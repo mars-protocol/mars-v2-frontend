@@ -1,4 +1,4 @@
-import { getVaultAccountStrategiesRow } from 'account/AccountStrategiesTable/functions'
+import { getVaultAccountStrategiesRow } from 'components/account/AccountStrategiesTable/functions'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import useAsset from 'hooks/assets/useAsset'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'

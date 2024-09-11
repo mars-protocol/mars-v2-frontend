@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 
-import AccountSummaryInModal from 'account/AccountSummary/AccountSummaryInModal'
 import classNames from 'classnames'
+import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
 import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
 import Button from 'components/common/Button'
 import { Callout, CalloutType } from 'components/common/Callout'

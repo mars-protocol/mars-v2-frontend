@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { isMobile } from 'react-device-detect'
 
-import { ACCOUNT_MENU_BUTTON_ID } from 'account/AccountMenuContent'
+import { ACCOUNT_MENU_BUTTON_ID } from 'components/account/AccountMenuContent'
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { ArrowDownLine, ArrowUpLine, Enter, ExclamationMarkCircled } from 'components/common/Icons'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'

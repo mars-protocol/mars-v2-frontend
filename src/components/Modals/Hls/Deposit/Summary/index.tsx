@@ -1,7 +1,7 @@
+import AssetSummary from 'components/Modals/Hls/Deposit/Summary/AssetSummary'
+import YourPosition from 'components/Modals/Hls/Deposit/Summary/YourPosition'
 import useRouteInfo from 'hooks/trade/useRouteInfo'
 import { BNCoin } from 'types/classes/BNCoin'
-import AssetSummary from './AssetSummary'
-import YourPosition from './YourPosition'
 
 interface Props {
   apy: number
@@ -23,7 +23,7 @@ export default function Summary(props: Props) {
   )
 
   return (
-    <div id='item-3' className='p-4 flex flex-col gap-4'>
+    <div id='item-3' className='flex flex-col gap-4 p-4'>
       <AssetSummary
         asset={props.collateralAsset}
         amount={props.depositAmount}

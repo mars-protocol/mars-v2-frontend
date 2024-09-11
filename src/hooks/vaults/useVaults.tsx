@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 
 import getVaults from 'api/vaults/getVaults'
-import useChainConfig from 'chain/useChainConfig'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 export default function useVaults(suspense = true, address?: string) {
   const chainConfig = useChainConfig()

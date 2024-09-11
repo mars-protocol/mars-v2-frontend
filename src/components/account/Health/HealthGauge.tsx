@@ -1,6 +1,8 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
+import HealthIcon from 'components/account/Health/HealthIcon'
+import HealthTooltip from 'components/account/Health/HealthTooltip'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -8,8 +10,6 @@ import useHealthColorAndLabel from 'hooks/health-computer/useHealthColor'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { computeHealthGaugePercentage } from 'utils/accounts'
 import { getHealthIndicatorColors } from 'utils/healthIndicator'
-import HealthIcon from './HealthIcon'
-import HealthTooltip from './HealthTooltip'
 
 interface Props {
   diameter?: number

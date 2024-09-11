@@ -1,5 +1,5 @@
-import { cacheFn, vaultUtilizationCache } from 'cache'
-import { getCreditManagerQueryClient } from 'cosmwasm-client'
+import { cacheFn, vaultUtilizationCache } from 'api/cache'
+import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
 import { VaultUtilizationResponse } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams.types'
 

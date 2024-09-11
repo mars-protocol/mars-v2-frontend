@@ -1,6 +1,6 @@
-import useBaseAsset from 'assets/useBasetAsset'
+import useBaseAsset from 'hooks/assets/useBasetAsset'
+import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import { BN } from 'utils/helpers'
-import useCurrentWalletBalance from './useCurrentWalletBalance'
 
 export default function useHasFundsForTxFee() {
   const baseAsset = useBaseAsset()

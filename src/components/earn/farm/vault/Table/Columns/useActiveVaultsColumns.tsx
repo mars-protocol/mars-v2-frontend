@@ -4,13 +4,15 @@ import { useMemo } from 'react'
 import DepositCap, {
   DEPOSIT_CAP_META,
   depositCapSortingFn,
-} from 'components/common/Table/Columns/DepositCap'
-import MaxLTV, { LTV_MAX_META } from 'components/common/Table/Columns/MaxLTV'
-import Name, { NAME_META } from 'components/common/Table/Columns/Name'
-import TVL, { TVL_META } from 'components/common/Table/Columns/TVL'
-import VaultApy, { APY_META } from './VaultApy'
-import VaultManage, { MANAGE_META } from './VaultManage'
-import VaultPositionValue, { POSITION_VALUE_META } from './VaultPositionValue'
+} from 'components/earn/farm/common/Table/Columns/DepositCap'
+import MaxLTV, { LTV_MAX_META } from 'components/earn/farm/common/Table/Columns/MaxLTV'
+import Name, { NAME_META } from 'components/earn/farm/common/Table/Columns/Name'
+import TVL, { TVL_META } from 'components/earn/farm/common/Table/Columns/TVL'
+import VaultApy, { APY_META } from 'components/earn/farm/vault/Table/Columns/VaultApy'
+import VaultManage, { MANAGE_META } from 'components/earn/farm/vault/Table/Columns/VaultManage'
+import VaultPositionValue, {
+  POSITION_VALUE_META,
+} from 'components/earn/farm/vault/Table/Columns/VaultPositionValue'
 
 export default function useActiveVaultsColumns() {
   return useMemo<ColumnDef<DepositedVault>[]>(() => {

@@ -1,4 +1,4 @@
-import { FormattedNumber } from 'FormattedNumber'
+import { FormattedNumber } from 'components/common/FormattedNumber'
 
 type Props = {
   asset: Asset

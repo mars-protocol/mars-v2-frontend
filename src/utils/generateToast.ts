@@ -1,6 +1,6 @@
 import moment from 'moment'
 
-import { analizeTransaction, getToastContentsFromGroupedTransactionCoin } from './broadcast'
+import { analizeTransaction, getToastContentsFromGroupedTransactionCoin } from 'utils/broadcast'
 
 export async function generateToast(
   chainConfig: ChainConfig,

@@ -1,7 +1,7 @@
 import { Row } from '@tanstack/react-table'
 import classNames from 'classnames'
 
-import { getAmountChangeColor } from 'AccountBalancesTable/functions'
+import { getAmountChangeColor } from 'components/account/AccountBalancesTable/functions'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { BNCoin } from 'types/classes/BNCoin'

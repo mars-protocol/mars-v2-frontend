@@ -1,17 +1,23 @@
 import { ColumnDef, Row } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
+import Apy, { APY_META } from 'components/account/AccountBalancesTable/Columns/Apy'
+import Asset, { ASSET_META } from 'components/account/AccountBalancesTable/Columns/Asset'
+import LiqPrice, { LIQ_META } from 'components/account/AccountBalancesTable/Columns/LiqPrice'
+import Price, { PRICE_META } from 'components/account/AccountBalancesTable/Columns/Price'
+import Size, {
+  SIZE_META,
+  sizeSortingFn,
+} from 'components/account/AccountBalancesTable/Columns/Size'
+import Value, {
+  VALUE_META,
+  valueBalancesSortingFn,
+} from 'components/account/AccountBalancesTable/Columns/Value'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
-import Apy, { APY_META } from './Apy'
-import Asset, { ASSET_META } from './Asset'
-import LiqPrice, { LIQ_META } from './LiqPrice'
-import Price, { PRICE_META } from './Price'
-import Size, { SIZE_META, sizeSortingFn } from './Size'
-import Value, { VALUE_META, valueBalancesSortingFn } from './Value'
 
 export default function useAccountBalancesColumns(
   account: Account,

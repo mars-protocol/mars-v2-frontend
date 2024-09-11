@@ -1,11 +1,11 @@
 import classNames from 'classnames'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
 import { CampaignLogo } from 'constants/campaigns'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAssets from 'hooks/assets/useAssets'
 import { useMemo } from 'react'
 import useStore from 'store'
-import Text from 'Text'
-import { Tooltip } from 'Tooltip'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatValue, getCoinValue } from 'utils/formatters'
 

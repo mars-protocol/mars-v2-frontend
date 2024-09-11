@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 
+import AccountFundContent from 'components/account/AccountFund/AccountFundContent'
 import Card from 'components/common/Card'
 import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
-import useAccountId from 'hooks/accounts/useAccountId'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useAccountId from 'hooks/accounts/useAccountId'
 import useStore from 'store'
-import AccountFundContent from './AccountFundContent'
 
 export default function AccountFundFullPage() {
   const address = useStore((s) => s.address)

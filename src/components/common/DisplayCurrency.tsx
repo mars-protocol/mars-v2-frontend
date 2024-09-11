@@ -1,6 +1,10 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { InfoCircle } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAssets from 'hooks/assets/useAssets'
 import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
@@ -8,10 +12,6 @@ import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getCoinValue, getCoinValueWithoutFallback } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import { FormattedNumber } from './FormattedNumber'
-import { InfoCircle } from './Icons'
-import Text from './Text'
-import { Tooltip } from './Tooltip'
 
 interface Props {
   coin: BNCoin

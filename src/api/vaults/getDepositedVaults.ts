@@ -6,9 +6,10 @@ import {
   positionsCache,
   previewRedeemCache,
   unlockPositionsCache,
-} from 'cache'
+} from 'api/cache'
+import { getClient, getCreditManagerQueryClient, getVaultQueryClient } from 'api/cosmwasm-client'
+import getVaults from 'api/vaults/getVaults'
 import { BN_ZERO } from 'constants/math'
-import { getClient, getCreditManagerQueryClient, getVaultQueryClient } from 'cosmwasm-client'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultStatus } from 'types/enums'
 import {
@@ -19,7 +20,6 @@ import {
 import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { getUrl } from 'utils/url'
-import getVaults from './getVaults'
 
 async function getUnlocksAtTimestamp(
   chainConfig: ChainConfig,

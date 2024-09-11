@@ -1,13 +1,10 @@
-import useAssets from 'assets/useAssets'
-import useChainConfig from 'chain/useChainConfig'
-import useMarketDepositCaps from 'markets/useMarketDepositCaps'
-import useAssetParams from 'params/useAssetParams'
+import useAssets from 'hooks/assets/useAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useMarketDepositCaps from 'hooks/markets/useMarketDepositCaps'
+import useAssetParams from 'hooks/params/useAssetParams'
 import { useMemo } from 'react'
 import { byDenom } from 'utils/array'
-import {
-  getAstroLpFromPoolAsset,
-  getDepositedAstroLpFromStakedLpBNCoin,
-} from 'utils/astroLps'
+import { getAstroLpFromPoolAsset, getDepositedAstroLpFromStakedLpBNCoin } from 'utils/astroLps'
 
 export default function useDepositedAstroLps(accounts?: Account[]) {
   const { data: assets } = useAssets()

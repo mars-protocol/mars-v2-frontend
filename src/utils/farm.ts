@@ -2,11 +2,11 @@ import getRouteInfo from 'api/swap/getRouteInfo'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { getAstroLpBaseDepositCoinsAndValue, getEnterAstroLpActions } from './astroLps'
-import { getCoinAmount, getCoinValue } from './formatters'
-import { getValueFromBNCoins } from './helpers'
-import { getSwapExactInAction } from './swap'
-import { getEnterVaultActions, getVaultBaseDepositCoinsAndValue } from './vaults'
+import { getAstroLpBaseDepositCoinsAndValue, getEnterAstroLpActions } from 'utils/astroLps'
+import { getCoinAmount, getCoinValue } from 'utils/formatters'
+import { getValueFromBNCoins } from 'utils/helpers'
+import { getSwapExactInAction } from 'utils/swap'
+import { getEnterVaultActions, getVaultBaseDepositCoinsAndValue } from 'utils/vaults'
 
 export function getFarmDepositsReclaimsAndBorrowingsActions(
   deposits: BNCoin[],

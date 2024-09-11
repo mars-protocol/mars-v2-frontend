@@ -1,13 +1,13 @@
 import { useCallback, useEffect } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
+import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 import FullOverlayContent from 'components/common/FullOverlayContent'
+import WalletSelect from 'components/Wallet/WalletSelect'
 import useToggle from 'hooks/common/useToggle'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
-import WalletSelect from 'Wallet/WalletSelect'
-import AccountFundFullPage from './AccountFund/AccountFundFullPage'
 
 export default function AccountCreateFirst() {
   const navigate = useNavigate()

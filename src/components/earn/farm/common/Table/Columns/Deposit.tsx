@@ -3,11 +3,11 @@ import { useCallback } from 'react'
 import ActionButton from 'components/common/Button/ActionButton'
 import { Enter, Plus, TrashBin, Wallet } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
+import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import { AlertDialogItems } from 'Modals/AlertDialog/AlertDialogItems'
 import useStore from 'store'
 
 interface Props {

@@ -1,7 +1,7 @@
+import DepositsTable from 'components/earn/lend/Table/DepositedLendsTable'
+import useV1DepositsTableData from 'components/v1/Table/useV1DepositsTableData'
 import { BN_ZERO } from 'constants/math'
-import DepositsTable from 'earn/lend/Table/DepositedLendsTable'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
-import useV1DepositsTableData from './Table/useV1DepositsTableData'
 
 export default function Deposits() {
   const { depositAssets } = useV1DepositsTableData()

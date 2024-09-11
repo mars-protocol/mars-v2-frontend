@@ -1,5 +1,10 @@
 import { useMemo } from 'react'
 
+import {
+  getAstroLpAccountStrategiesRow,
+  getPerpsVaultAccountStrategiesRow,
+  getVaultAccountStrategiesRow,
+} from 'components/account/AccountStrategiesTable/functions'
 import { BN_ZERO } from 'constants/math'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAvailableAstroLps from 'hooks/astroLp/useAvailableAstroLps'
@@ -9,11 +14,6 @@ import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getDepositedAstroLpFromStakedLpBNCoin } from 'utils/astroLps'
-import {
-  getAstroLpAccountStrategiesRow,
-  getPerpsVaultAccountStrategiesRow,
-  getVaultAccountStrategiesRow,
-} from './functions'
 
 interface Props {
   account: Account

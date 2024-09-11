@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { useState } from 'react'
 
-import Card from '.'
+import Card from 'components/common/Card'
 
 type Props = {
   tabs: CardTab[]

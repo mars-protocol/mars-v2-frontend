@@ -1,11 +1,13 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import Apy, { APY_META } from 'AccountBalancesTable/Columns/Apy'
-import UnlockTime from 'earn/farm/common/Table/Columns/UnlockTime'
+import Apy, { APY_META } from 'components/account/AccountBalancesTable/Columns/Apy'
+import Size, { SIZE_META } from 'components/account/AccountStrategiesTable/Columns/Size'
+import StrategyAndValue, {
+  STRATEGY_AND_VALUE_META,
+} from 'components/account/AccountStrategiesTable/Columns/StrategyAndValue'
+import UnlockTime from 'components/earn/farm/common/Table/Columns/UnlockTime'
 import useMarkets from 'hooks/markets/useMarkets'
-import Size, { SIZE_META } from './Size'
-import StrategyAndValue, { STRATEGY_AND_VALUE_META } from './StrategyAndValue'
 
 export default function useAccountStrategiesColumns() {
   const markets = useMarkets()

@@ -1,11 +1,12 @@
 import { useCallback, useMemo } from 'react'
 
-import AccountFundFullPage from 'AccountFund/AccountFundFullPage'
-import useBorrowMarketAssetsTableData from 'borrow/Table/useBorrowMarketAssetsTableData'
+import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
+import Skeleton from 'components/account/AccountList/Skeleton'
+import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import Button from 'components/common/Button'
 import { ArrowDownLine, ArrowUpLine, TrashBin } from 'components/common/Icons'
 import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
-import useLendingMarketAssetsTableData from 'earn/lend/Table/useLendingMarketAssetsTableData'
+import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import useAccount from 'hooks/accounts/useAccount'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
@@ -15,7 +16,6 @@ import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApr, calculateAccountBalanceValue } from 'utils/accounts'
 import { mergeBNCoinArrays } from 'utils/helpers'
-import Skeleton from './Skeleton'
 
 interface Props {
   accountId: string

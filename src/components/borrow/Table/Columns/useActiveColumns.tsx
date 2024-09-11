@@ -1,13 +1,19 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import Action from 'v1/Table/borrowings/Columns/Action'
-import BorrowRate, { BORROW_RATE_META } from './BorrowRate'
-import Chevron, { CHEVRON_META } from './Chevron'
-import DebtValue, { DEBT_VALUE_META, debtSortingFn } from './DebtValue'
-import Liquidity, { LIQUIDITY_META, liquiditySortingFn } from './Liquidity'
-import Manage, { MANAGE_META } from './Manage'
-import Name, { NAME_META } from './Name'
+import BorrowRate, { BORROW_RATE_META } from 'components/borrow/Table/Columns/BorrowRate'
+import Chevron, { CHEVRON_META } from 'components/borrow/Table/Columns/Chevron'
+import DebtValue, {
+  DEBT_VALUE_META,
+  debtSortingFn,
+} from 'components/borrow/Table/Columns/DebtValue'
+import Liquidity, {
+  LIQUIDITY_META,
+  liquiditySortingFn,
+} from 'components/borrow/Table/Columns/Liquidity'
+import Manage, { MANAGE_META } from 'components/borrow/Table/Columns/Manage'
+import Name, { NAME_META } from 'components/borrow/Table/Columns/Name'
+import Action from 'components/v1/Table/borrowings/Columns/Action'
 
 interface Props {
   v1?: boolean

@@ -2,14 +2,14 @@ import { useCallback } from 'react'
 
 import { SwapIcon } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import AssetButton from 'components/trade/TradeModule/AssetSelector/AssetButton'
+import AssetOverlay from 'components/trade/TradeModule/AssetSelector/AssetOverlay'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
-import AssetButton from './AssetButton'
-import AssetOverlay from './AssetOverlay'
 
 interface Props {
   buyAsset: Asset

@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 import React from 'react'
 
-import { FormattedNumber } from './FormattedNumber'
-import Text from './Text'
-import WarningMessages from './WarningMessages'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import Text from 'components/common/Text'
+import WarningMessages from 'components/common/WarningMessages'
 
 interface Props {
   items: SummaryItem[]

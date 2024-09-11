@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import QRCode from 'react-qr-code'
 
+import WalletConnecting from 'components/Wallet/WalletConnecting'
 import Button from 'components/common/Button'
 import FullOverlayContent from 'components/common/FullOverlayContent'
 import { ChevronLeft, ChevronRight } from 'components/common/Icons'
@@ -15,7 +16,6 @@ import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useStore from 'store'
 import { WalletID } from 'types/enums'
 import { isAndroid, isIOS } from 'utils/mobile'
-import WalletConnecting from './WalletConnecting'
 
 interface Props {
   error?: ErrorObject

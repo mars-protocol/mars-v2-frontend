@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
-import useAccount from './useAccount'
-import useAccountId from './useAccountId'
+import useAccount from 'hooks/accounts/useAccount'
+import useAccountId from 'hooks/accounts/useAccountId'
 
 export default function useCurrentAccount(): Account | undefined {
   const accountId = useAccountId()

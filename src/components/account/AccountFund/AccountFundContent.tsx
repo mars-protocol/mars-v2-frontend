@@ -1,6 +1,8 @@
 import classNames from 'classnames'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import WalletBridges from 'components/Wallet/WalletBridges'
+import AccountFundRow from 'components/account/AccountFund/AccountFundRow'
 import Button from 'components/common/Button'
 import DepositCapMessage from 'components/common/DepositCapMessage'
 import { ArrowRight, Plus } from 'components/common/Icons'
@@ -17,8 +19,6 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { BN } from 'utils/helpers'
-import WalletBridges from 'Wallet/WalletBridges'
-import AccountFundRow from './AccountFundRow'
 
 interface Props {
   account?: Account

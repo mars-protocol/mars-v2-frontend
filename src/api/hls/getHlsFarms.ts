@@ -1,7 +1,7 @@
+import getAssetParams from 'api/params/getAssetParams'
 import { TotalDepositResponse } from 'types/generated/mars-params/MarsParams.types'
 import { byDenom } from 'utils/array'
 import { getAstroLpFromPoolAsset } from 'utils/astroLps'
-import getAssetParams from 'params/getAssetParams'
 
 export default async function getHlsFarms(
   chainConfig: ChainConfig,

@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
-import { CheckCircled, CrossCircled, ExclamationMarkTriangle } from './Icons'
-import Text from './Text'
+import { CheckCircled, CrossCircled, ExclamationMarkTriangle } from 'components/common/Icons'
+import Text from 'components/common/Text'
 
 interface Props {
   type: 'success' | 'error' | 'warning' | 'info'

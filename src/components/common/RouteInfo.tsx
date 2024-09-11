@@ -1,14 +1,15 @@
 import classNames from 'classnames'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import Divider from 'components/common/Divider'
+import SummaryLine from 'components/common/SummaryLine'
+import Text from 'components/common/Text'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import { BNCoin } from 'types/classes/BNCoin'
+import { ChevronDown } from 'components/common/Icons'
+import { ChainInfoID } from 'types/enums'
+import { FormattedNumber } from 'components/common/FormattedNumber'
 import { formatValue } from 'utils/formatters'
-import DisplayCurrency from './DisplayCurrency'
-import Divider from './Divider'
-import { FormattedNumber } from './FormattedNumber'
-import { ChevronDown } from './Icons'
-import SummaryLine from './SummaryLine'
-import Text from './Text'
 
 interface Props {
   assets: SwapAssets

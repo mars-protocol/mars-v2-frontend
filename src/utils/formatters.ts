@@ -4,8 +4,8 @@ import moment from 'moment'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from './array'
-import { BN } from './helpers'
+import { byDenom } from 'utils/array'
+import { BN } from 'utils/helpers'
 
 export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
   const head = text.slice(0, h)

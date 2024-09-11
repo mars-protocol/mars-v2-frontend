@@ -8,6 +8,8 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import useClipboard from 'react-use-clipboard'
 
 import chains from 'chains'
+import RecentTransactions from 'components/Wallet/RecentTransactions'
+import WalletSelect from 'components/Wallet/WalletSelect'
 import Button from 'components/common/Button'
 import { CircularProgress } from 'components/common/CircularProgress'
 import { FormattedNumber } from 'components/common/FormattedNumber'
@@ -25,8 +27,6 @@ import useStore from 'store'
 import { ChainInfoID, NETWORK } from 'types/enums'
 import { truncate } from 'utils/formatters'
 import { getPage, getRoute } from 'utils/route'
-import RecentTransactions from './RecentTransactions'
-import WalletSelect from './WalletSelect'
 
 export default function WalletConnectedButton() {
   // ---------------

@@ -1,9 +1,10 @@
 import { Suspense, useEffect, useMemo } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
-import AccountCreateFirst from 'account/AccountCreateFirst'
+import AccountCreateFirst from 'components/account/AccountCreateFirst'
 import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
+import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
@@ -12,7 +13,6 @@ import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
-import WalletBridges from './WalletBridges'
 
 function FetchLoading() {
   return (

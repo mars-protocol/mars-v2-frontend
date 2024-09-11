@@ -5,10 +5,10 @@ import { ORACLE_DENOM } from 'constants/oracle'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPosition } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { Positions } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
-import { byDenom } from './array'
-import { getCoinValue } from './formatters'
-import { BN } from './helpers'
-import { convertApyToApr } from './parsers'
+import { byDenom } from 'utils/array'
+import { getCoinValue } from 'utils/formatters'
+import { BN } from 'utils/helpers'
+import { convertApyToApr } from 'utils/parsers'
 
 export const calculateAccountBalanceValue = (
   account: Account | AccountChange,

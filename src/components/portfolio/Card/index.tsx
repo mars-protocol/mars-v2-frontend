@@ -2,12 +2,13 @@ import classNames from 'classnames'
 import { ReactNode, useMemo } from 'react'
 import { NavLink, useParams, useSearchParams } from 'react-router-dom'
 
-import useBorrowMarketAssetsTableData from 'borrow/Table/useBorrowMarketAssetsTableData'
+import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
+import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
+import Skeleton from 'components/portfolio/Card/Skeleton'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useLendingMarketAssetsTableData from 'earn/lend/Table/useLendingMarketAssetsTableData'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
@@ -19,7 +20,6 @@ import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { getRoute } from 'utils/route'
-import Skeleton from './Skeleton'
 
 interface Props {
   accountId: string

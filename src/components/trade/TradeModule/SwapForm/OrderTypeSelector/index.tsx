@@ -3,8 +3,8 @@ import classNames from 'classnames'
 import { InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
+import { ORDER_TYPE_TABS } from 'components/trade/TradeModule/SwapForm/OrderTypeSelector/constants'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
-import { ORDER_TYPE_TABS } from './constants'
 
 interface Props {
   selected: AvailableOrderType

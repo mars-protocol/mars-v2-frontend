@@ -5,8 +5,8 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
+import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
-import TradeDirection from 'perps/BalancesTable/Columns/TradeDirection'
 import { demagnify } from 'utils/formatters'
 
 export const ASSET_META = {

@@ -1,9 +1,9 @@
 import { Row } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
-import { FormattedNumber } from './FormattedNumber'
-import TitleAndSubCell from './TitleAndSubCell'
 
 interface Props {
   row: Row<BorrowMarketTableData | LendingMarketTableData>

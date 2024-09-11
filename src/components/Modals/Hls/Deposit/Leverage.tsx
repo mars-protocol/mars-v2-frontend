@@ -3,8 +3,8 @@ import { useMemo } from 'react'
 import Button from 'components/common/Button'
 import { ArrowRight } from 'components/common/Icons'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
+import LeverageSummary from 'components/Modals/Hls/Deposit/LeverageSummary'
 import { getLeveragedApy } from 'utils/math'
-import LeverageSummary from './LeverageSummary'
 
 interface Props {
   amount: BigNumber
@@ -26,7 +26,7 @@ export default function Leverage(props: Props) {
   }, [props.baseApy, props.borrowMarket.apy.borrow, props.leverage])
 
   return (
-    <div id='item-1' className='flex-col gap-6 flex justify-between h-full p-4'>
+    <div id='item-1' className='flex flex-col justify-between h-full gap-6 p-4'>
       <TokenInputWithSlider
         amount={props.amount}
         asset={props.borrowMarket.asset}

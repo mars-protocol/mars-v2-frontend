@@ -1,10 +1,6 @@
-import {
-  calculateAccountLeverage,
-  getAccountPositionValues,
-  isAccountEmpty,
-} from 'utils/accounts'
-import getAccounts from 'wallets/getAccounts'
-import getHlsStakingAssets from './getHlsStakingAssets'
+import getHlsStakingAssets from 'api/hls/getHlsStakingAssets'
+import getAccounts from 'api/wallets/getAccounts'
+import { calculateAccountLeverage, getAccountPositionValues, isAccountEmpty } from 'utils/accounts'
 
 export default async function getHlsStakingAccounts(
   chainConfig: ChainConfig,

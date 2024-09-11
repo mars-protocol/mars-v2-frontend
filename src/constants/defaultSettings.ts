@@ -1,6 +1,6 @@
 import { RewardsCenterType } from 'types/enums'
 import { ResolutionString } from 'utils/charting_library'
-import { ORACLE_DENOM } from './oracle'
+import { ORACLE_DENOM } from 'constants/oracle'
 
 export const getDefaultChainSettings = (chainConfig: ChainConfig) => {
   return {

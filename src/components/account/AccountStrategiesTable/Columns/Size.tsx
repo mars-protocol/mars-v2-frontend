@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
+import { getSizeChangeColor } from 'components/account/AccountStrategiesTable/functions'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from 'constants/math'
-import { getSizeChangeColor } from 'functions'
 import useAsset from 'hooks/assets/useAsset'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import { BNCoin } from 'types/classes/BNCoin'

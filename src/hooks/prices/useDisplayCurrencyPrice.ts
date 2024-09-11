@@ -1,9 +1,9 @@
 import { useCallback, useMemo } from 'react'
 
-import useAssets from 'assets/useAssets'
-import useDisplayCurrencyAssets from 'assets/useDisplayCurrencyAssets'
 import { BN_ZERO } from 'constants/math'
-import useDisplayCurrency from 'localStorage/useDisplayCurrency'
+import useAssets from 'hooks/assets/useAssets'
+import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
+import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import { BN } from 'utils/helpers'
 import { getTokenPrice } from 'utils/tokens'
 

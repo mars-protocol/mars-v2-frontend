@@ -1,3 +1,4 @@
+import { subscribeOnStream, unsubscribeFromStream } from 'components/trade/TradeChart/streaming'
 import { pythEndpoints } from 'constants/pyth'
 import {
   HistoryCallback,
@@ -10,7 +11,6 @@ import {
   SubscribeBarsCallback,
   SymbolResolveExtension,
 } from 'utils/charting_library'
-import { subscribeOnStream, unsubscribeFromStream } from './streaming'
 
 const lastBarsCache = new Map()
 

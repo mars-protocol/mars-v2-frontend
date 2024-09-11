@@ -1,4 +1,4 @@
-import useCurrentAccount from 'accounts/useCurrentAccount'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 
 export default function useCurrentAccountDeposits() {
   const account = useCurrentAccount()

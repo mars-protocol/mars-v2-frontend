@@ -1,5 +1,5 @@
-import FundAccount from './FundAccount'
-import WithdrawFromAccount from './WithdrawFromAccount'
+import FundAccount from 'components/Modals/FundWithdraw/FundAccount'
+import WithdrawFromAccount from 'components/Modals/FundWithdraw/WithdrawFromAccount'
 
 interface Props {
   account?: Account

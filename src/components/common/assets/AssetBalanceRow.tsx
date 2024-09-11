@@ -1,10 +1,10 @@
 import classNames from 'classnames'
-import DisplayCurrency from 'DisplayCurrency'
-import { FormattedNumber } from 'FormattedNumber'
-import Text from 'Text'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import Text from 'components/common/Text'
+import AssetImage from 'components/common/assets/AssetImage'
 import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify } from 'utils/formatters'
-import AssetImage from './AssetImage'
 
 interface Props {
   asset: Asset

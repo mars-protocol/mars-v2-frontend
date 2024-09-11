@@ -1,5 +1,5 @@
-import { Neutron, Osmo } from 'Icons'
 import { ChainInfoID } from 'types/enums'
+import { Neutron, Osmo } from 'components/common/Icons'
 
 interface Props {
   chainID: ChainInfoID

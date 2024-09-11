@@ -1,12 +1,12 @@
 import { useMemo } from 'react'
 
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
-import ActiveAstroLpsTable from 'earn/farm/astroLp/Table/ActiveAstroLpsTable'
+import ActiveAstroLpsTable from 'components/earn/farm/astroLp/Table/ActiveAstroLpsTable'
+import useActiveHlsFarmsColumns from 'components/hls/Farm/Table/Columns/useActiveHlsFarmsColumns'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useAssets from 'hooks/assets/useAssets'
 import useDepositedAstroLps from 'hooks/astroLp/useDepositedAstroLps'
 import useStore from 'store'
-import useActiveHlsFarmsColumns from './Table/Columns/useActiveHlsFarmsColumns'
 
 export function ActiveHlsFarms() {
   const { data: assets } = useAssets()

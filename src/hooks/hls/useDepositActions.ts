@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import useSlippage from 'settings/useSlippage'
+import useSlippage from 'hooks/settings/useSlippage'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getSwapExactInAction } from 'utils/swap'
 

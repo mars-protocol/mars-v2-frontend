@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 
-import Button from './Button'
-import DocsLink from './DocsLink'
-import Text from './Text'
+import Button from 'components/common/Button'
+import DocsLink from 'components/common/DocsLink'
+import Text from 'components/common/Text'
 
 interface Props {
   title: string

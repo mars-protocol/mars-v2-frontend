@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 
-import { FormattedNumber } from 'FormattedNumber'
-import { InfoCircle } from 'Icons'
-import Text from 'Text'
-import { Tooltip } from 'Tooltip'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { InfoCircle } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
 
 interface Props {
   rate: number

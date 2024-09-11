@@ -1,11 +1,11 @@
 import { Row } from '@tanstack/react-table'
 import { useCallback } from 'react'
 
+import { DEBT_VALUE_META } from 'components/borrow/Table/Columns/DebtValue'
+import { NAME_META } from 'components/borrow/Table/Columns/Name'
+import useBorrowingsColumns from 'components/borrow/Table/Columns/useActiveColumns'
 import MarketDetails from 'components/common/MarketDetails'
 import Table from 'components/common/Table'
-import { DEBT_VALUE_META } from './Columns/DebtValue'
-import { NAME_META } from './Columns/Name'
-import useBorrowingsColumns from './Columns/useActiveColumns'
 
 type Props = {
   data: BorrowMarketTableData[]

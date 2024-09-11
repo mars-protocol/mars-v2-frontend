@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 
-import AssetList from 'AssetList'
 import EscButton from 'components/common/Button/EscButton'
-import { CircularProgress } from 'components/common/CircularProgress'
 import Divider from 'components/common/Divider'
 import Overlay from 'components/common/Overlay'
 import SearchBar from 'components/common/SearchBar'
 import Text from 'components/common/Text'
+import AssetList from 'components/trade/TradeModule/AssetSelector/AssetList'
+import StablesFilter from 'components/trade/TradeModule/AssetSelector/AssetOverlay/StablesFilter'
+import PairsList from 'components/trade/TradeModule/AssetSelector/PairsList'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useFilteredAssets from 'hooks/assets/useFilteredAssets'
-import PairsList from 'PairsList'
-import StablesFilter from './StablesFilter'
+import { CircularProgress } from 'components/common/CircularProgress'
 
 interface Props {
   state: OverlayState

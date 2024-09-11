@@ -5,9 +5,9 @@ import {
   AssetParamsBaseForAddr,
   TotalDepositResponse,
 } from 'types/generated/mars-params/MarsParams.types'
-import { byDenom } from './array'
-import { BN, getValueFromBNCoins, mergeBNCoinArrays } from './helpers'
-import { convertApyToApr } from './parsers'
+import { byDenom } from 'utils/array'
+import { BN, getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
+import { convertApyToApr } from 'utils/parsers'
 
 export function getAstroLpFromPoolAsset(
   asset: Asset,

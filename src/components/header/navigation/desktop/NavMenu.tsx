@@ -3,9 +3,9 @@ import classNames from 'classnames'
 import Divider from 'components/common/Divider'
 import { ChevronDown } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import { getIsActive } from 'components/header/navigation/desktop/DesktopNavigation'
+import { NavLink } from 'components/header/navigation/desktop/NavLink'
 import useToggle from 'hooks/common/useToggle'
-import { getIsActive } from './DesktopNavigation'
-import { NavLink } from './NavLink'
 
 interface Props {
   item: MenuTreeEntry

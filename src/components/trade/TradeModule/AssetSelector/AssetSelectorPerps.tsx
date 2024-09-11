@@ -3,11 +3,11 @@ import { useCallback } from 'react'
 import Button from 'components/common/Button'
 import { ChevronDown } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import AssetOverlay from 'components/trade/TradeModule/AssetSelector/AssetOverlay'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import useStore from 'store'
-import AssetOverlay from './AssetOverlay'
 
 interface Props {
   asset: Asset

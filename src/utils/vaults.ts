@@ -2,10 +2,10 @@ import { BN_ZERO } from 'constants/math'
 import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action, Uint128 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { byDenom } from './array'
-import { getCoinAmount, getCoinValue } from './formatters'
-import { BN, getValueFromBNCoins, mergeBNCoinArrays } from './helpers'
-import { getTokenPrice } from './tokens'
+import { byDenom } from 'utils/array'
+import { getCoinAmount, getCoinValue } from 'utils/formatters'
+import { BN, getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
+import { getTokenPrice } from 'utils/tokens'
 
 export function getVaultBaseDepositCoinsAndValue(
   vault: Vault,

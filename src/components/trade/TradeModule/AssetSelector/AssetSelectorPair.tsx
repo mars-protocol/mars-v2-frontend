@@ -3,12 +3,12 @@ import { useCallback } from 'react'
 import Button from 'components/common/Button'
 import { ChevronDown } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import AssetOverlay from 'components/trade/TradeModule/AssetSelector/AssetOverlay'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
-import AssetOverlay from './AssetOverlay'
 
 interface Props {
   buyAsset: Asset

@@ -1,7 +1,7 @@
+import Deposit from 'components/Modals/v1/Deposit'
+import Withdraw from 'components/Modals/v1/Withdraw'
 import useAccount from 'hooks/accounts/useAccount'
 import useStore from 'store'
-import Deposit from './Deposit'
-import Withdraw from './Withdraw'
 
 export default function V1DepositAndWithdraw() {
   const address = useStore((s) => s.address)

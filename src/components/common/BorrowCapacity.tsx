@@ -1,13 +1,13 @@
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import { FormattedNumber } from './FormattedNumber'
-import Text from './Text'
-import { Tooltip } from './Tooltip'
 
 interface Props {
   balance: number

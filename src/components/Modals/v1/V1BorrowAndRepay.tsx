@@ -1,7 +1,7 @@
+import Borrow from 'components/Modals/v1/Borrow'
+import Repay from 'components/Modals/v1/Repay'
 import useAccount from 'hooks/accounts/useAccount'
 import useStore from 'store'
-import Borrow from './Borrow'
-import Repay from './Repay'
 
 export default function V1BorrowAndRepayModal() {
   const address = useStore((s) => s.address)

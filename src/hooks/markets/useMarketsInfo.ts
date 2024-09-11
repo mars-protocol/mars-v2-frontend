@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 
-import useChainConfig from 'chain/useChainConfig'
-import useClients from 'chain/useClients'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useClients from 'hooks/chain/useClients'
 import { BN } from 'utils/helpers'
 import iterateContractQuery from 'utils/iterateContractQuery'
 

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import useVaults from './useVaults'
+import useVaults from 'hooks/vaults/useVaults'
 
 export default function useVault(address: string) {
   const { data: vaults } = useVaults(false)

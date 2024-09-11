@@ -1,9 +1,9 @@
 import classNames from 'classnames'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { FormattedNumber } from 'components/common/FormattedNumber'
 import { MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify } from 'utils/formatters'
-import DisplayCurrency from './DisplayCurrency'
-import { FormattedNumber } from './FormattedNumber'
 
 interface Props {
   asset: Asset

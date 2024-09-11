@@ -6,6 +6,8 @@ import Button from 'components/common/Button'
 import FullOverlayContent from 'components/common/FullOverlayContent'
 import { ChevronRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalancesAndAccounts'
+import WalletSelect from 'components/Wallet/WalletSelect'
 import { BRIDGES } from 'constants/bridges'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -16,8 +18,6 @@ import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { defaultFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
-import WalletFetchBalancesAndAccounts from './WalletFetchBalancesAndAccounts'
-import WalletSelect from './WalletSelect'
 
 function Bridge({ name, url, image }: Bridge) {
   return (

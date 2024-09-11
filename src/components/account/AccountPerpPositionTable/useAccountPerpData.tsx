@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 
+import { getAssetAccountPerpRow } from 'components/account/AccountPerpPositionTable/functions'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import { byDenom } from 'utils/array'
-import { getAssetAccountPerpRow } from './functions'
 
 interface Props {
   account: Account

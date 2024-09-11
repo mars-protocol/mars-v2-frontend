@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 
-import { ChevronDown, ChevronRight } from './Icons'
-import Text from './Text'
+import { ChevronDown, ChevronRight } from 'components/common/Icons'
+import Text from 'components/common/Text'
 
 interface Props {
   item: Item

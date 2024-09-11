@@ -1,11 +1,11 @@
 import classNames from 'classnames'
 
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
 import useAsset from 'hooks/assets/useAsset'
 import { BNCoin } from 'types/classes/BNCoin'
-import DisplayCurrency from './DisplayCurrency'
-import { FormattedNumber } from './FormattedNumber'
-import TitleAndSubCell from './TitleAndSubCell'
 
 interface Props {
   depositCap: DepositCap

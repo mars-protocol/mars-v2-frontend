@@ -1,8 +1,8 @@
 import { useCallback, useEffect } from 'react'
 
 import classNames from 'classnames'
-import { Cross } from 'Icons'
-import Button from './index'
+import Button from 'components/common/Button/index'
+import { Cross } from 'components/common/Icons'
 
 interface Props {
   enableKeyPress?: boolean

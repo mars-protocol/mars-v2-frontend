@@ -1,4 +1,4 @@
-import { BN } from './helpers'
+import { BN } from 'utils/helpers'
 
 export function calculatePoolWeight(
   primary: AstroportPoolAsset,

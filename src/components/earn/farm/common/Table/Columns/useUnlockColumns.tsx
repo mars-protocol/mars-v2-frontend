@@ -1,11 +1,18 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import { VaultWithdraw, WITHDRAW_META } from 'vault/Table/Columns/VaultWithdraw'
-import Name, { NAME_META } from './Name'
-import UnlockAmount, { UNLOCK_AMOUNT_META } from './UnlockAmount'
-import UnlockTime, { UNLOCK_TIME_META } from './UnlockTime'
-import UnlockValue, { UNLOCK_VALUE_META } from './UnlockValue'
+import Name, { NAME_META } from 'components/earn/farm/common/Table/Columns/Name'
+import UnlockAmount, {
+  UNLOCK_AMOUNT_META,
+} from 'components/earn/farm/common/Table/Columns/UnlockAmount'
+import UnlockTime, { UNLOCK_TIME_META } from 'components/earn/farm/common/Table/Columns/UnlockTime'
+import UnlockValue, {
+  UNLOCK_VALUE_META,
+} from 'components/earn/farm/common/Table/Columns/UnlockValue'
+import {
+  VaultWithdraw,
+  WITHDRAW_META,
+} from 'components/earn/farm/vault/Table/Columns/VaultWithdraw'
 
 interface Props {
   showActions?: boolean

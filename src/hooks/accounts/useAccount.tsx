@@ -1,10 +1,10 @@
 import useSWR from 'swr'
 
 import getAccount from 'api/accounts/getAccount'
-import useAssets from 'assets/useAssets'
-import useChainConfig from 'chain/useChainConfig'
+import useAssets from 'hooks/assets/useAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useV1Account from 'hooks/v1/useV1Account'
 import useStore from 'store'
-import useV1Account from 'v1/useV1Account'
 
 export default function useAccount(accountId?: string, suspense?: boolean) {
   const { data: assets } = useAssets()

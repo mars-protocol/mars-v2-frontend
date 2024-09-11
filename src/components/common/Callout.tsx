@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 import { useCallback } from 'react'
 
-import { CircularProgress } from './CircularProgress'
-import { ExclamationMarkTriangle, InfoCircle } from './Icons'
-import Text from './Text'
+import { CircularProgress } from 'components/common/CircularProgress'
+import { ExclamationMarkTriangle, InfoCircle } from 'components/common/Icons'
+import Text from 'components/common/Text'
 
 interface Props {
   children: string | React.ReactNode

@@ -1,8 +1,8 @@
 import useSWR from 'swr'
 
-import useWhitelistedAssets from 'assets/useWhitelistedAssets'
-import useChainConfig from 'chain/useChainConfig'
-import useClients from 'chain/useClients'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useClients from 'hooks/chain/useClients'
 
 export default function useMarketDepositCaps() {
   const chainConfig = useChainConfig()

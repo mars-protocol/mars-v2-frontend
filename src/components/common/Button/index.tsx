@@ -1,12 +1,6 @@
 import classNames from 'classnames'
 import React, { LegacyRef, useMemo } from 'react'
 
-import { CircularProgress } from 'CircularProgress'
-import { getDefaultChainSettings } from 'constants/defaultSettings'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import { ChevronDown } from 'Icons'
 import {
   buttonBorderClasses,
   buttonColorClasses,
@@ -18,8 +12,14 @@ import {
   buttonVariantClasses,
   circularProgressSize,
   focusClasses,
-} from './constants'
-import { glowElement } from './utils'
+} from 'components/common/Button/constants'
+import { glowElement } from 'components/common/Button/utils'
+import { CircularProgress } from 'components/common/CircularProgress'
+import { ChevronDown } from 'components/common/Icons'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 
 const Button = React.forwardRef(function Button(
   {

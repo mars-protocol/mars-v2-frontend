@@ -3,10 +3,10 @@ import { ReactNode, useCallback } from 'react'
 import Button from 'components/common/Button'
 import { Wallet } from 'components/common/Icons'
 import TermsOfService from 'components/common/TermsOfService'
+import WalletSelect from 'components/Wallet/WalletSelect'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
-import WalletSelect from './WalletSelect'
 
 interface Props {
   textOverride?: string | ReactNode

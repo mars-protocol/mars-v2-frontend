@@ -8,6 +8,14 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { LineChart } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
+import { datafeed } from 'components/trade/TradeChart/DataFeed'
+import PoweredByPyth from 'components/trade/TradeChart/PoweredByPyth'
+import {
+  disabledFeatures,
+  disabledFeaturesMobile,
+  enabledFeatures,
+  enabledFeaturesMobile,
+} from 'components/trade/TradeChart/constants'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
@@ -17,14 +25,6 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { ChartingLibraryWidgetOptions, ResolutionString, widget } from 'utils/charting_library'
 import { magnify } from 'utils/formatters'
 import { getTradingViewSettings } from 'utils/theme'
-import { datafeed } from './DataFeed'
-import PoweredByPyth from './PoweredByPyth'
-import {
-  disabledFeatures,
-  disabledFeaturesMobile,
-  enabledFeatures,
-  enabledFeaturesMobile,
-} from './constants'
 
 interface Props {
   buyAsset: Asset

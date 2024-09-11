@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 
-import { Check } from './Icons'
-import Text from './Text'
+import { Check } from 'components/common/Icons'
+import Text from 'components/common/Text'
 
 interface Props {
   checked: boolean

@@ -15,11 +15,7 @@ import useToggle from 'hooks/common/useToggle'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import {
-  cloneAccount,
-  getMergedBalancesForAsset,
-  removeDepositsAndLends,
-} from 'utils/accounts'
+import { cloneAccount, getMergedBalancesForAsset, removeDepositsAndLends } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 
 interface Props {

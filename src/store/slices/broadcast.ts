@@ -21,11 +21,7 @@ import { ExecuteMsg as IncentivesExecuteMsg } from 'types/generated/mars-incenti
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
 import { byDenom, bySymbol } from 'utils/array'
-import {
-  generateErrorMessage,
-  getSingleValueFromBroadcastResult,
-  sortFunds,
-} from 'utils/broadcast'
+import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import checkPythUpdateEnabled from 'utils/checkPythUpdateEnabled'
 import { defaultFee } from 'utils/constants'

@@ -1,4 +1,4 @@
-import HealthBar from 'account/Health/HealthBar'
+import HealthBar from 'components/account/Health/HealthBar'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 

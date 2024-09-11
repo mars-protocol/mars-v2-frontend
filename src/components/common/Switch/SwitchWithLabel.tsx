@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 
-import Text from 'Text'
-import { Tooltip } from 'Tooltip'
-import Switch from './index'
+import Switch from 'components/common/Switch/index'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
 
 interface Props {
   name: string

@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
 import React, { ReactNode } from 'react'
-import Text from './Text'
-import { Tooltip } from './Tooltip'
 
 const infoLineClasses = 'flex flex-row justify-between flex-1 mb-1 text-xs text-white'
 

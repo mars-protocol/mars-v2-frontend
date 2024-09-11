@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 
+import useAccountStrategiesColumns from 'components/account/AccountStrategiesTable/Columns/useAccountStrategiesColumns'
+import useAccountStrategiesData from 'components/account/AccountStrategiesTable/useAccountStrategiesData'
 import Table from 'components/common/Table'
 import useStore from 'store'
-import useAccountStrategiesColumns from './Columns/useAccountStrategiesColumns'
-import useAccountStrategiesData from './useAccountStrategiesData'
 
 interface Props {
   account: Account

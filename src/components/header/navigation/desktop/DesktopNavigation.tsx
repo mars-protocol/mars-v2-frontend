@@ -3,11 +3,11 @@ import { useMemo } from 'react'
 
 import Button from 'components/common/Button'
 import { ChevronDown } from 'components/common/Icons'
+import { NavLink } from 'components/header/navigation/desktop/NavLink'
+import { NavMenu } from 'components/header/navigation/desktop/NavMenu'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useStore from 'store'
-import { NavLink } from './NavLink'
-import { NavMenu } from './NavMenu'
 
 interface Props {
   menuTree: (chainConfig: ChainConfig) => MenuTreeEntry[]

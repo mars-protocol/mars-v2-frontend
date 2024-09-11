@@ -1,18 +1,19 @@
+import { useCallback } from 'react'
+
 import classNames from 'classnames'
 import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
+import Header from 'components/Modals/Hls/Header'
+import ChangeLeverage from 'components/Modals/Hls/Manage/ChangeLeverage'
+import Deposit from 'components/Modals/Hls/Manage/Deposit'
+import Repay from 'components/Modals/Hls/Manage/Repay'
+import Withdraw from 'components/Modals/Hls/Manage/Withdraw'
+import ModalContentWithSummary from 'components/Modals/ModalContentWithSummary'
 import { BN_ZERO } from 'constants/math'
-import Header from 'Header'
 import useAccount from 'hooks/accounts/useAccount'
 import useAsset from 'hooks/assets/useAsset'
 import useMarket from 'hooks/markets/useMarket'
-import ModalContentWithSummary from 'ModalContentWithSummary'
-import { useCallback } from 'react'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
-import ChangeLeverage from './ChangeLeverage'
-import Deposit from './Deposit'
-import Repay from './Repay'
-import Withdraw from './Withdraw'
 
 export default function HlsManageModalController() {
   const modal = useStore((s) => s.hlsManageModal)

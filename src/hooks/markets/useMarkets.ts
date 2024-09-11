@@ -1,8 +1,10 @@
 import useSWR from 'swr'
 
-import useTradeEnabledAssets from 'assets/useTradeEnabledAssets'
-import useChainConfig from 'chain/useChainConfig'
-import useAssetParams from 'params/useAssetParams'
+import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useMarketDepositCaps from 'hooks/markets/useMarketDepositCaps'
+import useMarketsInfo from 'hooks/markets/useMarketsInfo'
+import useAssetParams from 'hooks/params/useAssetParams'
 import {
   AssetParamsBaseForAddr as AssetParams,
   TotalDepositResponse,
@@ -10,8 +12,6 @@ import {
 import { Market as RedBankMarket } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { byDenom } from 'utils/array'
 import { resolveMarketResponse } from 'utils/resolvers'
-import useMarketDepositCaps from './useMarketDepositCaps'
-import useMarketsInfo from './useMarketsInfo'
 
 export default function useMarkets() {
   const chainConfig = useChainConfig()

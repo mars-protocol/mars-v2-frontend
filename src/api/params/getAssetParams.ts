@@ -1,5 +1,5 @@
-import { assetParamsCache, cacheFn } from 'cache'
-import { getParamsQueryClient } from 'cosmwasm-client'
+import { assetParamsCache, cacheFn } from 'api/cache'
+import { getParamsQueryClient } from 'api/cosmwasm-client'
 import { AssetParamsBaseForAddr } from 'types/generated/mars-params/MarsParams.types'
 import iterateContractQuery from 'utils/iterateContractQuery'
 

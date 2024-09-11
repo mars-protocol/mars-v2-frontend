@@ -28325,7 +28325,7 @@ export type WidgetOverrides = DrawingOverrides & {
 
 export as namespace TradingView
 
-export { }
+export {}
 
 declare type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends (infer U)[]

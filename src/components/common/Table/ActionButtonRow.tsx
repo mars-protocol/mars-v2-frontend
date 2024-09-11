@@ -1,7 +1,7 @@
 import { Row as TanstackRow } from '@tanstack/react-table'
 import { ReactNode } from 'react'
 
-import Text from 'Text'
+import Text from 'components/common/Text'
 
 interface Props<T> {
   row: TanstackRow<T>

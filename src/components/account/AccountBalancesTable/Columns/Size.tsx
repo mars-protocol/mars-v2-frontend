@@ -2,9 +2,9 @@ import { Row } from '@tanstack/react-table'
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
+import { getAmountChangeColor } from 'components/account/AccountBalancesTable/functions'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from 'constants/math'
-import { getAmountChangeColor } from 'functions'
 import { formatAmountToPrecision } from 'utils/formatters'
 
 export const SIZE_META = { accessorKey: 'size', header: 'Size', meta: { className: 'w-40' } }

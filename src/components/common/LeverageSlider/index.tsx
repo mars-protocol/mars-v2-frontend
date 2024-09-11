@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import debounce from 'lodash.debounce'
 import { ChangeEvent, useCallback, useMemo } from 'react'
 
-import InputOverlay from './InputOverlay'
+import InputOverlay from 'components/common/LeverageSlider/InputOverlay'
 
 const LEFT_MARGIN = 5
 

@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 
+import Button from 'components/common/Button'
+import { Gear } from 'components/common/Icons'
 import useStore from 'store'
-import Button from './Button'
-import { Gear } from './Icons'
 
 interface Props {
   className?: string

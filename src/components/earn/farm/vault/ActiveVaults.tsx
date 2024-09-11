@@ -1,14 +1,14 @@
 import { useMemo } from 'react'
 
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
-import useUnlockColumns from 'components/common/Table/Columns/useUnlockColumns'
+import useUnlockColumns from 'components/earn/farm/common/Table/Columns/useUnlockColumns'
+import ActiveVaultsTable from 'components/earn/farm/vault/Table/ActiveVaultsTable'
+import useActiveVaultsColumns from 'components/earn/farm/vault/Table/Columns/useActiveVaultsColumns'
+import VaultUnlockBanner from 'components/earn/farm/vault/VaultUnlockBanner'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useDepositedVaults from 'hooks/vaults/useDepositedVaults'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { VaultStatus } from 'types/enums'
-import ActiveVaultsTable from './Table/ActiveVaultsTable'
-import useActiveVaultsColumns from './Table/Columns/useActiveVaultsColumns'
-import VaultUnlockBanner from './VaultUnlockBanner'
 
 export function ActiveVaults() {
   const accountId = useAccountId()

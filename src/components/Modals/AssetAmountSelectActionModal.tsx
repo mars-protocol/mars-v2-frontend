@@ -1,7 +1,8 @@
 import classNames from 'classnames'
 import { useCallback, useMemo, useState } from 'react'
 
-import AccountSummaryInModal from 'account/AccountSummary/AccountSummaryInModal'
+import Modal from 'components/Modals/Modal'
+import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
 import Divider from 'components/common/Divider'
@@ -15,7 +16,6 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN, mergeBNCoinArrays } from 'utils/helpers'
-import Modal from './Modal'
 
 interface Props {
   account: Account

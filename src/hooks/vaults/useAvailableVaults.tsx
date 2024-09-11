@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 
-import useAccountId from 'accounts/useAccountId'
-import useDepositedVaults from './useDepositedVaults'
-import useVaults from './useVaults'
+import useAccountId from 'hooks/accounts/useAccountId'
+import useDepositedVaults from 'hooks/vaults/useDepositedVaults'
+import useVaults from 'hooks/vaults/useVaults'
 
 export default function useAvailableVaults() {
   const accountId = useAccountId()

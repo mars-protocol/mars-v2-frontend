@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import Table from 'components/common/Table'
-import useAvailableColumns from 'components/common/Table/Columns/useAvailableColumns'
+import useAvailableColumns from 'components/earn/farm/common/Table/Columns/useAvailableColumns'
 import useAvailableVaults from 'hooks/vaults/useAvailableVaults'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 

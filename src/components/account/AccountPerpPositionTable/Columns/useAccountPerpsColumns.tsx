@@ -1,14 +1,17 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import LiqPrice, { LIQ_META } from 'AccountBalancesTable/Columns/LiqPrice'
-import Value, { VALUE_META, valuePerpSortingFn } from 'AccountBalancesTable/Columns/Value'
+import LiqPrice, { LIQ_META } from 'components/account/AccountBalancesTable/Columns/LiqPrice'
+import Value, {
+  VALUE_META,
+  valuePerpSortingFn,
+} from 'components/account/AccountBalancesTable/Columns/Value'
+import Asset, { ASSET_META } from 'components/account/AccountPerpPositionTable/Columns/Asset'
+import TotalPnL, { PNL_META } from 'components/account/AccountPerpPositionTable/Columns/TotalPnL'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
-import Asset, { ASSET_META } from './Asset'
-import TotalPnL, { PNL_META } from './TotalPnL'
 
 export default function useAccountPerpsColumns(account: Account) {
   const updatedAccount = useStore((s) => s.updatedAccount)

@@ -1,8 +1,8 @@
-import { cacheFn, positionsCache } from 'cache'
-import { getCreditManagerQueryClient } from 'cosmwasm-client'
+import { cacheFn, positionsCache } from 'api/cache'
+import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
+import getDepositedVaults from 'api/vaults/getDepositedVaults'
 import { Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { convertCoinArrayIntoBNCoinArrayAndRemoveEmptyCoins } from 'utils/accounts'
-import getDepositedVaults from 'vaults/getDepositedVaults'
 
 export default async function getAccount(
   chainConfig: ChainConfig,

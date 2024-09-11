@@ -4,12 +4,12 @@ import { useCallback, useEffect, useMemo } from 'react'
 
 import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
+import WalletSelect from 'components/Wallet//WalletSelect'
+import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalancesAndAccounts'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useStore from 'store'
-import WalletFetchBalancesAndAccounts from './WalletFetchBalancesAndAccounts'
-import WalletSelect from './WalletSelect'
 
 interface Props {
   providerId?: string

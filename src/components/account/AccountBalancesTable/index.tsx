@@ -1,7 +1,9 @@
 import classNames from 'classnames'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
-import AccountFundFullPage from 'AccountFund/AccountFundFullPage'
+import useAccountBalancesColumns from 'components/account/AccountBalancesTable/Columns/useAccountBalancesColumns'
+import useAccountBalanceData from 'components/account/AccountBalancesTable/useAccountBalanceData'
+import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 import ActionButton from 'components/common/Button/ActionButton'
 import Card from 'components/common/Card'
 import Table from 'components/common/Table'
@@ -10,8 +12,6 @@ import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
-import useAccountBalancesColumns from './Columns/useAccountBalancesColumns'
-import useAccountBalanceData from './useAccountBalanceData'
 
 interface Props {
   account: Account

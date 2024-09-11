@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import { checkOpenInterest, checkPositionValue } from 'components/perps/Module/validators'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
@@ -13,7 +14,6 @@ import { List } from 'types/classes/List'
 import { getAccountNetValue } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { demagnify } from 'utils/formatters'
-import { checkOpenInterest, checkPositionValue } from './validators'
 
 export default function usePerpsModule(amount: BigNumber | null) {
   const { perpsAsset } = usePerpsAsset()

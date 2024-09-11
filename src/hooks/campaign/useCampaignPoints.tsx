@@ -1,10 +1,10 @@
-import useCurrentAccount from 'accounts/useCurrentAccount'
 import getCampaignPoints from 'api/campaign/getCampaignPoints'
-import useChainConfig from 'chain/useChainConfig'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useAssetCampaigns from 'hooks/campaign/useAssetCampaigns'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { useMemo } from 'react'
 import useStore from 'store'
 import useSWRImmutable from 'swr/immutable'
-import useAssetCampaigns from './useAssetCampaigns'
 
 export default function useCampaignPoints() {
   const chainConfig = useChainConfig()

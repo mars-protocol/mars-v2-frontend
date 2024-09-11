@@ -1,5 +1,5 @@
+import useAssets from 'hooks/assets/useAssets'
 import { byDenom, bySymbol } from 'utils/array'
-import useAssets from './useAssets'
 
 export default function useAsset(denomOrSymbol: string) {
   const { data: assets } = useAssets()

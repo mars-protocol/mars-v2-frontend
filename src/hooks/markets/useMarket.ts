@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import useMarkets from './useMarkets'
+import useMarkets from 'hooks/markets/useMarkets'
 
 export default function useMarket(denom: string) {
   const markets = useMarkets()

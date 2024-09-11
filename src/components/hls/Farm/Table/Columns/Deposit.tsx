@@ -13,7 +13,7 @@ export const DEPOSIT_META = { accessorKey: 'deposit', header: 'Deposit' }
 
 interface Props {
   isLoading: boolean
-  strategy?: HLSStrategy
+  strategy?: HlsStrategy
   vault?: Vault
 }
 
@@ -21,7 +21,7 @@ export default function Deposit(props: Props) {
   const { strategy, vault } = props
 
   const [showHlsInfo, setShowHlsInfo] = useLocalStorage<boolean>(
-    LocalStorageKeys.HLS_INFORMATION,
+    LocalStorageKeys.HLSINFORMATION,
     true,
   )
 
@@ -39,7 +39,7 @@ export default function Deposit(props: Props) {
     }
 
     openAlertDialog({
-      title: 'Understanding HLS Positions',
+      title: 'Understanding Hls Positions',
       content: <AlertDialogItems items={INFO_ITEMS} />,
       positiveButton: {
         text: 'Continue',
@@ -74,12 +74,12 @@ const INFO_ITEMS = [
     icon: <Circle />,
     title: 'One account, one position',
     description:
-      'A minted HLS account can only have a single position tied to it, in order to limit risk.',
+      'A minted Hls account can only have a single position tied to it, in order to limit risk.',
   },
   {
     icon: <Wallet />,
     title: 'Funded from your wallet',
-    description: 'To fund your HLS position, funds will have to come directly from your wallet.',
+    description: 'To fund your Hls position, funds will have to come directly from your wallet.',
   },
   {
     icon: <TrashBin />,

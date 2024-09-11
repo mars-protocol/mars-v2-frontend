@@ -1,4 +1,4 @@
-import useCurrentAccount from 'accounts/useCurrentAccount'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 
 export default function usePerpPosition(denom: string): PerpsPosition | undefined {
   const account = useCurrentAccount()

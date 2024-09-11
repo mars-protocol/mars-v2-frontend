@@ -1,15 +1,16 @@
 import { useCallback, useMemo } from 'react'
 
-import AccountBalancesTable from 'AccountBalancesTable'
-import AccountComposition from 'AccountComposition'
-import AccountPerpPositionTable from 'AccountPerpPositionTable'
-import AccountStrategiesTable from 'AccountStrategiesTable'
-import useBorrowMarketAssetsTableData from 'borrow/Table/useBorrowMarketAssetsTableData'
+import AccountBalancesTable from 'components/account/AccountBalancesTable'
+import AccountComposition from 'components/account/AccountComposition'
+import AccountPerpPositionTable from 'components/account/AccountPerpPositionTable'
+import AccountStrategiesTable from 'components/account/AccountStrategiesTable'
+import AccountSummaryHeader from 'components/account/AccountSummary/AccountSummaryHeader'
+import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import Accordion from 'components/common/Accordion'
+import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
-import useLendingMarketAssetsTableData from 'earn/lend/Table/useLendingMarketAssetsTableData'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -19,7 +20,6 @@ import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApr, calculateAccountLeverage } from 'utils/accounts'
-import AccountSummaryHeader from './AccountSummaryHeader'
 
 interface Props {
   account: Account
@@ -73,7 +73,7 @@ export default function AccountSummary(props: Props) {
     (index: number) => {
       setAccountSummaryTabs(
         defaultSetting.map((_, i) =>
-          i === index ? (!accountSummaryTabs[i] ?? true) : (accountSummaryTabs[i] ?? false),
+          i === index ? !accountSummaryTabs[i] : accountSummaryTabs[i],
         ),
       )
     },

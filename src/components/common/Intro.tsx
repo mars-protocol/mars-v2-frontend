@@ -1,11 +1,18 @@
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 
+import Card from 'components/common/Card'
+import {
+  GridGlobe,
+  GridHole,
+  GridLandscape,
+  GridPlanet,
+  GridTire,
+  GridWeb,
+} from 'components/common/Icons'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
 import useStore from 'store'
-import Card from './Card'
-import { GridGlobe, GridHole, GridLandscape, GridPlanet, GridTire, GridWeb } from './Icons'
-import Text from './Text'
-import { Tooltip } from './Tooltip'
 
 interface Props {
   text: string | ReactNode

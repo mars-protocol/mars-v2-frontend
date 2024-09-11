@@ -1,5 +1,5 @@
 interface Props {
-  data: HLSStrategy[] | DepositedHLSStrategy[]
+  data: HlsStrategy[] | DepositedHlsStrategy[]
 }
 
 export default function Index(props: Props) {

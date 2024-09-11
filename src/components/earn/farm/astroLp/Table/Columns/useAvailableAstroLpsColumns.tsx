@@ -1,16 +1,19 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
+import AstroLpApy, { APY_META } from 'components/earn/farm/astroLp/Table/Columns/AstroLpApy'
+import {
+  AstroLpDeposit,
+  DEPOSIT_META,
+} from 'components/earn/farm/astroLp/Table/Columns/AstroLpDeposit'
 import DepositCap, {
   DEPOSIT_CAP_META,
   depositCapSortingFn,
-} from 'components/common/Table/Columns/DepositCap'
-import MaxLTV, { LTV_MAX_META } from 'components/common/Table/Columns/MaxLTV'
-import Name, { NAME_META } from 'components/common/Table/Columns/Name'
-import TVL, { TVL_META } from 'components/common/Table/Columns/TVL'
+} from 'components/earn/farm/common/Table/Columns/DepositCap'
+import MaxLTV, { LTV_MAX_META } from 'components/earn/farm/common/Table/Columns/MaxLTV'
+import Name, { NAME_META } from 'components/earn/farm/common/Table/Columns/Name'
+import TVL, { TVL_META } from 'components/earn/farm/common/Table/Columns/TVL'
 import useAssets from 'hooks/assets/useAssets'
-import AstroLpApy, { APY_META } from './AstroLpApy'
-import { AstroLpDeposit, DEPOSIT_META } from './AstroLpDeposit'
 
 interface Props {
   isLoading: boolean

@@ -3,8 +3,8 @@ import { useCallback } from 'react'
 
 import MarketDetails from 'components/common/MarketDetails'
 import Table from 'components/common/Table'
-import { APY_META } from './Columns/Apy'
-import useAvailableColumns from './Columns/useAvailableColumns'
+import { APY_META } from 'components/earn/lend/Table/Columns/Apy'
+import useAvailableColumns from 'components/earn/lend/Table/Columns/useAvailableColumns'
 
 type Props = {
   data: LendingMarketTableData[]

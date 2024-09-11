@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useState } from 'react'
 
-import AssetsSelect from 'AssetsSelect'
 import SearchBar from 'components/common/SearchBar'
 import Text from 'components/common/Text'
+import AssetsSelect from 'components/Modals/AssetsSelect'
 import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'
 

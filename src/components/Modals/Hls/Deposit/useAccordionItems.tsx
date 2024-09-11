@@ -1,5 +1,15 @@
 import { useEffect, useMemo } from 'react'
 
+import CreateAccount from 'components/Modals/Hls/Deposit/CreateAccount'
+import Leverage from 'components/Modals/Hls/Deposit/Leverage'
+import ProvideCollateral from 'components/Modals/Hls/Deposit/ProvideCollateral'
+import SelectAccount from 'components/Modals/Hls/Deposit/SelectAccount'
+import {
+  CollateralSubTitle,
+  LeverageSubTitle,
+  SelectAccountSubTitle,
+} from 'components/Modals/Hls/Deposit/SubTitles'
+import Summary from 'components/Modals/Hls/Deposit/Summary'
 import { BN_ZERO } from 'constants/math'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -11,12 +21,6 @@ import {
   getLiquidityMessage,
   getNoBalanceInWalletMessage,
 } from 'utils/messages'
-import CreateAccount from './CreateAccount'
-import Leverage from './Leverage'
-import ProvideCollateral from './ProvideCollateral'
-import SelectAccount from './SelectAccount'
-import { CollateralSubTitle, LeverageSubTitle, SelectAccountSubTitle } from './SubTitles'
-import Summary from './Summary'
 
 interface Props {
   apy: number

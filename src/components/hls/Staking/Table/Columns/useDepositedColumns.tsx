@@ -1,14 +1,29 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import Account, { ACCOUNT_META } from './Account'
-import ActiveApy, { ACTIVE_APY_META, activeApySortingFn } from './ActiveApy'
-import DepositCap, { CAP_META, depositCapSortingFn } from './DepositCap'
-import Leverage, { LEV_META, leverageSortingFn } from './Leverage'
-import Manage, { MANAGE_META } from './Manage'
-import Name, { NAME_META } from './Name'
-import NetValue, { NET_VAL_META, netValueSorting } from './NetValue'
-import PositionValue, { POS_VAL_META, positionValueSorting } from './PositionValue'
+import Account, { ACCOUNT_META } from 'components/hls/Staking/Table/Columns/Account'
+import ActiveApy, {
+  ACTIVE_APY_META,
+  activeApySortingFn,
+} from 'components/hls/Staking/Table/Columns/ActiveApy'
+import DepositCap, {
+  CAP_META,
+  depositCapSortingFn,
+} from 'components/hls/Staking/Table/Columns/DepositCap'
+import Leverage, {
+  LEV_META,
+  leverageSortingFn,
+} from 'components/hls/Staking/Table/Columns/Leverage'
+import Manage, { MANAGE_META } from 'components/hls/Staking/Table/Columns/Manage'
+import Name, { NAME_META } from 'components/hls/Staking/Table/Columns/Name'
+import NetValue, {
+  NET_VAL_META,
+  netValueSorting,
+} from 'components/hls/Staking/Table/Columns/NetValue'
+import PositionValue, {
+  POS_VAL_META,
+  positionValueSorting,
+} from 'components/hls/Staking/Table/Columns/PositionValue'
 
 interface Props {
   isLoading: boolean

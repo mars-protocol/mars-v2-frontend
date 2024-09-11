@@ -1,13 +1,15 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import EntryPrice, { ENTRY_PRICE_META } from './EntryPrice'
-import Leverage, { LEVERAGE_META } from './Leverage'
-import Manage, { MANAGE_META } from './Manage'
-import { PERP_NAME_META, PerpName } from './PerpName'
-import PnL, { PNL_META } from './PnL'
-import Size, { SIZE_META, sizeSortingFn } from './Size'
-import TradeDirection, { PERP_TYPE_META } from './TradeDirection'
+import EntryPrice, { ENTRY_PRICE_META } from 'components/perps/BalancesTable/Columns/EntryPrice'
+import Leverage, { LEVERAGE_META } from 'components/perps/BalancesTable/Columns/Leverage'
+import Manage, { MANAGE_META } from 'components/perps/BalancesTable/Columns/Manage'
+import { PERP_NAME_META, PerpName } from 'components/perps/BalancesTable/Columns/PerpName'
+import PnL, { PNL_META } from 'components/perps/BalancesTable/Columns/PnL'
+import Size, { SIZE_META, sizeSortingFn } from 'components/perps/BalancesTable/Columns/Size'
+import TradeDirection, {
+  PERP_TYPE_META,
+} from 'components/perps/BalancesTable/Columns/TradeDirection'
 
 export default function usePerpsBalancesColumns() {
   return useMemo<ColumnDef<PerpPositionRow>[]>(() => {

@@ -2,8 +2,8 @@ import { CAMPAIGNS } from 'constants/campaigns'
 import { BN_ZERO } from 'constants/math'
 import { priceFeedIDs } from 'constants/pythPriceFeedIDs'
 import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from './array'
-import { demagnify, truncate } from './formatters'
+import { byDenom } from 'utils/array'
+import { demagnify, truncate } from 'utils/formatters'
 
 export function findCoinByDenom(denom: string, coins: BigNumberCoin[]) {
   return coins.find((coin) => coin.denom === denom)

@@ -1,5 +1,5 @@
-import { FormattedNumber } from './FormattedNumber'
-import Text from './Text'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import Text from 'components/common/Text'
 
 interface Props {
   market: Market

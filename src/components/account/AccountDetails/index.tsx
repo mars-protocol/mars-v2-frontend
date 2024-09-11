@@ -2,19 +2,20 @@ import classNames from 'classnames'
 import { useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import AccountSummary from 'AccountSummary'
-import AccountSummaryLeverage from 'AccountSummary/AccountSummaryLeverage'
-import useBorrowMarketAssetsTableData from 'borrow/Table/useBorrowMarketAssetsTableData'
+import Skeleton from 'components/account/AccountDetails/Skeleton'
+import AccountSummary from 'components/account/AccountSummary'
+import AccountSummaryLeverage from 'components/account/AccountSummary/AccountSummaryLeverage'
+import { HealthGauge } from 'components/account/Health/HealthGauge'
+import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import { glowElement } from 'components/common/Button/utils'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ThreeDots } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useLendingMarketAssetsTableData from 'earn/lend/Table/useLendingMarketAssetsTableData'
-import { HealthGauge } from 'Health/HealthGauge'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useAccounts from 'hooks/accounts/useAccounts'
@@ -33,7 +34,6 @@ import {
   calculateAccountBalanceValue,
   calculateAccountLeverage,
 } from 'utils/accounts'
-import Skeleton from './Skeleton'
 
 interface Props {
   account: Account

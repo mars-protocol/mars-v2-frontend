@@ -1,9 +1,9 @@
 import { Suspense } from 'react'
 
 import Table from 'components/common/Table'
+import { NAME_META } from 'components/hls/Staking/Table/Columns/Name'
+import useAvailableColumns from 'components/hls/Staking/Table/Columns/useAvailableColumns'
 import useHlsStakingAssets from 'hooks/hls/useHlsStakingAssets'
-import { NAME_META } from './Table/Columns/Name'
-import useAvailableColumns from './Table/Columns/useAvailableColumns'
 
 const title = 'Available Strategies'
 

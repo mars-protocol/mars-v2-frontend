@@ -1,16 +1,16 @@
 import classNames from 'classnames'
 import { useEffect } from 'react'
-import { isMobile } from 'react-device-detect'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { isMobile } from 'react-device-detect'
 
+import AccountStats from 'components/account/AccountList/AccountStats'
 import Card from 'components/common/Card'
 import Radio from 'components/common/Radio'
 import Text from 'components/common/Text'
-import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
+import useAccountId from 'hooks/accounts/useAccountId'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
-import AccountStats from './AccountStats'
 
 interface Props {
   setShowMenu: (show: boolean) => void

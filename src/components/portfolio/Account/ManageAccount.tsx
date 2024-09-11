@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
 
-import AccountFundFullPage from 'account/AccountFund/AccountFundFullPage'
+import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 import Button from 'components/common/Button'
 import { ArrowDownLine, ArrowUpLine, TrashBin } from 'components/common/Icons'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'

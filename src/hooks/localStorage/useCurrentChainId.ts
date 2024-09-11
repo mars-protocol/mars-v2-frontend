@@ -1,7 +1,7 @@
-import useChainConfig from 'chain/useChainConfig'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { ChainInfoID } from 'types/enums'
-import useLocalStorage from './useLocalStorage'
 
 export default function useCurrentChainId() {
   const chainConfig = useChainConfig()

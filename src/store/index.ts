@@ -1,9 +1,9 @@
 import { create, GetState, SetState, StoreApi, UseBoundStore } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
-import createBroadcastSlice from './slices/broadcast'
-import createCommonSlice from './slices/common'
-import createModalSlice from './slices/modal'
+import createBroadcastSlice from 'store/slices/broadcast'
+import createCommonSlice from 'store/slices/common'
+import createModalSlice from 'store/slices/modal'
 
 const store = (set: SetState<any>, get: GetState<any>) => ({
   ...createCommonSlice(set, get),

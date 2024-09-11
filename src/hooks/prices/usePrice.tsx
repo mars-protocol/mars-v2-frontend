@@ -1,4 +1,4 @@
-import useAssets from 'assets/useAssets'
+import useAssets from 'hooks/assets/useAssets'
 import { useMemo } from 'react'
 import { getTokenPrice } from 'utils/tokens'
 

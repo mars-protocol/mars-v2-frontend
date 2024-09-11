@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 
-import useCurrentAccount from 'accounts/useCurrentAccount'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { byDenom } from 'utils/array'
-import useAvailableAstroLps from './useAvailableAstroLps'
+import useAvailableAstroLps from 'hooks/astroLp/useAvailableAstroLps'
 
 export default function useActiveAstroLps() {
   const account = useCurrentAccount()

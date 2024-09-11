@@ -1,11 +1,11 @@
 import React, { Suspense, useMemo } from 'react'
 
-import AccountBalancesTable from 'account/AccountBalancesTable'
-import useBorrowMarketAssetsTableData from 'borrow/Table/useBorrowMarketAssetsTableData'
+import AccountBalancesTable from 'components/account/AccountBalancesTable'
+import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import Card from 'components/common/Card'
 import TableSkeleton from 'components/common/Table/TableSkeleton'
 import Text from 'components/common/Text'
-import useLendingMarketAssetsTableData from 'earn/lend/Table/useLendingMarketAssetsTableData'
+import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 
 interface Props {
   isUsersAccount?: boolean

@@ -1,11 +1,11 @@
 import { useShuttle } from '@delphi-labs/shuttle-react'
 import { useEffect } from 'react'
 
+import WalletConnectButton from 'components/Wallet/WalletConnectButton'
+import WalletConnectedButton from 'components/Wallet/WalletConnectedButton'
+import WalletConnecting from 'components/Wallet/WalletConnecting'
 import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useStore from 'store'
-import WalletConnectButton from './WalletConnectButton'
-import WalletConnectedButton from './WalletConnectedButton'
-import WalletConnecting from './WalletConnecting'
 
 export default function Wallet() {
   const { disconnectWallet } = useShuttle()

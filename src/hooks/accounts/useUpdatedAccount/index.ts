@@ -1,10 +1,19 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import useAssets from 'assets/useAssets'
-import useAvailableAstroLps from 'astroLp/useAvailableAstroLps'
 import { BN_ZERO } from 'constants/math'
-import usePerpsVault from 'perps/usePerpsVault'
-import useSlippage from 'settings/useSlippage'
+import {
+  addCoins,
+  addValueToVaults,
+  adjustPerpsVaultAmounts,
+  getDepositAndLendCoinsToSpend,
+  removeCoins,
+  updatePerpsPositions,
+} from 'hooks/accounts/useUpdatedAccount/functions'
+import useAssets from 'hooks/assets/useAssets'
+import useAvailableAstroLps from 'hooks/astroLp/useAvailableAstroLps'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
+import useSlippage from 'hooks/settings/useSlippage'
+import useVaults from 'hooks/vaults/useVaults'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountLeverage, cloneAccount } from 'utils/accounts'
@@ -13,15 +22,6 @@ import { getAstroLpCoinsFromShares, getAstroLpSharesFromCoinsValue } from 'utils
 import { SWAP_FEE_BUFFER } from 'utils/constants'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
 import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
-import useVaults from 'vaults/useVaults'
-import {
-  addCoins,
-  addValueToVaults,
-  adjustPerpsVaultAmounts,
-  getDepositAndLendCoinsToSpend,
-  removeCoins,
-  updatePerpsPositions,
-} from './functions'
 
 export function useUpdatedAccount(account?: Account) {
   const { data: availableVaults } = useVaults(false)

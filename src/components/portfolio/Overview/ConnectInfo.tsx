@@ -1,6 +1,6 @@
 import Card from 'components/common/Card'
 import Text from 'components/common/Text'
-import WalletConnectButton from 'Wallet/WalletConnectButton'
+import WalletConnectButton from 'components/Wallet/WalletConnectButton'
 
 export default function ConnectInfo() {
   return (

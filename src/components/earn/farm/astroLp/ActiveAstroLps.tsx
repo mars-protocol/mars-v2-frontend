@@ -1,16 +1,14 @@
 import { useMemo } from 'react'
 
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
-import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import ActiveAstroLpsTable from 'components/earn/farm/astroLp/Table/ActiveAstroLpsTable'
+import useActiveAstroLpsColumns from 'components/earn/farm/astroLp/Table/Columns/useActiveAstroLpsColumns'
 import useAssets from 'hooks/assets/useAssets'
 import useDepositedAstroLps from 'hooks/astroLp/useDepositedAstroLps'
-import ActiveAstroLpsTable from './Table/ActiveAstroLpsTable'
-import useActiveAstroLpsColumns from './Table/Columns/useActiveAstroLpsColumns'
 
 export function ActiveAstroLps() {
   const { data: assets } = useAssets()
-  const currentAccount = useCurrentAccount()
-  const activeAstroLps = useDepositedAstroLps(currentAccount ? [currentAccount] : [])
+  const activeAstroLps = useDepositedAstroLps()
   const activeColumns = useActiveAstroLpsColumns(assets)
 
   const tabs: CardTab[] = useMemo(

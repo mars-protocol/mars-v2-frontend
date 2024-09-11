@@ -4,6 +4,7 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import DoubleLogo from 'components/common/DoubleLogo'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
+import Modal from 'components/Modals/Modal'
 import { BN_ONE } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAccountId from 'hooks/accounts/useAccountId'
@@ -13,7 +14,6 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getTokenPrice } from 'utils/tokens'
-import Modal from './Modal'
 
 export default function WithdrawFromVaultsModal() {
   const modal = useStore((s) => s.withdrawFromVaultsModal)

@@ -1,12 +1,12 @@
 import React from 'react'
 
-import HealthBar from 'account/Health/HealthBar'
-import HealthIcon from 'account/Health/HealthIcon'
+import HealthBar from 'components/account/Health/HealthBar'
+import HealthIcon from 'components/account/Health/HealthIcon'
 import Card from 'components/common/Card'
 import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import HlsTag from 'hls/HlsTag'
+import HlsTag from 'components/hls/HlsTag'
 import useAccount from 'hooks/accounts/useAccount'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 

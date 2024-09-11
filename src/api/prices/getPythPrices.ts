@@ -1,4 +1,4 @@
-import { cacheFn, pythPriceCache } from 'cache'
+import { cacheFn, pythPriceCache } from 'api/cache'
 import { pythEndpoints } from 'constants/pyth'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'

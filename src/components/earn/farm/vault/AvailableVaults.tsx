@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
 
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
+import AvailablePerpsVaultsTable from 'components/earn/farm/perps/Table/AvailablePerpsVaultTable'
+import AvailableVaultsTable from 'components/earn/farm/vault/Table/AvailableVaultsTable'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import AvailablePerpsVaultsTable from 'perps/Table/AvailablePerpsVaultTable'
-import AvailableVaultsTable from './Table/AvailableVaultsTable'
 
 export function AvailableVaults() {
   const chainConfig = useChainConfig()

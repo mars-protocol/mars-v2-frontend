@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 
-import Text from 'Text'
+import Text from 'components/common/Text'
 
 interface Props {
   className?: string

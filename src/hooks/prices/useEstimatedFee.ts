@@ -1,4 +1,4 @@
-import useChainConfig from 'chain/useChainConfig'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import debounce from 'lodash.debounce'
 import { useEffect, useMemo, useState } from 'react'
 

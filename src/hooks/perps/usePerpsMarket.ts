@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 
+import usePerpsAsset from 'hooks/perps/usePerpsAsset'
+import usePerpsDenomState from 'hooks/perps/usePerpsDenomState'
 import { BN } from 'utils/helpers'
-import usePerpsAsset from './usePerpsAsset'
-import usePerpsDenomState from './usePerpsDenomState'
 
 export default function usePerpsMarket() {
   const { perpsAsset } = usePerpsAsset()

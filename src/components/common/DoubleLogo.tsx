@@ -1,5 +1,5 @@
+import AssetImage from 'components/common/assets/AssetImage'
 import useAsset from 'hooks/assets/useAsset'
-import AssetImage from './assets/AssetImage'
 
 interface Props {
   primaryDenom: string

@@ -1,8 +1,8 @@
 import Button from 'components/common/Button'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 
+import LeverageSummary from 'components/Modals/Hls/Deposit/LeverageSummary'
 import { BN_ZERO } from 'constants/math'
-import LeverageSummary from 'Deposit/LeverageSummary'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useIsOsmosis from 'hooks/chain/useIsOsmosis'

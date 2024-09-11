@@ -1,5 +1,5 @@
+import { TextLink } from 'components/common/TextLink'
 import { DocURL } from 'types/enums'
-import { TextLink } from './TextLink'
 
 import packageInfo from '../../../package.json'
 

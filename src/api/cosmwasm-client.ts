@@ -171,6 +171,5 @@ export {
   getPerpsQueryClient,
   */
   getRedBankQueryClient,
-  getVaultQueryClient
+  getVaultQueryClient,
 }
-

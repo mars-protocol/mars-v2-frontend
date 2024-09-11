@@ -4,9 +4,9 @@ import { useSWRConfig } from 'swr'
 import Button from 'components/common/Button'
 import { ChevronRight } from 'components/common/Icons'
 import NotificationBanner from 'components/common/NotificationBanner'
+import useSlippage from 'hooks/settings/useSlippage'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import useSlippage from 'hooks/settings/useSlippage'
 import useStore from 'store'
 
 interface Props {

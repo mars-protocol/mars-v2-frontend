@@ -1,14 +1,20 @@
 import { ColumnDef, Row } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import Action from 'v1/Table/deposits/Columns/Action'
-import Apy, { APY_META } from './Apy'
-import Campaign, { CAMPAIGN_META } from './Campaign'
-import Chevron, { CHEVRON_META } from './Chevron'
-import DepositCap, { DEPOSIT_CAP_META, marketDepositCapSortingFn } from './DepositCap'
-import DepositValue, { DEPOSIT_VALUE_META, depositedSortingFn } from './DepositValue'
-import Manage, { MANAGE_META } from './Manage'
-import Name, { NAME_META } from './Name'
+import Apy, { APY_META } from 'components/earn/lend/Table/Columns/Apy'
+import Campaign, { CAMPAIGN_META } from 'components/earn/lend/Table/Columns/Campaign'
+import Chevron, { CHEVRON_META } from 'components/earn/lend/Table/Columns/Chevron'
+import DepositCap, {
+  DEPOSIT_CAP_META,
+  marketDepositCapSortingFn,
+} from 'components/earn/lend/Table/Columns/DepositCap'
+import DepositValue, {
+  DEPOSIT_VALUE_META,
+  depositedSortingFn,
+} from 'components/earn/lend/Table/Columns/DepositValue'
+import Manage, { MANAGE_META } from 'components/earn/lend/Table/Columns/Manage'
+import Name, { NAME_META } from 'components/earn/lend/Table/Columns/Name'
+import Action from 'components/v1/Table/deposits/Columns/Action'
 
 interface Props {
   isLoading: boolean

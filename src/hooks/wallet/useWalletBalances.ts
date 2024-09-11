@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 
-import useChainConfig from 'chain/useChainConfig'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { getUrl } from 'utils/url'
 
 export default function useWalletBalances(address?: string) {

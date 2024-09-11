@@ -1,4 +1,4 @@
-import { cacheFn, pythPriceCache } from 'cache'
+import { cacheFn, pythPriceCache } from 'api/cache'
 import { pythEndpoints } from 'constants/pyth'
 
 export default async function getPythPriceData(priceFeedIds: string[]) {

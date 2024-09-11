@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 
-import usePoolAssets from 'assets/usePoolAssets'
-import useChainConfig from 'chain/useChainConfig'
-import useMarketDepositCaps from 'markets/useMarketDepositCaps'
-import useAssetParams from 'params/useAssetParams'
+import usePoolAssets from 'hooks/assets/usePoolAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useMarketDepositCaps from 'hooks/markets/useMarketDepositCaps'
+import useAssetParams from 'hooks/params/useAssetParams'
 import { byDenom } from 'utils/array'
 import { getAstroLpFromPoolAsset } from 'utils/astroLps'
 

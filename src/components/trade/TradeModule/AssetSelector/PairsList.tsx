@@ -1,6 +1,8 @@
 import { Suspense, useMemo } from 'react'
 
 import Text from 'components/common/Text'
+import AssetSelectorItem from 'components/trade/TradeModule/AssetSelector/AssetSelectorItem'
+import AssetSelectorItemLoading from 'components/trade/TradeModule/AssetSelector/AssetSelectorItemLoading'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useFavoriteAssets from 'hooks/localStorage/useFavoriteAssets'
@@ -8,8 +10,6 @@ import useMarkets from 'hooks/markets/useMarkets'
 import { getMergedBalancesForAsset } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { sortAssetsOrPairs } from 'utils/assets'
-import AssetSelectorItem from './AssetSelectorItem'
-import AssetSelectorItemLoading from './AssetSelectorItemLoading'
 
 interface Props {
   assets: Asset[]

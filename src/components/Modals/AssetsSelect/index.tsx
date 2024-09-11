@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Callout, CalloutType } from 'components/common/Callout'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
+import useAssetSelectColumns from 'components/Modals/AssetsSelect/Columns/useAssetSelectColumns'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'
@@ -11,7 +12,6 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import useAssetSelectColumns from './Columns/useAssetSelectColumns'
 
 interface Props {
   assets: Asset[]

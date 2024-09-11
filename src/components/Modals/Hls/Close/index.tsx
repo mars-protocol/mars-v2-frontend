@@ -1,6 +1,8 @@
 import { useCallback } from 'react'
 
-import AccountAlertDialog from 'Account/AccountAlertDialog'
+import AccountAlertDialog from 'components/Modals/Account/AccountAlertDialog'
+import RepayInfo from 'components/Modals/Hls/Close/RepayInfo'
+import SwapInfo from 'components/Modals/Hls/Close/SwapInfo'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { ArrowRight, Plus } from 'components/common/Icons'
 import Text from 'components/common/Text'
@@ -10,8 +12,6 @@ import useHlsClosePositionActions from 'hooks/hls/useHlsClosePositionActions'
 import React from 'react'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
-import RepayInfo from './RepayInfo'
-import SwapInfo from './SwapInfo'
 
 interface Props {
   modal: HlsCloseModal

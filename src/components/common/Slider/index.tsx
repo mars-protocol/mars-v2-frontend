@@ -2,11 +2,11 @@ import classNames from 'classnames'
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 
+import { OverlayMark } from 'components/common/Icons'
+import LeverageLabel from 'components/common/Slider/LeverageLabel'
+import Mark from 'components/common/Slider/Mark'
+import Track from 'components/common/Slider/Track'
 import useToggle from 'hooks/common/useToggle'
-import { OverlayMark } from 'Icons'
-import LeverageLabel from './LeverageLabel'
-import Mark from './Mark'
-import Track from './Track'
 
 type Props = {
   value: number

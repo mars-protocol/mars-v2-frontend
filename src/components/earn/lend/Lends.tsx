@@ -1,8 +1,8 @@
+import AvailableLendsTable from 'components/earn/lend/Table/AvailableLendsTable'
+import DepositedLendsTable from 'components/earn/lend/Table/DepositedLendsTable'
+import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import { BN_ZERO } from 'constants/math'
 import useLendEnabledAssets from 'hooks/assets/useLendEnabledAssets'
-import AvailableLendsTable from './Table/AvailableLendsTable'
-import DepositedLendsTable from './Table/DepositedLendsTable'
-import useLendingMarketAssetsTableData from './Table/useLendingMarketAssetsTableData'
 
 export default function Lends() {
   const { accountLentAssets, availableAssets, allAssets } = useLendingMarketAssetsTableData()

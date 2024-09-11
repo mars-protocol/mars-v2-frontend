@@ -1,7 +1,7 @@
 import { LockUnlocked } from 'components/common/Icons'
-import Modal from 'Modal'
+import Modal from 'components/Modals/Modal'
+import UnlockModalContent from 'components/Modals/Unlock/UnlockModalContent'
 import useStore from 'store'
-import UnlockModalContent from './UnlockModalContent'
 
 export default function UnlockModal() {
   const modal = useStore((s) => s.unlockModal)

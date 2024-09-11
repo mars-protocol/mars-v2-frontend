@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 
-import { VerticalThreeLine } from 'Icons'
+import { VerticalThreeLine } from 'components/common/Icons'
+import { LeverageSliderType } from 'components/common/LeverageSlider'
 import { formatValue } from 'utils/formatters'
-import { LeverageSliderType } from '.'
 
 interface Props {
   value: number

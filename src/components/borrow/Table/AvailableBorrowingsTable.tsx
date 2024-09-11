@@ -2,10 +2,10 @@ import { Row } from '@tanstack/react-table'
 import { Table as TanstackTable } from '@tanstack/table-core/build/lib/types'
 import { useCallback } from 'react'
 
+import { NAME_META } from 'components/borrow/Table/Columns/Name'
+import useAvailableColumns from 'components/borrow/Table/Columns/useAvailableColumns'
 import MarketDetails from 'components/common/MarketDetails'
 import Table from 'components/common/Table'
-import { NAME_META } from './Columns/Name'
-import useAvailableColumns from './Columns/useAvailableColumns'
 
 type Props = {
   data: BorrowMarketTableData[]

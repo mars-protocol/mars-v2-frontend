@@ -5,8 +5,8 @@ import {
   TotalDepositResponse,
 } from 'types/generated/mars-params/MarsParams.types'
 import { Market as RedBankMarket } from 'types/generated/mars-red-bank/MarsRedBank.types'
-import { BN, getLeverageFromLTV } from './helpers'
-import { convertAprToApy } from './parsers'
+import { BN, getLeverageFromLTV } from 'utils/helpers'
+import { convertAprToApy } from 'utils/parsers'
 
 export function resolveMarketResponse(
   asset: Asset,

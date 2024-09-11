@@ -4,13 +4,13 @@ import AssetImage from 'components/common/assets/AssetImage'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ArrowRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import Container from 'components/Modals/Hls/Deposit/Summary/Container'
 import { BN_ZERO } from 'constants/math'
 import useAssets from 'hooks/assets/useAssets'
 import useMarket from 'hooks/markets/useMarket'
 import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getCoinValue } from 'utils/formatters'
-import Container from './Container'
 
 interface Props {
   amount: BigNumber

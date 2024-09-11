@@ -1,5 +1,5 @@
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { useMemo } from 'react'
-import useChainConfig from './useChainConfig'
 
 export default function useIsOsmosis() {
   const chainConfig = useChainConfig()

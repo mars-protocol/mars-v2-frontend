@@ -3,9 +3,9 @@ import { useCallback } from 'react'
 
 import MarketDetails from 'components/common/MarketDetails'
 import Table from 'components/common/Table'
-import { DEPOSIT_VALUE_META } from './Columns/DepositValue'
-import { NAME_META } from './Columns/Name'
-import useDepositedColumns from './Columns/useDepositedColumns'
+import { DEPOSIT_VALUE_META } from 'components/earn/lend/Table/Columns/DepositValue'
+import { NAME_META } from 'components/earn/lend/Table/Columns/Name'
+import useDepositedColumns from 'components/earn/lend/Table/Columns/useDepositedColumns'
 
 type Props = {
   data: LendingMarketTableData[]

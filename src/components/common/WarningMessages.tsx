@@ -1,7 +1,7 @@
-import Divider from './Divider'
-import { ExclamationMarkTriangle, InfoCircle } from './Icons'
-import Text from './Text'
-import { Tooltip } from './Tooltip'
+import Divider from 'components/common/Divider'
+import { ExclamationMarkTriangle, InfoCircle } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
 
 interface Props {
   messages: string[]

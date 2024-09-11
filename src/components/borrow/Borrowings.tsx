@@ -1,8 +1,8 @@
+import ActiveBorrowingsTable from 'components/borrow/Table/ActiveBorrowingsTable'
+import AvailableBorrowingsTable from 'components/borrow/Table/AvailableBorrowingsTable'
+import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import { BN_ZERO } from 'constants/math'
 import useBorrowEnabledAssets from 'hooks/assets/useBorrowEnabledAssets'
-import ActiveBorrowingsTable from './Table/ActiveBorrowingsTable'
-import AvailableBorrowingsTable from './Table/AvailableBorrowingsTable'
-import useBorrowMarketAssetsTableData from './Table/useBorrowMarketAssetsTableData'
 
 export default function Borrowings() {
   const { accountBorrowedAssets, availableAssets, allAssets } = useBorrowMarketAssetsTableData()

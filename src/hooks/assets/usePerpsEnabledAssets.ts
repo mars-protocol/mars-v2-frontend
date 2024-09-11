@@ -1,5 +1,5 @@
+import useAssets from 'hooks/assets/useAssets'
 import { useMemo } from 'react'
-import useAssets from './useAssets'
 
 export default function usePerpsEnabledAssets() {
   const { data: assets } = useAssets()

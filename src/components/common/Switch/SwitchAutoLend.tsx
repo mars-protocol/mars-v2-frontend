@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 import { useCallback } from 'react'
 
+import SwitchWithLabel from 'components/common/Switch/SwitchWithLabel'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useAutoLend from 'hooks/wallet/useAutoLend'
-import SwitchWithLabel from './SwitchWithLabel'
 
 interface Props {
   accountId: string

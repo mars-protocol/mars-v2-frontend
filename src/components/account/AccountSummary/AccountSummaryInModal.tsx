@@ -1,5 +1,5 @@
+import AccountSummary from 'components/account/AccountSummary'
 import Card from 'components/common/Card'
-import AccountSummary from '.'
 
 interface Props {
   account: Account

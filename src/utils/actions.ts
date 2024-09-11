@@ -1,7 +1,7 @@
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { getSwapExactInAction } from './swap'
+import { getSwapExactInAction } from 'utils/swap'
 
 export function getHlsStakingChangeLevActions(
   previousAmount: BigNumber,

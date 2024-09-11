@@ -1,5 +1,5 @@
-import useChainConfig from 'chain/useChainConfig'
 import { CAMPAIGNS } from 'constants/campaigns'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { useMemo } from 'react'
 
 export default function useAssetCampaigns(type: AssetCampaignType) {

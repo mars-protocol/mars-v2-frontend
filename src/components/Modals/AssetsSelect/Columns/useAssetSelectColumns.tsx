@@ -1,9 +1,12 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import Asset, { ASSET_META } from './Asset'
-import Balance, { BALANCE_META, valueSortingFn } from './Balance'
-import BorrowRate, { BORROW_RATE_META } from './BorrowRate'
+import Asset, { ASSET_META } from 'components/Modals/AssetsSelect/Columns/Asset'
+import Balance, {
+  BALANCE_META,
+  valueSortingFn,
+} from 'components/Modals/AssetsSelect/Columns/Balance'
+import BorrowRate, { BORROW_RATE_META } from 'components/Modals/AssetsSelect/Columns/BorrowRate'
 
 export default function useAssetSelectColumns(isBorrow?: boolean) {
   return useMemo<ColumnDef<AssetTableRow>[]>(() => {

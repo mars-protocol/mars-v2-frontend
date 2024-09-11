@@ -1,4 +1,4 @@
-import { BN_ZERO } from './math'
+import { BN_ZERO } from 'constants/math'
 
 export const VAULT_DEPOSIT_BUFFER = 0.999
 

@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React, { ChangeEvent, LegacyRef } from 'react'
 
-import { Search } from './Icons'
+import { Search } from 'components/common/Icons'
 
 interface Props {
   value: string

@@ -2,17 +2,17 @@ import classNames from 'classnames'
 import { useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 
-import AccountCreateFirst from 'account/AccountCreateFirst'
-import PortfolioCard from 'Card'
+import AccountCreateFirst from 'components/account/AccountCreateFirst'
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
 import { PlusCircled } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import PortfolioCard from 'components/portfolio/Card'
+import ConnectInfo from 'components/portfolio/Overview/ConnectInfo'
+import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useHasFundsForTxFee from 'hooks/wallet/useHasFundsForTxFee'
 import useStore from 'store'
-import WalletBridges from 'Wallet/WalletBridges'
-import ConnectInfo from './ConnectInfo'
 
 export default function AccountSummary() {
   const { address: urlAddress } = useParams()

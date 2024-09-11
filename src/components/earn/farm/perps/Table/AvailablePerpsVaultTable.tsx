@@ -1,6 +1,6 @@
 import Table from 'components/common/Table'
+import useAvailablePerpsColumns from 'components/earn/farm/perps/Table/Columns/useAvailablePerpsColumns'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
-import useAvailablePerpsColumns from './Columns/useAvailablePerpsColumns'
 
 export default function AvailablePerpsVaultsTable() {
   const { data: vault } = usePerpsVault()

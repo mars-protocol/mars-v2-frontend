@@ -2,7 +2,8 @@ import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import AccountSummaryInModal from 'account/AccountSummary/AccountSummaryInModal'
+import Modal from 'components/Modals/Modal'
+import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
 import DisplayCurrency from 'components/common/DisplayCurrency'
@@ -29,7 +30,6 @@ import { byDenom } from 'utils/array'
 import { formatPercent } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { getDebtAmountWithInterest } from 'utils/tokens'
-import Modal from './Modal'
 
 interface Props {
   account: Account

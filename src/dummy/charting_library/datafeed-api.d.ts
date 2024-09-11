@@ -1184,5 +1184,4 @@ export type VisiblePlotsSet = 'ohlcv' | 'ohlc' | 'c'
 
 export as namespace TradingView
 
-export { }
-
+export {}

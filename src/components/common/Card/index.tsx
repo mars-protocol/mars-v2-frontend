@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { ReactElement, ReactNode } from 'react'
 
-import Text from 'Text'
+import Text from 'components/common/Text'
 
 interface Props {
   children: ReactNode

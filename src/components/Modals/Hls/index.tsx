@@ -1,17 +1,17 @@
 import classNames from 'classnames'
 import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
+import Content from 'components/Modals/Hls/Deposit'
+import Header from 'components/Modals/Hls/Header'
+import Modal from 'components/Modals/Modal'
 import { EMPTY_ACCOUNT_Hls } from 'constants/accounts'
 import { BN_ONE, BN_ZERO } from 'constants/math'
 import useAssets from 'hooks/assets/useAssets'
 import useMarket from 'hooks/markets/useMarket'
-import Modal from 'Modal'
 import { useCallback, useMemo } from 'react'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
-import Content from './Deposit'
-import Header from './Header'
 
 export default function HlsModalController() {
   const modal = useStore((s) => s.hlsModal)

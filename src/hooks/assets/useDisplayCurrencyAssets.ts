@@ -1,5 +1,5 @@
+import useAssets from 'hooks/assets/useAssets'
 import { useMemo } from 'react'
-import useAssets from './useAssets'
 
 export default function useDisplayCurrencyAssets() {
   const { data: assets } = useAssets()

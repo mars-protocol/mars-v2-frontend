@@ -1,14 +1,14 @@
 import { useMemo, useState } from 'react'
 
 import Accordion from 'components/common/Accordion'
+import useAccordionItems from 'components/Modals/Hls/Deposit/useAccordionItems'
+import useStakingController from 'components/Modals/Hls/Deposit/useStakingController'
 import { EMPTY_ACCOUNT_Hls } from 'constants/accounts'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useIsOpenArray from 'hooks/common/useIsOpenArray'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import useStore from 'store'
 import { isAccountEmpty } from 'utils/accounts'
-import useAccordionItems from './useAccordionItems'
-import useStakingController from './useStakingController'
 
 interface Props {
   borrowMarket: Market

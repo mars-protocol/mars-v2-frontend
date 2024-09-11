@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import useSWRImmutable from 'swr/immutable'
 
-import useChainConfig from 'chain/useChainConfig'
-import useClients from 'chain/useClients'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useClients from 'hooks/chain/useClients'
 
 export function usePerpsParams(denom: string) {
   /* PERPS

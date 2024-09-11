@@ -1,8 +1,8 @@
 import useSWR from 'swr'
 
-import useChainConfig from 'chain/useChainConfig'
-import useClients from 'chain/useClients'
-import usePerpsAsset from './usePerpsAsset'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useClients from 'hooks/chain/useClients'
+import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 
 export default function usePerpsDenomState() {
   const chainConfig = useChainConfig()

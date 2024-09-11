@@ -1,12 +1,15 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import VaultApy, { APY_META } from 'vault/Table/Columns/VaultApy'
-import { Deposit, DEPOSIT_META } from './Deposit'
-import DepositCap, { DEPOSIT_CAP_META, depositCapSortingFn } from './DepositCap'
-import MaxLTV, { LTV_MAX_META } from './MaxLTV'
-import Name, { NAME_META } from './Name'
-import TVL, { TVL_META } from './TVL'
+import { Deposit, DEPOSIT_META } from 'components/earn/farm/common/Table/Columns/Deposit'
+import DepositCap, {
+  DEPOSIT_CAP_META,
+  depositCapSortingFn,
+} from 'components/earn/farm/common/Table/Columns/DepositCap'
+import MaxLTV, { LTV_MAX_META } from 'components/earn/farm/common/Table/Columns/MaxLTV'
+import Name, { NAME_META } from 'components/earn/farm/common/Table/Columns/Name'
+import TVL, { TVL_META } from 'components/earn/farm/common/Table/Columns/TVL'
+import VaultApy, { APY_META } from 'components/earn/farm/vault/Table/Columns/VaultApy'
 
 interface Props {
   isLoading: boolean

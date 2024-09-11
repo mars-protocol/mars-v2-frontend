@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 
 import { DocURL } from 'types/enums'
-import { ExternalLink } from './Icons'
-import Text from './Text'
-import { TextLink } from './TextLink'
+import { ExternalLink } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import { TextLink } from 'components/common/TextLink'
 
 interface Props {
   type: DocLinkType

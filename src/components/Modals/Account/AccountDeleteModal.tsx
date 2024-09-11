@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
+import AccountAlertDialog from 'components/Modals/Account/AccountAlertDialog'
 import { ArrowRight, ExclamationMarkCircled } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
@@ -12,7 +13,6 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { combineBNCoins } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
-import AccountAlertDialog from './AccountAlertDialog'
 
 interface Props {
   modal: Account

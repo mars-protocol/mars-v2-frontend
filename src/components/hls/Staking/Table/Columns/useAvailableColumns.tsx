@@ -1,12 +1,15 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import ApyRange, { APY_RANGE_META, apyRangeSortingFn } from './ApyRange'
-import Deposit, { DEPOSIT_META } from './Deposit'
-import DepositCap, { CAP_META } from './DepositCap'
-import MaxLeverage, { MAX_LEV_META } from './MaxLeverage'
-import MaxLTV, { LTV_MAX_META } from './MaxLTV'
-import Name, { NAME_META } from './Name'
+import ApyRange, {
+  APY_RANGE_META,
+  apyRangeSortingFn,
+} from 'components/hls/Staking/Table/Columns/ApyRange'
+import Deposit, { DEPOSIT_META } from 'components/hls/Staking/Table/Columns/Deposit'
+import DepositCap, { CAP_META } from 'components/hls/Staking/Table/Columns/DepositCap'
+import MaxLeverage, { MAX_LEV_META } from 'components/hls/Staking/Table/Columns/MaxLeverage'
+import MaxLTV, { LTV_MAX_META } from 'components/hls/Staking/Table/Columns/MaxLTV'
+import Name, { NAME_META } from 'components/hls/Staking/Table/Columns/Name'
 
 interface Props {
   isLoading: boolean

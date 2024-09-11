@@ -1,8 +1,8 @@
 import useSWR from 'swr'
 
-import useAccountId from 'accounts/useAccountId'
-import useChainConfig from 'chain/useChainConfig'
-import useClients from 'chain/useClients'
+import useAccountId from 'hooks/accounts/useAccountId'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useClients from 'hooks/chain/useClients'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import iterateContractQuery from 'utils/iterateContractQuery'

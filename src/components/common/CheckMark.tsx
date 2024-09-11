@@ -1,10 +1,10 @@
 import classNames from 'classnames'
 
+import { CheckCircled } from 'components/common/Icons'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import { CheckCircled } from './Icons'
 
 interface Props {
   color?: string

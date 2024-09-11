@@ -1,12 +1,15 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import Apy, { APY_META } from './Apy'
-import Campaign, { CAMPAIGN_META } from './Campaign'
-import Chevron, { CHEVRON_META } from './Chevron'
-import DepositCap, { DEPOSIT_CAP_META, marketDepositCapSortingFn } from './DepositCap'
-import LendButton, { LEND_BUTTON_META } from './LendButton'
-import Name, { NAME_META } from './Name'
+import Apy, { APY_META } from 'components/earn/lend/Table/Columns/Apy'
+import Campaign, { CAMPAIGN_META } from 'components/earn/lend/Table/Columns/Campaign'
+import Chevron, { CHEVRON_META } from 'components/earn/lend/Table/Columns/Chevron'
+import DepositCap, {
+  DEPOSIT_CAP_META,
+  marketDepositCapSortingFn,
+} from 'components/earn/lend/Table/Columns/DepositCap'
+import LendButton, { LEND_BUTTON_META } from 'components/earn/lend/Table/Columns/LendButton'
+import Name, { NAME_META } from 'components/earn/lend/Table/Columns/Name'
 
 interface Props {
   isLoading: boolean

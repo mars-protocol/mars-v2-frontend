@@ -3,7 +3,7 @@ import throttle from 'lodash.throttle'
 
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
-import { getCoinValue } from './formatters'
+import { getCoinValue } from 'utils/formatters'
 
 BigNumber.config({ EXPONENTIAL_AT: 1e9 })
 

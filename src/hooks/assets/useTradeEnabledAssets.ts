@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import useAssets from './useAssets'
+import useAssets from 'hooks/assets/useAssets'
 
 export default function useTradeEnabledAssets() {
   const { data: assets } = useAssets()

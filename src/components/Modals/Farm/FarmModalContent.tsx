@@ -1,9 +1,13 @@
 import classNames from 'classnames'
 import { useCallback, useMemo, useState } from 'react'
 
-import AccountSummaryInModal from 'account/AccountSummary/AccountSummaryInModal'
+import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
 import Accordion from 'components/common/Accordion'
 import Text from 'components/common/Text'
+import FarmBorrowings from 'components/Modals/Farm/FarmBorrowings'
+import FarmBorrowingsSubTitle from 'components/Modals/Farm/FarmBorrowingsSubTitle'
+import FarmDeposits from 'components/Modals/Farm/FarmDeposits'
+import FarmDepositsSubTitle from 'components/Modals/Farm/FarmDepositsSubTitle'
 import { BN_ZERO } from 'constants/math'
 import useDisplayAsset from 'hooks/assets/useDisplayAsset'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
@@ -12,18 +16,11 @@ import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import useSlippage from 'hooks/settings/useSlippage'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import {
-  getAstroLpBaseDepositCoinsAndValue,
-  getAstroLpSharesFromCoinsValue,
-} from 'utils/astroLps'
+import { getAstroLpBaseDepositCoinsAndValue, getAstroLpSharesFromCoinsValue } from 'utils/astroLps'
 import { getCoinValue, magnify } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { mergeBNCoinArrays } from 'utils/helpers'
 import { getVaultBaseDepositCoinsAndValue } from 'utils/vaults'
-import FarmBorrowings from './FarmBorrowings'
-import FarmBorrowingsSubTitle from './FarmBorrowingsSubTitle'
-import FarmDeposits from './FarmDeposits'
-import FarmDepositsSubTitle from './FarmDepositsSubTitle'
 
 interface Props {
   farm: Vault | DepositedVault | AstroLp | DepositedAstroLp

@@ -1,4 +1,4 @@
-import { getVaultAccountStrategiesRow } from 'account/AccountStrategiesTable/functions'
+import { getVaultAccountStrategiesRow } from 'components/account/AccountStrategiesTable/functions'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { BN_ZERO } from 'constants/math'
 import useAsset from 'hooks/assets/useAsset'

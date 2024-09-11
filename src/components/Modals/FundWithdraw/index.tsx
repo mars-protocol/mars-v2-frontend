@@ -1,9 +1,9 @@
 import Text from 'components/common/Text'
+import FundWithdrawModalContent from 'components/Modals/FundWithdraw/FundAndWithdrawModalContent'
+import ModalContentWithSummary from 'components/Modals/ModalContentWithSummary'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
-import ModalContentWithSummary from 'ModalContentWithSummary'
 import useStore from 'store'
-import FundWithdrawModalContent from './FundAndWithdrawModalContent'
 
 export default function FundAndWithdrawModal() {
   const accountId = useAccountId()

@@ -1,8 +1,8 @@
-import getAssetParams from 'params/getAssetParams'
+import getAssetParams from 'api/params/getAssetParams'
+import { getVaultConfigs } from 'api/vaults/getVaultConfigs'
+import { getVaultUtilizations } from 'api/vaults/getVaultUtilizations'
 import { BN } from 'utils/helpers'
 import { resolveHlsStrategies } from 'utils/resolvers'
-import { getVaultConfigs } from './getVaultConfigs'
-import { getVaultUtilizations } from './getVaultUtilizations'
 
 export default async function getVaults(chainConfig: ChainConfig): Promise<Vault[]> {
   const assetParams = await getAssetParams(chainConfig)

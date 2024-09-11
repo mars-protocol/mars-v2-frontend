@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 
+import SwapForm from 'components/trade/TradeModule/SwapForm'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import SwapForm from './SwapForm'
 
 interface Props {
   buyAsset: Asset

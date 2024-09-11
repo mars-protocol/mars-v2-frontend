@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
 
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
+import AvailableAstroLpsTable from 'components/earn/farm/astroLp/Table/AvailableAstroLpsTable'
+import AvailablePerpsVaultsTable from 'components/earn/farm/perps/Table/AvailablePerpsVaultTable'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import AvailablePerpsVaultsTable from 'perps/Table/AvailablePerpsVaultTable'
-import AvailableAstroLpsTable from './Table/AvailableAstroLpsTable'
 
 export function AvailableAstroLps() {
   const chainConfig = useChainConfig()

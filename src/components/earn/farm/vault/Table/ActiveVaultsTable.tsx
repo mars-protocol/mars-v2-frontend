@@ -1,9 +1,9 @@
 import { ColumnDef } from '@tanstack/react-table'
 
+import { VaultStatus } from 'types/enums'
 import { LockLocked, LockUnlocked } from 'components/common/Icons'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
-import { VaultStatus } from 'types/enums'
 
 type Props = {
   data: DepositedVault[]

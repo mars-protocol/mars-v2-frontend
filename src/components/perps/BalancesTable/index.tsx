@@ -1,11 +1,11 @@
 import { useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-import Table from 'components/common/Table'
 import { SearchParams } from 'types/enums'
+import Table from 'components/common/Table'
+import usePerpsBalancesColumns from 'components/perps/BalancesTable/Columns/usePerpsBalancesColumns'
+import usePerpsBalancesData from 'components/perps/BalancesTable/usePerpsBalancesData'
 import { getSearchParamsObject } from 'utils/route'
-import usePerpsBalancesColumns from './Columns/usePerpsBalancesColumns'
-import usePerpsBalancesData from './usePerpsBalancesData'
 
 export default function PerpsBalancesTable() {
   const data = usePerpsBalancesData()

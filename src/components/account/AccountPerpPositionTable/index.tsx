@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 
+import useAccountPerpsColumns from 'components/account/AccountPerpPositionTable/Columns/useAccountPerpsColumns'
+import useAccountPerpData from 'components/account/AccountPerpPositionTable/useAccountPerpData'
 import Table from 'components/common/Table'
 import useStore from 'store'
-import useAccountPerpsColumns from './Columns/useAccountPerpsColumns'
-import useAccountPerpData from './useAccountPerpData'
 
 interface Props {
   account: Account

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import useAvailableAstroLps from './useAvailableAstroLps'
+import useAvailableAstroLps from 'hooks/astroLp/useAvailableAstroLps'
 
 export default function useAstroLpAprs() {
   const availableAstroLps = useAvailableAstroLps()

@@ -1,7 +1,7 @@
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
+import useAvailableHlsFarmsColumns from 'components/hls/Farm/Table/Columns/useAvailableHlsFarmsColumns'
 import useHlsFarms from 'hooks/hls/useHlsFarms'
-import useAvailableHlsFarmsColumns from './Columns/useAvailableHlsFarmsColumns'
 
 export default function AvailableHlsFarmsTable() {
   const { data: availableHlsFarms, isLoading } = useHlsFarms()

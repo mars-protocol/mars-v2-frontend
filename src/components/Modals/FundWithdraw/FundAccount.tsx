@@ -1,4 +1,4 @@
-import AccountFundContent from 'account/AccountFund/AccountFundContent'
+import AccountFundContent from 'components/account/AccountFund/AccountFundContent'
 import useStore from 'store'
 
 interface Props {

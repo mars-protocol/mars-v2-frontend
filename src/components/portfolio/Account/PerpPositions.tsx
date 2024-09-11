@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react'
 
-import AccountPerpPositionTable from 'account/AccountPerpPositionTable'
+import AccountPerpPositionTable from 'components/account/AccountPerpPositionTable'
 import Card from 'components/common/Card'
 import TableSkeleton from 'components/common/Table/TableSkeleton'
 import Text from 'components/common/Text'

@@ -1,8 +1,8 @@
 import useSWR from 'swr'
 
 import getAccounts from 'api/wallets/getAccounts'
-import useAssets from 'assets/useAssets'
-import useChainConfig from 'chain/useChainConfig'
+import useAssets from 'hooks/assets/useAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { AccountKind } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 
 export default function useAccounts(kind: AccountKind, address?: string, suspense = true) {

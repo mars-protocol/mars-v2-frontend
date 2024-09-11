@@ -1,7 +1,7 @@
 import useSWRImmutable from 'swr/immutable'
 
 import { getVaultConfigs } from 'api/vaults/getVaultConfigs'
-import useChainConfig from 'chain/useChainConfig'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 export default function useVaultConfigs() {
   const chainConfig = useChainConfig()

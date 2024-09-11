@@ -1,7 +1,7 @@
+import getOraclePrices from 'api/prices/getOraclePrices'
+import fetchPythPrices from 'api/prices/getPythPrices'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import getOraclePrices from './getOraclePrices'
-import fetchPythPrices from './getPythPrices'
 
 export default async function getPrices(
   chainConfig: ChainConfig,

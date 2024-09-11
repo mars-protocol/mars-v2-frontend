@@ -1,6 +1,6 @@
-import useAccounts from 'accounts/useAccounts'
-import useCurrentAccount from 'accounts/useCurrentAccount'
-import useAutoLendEnabledAccountIds from 'localStorage/useAutoLendEnabledAccountIds'
+import useAccounts from 'hooks/accounts/useAccounts'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useAutoLendEnabledAccountIds from 'hooks/localStorage/useAutoLendEnabledAccountIds'
 import { useCallback } from 'react'
 import useStore from 'store'
 

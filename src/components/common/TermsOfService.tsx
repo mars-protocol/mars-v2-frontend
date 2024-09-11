@@ -1,13 +1,13 @@
 import classNames from 'classnames'
 import { useCallback } from 'react'
 
+import FullOverlayContent from 'components/common/FullOverlayContent'
+import { Check } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import WalletSelect from 'components/Wallet/WalletSelect'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
-import WalletSelect from 'Wallet/WalletSelect'
-import FullOverlayContent from './FullOverlayContent'
-import { Check } from './Icons'
-import Text from './Text'
 
 interface BenefitsProps {
   benefits: string[]

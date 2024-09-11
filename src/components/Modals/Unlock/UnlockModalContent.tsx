@@ -1,4 +1,4 @@
-import { NoIcon, YesIcon } from 'AlertDialog/ButtonIcons'
+import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
 import Button from 'components/common/Button'
 import Text from 'components/common/Text'
 import useAccountId from 'hooks/accounts/useAccountId'

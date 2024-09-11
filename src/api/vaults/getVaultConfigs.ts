@@ -1,5 +1,5 @@
-import { cacheFn, vaultConfigsCache } from 'cache'
-import { getParamsQueryClient } from 'cosmwasm-client'
+import { cacheFn, vaultConfigsCache } from 'api/cache'
+import { getParamsQueryClient } from 'api/cosmwasm-client'
 import { VaultConfigBaseForAddr } from 'types/generated/mars-params/MarsParams.types'
 import iterateContractQuery from 'utils/iterateContractQuery'
 

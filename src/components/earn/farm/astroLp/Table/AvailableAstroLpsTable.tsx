@@ -1,9 +1,9 @@
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
+import useAvailableAstroLpsColumns from 'components/earn/farm/astroLp/Table/Columns/useAvailableAstroLpsColumns'
 import useActiveAstroLps from 'hooks/astroLp/useActiveAstroLps'
 import useAvailableAstroLps from 'hooks/astroLp/useAvailableAstroLps'
 import { useMemo } from 'react'
-import useAvailableAstroLpsColumns from './Columns/useAvailableAstroLpsColumns'
 
 export default function AvailableAstroLpsTable() {
   const availableAstroLps = useAvailableAstroLps()

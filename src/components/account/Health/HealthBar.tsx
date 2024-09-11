@@ -1,14 +1,14 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
+import HealthIcon from 'components/account/Health/HealthIcon'
+import HealthTooltip from 'components/account/Health/HealthTooltip'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthColor from 'hooks/health-computer/useHealthColor'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { getHealthIndicatorColors } from 'utils/healthIndicator'
-import HealthIcon from './HealthIcon'
-import HealthTooltip from './HealthTooltip'
 
 interface Props {
   className?: string

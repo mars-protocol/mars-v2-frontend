@@ -13,12 +13,12 @@ import {
 import classNames from 'classnames'
 import React, { ReactElement } from 'react'
 
-import Card from 'Card'
+import Card from 'components/common/Card'
+import { SortAsc, SortDesc, SortNone } from 'components/common/Icons'
+import Row from 'components/common/Table/Row'
+import Text from 'components/common/Text'
 import { LEFT_ALIGNED_ROWS } from 'constants/table'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
-import { SortAsc, SortDesc, SortNone } from 'Icons'
-import Text from 'Text'
-import Row from './Row'
 
 interface Props<T> {
   title: string | ReactElement

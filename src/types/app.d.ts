@@ -17,13 +17,13 @@ type StdFee = {
   readonly payer?: string
 }
 
-type ActionCoin = import('./generated/mars-credit-manager/MarsCreditManager.types').ActionCoin
-type Action = import('./generated/mars-credit-manager/MarsCreditManager.types').Action
-type BNCoin = import('./classes/BNCoin').BNCoin
+type ActionCoin = import('types/generated/mars-credit-manager/MarsCreditManager.types').ActionCoin
+type Action = import('types/generated/mars-credit-manager/MarsCreditManager.types').Action
+type BNCoin = import('types/classes/BNCoin').BNCoin
 
 type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp'
 type TableType = 'balances' | 'strategies' | 'perps'
-type AccountKind = import('./generated/mars-credit-manager/MarsCreditManager.types').AccountKind
+type AccountKind = import('types/generated/mars-credit-manager/MarsCreditManager.types').AccountKind
 
 interface Account {
   id: string
@@ -257,7 +257,7 @@ interface ChainConfig {
   explorerName: string
   features: ('ibc-transfer' | 'ibc-go')[]
   gasPrice: string
-  id: import('./enums').ChainInfoID
+  id: import('types/enums').ChainInfoID
   name: string
   network: 'mainnet' | 'testnet'
   vaults: VaultMetaData[]
@@ -277,14 +277,14 @@ interface AssetCampaignInfo {
 }
 
 interface ContractClients {
-  accountNft: import('./generated/mars-account-nft/MarsAccountNft.client').MarsAccountNftQueryClient
-  creditManager: import('./generated/mars-credit-manager/MarsCreditManager.client').MarsCreditManagerQueryClient
-  incentives: import('./generated/mars-incentives/MarsIncentives.client').MarsIncentivesQueryClient
-  oracle: import('./generated/mars-oracle-osmosis/MarsOracleOsmosis.client').MarsOracleOsmosisQueryClient
-  params: import('./generated/mars-params/MarsParams.client').MarsParamsQueryClient
+  accountNft: import('types/generated/mars-account-nft/MarsAccountNft.client').MarsAccountNftQueryClient
+  creditManager: import('types/generated/mars-credit-manager/MarsCreditManager.client').MarsCreditManagerQueryClient
+  incentives: import('types/generated/mars-incentives/MarsIncentives.client').MarsIncentivesQueryClient
+  oracle: import('types/generated/mars-oracle-osmosis/MarsOracleOsmosis.client').MarsOracleOsmosisQueryClient
+  params: import('types/generated/mars-params/MarsParams.client').MarsParamsQueryClient
   perps: import('types/generated/mars-perps/MarsPerps.client').MarsPerpsQueryClient
-  redBank: import('./generated/mars-red-bank/MarsRedBank.client').MarsRedBankQueryClient
-  icns: import('./classes/ICNSClient.client').ICNSQueryClient
+  redBank: import('types/generated/mars-red-bank/MarsRedBank.client').MarsRedBankQueryClient
+  icns: import('types/classes/ICNSClient.client').ICNSQueryClient
 }
 
 interface Market {
@@ -425,7 +425,7 @@ type SwapRouteInfo = {
   amountOut: BigNumber
   priceImpact: BigNumber
   fee: BigNumber
-  route: import('./generated/mars-credit-manager/MarsCreditManager.types').SwapperRoute
+  route: import('types/generated/mars-credit-manager/MarsCreditManager.types').SwapperRoute
   description: string
 }
 
@@ -643,9 +643,9 @@ interface DepositCap {
 interface ProvideLiquidityAction {
   provide_liquidity: {
     account_id: string
-    coins_in: import('./generated/mars-credit-manager/MarsCreditManager.types').ActionCoin[]
+    coins_in: import('types/generated/mars-credit-manager/MarsCreditManager.types').ActionCoin[]
     lp_token_out: string
-    minimum_receive: import('./generated/mars-credit-manager/MarsCreditManager.types').Uint128
+    minimum_receive: import('types/generated/mars-credit-manager/MarsCreditManager.types').Uint128
   }
 }
 
@@ -985,7 +985,7 @@ interface BroadcastSlice {
   }) => Promise<boolean>
   closeHlsStakingPosition: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
   createAccount: (
-    accountKind: import('./generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind,
+    accountKind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind,
     isAutoLendEnabled: boolean,
   ) => Promise<string | null>
   deleteAccount: (options: { accountId: string; lends: BNCoin[] }) => Promise<boolean>
@@ -995,7 +995,7 @@ interface BroadcastSlice {
     actions: Action[]
     deposits: BNCoin[]
     borrowings: BNCoin[]
-    kind: import('./generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind
+    kind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind
   }) => Promise<boolean>
   execute: (contract: string, msg: ExecuteMsg, funds: Coin[]) => Promise<BroadcastResult>
   executeMsg: (options: {
@@ -1283,7 +1283,7 @@ interface Settings {
   updateOracle: boolean
   chartInterval: import('utils/charting_library').ResolutionString
   theme: string
-  rewardsCenterType: import('./enums').RewardsCenterType
+  rewardsCenterType: import('types/enums').RewardsCenterType
 }
 
 interface KeyValuePair {
