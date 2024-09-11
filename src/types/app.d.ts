@@ -180,6 +180,16 @@ interface DepositedHLSStrategy extends HLSStrategy {
   depositedAmount: BigNumber
 }
 
+interface Vaults {
+  // TODO: update with correct types
+  vaultName: string
+  vaultSub: string
+  apy: number
+  tvl: number
+  fee: number
+  freezePeriod: number
+}
+
 interface StakingApr {
   chainId: string
   currentYield: number
@@ -381,6 +391,9 @@ type Page =
   | 'portfolio/{accountId}'
   | 'hls-farm'
   | 'hls-staking'
+  | 'vaults'
+  | 'vaults-community'
+  | 'vaults/{vaultId}'
   | 'governance'
   | 'execute'
   | 'v1'
@@ -1125,6 +1138,7 @@ interface CommonSlice {
   useAutoRepay: boolean
   isOracleStale: boolean
   isHLS: boolean
+  isVaults: boolean
   isV1: boolean
   assets: Asset[]
   hlsBorrowAmount: BigNumber | null
@@ -1176,6 +1190,8 @@ interface AlertDialogConfig {
   negativeButton?: AlertDialogButton
   positiveButton?: AlertDialogButton
   title: string
+  modalClassName?: string
+  titleClassName?: string
 }
 
 interface BorrowModal {

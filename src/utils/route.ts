@@ -40,6 +40,8 @@ export function getPage(pathname: string): Page {
     'portfolio',
     'hls-farm',
     'hls-staking',
+    'vaults',
+    'vaults-community',
     'v1',
   ]
   const segments = pathname.split('/')
