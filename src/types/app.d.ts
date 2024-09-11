@@ -1139,7 +1139,6 @@ interface CommonSlice {
   isOracleStale: boolean
   isHLS: boolean
   isVaults: boolean
-  isVaultsCreate: boolean
   isV1: boolean
   assets: Asset[]
 }
