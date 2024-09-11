@@ -1,0 +1,25 @@
+import { FormattedNumber } from '../../../../../common/FormattedNumber'
+import Loading from '../../../../../common/Loading'
+import Text from '../../../../../common/Text'
+
+export const APY_META = { accessorKey: 'apy', header: 'APY' }
+
+interface Props {
+  vault: Vault | DepositedVault
+}
+
+export default function Apy(props: Props) {
+  const { vault } = props
+
+  if (vault.apy === undefined) return <Loading />
+  if (vault.apy === null) return <Text size='xs'>N/A</Text>
+
+  return (
+    <FormattedNumber
+      amount={vault.apy ?? 0}
+      options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
+      className='text-xs'
+      animate
+    />
+  )
+}

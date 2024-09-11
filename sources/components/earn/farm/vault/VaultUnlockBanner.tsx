@@ -1,0 +1,67 @@
+import { useState } from 'react'
+import { useSWRConfig } from 'swr'
+
+import useAccountId from '../../../../hooks/accounts/useAccountId'
+import useChainConfig from '../../../../hooks/chain/useChainConfig'
+import useSlippage from '../../../../hooks/settings/useSlippage'
+import useStore from '../../../../store'
+import Button from '../../../common/Button'
+import { ChevronRight } from '../../../common/Icons'
+import NotificationBanner from '../../../common/NotificationBanner'
+
+interface Props {
+  vaults: DepositedVault[]
+}
+
+export default function VaultUnlockBanner(props: Props) {
+  const accountId = useAccountId()
+  const [isConfirming, setIsConfirming] = useState(false)
+  const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
+  const [slippage] = useSlippage()
+  const { mutate } = useSWRConfig()
+  const chainConfig = useChainConfig()
+
+  async function handleWithdraw() {
+    if (!accountId) return
+    if (props.vaults.length > 1) {
+      useStore.setState({
+        withdrawFromVaultsModal: props.vaults,
+      })
+    } else {
+      setIsConfirming(true)
+      await withdrawFromVaults({
+        accountId: accountId,
+        vaults: props.vaults,
+        slippage,
+      })
+      await mutate(`chains/${chainConfig.id}/accounts/${accountId}`)
+      await mutate(`chains/${chainConfig.id}/vaults/${accountId}/deposited`)
+      setIsConfirming(false)
+    }
+  }
+
+  if (props.vaults.length === 0) return null
+
+  return (
+    <NotificationBanner
+      type='success'
+      text={
+        props.vaults.length === 1
+          ? 'There is one vault with funds unlocked. It is not earning fees and can be liquidated'
+          : `There are ${props.vaults.length} vaults with funds unlocked. They are not earning fees and can be liquidated.`
+      }
+      button={
+        <Button
+          onClick={handleWithdraw}
+          variant='transparent'
+          color='quaternary'
+          className='!text-success underline hover:no-underline'
+          text='Withdraw Unlocked Positions'
+          rightIcon={<ChevronRight />}
+          iconClassName='text-success w-2 h-4'
+          showProgressIndicator={isConfirming}
+        />
+      }
+    />
+  )
+}

@@ -1,0 +1,47 @@
+import {
+  AccountDeleteController,
+  AddFarmAssetsModal,
+  AlertDialogController,
+  AstroLpModal,
+  BorrowModal,
+  FundAndWithdrawModal,
+  GetStartedModal,
+  HlsCloseModal,
+  HlsManageModal,
+  HlsModal,
+  LendAndReclaimModalController,
+  PerpsVaultModal,
+  SettingsModal,
+  UnlockModal,
+  V1BorrowAndRepay,
+  V1DepositAndWithdraw,
+  VaultModal,
+  WalletAssets,
+  WithdrawFromVaultsModal,
+} from '.'
+
+export default function ModalsContainer() {
+  return (
+    <>
+      <AccountDeleteController />
+      <AddFarmAssetsModal />
+      <BorrowModal />
+      <FundAndWithdrawModal />
+      <GetStartedModal />
+      <LendAndReclaimModalController />
+      <SettingsModal />
+      <UnlockModal />
+      <AstroLpModal />
+      <VaultModal />
+      <WithdrawFromVaultsModal />
+      <WalletAssets />
+      <AlertDialogController />
+      <HlsModal />
+      <HlsCloseModal />
+      <HlsManageModal />
+      <PerpsVaultModal />
+      <V1DepositAndWithdraw />
+      <V1BorrowAndRepay />
+    </>
+  )
+}

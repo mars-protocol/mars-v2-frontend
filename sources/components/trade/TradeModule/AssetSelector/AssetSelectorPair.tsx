@@ -1,0 +1,67 @@
+import { useCallback } from 'react'
+
+import { getDefaultChainSettings } from '../../../../constants/defaultSettings'
+import { LocalStorageKeys } from '../../../../constants/localStorageKeys'
+import useChainConfig from '../../../../hooks/chain/useChainConfig'
+import useLocalStorage from '../../../../hooks/localStorage/useLocalStorage'
+import useStore from '../../../../store'
+import Button from '../../../common/Button'
+import { ChevronDown } from '../../../common/Icons'
+import Text from '../../../common/Text'
+import AssetOverlay from './AssetOverlay'
+
+interface Props {
+  buyAsset: Asset
+  sellAsset: Asset
+  assets: Asset[]
+}
+
+export default function AssetSelectorPair(props: Props) {
+  const chainConfig = useChainConfig()
+  const [_, setTradingPairSimple] = useLocalStorage<Settings['tradingPairSimple']>(
+    chainConfig.id + '/' + LocalStorageKeys.TRADING_PAIR_SIMPLE,
+    getDefaultChainSettings(chainConfig).tradingPairSimple,
+  )
+  const { buyAsset, sellAsset } = props
+  const assetOverlayState = useStore((s) => s.assetOverlayState)
+  const onChangeTradingPair = useCallback(
+    (tradingPair: TradingPair) => {
+      setTradingPairSimple(tradingPair)
+    },
+    [setTradingPairSimple],
+  )
+
+  const handleChangeState = useCallback((state: OverlayState) => {
+    useStore.setState({ assetOverlayState: state })
+  }, [])
+
+  return (
+    <>
+      <Button
+        color='quaternary'
+        variant='transparent'
+        onClick={() => useStore.setState({ assetOverlayState: 'pair' })}
+        className='flex items-center justify-between w-full py-5 rounded-b-none bg-white/10'
+      >
+        <Text size='sm' className='text-white/60'>
+          <span className='text-white'>{buyAsset.symbol}</span>/{sellAsset.symbol}
+        </Text>
+        <div className='flex items-center gap-2'>
+          <Text>All markets</Text>
+          <ChevronDown className='w-3 h-3' />
+        </div>
+      </Button>
+      {assetOverlayState === 'pair' && (
+        <AssetOverlay
+          state={assetOverlayState}
+          onChangeState={handleChangeState}
+          buyAsset={buyAsset}
+          sellAsset={sellAsset}
+          onChangeTradingPair={onChangeTradingPair}
+          buyAssets={props.assets}
+          type='pair'
+        />
+      )}
+    </>
+  )
+}

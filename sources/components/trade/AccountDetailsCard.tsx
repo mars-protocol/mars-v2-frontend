@@ -1,0 +1,31 @@
+import { useMemo } from 'react'
+
+import useCurrentAccount from '../../hooks/accounts/useCurrentAccount'
+import AccountBalancesTable from '../account/AccountBalancesTable'
+import useBorrowMarketAssetsTableData from '../borrow/Table/useBorrowMarketAssetsTableData'
+import useLendingMarketAssetsTableData from '../earn/lend/Table/useLendingMarketAssetsTableData'
+
+export default function AccountDetailsCard() {
+  const account = useCurrentAccount()
+  const data = useBorrowMarketAssetsTableData()
+  const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
+  const { availableAssets: lendingAvailableAssets, accountLentAssets } =
+    useLendingMarketAssetsTableData()
+  const lendingAssetsData = useMemo(
+    () => [...lendingAvailableAssets, ...accountLentAssets],
+    [lendingAvailableAssets, accountLentAssets],
+  )
+
+  if (account)
+    return (
+      <div className='order-2 w-full max-w-full overflow-hidden md:order-3'>
+        <AccountBalancesTable
+          account={account}
+          borrowingData={borrowAssetsData}
+          lendingData={lendingAssetsData}
+          tableBodyClassName='gradient-card-content'
+          showLiquidationPrice
+        />
+      </div>
+    )
+}

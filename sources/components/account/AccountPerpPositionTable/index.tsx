@@ -1,0 +1,37 @@
+import classNames from 'classnames'
+
+import useStore from '../../../store'
+import Table from '../../common/Table'
+import useAccountPerpsColumns from './Columns/useAccountPerpsColumns'
+import useAccountPerpData from './useAccountPerpData'
+
+interface Props {
+  account: Account
+  tableBodyClassName?: string
+  showLiquidationPrice?: boolean
+  hideCard?: boolean
+}
+
+export default function AccountPerpPositionTable(props: Props) {
+  const { account, tableBodyClassName, showLiquidationPrice, hideCard } = props
+  const updatedAccount = useStore((s) => s.updatedAccount)
+  const accountPerpData = useAccountPerpData({
+    account,
+    updatedAccount,
+  })
+
+  const columns = useAccountPerpsColumns(account)
+
+  return (
+    <Table
+      title='Perp Positions'
+      columns={columns}
+      data={accountPerpData}
+      tableBodyClassName={classNames(tableBodyClassName, 'text-white/60')}
+      initialSorting={[]}
+      spacingClassName='p-2'
+      hideCard={hideCard}
+      type='perps'
+    />
+  )
+}
