@@ -80,7 +80,7 @@ export default function Row<T>(props: Props<T>) {
                   getBorderColor(type, cell.row.original as any, isWhitelisted),
                 cell.column.columnDef.meta?.className,
                 !isWhitelisted && 'opacity-50',
-                !isWhitelisted && 'group-hover:opacity-100',
+                !isWhitelisted && 'group-hover/assetRow:opacity-100',
               )}
             >
               {flexRender(cell.column.columnDef.cell, cell.getContext())}
