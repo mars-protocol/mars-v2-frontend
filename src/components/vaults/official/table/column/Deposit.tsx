@@ -1,6 +1,6 @@
-import ActionButton from 'components/common/Button/ActionButton'
-import { Plus } from 'components/common/Icons'
+import Button from 'components/common/Button'
 import Loading from 'components/common/Loading'
+import { Plus } from 'components/common/Icons'
 
 export const DEPOSIT_META = {
   accessorKey: 'deposit',
@@ -20,7 +20,7 @@ export default function Deposit(props: Props) {
 
   return (
     <div className='flex items-center justify-end'>
-      <ActionButton onClick={() => {}} color='tertiary' text='Deposit' leftIcon={<Plus />} short />
+      <Button onClick={() => {}} color='tertiary' text='Deposit' leftIcon={<Plus />} />
     </div>
   )
 }
