@@ -19,8 +19,6 @@ coverage-summary.json
 # misc
 .DS_Store
 *.pem
-sources/utils/charting_library/
-sources/utils/datafeeds/
 src/utils/charting_library/
 src/utils/datafeeds/
 /public/charting_library/
