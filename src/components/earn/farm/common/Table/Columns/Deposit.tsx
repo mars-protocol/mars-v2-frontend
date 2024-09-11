@@ -16,7 +16,12 @@ interface Props {
   vault: Vault | DepositedVault | PerpsVault
 }
 
-export const DEPOSIT_META = { accessorKey: 'deposit', enableSorting: false, header: '' }
+export const DEPOSIT_META = {
+  accessorKey: 'deposit',
+  enableSorting: false,
+  header: '',
+  meta: { className: 'w-30' },
+}
 
 export const Deposit = (props: Props) => {
   const chainConfig = useChainConfig()

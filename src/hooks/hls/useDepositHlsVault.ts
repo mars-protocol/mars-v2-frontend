@@ -1,11 +1,13 @@
 import { BN_ZERO } from 'constants/math'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useSlippage from 'hooks/settings/useSlippage'
 import useRouteInfo from 'hooks/trade/useRouteInfo'
 import { useMemo, useState } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getCoinValue } from 'utils/formatters'
+import { getSwapExactInAction } from 'utils/swap'
 
 interface Props {
   borrowDenom: string
@@ -14,6 +16,7 @@ interface Props {
 export default function useDepositHlsVault(props: Props) {
   const [slippage] = useSlippage()
   const assets = useDepositEnabledAssets()
+  const chainConfig = useChainConfig()
 
   const [depositAmount, setDepositAmount] = useState<BigNumber>(BN_ZERO)
   const [borrowAmount, setBorrowAmount] = useState<BigNumber>(BN_ZERO)
@@ -75,27 +78,24 @@ export default function useDepositHlsVault(props: Props) {
             {
               borrow: borrowCoin.toCoin(),
             },
-            {
-              swap_exact_in: {
-                route: route.route,
-                denom_out: props.collateralDenom,
-                slippage: slippage.toString(),
-                coin_in: BNCoin.fromDenomAndBigNumber(
-                  props.borrowDenom,
-                  borrowAmount,
-                ).toActionCoin(),
-              },
-            },
+            getSwapExactInAction(
+              BNCoin.fromDenomAndBigNumber(props.borrowDenom, borrowAmount).toActionCoin(),
+              props.collateralDenom,
+              route,
+              slippage,
+              chainConfig.isOsmosis,
+            ),
           ]),
     ]
   }, [
     borrowAmount,
-    borrowCoin,
+    route,
     depositCoin,
+    borrowCoin,
     props.borrowDenom,
     props.collateralDenom,
     slippage,
-    route,
+    chainConfig.isOsmosis,
   ])
 
   return {

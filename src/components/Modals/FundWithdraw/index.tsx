@@ -29,6 +29,7 @@ export default function FundAndWithdrawModal() {
           </Text>
         </span>
       }
+      headerClassName='pl-2 pr-2.5 py-3'
       onClose={onClose}
       content={<FundWithdrawModalContent account={account} isFunding={isFunding} />}
     />

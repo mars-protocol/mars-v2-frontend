@@ -20,7 +20,7 @@ export default function useAvailableColumns(props: Props) {
     () => [
       {
         ...NAME_META,
-        cell: ({ row }) => <Name strategy={row.original as HLSStrategy} />,
+        cell: ({ row }) => <Name strategy={row.original} />,
       },
       {
         ...MAX_LEV_META,

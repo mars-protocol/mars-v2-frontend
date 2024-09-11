@@ -1,4 +1,4 @@
-import { Droplet, Lido, Stride } from 'components/common/Icons'
+import { Droplet, Lido, MilkyWay, Stride } from 'components/common/Icons'
 
 export const CAMPAIGNS: AssetCampaign[] = [
   {
@@ -78,6 +78,24 @@ export const CAMPAIGNS: AssetCampaign[] = [
       'Your deposit will still earn the underlying Lido staking yield. This number is based on the moving average of APR for 7 days period.',
     enabledOnV1: true,
   },
+  {
+    id: 'milkyway',
+    name: 'Milkyway Staking',
+    type: 'apy',
+    apyApi: {
+      url: 'https://apis.milkyway.zone/v2/protocols/osmosis.milkTIA',
+      isApr: true,
+      isPercent: true,
+      apyStructure: ['apr'],
+      denomStructure: ['symbol'],
+    },
+    incentiveCopy: '+##APY##% APY',
+    classNames: 'milkyway',
+    bgClassNames: 'gradient-milkyway',
+    detailedIncentiveCopy: 'Deposits earn ##APY##% APY via Milkyway',
+    tooltip: 'Your deposit will still earn the underlying Milkyway staking APY.',
+    enabledOnV1: true,
+  },
 ]
 
 export function CampaignLogo({ campaignId }: { campaignId: AssetCampaignId }) {
@@ -89,6 +107,8 @@ export function CampaignLogo({ campaignId }: { campaignId: AssetCampaignId }) {
       return <Droplet />
     case 'lido':
       return <Lido />
+    case 'milkyway':
+      return <MilkyWay />
     default:
       return null
   }

@@ -1141,6 +1141,7 @@ interface CommonSlice {
   isVaults: boolean
   isV1: boolean
   assets: Asset[]
+  hlsBorrowAmount: BigNumber | null
 }
 
 interface FocusComponent {
@@ -1516,7 +1517,7 @@ interface StakedAstroLpRewards {
   rewards: BNCoin[]
 }
 
-type AssetCampaignId = 'stride' | 'drop' | 'lido' | 'drop_apy'
+type AssetCampaignId = 'stride' | 'drop' | 'lido' | 'drop_apy' | 'milkyway'
 type AssetCampaignType = 'points_with_multiplier' | 'apy'
 type AssetCampaignPointBase = 'value' | 'amount'
 
