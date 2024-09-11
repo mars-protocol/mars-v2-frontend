@@ -1,6 +1,6 @@
+import Text from 'components/common/Text'
 import FundWithdrawModalContent from 'components/Modals/FundWithdraw/FundAndWithdrawModalContent'
 import ModalContentWithSummary from 'components/Modals/ModalContentWithSummary'
-import Text from 'components/common/Text'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useStore from 'store'

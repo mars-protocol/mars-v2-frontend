@@ -15,7 +15,7 @@ import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
+import useHlsStakingAssets from 'hooks/hls/useHlsStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
@@ -48,7 +48,7 @@ export default function AccountSummary(props: Props) {
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
     useLendingMarketAssetsTableData()
-  const { data: hlsStrategies } = useHLSStakingAssets()
+  const { data: hlsStrategies } = useHlsStakingAssets()
   const lendingAssetsData = useMemo(
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
@@ -73,7 +73,7 @@ export default function AccountSummary(props: Props) {
     (index: number) => {
       setAccountSummaryTabs(
         defaultSetting.map((_, i) =>
-          i === index ? (!accountSummaryTabs[i] ?? true) : (accountSummaryTabs[i] ?? false),
+          i === index ? !accountSummaryTabs[i] : accountSummaryTabs[i],
         ),
       )
     },

@@ -7,7 +7,7 @@ import { BN_ZERO } from 'constants/math'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useVaults from 'hooks/vaults/useVaults'
 
-const title = 'Available HLS Vaults'
+const title = 'Available Hls Vaults'
 
 function Content() {
   const { data: vaults } = useVaults()
