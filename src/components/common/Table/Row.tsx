@@ -79,7 +79,7 @@ export default function Row<T>(props: Props<T>) {
                   type !== 'strategies' &&
                   getBorderColor(type, cell.row.original as any, isWhitelisted),
                 cell.column.columnDef.meta?.className,
-                !isWhitelisted && 'opacity-70',
+                !isWhitelisted && 'opacity-50',
                 !isWhitelisted && 'group-hover:opacity-100',
               )}
             >
