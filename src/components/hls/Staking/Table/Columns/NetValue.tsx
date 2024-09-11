@@ -5,12 +5,12 @@ import { BNCoin } from 'types/classes/BNCoin'
 
 export const NET_VAL_META = { header: 'Net Value', accessorKey: 'values.net' }
 interface Props {
-  account: HLSAccountWithStrategy
+  account: HlsAccountWithStakingStrategy
 }
 
 export function netValueSorting(
-  a: Row<HLSAccountWithStrategy>,
-  b: Row<HLSAccountWithStrategy>,
+  a: Row<HlsAccountWithStakingStrategy>,
+  b: Row<HlsAccountWithStakingStrategy>,
 ): number {
   return a.original.values.net.minus(b.original.values.net).toNumber()
 }

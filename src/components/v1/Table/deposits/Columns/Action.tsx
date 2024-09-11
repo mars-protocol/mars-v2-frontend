@@ -12,7 +12,7 @@ interface Props {
   data: LendingMarketTableData
 }
 export default function Action(props: Props) {
-  const hasDeposits = !props.data.accountLentAmount?.isZero() ?? false
+  const hasDeposits = !props.data.accountLentAmount?.isZero()
   const isDeprecated = props.data.asset.isDeprecated
 
   if (hasDeposits && isDeprecated) return <WithdrawButton data={props.data} />

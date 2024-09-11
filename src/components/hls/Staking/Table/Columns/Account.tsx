@@ -9,7 +9,7 @@ export const ACCOUNT_META = {
   meta: { className: 'w-30' },
 }
 interface Props {
-  account: HLSAccountWithStrategy
+  account: HlsAccountWithStakingStrategy
 }
 
 export default function Name(props: Props) {

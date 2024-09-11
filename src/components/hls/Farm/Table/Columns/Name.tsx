@@ -1,11 +1,9 @@
-import React from 'react'
-
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 
 export const NAME_META = { id: 'name', accessorKey: 'denoms.primary', header: 'Name' }
 
 interface Props {
-  strategy: HLSStrategy
+  strategy: HlsStrategy
 }
 
 export default function Name(props: Props) {

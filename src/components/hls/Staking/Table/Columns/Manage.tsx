@@ -6,7 +6,7 @@ import useStore from 'store'
 export const MANAGE_META = { id: 'manage' }
 
 interface Props {
-  account: HLSAccountWithStrategy
+  account: HlsAccountWithStakingStrategy
 }
 
 export default function Manage(props: Props) {

@@ -46,6 +46,7 @@ export { default as LockUnlocked } from 'components/common/Icons/LockUnlocked.sv
 export { default as Logo } from 'components/common/Icons/Logo.svg'
 export { default as Luggage } from 'components/common/Icons/Luggage.svg'
 export { default as MarsProtocol } from 'components/common/Icons/MarsProtocol.svg'
+export { default as MilkyWay } from 'components/common/Icons/MilkyWay.svg'
 export { default as Neutron } from 'components/common/Icons/Neutron.svg'
 export { default as Osmo } from 'components/common/Icons/Osmo.svg'
 export { default as OverlayMark } from 'components/common/Icons/OverlayMark.svg'

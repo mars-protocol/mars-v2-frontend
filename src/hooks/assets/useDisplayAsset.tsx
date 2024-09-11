@@ -1,7 +1,7 @@
-import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import { useMemo } from 'react'
 import { byDenom } from 'utils/array'
+import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
 
 export default function useDisplayAsset() {
   const assets = useDisplayCurrencyAssets()

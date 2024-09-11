@@ -7,7 +7,7 @@ export const MAX_LEV_META = {
 }
 
 interface Props {
-  strategy: HLSStrategy
+  strategy: HlsStrategy
 }
 
 export default function MaxLeverage(props: Props) {

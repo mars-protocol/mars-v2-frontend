@@ -1,13 +1,13 @@
 import { useCallback, useMemo, useState } from 'react'
 
-import AssetsSelect from 'components/Modals/AssetsSelect'
 import SearchBar from 'components/common/SearchBar'
+import AssetsSelect from 'components/Modals/AssetsSelect'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { handleUnknownAsset } from 'utils/assets'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 
 interface Props {
   onChangeDenoms: (denoms: string[]) => void

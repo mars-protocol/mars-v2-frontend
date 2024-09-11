@@ -35,8 +35,15 @@ export default function useDepositActions(props: Props) {
       {
         deposit: depositCoin.toCoin(),
       },
+      ...(borrowCoin.amount.isGreaterThan(0)
+        ? [
+            {
+              borrow: borrowCoin.toCoin(),
+            },
+          ]
+        : []),
       ...(borrowCoin.amount.isZero() || swapAction === null ? [] : [swapAction]),
     ],
-    [borrowCoin.amount, depositCoin, swapAction],
+    [borrowCoin, depositCoin, swapAction],
   )
 }

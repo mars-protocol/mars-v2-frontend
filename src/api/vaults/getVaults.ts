@@ -2,15 +2,15 @@ import getAssetParams from 'api/params/getAssetParams'
 import { getVaultConfigs } from 'api/vaults/getVaultConfigs'
 import { getVaultUtilizations } from 'api/vaults/getVaultUtilizations'
 import { BN } from 'utils/helpers'
-import { resolveHLSStrategies } from 'utils/resolvers'
+import { resolveHlsStrategies } from 'utils/resolvers'
 
 export default async function getVaults(chainConfig: ChainConfig): Promise<Vault[]> {
   const assetParams = await getAssetParams(chainConfig)
   const vaultConfigs = await getVaultConfigs(chainConfig)
   const $vaultUtilizations = getVaultUtilizations(chainConfig, vaultConfigs)
   const vaultMetaDatas = chainConfig.vaults
-  const HLSAssets = assetParams.filter((asset) => asset.credit_manager.hls)
-  const hlsStrategies = resolveHLSStrategies('vault', HLSAssets)
+  const HlsAssets = assetParams.filter((asset) => asset.credit_manager.hls)
+  const hlsStrategies = resolveHlsStrategies('vault', HlsAssets)
 
   const vaults: Vault[] = []
   await $vaultUtilizations.then((vaultUtilizations) => {
