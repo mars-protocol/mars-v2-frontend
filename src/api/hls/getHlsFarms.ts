@@ -20,12 +20,11 @@ export default async function getHlsFarms(
       const correlations = params.credit_manager.hls?.correlations.filter((correlation) => {
         return 'coin' in correlation
       })
-
       correlations?.forEach((correlation) => {
         const poolAsset = assets.find(
           byDenom((correlation as { coin: { denom: string } }).coin.denom),
         )
-        if (!poolAsset || poolAsset.isPoolToken) return
+        if (!poolAsset || !poolAsset.isPoolToken) return
 
         const depositCap = depositCaps.find(byDenom(poolAsset.denom))
         if (!depositCap) return
