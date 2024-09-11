@@ -47,6 +47,7 @@ export default function Routes() {
         <Route path='/vaults-community' element={<VaultsCommunityPage />} />
         <Route path='/vaults/:vaultAddress' element={<CreateVault />}>
           <Route path='mint-account' element={<CreateVaultAccount />} />
+          {/* TODO */}
           {/* <Route path='delete' element={<CreateVault />} /> */}
         </Route>
         <Route path='/' element={<TradePage />} />
@@ -68,6 +69,7 @@ export default function Routes() {
           <Route path='vaults-community' element={<VaultsCommunityPage />} />
           <Route path='vaults/:vaultAddress' element={<CreateVault />}>
             <Route path='mint-account' element={<CreateVaultAccount />} />
+            {/* TODO */}
             {/* <Route path='delete' element={} /> */}
           </Route>
           <Route path='v1' element={<V1Page />} />
