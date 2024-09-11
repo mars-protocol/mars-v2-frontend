@@ -46,6 +46,7 @@ export default function Row<T>(props: Props<T>) {
           canExpand && row.getIsExpanded()
             ? 'is-expanded border-t gradient-header'
             : 'hover:bg-white/5',
+          'group',
         )}
         onClick={(e) => {
           e.preventDefault()
@@ -78,6 +79,8 @@ export default function Row<T>(props: Props<T>) {
                   type !== 'strategies' &&
                   getBorderColor(type, cell.row.original as any, isWhitelisted),
                 cell.column.columnDef.meta?.className,
+                !isWhitelisted && 'opacity-70',
+                !isWhitelisted && 'group-hover:opacity-100',
               )}
             >
               {flexRender(cell.column.columnDef.cell, cell.getContext())}

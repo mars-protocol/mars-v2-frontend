@@ -19,7 +19,6 @@ import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { Tooltip } from 'components/common/Tooltip'
-import classNames from 'classnames'
 
 export default function useAccountBalancesColumns(
   account: Account,
@@ -48,33 +47,16 @@ export default function useAccountBalancesColumns(
     )
   }, [])
 
-  const applyRowStyling = useCallback(
-    (children: React.ReactNode, isWhitelisted: boolean) => (
-      <div
-        className={classNames(
-          'flex items-center',
-          !isWhitelisted && 'opacity-70 hover:opacity-100',
-        )}
-      >
-        {children}
-      </div>
-    ),
-    [],
-  )
-
   const assetCell = useMemo(
     () => ({
       ...ASSET_META,
       cell: ({ row }: { row: Row<AccountBalanceRow> }) =>
         wrapWithTooltip(
-          applyRowStyling(
-            <Asset type={row.original.type} symbol={row.original.symbol} />,
-            isWhitelisted(row.original.denom),
-          ),
+          <Asset type={row.original.type} symbol={row.original.symbol} />,
           isWhitelisted(row.original.denom),
         ),
     }),
-    [wrapWithTooltip, applyRowStyling, isWhitelisted],
+    [wrapWithTooltip, isWhitelisted],
   )
 
   const valueCell = useMemo(
@@ -82,19 +64,16 @@ export default function useAccountBalancesColumns(
       ...VALUE_META,
       cell: ({ row }: { row: Row<AccountBalanceRow> }) =>
         wrapWithTooltip(
-          applyRowStyling(
-            <Value
-              amountChange={row.original.amountChange}
-              value={row.original.value}
-              type={row.original.type}
-            />,
-            isWhitelisted(row.original.denom),
-          ),
+          <Value
+            amountChange={row.original.amountChange}
+            value={row.original.value}
+            type={row.original.type}
+          />,
           isWhitelisted(row.original.denom),
         ),
       sortingFn: valueBalancesSortingFn,
     }),
-    [wrapWithTooltip, applyRowStyling, isWhitelisted],
+    [wrapWithTooltip, isWhitelisted],
   )
 
   const sizeCell = useMemo(
@@ -102,20 +81,17 @@ export default function useAccountBalancesColumns(
       ...SIZE_META,
       cell: ({ row }: { row: Row<AccountBalanceRow> }) =>
         wrapWithTooltip(
-          applyRowStyling(
-            <Size
-              size={row.original.size}
-              amountChange={row.original.amountChange}
-              denom={row.original.denom}
-              type={row.original.type}
-            />,
-            isWhitelisted(row.original.denom),
-          ),
+          <Size
+            size={row.original.size}
+            amountChange={row.original.amountChange}
+            denom={row.original.denom}
+            type={row.original.type}
+          />,
           isWhitelisted(row.original.denom),
         ),
       sortingFn: sizeSortingFn,
     }),
-    [wrapWithTooltip, applyRowStyling, isWhitelisted],
+    [wrapWithTooltip, isWhitelisted],
   )
 
   const priceCell = useMemo(
@@ -124,18 +100,15 @@ export default function useAccountBalancesColumns(
       accessorKey: 'price',
       cell: ({ row }: { row: Row<AccountBalanceRow> }) =>
         wrapWithTooltip(
-          applyRowStyling(
-            <Price
-              type={row.original.type}
-              amount={row.original.amount.toNumber()}
-              denom={row.original.denom}
-            />,
-            isWhitelisted(row.original.denom),
-          ),
+          <Price
+            type={row.original.type}
+            amount={row.original.amount.toNumber()}
+            denom={row.original.denom}
+          />,
           isWhitelisted(row.original.denom),
         ),
     }),
-    [wrapWithTooltip, applyRowStyling, isWhitelisted],
+    [wrapWithTooltip, isWhitelisted],
   )
 
   const liqPriceCell = useMemo(
@@ -148,28 +121,18 @@ export default function useAccountBalancesColumns(
       },
       cell: ({ row }: { row: Row<AccountBalanceRow> }) =>
         wrapWithTooltip(
-          applyRowStyling(
-            <LiqPrice
-              denom={row.original.denom}
-              computeLiquidationPrice={computeLiquidationPrice}
-              type={row.original.type}
-              amount={row.original.amount.toNumber()}
-              account={updatedAccount ?? account}
-              isWhitelisted={isWhitelisted(row.original.denom)}
-            />,
-            isWhitelisted(row.original.denom),
-          ),
+          <LiqPrice
+            denom={row.original.denom}
+            computeLiquidationPrice={computeLiquidationPrice}
+            type={row.original.type}
+            amount={row.original.amount.toNumber()}
+            account={updatedAccount ?? account}
+            isWhitelisted={isWhitelisted(row.original.denom)}
+          />,
           isWhitelisted(row.original.denom),
         ),
     }),
-    [
-      wrapWithTooltip,
-      applyRowStyling,
-      isWhitelisted,
-      computeLiquidationPrice,
-      updatedAccount,
-      account,
-    ],
+    [wrapWithTooltip, isWhitelisted, computeLiquidationPrice, updatedAccount, account],
   )
 
   const apyCell = useMemo(
@@ -178,19 +141,16 @@ export default function useAccountBalancesColumns(
       id: 'apy',
       cell: ({ row }: { row: Row<AccountBalanceRow> }) =>
         wrapWithTooltip(
-          applyRowStyling(
-            <Apy
-              apy={row.original.apy}
-              markets={markets}
-              denom={row.original.denom}
-              type={row.original.type}
-            />,
-            isWhitelisted(row.original.denom),
-          ),
+          <Apy
+            apy={row.original.apy}
+            markets={markets}
+            denom={row.original.denom}
+            type={row.original.type}
+          />,
           isWhitelisted(row.original.denom),
         ),
     }),
-    [wrapWithTooltip, applyRowStyling, isWhitelisted, markets],
+    [wrapWithTooltip, isWhitelisted, markets],
   )
 
   return useMemo<ColumnDef<AccountBalanceRow>[]>(() => {
