@@ -6,7 +6,7 @@ import Card from 'components/common/Card'
 import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import HLSTag from 'components/hls/HLSTag'
+import HlsTag from 'components/hls/HlsTag'
 import useAccount from 'hooks/accounts/useAccount'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 
@@ -28,7 +28,7 @@ export default function SummarySkeleton(props: Props) {
       <div className='flex flex-wrap justify-between gap-2 md:flex-nowrap'>
         <div className='flex items-center'>
           <Text size='2xl'>{title}</Text>
-          {account?.kind === 'high_levered_strategy' && <HLSTag />}
+          {account?.kind === 'high_levered_strategy' && <HlsTag />}
         </div>
         {health !== undefined && healthFactor !== undefined && (
           <div className='flex items-center gap-2 md:flex-grow md:justify-end'>

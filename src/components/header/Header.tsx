@@ -59,10 +59,10 @@ export default function Header() {
   const address = useStore((s) => s.address)
   const focusComponent = useStore((s) => s.focusComponent)
   const isOracleStale = useStore((s) => s.isOracleStale)
-  const isHLS = useStore((s) => s.isHLS)
+  const isHls = useStore((s) => s.isHls)
   const accountId = useAccountId()
   const isV1 = useStore((s) => s.isV1)
-  const showAccountMenu = address && !isHLS && !isMobile && !isV1
+  const showAccountMenu = address && !isHls && !isMobile && !isV1
 
   function handleCloseFocusMode() {
     if (focusComponent && focusComponent.onClose) focusComponent.onClose()

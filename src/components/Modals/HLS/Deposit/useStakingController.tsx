@@ -1,6 +1,6 @@
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import useDepositHlsVault from 'hooks/hls/useDepositHlsVault'
+import useDepositHlsStaking from 'hooks/hls/useDepositHlsStaking'
 import useSlippage from 'hooks/settings/useSlippage'
 import { useCallback, useMemo } from 'react'
 import useStore from 'store'
@@ -25,7 +25,7 @@ export default function useStakingController(props: Props) {
     borrowAmount,
     positionValue,
     actions,
-  } = useDepositHlsVault({
+  } = useDepositHlsStaking({
     collateralDenom: collateralAsset.denom,
     borrowDenom: borrowMarket.asset.denom,
   })

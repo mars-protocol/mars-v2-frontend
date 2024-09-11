@@ -1,7 +1,7 @@
 import Button from 'components/common/Button'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 
-import LeverageSummary from 'components/Modals/HLS/Deposit/LeverageSummary'
+import LeverageSummary from 'components/Modals/Hls/Deposit/LeverageSummary'
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
@@ -21,7 +21,7 @@ import { getLeveragedApy } from 'utils/math'
 import { getDepositCapMessage, getHealthFactorMessage, getLiquidityMessage } from 'utils/messages'
 
 interface Props {
-  account: HLSAccountWithStrategy
+  account: HlsAccountWithStakingStrategy
   action: HlsStakingManageAction
   borrowMarket: Market
   collateralAsset: Asset

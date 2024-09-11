@@ -1,10 +1,10 @@
 import classNames from 'classnames'
 import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
-import Header from 'components/Modals/HLS/Header'
-import ChangeLeverage from 'components/Modals/HLS/Manage/ChangeLeverage'
-import Deposit from 'components/Modals/HLS/Manage/Deposit'
-import Repay from 'components/Modals/HLS/Manage/Repay'
-import Withdraw from 'components/Modals/HLS/Manage/Withdraw'
+import Header from 'components/Modals/Hls/Header'
+import ChangeLeverage from 'components/Modals/Hls/Manage/ChangeLeverage'
+import Deposit from 'components/Modals/Hls/Manage/Deposit'
+import Repay from 'components/Modals/Hls/Manage/Repay'
+import Withdraw from 'components/Modals/Hls/Manage/Withdraw'
 import ModalContentWithSummary from 'components/Modals/ModalContentWithSummary'
 import { BN_ZERO } from 'constants/math'
 import useAccount from 'hooks/accounts/useAccount'
@@ -24,7 +24,7 @@ export default function HlsManageModalController() {
 
   return (
     <HlsModal
-      account={{ ...account, strategy: modal.staking.strategy } as HLSAccountWithStrategy}
+      account={{ ...account, strategy: modal.staking.strategy } as HlsAccountWithStakingStrategy}
       action={modal.staking.action}
       collateralAsset={collateralAsset}
       borrowMarket={market}
@@ -33,7 +33,7 @@ export default function HlsManageModalController() {
 }
 
 interface Props {
-  account: HLSAccountWithStrategy
+  account: HlsAccountWithStakingStrategy
   action: HlsStakingManageAction
   borrowMarket: Market
   collateralAsset: Asset

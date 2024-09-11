@@ -31,7 +31,7 @@ export default function CreateAccount(props: Props) {
             active={account.id === props.selectedAccount?.id}
             className={classNames(`group-hover/hls:opacity-100`)}
           />
-          {`HLS Account ${account.id}`}
+          {`Hls Account ${account.id}`}
         </div>
       ))}
       <Button

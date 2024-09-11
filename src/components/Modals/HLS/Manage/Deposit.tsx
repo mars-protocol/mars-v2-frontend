@@ -31,7 +31,7 @@ import {
 } from 'utils/messages'
 
 interface Props {
-  account: HLSAccountWithStrategy
+  account: HlsAccountWithStakingStrategy
   action: HlsStakingManageAction
   borrowMarket: Market
   collateralAsset: Asset

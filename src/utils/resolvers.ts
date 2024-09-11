@@ -57,11 +57,11 @@ export function resolveMarketResponse(
   }
 }
 
-export function resolveHLSStrategies(
+export function resolveHlsStrategies(
   type: 'vault' | 'coin',
   assets: AssetParamsBaseForAddr[],
-): HLSStrategyNoCap[] {
-  const HLSStakingStrategies: HLSStrategyNoCap[] = []
+): HlsStrategyNoCap[] {
+  const HlsStakingStrategies: HlsStrategyNoCap[] = []
 
   assets.forEach((asset) => {
     const correlations = asset.credit_manager.hls?.correlations.filter((correlation) => {
@@ -81,7 +81,7 @@ export function resolveHLSStrategies(
     if (!correlatedDenoms?.length) return
 
     correlatedDenoms.forEach((correlatedDenom) =>
-      HLSStakingStrategies.push({
+      HlsStakingStrategies.push({
         apy: null,
         maxLeverage: getLeverageFromLTV(+asset.credit_manager.hls!.max_loan_to_value),
         maxLTV: +asset.credit_manager.hls!.max_loan_to_value,
@@ -92,7 +92,7 @@ export function resolveHLSStrategies(
       }),
     )
   })
-  return HLSStakingStrategies
+  return HlsStakingStrategies
 }
 
 /* PERPS

@@ -13,7 +13,7 @@ interface Props {
   borrowDenom: string
   collateralDenom: string
 }
-export default function useDepositHlsVault(props: Props) {
+export default function useDepositHlsStaking(props: Props) {
   const [slippage] = useSlippage()
   const assets = useDepositEnabledAssets()
   const chainConfig = useChainConfig()

@@ -11,15 +11,15 @@ import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
+import useHlsStakingAssets from 'hooks/hls/useHlsStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { getRoute } from 'utils/route'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 
 interface Props {
   accountId: string
@@ -34,7 +34,7 @@ export default function PortfolioCard(props: Props) {
   const currentAccountId = useAccountId()
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const data = useBorrowMarketAssetsTableData()
-  const { data: hlsStrategies } = useHLSStakingAssets()
+  const { data: hlsStrategies } = useHlsStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
   const [searchParams] = useSearchParams()
   const assets = useWhitelistedAssets()

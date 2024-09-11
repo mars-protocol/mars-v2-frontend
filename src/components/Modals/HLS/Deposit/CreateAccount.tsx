@@ -26,7 +26,7 @@ export default function CreateAccount() {
   return (
     <div id='item-2' className='flex flex-col p-4'>
       <Text size='sm' className='mt-2 mb-4 text-white/50'>
-        Depositing into a HLS strategy mandates the creation of a HLS credit account.
+        Depositing into a Hls strategy mandates the creation of a Hls credit account.
       </Text>
       <Button
         onClick={handleBtnClick}

@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
-import Content from 'components/Modals/HLS/Deposit'
-import Header from 'components/Modals/HLS/Header'
+import Content from 'components/Modals/Hls/Deposit'
+import Header from 'components/Modals/Hls/Header'
 import Modal from 'components/Modals/Modal'
-import { EMPTY_ACCOUNT_HLS } from 'constants/accounts'
+import { EMPTY_ACCOUNT_Hls } from 'constants/accounts'
 import { BN_ONE, BN_ZERO } from 'constants/math'
 import useAssets from 'hooks/assets/useAssets'
 import useMarket from 'hooks/markets/useMarket'
@@ -49,7 +49,7 @@ export default function HlsModalController() {
 interface Props {
   primaryAsset: Asset
   secondaryAsset: Market
-  strategy?: HLSStrategy
+  strategy?: HlsStrategy
   vaultAddress: string | null
 }
 
@@ -74,7 +74,7 @@ function HlsModal(props: Props) {
 
     const hasDebt = hlsBorrowAmount && !hlsBorrowAmount.isZero()
     return {
-      ...EMPTY_ACCOUNT_HLS,
+      ...EMPTY_ACCOUNT_Hls,
       deposits: [
         BNCoin.fromDenomAndBigNumber(
           props.primaryAsset.denom,

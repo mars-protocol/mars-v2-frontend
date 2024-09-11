@@ -1,15 +1,14 @@
 import { useCallback } from 'react'
 
 import AccountAlertDialog from 'components/Modals/Account/AccountAlertDialog'
-import RepayInfo from 'components/Modals/HLS/Close/RepayInfo'
-import SwapInfo from 'components/Modals/HLS/Close/SwapInfo'
+import RepayInfo from 'components/Modals/Hls/Close/RepayInfo'
+import SwapInfo from 'components/Modals/Hls/Close/SwapInfo'
 import { Callout, CalloutType } from 'components/common/Callout'
-import { CircularProgress } from 'components/common/CircularProgress'
 import { ArrowRight, Plus } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
-import useHLSClosePositionActions from 'hooks/hls/useHLSClosePositionActions'
+import useHlsClosePositionActions from 'hooks/hls/useHlsClosePositionActions'
 import React from 'react'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
@@ -44,7 +43,7 @@ export default function HlsCloseController() {
 
 function HlsCloseModal(props: Props) {
   const { modal, collateralAsset, debtAsset, assets } = props
-  const { actions, changes, isLoadingRoute } = useHLSClosePositionActions({
+  const { actions, changes, isLoadingRoute } = useHlsClosePositionActions({
     account: modal.account,
   })
   const closeHlsStakingPosition = useStore((s) => s.closeHlsStakingPosition)
@@ -57,7 +56,7 @@ function HlsCloseModal(props: Props) {
 
   return (
     <AccountAlertDialog
-      title='Close HLS Position'
+      title='Close Hls Position'
       content={
         <>
           <div className='flex flex-col w-full gap-2'>

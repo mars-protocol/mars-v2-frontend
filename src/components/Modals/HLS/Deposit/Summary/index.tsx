@@ -1,5 +1,5 @@
-import AssetSummary from 'components/Modals/HLS/Deposit/Summary/AssetSummary'
-import YourPosition from 'components/Modals/HLS/Deposit/Summary/YourPosition'
+import AssetSummary from 'components/Modals/Hls/Deposit/Summary/AssetSummary'
+import YourPosition from 'components/Modals/Hls/Deposit/Summary/YourPosition'
 import useRouteInfo from 'hooks/trade/useRouteInfo'
 import { BNCoin } from 'types/classes/BNCoin'
 

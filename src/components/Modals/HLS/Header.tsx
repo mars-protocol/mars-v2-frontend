@@ -1,6 +1,6 @@
 import DoubleLogo from 'components/common/DoubleLogo'
 import Text from 'components/common/Text'
-import HLSTag from 'components/hls/HLSTag'
+import HlsTag from 'components/hls/HlsTag'
 
 interface Props {
   primaryAsset: Asset
@@ -18,7 +18,7 @@ export default function Header(props: Props) {
       />
       <Text>{`${props.primaryAsset.symbol}/${props.secondaryAsset.symbol}`}</Text>
       {props.action && <Text className='capitalize'> - {props.action}</Text>}
-      <HLSTag />
+      <HlsTag />
     </div>
   )
 }

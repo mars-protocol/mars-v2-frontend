@@ -13,7 +13,7 @@ export const DEPOSIT_META = { accessorKey: 'deposit', header: 'Deposit' }
 
 interface Props {
   isLoading: boolean
-  strategy?: HLSStrategy
+  strategy?: HlsStrategy
   vault?: Vault
 }
 
