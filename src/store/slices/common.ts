@@ -21,7 +21,6 @@ export default function createCommonSlice(
     isOracleStale: false,
     isHls: false,
     isVaults: false,
-    isVaultsCreate: false,
     isV1: false,
     assets: [],
     hlsBorrowAmount: null,
