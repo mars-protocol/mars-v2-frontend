@@ -459,6 +459,18 @@ module.exports = {
           background:
             'linear-gradient(180deg, hsl(var(--color-hls-primary)) 0%, hsl(var(--color-hls-secondary)) 50%)',
         },
+        '.gradient-vault-primary': {
+          background:
+            'linear-gradient(180deg, hsl(var(--color-vault-blue-primary)) 0%, hsl(var(--color-vault-blue-secondary)) 65%)',
+        },
+        '.gradient-vault-secondary': {
+          background:
+            'linear-gradient(90deg, hsl(var(--color-vault-purple-primary)) 50%, hsl(var(--color-vault-purple-secondary)) 127%)',
+        },
+        '.gradient-vault-tertiary': {
+          background:
+            'linear-gradient(180deg, hsl(var(--color-vault-pink-primary)) 0%, hsl(var(--color-vault-blue-tertiary)) 65%)',
+        },
         '.gradient-popover': {
           background:
             'linear-gradient(180deg, hsl(var(--color-white) /0.1) 0%,  hsl(var(--color-white) /0) 100%), linear-gradient(0deg,  hsl(var(--color-white) /0.1), hsl(var(--color-white) /0.05))',
