@@ -18,7 +18,7 @@ import {
   VaultModal,
   WalletAssets,
   WithdrawFromVaultsModal,
-} from '.'
+} from 'components/Modals'
 
 export default function ModalsContainer() {
   return (
