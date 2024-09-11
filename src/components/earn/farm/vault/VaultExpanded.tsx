@@ -2,13 +2,13 @@ import { Row } from '@tanstack/react-table'
 import moment from 'moment'
 import { useState } from 'react'
 
-import useAccountId from '../../../../hooks/accounts/useAccountId'
-import useSlippage from '../../../../hooks/settings/useSlippage'
-import useStore from '../../../../store'
-import { VaultStatus } from '../../../../types/enums'
-import Button from '../../../common/Button'
-import { AccountArrowDown, LockLocked, LockUnlocked, Plus } from '../../../common/Icons'
-import { Tooltip } from '../../../common/Tooltip'
+import Button from 'components/common/Button'
+import { AccountArrowDown, LockLocked, LockUnlocked, Plus } from 'components/common/Icons'
+import { Tooltip } from 'components/common/Tooltip'
+import useAccountId from 'hooks/accounts/useAccountId'
+import useSlippage from 'hooks/settings/useSlippage'
+import useStore from 'store'
+import { VaultStatus } from 'types/enums'
 
 interface Props {
   row: Row<DepositedVault>

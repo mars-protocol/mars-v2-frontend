@@ -1,5 +1,5 @@
-import { PythLogoType } from '../../common/Icons'
-import Text from '../../common/Text'
+import { PythLogoType } from 'components/common/Icons'
+import Text from 'components/common/Text'
 
 export default function PoweredByPyth() {
   return (

@@ -1,5 +1,5 @@
-import { BNCoin } from '../../../../../../types/classes/BNCoin'
-import DisplayCurrency from '../../../../../common/DisplayCurrency'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { BNCoin } from 'types/classes/BNCoin'
 
 export const TVL_META = { accessorKey: 'tvl', header: 'TVL', meta: { className: 'w-30' } }
 

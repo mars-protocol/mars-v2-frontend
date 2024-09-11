@@ -1,11 +1,11 @@
 import { Row } from '@tanstack/react-table'
 
-import { BN_ZERO } from '../../../../constants/math'
-import { BNCoin } from '../../../../types/classes/BNCoin'
-import { demagnify } from '../../../../utils/formatters'
-import { BN } from '../../../../utils/helpers'
-import DisplayCurrency from '../../../common/DisplayCurrency'
-import { FormattedNumber } from '../../../common/FormattedNumber'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { BN_ZERO } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
+import { demagnify } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 export const BALANCE_META = { id: 'value', header: 'Balance', accessorKey: 'value' }
 

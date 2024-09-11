@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-import useStore from '../../store'
+import useStore from 'store'
 
 function useLendAndReclaimModal() {
   const config = useStore((s) => s.lendAndReclaimModal)

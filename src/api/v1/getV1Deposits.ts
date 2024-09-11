@@ -1,5 +1,5 @@
-import { ArrayOfUserCollateralResponse } from '../../types/generated/mars-red-bank/MarsRedBank.types'
-import { getRedBankQueryClient } from '../cosmwasm-client'
+import { getRedBankQueryClient } from 'cosmwasm-client'
+import { ArrayOfUserCollateralResponse } from 'types/generated/mars-red-bank/MarsRedBank.types'
 
 export default async function getV1Deposits(
   chainConfig: ChainConfig,

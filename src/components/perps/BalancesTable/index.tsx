@@ -1,9 +1,9 @@
 import { useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-import { SearchParams } from '../../../types/enums'
-import { getSearchParamsObject } from '../../../utils/route'
-import Table from '../../common/Table'
+import Table from 'components/common/Table'
+import { SearchParams } from 'types/enums'
+import { getSearchParamsObject } from 'utils/route'
 import usePerpsBalancesColumns from './Columns/usePerpsBalancesColumns'
 import usePerpsBalancesData from './usePerpsBalancesData'
 

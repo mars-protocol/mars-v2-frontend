@@ -1,4 +1,4 @@
-import { ChainInfoID } from '../types/enums'
+import { ChainInfoID } from 'types/enums'
 import Neutron1 from './neutron/neutron-1'
 import Pion1 from './neutron/pion-1'
 import Osmosis1 from './osmosis/osmosis-1'

@@ -1,13 +1,13 @@
 import { ReactNode } from 'react'
 
-import usePerpsEnabledAssets from '../../../../hooks/assets/usePerpsEnabledAssets'
-import { demagnify } from '../../../../utils/formatters'
-import AssetImage from '../../../common/assets/AssetImage'
-import DisplayCurrency from '../../../common/DisplayCurrency'
-import { FormattedNumber } from '../../../common/FormattedNumber'
-import Text from '../../../common/Text'
-import { Tooltip } from '../../../common/Tooltip'
-import TradeDirection from '../../../perps/BalancesTable/Columns/TradeDirection'
+import AssetImage from 'components/common/assets/AssetImage'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
+import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
+import TradeDirection from 'perps/BalancesTable/Columns/TradeDirection'
+import { demagnify } from 'utils/formatters'
 
 export const ASSET_META = {
   accessorKey: 'symbol',

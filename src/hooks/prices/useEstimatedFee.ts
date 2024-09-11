@@ -1,6 +1,6 @@
+import useChainConfig from 'chain/useChainConfig'
 import debounce from 'lodash.debounce'
 import { useEffect, useMemo, useState } from 'react'
-import useChainConfig from '../chain/useChainConfig'
 
 export default function useEstimatedFee(estimateFeeTx: ExecutableTx | undefined) {
   const chainConfig = useChainConfig()

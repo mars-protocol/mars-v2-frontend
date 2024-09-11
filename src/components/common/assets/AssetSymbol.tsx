@@ -1,4 +1,4 @@
-import Text from '../Text'
+import Text from 'Text'
 
 interface Props {
   symbol: string

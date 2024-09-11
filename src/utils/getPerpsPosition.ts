@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 
-import { BN_ZERO } from '../constants/math'
-import { BNCoin } from '../types/classes/BNCoin'
+import { BN_ZERO } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from './helpers'
 
 export default function getPerpsPosition(

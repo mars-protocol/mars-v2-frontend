@@ -1,9 +1,9 @@
-import useWhitelistedAssets from '../../../../../../hooks/assets/useWhitelistedAssets'
-import useStore from '../../../../../../store'
-import { byDenom } from '../../../../../../utils/array'
-import ActionButton from '../../../../../common/Button/ActionButton'
-import { Plus } from '../../../../../common/Icons'
-import Loading from '../../../../../common/Loading'
+import ActionButton from 'components/common/Button/ActionButton'
+import { Plus } from 'components/common/Icons'
+import Loading from 'components/common/Loading'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useStore from 'store'
+import { byDenom } from 'utils/array'
 
 interface Props {
   isLoading: boolean

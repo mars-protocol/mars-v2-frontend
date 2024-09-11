@@ -1,6 +1,6 @@
-import useStore from '../../store'
-import WalletConnectButton from '../Wallet/WalletConnectButton'
-import Intro from '../common/Intro'
+import Intro from 'components/common/Intro'
+import useStore from 'store'
+import WalletConnectButton from 'Wallet/WalletConnectButton'
 
 export default function V1Intro() {
   const address = useStore((state) => state.address)

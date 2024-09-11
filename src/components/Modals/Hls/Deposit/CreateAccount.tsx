@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { mutate } from 'swr'
 
-import useStore from '../../../../store'
-import Button from '../../../common/Button'
-import DocsLink from '../../../common/DocsLink'
-import { ArrowRight } from '../../../common/Icons'
-import Text from '../../../common/Text'
+import Button from 'components/common/Button'
+import DocsLink from 'components/common/DocsLink'
+import { ArrowRight } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import useStore from 'store'
 
 export default function CreateAccount() {
   const createAccount = useStore((s) => s.createAccount)

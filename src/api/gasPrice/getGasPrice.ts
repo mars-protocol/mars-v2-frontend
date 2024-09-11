@@ -1,4 +1,4 @@
-import { ChainInfoID } from '../../types/enums'
+import { ChainInfoID } from 'types/enums'
 
 export default async function getGasPrice(chainConfig: ChainConfig) {
   const { id, endpoints, gasPrice, defaultCurrency } = chainConfig

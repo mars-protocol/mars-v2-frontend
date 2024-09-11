@@ -1,7 +1,7 @@
-import { getDefaultChainSettings } from '../../constants/defaultSettings'
-import { LocalStorageKeys } from '../../constants/localStorageKeys'
-import { RewardsCenterType } from '../../types/enums'
-import useChainConfig from '../chain/useChainConfig'
+import useChainConfig from 'chain/useChainConfig'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import { RewardsCenterType } from 'types/enums'
 import useLocalStorage from './useLocalStorage'
 
 export default function useRewardsCenterType() {

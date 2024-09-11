@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 import { isMobile } from 'react-device-detect'
 
-import AssetImage from '../../../common/assets/AssetImage'
-import Button from '../../../common/Button'
+import AssetImage from 'components/common/assets/AssetImage'
+import Button from 'components/common/Button'
 
 interface Props {
   asset: Asset

@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 
-import { FormattedNumber } from '../../common/FormattedNumber'
-import { ArrowRight } from '../../common/Icons'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { ArrowRight } from 'components/common/Icons'
 
 interface Props {
   leverage: number

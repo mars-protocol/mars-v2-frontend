@@ -1,10 +1,10 @@
 import classNames from 'classnames'
 
-import ConditionalWrapper from '../../../hocs/ConditionalWrapper'
-import useToggle from '../../../hooks/common/useToggle'
-import { ChevronDown } from '../Icons'
-import Text from '../Text'
-import { Tooltip } from '../Tooltip'
+import ConditionalWrapper from 'hocs/ConditionalWrapper'
+import useToggle from 'hooks/common/useToggle'
+import { ChevronDown } from 'Icons'
+import Text from 'Text'
+import { Tooltip } from 'Tooltip'
 import Button from './index'
 
 interface Props extends ButtonProps {

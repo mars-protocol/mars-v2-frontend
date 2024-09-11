@@ -1,12 +1,12 @@
 import { useCallback, useState } from 'react'
 import { useSWRConfig } from 'swr'
 
-import useAccountId from '../../../../../../hooks/accounts/useAccountId'
-import useChainConfig from '../../../../../../hooks/chain/useChainConfig'
-import useSlippage from '../../../../../../hooks/settings/useSlippage'
-import useStore from '../../../../../../store'
-import Button from '../../../../../common/Button'
-import { AccountArrowDown } from '../../../../../common/Icons'
+import Button from 'components/common/Button'
+import { AccountArrowDown } from 'components/common/Icons'
+import useAccountId from 'hooks/accounts/useAccountId'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useSlippage from 'hooks/settings/useSlippage'
+import useStore from 'store'
 
 export const WITHDRAW_META = { id: 'withdraw', header: 'Actions' }
 

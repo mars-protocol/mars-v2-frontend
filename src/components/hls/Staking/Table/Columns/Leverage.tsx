@@ -1,6 +1,6 @@
 import { Row } from '@tanstack/react-table'
 
-import { FormattedNumber } from '../../../../common/FormattedNumber'
+import { FormattedNumber } from 'components/common/FormattedNumber'
 
 export const LEV_META = { accessorKey: 'leverage ', header: 'Leverage' }
 

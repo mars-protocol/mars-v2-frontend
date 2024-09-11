@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 
-import { SortNone } from '../Icons'
-import Loading from '../Loading'
-import Text from '../Text'
+import { SortNone } from 'Icons'
+import Loading from 'Loading'
+import Text from 'Text'
 
 interface Props {
   labels: string[]

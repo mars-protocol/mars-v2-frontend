@@ -1,5 +1,5 @@
-import useStore from '../../store'
-import { BNCoin } from '../../types/classes/BNCoin'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import getOraclePrices from './getOraclePrices'
 import fetchPythPrices from './getPythPrices'
 

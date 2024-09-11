@@ -1,9 +1,9 @@
+import Background from 'components/common/Background'
+import Button from 'components/common/Button'
+import { ExternalLink } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import { TextLink } from 'components/common/TextLink'
 import { useState } from 'react'
-import Background from '../components/common/Background'
-import Button from '../components/common/Button'
-import { ExternalLink } from '../components/common/Icons'
-import Text from '../components/common/Text'
-import { TextLink } from '../components/common/TextLink'
 
 export default function ErrorPage() {
   const [clicked, setClicked] = useState(false)

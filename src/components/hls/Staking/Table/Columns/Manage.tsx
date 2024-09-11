@@ -1,7 +1,7 @@
+import DropDownButton from 'components/common/Button/DropDownButton'
+import { ArrowDownLine, Cross, HandCoins, Plus, Scale } from 'components/common/Icons'
 import { useCallback, useMemo } from 'react'
-import useStore from '../../../../../store'
-import DropDownButton from '../../../../common/Button/DropDownButton'
-import { ArrowDownLine, Cross, HandCoins, Plus, Scale } from '../../../../common/Icons'
+import useStore from 'store'
 
 export const MANAGE_META = { id: 'manage' }
 

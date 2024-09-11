@@ -1,17 +1,22 @@
+import useAssets from 'assets/useAssets'
+import useWhitelistedAssets from 'assets/useWhitelistedAssets'
+import { BN_ZERO } from 'constants/math'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import useAssetParams from 'params/useAssetParams'
+import usePerpsVault from 'perps/usePerpsVault'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { BN_ZERO } from '../../constants/math'
-import { PRICE_ORACLE_DECIMALS } from '../../constants/query'
-import { BNCoin } from '../../types/classes/BNCoin'
-import { VaultPositionValue } from '../../types/generated/mars-credit-manager/MarsCreditManager.types'
-import { VaultConfigBaseForString } from '../../types/generated/mars-params/MarsParams.types'
+import useSlippage from 'settings/useSlippage'
+import { BNCoin } from 'types/classes/BNCoin'
+import { VaultPositionValue } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams.types'
 import {
   AssetParamsBaseForAddr,
   HealthComputer,
   Positions,
-} from '../../types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
-import { convertAccountToPositions } from '../../utils/accounts'
-import { byDenom } from '../../utils/array'
-import { SWAP_FEE_BUFFER } from '../../utils/constants'
+} from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
+import { convertAccountToPositions } from 'utils/accounts'
+import { byDenom } from 'utils/array'
+import { SWAP_FEE_BUFFER } from 'utils/constants'
 import {
   BorrowTarget,
   compute_health_js,
@@ -21,16 +26,11 @@ import {
   max_swap_estimate_js,
   max_withdraw_estimate_js,
   SwapKind,
-} from '../../utils/health_computer'
-import { findPositionInAccount } from '../../utils/healthComputer'
-import { BN } from '../../utils/helpers'
-import { getTokenPrice } from '../../utils/tokens'
-import useAssets from '../assets/useAssets'
-import useWhitelistedAssets from '../assets/useWhitelistedAssets'
-import useAssetParams from '../params/useAssetParams'
-import usePerpsVault from '../perps/usePerpsVault'
-import useSlippage from '../settings/useSlippage'
-import useVaultConfigs from '../vaults/useVaultConfigs'
+} from 'utils/health_computer'
+import { findPositionInAccount } from 'utils/healthComputer'
+import { BN } from 'utils/helpers'
+import { getTokenPrice } from 'utils/tokens'
+import useVaultConfigs from 'vaults/useVaultConfigs'
 
 // Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
 // avoid "too many decimals" errors.

@@ -1,8 +1,8 @@
-import { Positions } from '../../types/generated/mars-credit-manager/MarsCreditManager.types'
-import { convertCoinArrayIntoBNCoinArrayAndRemoveEmptyCoins } from '../../utils/accounts'
-import { cacheFn, positionsCache } from '../cache'
-import { getCreditManagerQueryClient } from '../cosmwasm-client'
-import getDepositedVaults from '../vaults/getDepositedVaults'
+import { cacheFn, positionsCache } from 'cache'
+import { getCreditManagerQueryClient } from 'cosmwasm-client'
+import { Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { convertCoinArrayIntoBNCoinArrayAndRemoveEmptyCoins } from 'utils/accounts'
+import getDepositedVaults from 'vaults/getDepositedVaults'
 
 export default async function getAccount(
   chainConfig: ChainConfig,

@@ -1,4 +1,4 @@
-import useAsset from '../../hooks/assets/useAsset'
+import useAsset from 'hooks/assets/useAsset'
 import AssetImage from './assets/AssetImage'
 
 interface Props {

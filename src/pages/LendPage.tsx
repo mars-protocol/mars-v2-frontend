@@ -1,7 +1,7 @@
-import Tab from '../components/earn/Tab'
-import LendIntro from '../components/earn/lend/LendIntro'
-import Lends from '../components/earn/lend/Lends'
-import { EARN_TABS } from '../constants/pages'
+import Tab from 'components/earn/Tab'
+import LendIntro from 'components/earn/lend/LendIntro'
+import Lends from 'components/earn/lend/Lends'
+import { EARN_TABS } from 'constants/pages'
 
 export default function LendPage() {
   return (

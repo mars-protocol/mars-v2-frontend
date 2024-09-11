@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-import ActionButton from '../components/common/Button/ActionButton'
-import Text from '../components/common/Text'
-import WarningMessages from '../components/common/WarningMessages'
-import useChainConfig from '../hooks/chain/useChainConfig'
-import useStore from '../store'
+import ActionButton from 'components/common/Button/ActionButton'
+import Text from 'components/common/Text'
+import WarningMessages from 'components/common/WarningMessages'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useStore from 'store'
 
 export default function ExecuteMessagePage() {
   const [searchParams] = useSearchParams()

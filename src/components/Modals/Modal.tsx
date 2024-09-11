@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 import { useEffect, useRef } from 'react'
 
-import EscButton from '../common/Button/EscButton'
-import Card from '../common/Card'
+import EscButton from 'components/common/Button/EscButton'
+import Card from 'components/common/Card'
 
 export default function Modal(props: ModalProps) {
   const ref: React.RefObject<HTMLDialogElement> = useRef(null)

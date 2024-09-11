@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 
-import useCurrentAccount from '../../../../hooks/accounts/useCurrentAccount'
-import useAssets from '../../../../hooks/assets/useAssets'
-import useDepositedAstroLps from '../../../../hooks/astroLp/useDepositedAstroLps'
-import { CardWithTabs } from '../../../common/Card/CardWithTabs'
+import { CardWithTabs } from 'components/common/Card/CardWithTabs'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useAssets from 'hooks/assets/useAssets'
+import useDepositedAstroLps from 'hooks/astroLp/useDepositedAstroLps'
 import ActiveAstroLpsTable from './Table/ActiveAstroLpsTable'
 import useActiveAstroLpsColumns from './Table/Columns/useActiveAstroLpsColumns'
 

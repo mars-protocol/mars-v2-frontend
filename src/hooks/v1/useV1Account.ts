@@ -1,10 +1,10 @@
 import useSWR from 'swr'
 
-import getV1Debts from '../../api/v1/getV1Debts'
-import getV1Deposits from '../../api/v1/getV1Deposits'
-import useStore from '../../store'
-import { BNCoin } from '../../types/classes/BNCoin'
-import useChainConfig from '../chain/useChainConfig'
+import getV1Debts from 'api/v1/getV1Debts'
+import getV1Deposits from 'api/v1/getV1Deposits'
+import useChainConfig from 'chain/useChainConfig'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 
 export default function useV1Account() {
   const chainConfig = useChainConfig()

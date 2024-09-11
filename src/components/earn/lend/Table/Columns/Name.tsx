@@ -1,6 +1,6 @@
-import AssetCampaignCopy from '../../../../common/assets/AssetCampaignCopy'
-import AssetImage from '../../../../common/assets/AssetImage'
-import TitleAndSubCell from '../../../../common/TitleAndSubCell'
+import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
+import AssetImage from 'components/common/assets/AssetImage'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
 
 export const NAME_META = {
   accessorKey: 'asset.symbol',

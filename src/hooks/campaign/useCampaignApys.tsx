@@ -1,7 +1,7 @@
+import getCampaignApys from 'api/campaign/getCampaignApys'
+import useChainConfig from 'chain/useChainConfig'
 import { useMemo } from 'react'
 import useSWRImmutable from 'swr/immutable'
-import getCampaignApys from '../../api/campaign/getCampaignApys'
-import useChainConfig from '../chain/useChainConfig'
 import useAssetCampaigns from './useAssetCampaigns'
 
 export default function useCampaignApys() {

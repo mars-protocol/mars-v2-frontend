@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
-import { byDenom } from '../../utils/array'
-import useCurrentAccount from '../accounts/useCurrentAccount'
+import useCurrentAccount from 'accounts/useCurrentAccount'
+import { byDenom } from 'utils/array'
 import useAvailableAstroLps from './useAvailableAstroLps'
 
 export default function useActiveAstroLps() {

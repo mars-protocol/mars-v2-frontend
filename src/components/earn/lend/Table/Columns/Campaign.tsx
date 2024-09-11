@@ -1,4 +1,4 @@
-import AssetCampaignCopy from '../../../../common/assets/AssetCampaignCopy'
+import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
 
 export const CAMPAIGN_META = {
   sortEnabled: false,

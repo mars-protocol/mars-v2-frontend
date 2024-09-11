@@ -1,4 +1,4 @@
-import { BNCoin } from '../../types/classes/BNCoin'
+import { BNCoin } from 'types/classes/BNCoin'
 
 export default async function getOpeningFee(
   chainConfig: ChainConfig,

@@ -1,13 +1,13 @@
 import useSWR from 'swr'
 
-import { BN_ZERO } from '../../constants/math'
-import { byDenom } from '../../utils/array'
-import { SECONDS_IN_A_YEAR } from '../../utils/constants'
-import { BN } from '../../utils/helpers'
-import useDepositEnabledAssets from '../assets/useDepositEnabledAssets'
-import useChainConfig from '../chain/useChainConfig'
-import useClients from '../chain/useClients'
-import useMarket from '../markets/useMarket'
+import useDepositEnabledAssets from 'assets/useDepositEnabledAssets'
+import useChainConfig from 'chain/useChainConfig'
+import useClients from 'chain/useClients'
+import { BN_ZERO } from 'constants/math'
+import useMarket from 'markets/useMarket'
+import { byDenom } from 'utils/array'
+import { SECONDS_IN_A_YEAR } from 'utils/constants'
+import { BN } from 'utils/helpers'
 
 export default function useAssetIncentivesApy(denom: string) {
   const chainConfig = useChainConfig()

@@ -2,18 +2,18 @@ import {
   ArrayOfCoin,
   Positions,
   VaultUtilizationResponse,
-} from '../types/generated/mars-credit-manager/MarsCreditManager.types'
-import { ArrayOfActiveEmission } from '../types/generated/mars-incentives/MarsIncentives.types'
-import { PriceResponse } from '../types/generated/mars-oracle-osmosis/MarsOracleOsmosis.types'
+} from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { ArrayOfActiveEmission } from 'types/generated/mars-incentives/MarsIncentives.types'
+import { PriceResponse } from 'types/generated/mars-oracle-osmosis/MarsOracleOsmosis.types'
 import {
   AssetParamsBaseForAddr,
   TotalDepositResponse,
   VaultConfigBaseForAddr,
-} from '../types/generated/mars-params/MarsParams.types'
+} from 'types/generated/mars-params/MarsParams.types'
 import {
   ArrayOfMarket,
   ArrayOfUserDebtResponse,
-} from '../types/generated/mars-red-bank/MarsRedBank.types'
+} from 'types/generated/mars-red-bank/MarsRedBank.types'
 
 interface Cache<T> extends Map<string, { data: T | null; timestamp: number }> {}
 

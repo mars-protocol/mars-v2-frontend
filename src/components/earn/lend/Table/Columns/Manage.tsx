@@ -1,14 +1,14 @@
 import { useCallback, useMemo } from 'react'
 import { isMobile } from 'react-device-detect'
 
-import useCurrentAccount from '../../../../../hooks/accounts/useCurrentAccount'
-import useAlertDialog from '../../../../../hooks/common/useAlertDialog'
-import useLendAndReclaimModal from '../../../../../hooks/common/useLendAndReclaimModal'
-import useAutoLend from '../../../../../hooks/wallet/useAutoLend'
-import useStore from '../../../../../store'
-import { ACCOUNT_MENU_BUTTON_ID } from '../../../../account/AccountMenuContent'
-import DropDownButton from '../../../../common/Button/DropDownButton'
-import { ArrowDownLine, ArrowUpLine, Enter, ExclamationMarkCircled } from '../../../../common/Icons'
+import { ACCOUNT_MENU_BUTTON_ID } from 'account/AccountMenuContent'
+import DropDownButton from 'components/common/Button/DropDownButton'
+import { ArrowDownLine, ArrowUpLine, Enter, ExclamationMarkCircled } from 'components/common/Icons'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useAlertDialog from 'hooks/common/useAlertDialog'
+import useLendAndReclaimModal from 'hooks/common/useLendAndReclaimModal'
+import useAutoLend from 'hooks/wallet/useAutoLend'
+import useStore from 'store'
 
 export const MANAGE_META = {
   accessorKey: 'manage',

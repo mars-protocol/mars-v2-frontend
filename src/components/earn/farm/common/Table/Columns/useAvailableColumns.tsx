@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import VaultApy, { APY_META } from '../../../vault/Table/Columns/VaultApy'
+import VaultApy, { APY_META } from 'vault/Table/Columns/VaultApy'
 import { Deposit, DEPOSIT_META } from './Deposit'
 import DepositCap, { DEPOSIT_CAP_META, depositCapSortingFn } from './DepositCap'
 import MaxLTV, { LTV_MAX_META } from './MaxLTV'

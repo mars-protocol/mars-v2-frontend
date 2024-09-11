@@ -1,13 +1,13 @@
 import { useMemo } from 'react'
 
-import { BN_ZERO } from '../../../constants/math'
-import useAccount from '../../../hooks/accounts/useAccount'
-import useAssets from '../../../hooks/assets/useAssets'
-import useLendingMarkets from '../../../hooks/markets/useLendingMarkets'
-import useDisplayCurrencyPrice from '../../../hooks/prices/useDisplayCurrencyPrice'
-import useStore from '../../../store'
-import { byDenom } from '../../../utils/array'
-import { getCoinValue } from '../../../utils/formatters'
+import { BN_ZERO } from 'constants/math'
+import useAccount from 'hooks/accounts/useAccount'
+import useAssets from 'hooks/assets/useAssets'
+import useLendingMarkets from 'hooks/markets/useLendingMarkets'
+import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
+import useStore from 'store'
+import { byDenom } from 'utils/array'
+import { getCoinValue } from 'utils/formatters'
 
 export default function useV1DepositsTableData(): {
   depositAssets: LendingMarketTableData[]

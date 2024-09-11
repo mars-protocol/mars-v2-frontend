@@ -1,5 +1,5 @@
-import useRouteInfo from '../../../../../hooks/trade/useRouteInfo'
-import { BNCoin } from '../../../../../types/classes/BNCoin'
+import useRouteInfo from 'hooks/trade/useRouteInfo'
+import { BNCoin } from 'types/classes/BNCoin'
 import AssetSummary from './AssetSummary'
 import YourPosition from './YourPosition'
 

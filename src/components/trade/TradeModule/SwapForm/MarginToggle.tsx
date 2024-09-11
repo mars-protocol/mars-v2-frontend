@@ -1,7 +1,7 @@
-import ConditionalWrapper from '../../../../hocs/ConditionalWrapper'
-import Switch from '../../../common/Switch'
-import Text from '../../../common/Text'
-import { Tooltip } from '../../../common/Tooltip'
+import Switch from 'components/common/Switch'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
+import ConditionalWrapper from 'hocs/ConditionalWrapper'
 
 interface Props {
   checked: boolean

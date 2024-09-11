@@ -1,12 +1,12 @@
 import BigNumber from 'bignumber.js'
 import useSWR from 'swr'
 
-import { BN_ZERO } from '../../constants/math'
-import { BN } from '../../utils/helpers'
-import useCurrentAccount from '../accounts/useCurrentAccount'
-import useChainConfig from '../chain/useChainConfig'
-import useClients from '../chain/useClients'
-import useDebounce from '../common/useDebounce'
+import useCurrentAccount from 'accounts/useCurrentAccount'
+import useChainConfig from 'chain/useChainConfig'
+import useClients from 'chain/useClients'
+import useDebounce from 'components/common/useDebounce'
+import { BN_ZERO } from 'constants/math'
+import { BN } from 'utils/helpers'
 import { usePerpsParams } from './usePerpsParams'
 
 export default function useTradingFeeAndPrice(

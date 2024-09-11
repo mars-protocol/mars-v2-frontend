@@ -1,10 +1,10 @@
-import ConditionalWrapper from '../../../../../hocs/ConditionalWrapper'
-import useAccount from '../../../../../hooks/accounts/useAccount'
-import useStore from '../../../../../store'
-import ActionButton from '../../../../common/Button/ActionButton'
-import { Plus } from '../../../../common/Icons'
-import Text from '../../../../common/Text'
-import { Tooltip } from '../../../../common/Tooltip'
+import ActionButton from 'components/common/Button/ActionButton'
+import { Plus } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
+import ConditionalWrapper from 'hocs/ConditionalWrapper'
+import useAccount from 'hooks/accounts/useAccount'
+import useStore from 'store'
 
 interface Props {
   data: BorrowMarketTableData

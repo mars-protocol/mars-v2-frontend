@@ -1,5 +1,5 @@
-import { BN } from '../../utils/helpers'
-import { ActionCoin } from '../generated/mars-credit-manager/MarsCreditManager.types'
+import { ActionCoin } from 'generated/mars-credit-manager/MarsCreditManager.types'
+import { BN } from 'utils/helpers'
 
 export class BNCoin {
   static fromDenom(denom: string, arg1: string): BNCoin {

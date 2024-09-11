@@ -1,6 +1,6 @@
-import { BN_ZERO } from '../../constants/math'
-import useDepositEnabledAssets from '../../hooks/assets/useDepositEnabledAssets'
-import DepositsTable from '../earn/lend/Table/DepositedLendsTable'
+import { BN_ZERO } from 'constants/math'
+import DepositsTable from 'earn/lend/Table/DepositedLendsTable'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useV1DepositsTableData from './Table/useV1DepositsTableData'
 
 export default function Deposits() {

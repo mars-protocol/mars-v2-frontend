@@ -1,4 +1,4 @@
-import { LocalStorageKeys } from '../constants/localStorageKeys'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 
 export default function checkAutoLendEnabled(accountId: string, chainId: string) {
   const storageItem = localStorage.getItem(

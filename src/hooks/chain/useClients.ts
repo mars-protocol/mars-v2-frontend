@@ -1,14 +1,14 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import useSWR from 'swr'
 
-import { ICNSQueryClient } from '../../types/classes/ICNSClient.client'
-import { MarsAccountNftQueryClient } from '../../types/generated/mars-account-nft/MarsAccountNft.client'
-import { MarsCreditManagerQueryClient } from '../../types/generated/mars-credit-manager/MarsCreditManager.client'
-import { MarsIncentivesQueryClient } from '../../types/generated/mars-incentives/MarsIncentives.client'
-import { MarsOracleOsmosisQueryClient } from '../../types/generated/mars-oracle-osmosis/MarsOracleOsmosis.client'
-import { MarsParamsQueryClient } from '../../types/generated/mars-params/MarsParams.client'
-import { MarsRedBankQueryClient } from '../../types/generated/mars-red-bank/MarsRedBank.client'
-import { getUrl } from '../../utils/url'
+import { ICNSQueryClient } from 'types/classes/ICNSClient.client'
+import { MarsAccountNftQueryClient } from 'types/generated/mars-account-nft/MarsAccountNft.client'
+import { MarsCreditManagerQueryClient } from 'types/generated/mars-credit-manager/MarsCreditManager.client'
+import { MarsIncentivesQueryClient } from 'types/generated/mars-incentives/MarsIncentives.client'
+import { MarsOracleOsmosisQueryClient } from 'types/generated/mars-oracle-osmosis/MarsOracleOsmosis.client'
+import { MarsParamsQueryClient } from 'types/generated/mars-params/MarsParams.client'
+import { MarsRedBankQueryClient } from 'types/generated/mars-red-bank/MarsRedBank.client'
+import { getUrl } from 'utils/url'
 import useChainConfig from './useChainConfig'
 
 export default function useClients() {

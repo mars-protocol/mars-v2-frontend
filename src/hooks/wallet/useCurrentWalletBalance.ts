@@ -1,5 +1,5 @@
-import useStore from '../../store'
-import { byDenom } from '../../utils/array'
+import useStore from 'store'
+import { byDenom } from 'utils/array'
 import useWalletBalances from './useWalletBalances'
 
 function useCurrentWalletBalance(denom: string) {

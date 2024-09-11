@@ -1,9 +1,9 @@
-import { pythEndpoints } from '../../../constants/pyth'
+import { pythEndpoints } from 'constants/pyth'
 import {
   LibrarySymbolInfo,
   ResolutionString,
   SubscribeBarsCallback,
-} from '../../../utils/charting_library/charting_library'
+} from 'utils/charting_library/charting_library'
 
 const streamingUrl = `${pythEndpoints.candles}/streaming`
 const channelToSubscription = new Map()

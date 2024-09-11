@@ -1,11 +1,11 @@
 import { Row } from '@tanstack/react-table'
 
-import Checkbox from '../../../common/Checkbox'
-import Text from '../../../common/Text'
-import { Tooltip } from '../../../common/Tooltip'
-import AssetCampaignCopy from '../../../common/assets/AssetCampaignCopy'
-import AssetImage from '../../../common/assets/AssetImage'
-import AssetRate from '../../../common/assets/AssetRate'
+import Checkbox from 'components/common/Checkbox'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
+import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
+import AssetImage from 'components/common/assets/AssetImage'
+import AssetRate from 'components/common/assets/AssetRate'
 
 export const ASSET_META = { id: 'name', header: 'Asset', accessorKey: 'asset.symbol' }
 

@@ -1,12 +1,12 @@
 import { useCallback } from 'react'
 
-import useCurrentAccount from '../../../../hooks/accounts/useCurrentAccount'
-import usePerpsEnabledAssets from '../../../../hooks/assets/usePerpsEnabledAssets'
-import usePerpsAsset from '../../../../hooks/perps/usePerpsAsset'
-import useStore from '../../../../store'
-import Button from '../../../common/Button'
-import { ChevronDown } from '../../../common/Icons'
-import Text from '../../../common/Text'
+import Button from 'components/common/Button'
+import { ChevronDown } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
+import usePerpsAsset from 'hooks/perps/usePerpsAsset'
+import useStore from 'store'
 import AssetOverlay from './AssetOverlay'
 
 interface Props {

@@ -2,8 +2,8 @@ import { Row } from '@tanstack/react-table'
 import { Table as TanstackTable } from '@tanstack/table-core/build/lib/types'
 import { useCallback } from 'react'
 
-import MarketDetails from '../../common/MarketDetails'
-import Table from '../../common/Table'
+import MarketDetails from 'components/common/MarketDetails'
+import Table from 'components/common/Table'
 import { NAME_META } from './Columns/Name'
 import useAvailableColumns from './Columns/useAvailableColumns'
 

@@ -1,10 +1,10 @@
-import { BN_ZERO } from '../constants/math'
-import { BNCoin } from '../types/classes/BNCoin'
-import { Action } from '../types/generated/mars-credit-manager/MarsCreditManager.types'
+import { BN_ZERO } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
+import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import {
   AssetParamsBaseForAddr,
   TotalDepositResponse,
-} from '../types/generated/mars-params/MarsParams.types'
+} from 'types/generated/mars-params/MarsParams.types'
 import { byDenom } from './array'
 import { BN, getValueFromBNCoins, mergeBNCoinArrays } from './helpers'
 import { convertApyToApr } from './parsers'

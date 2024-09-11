@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 import { Suspense } from 'react'
 
-import useAccountIds from '../../hooks/accounts/useAccountIds'
-import useStore from '../../store'
-import Loading from '../common/Loading'
+import Loading from 'components/common/Loading'
+import useAccountIds from 'hooks/accounts/useAccountIds'
+import useStore from 'store'
 import AccountMenuContent from './AccountMenuContent'
 
 interface Props {

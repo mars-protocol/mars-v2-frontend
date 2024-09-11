@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { useSWRConfig } from 'swr'
 
-import useAccountId from '../../../../hooks/accounts/useAccountId'
-import useChainConfig from '../../../../hooks/chain/useChainConfig'
-import useSlippage from '../../../../hooks/settings/useSlippage'
-import useStore from '../../../../store'
-import Button from '../../../common/Button'
-import { ChevronRight } from '../../../common/Icons'
-import NotificationBanner from '../../../common/NotificationBanner'
+import Button from 'components/common/Button'
+import { ChevronRight } from 'components/common/Icons'
+import NotificationBanner from 'components/common/NotificationBanner'
+import useAccountId from 'hooks/accounts/useAccountId'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useSlippage from 'hooks/settings/useSlippage'
+import useStore from 'store'
 
 interface Props {
   vaults: DepositedVault[]

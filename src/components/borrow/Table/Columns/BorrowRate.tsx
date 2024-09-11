@@ -1,5 +1,5 @@
-import { FormattedNumber } from '../../../common/FormattedNumber'
-import Loading from '../../../common/Loading'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import Loading from 'components/common/Loading'
 
 export const BORROW_RATE_META = {
   accessorKey: 'apy.borrow',

@@ -1,12 +1,12 @@
 import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-import useCurrentAccount from '../../../../hooks/accounts/useCurrentAccount'
-import useStore from '../../../../store'
-import { SearchParams } from '../../../../types/enums'
-import { getSearchParamsObject } from '../../../../utils/route'
-import DropDownButton from '../../../common/Button/DropDownButton'
-import { Cross, Edit } from '../../../common/Icons'
+import DropDownButton from 'components/common/Button/DropDownButton'
+import { Cross, Edit } from 'components/common/Icons'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useStore from 'store'
+import { SearchParams } from 'types/enums'
+import { getSearchParamsObject } from 'utils/route'
 
 export const MANAGE_META = { id: 'manage', header: 'Manage' }
 

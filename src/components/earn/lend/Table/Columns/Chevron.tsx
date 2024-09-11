@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp } from '../../../../common/Icons'
+import { ChevronDown, ChevronUp } from 'components/common/Icons'
 
 export const CHEVRON_META = {
   id: 'chevron',

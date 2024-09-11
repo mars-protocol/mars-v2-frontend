@@ -1,5 +1,5 @@
-import { FormattedNumber } from '../../../../common/FormattedNumber'
-import Text from '../../../../common/Text'
+import { FormattedNumber } from 'components/common/FormattedNumber';
+import Text from 'components/common/Text';
 
 interface Props {
   items: { title: string; amount: number }[]

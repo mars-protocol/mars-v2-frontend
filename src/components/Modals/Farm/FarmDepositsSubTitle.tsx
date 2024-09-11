@@ -2,13 +2,13 @@ import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
-import { ORACLE_DENOM } from '../../../constants/oracle'
-import useDepositEnabledAssets from '../../../hooks/assets/useDepositEnabledAssets'
-import { BNCoin } from '../../../types/classes/BNCoin'
-import { formatAmountWithSymbol } from '../../../utils/formatters'
-import { getValueFromBNCoins } from '../../../utils/helpers'
-import DisplayCurrency from '../../common/DisplayCurrency'
-import Text from '../../common/Text'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import Text from 'components/common/Text'
+import { ORACLE_DENOM } from 'constants/oracle'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import { BNCoin } from 'types/classes/BNCoin'
+import { formatAmountWithSymbol } from 'utils/formatters'
+import { getValueFromBNCoins } from 'utils/helpers'
 
 interface Props {
   primaryAmount: BigNumber

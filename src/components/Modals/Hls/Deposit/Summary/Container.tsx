@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Text from '../../../../common/Text'
+import Text from 'components/common/Text'
 
 interface Props {
   children: React.ReactNode

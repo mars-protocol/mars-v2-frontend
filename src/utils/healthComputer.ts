@@ -1,4 +1,4 @@
-import { HealthComputer } from '../types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
+import { HealthComputer } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 
 export function findPositionInAccount(healthComputer: HealthComputer, denom: string) {
   const positions = [

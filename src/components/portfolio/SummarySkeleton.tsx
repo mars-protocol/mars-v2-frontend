@@ -1,14 +1,14 @@
 import React from 'react'
 
-import useAccount from '../../hooks/accounts/useAccount'
-import { DEFAULT_PORTFOLIO_STATS } from '../../utils/constants'
-import HealthBar from '../account/Health/HealthBar'
-import HealthIcon from '../account/Health/HealthIcon'
-import Card from '../common/Card'
-import Loading from '../common/Loading'
-import Text from '../common/Text'
-import TitleAndSubCell from '../common/TitleAndSubCell'
-import HlsTag from '../hls/HlsTag'
+import HealthBar from 'account/Health/HealthBar'
+import HealthIcon from 'account/Health/HealthIcon'
+import Card from 'components/common/Card'
+import Loading from 'components/common/Loading'
+import Text from 'components/common/Text'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import HlsTag from 'hls/HlsTag'
+import useAccount from 'hooks/accounts/useAccount'
+import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 
 interface Props {
   stats?: { title: React.ReactNode | null; sub: string }[]

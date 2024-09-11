@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
 
-import useCurrentAccount from '../../../hooks/accounts/useCurrentAccount'
-import useDepositEnabledAssets from '../../../hooks/assets/useDepositEnabledAssets'
-import usePerpsEnabledAssets from '../../../hooks/assets/usePerpsEnabledAssets'
-import { getAccountNetValue } from '../../../utils/accounts'
-import { byDenom } from '../../../utils/array'
-import { demagnify } from '../../../utils/formatters'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
+import { getAccountNetValue } from 'utils/accounts'
+import { byDenom } from 'utils/array'
+import { demagnify } from 'utils/formatters'
 
 export default function usePerpsBalancesTable() {
   const currentAccount = useCurrentAccount()

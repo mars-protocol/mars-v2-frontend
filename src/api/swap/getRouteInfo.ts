@@ -1,5 +1,5 @@
-import { byDenom } from '../../utils/array'
-import { BN } from '../../utils/helpers'
+import { byDenom } from 'utils/array'
+import { BN } from 'utils/helpers'
 
 export default async function getRouteInfo(
   url: string,

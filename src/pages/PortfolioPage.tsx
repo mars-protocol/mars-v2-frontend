@@ -1,7 +1,7 @@
-import ShareBar from '../components/common/ShareBar'
-import AccountOverview from '../components/portfolio/Overview'
-import PortfolioSummary from '../components/portfolio/Overview/Summary'
-import PortfolioIntro from '../components/portfolio/PortfolioIntro'
+import ShareBar from 'components/common/ShareBar'
+import AccountOverview from 'components/portfolio/Overview'
+import PortfolioSummary from 'components/portfolio/Overview/Summary'
+import PortfolioIntro from 'components/portfolio/PortfolioIntro'
 
 export default function PortfolioPage() {
   return (

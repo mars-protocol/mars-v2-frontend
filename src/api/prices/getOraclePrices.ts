@@ -1,12 +1,12 @@
-import { BN_ZERO } from '../../constants/math'
-import { PRICE_ORACLE_DECIMALS } from '../../constants/query'
-import { BNCoin } from '../../types/classes/BNCoin'
-import { PriceResponse } from '../../types/generated/mars-oracle-osmosis/MarsOracleOsmosis.types'
-import { byDenom } from '../../utils/array'
-import { BN } from '../../utils/helpers'
-import iterateContractQuery from '../../utils/iterateContractQuery'
-import { cacheFn, oraclePriceCache } from '../cache'
-import { getOracleQueryClientNeutron, getOracleQueryClientOsmosis } from '../cosmwasm-client'
+import { cacheFn, oraclePriceCache } from 'cache'
+import { BN_ZERO } from 'constants/math'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import { getOracleQueryClientNeutron, getOracleQueryClientOsmosis } from 'cosmwasm-client'
+import { BNCoin } from 'types/classes/BNCoin'
+import { PriceResponse } from 'types/generated/mars-oracle-osmosis/MarsOracleOsmosis.types'
+import { byDenom } from 'utils/array'
+import { BN } from 'utils/helpers'
+import iterateContractQuery from 'utils/iterateContractQuery'
 
 function getAssetPrice(asset: Asset, priceResult: PriceResponse): BNCoin {
   const price = BN(priceResult?.price ?? BN_ZERO)

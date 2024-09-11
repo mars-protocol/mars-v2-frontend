@@ -1,10 +1,10 @@
 import BigNumber from 'bignumber.js'
 import { useEffect, useState } from 'react'
 
-import { BN_ZERO } from '../../../constants/math'
-import { BNCoin } from '../../../types/classes/BNCoin'
-import { BN } from '../../../utils/helpers'
-import Slider from '../Slider'
+import { BN_ZERO } from 'constants/math'
+import Slider from 'Slider'
+import { BNCoin } from 'types/classes/BNCoin'
+import { BN } from 'utils/helpers'
 import TokenInput from './index'
 
 interface Props {

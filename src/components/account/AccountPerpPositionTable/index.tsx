@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 
-import useStore from '../../../store'
-import Table from '../../common/Table'
+import Table from 'components/common/Table'
+import useStore from 'store'
 import useAccountPerpsColumns from './Columns/useAccountPerpsColumns'
 import useAccountPerpData from './useAccountPerpData'
 

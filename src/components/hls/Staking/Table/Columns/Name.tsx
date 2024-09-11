@@ -1,11 +1,11 @@
+import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
+import DoubleLogo from 'components/common/DoubleLogo'
+import Loading from 'components/common/Loading'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import { BN_ZERO } from 'constants/math'
+import useAsset from 'hooks/assets/useAsset'
 import { useMemo } from 'react'
-import { BN_ZERO } from '../../../../../constants/math'
-import useAsset from '../../../../../hooks/assets/useAsset'
-import { byDenom } from '../../../../../utils/array'
-import AssetCampaignCopy from '../../../../common/assets/AssetCampaignCopy'
-import DoubleLogo from '../../../../common/DoubleLogo'
-import Loading from '../../../../common/Loading'
-import TitleAndSubCell from '../../../../common/TitleAndSubCell'
+import { byDenom } from 'utils/array'
 
 export const NAME_META = { id: 'name', header: 'Strategy', meta: { className: 'min-w-50' } }
 interface Props {

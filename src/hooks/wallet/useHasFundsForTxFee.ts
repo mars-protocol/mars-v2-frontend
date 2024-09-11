@@ -1,5 +1,5 @@
-import { BN } from '../../utils/helpers'
-import useBaseAsset from '../assets/useBasetAsset'
+import useBaseAsset from 'assets/useBasetAsset'
+import { BN } from 'utils/helpers'
 import useCurrentWalletBalance from './useCurrentWalletBalance'
 
 export default function useHasFundsForTxFee() {

@@ -1,5 +1,5 @@
-import { CircularProgress } from '../../../common/CircularProgress'
-import Text from '../../../common/Text'
+import { CircularProgress } from 'components/common/CircularProgress'
+import Text from 'components/common/Text'
 
 export default function AssetSelectorItemLoading() {
   return (

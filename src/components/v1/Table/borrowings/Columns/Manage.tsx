@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
 
-import useWalletBalances from '../../../../../hooks/wallet/useWalletBalances'
-import useStore from '../../../../../store'
-import { byDenom } from '../../../../../utils/array'
-import DropDownButton from '../../../../common/Button/DropDownButton'
-import { HandCoins, Plus } from '../../../../common/Icons'
+import DropDownButton from 'components/common/Button/DropDownButton'
+import { HandCoins, Plus } from 'components/common/Icons'
+import useWalletBalances from 'hooks/wallet/useWalletBalances'
+import useStore from 'store'
+import { byDenom } from 'utils/array'
 
 interface Props {
   data: BorrowMarketTableData

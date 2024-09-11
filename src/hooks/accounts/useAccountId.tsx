@@ -1,5 +1,5 @@
 import { useSearchParams } from 'react-router-dom'
-import useStore from '../../store'
+import useStore from 'store'
 
 export default function useAccountId() {
   const [searchParams] = useSearchParams()

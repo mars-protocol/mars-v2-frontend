@@ -1,10 +1,10 @@
 import classNames from 'classnames'
 import { ReactElement, ReactNode } from 'react'
 
-import { getDefaultChainSettings } from '../../constants/defaultSettings'
-import { LocalStorageKeys } from '../../constants/localStorageKeys'
-import useChainConfig from '../../hooks/chain/useChainConfig'
-import useLocalStorage from '../../hooks/localStorage/useLocalStorage'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { Tooltip } from './Tooltip'
 
 interface Props {

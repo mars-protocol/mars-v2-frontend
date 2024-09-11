@@ -1,7 +1,7 @@
-import { AssetParamsBaseForAddr } from '../../types/generated/mars-params/MarsParams.types'
-import iterateContractQuery from '../../utils/iterateContractQuery'
-import { assetParamsCache, cacheFn } from '../cache'
-import { getParamsQueryClient } from '../cosmwasm-client'
+import { assetParamsCache, cacheFn } from 'cache'
+import { getParamsQueryClient } from 'cosmwasm-client'
+import { AssetParamsBaseForAddr } from 'types/generated/mars-params/MarsParams.types'
+import iterateContractQuery from 'utils/iterateContractQuery'
 
 export default async function getAssetParams(
   chainConfig: ChainConfig,

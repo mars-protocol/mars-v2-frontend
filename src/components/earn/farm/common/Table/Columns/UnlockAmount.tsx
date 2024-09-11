@@ -1,8 +1,8 @@
-import { BN_ZERO } from '../../../../../../constants/math'
-import useAsset from '../../../../../../hooks/assets/useAsset'
-import useDepositEnabledAssets from '../../../../../../hooks/assets/useDepositEnabledAssets'
-import { getVaultAccountStrategiesRow } from '../../../../../account/AccountStrategiesTable/functions'
-import { FormattedNumber } from '../../../../../common/FormattedNumber'
+import { getVaultAccountStrategiesRow } from 'account/AccountStrategiesTable/functions'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { BN_ZERO } from 'constants/math'
+import useAsset from 'hooks/assets/useAsset'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 
 export const UNLOCK_AMOUNT_META = { accessorKey: 'amounts.primary', header: 'Unlock Amount' }
 

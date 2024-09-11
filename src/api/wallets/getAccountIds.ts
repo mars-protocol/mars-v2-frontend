@@ -1,5 +1,5 @@
-import { ITEM_LIMIT_PER_QUERY } from '../../constants/query'
-import { getCreditManagerQueryClient } from '../cosmwasm-client'
+import { ITEM_LIMIT_PER_QUERY } from 'constants/query'
+import { getCreditManagerQueryClient } from 'cosmwasm-client'
 
 export default async function getAccountIds(
   chainConfig: ChainConfig,

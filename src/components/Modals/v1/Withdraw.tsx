@@ -1,14 +1,14 @@
 import { useCallback, useState } from 'react'
 
-import { BN_ZERO } from '../../../constants/math'
-import { useUpdatedAccount } from '../../../hooks/accounts/useUpdatedAccount'
-import useBaseAsset from '../../../hooks/assets/useBasetAsset'
-import useHealthComputer from '../../../hooks/health-computer/useHealthComputer'
-import useStore from '../../../store'
-import { BNCoin } from '../../../types/classes/BNCoin'
-import { byDenom } from '../../../utils/array'
-import AssetAmountSelectActionModal from '../AssetAmountSelectActionModal'
-import DetailsHeader from '../LendAndReclaim/DetailsHeader'
+import AssetAmountSelectActionModal from 'AssetAmountSelectActionModal'
+import { BN_ZERO } from 'constants/math'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
+import useBaseAsset from 'hooks/assets/useBasetAsset'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import DetailsHeader from 'LendAndReclaim/DetailsHeader'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
 
 interface Props {
   account: Account

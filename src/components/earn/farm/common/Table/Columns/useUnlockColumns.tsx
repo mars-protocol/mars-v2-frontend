@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import { VaultWithdraw, WITHDRAW_META } from '../../../vault/Table/Columns/VaultWithdraw'
+import { VaultWithdraw, WITHDRAW_META } from 'vault/Table/Columns/VaultWithdraw'
 import Name, { NAME_META } from './Name'
 import UnlockAmount, { UNLOCK_AMOUNT_META } from './UnlockAmount'
 import UnlockTime, { UNLOCK_TIME_META } from './UnlockTime'

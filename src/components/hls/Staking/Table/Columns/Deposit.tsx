@@ -1,13 +1,13 @@
 import { useCallback } from 'react'
 
-import { LocalStorageKeys } from '../../../../../constants/localStorageKeys'
-import useAlertDialog from '../../../../../hooks/common/useAlertDialog'
-import useLocalStorage from '../../../../../hooks/localStorage/useLocalStorage'
-import useStore from '../../../../../store'
-import ActionButton from '../../../../common/Button/ActionButton'
-import { ArrowRight, Circle, TrashBin, Wallet } from '../../../../common/Icons'
-import Loading from '../../../../common/Loading'
-import { AlertDialogItems } from '../../../../Modals/AlertDialog/AlertDialogItems'
+import ActionButton from 'components/common/Button/ActionButton'
+import { ArrowRight, Circle, TrashBin, Wallet } from 'components/common/Icons'
+import Loading from 'components/common/Loading'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useAlertDialog from 'hooks/common/useAlertDialog'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import { AlertDialogItems } from 'Modals/AlertDialog/AlertDialogItems'
+import useStore from 'store'
 
 export const DEPOSIT_META = { accessorKey: 'deposit', header: 'Deposit' }
 

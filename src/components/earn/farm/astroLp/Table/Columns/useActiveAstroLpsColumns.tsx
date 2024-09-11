@@ -4,10 +4,10 @@ import { useMemo } from 'react'
 import DepositCap, {
   DEPOSIT_CAP_META,
   depositCapSortingFn,
-} from '../../../common/Table/Columns/DepositCap'
-import MaxLTV, { LTV_MAX_META } from '../../../common/Table/Columns/MaxLTV'
-import Name, { NAME_META } from '../../../common/Table/Columns/Name'
-import TVL, { TVL_META } from '../../../common/Table/Columns/TVL'
+} from 'components/common/Table/Columns/DepositCap'
+import MaxLTV, { LTV_MAX_META } from 'components/common/Table/Columns/MaxLTV'
+import Name, { NAME_META } from 'components/common/Table/Columns/Name'
+import TVL, { TVL_META } from 'components/common/Table/Columns/TVL'
 import AstroLpApy, { APY_META } from './AstroLpApy'
 import AstroLpManage, { MANAGE_META } from './AstroLpManage'
 import AstroLpPositionValue, { POSITION_VALUE_META } from './AstroLpPositionValue'

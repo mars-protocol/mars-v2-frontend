@@ -1,9 +1,9 @@
 import BigNumber from 'bignumber.js'
 
-import useTradingFeeAndPrice from '../../../hooks/perps/useTradingFeeAndPrice'
-import { BNCoin } from '../../../types/classes/BNCoin'
-import { CircularProgress } from '../../common/CircularProgress'
-import DisplayCurrency from '../../common/DisplayCurrency'
+import { CircularProgress } from 'components/common/CircularProgress'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
+import { BNCoin } from 'types/classes/BNCoin'
 
 type Props = {
   denom: string

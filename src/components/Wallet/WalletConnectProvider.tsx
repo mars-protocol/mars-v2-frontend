@@ -16,10 +16,10 @@ import {
 } from '@delphi-labs/shuttle-react'
 import { FC } from 'react'
 
-import chains from '../../chains'
-import { LocalStorageKeys } from '../../constants/localStorageKeys'
-import { DAODAO_ORIGINS, WALLETS } from '../../constants/wallets'
-import { WalletID } from '../../types/enums'
+import chains from 'chains'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import { DAODAO_ORIGINS, WALLETS } from 'constants/wallets'
+import { WalletID } from 'types/enums'
 
 type Props = {
   children?: React.ReactNode

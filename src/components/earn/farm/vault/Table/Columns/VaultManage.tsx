@@ -1,12 +1,12 @@
 import moment from 'moment/moment'
 import { useCallback, useMemo, useState } from 'react'
 
-import useAccountId from '../../../../../../hooks/accounts/useAccountId'
-import useSlippage from '../../../../../../hooks/settings/useSlippage'
-import useStore from '../../../../../../store'
-import { VaultStatus } from '../../../../../../types/enums'
-import DropDownButton from '../../../../../common/Button/DropDownButton'
-import { AccountArrowDown, LockLocked, LockUnlocked, Plus } from '../../../../../common/Icons'
+import DropDownButton from 'components/common/Button/DropDownButton'
+import { AccountArrowDown, LockLocked, LockUnlocked, Plus } from 'components/common/Icons'
+import useAccountId from 'hooks/accounts/useAccountId'
+import useSlippage from 'hooks/settings/useSlippage'
+import useStore from 'store'
+import { VaultStatus } from 'types/enums'
 
 export const MANAGE_META = {
   accessorKey: 'details',

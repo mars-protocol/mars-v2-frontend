@@ -1,9 +1,9 @@
 import { NavLink, useParams, useSearchParams } from 'react-router-dom'
 
-import useAccountId from '../../../hooks/accounts/useAccountId'
-import { getRoute } from '../../../utils/route'
-import { ArrowRight } from '../../common/Icons'
-import Text from '../../common/Text'
+import { ArrowRight } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import useAccountId from 'hooks/accounts/useAccountId'
+import { getRoute } from 'utils/route'
 
 interface Props {
   accountId: string

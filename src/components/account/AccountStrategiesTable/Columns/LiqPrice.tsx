@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import useLiquidationPrice from '../../../../hooks/prices/useLiquidationPrice'
-import { BNCoin } from '../../../../types/classes/BNCoin'
-import { LiquidationPriceKind } from '../../../../utils/health_computer'
-import { BN } from '../../../../utils/helpers'
-import DisplayCurrency from '../../../common/DisplayCurrency'
-import { InfoCircle } from '../../../common/Icons'
-import Text from '../../../common/Text'
-import { Tooltip } from '../../../common/Tooltip'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { InfoCircle } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
+import useLiquidationPrice from 'hooks/prices/useLiquidationPrice'
+import { BNCoin } from 'types/classes/BNCoin'
+import { LiquidationPriceKind } from 'utils/health_computer'
+import { BN } from 'utils/helpers'
 
 export const LIQ_META = {
   accessorKey: 'symbol',

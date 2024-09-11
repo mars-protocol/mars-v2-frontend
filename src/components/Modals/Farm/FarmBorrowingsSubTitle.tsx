@@ -1,13 +1,13 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
-import { BN_ZERO } from '../../../constants/math'
-import { ORACLE_DENOM } from '../../../constants/oracle'
-import useWhitelistedAssets from '../../../hooks/assets/useWhitelistedAssets'
-import { BNCoin } from '../../../types/classes/BNCoin'
-import { formatAmountWithSymbol, getCoinValue } from '../../../utils/formatters'
-import DisplayCurrency from '../../common/DisplayCurrency'
-import Text from '../../common/Text'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import Text from 'components/common/Text'
+import { BN_ZERO } from 'constants/math'
+import { ORACLE_DENOM } from 'constants/oracle'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import { BNCoin } from 'types/classes/BNCoin'
+import { formatAmountWithSymbol, getCoinValue } from 'utils/formatters'
 
 interface Props {
   borrowings: BNCoin[]

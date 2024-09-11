@@ -1,14 +1,14 @@
 import { useMemo } from 'react'
 
-import { BN_ZERO } from '../../../constants/math'
-import useWhitelistedAssets from '../../../hooks/assets/useWhitelistedAssets'
-import useAvailableAstroLps from '../../../hooks/astroLp/useAvailableAstroLps'
-import usePerpsVault from '../../../hooks/perps/usePerpsVault'
-import { transformPerpsVaultIntoDeposited } from '../../../hooks/vaults/useDepositedVaults'
-import useVaultAprs from '../../../hooks/vaults/useVaultAprs'
-import { BNCoin } from '../../../types/classes/BNCoin'
-import { byDenom } from '../../../utils/array'
-import { getDepositedAstroLpFromStakedLpBNCoin } from '../../../utils/astroLps'
+import { BN_ZERO } from 'constants/math'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useAvailableAstroLps from 'hooks/astroLp/useAvailableAstroLps'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
+import { transformPerpsVaultIntoDeposited } from 'hooks/vaults/useDepositedVaults'
+import useVaultAprs from 'hooks/vaults/useVaultAprs'
+import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
+import { getDepositedAstroLpFromStakedLpBNCoin } from 'utils/astroLps'
 import {
   getAstroLpAccountStrategiesRow,
   getPerpsVaultAccountStrategiesRow,

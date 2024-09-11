@@ -1,7 +1,7 @@
-import { DocURL } from '../../../types/enums'
-import Button from '../../common/Button'
-import { PlusSquared } from '../../common/Icons'
-import Intro from '../../common/Intro'
+import Button from 'components/common/Button'
+import { PlusSquared } from 'components/common/Icons'
+import Intro from 'components/common/Intro'
+import { DocURL } from 'types/enums'
 
 export default function HlsStakingIntro() {
   return (

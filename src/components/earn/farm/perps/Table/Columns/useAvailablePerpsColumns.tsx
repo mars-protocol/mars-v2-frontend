@@ -3,10 +3,10 @@ import { useMemo } from 'react'
 
 import CollateralizationRatio, {
   COLL_META,
-} from '../../../common/Table/Columns/CollateralizationRatio'
-import { Deposit, DEPOSIT_META } from '../../../common/Table/Columns/Deposit'
-import { NAME_META } from '../../../common/Table/Columns/Name'
-import TVL, { TVL_META } from '../../../common/Table/Columns/TVL'
+} from 'components/common/Table/Columns/CollateralizationRatio'
+import { Deposit, DEPOSIT_META } from 'components/common/Table/Columns/Deposit'
+import { NAME_META } from 'components/common/Table/Columns/Name'
+import TVL, { TVL_META } from 'components/common/Table/Columns/TVL'
 import { PerpsName } from './PerpsName'
 
 interface Props {

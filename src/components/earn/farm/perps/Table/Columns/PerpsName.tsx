@@ -1,6 +1,6 @@
-import useAsset from '../../../../../../hooks/assets/useAsset'
-import AssetImage from '../../../../../common/assets/AssetImage'
-import TitleAndSubCell from '../../../../../common/TitleAndSubCell'
+import AssetImage from 'components/common/assets/AssetImage'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import useAsset from 'hooks/assets/useAsset'
 
 interface Props {
   vault: PerpsVault

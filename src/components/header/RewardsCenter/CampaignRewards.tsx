@@ -1,13 +1,13 @@
-import useCurrentAccount from '../../../hooks/accounts/useCurrentAccount'
-import useWhitelistedAssets from '../../../hooks/assets/useWhitelistedAssets'
-import useAssetCampaigns from '../../../hooks/campaign/useAssetCampaigns'
-import useChainConfig from '../../../hooks/chain/useChainConfig'
-import useStore from '../../../store'
-import { getDailyAccountPoints } from '../../../utils/campaign'
-import { FormattedNumber } from '../../common/FormattedNumber'
-import { InfoCircle } from '../../common/Icons'
-import Text from '../../common/Text'
-import { Tooltip } from '../../common/Tooltip'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { InfoCircle } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useAssetCampaigns from 'hooks/campaign/useAssetCampaigns'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useStore from 'store'
+import { getDailyAccountPoints } from 'utils/campaign'
 
 interface Props {
   campaignPoints: AssetCampaignPoints[]

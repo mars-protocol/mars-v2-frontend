@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 
-import { BN } from '../../utils/helpers'
+import { BN } from 'utils/helpers'
 import { FormattedNumber } from './FormattedNumber'
 import Text from './Text'
 

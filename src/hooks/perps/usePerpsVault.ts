@@ -1,9 +1,9 @@
 import moment from 'moment'
 import useSWR from 'swr'
 
-import { BN } from '../../utils/helpers'
-import useChainConfig from '../chain/useChainConfig'
-import useClients from '../chain/useClients'
+import useChainConfig from 'chain/useChainConfig'
+import useClients from 'chain/useClients'
+import { BN } from 'utils/helpers'
 
 export default function usePerpsVault() {
   const chainConfig = useChainConfig()

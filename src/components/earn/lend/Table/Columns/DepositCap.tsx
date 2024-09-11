@@ -1,13 +1,13 @@
 import { Row } from '@tanstack/react-table'
 import classNames from 'classnames'
-import DisplayCurrency from '../../../../common/DisplayCurrency'
+import DisplayCurrency from 'components/common/DisplayCurrency'
 
-import { BN_ZERO } from '../../../../../constants/math'
-import { BNCoin } from '../../../../../types/classes/BNCoin'
-import { demagnify } from '../../../../../utils/formatters'
-import { FormattedNumber } from '../../../../common/FormattedNumber'
-import Loading from '../../../../common/Loading'
-import TitleAndSubCell from '../../../../common/TitleAndSubCell'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import Loading from 'components/common/Loading'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import { BN_ZERO } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
+import { demagnify } from 'utils/formatters'
 
 export const DEPOSIT_CAP_META = {
   accessorKey: 'marketDepositCap',

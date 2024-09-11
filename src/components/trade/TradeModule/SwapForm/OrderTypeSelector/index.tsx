@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 
-import ConditionalWrapper from '../../../../../hocs/ConditionalWrapper'
-import { InfoCircle } from '../../../../common/Icons'
-import Text from '../../../../common/Text'
-import { Tooltip } from '../../../../common/Tooltip'
+import { InfoCircle } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
+import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import { ORDER_TYPE_TABS } from './constants'
 
 interface Props {

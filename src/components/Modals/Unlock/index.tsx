@@ -1,6 +1,6 @@
-import useStore from '../../../store'
-import { LockUnlocked } from '../../common/Icons'
-import Modal from '../Modal'
+import { LockUnlocked } from 'components/common/Icons'
+import Modal from 'Modal'
+import useStore from 'store'
 import UnlockModalContent from './UnlockModalContent'
 
 export default function UnlockModal() {

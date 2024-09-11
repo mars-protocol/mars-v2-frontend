@@ -1,6 +1,6 @@
-import Button from '../../../common/Button'
-import { ArrowRight } from '../../../common/Icons'
-import TokenInputWithSlider from '../../../common/TokenInput/TokenInputWithSlider'
+import Button from 'components/common/Button'
+import { ArrowRight } from 'components/common/Icons'
+import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 
 interface Props {
   amount: BigNumber

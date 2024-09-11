@@ -1,5 +1,5 @@
-import { ArrayOfUserDebtResponse } from '../../types/generated/mars-red-bank/MarsRedBank.types'
-import { getRedBankQueryClient } from '../cosmwasm-client'
+import { getRedBankQueryClient } from 'cosmwasm-client'
+import { ArrayOfUserDebtResponse } from 'types/generated/mars-red-bank/MarsRedBank.types'
 
 export default async function getV1Debts(
   chainConfig: ChainConfig,

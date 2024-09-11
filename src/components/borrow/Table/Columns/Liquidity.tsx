@@ -1,9 +1,9 @@
 import { Row } from '@tanstack/react-table'
 
-import { BN_ZERO } from '../../../../constants/math'
-import useAsset from '../../../../hooks/assets/useAsset'
-import { demagnify } from '../../../../utils/formatters'
-import AmountAndValue from '../../../common/AmountAndValue'
+import AmountAndValue from 'components/common/AmountAndValue'
+import { BN_ZERO } from 'constants/math'
+import useAsset from 'hooks/assets/useAsset'
+import { demagnify } from 'utils/formatters'
 
 export const LIQUIDITY_META = {
   accessorKey: 'liquidity',

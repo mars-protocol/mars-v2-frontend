@@ -1,8 +1,8 @@
-import useAccount from '../../../hooks/accounts/useAccount'
-import useAccountId from '../../../hooks/accounts/useAccountId'
-import useStore from '../../../store'
-import Text from '../../common/Text'
-import ModalContentWithSummary from '../ModalContentWithSummary'
+import Text from 'components/common/Text'
+import useAccount from 'hooks/accounts/useAccount'
+import useAccountId from 'hooks/accounts/useAccountId'
+import ModalContentWithSummary from 'ModalContentWithSummary'
+import useStore from 'store'
 import FundWithdrawModalContent from './FundAndWithdrawModalContent'
 
 export default function FundAndWithdrawModal() {

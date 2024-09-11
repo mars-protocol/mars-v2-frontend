@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import useAccountId from '../accounts/useAccountId'
+import useAccountId from 'accounts/useAccountId'
 import useDepositedVaults from './useDepositedVaults'
 import useVaults from './useVaults'
 

@@ -1,6 +1,6 @@
-import DoubleLogo from '../../common/DoubleLogo'
-import Text from '../../common/Text'
-import HlsTag from '../../hls/HlsTag'
+import DoubleLogo from 'components/common/DoubleLogo'
+import Text from 'components/common/Text'
+import HlsTag from 'hls/HlsTag'
 
 interface Props {
   primaryAsset: Asset

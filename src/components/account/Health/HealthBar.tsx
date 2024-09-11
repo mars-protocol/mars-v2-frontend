@@ -1,12 +1,12 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
-import { getDefaultChainSettings } from '../../../constants/defaultSettings'
-import { LocalStorageKeys } from '../../../constants/localStorageKeys'
-import useChainConfig from '../../../hooks/chain/useChainConfig'
-import useHealthColor from '../../../hooks/health-computer/useHealthColor'
-import useLocalStorage from '../../../hooks/localStorage/useLocalStorage'
-import { getHealthIndicatorColors } from '../../../utils/healthIndicator'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useHealthColor from 'hooks/health-computer/useHealthColor'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import { getHealthIndicatorColors } from 'utils/healthIndicator'
 import HealthIcon from './HealthIcon'
 import HealthTooltip from './HealthTooltip'
 

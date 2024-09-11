@@ -1,7 +1,7 @@
-import useStore from '../../../store'
-import ActionButton from '../../common/Button/ActionButton'
-import { ArrowUpLine } from '../../common/Icons'
-import Intro from '../../common/Intro'
+import ActionButton from 'components/common/Button/ActionButton'
+import { ArrowUpLine } from 'components/common/Icons'
+import Intro from 'components/common/Intro'
+import useStore from 'store'
 
 export default function LendIntro() {
   return (

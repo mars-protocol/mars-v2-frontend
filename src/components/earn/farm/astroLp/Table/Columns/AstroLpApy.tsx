@@ -1,11 +1,11 @@
-import ConditionalWrapper from '../../../../../../hocs/ConditionalWrapper'
-import { byDenom } from '../../../../../../utils/array'
-import { getSymbolFromUnknownAssetDenom } from '../../../../../../utils/assets'
-import AssetImage, { LogoUknown } from '../../../../../common/assets/AssetImage'
-import { FormattedNumber } from '../../../../../common/FormattedNumber'
-import Loading from '../../../../../common/Loading'
-import Text from '../../../../../common/Text'
-import { Tooltip } from '../../../../../common/Tooltip'
+import AssetImage, { LogoUknown } from 'components/common/assets/AssetImage'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import Loading from 'components/common/Loading'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
+import ConditionalWrapper from 'hocs/ConditionalWrapper'
+import { byDenom } from 'utils/array'
+import { getSymbolFromUnknownAssetDenom } from 'utils/assets'
 
 export const APY_META = { accessorKey: 'apy', header: 'APY' }
 

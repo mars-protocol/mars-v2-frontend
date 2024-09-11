@@ -1,8 +1,8 @@
+import { BN_ZERO } from 'constants/math'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useMarkets from 'hooks/markets/useMarkets'
+import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
 import { useMemo } from 'react'
-import { BN_ZERO } from '../../../constants/math'
-import useCurrentAccount from '../../../hooks/accounts/useCurrentAccount'
-import useMarkets from '../../../hooks/markets/useMarkets'
-import useDisplayCurrencyPrice from '../../../hooks/prices/useDisplayCurrencyPrice'
 
 export default function useBorrowMarketAssetsTableData() {
   const account = useCurrentAccount()

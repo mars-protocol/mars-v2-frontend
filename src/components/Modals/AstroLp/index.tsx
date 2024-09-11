@@ -1,13 +1,13 @@
 import { useCallback } from 'react'
 
-import useCurrentAccount from '../../../hooks/accounts/useCurrentAccount'
-import { useUpdatedAccount } from '../../../hooks/accounts/useUpdatedAccount'
-import useStore from '../../../store'
-import DoubleLogo from '../../common/DoubleLogo'
-import Text from '../../common/Text'
-import FarmModalContent from '../Farm/FarmModalContent'
-import FarmModalContentHeader from '../Farm/FarmModalContentHeader'
-import Modal from '../Modal'
+import DoubleLogo from 'components/common/DoubleLogo'
+import Text from 'components/common/Text'
+import FarmModalContent from 'Farm/FarmModalContent'
+import FarmModalContentHeader from 'Farm/FarmModalContentHeader'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
+import Modal from 'Modal'
+import useStore from 'store'
 import AstroLpWithdraw from './AstroLpWithdraw'
 
 export default function AstroLpModalController() {

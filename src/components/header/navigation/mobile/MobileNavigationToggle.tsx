@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 
-import useStore from '../../../../store'
-import Button from '../../../common/Button'
+import Button from 'components/common/Button'
+import useStore from 'store'
 
 interface Props {
   className?: string

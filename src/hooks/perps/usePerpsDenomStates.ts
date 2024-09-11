@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 
-import useChainConfig from '../chain/useChainConfig'
-import useClients from '../chain/useClients'
+import useChainConfig from 'chain/useChainConfig'
+import useClients from 'chain/useClients'
 import { useAllPerpsParams } from './usePerpsParams'
 
 export default function useAllPerpsDenomStates() {

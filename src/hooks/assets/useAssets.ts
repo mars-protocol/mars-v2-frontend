@@ -1,7 +1,7 @@
+import getPrices from 'api/prices/getPrices'
+import useChainConfig from 'chain/useChainConfig'
 import useSWR from 'swr'
-import getPrices from '../../api/prices/getPrices'
-import { BNCoin } from '../../types/classes/BNCoin'
-import useChainConfig from '../chain/useChainConfig'
+import { BNCoin } from 'types/classes/BNCoin'
 import useAssetsNoOraclePrices from './useAssetsNoOraclePrices'
 
 export default function useAssets() {

@@ -1,10 +1,10 @@
 import React from 'react'
 
-import HealthBar from '../../account/Health/HealthBar'
-import Card from '../../common/Card'
-import Text from '../../common/Text'
-import TitleAndSubCell from '../../common/TitleAndSubCell'
-import HlsTag from '../../hls/HlsTag'
+import HealthBar from 'account/Health/HealthBar'
+import Card from 'components/common/Card'
+import Text from 'components/common/Text'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import HlsTag from 'hls/HlsTag'
 
 interface Props {
   stats: { title: React.ReactNode; sub: string }[]

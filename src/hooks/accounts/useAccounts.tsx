@@ -1,9 +1,9 @@
 import useSWR from 'swr'
 
-import getAccounts from '../../api/wallets/getAccounts'
-import { AccountKind } from '../../types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
-import useAssets from '../assets/useAssets'
-import useChainConfig from '../chain/useChainConfig'
+import getAccounts from 'api/wallets/getAccounts'
+import useAssets from 'assets/useAssets'
+import useChainConfig from 'chain/useChainConfig'
+import { AccountKind } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 
 export default function useAccounts(kind: AccountKind, address?: string, suspense = true) {
   const chainConfig = useChainConfig()

@@ -1,6 +1,6 @@
-import useHlsStakingAccounts from '../../../hooks/hls/useHlsStakingAccounts'
-import useStore from '../../../store'
-import Table from '../../common/Table'
+import Table from 'components/common/Table'
+import useHlsStakingAccounts from 'hooks/hls/useHlsStakingAccounts'
+import useStore from 'store'
 import { NAME_META } from './Table/Columns/Name'
 import useDepositedColumns from './Table/Columns/useDepositedColumns'
 

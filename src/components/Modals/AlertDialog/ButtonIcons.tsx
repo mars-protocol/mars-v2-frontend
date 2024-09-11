@@ -1,4 +1,4 @@
-import { Enter } from '../../common/Icons'
+import { Enter } from 'components/common/Icons'
 
 export function NoIcon() {
   return (

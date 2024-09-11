@@ -1,17 +1,17 @@
 import BigNumber from 'bignumber.js'
 import { useCallback, useMemo } from 'react'
 
-import { BN_ZERO } from '../../../../constants/math'
-import { useUpdatedAccount } from '../../../../hooks/accounts/useUpdatedAccount'
-import useCurrentWalletBalance from '../../../../hooks/wallet/useCurrentWalletBalance'
-import useStore from '../../../../store'
-import { BNCoin } from '../../../../types/classes/BNCoin'
-import { byDenom } from '../../../../utils/array'
-import { BN } from '../../../../utils/helpers'
-import { getNoBalanceInWalletMessage } from '../../../../utils/messages'
-import Button from '../../../common/Button'
-import SummaryItems from '../../../common/SummaryItems'
-import TokenInputWithSlider from '../../../common/TokenInput/TokenInputWithSlider'
+import Button from 'components/common/Button'
+import SummaryItems from 'components/common/SummaryItems'
+import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
+import { BN_ZERO } from 'constants/math'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
+import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
+import { BN } from 'utils/helpers'
+import { getNoBalanceInWalletMessage } from 'utils/messages'
 
 interface Props {
   account: Account

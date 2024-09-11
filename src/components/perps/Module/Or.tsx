@@ -1,5 +1,5 @@
-import Divider from '../../common/Divider'
-import Text from '../../common/Text'
+import Divider from 'components/common/Divider'
+import Text from 'components/common/Text'
 
 export function Or() {
   return (

@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 
-import { convertAprToApy } from '../../utils/parsers'
-import useChainConfig from '../chain/useChainConfig'
+import useChainConfig from 'chain/useChainConfig'
+import { convertAprToApy } from 'utils/parsers'
 
 export default function useVaultAprs() {
   const chainConfig = useChainConfig()

@@ -2,8 +2,8 @@ import {
   calculateAccountLeverage,
   getAccountPositionValues,
   isAccountEmpty,
-} from '../../utils/accounts'
-import getAccounts from '../wallets/getAccounts'
+} from 'utils/accounts'
+import getAccounts from 'wallets/getAccounts'
 import getHlsStakingAssets from './getHlsStakingAssets'
 
 export default async function getHlsStakingAccounts(

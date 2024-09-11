@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 
-import { DocURL } from '../../types/enums'
+import { DocURL } from 'types/enums'
 import { ExternalLink } from './Icons'
 import Text from './Text'
 import { TextLink } from './TextLink'

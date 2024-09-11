@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react'
 
-import usePerpsMarket from '../../../hooks/perps/usePerpsMarket'
-import { BNCoin } from '../../../types/classes/BNCoin'
-import DisplayCurrency from '../../common/DisplayCurrency'
-import Divider from '../../common/Divider'
-import Text from '../../common/Text'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import Divider from 'components/common/Divider'
+import Text from 'components/common/Text'
+import usePerpsMarket from 'hooks/perps/usePerpsMarket'
+import { BNCoin } from 'types/classes/BNCoin'
 import FundingRate from './FundingRate'
 
 export function PerpsInfo() {

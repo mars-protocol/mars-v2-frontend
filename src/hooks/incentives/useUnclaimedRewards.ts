@@ -1,11 +1,11 @@
 import useSWR from 'swr'
 
-import useStore from '../../store'
-import { BNCoin } from '../../types/classes/BNCoin'
-import iterateContractQuery from '../../utils/iterateContractQuery'
-import useAccountId from '../accounts/useAccountId'
-import useChainConfig from '../chain/useChainConfig'
-import useClients from '../chain/useClients'
+import useAccountId from 'accounts/useAccountId'
+import useChainConfig from 'chain/useChainConfig'
+import useClients from 'chain/useClients'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import iterateContractQuery from 'utils/iterateContractQuery'
 
 export default function useUserUnclaimedRewards() {
   const isV1 = useStore((s) => s.isV1)

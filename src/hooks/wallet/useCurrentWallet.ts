@@ -1,7 +1,7 @@
 import { useShuttle } from '@delphi-labs/shuttle-react'
 import { useMemo } from 'react'
 
-import { getCurrentChainId } from '../../utils/getCurrentChainId'
+import { getCurrentChainId } from 'utils/getCurrentChainId'
 
 export default function useCurrentWallet() {
   const { wallets } = useShuttle()

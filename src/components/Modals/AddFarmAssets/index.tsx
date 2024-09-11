@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react'
 
-import useStore from '../../../store'
-import Button from '../../common/Button'
-import { CircularProgress } from '../../common/CircularProgress'
-import Text from '../../common/Text'
-import Modal from '../Modal'
+import Button from 'components/common/Button'
+import { CircularProgress } from 'components/common/CircularProgress'
+import Text from 'components/common/Text'
+import Modal from 'Modal'
+import useStore from 'store'
 import AddFarmAssetsModalContent from './AddFarmAssetsModalContent'
 
 export default function AddFarmBorrowAssetsModal() {

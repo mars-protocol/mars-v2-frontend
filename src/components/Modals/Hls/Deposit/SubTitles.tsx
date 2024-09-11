@@ -1,12 +1,12 @@
 import classNames from 'classnames'
 
-import useDepositEnabledAssets from '../../../../hooks/assets/useDepositEnabledAssets'
-import { BNCoin } from '../../../../types/classes/BNCoin'
-import { formatAmountWithSymbol, formatLeverage } from '../../../../utils/formatters'
-import DisplayCurrency from '../../../common/DisplayCurrency'
-import { ExclamationMarkTriangle } from '../../../common/Icons'
-import Text from '../../../common/Text'
-import WarningMessages from '../../../common/WarningMessages'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { ExclamationMarkTriangle } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import WarningMessages from 'components/common/WarningMessages'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import { BNCoin } from 'types/classes/BNCoin'
+import { formatAmountWithSymbol, formatLeverage } from 'utils/formatters'
 
 interface SubTitleProps {
   text?: string

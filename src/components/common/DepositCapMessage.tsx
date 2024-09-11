@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 import { HTMLAttributes } from 'react'
 
-import useAsset from '../../hooks/assets/useAsset'
-import { BNCoin } from '../../types/classes/BNCoin'
+import useAsset from 'hooks/assets/useAsset'
+import { BNCoin } from 'types/classes/BNCoin'
 import { FormattedNumber } from './FormattedNumber'
 import { InfoCircle } from './Icons'
 import Text from './Text'

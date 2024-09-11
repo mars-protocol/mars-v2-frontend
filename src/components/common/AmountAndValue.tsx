@@ -1,7 +1,7 @@
 import classNames from 'classnames'
-import { MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from '../../constants/math'
-import { BNCoin } from '../../types/classes/BNCoin'
-import { demagnify } from '../../utils/formatters'
+import { MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
+import { demagnify } from 'utils/formatters'
 import DisplayCurrency from './DisplayCurrency'
 import { FormattedNumber } from './FormattedNumber'
 

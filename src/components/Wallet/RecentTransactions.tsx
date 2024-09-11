@@ -1,15 +1,15 @@
 import classNames from 'classnames'
 import moment from 'moment'
 
-import useAssetsNoOraclePrices from '../../hooks/assets/useAssetsNoOraclePrices'
-import useChainConfig from '../../hooks/chain/useChainConfig'
-import useTransactions from '../../hooks/localStorage/useTransactions'
-import useStore from '../../store'
-import Card from '../common/Card'
-import Divider from '../common/Divider'
-import Text from '../common/Text'
-import { TextLink } from '../common/TextLink'
-import { generateToastContent } from '../common/Toaster'
+import Card from 'components/common/Card'
+import Divider from 'components/common/Divider'
+import Text from 'components/common/Text'
+import { TextLink } from 'components/common/TextLink'
+import { generateToastContent } from 'components/common/Toaster'
+import useAssetsNoOraclePrices from 'hooks/assets/useAssetsNoOraclePrices'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useTransactions from 'hooks/localStorage/useTransactions'
+import useStore from 'store'
 
 export default function RecentTransactions() {
   const address = useStore((s) => s.address)

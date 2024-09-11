@@ -1,4 +1,4 @@
-import { ChartingLibraryFeatureset } from '../../../utils/charting_library/charting_library'
+import { ChartingLibraryFeatureset } from 'utils/charting_library/charting_library'
 
 export const disabledFeatures: ChartingLibraryFeatureset[] = [
   'timeframes_toolbar',

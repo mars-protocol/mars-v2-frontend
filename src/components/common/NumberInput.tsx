@@ -2,9 +2,9 @@ import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import React, { useEffect, useState } from 'react'
 
-import { BN_ZERO } from '../../constants/math'
-import { demagnify, formatValue, magnify } from '../../utils/formatters'
-import { BN } from '../../utils/helpers'
+import { BN_ZERO } from 'constants/math'
+import { demagnify, formatValue, magnify } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 interface Props {
   asset: Asset | PseudoAsset

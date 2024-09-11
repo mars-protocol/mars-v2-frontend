@@ -1,4 +1,4 @@
-import { Droplet, Lido, MilkyWay, Stride } from '../components/common/Icons'
+import { Droplet, Lido, MilkyWay, Stride } from 'components/common/Icons'
 
 export const CAMPAIGNS: AssetCampaign[] = [
   {

@@ -1,10 +1,10 @@
 import { Row } from '@tanstack/react-table'
 
-import useMarket from '../../../../../hooks/markets/useMarket'
-import { getLeveragedApy } from '../../../../../utils/math'
-import { FormattedNumber } from '../../../../common/FormattedNumber'
-import Loading from '../../../../common/Loading'
-import TitleAndSubCell from '../../../../common/TitleAndSubCell'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import Loading from 'components/common/Loading'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import useMarket from 'hooks/markets/useMarket'
+import { getLeveragedApy } from 'utils/math'
 
 export const APY_RANGE_META = { header: 'APY range', accessorKey: 'apy' }
 

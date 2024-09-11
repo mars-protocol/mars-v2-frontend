@@ -1,9 +1,9 @@
 import React, { Suspense } from 'react'
 
-import AccountPerpPositionTable from '../../account/AccountPerpPositionTable'
-import Card from '../../common/Card'
-import TableSkeleton from '../../common/Table/TableSkeleton'
-import Text from '../../common/Text'
+import AccountPerpPositionTable from 'account/AccountPerpPositionTable'
+import Card from 'components/common/Card'
+import TableSkeleton from 'components/common/Table/TableSkeleton'
+import Text from 'components/common/Text'
 
 interface Props {
   account: Account

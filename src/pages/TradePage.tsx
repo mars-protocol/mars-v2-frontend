@@ -1,17 +1,17 @@
 import { useEffect, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import AccountDetailsCard from '../components/trade/AccountDetailsCard'
-import TradeChart from '../components/trade/TradeChart'
-import TradeModule from '../components/trade/TradeModule'
-import { getDefaultChainSettings } from '../constants/defaultSettings'
-import { LocalStorageKeys } from '../constants/localStorageKeys'
-import useTradeEnabledAssets from '../hooks/assets/useTradeEnabledAssets'
-import useChainConfig from '../hooks/chain/useChainConfig'
-import useLocalStorage from '../hooks/localStorage/useLocalStorage'
-import useStore from '../store'
-import { byDenom } from '../utils/array'
-import { getPage } from '../utils/route'
+import AccountDetailsCard from 'components/trade/AccountDetailsCard'
+import TradeChart from 'components/trade/TradeChart'
+import TradeModule from 'components/trade/TradeModule'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useStore from 'store'
+import { byDenom } from 'utils/array'
+import { getPage } from 'utils/route'
 
 export default function TradePage() {
   const { pathname } = useLocation()

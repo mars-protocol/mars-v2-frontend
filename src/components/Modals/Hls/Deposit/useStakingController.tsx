@@ -1,10 +1,10 @@
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import useDepositHlsStaking from 'hooks/hls/useDepositHlsStaking'
+import useSlippage from 'hooks/settings/useSlippage'
 import { useCallback, useMemo } from 'react'
-import { useUpdatedAccount } from '../../../../hooks/accounts/useUpdatedAccount'
-import useHealthComputer from '../../../../hooks/health-computer/useHealthComputer'
-import useDepositHlsStaking from '../../../../hooks/hls/useDepositHlsStaking'
-import useSlippage from '../../../../hooks/settings/useSlippage'
-import useStore from '../../../../store'
-import { BNCoin } from '../../../../types/classes/BNCoin'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   borrowMarket: Market

@@ -1,9 +1,9 @@
-import useAsset from '../../../../../../hooks/assets/useAsset'
-import useDepositEnabledAssets from '../../../../../../hooks/assets/useDepositEnabledAssets'
-import { BNCoin } from '../../../../../../types/classes/BNCoin'
-import { BN } from '../../../../../../utils/helpers'
-import { getVaultAccountStrategiesRow } from '../../../../../account/AccountStrategiesTable/functions'
-import DisplayCurrency from '../../../../../common/DisplayCurrency'
+import { getVaultAccountStrategiesRow } from 'account/AccountStrategiesTable/functions'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import useAsset from 'hooks/assets/useAsset'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import { BNCoin } from 'types/classes/BNCoin'
+import { BN } from 'utils/helpers'
 
 export const UNLOCK_VALUE_META = { accessorKey: 'values.net', header: 'Net value' }
 

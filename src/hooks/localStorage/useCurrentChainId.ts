@@ -1,6 +1,6 @@
-import { LocalStorageKeys } from '../../constants/localStorageKeys'
-import { ChainInfoID } from '../../types/enums'
-import useChainConfig from '../chain/useChainConfig'
+import useChainConfig from 'chain/useChainConfig'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import { ChainInfoID } from 'types/enums'
 import useLocalStorage from './useLocalStorage'
 
 export default function useCurrentChainId() {

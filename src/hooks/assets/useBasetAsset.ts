@@ -1,5 +1,5 @@
+import useChainConfig from 'chain/useChainConfig'
 import { useMemo } from 'react'
-import useChainConfig from '../chain/useChainConfig'
 import useAssets from './useAssets'
 
 export default function useBaseAsset() {

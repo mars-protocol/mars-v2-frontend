@@ -1,5 +1,5 @@
-import Text from '../../../common/Text'
-import AssetBalanceRow from '../../../common/assets/AssetBalanceRow'
+import Text from 'components/common/Text'
+import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
 
 interface Props {
   repayCoin: BNCoin | null

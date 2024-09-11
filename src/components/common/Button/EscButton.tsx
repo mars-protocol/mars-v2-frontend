@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react'
 
 import classNames from 'classnames'
-import { Cross } from '../Icons'
+import { Cross } from 'Icons'
 import Button from './index'
 
 interface Props {

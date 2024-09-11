@@ -1,8 +1,8 @@
+import Table from 'components/common/Table'
+import Text from 'components/common/Text'
+import useActiveAstroLps from 'hooks/astroLp/useActiveAstroLps'
+import useAvailableAstroLps from 'hooks/astroLp/useAvailableAstroLps'
 import { useMemo } from 'react'
-import useActiveAstroLps from '../../../../../hooks/astroLp/useActiveAstroLps'
-import useAvailableAstroLps from '../../../../../hooks/astroLp/useAvailableAstroLps'
-import Table from '../../../../common/Table'
-import Text from '../../../../common/Text'
 import useAvailableAstroLpsColumns from './Columns/useAvailableAstroLpsColumns'
 
 export default function AvailableAstroLpsTable() {

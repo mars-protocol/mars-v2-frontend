@@ -1,13 +1,13 @@
 import BigNumber from 'bignumber.js'
 
 import { useMemo } from 'react'
-import { BN_ZERO } from '../../constants/math'
-import { BNCoin } from '../../types/classes/BNCoin'
-import { Action } from '../../types/generated/mars-credit-manager/MarsCreditManager.types'
-import { getSwapExactInAction } from '../../utils/swap'
-import useIsOsmosis from '../chain/useIsOsmosis'
-import useSlippage from '../settings/useSlippage'
-import useRouteInfo from '../trade/useRouteInfo'
+import { BN_ZERO } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
+import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { getSwapExactInAction } from 'utils/swap'
+import useIsOsmosis from 'chain/useIsOsmosis'
+import useSlippage from 'settings/useSlippage'
+import useRouteInfo from 'trade/useRouteInfo'
 
 interface Props {
   account: HlsAccountWithStakingStrategy

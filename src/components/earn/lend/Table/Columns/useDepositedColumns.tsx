@@ -1,7 +1,7 @@
 import { ColumnDef, Row } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import Action from '../../../../v1/Table/deposits/Columns/Action'
+import Action from 'v1/Table/deposits/Columns/Action'
 import Apy, { APY_META } from './Apy'
 import Campaign, { CAMPAIGN_META } from './Campaign'
 import Chevron, { CHEVRON_META } from './Chevron'

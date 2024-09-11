@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 
-import useHlsStakingAssets from '../../../hooks/hls/useHlsStakingAssets'
-import Table from '../../common/Table'
+import Table from 'components/common/Table'
+import useHlsStakingAssets from 'hooks/hls/useHlsStakingAssets'
 import { NAME_META } from './Table/Columns/Name'
 import useAvailableColumns from './Table/Columns/useAvailableColumns'
 

@@ -1,8 +1,8 @@
-import Tab from '../components/earn/Tab'
-import ActiveStakingAccounts from '../components/hls/Staking/ActiveStakingAccounts'
-import AvailableHlsStakingAssets from '../components/hls/Staking/AvailableHlsStakingAssets'
-import HlsStakingIntro from '../components/hls/Staking/HlsStakingIntro'
-import { HLS_TABS } from '../constants/pages'
+import Tab from 'components/earn/Tab'
+import ActiveStakingAccounts from 'components/hls/Staking/ActiveStakingAccounts'
+import AvailableHlsStakingAssets from 'components/hls/Staking/AvailableHlsStakingAssets'
+import HlsStakingIntro from 'components/hls/Staking/HlsStakingIntro'
+import { HLS_TABS } from 'constants/pages'
 
 export default function HlsStakingPage() {
   return (

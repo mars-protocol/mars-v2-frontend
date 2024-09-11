@@ -1,4 +1,4 @@
-import { convertAprToApy } from '../../utils/parsers'
+import { convertAprToApy } from 'utils/parsers'
 
 function processApyData(aprOrApy: number, isApr: boolean, isPercent: boolean): number {
   if (!isApr && isPercent) return aprOrApy

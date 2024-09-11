@@ -1,5 +1,5 @@
-import { ChainInfoID } from '../../../types/enums'
-import { Neutron, Osmo } from '../Icons'
+import { Neutron, Osmo } from 'Icons'
+import { ChainInfoID } from 'types/enums'
 
 interface Props {
   chainID: ChainInfoID

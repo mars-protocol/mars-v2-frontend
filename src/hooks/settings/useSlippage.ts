@@ -1,7 +1,7 @@
-import { getDefaultChainSettings } from '../../constants/defaultSettings'
-import { LocalStorageKeys } from '../../constants/localStorageKeys'
-import useChainConfig from '../chain/useChainConfig'
-import useLocalStorage from '../localStorage/useLocalStorage'
+import useChainConfig from 'chain/useChainConfig'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useLocalStorage from 'localStorage/useLocalStorage'
 
 export default function useSlippage() {
   const chainConfig = useChainConfig()

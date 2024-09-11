@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 
-import { BNCoin } from '../../types/classes/BNCoin'
-import { getSwapExactInAction } from '../../utils/swap'
-import useSlippage from '../settings/useSlippage'
+import useSlippage from 'settings/useSlippage'
+import { BNCoin } from 'types/classes/BNCoin'
+import { getSwapExactInAction } from 'utils/swap'
 
 interface Props {
   borrowCoin: BNCoin

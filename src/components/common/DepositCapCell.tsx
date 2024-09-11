@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 
-import { VAULT_DEPOSIT_BUFFER } from '../../constants/vaults'
-import useAsset from '../../hooks/assets/useAsset'
-import { BNCoin } from '../../types/classes/BNCoin'
+import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
+import useAsset from 'hooks/assets/useAsset'
+import { BNCoin } from 'types/classes/BNCoin'
 import DisplayCurrency from './DisplayCurrency'
 import { FormattedNumber } from './FormattedNumber'
 import TitleAndSubCell from './TitleAndSubCell'

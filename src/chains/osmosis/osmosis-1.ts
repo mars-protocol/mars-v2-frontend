@@ -1,8 +1,8 @@
 import { Bech32Address } from '@keplr-wallet/cosmos'
 
-import { VAULTS_META_DATA } from '../../constants/vaults'
-import { ChainInfoID, NETWORK } from '../../types/enums'
-import { getUrl } from '../../utils/url'
+import { VAULTS_META_DATA } from 'constants/vaults'
+import { ChainInfoID, NETWORK } from 'types/enums'
+import { getUrl } from 'utils/url'
 
 const LP_ASSETS = [
   {

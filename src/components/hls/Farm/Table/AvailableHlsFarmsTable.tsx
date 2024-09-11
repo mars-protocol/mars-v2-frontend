@@ -1,6 +1,6 @@
-import useHlsFarms from '../../../../hooks/hls/useHlsFarms'
-import Table from '../../../common/Table'
-import Text from '../../../common/Text'
+import Table from 'components/common/Table'
+import Text from 'components/common/Text'
+import useHlsFarms from 'hooks/hls/useHlsFarms'
 import useAvailableHlsFarmsColumns from './Columns/useAvailableHlsFarmsColumns'
 
 export default function AvailableHlsFarmsTable() {

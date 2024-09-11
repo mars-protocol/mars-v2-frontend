@@ -1,13 +1,13 @@
 import { useCallback, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-import { getDefaultChainSettings } from '../../constants/defaultSettings'
-import { LocalStorageKeys } from '../../constants/localStorageKeys'
-import { SearchParams } from '../../types/enums'
-import { getSearchParamsObject } from '../../utils/route'
-import usePerpsEnabledAssets from '../assets/usePerpsEnabledAssets'
-import useChainConfig from '../chain/useChainConfig'
-import useLocalStorage from '../localStorage/useLocalStorage'
+import usePerpsEnabledAssets from 'assets/usePerpsEnabledAssets'
+import useChainConfig from 'chain/useChainConfig'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useLocalStorage from 'localStorage/useLocalStorage'
+import { SearchParams } from 'types/enums'
+import { getSearchParamsObject } from 'utils/route'
 
 export default function usePerpsAsset() {
   const chainConfig = useChainConfig()

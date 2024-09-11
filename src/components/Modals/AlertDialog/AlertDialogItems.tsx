@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 
-import Text from '../../common/Text'
+import Text from 'components/common/Text'
 
 interface Props {
   items: AlertDialogItem[]

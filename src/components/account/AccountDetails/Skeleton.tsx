@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 
-import Loading from '../../common/Loading'
-import Text from '../../common/Text'
-import { HealthGauge } from '../Health/HealthGauge'
+import Loading from 'components/common/Loading'
+import Text from 'components/common/Text'
+import { HealthGauge } from 'Health/HealthGauge'
 
 interface Props {
   className?: string

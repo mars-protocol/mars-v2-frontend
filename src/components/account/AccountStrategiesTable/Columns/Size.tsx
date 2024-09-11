@@ -1,14 +1,14 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
-import { MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from '../../../../constants/math'
-import useAsset from '../../../../hooks/assets/useAsset'
-import useDepositEnabledAssets from '../../../../hooks/assets/useDepositEnabledAssets'
-import { BNCoin } from '../../../../types/classes/BNCoin'
-import { byDenom } from '../../../../utils/array'
-import { formatAmountToPrecision } from '../../../../utils/formatters'
-import { FormattedNumber } from '../../../common/FormattedNumber'
-import { getSizeChangeColor } from '../functions'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from 'constants/math'
+import { getSizeChangeColor } from 'functions'
+import useAsset from 'hooks/assets/useAsset'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
+import { formatAmountToPrecision } from 'utils/formatters'
 
 export const SIZE_META = { header: 'Size' }
 

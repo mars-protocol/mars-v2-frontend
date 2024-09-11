@@ -1,4 +1,4 @@
-import useTransactions from '../localStorage/useTransactions'
+import useTransactions from 'localStorage/useTransactions'
 
 export default function useTransactionStore(): {
   transactions: ToastStore

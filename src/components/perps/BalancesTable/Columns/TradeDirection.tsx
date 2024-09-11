@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 
-import Text from '../../../common/Text'
+import Text from 'components/common/Text'
 
 export const PERP_TYPE_META = { accessorKey: 'tradeDirection', header: 'Side' }
 

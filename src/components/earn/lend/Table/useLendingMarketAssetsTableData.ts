@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
 
-import { BN_ZERO } from '../../../../constants/math'
-import useLendingMarkets from '../../../../hooks/markets/useLendingMarkets'
-import useDisplayCurrencyPrice from '../../../../hooks/prices/useDisplayCurrencyPrice'
-import useCurrentAccountLends from '../../../../hooks/wallet/useCurrentAccountLends'
-import { byDenom } from '../../../../utils/array'
+import { BN_ZERO } from 'constants/math'
+import useLendingMarkets from 'hooks/markets/useLendingMarkets'
+import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
+import useCurrentAccountLends from 'hooks/wallet/useCurrentAccountLends'
+import { byDenom } from 'utils/array'
 
 function useLendingMarketAssetsTableData(): {
   accountLentAssets: LendingMarketTableData[]

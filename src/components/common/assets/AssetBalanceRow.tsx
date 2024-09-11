@@ -1,9 +1,9 @@
 import classNames from 'classnames'
-import { BNCoin } from '../../../types/classes/BNCoin'
-import { demagnify } from '../../../utils/formatters'
-import DisplayCurrency from '../DisplayCurrency'
-import { FormattedNumber } from '../FormattedNumber'
-import Text from '../Text'
+import DisplayCurrency from 'DisplayCurrency'
+import { FormattedNumber } from 'FormattedNumber'
+import Text from 'Text'
+import { BNCoin } from 'types/classes/BNCoin'
+import { demagnify } from 'utils/formatters'
 import AssetImage from './AssetImage'
 
 interface Props {

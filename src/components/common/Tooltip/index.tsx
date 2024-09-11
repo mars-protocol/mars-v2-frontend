@@ -2,11 +2,11 @@ import Tippy, { TippyProps } from '@tippyjs/react'
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 
-import { getDefaultChainSettings } from '../../../constants/defaultSettings'
-import { LocalStorageKeys } from '../../../constants/localStorageKeys'
-import useChainConfig from '../../../hooks/chain/useChainConfig'
-import useLocalStorage from '../../../hooks/localStorage/useLocalStorage'
-import { Questionmark } from '../Icons'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import { Questionmark } from 'Icons'
 import TooltipContent from './TooltipContent'
 
 interface Props extends TippyProps {

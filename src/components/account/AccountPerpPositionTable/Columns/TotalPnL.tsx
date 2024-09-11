@@ -1,4 +1,4 @@
-import DisplayCurrency from '../../../common/DisplayCurrency'
+import DisplayCurrency from 'components/common/DisplayCurrency'
 
 export const PNL_META = { id: 'pnl', header: 'Total PnL', meta: { className: 'w-20' } }
 

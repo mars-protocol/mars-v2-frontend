@@ -2,12 +2,12 @@ import classNames from 'classnames'
 import React, { useEffect, useRef } from 'react'
 import { animated, useSpring } from 'react-spring'
 
+import { getDefaultChainSettings } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import _ from 'lodash'
-import { getDefaultChainSettings } from '../../constants/defaultSettings'
-import { LocalStorageKeys } from '../../constants/localStorageKeys'
-import useChainConfig from '../../hooks/chain/useChainConfig'
-import useLocalStorage from '../../hooks/localStorage/useLocalStorage'
-import { formatValue } from '../../utils/formatters'
+import { formatValue } from 'utils/formatters'
 
 interface Props {
   amount: number

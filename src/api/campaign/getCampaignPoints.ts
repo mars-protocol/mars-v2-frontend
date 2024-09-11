@@ -1,4 +1,4 @@
-import { BN } from '../../utils/helpers'
+import { BN } from 'utils/helpers'
 
 function fetchPoints(points: BigNumber, pointsDecimals: number): number {
   return BN(points).shiftedBy(-pointsDecimals).toNumber()

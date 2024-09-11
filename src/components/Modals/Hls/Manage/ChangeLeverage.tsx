@@ -1,28 +1,24 @@
-import Button from '../../../common/Button'
-import TokenInputWithSlider from '../../../common/TokenInput/TokenInputWithSlider'
+import Button from 'components/common/Button'
+import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 
+import { BN_ZERO } from 'constants/math'
+import LeverageSummary from 'Deposit/LeverageSummary'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useIsOsmosis from 'hooks/chain/useIsOsmosis'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import useSlippage from 'hooks/settings/useSlippage'
+import useRouteInfo from 'hooks/trade/useRouteInfo'
 import { useCallback, useMemo, useState } from 'react'
-import { BN_ZERO } from '../../../../constants/math'
-import { useUpdatedAccount } from '../../../../hooks/accounts/useUpdatedAccount'
-import useDepositEnabledAssets from '../../../../hooks/assets/useDepositEnabledAssets'
-import useIsOsmosis from '../../../../hooks/chain/useIsOsmosis'
-import useHealthComputer from '../../../../hooks/health-computer/useHealthComputer'
-import useSlippage from '../../../../hooks/settings/useSlippage'
-import useRouteInfo from '../../../../hooks/trade/useRouteInfo'
-import useStore from '../../../../store'
-import { BNCoin } from '../../../../types/classes/BNCoin'
-import { getAccountPositionValues } from '../../../../utils/accounts'
-import { getHlsStakingChangeLevActions } from '../../../../utils/actions'
-import { byDenom } from '../../../../utils/array'
-import { SWAP_FEE_BUFFER } from '../../../../utils/constants'
-import { getCoinAmount, getCoinValue } from '../../../../utils/formatters'
-import { getLeveragedApy } from '../../../../utils/math'
-import {
-  getDepositCapMessage,
-  getHealthFactorMessage,
-  getLiquidityMessage,
-} from '../../../../utils/messages'
-import LeverageSummary from '../Deposit/LeverageSummary'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import { getAccountPositionValues } from 'utils/accounts'
+import { getHlsStakingChangeLevActions } from 'utils/actions'
+import { byDenom } from 'utils/array'
+import { SWAP_FEE_BUFFER } from 'utils/constants'
+import { getCoinAmount, getCoinValue } from 'utils/formatters'
+import { getLeveragedApy } from 'utils/math'
+import { getDepositCapMessage, getHealthFactorMessage, getLiquidityMessage } from 'utils/messages'
 
 interface Props {
   account: HlsAccountWithStakingStrategy

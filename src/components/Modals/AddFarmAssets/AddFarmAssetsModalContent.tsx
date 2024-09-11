@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useState } from 'react'
 
-import useMarkets from '../../../hooks/markets/useMarkets'
-import useStore from '../../../store'
-import SearchBar from '../../common/SearchBar'
-import Text from '../../common/Text'
-import AssetsSelect from '../AssetsSelect'
+import AssetsSelect from 'AssetsSelect'
+import SearchBar from 'components/common/SearchBar'
+import Text from 'components/common/Text'
+import useMarkets from 'hooks/markets/useMarkets'
+import useStore from 'store'
 
 interface Props {
   farm: Vault | AstroLp

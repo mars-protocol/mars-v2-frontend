@@ -1,4 +1,4 @@
-import { convertAstroportAssetsResponse } from '../../utils/assets'
+import { convertAstroportAssetsResponse } from 'utils/assets'
 
 export default async function getDexAssets(chainConfig: ChainConfig) {
   const uri = new URL(chainConfig.endpoints.dexAssets)

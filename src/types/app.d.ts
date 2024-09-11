@@ -1361,7 +1361,7 @@ interface FormatOptions {
 }
 
 interface TradingViewSettings {
-  theme: import('../utils/charting_library/charting_library').ThemeName
+  theme: import('utils/charting_library/charting_library').ThemeName
   backgroundColor: string
   stylesheet: string
   overrides: {

@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import Action from '../../../v1/Table/borrowings/Columns/Action'
+import Action from 'v1/Table/borrowings/Columns/Action'
 import BorrowRate, { BORROW_RATE_META } from './BorrowRate'
 import Chevron, { CHEVRON_META } from './Chevron'
 import DebtValue, { DEBT_VALUE_META, debtSortingFn } from './DebtValue'

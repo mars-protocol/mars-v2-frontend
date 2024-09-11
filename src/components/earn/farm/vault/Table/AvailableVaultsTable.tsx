@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 
-import useAvailableVaults from '../../../../../hooks/vaults/useAvailableVaults'
-import useVaultAprs from '../../../../../hooks/vaults/useVaultAprs'
-import Table from '../../../../common/Table'
-import useAvailableColumns from '../../common/Table/Columns/useAvailableColumns'
+import Table from 'components/common/Table'
+import useAvailableColumns from 'components/common/Table/Columns/useAvailableColumns'
+import useAvailableVaults from 'hooks/vaults/useAvailableVaults'
+import useVaultAprs from 'hooks/vaults/useVaultAprs'
 
 export default function AvailableVaultsTable() {
   const availableVaultsWithoutApr = useAvailableVaults()

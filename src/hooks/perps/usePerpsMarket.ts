@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { BN } from '../../utils/helpers'
+import { BN } from 'utils/helpers'
 import usePerpsAsset from './usePerpsAsset'
 import usePerpsDenomState from './usePerpsDenomState'
 

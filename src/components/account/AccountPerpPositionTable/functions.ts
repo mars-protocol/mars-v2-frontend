@@ -1,4 +1,4 @@
-import { demagnify } from '../../../utils/formatters'
+import { demagnify } from 'utils/formatters'
 
 export function getAssetAccountPerpRow(
   asset: Asset,

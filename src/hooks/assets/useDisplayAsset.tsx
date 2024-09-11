@@ -1,6 +1,6 @@
+import useDisplayCurrency from 'localStorage/useDisplayCurrency'
 import { useMemo } from 'react'
-import { byDenom } from '../../utils/array'
-import useDisplayCurrency from '../localStorage/useDisplayCurrency'
+import { byDenom } from 'utils/array'
 import useDisplayCurrencyAssets from './useDisplayCurrencyAssets'
 
 export default function useDisplayAsset() {

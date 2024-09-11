@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom'
 
-import useStore from '../../store'
-import Intro from '../common/Intro'
+import Intro from 'components/common/Intro'
+import useStore from 'store'
 
 export default function PortfolioIntro() {
   const { address: urlAddress } = useParams()

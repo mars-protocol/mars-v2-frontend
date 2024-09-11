@@ -1,5 +1,5 @@
-import useAccount from '../../../hooks/accounts/useAccount'
-import useStore from '../../../store'
+import useAccount from 'hooks/accounts/useAccount'
+import useStore from 'store'
 import Borrow from './Borrow'
 import Repay from './Repay'
 

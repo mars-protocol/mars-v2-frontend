@@ -1,5 +1,5 @@
-import Borrowings from '../components/borrow/Borrowings'
-import BorrowIntro from '../components/borrow/BorrowIntro'
+import Borrowings from 'components/borrow/Borrowings'
+import BorrowIntro from 'components/borrow/BorrowIntro'
 
 export default function BorrowPage() {
   return (

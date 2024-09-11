@@ -1,5 +1,5 @@
-import usePerpsVault from '../../../../../hooks/perps/usePerpsVault'
-import Table from '../../../../common/Table'
+import Table from 'components/common/Table'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useAvailablePerpsColumns from './Columns/useAvailablePerpsColumns'
 
 export default function AvailablePerpsVaultsTable() {

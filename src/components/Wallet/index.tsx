@@ -1,8 +1,8 @@
 import { useShuttle } from '@delphi-labs/shuttle-react'
 import { useEffect } from 'react'
 
-import useCurrentWallet from '../../hooks/wallet/useCurrentWallet'
-import useStore from '../../store'
+import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
+import useStore from 'store'
 import WalletConnectButton from './WalletConnectButton'
 import WalletConnectedButton from './WalletConnectedButton'
 import WalletConnecting from './WalletConnecting'

@@ -1,5 +1,5 @@
-import useStore from '../../../store'
-import AccountFundContent from '../../account/AccountFund/AccountFundContent'
+import AccountFundContent from 'account/AccountFund/AccountFundContent'
+import useStore from 'store'
 
 interface Props {
   account: Account

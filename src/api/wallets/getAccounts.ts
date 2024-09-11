@@ -1,5 +1,5 @@
-import { AccountKind } from '../../types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
-import getAccount from '../accounts/getAccount'
+import getAccount from 'accounts/getAccount'
+import { AccountKind } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import getWalletAccountIds from './getAccountIds'
 
 export default async function getAccounts(

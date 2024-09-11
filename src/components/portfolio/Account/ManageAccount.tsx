@@ -1,13 +1,13 @@
 import { useCallback, useMemo } from 'react'
 
+import AccountFundFullPage from 'account/AccountFund/AccountFundFullPage'
+import Button from 'components/common/Button'
+import { ArrowDownLine, ArrowUpLine, TrashBin } from 'components/common/Icons'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import useWhitelistedAssets from '../../../hooks/assets/useWhitelistedAssets'
-import useStore from '../../../store'
-import { calculateAccountBalanceValue } from '../../../utils/accounts'
-import { getPage, getRoute } from '../../../utils/route'
-import AccountFundFullPage from '../../account/AccountFund/AccountFundFullPage'
-import Button from '../../common/Button'
-import { ArrowDownLine, ArrowUpLine, TrashBin } from '../../common/Icons'
+import useStore from 'store'
+import { calculateAccountBalanceValue } from 'utils/accounts'
+import { getPage, getRoute } from 'utils/route'
 
 interface Props {
   account: Account

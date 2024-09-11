@@ -1,6 +1,6 @@
-import { PerpsModule } from '../components/perps/Module/PerpsModule'
-import { PerpsChart } from '../components/perps/PerpsChart'
-import { PerpsPositions } from '../components/perps/PerpsPositions'
+import { PerpsModule } from 'components/perps/Module/PerpsModule'
+import { PerpsChart } from 'components/perps/PerpsChart'
+import { PerpsPositions } from 'components/perps/PerpsPositions'
 
 export default function PerpsPage() {
   return (

@@ -1,4 +1,4 @@
-import { FormattedNumber } from '../../../../../common/FormattedNumber'
+import { FormattedNumber } from 'components/common/FormattedNumber'
 
 export const COLL_META = { accessorKey: 'collatRatio', header: 'Collat. Ratio' }
 

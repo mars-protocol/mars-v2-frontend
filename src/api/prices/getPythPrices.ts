@@ -1,7 +1,7 @@
-import { pythEndpoints } from '../../constants/pyth'
-import { BNCoin } from '../../types/classes/BNCoin'
-import { BN } from '../../utils/helpers'
-import { cacheFn, pythPriceCache } from '../cache'
+import { cacheFn, pythPriceCache } from 'cache'
+import { pythEndpoints } from 'constants/pyth'
+import { BNCoin } from 'types/classes/BNCoin'
+import { BN } from 'utils/helpers'
 
 export default async function fetchPythPrices(priceFeedIds: string[], assets: Asset[]) {
   try {

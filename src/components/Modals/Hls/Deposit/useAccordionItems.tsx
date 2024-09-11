@@ -1,16 +1,16 @@
 import { useEffect, useMemo } from 'react'
 
-import { BN_ZERO } from '../../../../constants/math'
-import useDepositEnabledAssets from '../../../../hooks/assets/useDepositEnabledAssets'
-import { BNCoin } from '../../../../types/classes/BNCoin'
-import { getCoinAmount, getCoinValue } from '../../../../utils/formatters'
-import { BN } from '../../../../utils/helpers'
+import { BN_ZERO } from 'constants/math'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import { BNCoin } from 'types/classes/BNCoin'
+import { getCoinAmount, getCoinValue } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 import {
   getDepositCapMessage,
   getHealthFactorMessage,
   getLiquidityMessage,
   getNoBalanceInWalletMessage,
-} from '../../../../utils/messages'
+} from 'utils/messages'
 import CreateAccount from './CreateAccount'
 import Leverage from './Leverage'
 import ProvideCollateral from './ProvideCollateral'

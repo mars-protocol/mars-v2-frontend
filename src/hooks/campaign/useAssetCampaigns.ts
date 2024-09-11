@@ -1,6 +1,6 @@
+import useChainConfig from 'chain/useChainConfig'
+import { CAMPAIGNS } from 'constants/campaigns'
 import { useMemo } from 'react'
-import { CAMPAIGNS } from '../../constants/campaigns'
-import useChainConfig from '../chain/useChainConfig'
 
 export default function useAssetCampaigns(type: AssetCampaignType) {
   const chainConfig = useChainConfig()

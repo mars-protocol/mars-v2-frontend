@@ -1,16 +1,16 @@
 import { useMemo } from 'react'
 
 import classNames from 'classnames'
-import { BN_ZERO } from '../../../constants/math'
-import { PRICE_ORACLE_DECIMALS } from '../../../constants/query'
-import usePoolAssets from '../../../hooks/assets/usePoolAssets'
-import useStore from '../../../store'
-import { BNCoin } from '../../../types/classes/BNCoin'
-import { byDenom } from '../../../utils/array'
-import AssetCampaignCopy from '../../common/assets/AssetCampaignCopy'
-import DisplayCurrency from '../../common/DisplayCurrency'
-import { FormattedNumber } from '../../common/FormattedNumber'
-import TitleAndSubCell from '../../common/TitleAndSubCell'
+import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import { BN_ZERO } from 'constants/math'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import usePoolAssets from 'hooks/assets/usePoolAssets'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
 
 interface Props {
   farm: Vault | DepositedVault | AstroLp | DepositedAstroLp

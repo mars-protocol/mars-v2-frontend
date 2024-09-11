@@ -1,13 +1,13 @@
 import useSWR from 'swr'
 
-import { BNCoin } from '../../types/classes/BNCoin'
+import useAccountId from 'accounts/useAccountId'
+import useChainConfig from 'chain/useChainConfig'
+import useClients from 'chain/useClients'
+import { BNCoin } from 'types/classes/BNCoin'
 import {
   PaginationResponseForStakedLpPositionResponse,
   StakedLpPositionResponse,
-} from '../../types/generated/mars-incentives/MarsIncentives.types'
-import useAccountId from '../accounts/useAccountId'
-import useChainConfig from '../chain/useChainConfig'
-import useClients from '../chain/useClients'
+} from 'types/generated/mars-incentives/MarsIncentives.types'
 
 function isPaginatedResponse(
   rewards: StakedLpPositionResponse | PaginationResponseForStakedLpPositionResponse,

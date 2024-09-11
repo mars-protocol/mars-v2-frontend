@@ -1,5 +1,5 @@
-import AssetImage from '../../../common/assets/AssetImage'
-import TitleAndSubCell from '../../../common/TitleAndSubCell'
+import AssetImage from 'components/common/assets/AssetImage'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
 
 export const NAME_META = {
   accessorKey: 'asset.symbol',

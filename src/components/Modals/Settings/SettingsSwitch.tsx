@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 
-import Switch from '../../common/Switch'
-import Text from '../../common/Text'
+import Switch from 'components/common/Switch'
+import Text from 'components/common/Text'
 
 interface Props {
   onChange: (value: boolean) => void

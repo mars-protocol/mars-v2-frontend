@@ -1,11 +1,11 @@
 import { useCallback, useMemo } from 'react'
 
-import { BN_ZERO } from '../../constants/math'
-import { BN } from '../../utils/helpers'
-import { getTokenPrice } from '../../utils/tokens'
-import useAssets from '../assets/useAssets'
-import useDisplayCurrencyAssets from '../assets/useDisplayCurrencyAssets'
-import useDisplayCurrency from '../localStorage/useDisplayCurrency'
+import useAssets from 'assets/useAssets'
+import useDisplayCurrencyAssets from 'assets/useDisplayCurrencyAssets'
+import { BN_ZERO } from 'constants/math'
+import useDisplayCurrency from 'localStorage/useDisplayCurrency'
+import { BN } from 'utils/helpers'
+import { getTokenPrice } from 'utils/tokens'
 
 function useDisplayCurrencyPrice() {
   const { data: assets } = useAssets()

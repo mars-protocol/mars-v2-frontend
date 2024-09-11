@@ -1,6 +1,6 @@
-import useDepositEnabledAssets from '../../hooks/assets/useDepositEnabledAssets'
-import usePerpsAsset from '../../hooks/perps/usePerpsAsset'
-import TradeChart from '../trade/TradeChart'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import usePerpsAsset from 'hooks/perps/usePerpsAsset'
+import TradeChart from 'trade/TradeChart'
 import { PerpsInfo } from './PerpsInfo'
 
 export function PerpsChart() {

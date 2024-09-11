@@ -1,5 +1,5 @@
-import { BNCoin } from '../../../types/classes/BNCoin'
-import { demagnify, getCoinValue } from '../../../utils/formatters'
+import { BNCoin } from 'types/classes/BNCoin'
+import { demagnify, getCoinValue } from 'utils/formatters'
 
 export function getAssetAccountBalanceRow(
   type: 'deposit' | 'borrow' | 'lend',

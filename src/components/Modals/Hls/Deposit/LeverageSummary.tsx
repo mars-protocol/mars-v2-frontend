@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
-import useMarket from '../../../../hooks/markets/useMarket'
-import SummaryItems from '../../../common/SummaryItems'
+import SummaryItems from 'components/common/SummaryItems'
+import useMarket from 'hooks/markets/useMarket'
 
 interface Props {
   asset: Asset

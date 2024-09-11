@@ -1,7 +1,7 @@
 import { Row } from '@tanstack/react-table'
 
-import { formatPercent } from '../../../../utils/formatters'
-import Text from '../../../common/Text'
+import Text from 'components/common/Text'
+import { formatPercent } from 'utils/formatters'
 
 export const BORROW_RATE_META = {
   id: 'asset.borrowRate',

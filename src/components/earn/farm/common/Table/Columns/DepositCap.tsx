@@ -1,7 +1,7 @@
 import { Row } from '@tanstack/react-table'
 
-import DepositCapCell from '../../../../../common/DepositCapCell'
-import Loading from '../../../../../common/Loading'
+import DepositCapCell from 'components/common/DepositCapCell'
+import Loading from 'components/common/Loading'
 
 export const DEPOSIT_CAP_META = {
   accessorKey: 'cap',

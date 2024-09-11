@@ -1,19 +1,19 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import useAssets from '../../../../../hooks/assets/useAssets'
-import AstroLpApy, { APY_META } from '../../../../earn/farm/astroLp/Table/Columns/AstroLpApy'
+import useAssets from 'hooks/assets/useAssets'
+import AstroLpApy, { APY_META } from 'earn/farm/astroLp/Table/Columns/AstroLpApy'
 import {
   AstroLpDeposit,
   DEPOSIT_META,
-} from '../../../../earn/farm/astroLp/Table/Columns/AstroLpDeposit'
+} from 'earn/farm/astroLp/Table/Columns/AstroLpDeposit'
 import DepositCap, {
   DEPOSIT_CAP_META,
   depositCapSortingFn,
-} from '../../../../earn/farm/common/Table/Columns/DepositCap'
-import MaxLTV, { LTV_MAX_META } from '../../../../earn/farm/common/Table/Columns/MaxLTV'
-import Name, { NAME_META } from '../../../../earn/farm/common/Table/Columns/Name'
-import TVL, { TVL_META } from '../../../../earn/farm/common/Table/Columns/TVL'
+} from 'earn/farm/common/Table/Columns/DepositCap'
+import MaxLTV, { LTV_MAX_META } from 'earn/farm/common/Table/Columns/MaxLTV'
+import Name, { NAME_META } from 'earn/farm/common/Table/Columns/Name'
+import TVL, { TVL_META } from 'earn/farm/common/Table/Columns/TVL'
 
 interface Props {
   isLoading: boolean

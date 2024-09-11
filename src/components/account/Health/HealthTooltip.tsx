@@ -1,9 +1,9 @@
 import { ReactElement, useMemo } from 'react'
 
-import { formatValue } from '../../../utils/formatters'
-import { CircularProgress } from '../../common/CircularProgress'
-import Text from '../../common/Text'
-import { Tooltip } from '../../common/Tooltip'
+import { CircularProgress } from 'components/common/CircularProgress'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
+import { formatValue } from 'utils/formatters'
 
 interface Props {
   health: number

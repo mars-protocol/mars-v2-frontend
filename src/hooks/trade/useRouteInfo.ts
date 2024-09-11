@@ -1,9 +1,9 @@
 import useSWR from 'swr'
 
-import getRouteInfo from '../../api/swap/getRouteInfo'
-import useAssets from '../assets/useAssets'
-import useChainConfig from '../chain/useChainConfig'
-import useDebounce from '../common/useDebounce'
+import getRouteInfo from 'api/swap/getRouteInfo'
+import useAssets from 'assets/useAssets'
+import useChainConfig from 'chain/useChainConfig'
+import useDebounce from 'components/common/useDebounce'
 
 export default function useRouteInfo(denomIn: string, denomOut: string, amount: BigNumber) {
   const chainConfig = useChainConfig()

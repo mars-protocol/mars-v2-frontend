@@ -1,9 +1,9 @@
-import { PRICE_ORACLE_DECIMALS } from '../../../constants/query'
-import usePerpsVault from '../../../hooks/perps/usePerpsVault'
-import { formatPercent } from '../../../utils/formatters'
-import Divider from '../../common/Divider'
-import { FormattedNumber } from '../../common/FormattedNumber'
-import TitleAndSubCell from '../../common/TitleAndSubCell'
+import Divider from 'components/common/Divider'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
+import { formatPercent } from 'utils/formatters'
 
 export function SubHeader() {
   const { data: perpsVault } = usePerpsVault()

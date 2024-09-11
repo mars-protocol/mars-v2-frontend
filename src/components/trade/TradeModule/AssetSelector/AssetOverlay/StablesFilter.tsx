@@ -1,5 +1,5 @@
-import Button from '../../../../common/Button'
-import Divider from '../../../../common/Divider'
+import Button from 'components/common/Button'
+import Divider from 'components/common/Divider'
 
 interface StablesFilterProps {
   onFilter: (stables: Asset[]) => void

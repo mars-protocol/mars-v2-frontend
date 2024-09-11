@@ -1,7 +1,7 @@
 import { Row } from '@tanstack/react-table'
 
-import { BNCoin } from '../../../../../types/classes/BNCoin'
-import DisplayCurrency from '../../../../common/DisplayCurrency'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { BNCoin } from 'types/classes/BNCoin'
 
 export const NET_VAL_META = { header: 'Net Value', accessorKey: 'values.net' }
 interface Props {

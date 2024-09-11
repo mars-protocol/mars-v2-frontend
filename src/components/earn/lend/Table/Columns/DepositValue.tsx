@@ -1,8 +1,8 @@
 import { Row } from '@tanstack/react-table'
 
-import { BN_ZERO } from '../../../../../constants/math'
-import { BN } from '../../../../../utils/helpers'
-import AmountAndValue from '../../../../common/AmountAndValue'
+import AmountAndValue from 'components/common/AmountAndValue'
+import { BN_ZERO } from 'constants/math'
+import { BN } from 'utils/helpers'
 
 export const DEPOSIT_VALUE_META = {
   id: 'accountLentValue',

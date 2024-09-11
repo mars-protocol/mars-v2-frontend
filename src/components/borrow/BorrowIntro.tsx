@@ -1,4 +1,4 @@
-import Intro from '../common/Intro'
+import Intro from 'components/common/Intro'
 
 export default function BorrowIntro() {
   return (

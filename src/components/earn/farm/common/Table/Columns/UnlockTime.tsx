@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 
-import { produceCountdown } from '../../../../../../utils/formatters'
-import Text from '../../../../../common/Text'
+import Text from 'components/common/Text'
+import { produceCountdown } from 'utils/formatters'
 
 export const UNLOCK_TIME_META = { accessorKey: 'unlocksAt', header: 'Unlock time left' }
 

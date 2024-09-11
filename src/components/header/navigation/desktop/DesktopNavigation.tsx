@@ -1,11 +1,11 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
-import useChainConfig from '../../../../hooks/chain/useChainConfig'
-import useToggle from '../../../../hooks/common/useToggle'
-import useStore from '../../../../store'
-import Button from '../../../common/Button'
-import { ChevronDown } from '../../../common/Icons'
+import Button from 'components/common/Button'
+import { ChevronDown } from 'components/common/Icons'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useToggle from 'hooks/common/useToggle'
+import useStore from 'store'
 import { NavLink } from './NavLink'
 import { NavMenu } from './NavMenu'
 

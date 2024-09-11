@@ -1,9 +1,9 @@
 import useSWR from 'swr'
 
-import { BN } from '../../utils/helpers'
-import iterateContractQuery from '../../utils/iterateContractQuery'
-import useChainConfig from '../chain/useChainConfig'
-import useClients from '../chain/useClients'
+import useChainConfig from 'chain/useChainConfig'
+import useClients from 'chain/useClients'
+import { BN } from 'utils/helpers'
+import iterateContractQuery from 'utils/iterateContractQuery'
 
 export default function useMarketsInfo() {
   const chainConfig = useChainConfig()

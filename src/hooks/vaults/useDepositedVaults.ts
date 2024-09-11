@@ -1,15 +1,15 @@
 import useSWR from 'swr'
 
-import getDepositedVaults from '../../api/vaults/getDepositedVaults'
-import { BN_ZERO } from '../../constants/math'
-import { BNCoin } from '../../types/classes/BNCoin'
-import { VaultStatus } from '../../types/enums'
-import { getCoinValue } from '../../utils/formatters'
-import { BN } from '../../utils/helpers'
-import useCurrentAccount from '../accounts/useCurrentAccount'
-import useAssets from '../assets/useAssets'
-import useChainConfig from '../chain/useChainConfig'
-import usePerpsVault from '../perps/usePerpsVault'
+import useCurrentAccount from 'accounts/useCurrentAccount'
+import getDepositedVaults from 'api/vaults/getDepositedVaults'
+import useAssets from 'assets/useAssets'
+import useChainConfig from 'chain/useChainConfig'
+import { BN_ZERO } from 'constants/math'
+import usePerpsVault from 'perps/usePerpsVault'
+import { BNCoin } from 'types/classes/BNCoin'
+import { VaultStatus } from 'types/enums'
+import { getCoinValue } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 export default function useDepositedVaults(accountId: string) {
   const chainConfig = useChainConfig()

@@ -1,13 +1,13 @@
 import { Row } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import useDepositEnabledAssets from '../../../../../hooks/assets/useDepositEnabledAssets'
-import useMarket from '../../../../../hooks/markets/useMarket'
-import { calculateAccountLeverage } from '../../../../../utils/accounts'
-import { getLeveragedApy } from '../../../../../utils/math'
-import { FormattedNumber } from '../../../../common/FormattedNumber'
-import Loading from '../../../../common/Loading'
-import TitleAndSubCell from '../../../../common/TitleAndSubCell'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import Loading from 'components/common/Loading'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useMarket from 'hooks/markets/useMarket'
+import { calculateAccountLeverage } from 'utils/accounts'
+import { getLeveragedApy } from 'utils/math'
 
 export const ACTIVE_APY_META = { header: 'APY', accessorKey: 'strategy.apy' }
 

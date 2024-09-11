@@ -13,11 +13,11 @@ import {
 import classNames from 'classnames'
 import React, { ReactElement } from 'react'
 
-import { LEFT_ALIGNED_ROWS } from '../../../constants/table'
-import ConditionalWrapper from '../../../hocs/ConditionalWrapper'
-import Card from '../Card'
-import { SortAsc, SortDesc, SortNone } from '../Icons'
-import Text from '../Text'
+import Card from 'Card'
+import { LEFT_ALIGNED_ROWS } from 'constants/table'
+import ConditionalWrapper from 'hocs/ConditionalWrapper'
+import { SortAsc, SortDesc, SortNone } from 'Icons'
+import Text from 'Text'
 import Row from './Row'
 
 interface Props<T> {

@@ -1,4 +1,4 @@
-import { cacheFn, stakingAprCache } from '../cache'
+import { cacheFn, stakingAprCache } from 'cache'
 
 export default async function getStakingAprs(url: string) {
   try {

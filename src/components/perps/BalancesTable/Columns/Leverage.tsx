@@ -1,6 +1,6 @@
-import { FormattedNumber } from '../../../common/FormattedNumber'
-import Text from '../../../common/Text'
-import TitleAndSubCell from '../../../common/TitleAndSubCell'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import Text from 'components/common/Text'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
 
 export const LEVERAGE_META = {
   accessorKey: 'leverage',

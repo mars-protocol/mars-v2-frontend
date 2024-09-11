@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-import useStore from '../../store'
+import useStore from 'store'
 
 function useAlertDialog() {
   const config = useStore((s) => s.alertDialog)

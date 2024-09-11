@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react'
 
-import useStore from '../../../../../../store'
-import DropDownButton from '../../../../../common/Button/DropDownButton'
-import { AccountArrowDown, Plus } from '../../../../../common/Icons'
+import DropDownButton from 'components/common/Button/DropDownButton'
+import { AccountArrowDown, Plus } from 'components/common/Icons'
+import useStore from 'store'
 
 export const MANAGE_META = {
   accessorKey: 'details',

@@ -1,20 +1,20 @@
 import { ColumnDef, Row } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import AstroLpApy, { APY_META } from '../../../../earn/farm/astroLp/Table/Columns/AstroLpApy'
+import AstroLpApy, { APY_META } from 'earn/farm/astroLp/Table/Columns/AstroLpApy'
 import AstroLpManage, {
   MANAGE_META,
-} from '../../../../earn/farm/astroLp/Table/Columns/AstroLpManage'
+} from 'earn/farm/astroLp/Table/Columns/AstroLpManage'
 import AstroLpPositionValue, {
   POSITION_VALUE_META,
-} from '../../../../earn/farm/astroLp/Table/Columns/AstroLpPositionValue'
+} from 'earn/farm/astroLp/Table/Columns/AstroLpPositionValue'
 import DepositCap, {
   DEPOSIT_CAP_META,
   depositCapSortingFn,
-} from '../../../../earn/farm/common/Table/Columns/DepositCap'
-import MaxLTV, { LTV_MAX_META } from '../../../../earn/farm/common/Table/Columns/MaxLTV'
-import Name, { NAME_META } from '../../../../earn/farm/common/Table/Columns/Name'
-import TVL, { TVL_META } from '../../../../earn/farm/common/Table/Columns/TVL'
+} from 'earn/farm/common/Table/Columns/DepositCap'
+import MaxLTV, { LTV_MAX_META } from 'earn/farm/common/Table/Columns/MaxLTV'
+import Name, { NAME_META } from 'earn/farm/common/Table/Columns/Name'
+import TVL, { TVL_META } from 'earn/farm/common/Table/Columns/TVL'
 
 export default function useActiveHlsFarmsColumns(assets: Asset[]) {
   return useMemo<ColumnDef<DepositedAstroLp>[]>(() => {

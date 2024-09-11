@@ -1,7 +1,7 @@
+import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
+import Text from 'components/common/Text'
 import React from 'react'
-import { byDenom } from '../../../utils/array'
-import AssetBalanceRow from '../../common/assets/AssetBalanceRow'
-import Text from '../../common/Text'
+import { byDenom } from 'utils/array'
 
 interface Props {
   rewards: BNCoin[]

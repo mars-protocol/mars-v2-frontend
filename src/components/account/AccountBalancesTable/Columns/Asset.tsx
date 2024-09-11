@@ -1,6 +1,6 @@
-import useAssets from '../../../../hooks/assets/useAssets'
-import Text from '../../../common/Text'
-import AssetImage from '../../../common/assets/AssetImage'
+import Text from 'components/common/Text'
+import AssetImage from 'components/common/assets/AssetImage'
+import useAssets from 'hooks/assets/useAssets'
 export const ASSET_META = {
   accessorKey: 'symbol',
   header: 'Asset',

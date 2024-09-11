@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 
-import useStore from '../../store'
+import useStore from 'store'
 import Card from './Card'
 import { GridGlobe, GridHole, GridLandscape, GridPlanet, GridTire, GridWeb } from './Icons'
 import Text from './Text'

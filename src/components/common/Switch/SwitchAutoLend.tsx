@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 import { useCallback } from 'react'
 
-import useEnableAutoLendGlobal from '../../../hooks/localStorage/useEnableAutoLendGlobal'
-import useAutoLend from '../../../hooks/wallet/useAutoLend'
+import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
+import useAutoLend from 'hooks/wallet/useAutoLend'
 import SwitchWithLabel from './SwitchWithLabel'
 
 interface Props {

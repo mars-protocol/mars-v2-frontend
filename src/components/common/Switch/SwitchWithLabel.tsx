@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 
-import Text from '../Text'
-import { Tooltip } from '../Tooltip'
+import Text from 'Text'
+import { Tooltip } from 'Tooltip'
 import Switch from './index'
 
 interface Props {

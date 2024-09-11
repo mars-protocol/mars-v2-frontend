@@ -1,11 +1,11 @@
 import classNames from 'classnames'
 
-import { ORACLE_DENOM } from '../../../../constants/oracle'
-import { BNCoin } from '../../../../types/classes/BNCoin'
-import { BN } from '../../../../utils/helpers'
-import DisplayCurrency from '../../../common/DisplayCurrency'
-import Text from '../../../common/Text'
-import { getSizeChangeColor } from '../functions'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import Text from 'components/common/Text'
+import { ORACLE_DENOM } from 'constants/oracle'
+import { getSizeChangeColor } from 'functions'
+import { BNCoin } from 'types/classes/BNCoin'
+import { BN } from 'utils/helpers'
 
 export const STRATEGY_AND_VALUE_META = {
   header: 'Strategy & Value',

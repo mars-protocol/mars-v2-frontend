@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 
-import useChainConfig from '../../../hooks/chain/useChainConfig'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import SwapForm from './SwapForm'
 
 interface Props {

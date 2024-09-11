@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 
-import { TooltipArrow } from '../Icons'
-import Text from '../Text'
+import { TooltipArrow } from 'Icons'
+import Text from 'Text'
 
 interface Props {
   content: ReactNode | string

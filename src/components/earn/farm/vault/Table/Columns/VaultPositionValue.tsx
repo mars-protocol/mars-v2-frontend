@@ -1,6 +1,6 @@
-import { ORACLE_DENOM } from '../../../../../../constants/oracle'
-import { BNCoin } from '../../../../../../types/classes/BNCoin'
-import DisplayCurrency from '../../../../../common/DisplayCurrency'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { ORACLE_DENOM } from 'constants/oracle'
+import { BNCoin } from 'types/classes/BNCoin'
 
 export const POSITION_VALUE_META = {
   header: 'Pos. Value',

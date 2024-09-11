@@ -1,3 +1,4 @@
+import { pythEndpoints } from 'constants/pyth'
 import {
   HistoryCallback,
   LibrarySymbolInfo,
@@ -9,7 +10,6 @@ import {
   SubscribeBarsCallback,
   SymbolResolveExtension,
 } from 'utils/charting_library'
-import { pythEndpoints } from '../../../constants/pyth'
 import { subscribeOnStream, unsubscribeFromStream } from './streaming'
 
 const lastBarsCache = new Map()

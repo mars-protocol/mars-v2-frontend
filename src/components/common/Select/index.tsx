@@ -1,11 +1,11 @@
 import classNames from 'classnames'
 import { useCallback, useEffect, useState } from 'react'
 
-import useToggle from '../../../hooks/common/useToggle'
-import { CircularProgress } from '../CircularProgress'
-import { ChevronDown } from '../Icons'
-import Overlay from '../Overlay'
-import Text from '../Text'
+import { CircularProgress } from 'CircularProgress'
+import useToggle from 'hooks/common/useToggle'
+import { ChevronDown } from 'Icons'
+import Overlay from 'Overlay'
+import Text from 'Text'
 import Option from './Option'
 
 interface Props {

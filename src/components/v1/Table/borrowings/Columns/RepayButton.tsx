@@ -1,11 +1,11 @@
-import ConditionalWrapper from '../../../../../hocs/ConditionalWrapper'
-import useWalletBalances from '../../../../../hooks/wallet/useWalletBalances'
-import useStore from '../../../../../store'
-import { byDenom } from '../../../../../utils/array'
-import ActionButton from '../../../../common/Button/ActionButton'
-import { HandCoins } from '../../../../common/Icons'
-import Text from '../../../../common/Text'
-import { Tooltip } from '../../../../common/Tooltip'
+import ActionButton from 'components/common/Button/ActionButton'
+import { HandCoins } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
+import ConditionalWrapper from 'hocs/ConditionalWrapper'
+import useWalletBalances from 'hooks/wallet/useWalletBalances'
+import useStore from 'store'
+import { byDenom } from 'utils/array'
 
 interface Props {
   data: BorrowMarketTableData

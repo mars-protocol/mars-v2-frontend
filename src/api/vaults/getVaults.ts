@@ -1,6 +1,6 @@
-import { BN } from '../../utils/helpers'
-import { resolveHlsStrategies } from '../../utils/resolvers'
-import getAssetParams from '../params/getAssetParams'
+import getAssetParams from 'params/getAssetParams'
+import { BN } from 'utils/helpers'
+import { resolveHlsStrategies } from 'utils/resolvers'
 import { getVaultConfigs } from './getVaultConfigs'
 import { getVaultUtilizations } from './getVaultUtilizations'
 

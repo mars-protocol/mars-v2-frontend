@@ -1,9 +1,9 @@
-import { BN_ONE, BN_ZERO } from '../../../constants/math'
-import { transformPerpsVaultIntoDeposited } from '../../../hooks/vaults/useDepositedVaults'
-import { BNCoin } from '../../../types/classes/BNCoin'
-import { VaultStatus } from '../../../types/enums'
-import { byDenom } from '../../../utils/array'
-import { getTokenPrice } from '../../../utils/tokens'
+import { BN_ONE, BN_ZERO } from 'constants/math'
+import { transformPerpsVaultIntoDeposited } from 'hooks/vaults/useDepositedVaults'
+import { BNCoin } from 'types/classes/BNCoin'
+import { VaultStatus } from 'types/enums'
+import { byDenom } from 'utils/array'
+import { getTokenPrice } from 'utils/tokens'
 
 export function getVaultAccountStrategiesRow(
   vault: DepositedVault,

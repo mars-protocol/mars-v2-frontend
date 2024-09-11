@@ -1,6 +1,6 @@
-import { FormattedNumber } from '../../../../../common/FormattedNumber'
-import Loading from '../../../../../common/Loading'
-import Text from '../../../../../common/Text'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import Loading from 'components/common/Loading'
+import Text from 'components/common/Text'
 
 export const APY_META = { accessorKey: 'apy', header: 'APY' }
 

@@ -1,5 +1,5 @@
-import { BN_ZERO } from '../../constants/math'
-import { STANDARD_SWAP_FEE } from '../../utils/constants'
+import { BN_ZERO } from 'constants/math'
+import { STANDARD_SWAP_FEE } from 'utils/constants'
 
 export default async function getOsmosisSwapFee(
   chainConfig: ChainConfig,

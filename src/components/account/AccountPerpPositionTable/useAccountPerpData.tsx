@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
-import usePerpsEnabledAssets from '../../../hooks/assets/usePerpsEnabledAssets'
-import { byDenom } from '../../../utils/array'
+import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
+import { byDenom } from 'utils/array'
 import { getAssetAccountPerpRow } from './functions'
 
 interface Props {

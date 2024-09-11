@@ -9,14 +9,14 @@ import {
   YAxis,
 } from 'recharts'
 
-import { getDefaultChainSettings } from '../../constants/defaultSettings'
-import { LocalStorageKeys } from '../../constants/localStorageKeys'
-import { BN_ZERO } from '../../constants/math'
-import useChainConfig from '../../hooks/chain/useChainConfig'
-import useLocalStorage from '../../hooks/localStorage/useLocalStorage'
-import { formatValue } from '../../utils/formatters'
-import { FormattedNumber } from '../common/FormattedNumber'
-import Text from '../common/Text'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import Text from 'components/common/Text'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import { BN_ZERO } from 'constants/math'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import { formatValue } from 'utils/formatters'
 
 export const RiskChart = ({ data }: RiskChartProps) => {
   const chainConfig = useChainConfig()

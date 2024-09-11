@@ -1,12 +1,12 @@
 import classNames from 'classnames'
 import React, { LegacyRef, useMemo } from 'react'
 
-import { getDefaultChainSettings } from '../../../constants/defaultSettings'
-import { LocalStorageKeys } from '../../../constants/localStorageKeys'
-import useChainConfig from '../../../hooks/chain/useChainConfig'
-import useLocalStorage from '../../../hooks/localStorage/useLocalStorage'
-import { CircularProgress } from '../CircularProgress'
-import { ChevronDown } from '../Icons'
+import { CircularProgress } from 'CircularProgress'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import { ChevronDown } from 'Icons'
 import {
   buttonBorderClasses,
   buttonColorClasses,

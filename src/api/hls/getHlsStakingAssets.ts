@@ -1,8 +1,8 @@
-import { byDenom } from '../../utils/array'
-import { BN } from '../../utils/helpers'
-import { resolveHlsStrategies } from '../../utils/resolvers'
-import { getParamsQueryClient } from '../cosmwasm-client'
-import getAssetParams from '../params/getAssetParams'
+import { byDenom } from 'utils/array'
+import { BN } from 'utils/helpers'
+import { resolveHlsStrategies } from 'utils/resolvers'
+import { getParamsQueryClient } from 'cosmwasm-client'
+import getAssetParams from 'params/getAssetParams'
 
 export default async function getHlsStakingAssets(chainConfig: ChainConfig, assets: Asset[]) {
   const assetParams = await getAssetParams(chainConfig)

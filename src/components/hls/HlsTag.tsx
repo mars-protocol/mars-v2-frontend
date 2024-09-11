@@ -1,4 +1,4 @@
-import Text from '../common/Text'
+import Text from 'components/common/Text'
 
 export default function HlsTag() {
   return (

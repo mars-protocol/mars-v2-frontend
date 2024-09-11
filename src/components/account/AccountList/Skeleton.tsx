@@ -1,12 +1,12 @@
-import { ORACLE_DENOM } from '../../../constants/oracle'
-import { BNCoin } from '../../../types/classes/BNCoin'
-import DisplayCurrency from '../../common/DisplayCurrency'
-import { FormattedNumber } from '../../common/FormattedNumber'
-import { ArrowChartLineUp } from '../../common/Icons'
-import Loading from '../../common/Loading'
-import Text from '../../common/Text'
-import HealthBar from '../Health/HealthBar'
-import HealthIcon from '../Health/HealthIcon'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { ArrowChartLineUp } from 'components/common/Icons'
+import Loading from 'components/common/Loading'
+import Text from 'components/common/Text'
+import { ORACLE_DENOM } from 'constants/oracle'
+import HealthBar from 'Health/HealthBar'
+import HealthIcon from 'Health/HealthIcon'
+import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   health: number

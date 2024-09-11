@@ -2,10 +2,10 @@ import classNames from 'classnames'
 import { ReactNode } from 'react'
 import { NavLink as Link, useSearchParams } from 'react-router-dom'
 
-import useAccountId from '../../../../hooks/accounts/useAccountId'
-import useStore from '../../../../store'
-import { getRoute } from '../../../../utils/route'
-import { ExternalLink } from '../../../common/Icons'
+import { ExternalLink } from 'components/common/Icons'
+import useAccountId from 'hooks/accounts/useAccountId'
+import useStore from 'store'
+import { getRoute } from 'utils/route'
 import { getIsActive } from './DesktopNavigation'
 
 interface Props {

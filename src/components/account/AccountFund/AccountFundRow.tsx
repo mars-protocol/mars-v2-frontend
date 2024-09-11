@@ -1,9 +1,9 @@
-import { BN_ZERO } from '../../../constants/math'
-import useAsset from '../../../hooks/assets/useAsset'
-import { BNCoin } from '../../../types/classes/BNCoin'
-import { byDenom } from '../../../utils/array'
-import AssetCampaignCopy from '../../common/assets/AssetCampaignCopy'
-import TokenInputWithSlider from '../../common/TokenInput/TokenInputWithSlider'
+import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
+import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
+import { BN_ZERO } from 'constants/math'
+import useAsset from 'hooks/assets/useAsset'
+import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
 
 interface Props {
   amount: BigNumber

@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
 import { useLocation } from 'react-router-dom'
 
-import PAGE_METADATA from '../../constants/pageMetadata'
+import PAGE_METADATA from 'constants/pageMetadata'
 
 const helmetContext = {}
 

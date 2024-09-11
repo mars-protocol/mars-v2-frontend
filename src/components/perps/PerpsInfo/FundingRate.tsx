@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react'
 
-import { BN_ZERO } from '../../../constants/math'
-import useToggle from '../../../hooks/common/useToggle'
-import usePerpsMarket from '../../../hooks/perps/usePerpsMarket'
-import { FormattedNumber } from '../../common/FormattedNumber'
-import { ChevronDown } from '../../common/Icons'
-import { Tooltip } from '../../common/Tooltip'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { ChevronDown } from 'components/common/Icons'
+import { Tooltip } from 'components/common/Tooltip'
+import { BN_ZERO } from 'constants/math'
+import useToggle from 'hooks/common/useToggle'
+import usePerpsMarket from 'hooks/perps/usePerpsMarket'
 
 type Interval = '1H' | '1D' | '1W' | '1M' | '1Y'
 

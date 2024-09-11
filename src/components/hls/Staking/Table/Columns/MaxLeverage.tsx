@@ -1,4 +1,4 @@
-import { FormattedNumber } from '../../../../common/FormattedNumber'
+import { FormattedNumber } from 'components/common/FormattedNumber'
 
 export const MAX_LEV_META = {
   accessorKey: 'maxLeverage',

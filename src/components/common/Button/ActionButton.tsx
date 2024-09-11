@@ -1,12 +1,12 @@
 import { useCallback } from 'react'
 
-import useAccountId from '../../../hooks/accounts/useAccountId'
-import useAccountIds from '../../../hooks/accounts/useAccountIds'
-import useStore from '../../../store'
-import AccountCreateFirst from '../../account/AccountCreateFirst'
-import { ACCOUNT_MENU_BUTTON_ID } from '../../account/AccountMenuContent'
-import WalletConnectButton from '../../Wallet/WalletConnectButton'
-import { Account, PlusCircled } from '../Icons'
+import AccountCreateFirst from 'account/AccountCreateFirst'
+import { ACCOUNT_MENU_BUTTON_ID } from 'account/AccountMenuContent'
+import useAccountId from 'hooks/accounts/useAccountId'
+import useAccountIds from 'hooks/accounts/useAccountIds'
+import { Account, PlusCircled } from 'Icons'
+import useStore from 'store'
+import WalletConnectButton from 'Wallet/WalletConnectButton'
 import Button from './index'
 
 interface Props extends ButtonProps {

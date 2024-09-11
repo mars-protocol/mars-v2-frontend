@@ -1,16 +1,16 @@
 import moment from 'moment'
 import { useCallback, useMemo } from 'react'
 
-import useCurrentAccount from '../../../hooks/accounts/useCurrentAccount'
-import { useUpdatedAccount } from '../../../hooks/accounts/useUpdatedAccount'
-import useStore from '../../../store'
-import DoubleLogo from '../../common/DoubleLogo'
-import { InfoCircle } from '../../common/Icons'
-import Text from '../../common/Text'
-import { Tooltip } from '../../common/Tooltip'
-import FarmModalContent from '../Farm/FarmModalContent'
-import FarmModalContentHeader from '../Farm/FarmModalContentHeader'
-import Modal from '../Modal'
+import DoubleLogo from 'components/common/DoubleLogo'
+import { InfoCircle } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
+import FarmModalContent from 'Farm/FarmModalContent'
+import FarmModalContentHeader from 'Farm/FarmModalContentHeader'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
+import Modal from 'Modal'
+import useStore from 'store'
 
 export default function VaultModalController() {
   const currentAccount = useCurrentAccount()

@@ -1,5 +1,5 @@
-import { BN_ZERO } from '../../../constants/math'
-import useLendEnabledAssets from '../../../hooks/assets/useLendEnabledAssets'
+import { BN_ZERO } from 'constants/math'
+import useLendEnabledAssets from 'hooks/assets/useLendEnabledAssets'
 import AvailableLendsTable from './Table/AvailableLendsTable'
 import DepositedLendsTable from './Table/DepositedLendsTable'
 import useLendingMarketAssetsTableData from './Table/useLendingMarketAssetsTableData'

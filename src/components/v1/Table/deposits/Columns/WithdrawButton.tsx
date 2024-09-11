@@ -1,6 +1,6 @@
-import useStore from '../../../../../store'
-import ActionButton from '../../../../common/Button/ActionButton'
-import { ArrowDownLine } from '../../../../common/Icons'
+import ActionButton from 'components/common/Button/ActionButton'
+import { ArrowDownLine } from 'components/common/Icons'
+import useStore from 'store'
 
 interface Props {
   data: LendingMarketTableData

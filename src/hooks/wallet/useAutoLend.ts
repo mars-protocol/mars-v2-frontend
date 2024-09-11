@@ -1,8 +1,8 @@
+import useAccounts from 'accounts/useAccounts'
+import useCurrentAccount from 'accounts/useCurrentAccount'
+import useAutoLendEnabledAccountIds from 'localStorage/useAutoLendEnabledAccountIds'
 import { useCallback } from 'react'
-import useStore from '../../store'
-import useAccounts from '../accounts/useAccounts'
-import useCurrentAccount from '../accounts/useCurrentAccount'
-import useAutoLendEnabledAccountIds from '../localStorage/useAutoLendEnabledAccountIds'
+import useStore from 'store'
 
 export default function useAutoLend(): {
   autoLendEnabledAccountIds: string[]

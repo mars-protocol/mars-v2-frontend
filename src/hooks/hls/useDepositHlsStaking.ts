@@ -1,13 +1,13 @@
+import useDepositEnabledAssets from 'assets/useDepositEnabledAssets'
+import useChainConfig from 'chain/useChainConfig'
+import { BN_ZERO } from 'constants/math'
 import { useMemo, useState } from 'react'
-import { BN_ZERO } from '../../constants/math'
-import { BNCoin } from '../../types/classes/BNCoin'
-import { Action } from '../../types/generated/mars-credit-manager/MarsCreditManager.types'
-import { getCoinValue } from '../../utils/formatters'
-import { getSwapExactInAction } from '../../utils/swap'
-import useDepositEnabledAssets from '../assets/useDepositEnabledAssets'
-import useChainConfig from '../chain/useChainConfig'
-import useSlippage from '../settings/useSlippage'
-import useRouteInfo from '../trade/useRouteInfo'
+import useSlippage from 'settings/useSlippage'
+import useRouteInfo from 'trade/useRouteInfo'
+import { BNCoin } from 'types/classes/BNCoin'
+import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { getCoinValue } from 'utils/formatters'
+import { getSwapExactInAction } from 'utils/swap'
 
 interface Props {
   borrowDenom: string

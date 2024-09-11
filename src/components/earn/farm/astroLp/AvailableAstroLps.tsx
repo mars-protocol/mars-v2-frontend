@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 
-import useCurrentAccount from '../../../../hooks/accounts/useCurrentAccount'
-import useChainConfig from '../../../../hooks/chain/useChainConfig'
-import { CardWithTabs } from '../../../common/Card/CardWithTabs'
-import AvailablePerpsVaultsTable from '../perps/Table/AvailablePerpsVaultTable'
+import { CardWithTabs } from 'components/common/Card/CardWithTabs'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import AvailablePerpsVaultsTable from 'perps/Table/AvailablePerpsVaultTable'
 import AvailableAstroLpsTable from './Table/AvailableAstroLpsTable'
 
 export function AvailableAstroLps() {

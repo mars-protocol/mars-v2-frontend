@@ -1,13 +1,13 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 
-import { MarsCreditManagerQueryClient } from '../types/generated/mars-credit-manager/MarsCreditManager.client'
-import { MarsIncentivesQueryClient } from '../types/generated/mars-incentives/MarsIncentives.client'
-import { MarsMockVaultQueryClient } from '../types/generated/mars-mock-vault/MarsMockVault.client'
-import { MarsOracleOsmosisQueryClient } from '../types/generated/mars-oracle-osmosis/MarsOracleOsmosis.client'
-import { MarsOracleWasmQueryClient } from '../types/generated/mars-oracle-wasm/MarsOracleWasm.client'
-import { MarsParamsQueryClient } from '../types/generated/mars-params/MarsParams.client'
-import { MarsRedBankQueryClient } from '../types/generated/mars-red-bank/MarsRedBank.client'
-import { getUrl } from '../utils/url'
+import { MarsCreditManagerQueryClient } from 'types/generated/mars-credit-manager/MarsCreditManager.client'
+import { MarsIncentivesQueryClient } from 'types/generated/mars-incentives/MarsIncentives.client'
+import { MarsMockVaultQueryClient } from 'types/generated/mars-mock-vault/MarsMockVault.client'
+import { MarsOracleOsmosisQueryClient } from 'types/generated/mars-oracle-osmosis/MarsOracleOsmosis.client'
+import { MarsOracleWasmQueryClient } from 'types/generated/mars-oracle-wasm/MarsOracleWasm.client'
+import { MarsParamsQueryClient } from 'types/generated/mars-params/MarsParams.client'
+import { MarsRedBankQueryClient } from 'types/generated/mars-red-bank/MarsRedBank.client'
+import { getUrl } from 'utils/url'
 
 const _cosmWasmClient: Map<string, CosmWasmClient> = new Map()
 const _creditManagerQueryClient: Map<string, MarsCreditManagerQueryClient> = new Map()
@@ -171,5 +171,6 @@ export {
   getPerpsQueryClient,
   */
   getRedBankQueryClient,
-  getVaultQueryClient,
+  getVaultQueryClient
 }
+

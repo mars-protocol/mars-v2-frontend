@@ -1,6 +1,6 @@
+import useAssets from 'assets/useAssets'
 import { useMemo } from 'react'
-import { getTokenPrice } from '../../utils/tokens'
-import useAssets from '../assets/useAssets'
+import { getTokenPrice } from 'utils/tokens'
 
 export default function usePrice(denom: string) {
   const { data: assets } = useAssets()

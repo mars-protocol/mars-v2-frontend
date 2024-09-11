@@ -1,8 +1,8 @@
-import useAccountId from '../../../hooks/accounts/useAccountId'
-import useStore from '../../../store'
-import Button from '../../common/Button'
-import Text from '../../common/Text'
-import { NoIcon, YesIcon } from '../AlertDialog/ButtonIcons'
+import { NoIcon, YesIcon } from 'AlertDialog/ButtonIcons'
+import Button from 'components/common/Button'
+import Text from 'components/common/Text'
+import useAccountId from 'hooks/accounts/useAccountId'
+import useStore from 'store'
 
 interface Props {
   depositedVault: DepositedVault

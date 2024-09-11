@@ -1,10 +1,10 @@
-import { BN_ZERO } from '../constants/math'
+import { BN_ZERO } from 'constants/math'
 import {
   AssetParamsBaseForAddr as AssetParams,
   AssetParamsBaseForAddr,
   TotalDepositResponse,
-} from '../types/generated/mars-params/MarsParams.types'
-import { Market as RedBankMarket } from '../types/generated/mars-red-bank/MarsRedBank.types'
+} from 'types/generated/mars-params/MarsParams.types'
+import { Market as RedBankMarket } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { BN, getLeverageFromLTV } from './helpers'
 import { convertAprToApy } from './parsers'
 

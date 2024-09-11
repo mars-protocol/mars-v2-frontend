@@ -1,7 +1,7 @@
-import { VaultConfigBaseForAddr } from '../../types/generated/mars-params/MarsParams.types'
-import iterateContractQuery from '../../utils/iterateContractQuery'
-import { cacheFn, vaultConfigsCache } from '../cache'
-import { getParamsQueryClient } from '../cosmwasm-client'
+import { cacheFn, vaultConfigsCache } from 'cache'
+import { getParamsQueryClient } from 'cosmwasm-client'
+import { VaultConfigBaseForAddr } from 'types/generated/mars-params/MarsParams.types'
+import iterateContractQuery from 'utils/iterateContractQuery'
 
 export const getVaultConfigs = async (
   chainConfig: ChainConfig,

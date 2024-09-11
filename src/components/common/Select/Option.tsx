@@ -1,15 +1,15 @@
 import classNames from 'classnames'
 
-import { BN_ZERO } from '../../../constants/math'
-import useAsset from '../../../hooks/assets/useAsset'
-import useMarkets from '../../../hooks/markets/useMarkets'
-import { BNCoin } from '../../../types/classes/BNCoin'
-import { formatValue } from '../../../utils/formatters'
-import DisplayCurrency from '../DisplayCurrency'
-import { ChevronDown, ChevronRight } from '../Icons'
-import Text from '../Text'
-import AssetImage from '../assets/AssetImage'
-import AssetRate from '../assets/AssetRate'
+import DisplayCurrency from 'DisplayCurrency'
+import { ChevronDown, ChevronRight } from 'Icons'
+import Text from 'Text'
+import AssetImage from 'assets/AssetImage'
+import AssetRate from 'assets/AssetRate'
+import { BN_ZERO } from 'constants/math'
+import useAsset from 'hooks/assets/useAsset'
+import useMarkets from 'hooks/markets/useMarkets'
+import { BNCoin } from 'types/classes/BNCoin'
+import { formatValue } from 'utils/formatters'
 
 interface Props extends SelectOption {
   isSelected?: boolean

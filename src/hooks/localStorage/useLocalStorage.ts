@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import useStore from '../../store'
+import useStore from 'store'
 
 export default function useLocalStorage<T>(key: string, defaultValue: T): [T, (value: T) => void] {
   const keyRef = useRef(key)

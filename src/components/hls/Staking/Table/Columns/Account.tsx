@@ -1,6 +1,6 @@
-import useHealthComputer from '../../../../../hooks/health-computer/useHealthComputer'
-import HealthBar from '../../../../account/Health/HealthBar'
-import TitleAndSubCell from '../../../../common/TitleAndSubCell'
+import HealthBar from 'account/Health/HealthBar'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 
 export const ACCOUNT_META = {
   id: 'account',

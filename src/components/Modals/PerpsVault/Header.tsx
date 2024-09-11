@@ -1,6 +1,6 @@
-import usePerpsVault from '../../../hooks/perps/usePerpsVault'
-import AssetImage from '../../common/assets/AssetImage'
-import Text from '../../common/Text'
+import AssetImage from 'components/common/assets/AssetImage'
+import Text from 'components/common/Text'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 
 interface Props {
   asset: Asset

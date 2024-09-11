@@ -1,24 +1,24 @@
 import moment from 'moment'
 
-import { BN_ZERO } from '../../constants/math'
-import { BNCoin } from '../../types/classes/BNCoin'
-import { VaultStatus } from '../../types/enums'
-import {
-  Positions,
-  VaultPosition,
-  VaultPositionAmount,
-} from '../../types/generated/mars-credit-manager/MarsCreditManager.types'
-import { getCoinValue } from '../../utils/formatters'
-import { BN } from '../../utils/helpers'
-import { getUrl } from '../../utils/url'
 import {
   cacheFn,
   estimateWithdrawCache,
   positionsCache,
   previewRedeemCache,
   unlockPositionsCache,
-} from '../cache'
-import { getClient, getCreditManagerQueryClient, getVaultQueryClient } from '../cosmwasm-client'
+} from 'cache'
+import { BN_ZERO } from 'constants/math'
+import { getClient, getCreditManagerQueryClient, getVaultQueryClient } from 'cosmwasm-client'
+import { BNCoin } from 'types/classes/BNCoin'
+import { VaultStatus } from 'types/enums'
+import {
+  Positions,
+  VaultPosition,
+  VaultPositionAmount,
+} from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { getCoinValue } from 'utils/formatters'
+import { BN } from 'utils/helpers'
+import { getUrl } from 'utils/url'
 import getVaults from './getVaults'
 
 async function getUnlocksAtTimestamp(

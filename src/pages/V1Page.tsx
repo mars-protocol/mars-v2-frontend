@@ -1,9 +1,9 @@
-import Summary from '../components/portfolio/Account/Summary'
-import Borrowings from '../components/v1/Borrowings'
-import Deposits from '../components/v1/Deposits'
-import V1Intro from '../components/v1/V1Intro'
-import useAccount from '../hooks/accounts/useAccount'
-import useStore from '../store'
+import Summary from 'components/portfolio/Account/Summary'
+import Borrowings from 'components/v1/Borrowings'
+import Deposits from 'components/v1/Deposits'
+import V1Intro from 'components/v1/V1Intro'
+import useAccount from 'hooks/accounts/useAccount'
+import useStore from 'store'
 
 export default function V1Page() {
   const address = useStore((s) => s.address)

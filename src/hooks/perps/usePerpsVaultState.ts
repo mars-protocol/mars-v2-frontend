@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 
-import useChainConfig from '../chain/useChainConfig'
-import useClients from '../chain/useClients'
+import useChainConfig from 'chain/useChainConfig'
+import useClients from 'chain/useClients'
 
 export default function usePerpsVaultState() {
   const chainConfig = useChainConfig()

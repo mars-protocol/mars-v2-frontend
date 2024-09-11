@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 
-import useToggle from '../../../../hooks/common/useToggle'
-import Divider from '../../../common/Divider'
-import { ChevronDown } from '../../../common/Icons'
-import Text from '../../../common/Text'
+import Divider from 'components/common/Divider'
+import { ChevronDown } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import useToggle from 'hooks/common/useToggle'
 import { getIsActive } from './DesktopNavigation'
 import { NavLink } from './NavLink'
 

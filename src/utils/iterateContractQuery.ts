@@ -1,4 +1,4 @@
-import { ITEM_LIMIT_PER_QUERY } from '../constants/query'
+import { ITEM_LIMIT_PER_QUERY } from 'constants/query'
 
 interface KeyProperties {
   denom?: string

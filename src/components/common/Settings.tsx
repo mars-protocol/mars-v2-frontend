@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 
-import useStore from '../../store'
+import useStore from 'store'
 import Button from './Button'
 import { Gear } from './Icons'
 

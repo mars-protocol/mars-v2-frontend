@@ -1,13 +1,13 @@
 import { useCallback } from 'react'
 
-import { getDefaultChainSettings } from '../../../../constants/defaultSettings'
-import { LocalStorageKeys } from '../../../../constants/localStorageKeys'
-import useChainConfig from '../../../../hooks/chain/useChainConfig'
-import useLocalStorage from '../../../../hooks/localStorage/useLocalStorage'
-import useStore from '../../../../store'
-import Button from '../../../common/Button'
-import { ChevronDown } from '../../../common/Icons'
-import Text from '../../../common/Text'
+import Button from 'components/common/Button'
+import { ChevronDown } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useStore from 'store'
 import AssetOverlay from './AssetOverlay'
 
 interface Props {

@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 
-import { ExclamationMarkCircled, Heart } from '../../common/Icons'
+import { ExclamationMarkCircled, Heart } from 'components/common/Icons'
 
 interface Props {
   isLoading: boolean

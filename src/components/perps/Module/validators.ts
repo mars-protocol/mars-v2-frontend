@@ -1,5 +1,5 @@
-import { PRICE_ORACLE_DECIMALS } from '../../../constants/query'
-import { formatValue } from '../../../utils/formatters'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import { formatValue } from 'utils/formatters'
 
 export function checkPositionValue(
   amount: BigNumber,

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { CardWithTabs } from '../../common/Card/CardWithTabs'
+import { CardWithTabs } from 'components/common/Card/CardWithTabs'
 import AvailableHlsFarmsTable from './Table/AvailableHlsFarmsTable'
 
 export function AvailableHlsFarms() {

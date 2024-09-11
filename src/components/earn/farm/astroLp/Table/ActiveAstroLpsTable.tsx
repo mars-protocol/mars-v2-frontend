@@ -1,6 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table'
 
-import Table from '../../../../common/Table'
+import Table from 'components/common/Table'
 
 type Props = {
   data: DepositedAstroLp[]

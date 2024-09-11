@@ -1,7 +1,7 @@
 import { Row } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import useDisplayCurrencyPrice from '../../hooks/prices/useDisplayCurrencyPrice'
+import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
 import { FormattedNumber } from './FormattedNumber'
 import TitleAndSubCell from './TitleAndSubCell'
 

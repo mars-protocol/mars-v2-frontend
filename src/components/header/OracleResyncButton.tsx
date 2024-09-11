@@ -1,9 +1,9 @@
 import { useCallback } from 'react'
 
-import useStore from '../../store'
-import Button from '../common/Button'
-import { ExclamationMarkCircled } from '../common/Icons'
-import { Tooltip } from '../common/Tooltip'
+import Button from 'components/common/Button'
+import { ExclamationMarkCircled } from 'components/common/Icons'
+import { Tooltip } from 'components/common/Tooltip'
+import useStore from 'store'
 
 export default function OracleResyncButton() {
   const resyncOracle = useStore((s) => s.resyncOracle)

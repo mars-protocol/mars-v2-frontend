@@ -1,6 +1,6 @@
-import chains from '../../chains'
-import { LocalStorageKeys } from '../../constants/localStorageKeys'
-import { getCurrentChainId } from '../../utils/getCurrentChainId'
+import chains from 'chains'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import { getCurrentChainId } from 'utils/getCurrentChainId'
 
 export default function useChainConfig() {
   const chainId = getCurrentChainId()

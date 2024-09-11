@@ -1,26 +1,26 @@
 import BigNumber from 'bignumber.js'
 import { useCallback, useMemo, useState } from 'react'
 
-import { BN_ZERO } from '../../../constants/math'
-import { useUpdatedAccount } from '../../../hooks/accounts/useUpdatedAccount'
-import useAssets from '../../../hooks/assets/useAssets'
-import useTradeEnabledAssets from '../../../hooks/assets/useTradeEnabledAssets'
-import useToggle from '../../../hooks/common/useToggle'
-import useHealthComputer from '../../../hooks/health-computer/useHealthComputer'
-import useStore from '../../../store'
-import { BNCoin } from '../../../types/classes/BNCoin'
+import Button from 'components/common/Button'
+import Divider from 'components/common/Divider'
+import { ArrowRight } from 'components/common/Icons'
+import Switch from 'components/common/Switch'
+import Text from 'components/common/Text'
+import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
+import { BN_ZERO } from 'constants/math'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
+import useAssets from 'hooks/assets/useAssets'
+import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
+import useToggle from 'hooks/common/useToggle'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import {
   cloneAccount,
   getMergedBalancesForAsset,
   removeDepositsAndLends,
-} from '../../../utils/accounts'
-import { byDenom } from '../../../utils/array'
-import Button from '../../common/Button'
-import Divider from '../../common/Divider'
-import { ArrowRight } from '../../common/Icons'
-import Switch from '../../common/Switch'
-import Text from '../../common/Text'
-import TokenInputWithSlider from '../../common/TokenInput/TokenInputWithSlider'
+} from 'utils/accounts'
+import { byDenom } from 'utils/array'
 
 interface Props {
   account: Account

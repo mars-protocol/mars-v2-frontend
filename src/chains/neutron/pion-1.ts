@@ -1,6 +1,6 @@
 import { Bech32Address } from '@keplr-wallet/cosmos'
 
-import { ChainInfoID, NETWORK } from '../../types/enums'
+import { ChainInfoID, NETWORK } from 'types/enums'
 
 const Pion1: ChainConfig = {
   id: ChainInfoID.Pion1,

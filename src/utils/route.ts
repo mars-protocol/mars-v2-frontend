@@ -1,4 +1,4 @@
-import { SearchParams } from '../types/enums'
+import { SearchParams } from 'types/enums'
 
 export function getRoute(
   page: Page,
