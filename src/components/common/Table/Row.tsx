@@ -46,7 +46,7 @@ export default function Row<T>(props: Props<T>) {
           canExpand && row.getIsExpanded()
             ? 'is-expanded border-t gradient-header'
             : 'hover:bg-white/5',
-          'group',
+          'group/assetRow',
         )}
         onClick={(e) => {
           e.preventDefault()
