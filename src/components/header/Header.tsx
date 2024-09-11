@@ -40,7 +40,9 @@ const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
   ...(chainConfig.perps ? [{ pages: ['perps'] as Page[], label: 'Perps' }] : []),
   { pages: chainConfig.farm || chainConfig.perps ? ['lend', 'farm'] : ['lend'], label: 'Earn' },
   { pages: ['borrow'], label: 'Borrow' },
-  ...(chainConfig.hls ? [{ pages: ['hls-staking'] as Page[], label: 'High Leverage' }] : []),
+  ...(chainConfig.hls
+    ? [{ pages: ['hls-staking', 'hls-farm'] as Page[], label: 'High Leverage' }]
+    : []),
   { pages: ['portfolio'], label: 'Portfolio' },
   { pages: ['governance'], label: 'Governance', externalUrl: DocURL.COUNCIL },
 ]
@@ -57,10 +59,10 @@ export default function Header() {
   const address = useStore((s) => s.address)
   const focusComponent = useStore((s) => s.focusComponent)
   const isOracleStale = useStore((s) => s.isOracleStale)
-  const isHLS = useStore((s) => s.isHLS)
+  const isHls = useStore((s) => s.isHls)
   const accountId = useAccountId()
   const isV1 = useStore((s) => s.isV1)
-  const showAccountMenu = address && !isHLS && !isMobile && !isV1
+  const showAccountMenu = address && !isHls && !isMobile && !isV1
 
   function handleCloseFocusMode() {
     if (focusComponent && focusComponent.onClose) focusComponent.onClose()

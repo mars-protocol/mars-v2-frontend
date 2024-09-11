@@ -79,7 +79,7 @@ export const WALLETS: WalletInfos = {
     name: 'DAO DAO',
     install: 'Navigate to DAO DAO',
     installURL:
-      'https://daodao.zone/dao/neutron1suhgf5svhu4usrurvxzlgn54ksxmn8gljarjtxqnapv8kjnp4nrstdxvff/apps?url=https%3A%2F%2Fapp.marsprotocol.io',
+      'https://dao.daodao.zone/dao/neutron1suhgf5svhu4usrurvxzlgn54ksxmn8gljarjtxqnapv8kjnp4nrstdxvff/apps?url=https%3A%2F%2Fapp.marsprotocol.io',
     imageURL: '/images/wallets/daodao.png',
     supportedChains: [ChainInfoID.Neutron1, ChainInfoID.Osmosis1],
   },

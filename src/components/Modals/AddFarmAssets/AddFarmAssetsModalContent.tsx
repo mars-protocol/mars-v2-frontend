@@ -29,7 +29,7 @@ export default function AddFarmAssetsModalContent(props: Props) {
     setSearchString(value)
   }
 
-  const [farmAssets, stableAssets] = useMemo(
+  const [farmAssets, borrowEnabled] = useMemo(
     () =>
       filteredMarkets.reduce(
         (acc, market) => {
@@ -40,7 +40,7 @@ export default function AddFarmAssetsModalContent(props: Props) {
             market.asset.denom === props.farm.denoms.secondary
           ) {
             acc[0].push(market.asset)
-          } else if (market.asset.isStable) {
+          } else if (market.asset.isBorrowEnabled) {
             acc[1].push(market.asset)
           }
           return acc
@@ -55,7 +55,7 @@ export default function AddFarmAssetsModalContent(props: Props) {
     selectedDenoms?.filter((denom) => farmAssets.map((asset) => asset.denom).includes(denom)) || [],
   )
   const [selectedOtherDenoms, setSelectedOtherDenoms] = useState<string[]>(
-    selectedDenoms?.filter((denom) => stableAssets.map((asset) => asset.denom).includes(denom)) ||
+    selectedDenoms?.filter((denom) => borrowEnabled.map((asset) => asset.denom).includes(denom)) ||
       [],
   )
 
@@ -105,7 +105,7 @@ export default function AddFarmAssetsModalContent(props: Props) {
           </Text>
         </div>
         <AssetsSelect
-          assets={stableAssets}
+          assets={borrowEnabled}
           onChangeSelected={onChangeOtherDenoms}
           selectedDenoms={selectedOtherDenoms}
           isBorrow

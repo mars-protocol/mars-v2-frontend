@@ -1,11 +1,11 @@
 import BigNumber from 'bignumber.js'
 import useSWR from 'swr'
 
+import useDebounce from 'hooks/common/useDebounce'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
-import useDebounce from 'hooks/common/useDebounce'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
 import { BN } from 'utils/helpers'
 
