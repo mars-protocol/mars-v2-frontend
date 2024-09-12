@@ -40,7 +40,7 @@ export default function useAccountBalancesColumns(
         <Asset type={row.original.type} symbol={row.original.symbol} />
       ),
     }),
-    [isWhitelisted],
+    [],
   )
 
   const valueCell = useMemo(
@@ -55,7 +55,7 @@ export default function useAccountBalancesColumns(
       ),
       sortingFn: valueBalancesSortingFn,
     }),
-    [isWhitelisted],
+    [],
   )
 
   const sizeCell = useMemo(
@@ -71,7 +71,7 @@ export default function useAccountBalancesColumns(
       ),
       sortingFn: sizeSortingFn,
     }),
-    [isWhitelisted],
+    [],
   )
 
   const priceCell = useMemo(
@@ -86,7 +86,7 @@ export default function useAccountBalancesColumns(
         />
       ),
     }),
-    [isWhitelisted],
+    [],
   )
 
   const liqPriceCell = useMemo(
@@ -124,7 +124,7 @@ export default function useAccountBalancesColumns(
         />
       ),
     }),
-    [markets, isWhitelisted],
+    [markets],
   )
 
   return useMemo<ColumnDef<AccountBalanceRow>[]>(() => {
