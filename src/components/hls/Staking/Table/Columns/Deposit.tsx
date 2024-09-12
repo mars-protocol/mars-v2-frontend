@@ -9,7 +9,12 @@ import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 
-export const DEPOSIT_META = { accessorKey: 'deposit', header: 'Deposit' }
+export const DEPOSIT_META = {
+  accessorKey: 'deposit',
+  header: '',
+  enableSorting: false,
+  meta: { className: 'w-30' },
+}
 
 interface Props {
   isLoading: boolean

@@ -1,5 +1,5 @@
 import DropDownButton from 'components/common/Button/DropDownButton'
-import { ArrowDownLine, Cross, HandCoins, Plus, Scale } from 'components/common/Icons'
+import { ArrowDownLine, Cross, HandCoins, Plus } from 'components/common/Icons'
 import { useCallback, useMemo } from 'react'
 import useStore from 'store'
 
@@ -11,39 +11,36 @@ export const MANAGE_META = {
 }
 
 interface Props {
-  account: HlsAccountWithStakingStrategy
+  hlsFarm: DepositedHlsFarm
 }
 
 export default function Manage(props: Props) {
-  const openModal = useCallback(
-    (action: HlsStakingManageAction) =>
+  const openModal = useCallback((action: HlsStakingManageAction) => {
+    if (action === 'deposit') {
       useStore.setState({
-        hlsManageModal: {
-          accountId: props.account.id,
-          staking: { strategy: props.account.strategy, action },
+        farmModal: {
+          farm: props.hlsFarm.farm,
+          selectedBorrowDenoms: props.hlsFarm.borrowAssets.map((asset) => asset.denom),
+          account: props.hlsFarm.account,
+          maxLeverage: props.hlsFarm.maxLeverage,
+          action: 'deposit',
+          type: 'high_leverage',
         },
-      }),
-    [props.account.id, props.account.strategy],
-  )
+      })
+    }
+  }, [])
 
   const closeHlsStakingPosition = useCallback(() => {
-    useStore.setState({
-      hlsCloseModal: {
-        account: props.account,
-        staking: { strategy: props.account.strategy },
-      },
-    })
-  }, [props.account])
+    useStore.setState({})
+  }, [])
 
-  const hasNoDebt = useMemo(() => props.account.debts.length === 0, [props.account.debts.length])
+  const hasNoDebt = useMemo(
+    () => props.hlsFarm.account.debts.length === 0,
+    [props.hlsFarm.account.debts.length],
+  )
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [
-      {
-        icon: <Scale width={16} />,
-        text: 'Change leverage',
-        onClick: () => openModal('leverage'),
-      },
       {
         icon: <Plus width={16} />,
         text: 'Deposit more',

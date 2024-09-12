@@ -29,7 +29,7 @@ interface Props {
 
 function AstroLpModal(props: Props) {
   const {
-    modal: { farm, action, type, maxLeverage },
+    modal: { farm, action, type, isCreate },
     currentAccount,
   } = props
   const astroLp = farm as AstroLp
@@ -71,6 +71,7 @@ function AstroLpModal(props: Props) {
           removedLends={removedLends}
           simulateAstroLpDeposit={simulateAstroLpDeposit}
           type={type}
+          isDeposited={!isCreate}
         />
       ) : (
         <AstroLpWithdraw

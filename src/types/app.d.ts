@@ -189,6 +189,8 @@ interface HlsFarm {
 interface DepositedHlsFarm extends HlsFarm {
   farm: DepositedAstroLp
   account: Account
+  netValue: BigNumber
+  leverage: number
 }
 
 interface DepositedAstroLpAccounts {

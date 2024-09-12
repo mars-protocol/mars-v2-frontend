@@ -5,7 +5,7 @@ import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 export const ACCOUNT_META = {
   id: 'account',
   header: 'Account',
-  accessorKey: 'id',
+  accessorKey: 'account.id',
   meta: { className: 'w-30' },
 }
 interface Props {

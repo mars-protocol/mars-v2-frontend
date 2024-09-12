@@ -5,20 +5,17 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 export const LEV_META = { accessorKey: 'leverage ', header: 'Leverage' }
 
 interface Props {
-  account: HlsAccountWithStakingStrategy
+  leverage: number
 }
 
-export function leverageSortingFn(
-  a: Row<HlsAccountWithStakingStrategy>,
-  b: Row<HlsAccountWithStakingStrategy>,
-) {
+export function leverageSortingFn(a: Row<DepositedHlsFarm>, b: Row<DepositedHlsFarm>) {
   return a.original.leverage - b.original.leverage
 }
 
 export default function Leverage(props: Props) {
   return (
     <FormattedNumber
-      amount={props.account.leverage}
+      amount={props.leverage}
       options={{ minDecimals: 2, maxDecimals: 2, suffix: 'x' }}
       className='text-xs'
       animate

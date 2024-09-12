@@ -4,7 +4,7 @@ import Loading from 'components/common/Loading'
 export const LTV_MAX_META = {
   accessorKey: 'maxLTV',
   header: 'Max LTV',
-  meta: { className: 'min-w-30' },
+  meta: { className: 'w-24' },
 }
 
 interface Props {

@@ -10,9 +10,9 @@ export default async function getHlsFarms(
   depositCaps: TotalDepositResponse[],
 ) {
   const assetParams = await getAssetParams(chainConfig)
-  const HlsFarms = [] as HlsFarm[]
+  const hlsFarms = [] as HlsFarm[]
 
-  if (chainConfig.isOsmosis) return HlsFarms
+  if (chainConfig.isOsmosis) return hlsFarms
 
   assetParams.forEach((params) => {
     if (params.credit_manager.hls) {
@@ -42,15 +42,15 @@ export default async function getHlsFarms(
           liq: Number(poolAssetHlsParams.liquidation_threshold ?? 0),
         }
 
-        // If the farm already exists in the HlsFarms array, add the borrow asset to the existing farm
-        const existingFarm = HlsFarms.find((Hlsfarm) => Hlsfarm.farm.denoms.lp === farm.denoms.lp)
+        // If the farm already exists in the hlsFarms array, add the borrow asset to the existing farm
+        const existingFarm = hlsFarms.find((hlsFarm) => hlsFarm.farm.denoms.lp === farm.denoms.lp)
         if (existingFarm) {
           if (underlyingAsset.isBorrowEnabled) existingFarm.borrowAssets.push(underlyingAsset)
           return
         }
 
-        // Otherwise add farm to HlsFarms array
-        HlsFarms.push({
+        // Otherwise add farm to hlsFarms array
+        hlsFarms.push({
           farm,
           borrowAssets: underlyingAsset.isBorrowEnabled ? [underlyingAsset] : [],
           maxLeverage: getLeverageFromLTV(Number(poolAssetHlsParams.max_loan_to_value ?? 0)),
@@ -59,5 +59,5 @@ export default async function getHlsFarms(
     }
   })
 
-  return HlsFarms
+  return hlsFarms
 }
