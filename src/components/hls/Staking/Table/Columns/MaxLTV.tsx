@@ -8,7 +8,7 @@ export const LTV_MAX_META = {
 }
 
 interface Props {
-  strategy: HLSStrategy
+  strategy: HlsStrategy
   isLoading: boolean
 }
 export default function MaxLtv(props: Props) {

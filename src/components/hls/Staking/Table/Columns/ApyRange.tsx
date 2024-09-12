@@ -8,13 +8,13 @@ import { getLeveragedApy } from 'utils/math'
 
 export const APY_RANGE_META = { header: 'APY range', accessorKey: 'apy' }
 
-export const apyRangeSortingFn = (a: Row<HLSStrategy>, b: Row<HLSStrategy>): number => {
+export const apyRangeSortingFn = (a: Row<HlsStrategy>, b: Row<HlsStrategy>): number => {
   return (a.original.apy || 0) - (b.original.apy || 0)
 }
 
 interface Props {
   isLoading?: boolean
-  strategy: HLSStrategy
+  strategy: HlsStrategy
 }
 
 export default function ApyRange(props: Props) {

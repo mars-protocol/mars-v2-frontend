@@ -2,11 +2,10 @@ import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useAssets from 'hooks/assets/useAssets'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
-import useAssetParams from 'hooks/params/useAssetParams'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
-import useSlippage from 'hooks/settings/useSlippage'
-import useVaultConfigs from 'hooks/vaults/useVaultConfigs'
+import useAssetParams from 'hooks/params/useAssetParams'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import useSlippage from 'hooks/settings/useSlippage'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPositionValue } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams.types'
@@ -31,6 +30,7 @@ import {
 import { findPositionInAccount } from 'utils/healthComputer'
 import { BN } from 'utils/helpers'
 import { getTokenPrice } from 'utils/tokens'
+import useVaultConfigs from 'hooks/vaults/useVaultConfigs'
 
 // Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
 // avoid "too many decimals" errors.
