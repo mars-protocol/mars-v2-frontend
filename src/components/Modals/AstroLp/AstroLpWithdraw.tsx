@@ -26,6 +26,7 @@ interface Props {
     astroLp: DepositedAstroLp,
     currentLpRewards: BNCoin[],
   ) => void
+  type: FarmModal['type']
 }
 
 export default function AstroLpWithdraw(props: Props) {

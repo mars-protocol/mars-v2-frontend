@@ -77,7 +77,7 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
     const borrowPowerLeft = props.borrowings.reduce((capLeft, borrowing) => {
       const maxAmount = maxBorrowAmountsRaw.find((amount) => amount.denom === borrowing.denom)
 
-      if (!maxAmount) return capLeft
+      if (!maxAmount || maxAmount.amount.isZero()) return capLeft
       capLeft -= borrowing.amount.dividedBy(maxAmount.amount).toNumber()
       return capLeft
     }, 1)
@@ -174,6 +174,7 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
       chainConfig,
       isAutoLend,
       isAstroLp,
+      false,
     )
 
     useStore.setState({ farmModal: null })

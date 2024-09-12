@@ -8,19 +8,27 @@ import FarmBorrowings from 'components/Modals/Farm/FarmBorrowings'
 import FarmBorrowingsSubTitle from 'components/Modals/Farm/FarmBorrowingsSubTitle'
 import FarmDeposits from 'components/Modals/Farm/FarmDeposits'
 import FarmDepositsSubTitle from 'components/Modals/Farm/FarmDepositsSubTitle'
+import FarmLeverage from 'components/Modals/Hls/Deposit/FarmLeverage'
+import { EMPTY_ACCOUNT_HLS } from 'constants/accounts'
 import { BN_ZERO } from 'constants/math'
+import useAccounts from 'hooks/accounts/useAccounts'
 import useDisplayAsset from 'hooks/assets/useDisplayAsset'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useIsOpenArray from 'hooks/common/useIsOpenArray'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import useSlippage from 'hooks/settings/useSlippage'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { isAccountEmpty } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { getAstroLpBaseDepositCoinsAndValue, getAstroLpSharesFromCoinsValue } from 'utils/astroLps'
 import { getCoinValue, magnify } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
-import { mergeBNCoinArrays } from 'utils/helpers'
 import { getVaultBaseDepositCoinsAndValue } from 'utils/vaults'
+import CreateAccount from '../Hls/Deposit/CreateAccount'
+import SelectAccount from '../Hls/Deposit/SelectAccount'
+import { SelectAccountSubTitle } from '../Hls/Deposit/SubTitles'
+import HlsFarmingSummary from '../Hls/Deposit/Summary/HlsFarmingSummary'
 
 interface Props {
   farm: Vault | DepositedVault | AstroLp | DepositedAstroLp
@@ -32,6 +40,7 @@ interface Props {
   removedLends: BNCoin[]
   simulateAstroLpDeposit?: (lp: string, deposits: BNCoin[], borrowings: BNCoin[]) => void
   simulateVaultDeposit?: (address: string, deposits: BNCoin[], borrowings: BNCoin[]) => void
+  type: FarmModal['type']
 }
 
 export default function FarmModalContent(props: Props) {
@@ -45,36 +54,59 @@ export default function FarmModalContent(props: Props) {
     removedLends,
     simulateAstroLpDeposit,
     simulateVaultDeposit,
+    type,
   } = props
+  const address = useStore((s) => s.address)
   const assets = useWhitelistedAssets()
   const [displayCurrency] = useDisplayCurrency()
-  const [isOpen, toggleOpen] = useIsOpenArray(2, false)
+  const [isOpen, toggleOpen] = useIsOpenArray(type === 'high_leverage' ? 4 : 2, false)
   const [isCustomRatio, setIsCustomRatio] = useState(false)
   const [depositCoins, setDepositCoins] = useState<BNCoin[]>([])
   const [borrowCoins, setBorrowCoins] = useState<BNCoin[]>([])
   const displayAsset = useDisplayAsset()
   const [slippage] = useSlippage()
+  const { data: hlsAccounts } = useAccounts('high_levered_strategy', address)
+  const [selectedAccount, setSelectedAccount] = useState<Account>(EMPTY_ACCOUNT_HLS)
 
-  const { totalValue } = useMemo(
-    () =>
-      isAstroLp
-        ? getAstroLpBaseDepositCoinsAndValue(
-            farm as AstroLp,
-            removedDeposits,
-            addedDebts,
-            removedLends,
-            assets,
-          )
-        : getVaultBaseDepositCoinsAndValue(
-            farm as Vault,
-            removedDeposits,
-            addedDebts,
-            removedLends,
-            slippage,
-            assets,
-          ),
-    [addedDebts, assets, farm, isAstroLp, removedDeposits, removedLends, slippage],
-  )
+  const { totalValue } = useMemo(() => {
+    if (isAstroLp && type === 'astroLp')
+      return getAstroLpBaseDepositCoinsAndValue(
+        farm as AstroLp,
+        removedDeposits,
+        addedDebts,
+        removedLends,
+        assets,
+      )
+
+    if (isAstroLp && type === 'high_leverage')
+      return getAstroLpBaseDepositCoinsAndValue(
+        farm as AstroLp,
+        depositCoins,
+        borrowCoins,
+        [],
+        assets,
+      )
+
+    return getVaultBaseDepositCoinsAndValue(
+      farm as Vault,
+      removedDeposits,
+      addedDebts,
+      removedLends,
+      slippage,
+      assets,
+    )
+  }, [
+    addedDebts,
+    assets,
+    borrowCoins,
+    depositCoins,
+    farm,
+    isAstroLp,
+    removedDeposits,
+    removedLends,
+    slippage,
+    type,
+  ])
 
   const primaryAsset = useMemo(
     () => assets.find(byDenom(farm.denoms.primary)),
@@ -116,11 +148,6 @@ export default function FarmModalContent(props: Props) {
     [setIsCustomRatio],
   )
 
-  const deposits = useMemo(
-    () => mergeBNCoinArrays(removedDeposits, removedLends),
-    [removedDeposits, removedLends],
-  )
-
   const onChangeDeposits = useCallback(
     (coins: BNCoin[]) => {
       setDepositCoins(coins)
@@ -156,6 +183,16 @@ export default function FarmModalContent(props: Props) {
     ],
   )
 
+  const emptyHlsAccounts = useMemo(() => {
+    const emptyAccounts = hlsAccounts.filter((account) => isAccountEmpty(account))
+
+    if (emptyAccounts.length > 0 && selectedAccount.id === 'default') {
+      setSelectedAccount(emptyAccounts[0])
+    }
+
+    return emptyAccounts
+  }, [hlsAccounts, selectedAccount])
+
   const getDepositSubTitle = useCallback(() => {
     if (isOpen[0] && isDeposited)
       return (
@@ -169,17 +206,17 @@ export default function FarmModalContent(props: Props) {
     return (
       <FarmDepositsSubTitle
         primaryAmount={
-          deposits.find((coin) => coin.denom === primaryAsset.denom)?.amount || BN_ZERO
+          depositCoins.find((coin) => coin.denom === primaryAsset.denom)?.amount || BN_ZERO
         }
         secondaryAmount={
-          deposits.find((coin) => coin.denom === secondaryAsset.denom)?.amount || BN_ZERO
+          depositCoins.find((coin) => coin.denom === secondaryAsset.denom)?.amount || BN_ZERO
         }
         primaryAsset={primaryAsset}
         secondaryAsset={secondaryAsset}
         displayCurrency={displayCurrency}
       />
     )
-  }, [deposits, displayCurrency, isDeposited, isOpen, primaryAsset, secondaryAsset])
+  }, [depositCoins, displayCurrency, isDeposited, isOpen, primaryAsset, secondaryAsset])
 
   const getBorrowingsSubTitle = useCallback(() => {
     if (isOpen[1] && isDeposited)
@@ -196,6 +233,106 @@ export default function FarmModalContent(props: Props) {
 
   const items = useMemo(() => {
     if (!primaryAsset || !secondaryAsset) return []
+    if (type === 'high_leverage')
+      return [
+        {
+          renderContent: () => (
+            <FarmDeposits
+              deposits={depositCoins}
+              onChangeDeposits={onChangeDeposits}
+              primaryAsset={primaryAsset}
+              secondaryAsset={secondaryAsset}
+              account={account}
+              toggleOpen={toggleOpen}
+              isCustomRatio={isCustomRatio}
+              onChangeIsCustomRatio={onChangeIsCustomRatio}
+              depositCapReachedCoins={depositCapReachedCoins}
+              type={type}
+            />
+          ),
+          title: 'Collateral',
+          renderSubTitle: getDepositSubTitle,
+          isOpen: isOpen[0],
+          toggleOpen: (index: number) => toggleOpen(index),
+        },
+        {
+          renderContent: () => (
+            <FarmLeverage
+              account={account}
+              deposits={depositCoins}
+              borrowings={borrowCoins}
+              primaryAsset={primaryAsset}
+              secondaryAsset={secondaryAsset}
+              toggleOpen={toggleOpen}
+              onChangeBorrowings={onChangeBorrowings}
+              farm={farm as AstroLp}
+              depositCapReachedCoins={depositCapReachedCoins}
+              displayCurrency={displayCurrency}
+              totalValue={totalValue}
+            />
+          ),
+          title: 'Leverage',
+          renderSubTitle: getBorrowingsSubTitle,
+          isOpen: isOpen[1],
+          toggleOpen: (index: number) => toggleOpen(index),
+        },
+        ...[
+          emptyHlsAccounts.length > 0
+            ? {
+                title: 'Select Hls Account',
+                renderContent: () => (
+                  <SelectAccount
+                    selectedAccount={selectedAccount}
+                    onChangeSelected={setSelectedAccount}
+                    hlsAccounts={emptyHlsAccounts}
+                    onClickBtn={() => toggleOpen(3)}
+                  />
+                ),
+                renderSubTitle: () => (
+                  <SelectAccountSubTitle
+                    isOpen={isOpen[2]}
+                    isSummaryOpen={isOpen[3] || isOpen.every((i) => !i)}
+                    selectedAccountId={selectedAccount?.id}
+                    type='select'
+                  />
+                ),
+                isOpen: isOpen[2],
+                toggleOpen: (index: number) => toggleOpen(index),
+              }
+            : {
+                title: 'Create Hls Account',
+                renderContent: () => <CreateAccount />,
+                renderSubTitle: () => (
+                  <SelectAccountSubTitle
+                    isOpen={isOpen[2]}
+                    isSummaryOpen={isOpen[3] || isOpen.every((i) => !i)}
+                    selectedAccountId={selectedAccount?.id}
+                    type='create'
+                  />
+                ),
+                isOpen: isOpen[2],
+                toggleOpen: (index: number) => toggleOpen(index),
+              },
+        ],
+        {
+          renderContent: () => (
+            <HlsFarmingSummary
+              deposits={depositCoins}
+              borrowings={borrowCoins}
+              account={selectedAccount}
+              astroLp={farm as AstroLp}
+              primaryAsset={primaryAsset}
+              secondaryAsset={secondaryAsset}
+              totalValue={totalValue}
+            />
+          ),
+          title: 'Summary',
+          renderSubTitle: () => null,
+          isOpen: isOpen[3],
+          toggleOpen: (index: number) => toggleOpen(index),
+        },
+      ]
+
     return [
       {
         renderContent: () => (
@@ -209,6 +346,7 @@ export default function FarmModalContent(props: Props) {
             isCustomRatio={isCustomRatio}
             onChangeIsCustomRatio={onChangeIsCustomRatio}
             depositCapReachedCoins={depositCapReachedCoins}
+            type={type}
           />
         ),
         title: 'Deposit',
@@ -230,7 +368,7 @@ export default function FarmModalContent(props: Props) {
             depositCapReachedCoins={depositCapReachedCoins}
             displayCurrency={displayCurrency}
             totalValue={totalValue}
-            type={isAstroLp ? 'astroLp' : 'vault'}
+            type={type}
           />
         ),
         title: 'Borrow',
@@ -245,10 +383,10 @@ export default function FarmModalContent(props: Props) {
     depositCapReachedCoins,
     depositCoins,
     displayCurrency,
+    emptyHlsAccounts,
     farm,
     getBorrowingsSubTitle,
     getDepositSubTitle,
-    isAstroLp,
     isCustomRatio,
     isOpen,
     onChangeBorrowings,
@@ -258,8 +396,10 @@ export default function FarmModalContent(props: Props) {
     removedDeposits,
     removedLends,
     secondaryAsset,
+    selectedAccount,
     toggleOpen,
     totalValue,
+    type,
   ])
 
   return (

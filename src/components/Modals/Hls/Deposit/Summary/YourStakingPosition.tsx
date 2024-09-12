@@ -21,7 +21,7 @@ interface Props {
   route?: SwapRouteInfo | null
 }
 
-export default function YourPosition(props: Props) {
+export default function YourStakingPosition(props: Props) {
   const netApy = useMemo(
     () => props.baseApy * props.leverage - props.borrowRate * (props.leverage - 1),
     [props.baseApy, props.borrowRate, props.leverage],

@@ -2,6 +2,7 @@ import getAssetParams from 'api/params/getAssetParams'
 import { TotalDepositResponse } from 'types/generated/mars-params/MarsParams.types'
 import { byDenom } from 'utils/array'
 import { getAstroLpFromPoolAsset } from 'utils/astroLps'
+import { getLeverageFromLTV } from 'utils/helpers'
 
 export default async function getHlsFarms(
   chainConfig: ChainConfig,
@@ -44,14 +45,15 @@ export default async function getHlsFarms(
         // If the farm already exists in the HlsFarms array, add the borrow asset to the existing farm
         const existingFarm = HlsFarms.find((Hlsfarm) => Hlsfarm.farm.denoms.lp === farm.denoms.lp)
         if (existingFarm) {
-          existingFarm.borrowAssets.push(underlyingAsset)
+          if (underlyingAsset.isBorrowEnabled) existingFarm.borrowAssets.push(underlyingAsset)
           return
         }
 
         // Otherwise add farm to HlsFarms array
         HlsFarms.push({
           farm,
-          borrowAssets: [underlyingAsset],
+          borrowAssets: underlyingAsset.isBorrowEnabled ? [underlyingAsset] : [],
+          maxLeverage: getLeverageFromLTV(Number(poolAssetHlsParams.max_loan_to_value ?? 0)),
         })
       })
     }

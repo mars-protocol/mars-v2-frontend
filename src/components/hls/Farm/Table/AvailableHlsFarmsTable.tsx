@@ -6,7 +6,6 @@ import useHlsFarms from 'hooks/hls/useHlsFarms'
 export default function AvailableHlsFarmsTable() {
   const { data: availableHlsFarms, isLoading } = useHlsFarms()
   const columns = useAvailableHlsFarmsColumns({ isLoading })
-  const availableAstroLps = availableHlsFarms.map((HlsFarm) => HlsFarm.farm)
 
   if (availableHlsFarms.length === 0)
     return (
@@ -20,7 +19,7 @@ export default function AvailableHlsFarmsTable() {
       hideCard
       title='Available High Leverage Farms'
       columns={columns}
-      data={availableAstroLps}
+      data={availableHlsFarms}
       initialSorting={[{ id: 'name', desc: false }]}
     />
   )

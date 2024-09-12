@@ -1,5 +1,5 @@
 import AssetSummary from 'components/Modals/Hls/Deposit/Summary/AssetSummary'
-import YourPosition from 'components/Modals/Hls/Deposit/Summary/YourPosition'
+import YourStakingPosition from 'components/Modals/Hls/Deposit/Summary/YourStakingPosition'
 import useRouteInfo from 'hooks/trade/useRouteInfo'
 import { BNCoin } from 'types/classes/BNCoin'
 
@@ -15,7 +15,7 @@ interface Props {
   disabled: boolean
 }
 
-export default function Summary(props: Props) {
+export default function HlsStakingSummary(props: Props) {
   const { data: route } = useRouteInfo(
     props.borrowMarket.asset.denom,
     props.collateralAsset.denom,
@@ -37,7 +37,7 @@ export default function Summary(props: Props) {
         isBorrow
       />
 
-      <YourPosition
+      <YourStakingPosition
         positionValue={BNCoin.fromDenomAndBigNumber('usd', props.positionValue)}
         baseApy={props.apy || 0}
         borrowRate={props.borrowMarket.apy.borrow || 0}

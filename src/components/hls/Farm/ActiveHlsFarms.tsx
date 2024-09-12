@@ -1,26 +1,46 @@
 import { useMemo } from 'react'
 
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
-import ActiveAstroLpsTable from 'components/earn/farm/astroLp/Table/ActiveAstroLpsTable'
+import ActiveHlsFarmsTable from 'components/hls/Farm/Table/ActiveHlsFarmsTable'
 import useActiveHlsFarmsColumns from 'components/hls/Farm/Table/Columns/useActiveHlsFarmsColumns'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useAssets from 'hooks/assets/useAssets'
-import useDepositedAstroLps from 'hooks/astroLp/useDepositedAstroLps'
+import useHlsFarms from 'hooks/hls/useHlsFarms'
 import useStore from 'store'
+import useDepositedAstroLpAccounts from 'hooks/astroLp/useDepositedAstroLpAccounts'
 
 export function ActiveHlsFarms() {
   const { data: assets } = useAssets()
   const address = useStore((s) => s.address)
   const { data: accounts } = useAccounts('high_levered_strategy', address)
-  const activeHlsFarms = useDepositedAstroLps(accounts)
+  const { data: hlsFarms } = useHlsFarms()
+  const depositedAstroLpAccounts = useDepositedAstroLpAccounts(accounts)
   const activeColumns = useActiveHlsFarmsColumns(assets)
+
+  const activeHlsFarms = useMemo(() => {
+    const depositedHlsFarms = [] as DepositedHlsFarm[]
+    if (!hlsFarms || !depositedAstroLpAccounts) return []
+
+    depositedAstroLpAccounts.forEach((depositedAstroLp) => {
+      const hlsFarm = hlsFarms.find(
+        (hlsFarm) => hlsFarm.farm.denoms.lp === depositedAstroLp.astroLp.denoms.lp,
+      )
+      if (!hlsFarm) return
+      depositedHlsFarms.push({
+        ...hlsFarm,
+        farm: depositedAstroLp.astroLp,
+        account: depositedAstroLp.account,
+      })
+    })
+    return depositedHlsFarms
+  }, [depositedAstroLpAccounts, hlsFarms])
 
   const tabs: CardTab[] = useMemo(
     () => [
       {
         title: 'Active High Leverage Farms',
         renderContent: () => (
-          <ActiveAstroLpsTable columns={activeColumns} data={activeHlsFarms} isLoading={false} />
+          <ActiveHlsFarmsTable columns={activeColumns} data={activeHlsFarms} isLoading={false} />
         ),
       },
     ],

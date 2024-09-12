@@ -183,10 +183,17 @@ interface DepositedHlsStrategy extends HlsStrategy {
 interface HlsFarm {
   farm: AstroLp
   borrowAssets: Asset[]
+  maxLeverage: number
 }
 
 interface DepositedHlsFarm extends HlsFarm {
   farm: DepositedAstroLp
+  account: Account
+}
+
+interface DepositedAstroLpAccounts {
+  account: Account
+  astroLp: DepositedAstroLp
 }
 
 interface StakingApr {
@@ -1206,7 +1213,9 @@ interface FarmModal {
   farm: Vault | DepositedVault | AstroLp | DepositedAstroLp
   isCreate?: boolean
   action?: 'deposit' | 'withdraw'
-  type: 'vault' | 'astroLp'
+  type: 'vault' | 'astroLp' | 'high_leverage'
+  account?: Account
+  maxLeverage?: number
 }
 
 interface AddFarmBorrowingsModal {
@@ -1317,7 +1326,21 @@ interface FarmBorrowingsProps {
   displayCurrency: string
   depositCapReachedCoins: BNCoin[]
   totalValue: BigNumber
-  type: 'vault' | 'astroLp'
+  type: FarmModal['type']
+}
+
+interface HlsFarmLeverageProps {
+  farm: AstroLp
+  borrowings: BNCoin[]
+  deposits: BNCoin[]
+  account: Account
+  primaryAsset: Asset
+  secondaryAsset: Asset
+  onChangeBorrowings: (borrowings: BNCoin[]) => void
+  toggleOpen: (index: number) => void
+  displayCurrency: string
+  depositCapReachedCoins: BNCoin[]
+  totalValue: BigNumber
 }
 
 type AvailableOrderType = 'Market' | 'Limit' | 'Stop'

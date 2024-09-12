@@ -3,7 +3,7 @@ import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
 import Content from 'components/Modals/Hls/Deposit'
 import Header from 'components/Modals/Hls/Header'
 import Modal from 'components/Modals/Modal'
-import { EMPTY_ACCOUNT_Hls } from 'constants/accounts'
+import { EMPTY_ACCOUNT_HLS } from 'constants/accounts'
 import { BN_ONE, BN_ZERO } from 'constants/math'
 import useAssets from 'hooks/assets/useAssets'
 import useMarket from 'hooks/markets/useMarket'
@@ -74,7 +74,7 @@ function HlsModal(props: Props) {
 
     const hasDebt = hlsBorrowAmount && !hlsBorrowAmount.isZero()
     return {
-      ...EMPTY_ACCOUNT_Hls,
+      ...EMPTY_ACCOUNT_HLS,
       deposits: [
         BNCoin.fromDenomAndBigNumber(
           props.primaryAsset.denom,
