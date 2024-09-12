@@ -2,6 +2,7 @@ import getAssetParams from 'api/params/getAssetParams'
 import { TotalDepositResponse } from 'types/generated/mars-params/MarsParams.types'
 import { byDenom } from 'utils/array'
 import { getAstroLpFromPoolAsset } from 'utils/astroLps'
+import { getLeverageFromLTV } from 'utils/helpers'
 
 export default async function getHlsFarms(
   chainConfig: ChainConfig,
@@ -52,6 +53,7 @@ export default async function getHlsFarms(
         HlsFarms.push({
           farm,
           borrowAssets: [underlyingAsset],
+          maxLeverage: getLeverageFromLTV(Number(poolAssetHlsParams.max_loan_to_value ?? 0)),
         })
       })
     }

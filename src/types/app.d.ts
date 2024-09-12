@@ -183,6 +183,7 @@ interface DepositedHlsStrategy extends HlsStrategy {
 interface HlsFarm {
   farm: AstroLp
   borrowAssets: Asset[]
+  maxLeverage: number
 }
 
 interface DepositedHlsFarm extends HlsFarm {
