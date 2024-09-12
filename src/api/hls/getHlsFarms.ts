@@ -59,6 +59,5 @@ export default async function getHlsFarms(
     }
   })
 
-  //return HlsFarms
-  return []
+  return HlsFarms
 }
