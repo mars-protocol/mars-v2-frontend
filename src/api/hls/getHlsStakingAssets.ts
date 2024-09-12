@@ -10,7 +10,7 @@ export default async function getHlsStakingAssets(chainConfig: ChainConfig, asse
     .filter((asset) => asset.credit_manager.hls)
     .filter((asset) => {
       const underlyingAsset = assets.find(byDenom(asset.denom))
-      if (!underlyingAsset) return
+      if (!underlyingAsset || underlyingAsset.isPoolToken) return
       const correlations = asset.credit_manager.hls?.correlations.filter((correlation) => {
         return 'coin' in correlation
       })
