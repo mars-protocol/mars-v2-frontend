@@ -188,6 +188,12 @@ interface HlsFarm {
 
 interface DepositedHlsFarm extends HlsFarm {
   farm: DepositedAstroLp
+  account: Account
+}
+
+interface DepositedAstroLpAccounts {
+  account: Account
+  astroLp: DepositedAstroLp
 }
 
 interface StakingApr {

@@ -6,14 +6,14 @@ import { useMemo } from 'react'
 import { byDenom } from 'utils/array'
 import { getAstroLpFromPoolAsset, getDepositedAstroLpFromStakedLpBNCoin } from 'utils/astroLps'
 
-export default function useDepositedAstroLps(accounts?: Account[]) {
+export default function useDepositedAstroLpAccounts(accounts?: Account[]) {
   const { data: assets } = useAssets()
   const chainConfig = useChainConfig()
   const { data: depositCaps } = useMarketDepositCaps()
   const { data: assetParams } = useAssetParams()
 
   return useMemo(() => {
-    const depositedAstroLps = [] as DepositedAstroLp[]
+    const depositedAstroLps = [] as DepositedAstroLpAccounts[]
     if (!accounts) return depositedAstroLps
     accounts.forEach((account) => {
       if (!account?.stakedAstroLps) return depositedAstroLps
@@ -28,7 +28,7 @@ export default function useDepositedAstroLps(accounts?: Account[]) {
         const farm = getAstroLpFromPoolAsset(asset, chainConfig, depositCap, params)
         if (!farm) return
         const depositedAstroLp = getDepositedAstroLpFromStakedLpBNCoin(assets, stakedAstroLp, farm)
-        if (depositedAstroLp) depositedAstroLps.push(depositedAstroLp)
+        if (depositedAstroLp) depositedAstroLps.push({ astroLp: depositedAstroLp, account })
       })
     })
     return depositedAstroLps
