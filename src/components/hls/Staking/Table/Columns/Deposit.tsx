@@ -40,7 +40,7 @@ export default function Deposit(props: Props) {
 
     openAlertDialog({
       title: 'Understanding Hls Positions',
-      content: <AlertDialogItems items={INFO_ITEMS} />,
+      content: <AlertDialogItems items={HLS_INFO_ITEMS} />,
       positiveButton: {
         text: 'Continue',
         icon: <ArrowRight />,
@@ -69,7 +69,7 @@ export default function Deposit(props: Props) {
   )
 }
 
-const INFO_ITEMS = [
+export const HLS_INFO_ITEMS = [
   {
     icon: <Circle />,
     title: 'One account, one position',

@@ -2,10 +2,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
 import AstroLpApy, { APY_META } from 'components/earn/farm/astroLp/Table/Columns/AstroLpApy'
-import {
-  AstroLpDeposit,
-  DEPOSIT_META,
-} from 'components/earn/farm/astroLp/Table/Columns/AstroLpDeposit'
+import { DEPOSIT_META } from 'components/earn/farm/astroLp/Table/Columns/AstroLpDeposit'
 import MaxLTV, { LTV_MAX_META } from 'components/earn/farm/common/Table/Columns/MaxLTV'
 import DepositCap, {
   DEPOSIT_CAP_META,
@@ -14,6 +11,7 @@ import DepositCap, {
 import MaxLeverage, { MAX_LEV_META } from 'components/hls/Farm/Table/Columns/MaxLeverage'
 import Name, { NAME_META } from 'components/hls/Farm/Table/Columns/Name'
 import useAssets from 'hooks/assets/useAssets'
+import { Deposit } from './Deposit'
 
 interface Props {
   isLoading: boolean
@@ -46,9 +44,7 @@ export default function useAvailableHlsFarmsColumns(props: Props) {
       },
       {
         ...DEPOSIT_META,
-        cell: ({ row }) => (
-          <AstroLpDeposit astroLp={row.original.farm as AstroLp} isLoading={props.isLoading} />
-        ),
+        cell: ({ row }) => <Deposit hlsFarm={row.original} />,
       },
     ]
   }, [props.isLoading, assets])

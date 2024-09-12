@@ -9,7 +9,7 @@ import {
   LeverageSubTitle,
   SelectAccountSubTitle,
 } from 'components/Modals/Hls/Deposit/SubTitles'
-import Summary from 'components/Modals/Hls/Deposit/Summary'
+import HlsStakingSummary from 'components/Modals/Hls/Deposit/Summary/HlsStakingSummary'
 import { BN_ZERO } from 'constants/math'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -226,7 +226,7 @@ export default function useAccordionItems(props: Props) {
       {
         title: 'Summary',
         renderContent: () => (
-          <Summary
+          <HlsStakingSummary
             depositAmount={props.depositAmount}
             borrowAmount={props.borrowAmount}
             leverage={props.leverage}
