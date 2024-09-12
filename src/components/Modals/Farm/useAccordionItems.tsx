@@ -1,14 +1,14 @@
+import FarmBorrowings from 'components/Modals/Farm/FarmBorrowings'
+import FarmDeposits from 'components/Modals/Farm/FarmDeposits'
+import CreateAccount from 'components/Modals/Hls/Deposit/CreateAccount'
+import FarmLeverage from 'components/Modals/Hls/Deposit/FarmLeverage'
+import SelectAccount from 'components/Modals/Hls/Deposit/SelectAccount'
+import { SelectAccountSubTitle } from 'components/Modals/Hls/Deposit/SubTitles'
+import HlsFarmingSummary from 'components/Modals/Hls/Deposit/Summary/HlsFarmingSummary'
 import useAccounts from 'hooks/accounts/useAccounts'
 import { useMemo } from 'react'
 import useStore from 'store'
 import { isAccountEmpty } from 'utils/accounts'
-import CreateAccount from '../Hls/Deposit/CreateAccount'
-import FarmLeverage from '../Hls/Deposit/FarmLeverage'
-import SelectAccount from '../Hls/Deposit/SelectAccount'
-import { SelectAccountSubTitle } from '../Hls/Deposit/SubTitles'
-import HlsFarmingSummary from '../Hls/Deposit/Summary/HlsFarmingSummary'
-import FarmBorrowings from './FarmBorrowings'
-import FarmDeposits from './FarmDeposits'
 
 interface Props {
   account: Account

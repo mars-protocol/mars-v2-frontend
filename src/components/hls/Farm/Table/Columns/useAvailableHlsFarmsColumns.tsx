@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 
 import AstroLpApy, { APY_META } from 'components/earn/farm/astroLp/Table/Columns/AstroLpApy'
 import MaxLTV, { LTV_MAX_META } from 'components/earn/farm/common/Table/Columns/MaxLTV'
+import Deposit, { DEPOSIT_META } from 'components/hls/Farm/Table/Columns/Deposit'
 import DepositCap, {
   DEPOSIT_CAP_META,
   depositCapSortingFn,
@@ -10,7 +11,6 @@ import DepositCap, {
 import MaxLeverage, { MAX_LEV_META } from 'components/hls/Farm/Table/Columns/MaxLeverage'
 import Name, { NAME_META } from 'components/hls/Farm/Table/Columns/Name'
 import useAssets from 'hooks/assets/useAssets'
-import Deposit, { DEPOSIT_META } from './Deposit'
 
 interface Props {
   isLoading: boolean

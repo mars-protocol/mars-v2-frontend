@@ -6,6 +6,7 @@ import Accordion from 'components/common/Accordion'
 import Text from 'components/common/Text'
 import FarmBorrowingsSubTitle from 'components/Modals/Farm/FarmBorrowingsSubTitle'
 import FarmDepositsSubTitle from 'components/Modals/Farm/FarmDepositsSubTitle'
+import useAccordionItems from 'components/Modals/Farm/useAccordionItems'
 import { BN_ZERO } from 'constants/math'
 import useDisplayAsset from 'hooks/assets/useDisplayAsset'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
@@ -18,7 +19,6 @@ import { getAstroLpBaseDepositCoinsAndValue, getAstroLpSharesFromCoinsValue } fr
 import { getCoinValue, magnify } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { getVaultBaseDepositCoinsAndValue } from 'utils/vaults'
-import useAccordionItems from './useAccordionItems'
 
 interface Props {
   farm: Vault | DepositedVault | AstroLp | DepositedAstroLp
