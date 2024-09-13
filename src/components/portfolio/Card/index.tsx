@@ -11,15 +11,15 @@ import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
+import useHlsStakingAssets from 'hooks/hls/useHlsStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { getRoute } from 'utils/route'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 
 interface Props {
   accountId: string
@@ -34,7 +34,7 @@ export default function PortfolioCard(props: Props) {
   const currentAccountId = useAccountId()
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const data = useBorrowMarketAssetsTableData()
-  const { data: hlsStrategies } = useHLSStakingAssets()
+  const { data: hlsStrategies } = useHlsStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
   const [searchParams] = useSearchParams()
   const assets = useWhitelistedAssets()
@@ -44,45 +44,41 @@ export default function PortfolioCard(props: Props) {
     getDefaultChainSettings(chainConfig).reduceMotion,
   )
 
-  const { netWorth, apr, leverage } = getAccountSummaryStats(
-    account as Account,
-    borrowAssets,
-    lendingAssets,
-    hlsStrategies,
-    assets,
-    vaultAprs,
-    astroLpAprs,
-  )
-
   const stats: { title: ReactNode; sub: string }[] = useMemo(() => {
-    const isLoaded = account && assets.length && apr !== null
+    if (!account || !assets.length || !lendingAssets.length || !borrowAssets.length) {
+      return [
+        { title: <Loading />, sub: 'Net worth' },
+        { title: <Loading />, sub: 'Leverage' },
+        { title: <Loading />, sub: 'APR' },
+      ]
+    }
+
+    const { netWorth, apr, leverage } = getAccountSummaryStats(
+      account as Account,
+      borrowAssets,
+      lendingAssets,
+      hlsStrategies,
+      assets,
+      vaultAprs,
+      astroLpAprs,
+      account.kind === 'high_levered_strategy',
+    )
+
     return [
       {
-        title: isLoaded ? (
-          <FormattedNumber amount={netWorth.amount.toNumber()} options={{ prefix: '$' }} />
-        ) : (
-          <Loading />
-        ),
+        title: <FormattedNumber amount={netWorth.amount.toNumber()} options={{ prefix: '$' }} />,
         sub: 'Net worth',
       },
       {
-        title: isLoaded ? (
-          <FormattedNumber amount={leverage.toNumber() || 1} options={{ suffix: 'x' }} />
-        ) : (
-          <Loading />
-        ),
+        title: <FormattedNumber amount={leverage.toNumber() || 1} options={{ suffix: 'x' }} />,
         sub: 'Leverage',
       },
       {
-        title: isLoaded ? (
-          <FormattedNumber amount={apr.toNumber()} options={{ suffix: '%' }} />
-        ) : (
-          <Loading />
-        ),
+        title: <FormattedNumber amount={apr.toNumber()} options={{ suffix: '%' }} />,
         sub: 'APR',
       },
     ]
-  }, [account, assets, apr, leverage, netWorth])
+  }, [account, assets, borrowAssets, hlsStrategies, lendingAssets, vaultAprs, astroLpAprs])
 
   if (!account) {
     return (

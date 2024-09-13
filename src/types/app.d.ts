@@ -86,9 +86,9 @@ interface AccountIdAndKind {
   kind: AccountKind
 }
 
-interface HLSAccountWithStrategy extends Account {
+interface HlsAccountWithStakingStrategy extends Account {
   leverage: number
-  strategy: HLSStrategy
+  strategy: HlsStrategy
   values: {
     net: BigNumber
     debt: BigNumber
@@ -162,11 +162,11 @@ interface BigNumberCoin {
   amount: BigNumber
 }
 
-interface HLSStrategy extends HLSStrategyNoCap {
+interface HlsStrategy extends HlsStrategyNoCap {
   depositCap: DepositCap
 }
 
-interface HLSStrategyNoCap {
+interface HlsStrategyNoCap {
   maxLTV: number
   maxLeverage: number
   apy: number | null
@@ -176,8 +176,26 @@ interface HLSStrategyNoCap {
   }
 }
 
-interface DepositedHLSStrategy extends HLSStrategy {
+interface DepositedHlsStrategy extends HlsStrategy {
   depositedAmount: BigNumber
+}
+
+interface HlsFarm {
+  farm: AstroLp
+  borrowAssets: Asset[]
+  maxLeverage: number
+}
+
+interface DepositedHlsFarm extends HlsFarm {
+  farm: DepositedAstroLp
+  account: Account
+  netValue: BigNumber
+  leverage: number
+}
+
+interface DepositedAstroLpAccounts {
+  account: Account
+  astroLp: DepositedAstroLp
 }
 
 interface StakingApr {
@@ -1124,7 +1142,7 @@ interface CommonSlice {
   useMargin: boolean
   useAutoRepay: boolean
   isOracleStale: boolean
-  isHLS: boolean
+  isHls: boolean
   isV1: boolean
   assets: Asset[]
   hlsBorrowAmount: BigNumber | null
@@ -1197,7 +1215,9 @@ interface FarmModal {
   farm: Vault | DepositedVault | AstroLp | DepositedAstroLp
   isCreate?: boolean
   action?: 'deposit' | 'withdraw'
-  type: 'vault' | 'astroLp'
+  type: 'vault' | 'astroLp' | 'high_leverage'
+  account?: Account
+  maxLeverage?: number
 }
 
 interface AddFarmBorrowingsModal {
@@ -1215,22 +1235,22 @@ interface WalletAssetModal {
 }
 
 interface HlsModal {
-  strategy?: HLSStrategy
+  strategy?: HlsStrategy
   vault?: Vault
 }
 
 interface HlsManageModal {
   accountId: string
   staking: {
-    strategy: HLSStrategy
+    strategy: HlsStrategy
     action: HlsStakingManageAction
   }
 }
 
 interface HlsCloseModal {
-  account: HLSAccountWithStrategy
+  account: HlsAccountWithStakingStrategy
   staking: {
-    strategy: HLSStrategy
+    strategy: HlsStrategy
   }
 }
 
@@ -1308,7 +1328,21 @@ interface FarmBorrowingsProps {
   displayCurrency: string
   depositCapReachedCoins: BNCoin[]
   totalValue: BigNumber
-  type: 'vault' | 'astroLp'
+  type: FarmModal['type']
+}
+
+interface HlsFarmLeverageProps {
+  farm: AstroLp
+  borrowings: BNCoin[]
+  deposits: BNCoin[]
+  account: Account
+  primaryAsset: Asset
+  secondaryAsset: Asset
+  onChangeBorrowings: (borrowings: BNCoin[]) => void
+  toggleOpen: (index: number) => void
+  displayCurrency: string
+  depositCapReachedCoins: BNCoin[]
+  totalValue: BigNumber
 }
 
 type AvailableOrderType = 'Market' | 'Limit' | 'Stop'

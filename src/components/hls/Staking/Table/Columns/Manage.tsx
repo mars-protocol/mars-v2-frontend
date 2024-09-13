@@ -3,10 +3,15 @@ import { ArrowDownLine, Cross, HandCoins, Plus, Scale } from 'components/common/
 import { useCallback, useMemo } from 'react'
 import useStore from 'store'
 
-export const MANAGE_META = { id: 'manage' }
+export const MANAGE_META = {
+  id: 'manage',
+  enableSorting: false,
+  header: '',
+  meta: { className: 'w-30' },
+}
 
 interface Props {
-  account: HLSAccountWithStrategy
+  account: HlsAccountWithStakingStrategy
 }
 
 export default function Manage(props: Props) {

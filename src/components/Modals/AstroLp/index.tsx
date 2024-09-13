@@ -14,9 +14,12 @@ export default function AstroLpModalController() {
   const currentAccount = useCurrentAccount()
   const modal = useStore((s) => s.farmModal)
 
-  if (!modal || !currentAccount || modal.type !== 'astroLp') return null
+  if (!modal || modal.type === 'vault') return null
 
-  return <AstroLpModal currentAccount={currentAccount} modal={modal} />
+  const account = modal.type == 'high_leverage' ? modal.account : currentAccount
+
+  if (!account) return null
+  return <AstroLpModal currentAccount={account} modal={modal} />
 }
 
 interface Props {
@@ -26,7 +29,7 @@ interface Props {
 
 function AstroLpModal(props: Props) {
   const {
-    modal: { farm, action },
+    modal: { farm, action, type, isCreate },
     currentAccount,
   } = props
   const astroLp = farm as AstroLp
@@ -67,12 +70,15 @@ function AstroLpModal(props: Props) {
           removedDeposits={removedDeposits}
           removedLends={removedLends}
           simulateAstroLpDeposit={simulateAstroLpDeposit}
+          type={type}
+          isDeposited={!isCreate}
         />
       ) : (
         <AstroLpWithdraw
           account={currentAccount}
           simulateUnstakeAstroLp={simulateUnstakeAstroLp}
           astroLp={astroLp as DepositedAstroLp}
+          type={type}
         />
       )}
     </Modal>

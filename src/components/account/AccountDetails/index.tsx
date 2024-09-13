@@ -24,7 +24,7 @@ import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
+import useHlsStakingAssets from 'hooks/hls/useHlsStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
@@ -45,7 +45,7 @@ interface AccountDetailsControllerProps {
 
 export default function AccountDetailsController(props: AccountDetailsControllerProps) {
   const address = useStore((s) => s.address)
-  const isHLS = useStore((s) => s.isHLS)
+  const isHls = useStore((s) => s.isHls)
   const isV1 = useStore((s) => s.isV1)
   const { data: _, isLoading } = useAccounts('default', address)
   const { data: accountIds } = useAccountIds(address, false, true)
@@ -54,7 +54,7 @@ export default function AccountDetailsController(props: AccountDetailsController
   const account = useCurrentAccount()
   const focusComponent = useStore((s) => s.focusComponent)
   const isOwnAccount = accountId && accountIds?.includes(accountId)
-  const hideAccountDetails = !address || focusComponent || !isOwnAccount || isHLS || isV1
+  const hideAccountDetails = !address || focusComponent || !isOwnAccount || isHls || isV1
   const isLoadingAccountDetails = (isLoading && accountId && !focusComponent) || !account
 
   if (hideAccountDetails) return null
@@ -67,7 +67,7 @@ function AccountDetails(props: Props) {
   const chainConfig = useChainConfig()
   const { account } = props
   const location = useLocation()
-  const { data: hlsStrategies } = useHLSStakingAssets()
+  const { data: hlsStrategies } = useHlsStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
   const astroLpAprs = useAstroLpAprs()
   const [reduceMotion] = useLocalStorage<boolean>(
