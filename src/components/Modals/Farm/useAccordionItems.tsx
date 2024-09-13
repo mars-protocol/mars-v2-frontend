@@ -179,7 +179,6 @@ export default function useAccordionItems(props: Props) {
             secondaryAsset={secondaryAsset}
             toggleOpen={toggleOpen}
             onChangeBorrowings={onChangeBorrowings}
-            farm={farm as AstroLp}
             depositCapReachedCoins={depositCapReachedCoins}
             displayCurrency={displayCurrency}
             totalValue={totalValue}
@@ -305,7 +304,6 @@ export default function useAccordionItems(props: Props) {
             secondaryAsset={secondaryAsset}
             toggleOpen={toggleOpen}
             onChangeBorrowings={onChangeBorrowings}
-            farm={farm as AstroLp}
             depositCapReachedCoins={depositCapReachedCoins}
             displayCurrency={displayCurrency}
             totalValue={totalValue}

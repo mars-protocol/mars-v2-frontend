@@ -1336,7 +1336,6 @@ interface FarmBorrowingsProps {
 }
 
 interface HlsFarmLeverageProps {
-  farm: AstroLp
   borrowings: BNCoin[]
   deposits: BNCoin[]
   account: Account
