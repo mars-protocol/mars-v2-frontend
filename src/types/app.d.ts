@@ -1250,7 +1250,7 @@ interface HlsManageModal {
 }
 
 interface HlsCloseModal {
-  account: HlsAccountWithStrategy
+  account: HlsAccountWithStrategy | Account
   farming?: DepositedHlsFarm
   staking?: {
     strategy: HlsStrategy

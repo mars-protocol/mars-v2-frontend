@@ -52,7 +52,7 @@ export default function Manage(props: Props) {
         farming: props.hlsFarm,
       },
     })
-  }, [])
+  }, [props.hlsFarm])
 
   const hasNoDebt = useMemo(
     () => props.hlsFarm.account.debts.length === 0,
