@@ -1051,6 +1051,7 @@ interface BroadcastSlice {
     accountId: string
     astroLps: DepositedAstroLp[]
     amount: string
+    toWallet: boolean
   }) => Promise<boolean>
   withdrawFromVaults: (options: {
     accountId: string

@@ -483,6 +483,7 @@ export default function createBroadcastSlice(
       accountId: string
       astroLps: DepositedAstroLp[]
       amount: string
+      toWallet: boolean
     }) => {
       const actions: CreditManagerAction[] = []
 
@@ -503,6 +504,14 @@ export default function createBroadcastSlice(
             slippage: '0',
           },
         })
+        if (options.toWallet) {
+          actions.push({
+            withdraw: { denom: astroLp.denoms.primary, amount: 'account_balance' },
+          })
+          actions.push({
+            withdraw: { denom: astroLp.denoms.secondary, amount: 'account_balance' },
+          })
+        }
       })
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
