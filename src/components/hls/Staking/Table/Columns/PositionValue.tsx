@@ -5,12 +5,12 @@ import { BNCoin } from 'types/classes/BNCoin'
 
 export const POS_VAL_META = { header: 'Pos. Value', accessorKey: 'values.total' }
 interface Props {
-  account: HlsAccountWithStakingStrategy
+  account: HlsAccountWithStrategy
 }
 
 export function positionValueSorting(
-  a: Row<HlsAccountWithStakingStrategy>,
-  b: Row<HlsAccountWithStakingStrategy>,
+  a: Row<HlsAccountWithStrategy>,
+  b: Row<HlsAccountWithStrategy>,
 ): number {
   return a.original.values.total.minus(b.original.values.total).toNumber()
 }

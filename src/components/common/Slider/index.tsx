@@ -14,6 +14,7 @@ type Props = {
   leverage?: {
     current: number
     max: number
+    min?: number
   }
   className?: string
   disabled?: boolean
@@ -234,8 +235,8 @@ export default function Slider(props: Props) {
       {leverage && (
         <div className='flex justify-between pt-2'>
           <LeverageLabel
-            leverage={1}
-            decimals={0}
+            leverage={leverage.min || 1}
+            decimals={leverage.min ? 2 : 0}
             className='-translate-x-0.5'
             style={{ opacity: value < 5 ? 0 : 1 }}
           />

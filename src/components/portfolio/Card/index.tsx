@@ -61,7 +61,6 @@ export default function PortfolioCard(props: Props) {
       assets,
       vaultAprs,
       astroLpAprs,
-      account.kind === 'high_levered_strategy',
     )
 
     return [

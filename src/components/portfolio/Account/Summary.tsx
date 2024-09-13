@@ -41,7 +41,6 @@ function Content(props: Props) {
       assets,
       vaultAprs,
       astroLpAprs,
-      account.kind === 'high_levered_strategy',
     )
 
     return [

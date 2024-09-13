@@ -24,11 +24,11 @@ import { calculateAccountApr, calculateAccountLeverage } from 'utils/accounts'
 interface Props {
   account: Account
   isInModal?: boolean
-  isHls?: boolean
 }
 
 export default function AccountSummary(props: Props) {
-  const { account, isInModal, isHls } = props
+  const { account, isInModal } = props
+  const isHls = account.kind === 'high_levered_strategy'
   const chainConfig = useChainConfig()
   const storageKey = isInModal
     ? `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_IN_MODAL_TABS_EXPANDED}`
@@ -90,7 +90,6 @@ export default function AccountSummary(props: Props) {
         assets,
         vaultAprs,
         astroLpAprs,
-        account.kind === 'high_levered_strategy',
       ),
     [
       account,
@@ -108,8 +107,7 @@ export default function AccountSummary(props: Props) {
     const itemsArray = [
       {
         title: `Composition`,
-        renderContent: () =>
-          account ? <AccountComposition account={account} isHls={isHls} /> : null,
+        renderContent: () => (account ? <AccountComposition account={account} /> : null),
         isOpen: accountSummaryTabs[0],
         toggleOpen: (index: number) => handleToggle(index),
         renderSubTitle: () => <></>,
@@ -167,7 +165,6 @@ export default function AccountSummary(props: Props) {
     account,
     borrowAssetsData,
     lendingAssetsData,
-    isHls,
     handleToggle,
     accountSummaryTabs,
     updatedAccount,

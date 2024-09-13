@@ -1,19 +1,19 @@
 import BigNumber from 'bignumber.js'
 
-import { useMemo } from 'react'
 import { BN_ZERO } from 'constants/math'
-import { BNCoin } from 'types/classes/BNCoin'
-import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { getSwapExactInAction } from 'utils/swap'
 import useIsOsmosis from 'hooks/chain/useIsOsmosis'
 import useSlippage from 'hooks/settings/useSlippage'
 import useRouteInfo from 'hooks/trade/useRouteInfo'
+import { useMemo } from 'react'
+import { BNCoin } from 'types/classes/BNCoin'
+import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { getSwapExactInAction } from 'utils/swap'
 
 interface Props {
-  account: HlsAccountWithStakingStrategy
+  account: HlsAccountWithStrategy
 }
 
-export default function useHlsClosePositionActions(props: Props): {
+export default function useHlsCloseStakingPositionActions(props: Props): {
   actions: Action[] | null
   changes: HlsClosingChanges | null
   isLoadingRoute: boolean
@@ -94,6 +94,7 @@ export default function useHlsClosePositionActions(props: Props): {
         { refund_all_coin_balances: {} },
       ],
       changes: {
+        widthdraw: null,
         swap: !swapExactIn
           ? null
           : {

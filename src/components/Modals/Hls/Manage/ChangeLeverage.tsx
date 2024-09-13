@@ -21,7 +21,7 @@ import { getLeveragedApy } from 'utils/math'
 import { getDepositCapMessage, getHealthFactorMessage, getLiquidityMessage } from 'utils/messages'
 
 interface Props {
-  account: HlsAccountWithStakingStrategy
+  account: HlsAccountWithStrategy
   action: HlsStakingManageAction
   borrowMarket: Market
   collateralAsset: Asset

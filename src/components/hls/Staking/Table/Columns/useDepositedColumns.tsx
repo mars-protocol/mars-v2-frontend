@@ -30,7 +30,7 @@ interface Props {
 }
 
 export default function useDepositedColumns(props: Props) {
-  return useMemo<ColumnDef<HlsAccountWithStakingStrategy>[]>(
+  return useMemo<ColumnDef<HlsAccountWithStrategy>[]>(
     () => [
       {
         ...NAME_META,

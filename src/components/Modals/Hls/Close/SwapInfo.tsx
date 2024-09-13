@@ -18,7 +18,7 @@ export default function SwapInfo(props: Props) {
         Swap
       </Text>
       <Text className='text-white/50' size='xs'>
-        A part of the total collateral will be swapped to repay the borrowed funds
+        A part of the current position will be swapped to repay the borrowed funds
       </Text>
       <div className='flex items-center gap-2'>
         <AssetBalanceRow

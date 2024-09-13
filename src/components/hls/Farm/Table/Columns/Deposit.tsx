@@ -21,12 +21,9 @@ export const DEPOSIT_META = {
   meta: { className: 'w-30' },
 }
 
-export const Deposit = (props: Props) => {
+export default function Deposit(props: Props) {
   const { hlsFarm } = props
-  const borrowAssetsDenoms = useMemo(
-    () => hlsFarm.borrowAssets.map((asset) => asset.denom),
-    [hlsFarm],
-  )
+  const borrowAssetsDenoms = useMemo(() => [hlsFarm.borrowAsset.denom], [hlsFarm])
 
   const [showHlsInfo, setShowHlsInfo] = useLocalStorage<boolean>(
     LocalStorageKeys.HLS_INFORMATION,

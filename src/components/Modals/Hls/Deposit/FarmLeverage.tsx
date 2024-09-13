@@ -8,46 +8,87 @@ import { ArrowRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
-import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { getAccountDebtValue, getAccountNetValue, getAccountTotalValue } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { findCoinByDenom } from 'utils/assets'
 import { formatPercent, getCoinAmount, getCoinValue } from 'utils/formatters'
 
 export default function FarmLeverage(props: HlsFarmLeverageProps) {
-  const assets = useDepositEnabledAssets()
-  const { borrowings, onChangeBorrowings, farm } = props
+  const { data: assets } = useAssets()
+  const {
+    borrowings,
+    onChangeBorrowings,
+    account,
+    totalValue,
+    deposits,
+    depositCapReachedCoins,
+    toggleOpen,
+  } = props
   const markets = useMarkets()
   const modal = useStore((s) => s.farmModal)
   const maxLeverage = modal?.maxLeverage ?? 0
 
   const depositValue = useMemo(() => {
     let depositValue = BN_ZERO
-    props.deposits.forEach((deposit) => {
+    deposits.forEach((deposit) => {
       const value = getCoinValue(deposit, assets)
       depositValue = depositValue.plus(value)
     })
 
     return depositValue
-  }, [props.deposits, assets])
+  }, [deposits, assets])
+
+  const [accountTotalValue, accountNetValue, accountTotalDebt, accountDebtAmount] = useMemo(
+    () => [
+      getAccountTotalValue(account, assets),
+      getAccountNetValue(account, assets),
+      getAccountDebtValue(account, assets),
+      account.debts.length ? account.debts[0].amount : BN_ZERO,
+    ],
+    [account, assets],
+  )
 
   const currentLeverage = useMemo(() => {
-    const borrowValue = props.totalValue.minus(depositValue)
+    let borrowValue = BN_ZERO
+    if (account) {
+      const newTotalValue = accountTotalValue.plus(totalValue)
+      const currentBorrowValue = totalValue.minus(depositValue)
+      borrowValue = accountTotalDebt.plus(currentBorrowValue)
+      const netValue = newTotalValue.minus(borrowValue)
+      return borrowValue.dividedBy(netValue).plus(1).toNumber() || 1
+    }
+
+    borrowValue = totalValue.minus(depositValue)
     return borrowValue.dividedBy(depositValue).plus(1).toNumber() || 1
-  }, [props.totalValue, depositValue])
+  }, [account, totalValue, depositValue, accountTotalValue, accountTotalDebt])
+
+  const minLeverage = useMemo(() => {
+    if (!account) return 1
+    const newAccountNetValue = accountNetValue.plus(depositValue)
+    return accountTotalDebt.dividedBy(newAccountNetValue).plus(1).toNumber() || 1
+  }, [account, accountNetValue, accountTotalDebt, depositValue])
 
   const maxBorrowAmounts: BNCoin[] = useMemo(() => {
-    return props.borrowings.map((borrowing) => {
-      const maxBorrowValue = depositValue.times(maxLeverage - 1.1)
+    return borrowings.map((borrowing) => {
+      let newValue = BN_ZERO
+      if (account) {
+        newValue = accountNetValue.plus(depositValue)
+      } else {
+        newValue = depositValue
+      }
+      const maxBorrowValue = newValue.times(maxLeverage - 1.1)
       const maxAmount = getCoinAmount(borrowing.denom, maxBorrowValue, assets)
-      return new BNCoin({
-        denom: borrowing.denom,
-        amount: maxAmount.toString(),
-      })
+
+      return BNCoin.fromDenomAndBigNumber(
+        borrowing.denom,
+        account ? maxAmount.minus(accountDebtAmount) : maxAmount,
+      )
     })
-  }, [props.borrowings, depositValue, maxLeverage, assets])
+  }, [borrowings, account, maxLeverage, assets, accountDebtAmount, accountNetValue, depositValue])
 
   useEffect(() => {
     const selectedBorrowDenoms = modal?.selectedBorrowDenoms || []
@@ -69,14 +110,14 @@ export default function FarmLeverage(props: HlsFarmLeverageProps) {
   }, [modal, maxBorrowAmounts, borrowings, onChangeBorrowings])
 
   function updateAssets(denom: string, amount: BigNumber) {
-    const index = props.borrowings.findIndex((coin) => coin.denom === denom)
-    props.borrowings[index].amount = amount
-    props.onChangeBorrowings([...props.borrowings])
+    const index = borrowings.findIndex((coin) => coin.denom === denom)
+    borrowings[index].amount = amount
+    onChangeBorrowings([...borrowings])
   }
 
   return (
     <div className='flex flex-col flex-1 gap-4 p-4'>
-      {props.borrowings.map((coin) => {
+      {borrowings.map((coin) => {
         const asset = assets.find(byDenom(coin.denom))
         const maxAmount = maxBorrowAmounts.find(byDenom(coin.denom))?.amount ?? BN_ZERO
         if (!asset || !maxAmount)
@@ -92,6 +133,7 @@ export default function FarmLeverage(props: HlsFarmLeverageProps) {
             leverage={{
               current: currentLeverage,
               max: maxLeverage,
+              min: account ? minLeverage : 1,
             }}
             warningMessages={[]}
             key={`input-${coin.denom}`}
@@ -101,14 +143,14 @@ export default function FarmLeverage(props: HlsFarmLeverageProps) {
 
       <DepositCapMessage
         action='deposit'
-        coins={props.depositCapReachedCoins}
+        coins={depositCapReachedCoins}
         className='px-4 y-2'
         showIcon
       />
 
       <Divider />
       <div className='flex flex-col gap-2'>
-        {props.borrowings.map((coin) => {
+        {borrowings.map((coin) => {
           const asset = assets.find(byDenom(coin.denom))
           const borrowRate = markets?.find((market) => market.asset.denom === coin.denom)?.apy
             .borrow
@@ -124,11 +166,11 @@ export default function FarmLeverage(props: HlsFarmLeverageProps) {
         })}
       </div>
       <Button
-        onClick={() => props.toggleOpen(2)}
+        onClick={() => toggleOpen(2)}
         color='primary'
         text='Deposit'
         rightIcon={<ArrowRight />}
-        disabled={props.depositCapReachedCoins.length > 0}
+        disabled={depositCapReachedCoins.length > 0}
       />
     </div>
   )

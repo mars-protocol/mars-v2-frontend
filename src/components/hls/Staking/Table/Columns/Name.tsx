@@ -9,7 +9,7 @@ import { byDenom } from 'utils/array'
 
 export const NAME_META = { id: 'name', header: 'Strategy', meta: { className: 'min-w-50' } }
 interface Props {
-  account?: HlsAccountWithStakingStrategy
+  account?: HlsAccountWithStrategy
   strategy: HlsStrategy
 }
 

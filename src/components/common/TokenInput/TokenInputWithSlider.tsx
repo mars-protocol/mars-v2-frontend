@@ -22,6 +22,7 @@ interface Props {
   leverage?: {
     current: number
     max: number
+    min?: number
   }
   warningMessages: string[]
 }

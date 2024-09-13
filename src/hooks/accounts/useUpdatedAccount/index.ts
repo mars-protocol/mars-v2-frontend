@@ -152,13 +152,20 @@ export function useUpdatedAccount(account?: Account) {
   )
 
   const simulateUnstakeAstroLp = useCallback(
-    (isLendAction: boolean, shares: BNCoin, astroLp: AstroLp, rewards?: BNCoin[]) => {
+    (
+      isLendAction: boolean,
+      shares: BNCoin,
+      astroLp: AstroLp,
+      rewards?: BNCoin[],
+      toWallet?: boolean,
+    ) => {
       if (!account) return
       addDeposits([])
       addLends([])
 
       const shareCoins = getAstroLpCoinsFromShares(shares, astroLp, assets)
       removeStakedAstroLps([shares])
+      if (toWallet) return
       if (isLendAction) {
         addLends(mergeBNCoinArrays(shareCoins, rewards ?? []))
         return

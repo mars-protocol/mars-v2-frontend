@@ -18,12 +18,7 @@ export default function useAvailableAstroLps() {
     const mappedAstroLps = [] as AstroLp[]
 
     whitelistedPools.forEach((asset) => {
-      if (
-        !asset.poolInfo ||
-        asset.denom ===
-          'factory/neutron1yem82r0wf837lfkwvcu2zxlyds5qrzwkz8alvmg0apyrjthk64gqeq2e98/astroport/share'
-      )
-        return
+      if (!asset.poolInfo) return
       const depositCap = depositCaps?.find(byDenom(asset.denom))
       const params = assetParams.find(byDenom(asset.denom))
 

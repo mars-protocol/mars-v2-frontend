@@ -5,9 +5,10 @@ import ActiveHlsFarmsTable from 'components/hls/Farm/Table/ActiveHlsFarmsTable'
 import useActiveHlsFarmsColumns from 'components/hls/Farm/Table/Columns/useActiveHlsFarmsColumns'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useAssets from 'hooks/assets/useAssets'
+import useDepositedAstroLpAccounts from 'hooks/astroLp/useDepositedAstroLpAccounts'
 import useHlsFarms from 'hooks/hls/useHlsFarms'
 import useStore from 'store'
-import useDepositedAstroLpAccounts from 'hooks/astroLp/useDepositedAstroLpAccounts'
+import { calculateAccountLeverage, getAccountNetValue } from 'utils/accounts'
 
 export function ActiveHlsFarms() {
   const { data: assets } = useAssets()
@@ -30,10 +31,12 @@ export function ActiveHlsFarms() {
         ...hlsFarm,
         farm: depositedAstroLp.astroLp,
         account: depositedAstroLp.account,
+        netValue: getAccountNetValue(depositedAstroLp.account, assets),
+        leverage: calculateAccountLeverage(depositedAstroLp.account, assets).toNumber(),
       })
     })
     return depositedHlsFarms
-  }, [depositedAstroLpAccounts, hlsFarms])
+  }, [assets, depositedAstroLpAccounts, hlsFarms])
 
   const tabs: CardTab[] = useMemo(
     () => [
