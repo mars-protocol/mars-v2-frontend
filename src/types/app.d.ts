@@ -992,7 +992,7 @@ interface BroadcastSlice {
     stakedAstroLpRewards?: StakedAstroLpRewards[]
     lend: boolean
   }) => Promise<boolean>
-  closeHlsStakingPosition: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
+  closeHlsPosition: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
   createAccount: (
     accountKind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind,
     isAutoLendEnabled: boolean,
@@ -1251,12 +1251,14 @@ interface HlsManageModal {
 
 interface HlsCloseModal {
   account: HlsAccountWithStrategy
-  staking: {
+  farming?: DepositedHlsFarm
+  staking?: {
     strategy: HlsStrategy
   }
 }
 
 interface HlsClosingChanges {
+  widthdraw: BNCoin[] | null
   swap: {
     coinIn: BNCoin
     coinOut: BNCoin

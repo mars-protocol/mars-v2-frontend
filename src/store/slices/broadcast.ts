@@ -170,7 +170,7 @@ export default function createBroadcastSlice(
       get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
-    closeHlsStakingPosition: async (options: { accountId: string; actions: Action[] }) => {
+    closeHlsPosition: async (options: { accountId: string; actions: Action[] }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
@@ -187,7 +187,6 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-
     createAccount: async (accountKind: AccountKind, isAutoLendEnabled: boolean) => {
       const msg: CreditManagerExecuteMsg = {
         create_credit_account: accountKind,

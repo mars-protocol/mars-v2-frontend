@@ -46,7 +46,12 @@ export default function Manage(props: Props) {
   )
 
   const closeHlsStakingPosition = useCallback(() => {
-    useStore.setState({})
+    useStore.setState({
+      hlsCloseModal: {
+        account: props.hlsFarm.account,
+        farming: props.hlsFarm,
+      },
+    })
   }, [])
 
   const hasNoDebt = useMemo(

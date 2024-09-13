@@ -13,7 +13,7 @@ interface Props {
   account: HlsAccountWithStrategy
 }
 
-export default function useHlsClosePositionActions(props: Props): {
+export default function useHlsCloseStakingPositionActions(props: Props): {
   actions: Action[] | null
   changes: HlsClosingChanges | null
   isLoadingRoute: boolean
@@ -94,6 +94,7 @@ export default function useHlsClosePositionActions(props: Props): {
         { refund_all_coin_balances: {} },
       ],
       changes: {
+        widthdraw: null,
         swap: !swapExactIn
           ? null
           : {
