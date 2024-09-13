@@ -39,8 +39,7 @@ export default function HlsManageModalController() {
     if (isStaking) return { ...account, strategy: modal.staking?.strategy }
     if (isFarming && modal.farming) {
       return {
-        // TODO: change to ...account on mainnet
-        ...modal.farming.account,
+        ...account,
         strategy: {
           maxLTV: modal.farming.farm.ltv.max,
           maxLeverage: modal.farming.maxLeverage,
@@ -62,7 +61,6 @@ export default function HlsManageModalController() {
     return null
   }, [isStaking, account, modal, isFarming, assets])
 
-  // TODO: remove on mainnet
   if ((!isFarming && !isStaking) || !modal || !collateralAsset || !market || !usedAccount)
     return null
 
