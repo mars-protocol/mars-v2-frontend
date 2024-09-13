@@ -155,7 +155,7 @@ export default function AstroLpWithdraw(props: Props) {
         </div>
         <Button onClick={onClick} text='Withdraw' disabled={withdrawAmount.isZero()} />
       </Card>
-      <AccountSummaryInModal account={account} isHls={false} />
+      <AccountSummaryInModal account={account} />
     </div>
   )
 }

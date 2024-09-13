@@ -5,13 +5,10 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 export const LEV_META = { accessorKey: 'leverage ', header: 'Leverage' }
 
 interface Props {
-  account: HlsAccountWithStakingStrategy
+  account: HlsAccountWithStrategy
 }
 
-export function leverageSortingFn(
-  a: Row<HlsAccountWithStakingStrategy>,
-  b: Row<HlsAccountWithStakingStrategy>,
-) {
+export function leverageSortingFn(a: Row<HlsAccountWithStrategy>, b: Row<HlsAccountWithStrategy>) {
   return a.original.leverage - b.original.leverage
 }
 

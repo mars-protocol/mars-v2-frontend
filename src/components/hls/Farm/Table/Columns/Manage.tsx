@@ -15,20 +15,31 @@ interface Props {
 }
 
 export default function Manage(props: Props) {
-  const openModal = useCallback((action: HlsStakingManageAction) => {
-    if (action === 'deposit') {
-      useStore.setState({
-        farmModal: {
-          farm: props.hlsFarm.farm,
-          selectedBorrowDenoms: props.hlsFarm.borrowAssets.map((asset) => asset.denom),
-          account: props.hlsFarm.account,
-          maxLeverage: props.hlsFarm.maxLeverage,
-          action: 'deposit',
-          type: 'high_leverage',
-        },
-      })
-    }
-  }, [])
+  const openModal = useCallback(
+    (action: HlsStakingManageAction) => {
+      if (action === 'deposit') {
+        useStore.setState({
+          farmModal: {
+            farm: props.hlsFarm.farm,
+            selectedBorrowDenoms: [props.hlsFarm.borrowAsset.denom],
+            account: props.hlsFarm.account,
+            maxLeverage: props.hlsFarm.maxLeverage,
+            action: 'deposit',
+            type: 'high_leverage',
+          },
+        })
+      } else {
+        useStore.setState({
+          hlsManageModal: {
+            accountId: props.hlsFarm.account.id,
+            farming: props.hlsFarm,
+            action,
+          },
+        })
+      }
+    },
+    [props.hlsFarm],
+  )
 
   const closeHlsStakingPosition = useCallback(() => {
     useStore.setState({})

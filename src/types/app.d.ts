@@ -86,7 +86,7 @@ interface AccountIdAndKind {
   kind: AccountKind
 }
 
-interface HlsAccountWithStakingStrategy extends Account {
+interface HlsAccountWithStrategy extends Account {
   leverage: number
   strategy: HlsStrategy
   values: {
@@ -182,7 +182,7 @@ interface DepositedHlsStrategy extends HlsStrategy {
 
 interface HlsFarm {
   farm: AstroLp
-  borrowAssets: Asset[]
+  borrowAsset: Asset
   maxLeverage: number
 }
 
@@ -1241,14 +1241,15 @@ interface HlsModal {
 
 interface HlsManageModal {
   accountId: string
-  staking: {
+  farming?: DepositedHlsFarm
+  staking?: {
     strategy: HlsStrategy
-    action: HlsStakingManageAction
   }
+  action: HlsStakingManageAction
 }
 
 interface HlsCloseModal {
-  account: HlsAccountWithStakingStrategy
+  account: HlsAccountWithStrategy
   staking: {
     strategy: HlsStrategy
   }

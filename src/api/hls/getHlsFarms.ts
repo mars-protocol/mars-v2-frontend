@@ -42,17 +42,12 @@ export default async function getHlsFarms(
           liq: Number(poolAssetHlsParams.liquidation_threshold ?? 0),
         }
 
-        // If the farm already exists in the hlsFarms array, add the borrow asset to the existing farm
-        const existingFarm = hlsFarms.find((hlsFarm) => hlsFarm.farm.denoms.lp === farm.denoms.lp)
-        if (existingFarm) {
-          if (underlyingAsset.isBorrowEnabled) existingFarm.borrowAssets.push(underlyingAsset)
-          return
-        }
+        if (!underlyingAsset.isBorrowEnabled) return
 
-        // Otherwise add farm to hlsFarms array
+        // Add farm to hlsFarms array
         hlsFarms.push({
           farm,
-          borrowAssets: underlyingAsset.isBorrowEnabled ? [underlyingAsset] : [],
+          borrowAsset: underlyingAsset,
           maxLeverage: getLeverageFromLTV(Number(poolAssetHlsParams.max_loan_to_value ?? 0)),
         })
       })
