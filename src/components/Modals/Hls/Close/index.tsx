@@ -83,7 +83,7 @@ export default function HlsCloseController() {
 function HlsCloseStakingModal(props: Props) {
   const { modal, collateralAsset, debtAsset, assets } = props
   const { actions, changes, isLoadingRoute } = useHlsCloseStakingPositionActions({
-    account: modal.account,
+    account: modal.account as HlsAccountWithStrategy,
   })
   const closeHlsPosition = useStore((s) => s.closeHlsPosition)
 
