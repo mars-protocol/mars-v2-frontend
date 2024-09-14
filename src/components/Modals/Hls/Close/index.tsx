@@ -212,11 +212,9 @@ function HlsClosingDialogContent(props: ClosingDialogProps) {
       <SwapInfo changes={changes.swap} collateralAsset={collateralAsset} debtAsset={debtAsset} />
       <RepayInfo repayCoin={changes.repay} debtAsset={debtAsset} />
       {isLoadingRoute ? (
-        <>
           <Callout type={CalloutType.LOADING} className='mt-8'>
             Loading Swap-Route...
           </Callout>
-        </>
       ) : (
         <div className='flex flex-col w-full gap-2 mt-8'>
           <Text className='font-bold' size='sm'>
