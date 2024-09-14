@@ -55,7 +55,6 @@ export default function AccountStats(props: Props) {
             assets,
             vaultAprs,
             astroLpAprs,
-            account.kind === 'high_levered_strategy',
           ),
     [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, vaultAprs, astroLpAprs],
   )

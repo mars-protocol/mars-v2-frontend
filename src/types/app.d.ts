@@ -86,7 +86,7 @@ interface AccountIdAndKind {
   kind: AccountKind
 }
 
-interface HlsAccountWithStakingStrategy extends Account {
+interface HlsAccountWithStrategy extends Account {
   leverage: number
   strategy: HlsStrategy
   values: {
@@ -182,7 +182,7 @@ interface DepositedHlsStrategy extends HlsStrategy {
 
 interface HlsFarm {
   farm: AstroLp
-  borrowAssets: Asset[]
+  borrowAsset: Asset
   maxLeverage: number
 }
 
@@ -992,7 +992,7 @@ interface BroadcastSlice {
     stakedAstroLpRewards?: StakedAstroLpRewards[]
     lend: boolean
   }) => Promise<boolean>
-  closeHlsStakingPosition: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
+  closeHlsPosition: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
   createAccount: (
     accountKind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind,
     isAutoLendEnabled: boolean,
@@ -1051,6 +1051,8 @@ interface BroadcastSlice {
     accountId: string
     astroLps: DepositedAstroLp[]
     amount: string
+    toWallet: boolean
+    rewards: BNCoin[]
   }) => Promise<boolean>
   withdrawFromVaults: (options: {
     accountId: string
@@ -1241,26 +1243,30 @@ interface HlsModal {
 
 interface HlsManageModal {
   accountId: string
-  staking: {
+  farming?: DepositedHlsFarm
+  staking?: {
     strategy: HlsStrategy
-    action: HlsStakingManageAction
   }
+  action: HlsStakingManageAction
 }
 
 interface HlsCloseModal {
-  account: HlsAccountWithStakingStrategy
-  staking: {
+  account: HlsAccountWithStrategy | Account
+  farming?: DepositedHlsFarm
+  staking?: {
     strategy: HlsStrategy
   }
 }
 
 interface HlsClosingChanges {
+  widthdraw: BNCoin[] | null
   swap: {
     coinIn: BNCoin
     coinOut: BNCoin
   } | null
   repay: BNCoin | null
   refund: BNCoin[]
+  rewards?: BNCoin[]
 }
 
 type HlsStakingManageAction = 'deposit' | 'withdraw' | 'repay' | 'leverage'
@@ -1332,7 +1338,6 @@ interface FarmBorrowingsProps {
 }
 
 interface HlsFarmLeverageProps {
-  farm: AstroLp
   borrowings: BNCoin[]
   deposits: BNCoin[]
   account: Account

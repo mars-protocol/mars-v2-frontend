@@ -11,10 +11,9 @@ import Text from 'components/common/Text'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import { useMemo } from 'react'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
-import { byDenom } from 'utils/array'
-import { useMemo } from 'react'
 
 interface Props {
   account: Account
@@ -49,7 +48,6 @@ export default function AccountBalancesTable(props: Props) {
     updatedAccount,
     lendingData,
     borrowingData,
-    isHls,
   })
 
   const enhancedAccountBalanceData = useMemo(() => {

@@ -15,24 +15,44 @@ interface Props {
 }
 
 export default function Manage(props: Props) {
-  const openModal = useCallback((action: HlsStakingManageAction) => {
-    if (action === 'deposit') {
-      useStore.setState({
-        farmModal: {
-          farm: props.hlsFarm.farm,
-          selectedBorrowDenoms: props.hlsFarm.borrowAssets.map((asset) => asset.denom),
-          account: props.hlsFarm.account,
-          maxLeverage: props.hlsFarm.maxLeverage,
-          action: 'deposit',
-          type: 'high_leverage',
-        },
-      })
-    }
-  }, [])
+  const openModal = useCallback(
+    (action: HlsStakingManageAction) => {
+      switch (action) {
+        case 'deposit':
+        case 'withdraw':
+          useStore.setState({
+            farmModal: {
+              farm: props.hlsFarm.farm,
+              selectedBorrowDenoms: [props.hlsFarm.borrowAsset.denom],
+              account: props.hlsFarm.account,
+              maxLeverage: props.hlsFarm.maxLeverage,
+              action: action,
+              type: 'high_leverage',
+            },
+          })
+          break
+        default:
+          useStore.setState({
+            hlsManageModal: {
+              accountId: props.hlsFarm.account.id,
+              farming: props.hlsFarm,
+              action,
+            },
+          })
+          break
+      }
+    },
+    [props.hlsFarm],
+  )
 
   const closeHlsStakingPosition = useCallback(() => {
-    useStore.setState({})
-  }, [])
+    useStore.setState({
+      hlsCloseModal: {
+        account: props.hlsFarm.account,
+        farming: props.hlsFarm,
+      },
+    })
+  }, [props.hlsFarm])
 
   const hasNoDebt = useMemo(
     () => props.hlsFarm.account.debts.length === 0,

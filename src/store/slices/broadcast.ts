@@ -170,7 +170,7 @@ export default function createBroadcastSlice(
       get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
-    closeHlsStakingPosition: async (options: { accountId: string; actions: Action[] }) => {
+    closeHlsPosition: async (options: { accountId: string; actions: Action[] }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
@@ -187,7 +187,6 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-
     createAccount: async (accountKind: AccountKind, isAutoLendEnabled: boolean) => {
       const msg: CreditManagerExecuteMsg = {
         create_credit_account: accountKind,
@@ -483,6 +482,8 @@ export default function createBroadcastSlice(
       accountId: string
       astroLps: DepositedAstroLp[]
       amount: string
+      toWallet: boolean
+      rewards: BNCoin[]
     }) => {
       const actions: CreditManagerAction[] = []
 
@@ -503,6 +504,19 @@ export default function createBroadcastSlice(
             slippage: '0',
           },
         })
+        if (options.toWallet) {
+          actions.push({
+            withdraw: { denom: astroLp.denoms.primary, amount: 'account_balance' },
+          })
+          actions.push({
+            withdraw: { denom: astroLp.denoms.secondary, amount: 'account_balance' },
+          })
+          options.rewards.forEach((reward) => {
+            actions.push({
+              withdraw: { denom: reward.denom, amount: 'account_balance' },
+            })
+          })
+        }
       })
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {

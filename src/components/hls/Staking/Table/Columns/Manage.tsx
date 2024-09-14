@@ -11,7 +11,7 @@ export const MANAGE_META = {
 }
 
 interface Props {
-  account: HlsAccountWithStakingStrategy
+  account: HlsAccountWithStrategy
 }
 
 export default function Manage(props: Props) {
@@ -20,7 +20,8 @@ export default function Manage(props: Props) {
       useStore.setState({
         hlsManageModal: {
           accountId: props.account.id,
-          staking: { strategy: props.account.strategy, action },
+          staking: { strategy: props.account.strategy },
+          action,
         },
       }),
     [props.account.id, props.account.strategy],

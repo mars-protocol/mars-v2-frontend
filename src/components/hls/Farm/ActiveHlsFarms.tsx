@@ -17,6 +17,7 @@ export function ActiveHlsFarms() {
   const { data: hlsFarms } = useHlsFarms()
   const depositedAstroLpAccounts = useDepositedAstroLpAccounts(accounts)
   const activeColumns = useActiveHlsFarmsColumns(assets)
+
   const activeHlsFarms = useMemo(() => {
     const depositedHlsFarms = [] as DepositedHlsFarm[]
     if (!hlsFarms || !depositedAstroLpAccounts) return []

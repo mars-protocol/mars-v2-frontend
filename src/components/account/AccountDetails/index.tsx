@@ -118,7 +118,6 @@ function AccountDetails(props: Props) {
         whitelistedAssets,
         vaultAprs,
         astroLpAprs,
-        account.kind === 'high_levered_strategy',
       ),
     [
       account,
