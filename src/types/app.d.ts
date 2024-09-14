@@ -1052,6 +1052,7 @@ interface BroadcastSlice {
     astroLps: DepositedAstroLp[]
     amount: string
     toWallet: boolean
+    rewards: BNCoin[]
   }) => Promise<boolean>
   withdrawFromVaults: (options: {
     accountId: string
@@ -1265,6 +1266,7 @@ interface HlsClosingChanges {
   } | null
   repay: BNCoin | null
   refund: BNCoin[]
+  rewards?: BNCoin[]
 }
 
 type HlsStakingManageAction = 'deposit' | 'withdraw' | 'repay' | 'leverage'

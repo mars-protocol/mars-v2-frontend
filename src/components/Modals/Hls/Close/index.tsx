@@ -246,6 +246,34 @@ function HlsClosingDialogContent(props: ClosingDialogProps) {
           </div>
         </div>
       )}
+      {changes.rewards && changes.rewards.length > 0 && (
+        <div className='flex flex-col w-full gap-2 mt-8'>
+          <Text className='font-bold' size='sm'>
+            Rewards
+          </Text>
+          <Text size='xs'>These rewards will be claimed and sent to your wallet</Text>
+          <div className='flex flex-col w-full gap-2 py-2'>
+            <div className='flex items-center gap-2'>
+              {changes.rewards.map((coin, index) => {
+                const asset = assets.find(byDenom(coin.denom))
+                if (!asset) return null
+                return (
+                  <React.Fragment key={index}>
+                    <AssetBalanceRow
+                      asset={asset}
+                      coin={coin}
+                      className='p-2 rounded-md bg-white/5'
+                      hideNames
+                      small
+                    />
+                    {index < changes.refund.length - 1 && <Plus className='w-6 h-6' />}
+                  </React.Fragment>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

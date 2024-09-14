@@ -50,7 +50,7 @@ export default function AstroLpWithdraw(props: Props) {
   )
   const primaryAsset = assets.find(byDenom(astroLp.denoms.primary))
   const secondaryAsset = assets.find(byDenom(astroLp.denoms.secondary))
-  const { data: stakedAstroLpRewards } = useStakedAstroLpRewards(astroLp.denoms.lp)
+  const { data: stakedAstroLpRewards } = useStakedAstroLpRewards(astroLp.denoms.lp, account.id)
 
   const currentLpRewards = useMemo(() => {
     if (stakedAstroLpRewards.length === 0) return []
@@ -86,12 +86,14 @@ export default function AstroLpWithdraw(props: Props) {
       astroLps: [props.astroLp],
       amount: withdrawAmount.toString(),
       toWallet: isHls,
+      rewards: currentLpRewards,
     })
     await mutate(`chains/${chainConfig.id}/accounts/${account.id}`)
     await mutate(`chains/${chainConfig.id}/astroLps/${account.id}/staked-astro-lp-rewards`)
   }, [
     account.id,
     chainConfig.id,
+    currentLpRewards,
     isHls,
     mutate,
     props.astroLp,

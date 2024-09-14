@@ -483,6 +483,7 @@ export default function createBroadcastSlice(
       astroLps: DepositedAstroLp[]
       amount: string
       toWallet: boolean
+      rewards: BNCoin[]
     }) => {
       const actions: CreditManagerAction[] = []
 
@@ -509,6 +510,11 @@ export default function createBroadcastSlice(
           })
           actions.push({
             withdraw: { denom: astroLp.denoms.secondary, amount: 'account_balance' },
+          })
+          options.rewards.forEach((reward) => {
+            actions.push({
+              withdraw: { denom: reward.denom, amount: 'account_balance' },
+            })
           })
         }
       })

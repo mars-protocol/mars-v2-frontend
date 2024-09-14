@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js'
 import { BN_ZERO } from 'constants/math'
 import useAssets from 'hooks/assets/useAssets'
 import useIsOsmosis from 'hooks/chain/useIsOsmosis'
+import useStakedAstroLpRewards from 'hooks/incentives/useStakedAstroLpRewards'
 import useSlippage from 'hooks/settings/useSlippage'
 import useRouteInfo from 'hooks/trade/useRouteInfo'
 import { useMemo } from 'react'
@@ -28,6 +29,12 @@ export default function useHlsCloseFarmingPositionActions(props: Props): {
   const isOsmosis = useIsOsmosis()
   const borrowDenom = borrowAsset.denom
   const zeroCoin = BNCoin.fromDenomAndBigNumber(farm.denoms.primary, BN_ZERO)
+  const { data: stakedAstroLpRewards } = useStakedAstroLpRewards(farm.denoms.lp, account.id)
+
+  const currentLpRewards = useMemo(() => {
+    if (stakedAstroLpRewards.length === 0) return []
+    return stakedAstroLpRewards[0].rewards
+  }, [stakedAstroLpRewards])
 
   const debtAmount: BigNumber = useMemo(
     () => account.debts.find(byDenom(borrowDenom))?.amount || BN_ZERO,
@@ -150,6 +157,7 @@ export default function useHlsCloseFarmingPositionActions(props: Props): {
             },
         repay: debtAmount.isZero() ? null : BNCoin.fromDenomAndBigNumber(borrowDenom, debtAmount),
         refund: fundsLeftAfterSwap,
+        rewards: currentLpRewards,
       },
       isLoadingRoute: amountLeftToRepay > 0 && !debtAmount.isZero() && !routeInfo,
     }
@@ -158,6 +166,7 @@ export default function useHlsCloseFarmingPositionActions(props: Props): {
     amountLeftToRepay,
     borrowDenom,
     collateralAssetPartOfShare.denom,
+    currentLpRewards,
     debtAmount,
     fundsLeftAfterSwap,
     isOsmosis,
