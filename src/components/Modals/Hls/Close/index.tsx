@@ -8,7 +8,6 @@ import { ArrowRight, Plus } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
 import useAssets from 'hooks/assets/useAssets'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useHlsCloseFarmingPositionActions from 'hooks/hls/useHlsCloseFarmingPositionActions'
 import useHlsCloseStakingPositionActions from 'hooks/hls/useHlsCloseStakingPositionActions'
 import React from 'react'
@@ -41,7 +40,7 @@ interface ClosingDialogProps {
 
 export default function HlsCloseController() {
   const modal = useStore((s) => s.hlsCloseModal)
-  const assets = useWhitelistedAssets()
+  const { data: assets } = useAssets()
   const isFarming = !!modal?.farming
   const isStaking = !!modal?.staking
 
