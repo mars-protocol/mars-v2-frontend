@@ -44,7 +44,6 @@ export default function PortfolioSummary() {
         combinedAccount.stakedAstroLps = combinedAccount.stakedAstroLps.concat(
           account.stakedAstroLps,
         )
-        console.log(combinedAccount, 'combined account')
         return combinedAccount
       },
       {
