@@ -22,15 +22,20 @@ export default function PortfolioSummary() {
   const data = useBorrowMarketAssetsTableData()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
-  const { data: accounts } = useAccounts('default', urlAddress || walletAddress)
+  const { data: defaultAccounts } = useAccounts('default', urlAddress || walletAddress)
+  const { data: hlsAccounts } = useAccounts('high_levered_strategy', urlAddress || walletAddress)
   const { data: hlsStrategies } = useHlsStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
   const assets = useWhitelistedAssets()
   const astroLpAprs = useAstroLpAprs()
 
+  const allAccounts = useMemo(() => {
+    return [...(defaultAccounts || []), ...(hlsAccounts || [])]
+  }, [defaultAccounts, hlsAccounts])
+
   const stats = useMemo(() => {
-    if (!accounts?.length) return
-    const combinedAccount = accounts.reduce(
+    if (!allAccounts?.length) return
+    const combinedAccount = allAccounts.reduce(
       (combinedAccount, account) => {
         combinedAccount.debts = combinedAccount.debts.concat(account.debts)
         combinedAccount.deposits = combinedAccount.deposits.concat(account.deposits)
@@ -39,6 +44,7 @@ export default function PortfolioSummary() {
         combinedAccount.stakedAstroLps = combinedAccount.stakedAstroLps.concat(
           account.stakedAstroLps,
         )
+        console.log(combinedAccount, 'combined account')
         return combinedAccount
       },
       {
@@ -102,7 +108,7 @@ export default function PortfolioSummary() {
         sub: 'Combined leverage',
       },
     ]
-  }, [accounts, assets, borrowAssets, hlsStrategies, lendingAssets, vaultAprs, astroLpAprs])
+  }, [allAccounts, assets, borrowAssets, hlsStrategies, lendingAssets, vaultAprs, astroLpAprs])
 
   if (!walletAddress && !urlAddress) return null
 
