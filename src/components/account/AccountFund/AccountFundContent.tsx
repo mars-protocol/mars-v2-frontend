@@ -105,6 +105,8 @@ export default function AccountFundContent(props: Props) {
     chainID: string
     explorerLink: string
     status: StatusState
+    denom: string
+    amount: BigNumber
   }
 
   const [skipBridge, setSkipBridge] = useState<SkipBridgeTransaction | null>(() => {
@@ -230,6 +232,8 @@ export default function AccountFundContent(props: Props) {
             console.log('Transaction tracked:', txInfo)
             updateSkipBridge({
               ...txInfo,
+              denom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
+              amount: selectedAsset.coin.amount,
               status: 'STATE_PENDING',
             })
           },
@@ -239,7 +243,14 @@ export default function AccountFundContent(props: Props) {
             status: TxStatusResponse,
           ) => {
             console.log('Transaction completed:', { chainID, txHash, status })
-            updateSkipBridge({ txHash, chainID, explorerLink: '', status: status.status })
+            updateSkipBridge({
+              txHash,
+              chainID,
+              explorerLink: '',
+              status: status.status,
+              denom: selectedAsset.coin.denom,
+              amount: selectedAsset.coin.amount,
+            })
           },
         })
 

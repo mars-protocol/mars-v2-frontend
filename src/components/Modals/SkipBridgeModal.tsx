@@ -1,11 +1,15 @@
 import Modal from 'components/Modals/Modal'
+import SkipBridgeModalGraphic from 'components/common/Icons/SkipBridgeModalGraphic.svg'
+import Text from 'components/common/Text'
+import Link from 'next/link'
+import { ExternalLink } from 'components/common/Icons'
 import { useSkipBridgeStatus } from 'hooks/localStorage/useSkipBridgeStatus'
 
 export default function SkipBridgeModal() {
-  const { isPendingTransaction, skipBridge } = useSkipBridgeStatus()
+  const explorerLink = JSON.parse(localStorage.getItem('skipBridge') || '{}').explorerLink
+  const { shouldShowSkipBridgeModal } = useSkipBridgeStatus()
 
-  if (!isPendingTransaction) return null
-
+  if (!shouldShowSkipBridgeModal) return null
   return (
     <Modal
       header={null}
@@ -13,22 +17,28 @@ export default function SkipBridgeModal() {
       hideCloseBtn={true}
       content={
         <div className='p-4 text-center'>
-          <h2 className='text-xl font-bold mb-4'>Bridge Transaction in Progress</h2>
-          <p>Your bridge transaction is still processing. Please check back later.</p>
-          <p className='mt-4'>
-            You can track your transaction here:{' '}
-            <a
-              href={skipBridge?.explorerLink}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='text-blue-500 hover:text-blue-600 underline'
-            >
-              View on Explorer
-            </a>
-          </p>
-          <p className='mt-4'>
-            The app's functionality is limited until the transaction completes.
-          </p>
+          <div className='flex justify-center'>
+            <div className='mb-[-24px]'>
+              <SkipBridgeModalGraphic />
+            </div>
+          </div>
+          <h3 className='font-bold mb-4'>Bridge Transaction in Progress</h3>
+          <Text tag='p' className='text-center opacity-60'>
+            Your bridge transaction is still processing. Please check back later. <br />
+            The app's functionality is limited until the transaction completes
+          </Text>
+          {explorerLink && (
+            <div className='flex items-center justify-center my-4'>
+              <Link target='_blank' href={explorerLink} className='flex items-center'>
+                <Text tag='p' className='text-center'>
+                  Track your transaction
+                </Text>
+                <div className='w-3 h-3 ml-1 flex items-center justify-center'>
+                  <ExternalLink />
+                </div>
+              </Link>
+            </div>
+          )}
         </div>
       }
     />

@@ -86,6 +86,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      <SkipBridgeModal />
       <SWRConfig value={{ use: [debugSWR] }}>
         <Suspense
           fallback={
@@ -122,7 +123,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               mobileNavExpanded && isMobile && '-ml-full',
             )}
           >
-            <SkipBridgeModal />
             <PageContainer focusComponent={focusComponent} fullWidth={isFullWidth}>
               {children}
             </PageContainer>

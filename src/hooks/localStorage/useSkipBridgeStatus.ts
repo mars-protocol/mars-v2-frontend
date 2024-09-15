@@ -9,9 +9,11 @@ type SkipBridgeTransaction = {
 }
 
 export function useSkipBridgeStatus() {
-  const balances = useStore((s) => s.balances)
-  const [skipBridge, setSkipBridge] = useState<SkipBridgeTransaction | null>(null)
   const [isPendingTransaction, setIsPendingTransaction] = useState(false)
+  const [skipBridge, setSkipBridge] = useState<SkipBridgeTransaction | null>(null)
+  const [shouldShowSkipBridgeModal, setShouldShowSkipBridgeModal] = useState(false)
+
+  const hasNoBalances = useStore.getState().balances.length === 0
 
   const checkTransactionStatus = useCallback(async () => {
     const skipBridgeString = localStorage.getItem('skipBridge')
@@ -19,7 +21,7 @@ export function useSkipBridgeStatus() {
 
     const skipBridge: SkipBridgeTransaction = JSON.parse(skipBridgeString)
 
-    if (skipBridge && skipBridge.status === 'STATE_PENDING' && balances.length === 0) {
+    if (skipBridge && skipBridge.status === 'STATE_PENDING') {
       setIsPendingTransaction(true)
       setSkipBridge(skipBridge)
       try {
@@ -44,7 +46,7 @@ export function useSkipBridgeStatus() {
       setIsPendingTransaction(false)
       setSkipBridge(null)
     }
-  }, [balances])
+  }, [])
 
   useEffect(() => {
     checkTransactionStatus()
@@ -52,5 +54,11 @@ export function useSkipBridgeStatus() {
     return () => clearInterval(intervalId)
   }, [checkTransactionStatus])
 
-  return { isPendingTransaction, skipBridge }
+  useEffect(() => {
+    if (hasNoBalances && isPendingTransaction) {
+      setShouldShowSkipBridgeModal(true)
+    }
+  }, [hasNoBalances, isPendingTransaction])
+
+  return { isPendingTransaction, skipBridge, shouldShowSkipBridgeModal }
 }
