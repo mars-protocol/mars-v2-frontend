@@ -13,6 +13,8 @@ interface Props {
   small?: boolean
   hideBalances?: boolean
   hideNames?: boolean
+  bridgeStatus?: string
+  skipTxHash?: string
 }
 
 export default function AssetBalanceRow(props: Props) {

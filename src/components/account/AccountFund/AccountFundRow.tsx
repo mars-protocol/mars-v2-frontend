@@ -12,6 +12,7 @@ interface Props {
   chainName?: string
   isConfirming: boolean
   updateFundingAssets: (amount: BigNumber, denom: string, chainName?: string) => void
+  onChange?: () => void
 }
 
 export default function AccountFundRow(props: Props) {
@@ -22,11 +23,18 @@ export default function AccountFundRow(props: Props) {
 
   const chainName = props.chainName && props.chainName !== '' ? props.chainName : undefined
 
+  const handleChange = (amount: BigNumber) => {
+    props.updateFundingAssets(amount, props.denom, chainName)
+    if (props.onChange) {
+      props.onChange()
+    }
+  }
+
   return (
     <>
       <TokenInputWithSlider
         asset={asset}
-        onChange={(amount) => props.updateFundingAssets(amount, props.denom, chainName)}
+        onChange={handleChange}
         amount={props.amount}
         max={BN(balance)}
         balances={props.balances.map((wrappedCoin) => wrappedCoin.coin)}
@@ -37,7 +45,10 @@ export default function AccountFundRow(props: Props) {
       />
       {asset.campaigns.length > 0 &&
         asset.campaigns.map((campaign, index) => (
-          <div className='flex justify-center w-full p-2 mt-4 border rounded border-white/20'>
+          <div
+            key={index}
+            className='flex justify-center w-full p-2 mt-4 border rounded border-white/20'
+          >
             <AssetCampaignCopy
               campaign={campaign}
               asset={asset}
@@ -45,7 +56,6 @@ export default function AccountFundRow(props: Props) {
               amount={props.amount}
               withLogo
               className='justify-center'
-              key={index}
             />
           </div>
         ))}

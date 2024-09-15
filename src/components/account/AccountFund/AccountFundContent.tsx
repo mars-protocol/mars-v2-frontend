@@ -28,6 +28,7 @@ import { useNavigate } from 'react-router-dom'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import { getPage, getRoute } from 'utils/route'
 import { Callout, CalloutType } from 'components/common/Callout'
+import { BN_ZERO } from 'constants/math'
 
 interface Props {
   account?: Account
@@ -42,6 +43,8 @@ export default function AccountFundContent(props: Props) {
   const deposit = useStore((s) => s.deposit)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
   const [isConfirming, setIsConfirming] = useState(false)
+  const [isBridgeInProgress, setIsBridgeInProgress] = useState(false)
+  const [currentEVMAssetValue, setCurrentEVMAssetValue] = useState<BigNumber>(BN_ZERO)
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const [isAutoLendEnabledGlobal] = useEnableAutoLendGlobal()
   const { data: walletBalances } = useWalletBalances(props.address)
@@ -109,6 +112,32 @@ export default function AccountFundContent(props: Props) {
     amount: BigNumber
   }
 
+  const updateEVMAssetValue = useCallback(() => {
+    const evmAsset = fundingAssets.find(
+      (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
+    )
+    if (evmAsset) {
+      setCurrentEVMAssetValue(evmAsset.coin.amount)
+    } else {
+      setCurrentEVMAssetValue(BN_ZERO)
+    }
+  }, [fundingAssets])
+
+  useEffect(() => {
+    updateEVMAssetValue()
+  }, [fundingAssets, updateEVMAssetValue])
+
+  useEffect(() => {
+    const hasEVMAsset = fundingAssets.some(
+      (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
+    )
+    setShowMinimumUSDCValueOverlay(
+      hasEVMAsset &&
+        !currentEVMAssetValue.isZero() &&
+        currentEVMAssetValue.isLessThan(MINIMUM_USDC),
+    )
+  }, [currentEVMAssetValue, fundingAssets])
+
   const [skipBridge, setSkipBridge] = useState<SkipBridgeTransaction | null>(() => {
     const savedSkipBridge = localStorage.getItem('skipBridge')
     return savedSkipBridge && savedSkipBridge !== 'undefined' ? JSON.parse(savedSkipBridge) : null
@@ -147,12 +176,18 @@ export default function AccountFundContent(props: Props) {
 
   const handleSkipTransfer = useCallback(
     async (selectedAsset: WrappedBNCoin) => {
+      if (isBridgeInProgress) {
+        console.log('A bridge transaction is already in progress')
+        return
+      }
+
       if (!cosmosAddress || !evmAddress || !selectedAsset) {
         console.error('Missing required data for transfer')
         return
       }
 
       try {
+        setIsBridgeInProgress(true)
         if (!selectedAsset.chain) throw new Error('Chain not found for selected asset')
         let osmosisAddress = ''
         try {
@@ -246,20 +281,16 @@ export default function AccountFundContent(props: Props) {
             updateSkipBridge({
               txHash,
               chainID,
-              explorerLink: '',
+              explorerLink: skipBridge?.explorerLink ?? '',
               status: status.status,
-              denom: selectedAsset.coin.denom,
+              denom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
               amount: selectedAsset.coin.amount,
             })
+            setIsBridgeInProgress(false)
           },
         })
 
         const wrappedTransactionPromise = wrapTransactionPromise(transactionPromise)
-
-        useStore.getState().handleTransaction({
-          response: wrappedTransactionPromise,
-          message: 'EVM transaction in progress...',
-        })
 
         await wrappedTransactionPromise
       } catch (error) {
@@ -268,9 +299,18 @@ export default function AccountFundContent(props: Props) {
           console.error('Error message:', error.message)
           console.error('Error stack:', error.stack)
         }
+        setIsBridgeInProgress(false)
       }
     },
-    [chainConfig, cosmosAddress, evmAddress, skipClient, updateSkipBridge],
+    [
+      chainConfig,
+      cosmosAddress,
+      evmAddress,
+      skipClient,
+      skipBridge?.explorerLink,
+      updateSkipBridge,
+      isBridgeInProgress,
+    ],
   )
 
   const handleSelectAssetsClick = useCallback(() => {
@@ -301,12 +341,6 @@ export default function AccountFundContent(props: Props) {
     const nonEvmAssets = fundingAssets.filter(
       (asset) => !asset.chain || !chainNameToUSDCAttributes[asset.chain],
     )
-
-    if (evmAssets.length > 0) {
-      setIsConfirming(true)
-      await handleSkipTransfer(evmAssets[0])
-      setIsConfirming(false)
-    }
 
     if (nonEvmAssets.length > 0) {
       setIsConfirming(true)
@@ -342,6 +376,12 @@ export default function AccountFundContent(props: Props) {
       } finally {
         setIsConfirming(false)
       }
+    }
+
+    if (evmAssets.length > 0) {
+      setIsConfirming(true)
+      await handleSkipTransfer(evmAssets[0])
+      setIsConfirming(false)
     }
   }, [
     props.accountId,
@@ -385,10 +425,11 @@ export default function AccountFundContent(props: Props) {
           isConfirming={isConfirming}
           updateFundingAssets={updateFundingAssets}
           isFullPage={props.isFullPage}
+          onChange={updateEVMAssetValue}
         />
         {showMinimumUSDCValueOverlay && (
           <Callout type={CalloutType.WARNING} className='mt-4'>
-            Please select an asset with a value greater than 0.05 USDC.
+            You need to deposit at least 0.05 USDC, when bridging from an EVM chain.
           </Callout>
         )}
         <Button
@@ -424,7 +465,11 @@ export default function AccountFundContent(props: Props) {
         <Button
           className='w-full mt-4'
           text='Fund account'
-          disabled={!hasFundingAssets || depositCapReachedCoins.length > 0}
+          disabled={
+            !hasFundingAssets ||
+            depositCapReachedCoins.length > 0 ||
+            (showMinimumUSDCValueOverlay && currentEVMAssetValue.isLessThan(MINIMUM_USDC))
+          }
           showProgressIndicator={isConfirming}
           onClick={handleClick}
           color={props.isFullPage ? 'tertiary' : undefined}

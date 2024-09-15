@@ -10,6 +10,7 @@ interface AccountFundingAssetsProps {
   isConfirming: boolean
   updateFundingAssets: (amount: BigNumber, denom: string, chainName?: string) => void
   isFullPage?: boolean
+  onChange: () => void
 }
 
 export default function AccountFundingAssets({
@@ -18,6 +19,7 @@ export default function AccountFundingAssets({
   isConfirming,
   updateFundingAssets,
   isFullPage,
+  onChange,
 }: AccountFundingAssetsProps) {
   return fundingAssets.map((wrappedCoin, index) => (
     <div
@@ -34,6 +36,7 @@ export default function AccountFundingAssets({
         isConfirming={isConfirming}
         updateFundingAssets={updateFundingAssets}
         chainName={wrappedCoin.chain}
+        onChange={onChange}
       />
     </div>
   ))

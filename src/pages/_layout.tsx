@@ -22,6 +22,7 @@ import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { debugSWR } from 'utils/middleware'
 import SkipBridgeModal from 'components/Modals/SkipBridgeModal'
+import { useSkipBridgeStatus } from 'hooks/localStorage/useSkipBridgeStatus'
 
 interface Props {
   focusComponent: FocusComponent | null
@@ -83,10 +84,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       setCurrentChainId(chainConfig.id)
     }
   }, [chainConfig.id, currentChainId, setCurrentChainId])
-
+  const balances = useStore((s) => s.balances)
+  const hasNoBalances = balances.length === 0
+  const skipBridge = localStorage.getItem('skipBridge')
+  const isPendingTransaction = skipBridge && JSON.parse(skipBridge).status === 'STATE_PENDING'
+  console.log('skipBridge', isPendingTransaction, hasNoBalances)
+  const { shouldShowSkipBridgeModal } = useSkipBridgeStatus()
   return (
     <>
-      <SkipBridgeModal />
+      {shouldShowSkipBridgeModal && <SkipBridgeModal />}
+
       <SWRConfig value={{ use: [debugSWR] }}>
         <Suspense
           fallback={
