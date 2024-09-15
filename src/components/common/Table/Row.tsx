@@ -32,12 +32,13 @@ function getBorderColor(
 export default function Row<T>(props: Props<T>) {
   const { renderExpanded, table, row, type, spacingClassName, isSelectable } = props
   const canExpand = !!renderExpanded
-
   return (
     <>
       <tr
         key={`${row.id}-row`}
         className={classNames(
+          (row.original as any)?.bridgeStatus === 'STATE_PENDING' &&
+            'opacity-50 pointer-events-none',
           'transition-bg duration-100 border-white/10',
           (renderExpanded || isSelectable || props.onClick) && 'hover:cursor-pointer',
           canExpand && row.getIsExpanded()
