@@ -21,6 +21,7 @@ import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
 import { useSWRConfig } from 'swr'
 import { BNCoin } from 'types/classes/BNCoin'
+import { removeEmptyBNCoins } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { findCoinByDenom } from 'utils/assets'
 import { HF_THRESHOLD } from 'utils/constants'
@@ -182,7 +183,9 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
     await depositIntoFarm({
       accountId: updatedAccount.id,
       actions,
-      deposits: isAstroLp ? mergeBNCoinArrays(props.deposits, props.reclaims) : props.deposits,
+      deposits: isAstroLp
+        ? mergeBNCoinArrays(props.deposits, props.reclaims)
+        : removeEmptyBNCoins(props.deposits),
       borrowings: props.borrowings,
       kind: 'default' as AccountKind,
     })

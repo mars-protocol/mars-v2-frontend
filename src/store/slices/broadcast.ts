@@ -466,15 +466,13 @@ export default function createBroadcastSlice(
       }
       const cmContract = get().chainConfig.contracts.creditManager
 
-      const depositFundsArray = removeEmptyBNCoins(options.deposits)
-
       const response = get().executeMsg({
         messages: [
           generateExecutionMessage(
             get().address,
             cmContract,
             msg,
-            options.kind === 'default' ? [] : depositFundsArray.map((coin) => coin.toCoin()),
+            options.kind === 'default' ? [] : options.deposits.map((coin) => coin.toCoin()),
           ),
         ],
       })

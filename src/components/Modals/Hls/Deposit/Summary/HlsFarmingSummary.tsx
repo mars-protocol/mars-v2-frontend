@@ -12,6 +12,7 @@ import { useCallback, useMemo, useState } from 'react'
 import useStore from 'store'
 import { useSWRConfig } from 'swr'
 import { BNCoin } from 'types/classes/BNCoin'
+import { removeEmptyBNCoins } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { getAstroLpCoinsFromShares } from 'utils/astroLps'
 import { getFarmActions } from 'utils/farm'
@@ -63,7 +64,7 @@ export default function HlsFarmingSummary(props: Props) {
     await depositIntoFarm({
       accountId: account.id,
       actions,
-      deposits: deposits,
+      deposits: removeEmptyBNCoins(deposits),
       borrowings: borrowings,
       kind: 'high_levered_strategy' as AccountKind,
     })
