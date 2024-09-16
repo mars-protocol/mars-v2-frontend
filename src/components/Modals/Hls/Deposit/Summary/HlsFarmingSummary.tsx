@@ -3,6 +3,7 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import Text from 'components/common/Text'
 import AssetSummary from 'components/Modals/Hls/Deposit/Summary/AssetSummary'
 import MultiAssetSummary from 'components/Modals/Hls/Deposit/Summary/MultiAssetSummary'
+import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAssets from 'hooks/assets/useAssets'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
@@ -16,6 +17,7 @@ import { removeEmptyBNCoins } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { getAstroLpCoinsFromShares } from 'utils/astroLps'
 import { getFarmActions } from 'utils/farm'
+import { getCoinValue } from 'utils/formatters'
 
 interface Props {
   borrowings: BNCoin[]
@@ -25,6 +27,8 @@ interface Props {
   primaryAsset: Asset
   secondaryAsset: Asset
   totalValue: BigNumber
+  depositCapReachedCoins: BNCoin[]
+  isCreate?: boolean
 }
 
 export default function HlsFarmingSummary(props: Props) {
@@ -40,9 +44,11 @@ export default function HlsFarmingSummary(props: Props) {
     () => (updatedAccount?.stakedAstroLps ?? []) as BNCoin[],
     [updatedAccount],
   )
-  const astroLpCoins = stakedAstroLps.length
-    ? getAstroLpCoinsFromShares(stakedAstroLps[0], astroLp, assets)
-    : []
+  const astroLpCoins = useMemo(
+    () =>
+      stakedAstroLps.length ? getAstroLpCoinsFromShares(stakedAstroLps[0], astroLp, assets) : [],
+    [stakedAstroLps, astroLp, assets],
+  )
 
   const handleDeposit = useCallback(async () => {
     setIsCaluclating(true)
@@ -83,6 +89,19 @@ export default function HlsFarmingSummary(props: Props) {
     mutate,
   ])
 
+  const newTotalValue = useMemo(() => {
+    let totalLpValue = BN_ZERO
+    astroLpCoins.forEach((coin) => {
+      const coinValue = getCoinValue(coin, assets)
+      totalLpValue = totalLpValue.plus(coinValue)
+    })
+    return totalLpValue
+  }, [astroLpCoins, assets])
+
+  const totalValueString = props.isCreate
+    ? `${props.primaryAsset.symbol}-${props.secondaryAsset.symbol} Position Value`
+    : `New ${props.primaryAsset.symbol}-${props.secondaryAsset.symbol} Position Value`
+
   return (
     <div id='item-4' className='flex flex-col gap-4 p-4'>
       <DepositsSummary deposits={deposits} />
@@ -103,12 +122,11 @@ export default function HlsFarmingSummary(props: Props) {
 
       <MultiAssetSummary coins={astroLpCoins} isResult />
       <div className='flex items-center justify-between'>
-        <Text
-          size='sm'
-          className='text-white/50'
-        >{`${props.primaryAsset.symbol}-${props.secondaryAsset.symbol} Position Value`}</Text>
+        <Text size='sm' className='text-white/50'>
+          {totalValueString}
+        </Text>
         <DisplayCurrency
-          coin={new BNCoin({ denom: ORACLE_DENOM, amount: props.totalValue.toString() })}
+          coin={new BNCoin({ denom: ORACLE_DENOM, amount: newTotalValue.toString() })}
           options={{ abbreviated: false, minDecimals: 2, maxDecimals: 2 }}
         />
       </div>
@@ -117,7 +135,11 @@ export default function HlsFarmingSummary(props: Props) {
         color='primary'
         text='Deposit'
         showProgressIndicator={isCalculating}
-        disabled={deposits.length === 0}
+        disabled={
+          deposits.length === 0 &&
+          borrowings.length === 0 &&
+          props.depositCapReachedCoins.length === 0
+        }
       />
     </div>
   )
