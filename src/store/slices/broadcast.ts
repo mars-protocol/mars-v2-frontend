@@ -20,6 +20,7 @@ import {
 import { ExecuteMsg as IncentivesExecuteMsg } from 'types/generated/mars-incentives/MarsIncentives.types'
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
+import { removeEmptyBNCoins } from 'utils/accounts'
 import { byDenom, bySymbol } from 'utils/array'
 import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
@@ -465,13 +466,15 @@ export default function createBroadcastSlice(
       }
       const cmContract = get().chainConfig.contracts.creditManager
 
+      const depositFundsArray = removeEmptyBNCoins(options.deposits)
+
       const response = get().executeMsg({
         messages: [
           generateExecutionMessage(
             get().address,
             cmContract,
             msg,
-            options.kind === 'default' ? [] : options.deposits.map((coin) => coin.toCoin()),
+            options.kind === 'default' ? [] : depositFundsArray.map((coin) => coin.toCoin()),
           ),
         ],
       })
