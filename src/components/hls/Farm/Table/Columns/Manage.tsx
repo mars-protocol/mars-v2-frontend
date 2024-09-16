@@ -45,7 +45,7 @@ export default function Manage(props: Props) {
     [props.hlsFarm],
   )
 
-  const closeHlsStakingPosition = useCallback(() => {
+  const closeHlsFarmingPosition = useCallback(() => {
     useStore.setState({
       hlsCloseModal: {
         account: props.hlsFarm.account,
@@ -83,10 +83,10 @@ export default function Manage(props: Props) {
       {
         icon: <Cross width={14} />,
         text: 'Close Position',
-        onClick: () => closeHlsStakingPosition(),
+        onClick: () => closeHlsFarmingPosition(),
       },
     ],
-    [closeHlsStakingPosition, hasNoDebt, openModal],
+    [closeHlsFarmingPosition, hasNoDebt, openModal],
   )
 
   return <DropDownButton items={ITEMS} text='Manage' color='tertiary' />

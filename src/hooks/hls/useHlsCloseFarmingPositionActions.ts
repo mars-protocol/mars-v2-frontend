@@ -4,6 +4,7 @@ import { BN_ZERO } from 'constants/math'
 import useAssets from 'hooks/assets/useAssets'
 import useIsOsmosis from 'hooks/chain/useIsOsmosis'
 import useStakedAstroLpRewards from 'hooks/incentives/useStakedAstroLpRewards'
+import useMarkets from 'hooks/markets/useMarkets'
 import useSlippage from 'hooks/settings/useSlippage'
 import useRouteInfo from 'hooks/trade/useRouteInfo'
 import { useMemo } from 'react'
@@ -13,6 +14,7 @@ import { byDenom } from 'utils/array'
 import { getAstroLpCoinsFromShares } from 'utils/astroLps'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
+import { getDebtAmountWithInterest } from 'utils/tokens'
 
 interface Props {
   hlsFarm: DepositedHlsFarm
@@ -27,6 +29,7 @@ export default function useHlsCloseFarmingPositionActions(props: Props): {
   const { data: assets } = useAssets()
   const [slippage] = useSlippage()
   const isOsmosis = useIsOsmosis()
+  const markets = useMarkets()
   const borrowDenom = borrowAsset.denom
   const zeroCoin = BNCoin.fromDenomAndBigNumber(farm.denoms.primary, BN_ZERO)
   const { data: stakedAstroLpRewards } = useStakedAstroLpRewards(farm.denoms.lp, account.id)
@@ -36,10 +39,15 @@ export default function useHlsCloseFarmingPositionActions(props: Props): {
     return stakedAstroLpRewards[0].rewards
   }, [stakedAstroLpRewards])
 
-  const debtAmount: BigNumber = useMemo(
-    () => account.debts.find(byDenom(borrowDenom))?.amount || BN_ZERO,
-    [account.debts, borrowDenom],
-  )
+  const debtAmount: BigNumber = useMemo(() => {
+    const market = markets.find((market) => market.asset.denom === borrowDenom)
+    if (!market) return BN_ZERO
+
+    return getDebtAmountWithInterest(
+      account.debts.find(byDenom(borrowDenom))?.amount || BN_ZERO,
+      market.apy.borrow,
+    )
+  }, [account.debts, borrowDenom, markets])
 
   const underlyingAssets = getAstroLpCoinsFromShares(account.stakedAstroLps[0], farm, assets)
   const [debtAssetPartOfShare, collateralAssetPartOfShare] = useMemo(() => {
@@ -127,8 +135,13 @@ export default function useHlsCloseFarmingPositionActions(props: Props): {
     return {
       actions: [
         {
+          unstake_astro_lp: {
+            lp_token: account.stakedAstroLps[0].toActionCoin(true),
+          },
+        },
+        {
           withdraw_liquidity: {
-            lp_token: account.stakedAstroLps[0].toActionCoin(),
+            lp_token: account.stakedAstroLps[0].toActionCoin(true),
             slippage: slippage.toString(),
           },
         },
