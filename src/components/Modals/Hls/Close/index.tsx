@@ -212,9 +212,9 @@ function HlsClosingDialogContent(props: ClosingDialogProps) {
       <SwapInfo changes={changes.swap} collateralAsset={collateralAsset} debtAsset={debtAsset} />
       <RepayInfo repayCoin={changes.repay} debtAsset={debtAsset} />
       {isLoadingRoute ? (
-          <Callout type={CalloutType.LOADING} className='mt-8'>
-            Loading Swap-Route...
-          </Callout>
+        <Callout type={CalloutType.LOADING} className='mt-8'>
+          Loading Swap-Route...
+        </Callout>
       ) : (
         <div className='flex flex-col w-full gap-2 mt-8'>
           <Text className='font-bold' size='sm'>
@@ -249,25 +249,22 @@ function HlsClosingDialogContent(props: ClosingDialogProps) {
             Rewards
           </Text>
           <Text size='xs'>These rewards will be claimed and sent to your wallet</Text>
-          <div className='flex flex-col w-full gap-2 py-2'>
-            <div className='flex items-center gap-2'>
-              {changes.rewards.map((coin, index) => {
-                const asset = assets.find(byDenom(coin.denom))
-                if (!asset) return null
-                return (
-                  <React.Fragment key={index}>
-                    <AssetBalanceRow
-                      asset={asset}
-                      coin={coin}
-                      className='p-2 rounded-md bg-white/5'
-                      hideNames
-                      small
-                    />
-                    {index < changes.refund.length - 1 && <Plus className='w-6 h-6' />}
-                  </React.Fragment>
-                )
-              })}
-            </div>
+          <div className='flex flex-wrap items-center w-full max-w-full gap-2 py-2'>
+            {changes.rewards.map((coin, index) => {
+              const asset = assets.find(byDenom(coin.denom))
+              if (!asset) return null
+              return (
+                <div className='flex basis-[calc(50%-4px)]' key={index}>
+                  <AssetBalanceRow
+                    asset={asset}
+                    coin={coin}
+                    className='p-2 rounded-md bg-white/5'
+                    hideNames
+                    tiny
+                  />
+                </div>
+              )
+            })}
           </div>
         </div>
       )}
