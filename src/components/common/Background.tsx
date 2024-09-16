@@ -41,9 +41,9 @@ export default function Background() {
       }
       if (isVaults) {
         return [
-          'gradient-vault-primary',
-          'gradient-vault-secondary',
-          'gradient-vault-tertiary',
+          'bg-orb-primary-vaults',
+          'bg-orb-secondary-vaults',
+          'bg-orb-tertiary-vaults',
           'bg-body',
         ]
       }
