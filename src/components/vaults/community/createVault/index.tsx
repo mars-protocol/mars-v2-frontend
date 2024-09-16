@@ -1,9 +1,10 @@
 import AssetSelect from 'components/vaults/community/createVault/AssetSelect'
 import Button from 'components/common/Button'
-import CreateVaultOverlay from 'components/vaults/community/createVault/CreateVaultOverlay'
+import CreateVaultContent from 'components/vaults/community/createVault/CreateVaultContent'
 import CreateVaultAccount from 'components/vaults/community/createVault/CreateVaultAccount'
-import HLSSwitch from 'components/vaults/community/createVault/HLSSwitch'
-import Input from 'components/vaults/community/createVault/Input'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import HlsSwitch from 'components/vaults/community/createVault/HLSSwitch'
+import VaultInputElement from 'components/vaults/community/createVault/VaultInputElement'
 import PerformanceFee from 'components/vaults/community/createVault/PerformanceFee'
 import Text from 'components/common/Text'
 import useToggle from 'hooks/common/useToggle'
@@ -12,6 +13,10 @@ import React, { useCallback, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowRight } from 'components/common/Icons'
 import { getPage, getRoute } from 'utils/route'
+import { TextLink } from 'components/common/TextLink'
+import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -21,13 +26,6 @@ const options = [
   { label: '7 days', value: '168' },
   { label: '14 days', value: '336' },
 ]
-const assets = [
-  { id: 1, label: 'USDC', value: 'USDC' },
-  { id: 2, label: 'wBTC', value: 'wBTC' },
-  { id: 3, label: 'wETH', value: 'wETH' },
-  { id: 4, label: 'ATOM', value: 'ATOM' },
-  { id: 5, label: 'NEUTRON', value: 'NEUTRON' },
-]
 
 export default function CreateVault() {
   const [withdrawFreezePeriod, setWithdrawFreezePeriod] = useState<string>('24')
@@ -36,7 +34,8 @@ export default function CreateVault() {
     value: 'USDC',
   })
 
-  const [enableHLSVault, setEnableHLSVault] = useState<boolean>(false)
+  const assets = useWhitelistedAssets()
+  const [enableHlsVault, setEnableHlsVault] = useState<boolean>(false)
   const [showMenu, setShowMenu] = useToggle()
   const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
@@ -71,8 +70,8 @@ export default function CreateVault() {
     setWithdrawFreezePeriod(value)
   }, [])
 
-  const handleHLSSwitch = useCallback((value: boolean) => {
-    setEnableHLSVault(value)
+  const handleHlsSwitch = useCallback((value: boolean) => {
+    setEnableHlsVault(value)
   }, [])
 
   const handleSelectAssetsClick = useCallback(() => {
@@ -80,11 +79,11 @@ export default function CreateVault() {
   }, [])
 
   return (
-    <CreateVaultOverlay>
+    <CreateVaultContent>
       <form className='flex flex-col space-y-6 mb-4'>
         <div className='flex flex-col md:flex-row gap-8'>
           <div className='flex-1 space-y-8'>
-            <Input
+            <VaultInputElement
               type='text'
               // TODO: add value and onChange
               value={''}
@@ -96,9 +95,9 @@ export default function CreateVault() {
 
             <PerformanceFee />
 
-            <HLSSwitch onChange={handleHLSSwitch} name='enableHLSVault' value={enableHLSVault} />
+            <HlsSwitch onChange={handleHlsSwitch} name='enableHlsVault' value={enableHlsVault} />
 
-            <Input
+            <VaultInputElement
               type='button'
               value={selectedAsset.label}
               onClick={handleSelectAssetsClick}
@@ -117,7 +116,7 @@ export default function CreateVault() {
           <div className='border border-white/5' />
 
           <div className='flex-1 space-y-8'>
-            <Input
+            <VaultInputElement
               type='dropdown'
               options={options}
               value={withdrawFreezePeriod}
@@ -125,7 +124,7 @@ export default function CreateVault() {
               label='Withdraw Freeze Period'
             />
 
-            <Input
+            <VaultInputElement
               type='textarea'
               // TODO: add value and onChange
               value={''}
@@ -151,22 +150,20 @@ export default function CreateVault() {
 
         <div className='flex flex-wrap justify-between items-center px-4 md:px-0 gap-2'>
           <div className='space-y-2'>
-            <Text size='base' className='w-full'>
-              $10
-            </Text>
+            {/* TODO: fetch from contract */}
+            <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber('usd', BN(10))} />
             <Text size='sm' className='text-white/50'>
               Vault creation cost.
-              <span className='inline-block'>
-                <Button
-                  onClick={() => {}}
-                  variant='transparent'
-                  color='quaternary'
-                  size='xs'
-                  //   TODO: add link and update styling for the link
-                  className='hover:underline'
-                  text='Learn more...'
-                />
-              </span>
+              <TextLink
+                //   TODO: add link
+                href=''
+                target='_blank'
+                title='Vault Creation Info'
+                textSize='extraSmall'
+                className='pl-1'
+              >
+                Learn more...
+              </TextLink>
             </Text>
           </div>
           <Button
@@ -182,6 +179,6 @@ export default function CreateVault() {
           />
         </div>
       </form>
-    </CreateVaultOverlay>
+    </CreateVaultContent>
   )
 }

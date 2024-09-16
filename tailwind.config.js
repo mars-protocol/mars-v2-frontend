@@ -459,15 +459,15 @@ module.exports = {
           background:
             'linear-gradient(180deg, hsl(var(--color-hls-primary)) 0%, hsl(var(--color-hls-secondary)) 50%)',
         },
-        '.gradient-vault-primary': {
+        '.bg-orb-primary-vaults': {
           background:
             'linear-gradient(180deg, hsl(var(--color-vault-blue-primary)) 0%, hsl(var(--color-vault-blue-secondary)) 65%)',
         },
-        '.gradient-vault-secondary': {
+        '.bg-orb-secondary-vaults': {
           background:
             'linear-gradient(90deg, hsl(var(--color-vault-purple-primary)) 50%, hsl(var(--color-vault-purple-secondary)) 127%)',
         },
-        '.gradient-vault-tertiary': {
+        '.bg-orb-tertiary-vaults': {
           background:
             'linear-gradient(180deg, hsl(var(--color-vault-pink-primary)) 0%, hsl(var(--color-vault-blue-tertiary)) 65%)',
         },

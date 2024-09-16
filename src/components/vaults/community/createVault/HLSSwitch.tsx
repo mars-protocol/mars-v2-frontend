@@ -1,7 +1,7 @@
 import classNames from 'classnames'
-import Button from 'components/common/Button'
 import Switch from 'components/common/Switch'
 import Text from 'components/common/Text'
+import { TextLink } from 'components/common/TextLink'
 
 interface Props {
   onChange: (value: boolean) => void
@@ -10,7 +10,7 @@ interface Props {
   className?: string
 }
 
-export default function HLSSwitch(props: Props) {
+export default function HlsSwitch(props: Props) {
   const { onChange, value, name, className } = props
 
   return (
@@ -22,17 +22,16 @@ export default function HLSSwitch(props: Props) {
         <Text size='xs' className='text-white/50'>
           {/* TODO: add text */}
           Use this HLS vault, leverage up with deposited funds even more.
-          <span className='inline-block'>
-            <Button
-              onClick={() => {}}
-              variant='transparent'
-              color='quaternary'
-              size='xs'
-              //   TODO: add link and update styling for the link
-              className='hover:underline !text-mars'
-              text='Learn more...'
-            />
-          </span>
+          <TextLink
+            //   TODO: add link
+            href=''
+            target='_blank'
+            title='Hls Vault Info'
+            textSize='extraSmall'
+            className='pl-1'
+          >
+            Learn more...
+          </TextLink>
         </Text>
       </div>
       <div className='flex flex-wrap justify-end'>
