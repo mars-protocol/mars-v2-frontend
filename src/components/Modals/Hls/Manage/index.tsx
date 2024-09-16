@@ -39,7 +39,7 @@ export default function HlsManageModalController() {
     if (isStaking) return { ...account, strategy: modal.staking?.strategy }
     if (isFarming && modal.farming) {
       return {
-        ...account,
+        ...modal.farming.account,
         strategy: {
           maxLTV: modal.farming.farm.ltv.max,
           maxLeverage: modal.farming.maxLeverage,
