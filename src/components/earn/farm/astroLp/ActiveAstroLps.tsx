@@ -5,13 +5,17 @@ import ActiveAstroLpsTable from 'components/earn/farm/astroLp/Table/ActiveAstroL
 import useActiveAstroLpsColumns from 'components/earn/farm/astroLp/Table/Columns/useActiveAstroLpsColumns'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAssets from 'hooks/assets/useAssets'
-import useDepositedAstroLps from 'hooks/astroLp/useDepositedAstroLps'
+import useDepositedAstroLpAccounts from 'hooks/astroLp/useDepositedAstroLpAccounts'
 
 export function ActiveAstroLps() {
   const { data: assets } = useAssets()
   const account = useCurrentAccount()
-  const activeAstroLps = useDepositedAstroLps(account ? [account] : [])
+  const depositedAstroLpAccounts = useDepositedAstroLpAccounts(account ? [account] : [])
   const activeColumns = useActiveAstroLpsColumns(assets)
+  const activeAstroLps = useMemo(
+    () => depositedAstroLpAccounts.map((account) => account.astroLp),
+    [depositedAstroLpAccounts],
+  )
 
   const tabs: CardTab[] = useMemo(
     () => [

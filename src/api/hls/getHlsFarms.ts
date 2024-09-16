@@ -2,6 +2,7 @@ import getAssetParams from 'api/params/getAssetParams'
 import { TotalDepositResponse } from 'types/generated/mars-params/MarsParams.types'
 import { byDenom } from 'utils/array'
 import { getAstroLpFromPoolAsset } from 'utils/astroLps'
+import { getLeverageFromLTV } from 'utils/helpers'
 
 export default async function getHlsFarms(
   chainConfig: ChainConfig,
@@ -9,9 +10,9 @@ export default async function getHlsFarms(
   depositCaps: TotalDepositResponse[],
 ) {
   const assetParams = await getAssetParams(chainConfig)
-  const HlsFarms = [] as HlsFarm[]
+  const hlsFarms = [] as HlsFarm[]
 
-  if (chainConfig.isOsmosis) return HlsFarms
+  if (chainConfig.isOsmosis) return hlsFarms
 
   assetParams.forEach((params) => {
     if (params.credit_manager.hls) {
@@ -20,12 +21,11 @@ export default async function getHlsFarms(
       const correlations = params.credit_manager.hls?.correlations.filter((correlation) => {
         return 'coin' in correlation
       })
-
       correlations?.forEach((correlation) => {
         const poolAsset = assets.find(
           byDenom((correlation as { coin: { denom: string } }).coin.denom),
         )
-        if (!poolAsset || poolAsset.isPoolToken) return
+        if (!poolAsset || !poolAsset.isPoolToken) return
 
         const depositCap = depositCaps.find(byDenom(poolAsset.denom))
         if (!depositCap) return
@@ -42,21 +42,17 @@ export default async function getHlsFarms(
           liq: Number(poolAssetHlsParams.liquidation_threshold ?? 0),
         }
 
-        // If the farm already exists in the HlsFarms array, add the borrow asset to the existing farm
-        const existingFarm = HlsFarms.find((Hlsfarm) => Hlsfarm.farm.denoms.lp === farm.denoms.lp)
-        if (existingFarm) {
-          existingFarm.borrowAssets.push(underlyingAsset)
-          return
-        }
+        if (!underlyingAsset.isBorrowEnabled) return
 
-        // Otherwise add farm to HlsFarms array
-        HlsFarms.push({
+        // Add farm to hlsFarms array
+        hlsFarms.push({
           farm,
-          borrowAssets: [underlyingAsset],
+          borrowAsset: underlyingAsset,
+          maxLeverage: getLeverageFromLTV(Number(poolAssetHlsParams.max_loan_to_value ?? 0)),
         })
       })
     }
   })
 
-  return HlsFarms
+  return hlsFarms
 }

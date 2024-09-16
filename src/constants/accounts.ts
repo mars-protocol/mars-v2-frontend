@@ -10,7 +10,7 @@ export const EMPTY_ACCOUNT: Account = {
   stakedAstroLps: [],
 }
 
-export const EMPTY_ACCOUNT_Hls: Account = {
+export const EMPTY_ACCOUNT_HLS: Account = {
   ...EMPTY_ACCOUNT,
   kind: 'high_levered_strategy' as AccountKind,
 }

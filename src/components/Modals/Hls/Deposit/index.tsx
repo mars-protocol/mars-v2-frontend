@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react'
 import Accordion from 'components/common/Accordion'
 import useAccordionItems from 'components/Modals/Hls/Deposit/useAccordionItems'
 import useStakingController from 'components/Modals/Hls/Deposit/useStakingController'
-import { EMPTY_ACCOUNT_Hls } from 'constants/accounts'
+import { EMPTY_ACCOUNT_HLS } from 'constants/accounts'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useIsOpenArray from 'hooks/common/useIsOpenArray'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
@@ -18,7 +18,7 @@ interface Props {
 }
 
 export default function Controller(props: Props) {
-  const [selectedAccount, setSelectedAccount] = useState<Account>(EMPTY_ACCOUNT_Hls)
+  const [selectedAccount, setSelectedAccount] = useState<Account>(EMPTY_ACCOUNT_HLS)
   const [isOpen, toggleIsOpen] = useIsOpenArray(4, false)
   const address = useStore((s) => s.address)
   const { data: hlsAccounts } = useAccounts('high_levered_strategy', address)

@@ -3,8 +3,8 @@ import { ColumnDef } from '@tanstack/react-table'
 import Table from 'components/common/Table'
 
 type Props = {
-  data: DepositedAstroLp[]
-  columns: ColumnDef<DepositedAstroLp>[]
+  data: DepositedHlsFarm[]
+  columns: ColumnDef<DepositedHlsFarm>[]
   isLoading: boolean
 }
 

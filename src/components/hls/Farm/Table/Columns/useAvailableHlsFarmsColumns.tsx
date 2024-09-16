@@ -1,18 +1,16 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import AstroLpApy, { APY_META } from 'components/earn/farm/astroLp/Table/Columns/AstroLpApy'
-import {
-  AstroLpDeposit,
-  DEPOSIT_META,
-} from 'components/earn/farm/astroLp/Table/Columns/AstroLpDeposit'
+import { APY_META } from 'components/earn/farm/astroLp/Table/Columns/AstroLpApy'
+import MaxLTV, { LTV_MAX_META } from 'components/earn/farm/common/Table/Columns/MaxLTV'
+import ApyRange, { apyRangeSortingFn } from 'components/hls/Farm/Table/Columns/ApyRange'
+import Deposit, { DEPOSIT_META } from 'components/hls/Farm/Table/Columns/Deposit'
 import DepositCap, {
   DEPOSIT_CAP_META,
   depositCapSortingFn,
-} from 'components/earn/farm/common/Table/Columns/DepositCap'
-import MaxLTV, { LTV_MAX_META } from 'components/earn/farm/common/Table/Columns/MaxLTV'
-import Name, { NAME_META } from 'components/earn/farm/common/Table/Columns/Name'
-import TVL, { TVL_META } from 'components/earn/farm/common/Table/Columns/TVL'
+} from 'components/hls/Farm/Table/Columns/DepositCap'
+import MaxLeverage, { MAX_LEV_META } from 'components/hls/Farm/Table/Columns/MaxLeverage'
+import Name, { NAME_META } from 'components/hls/Farm/Table/Columns/Name'
 import useAssets from 'hooks/assets/useAssets'
 
 interface Props {
@@ -21,42 +19,34 @@ interface Props {
 
 export default function useAvailableHlsFarmsColumns(props: Props) {
   const { data: assets } = useAssets()
-  return useMemo<ColumnDef<AstroLp | DepositedAstroLp>[]>(() => {
+  return useMemo<ColumnDef<HlsFarm>[]>(() => {
     return [
       {
         ...NAME_META,
-        cell: ({ row }) => <Name vault={row.original as AstroLp} />,
+        cell: ({ row }) => <Name farm={row.original.farm as AstroLp} />,
       },
       {
-        ...APY_META,
-        cell: ({ row }) => <AstroLpApy astroLp={row.original as AstroLp} assets={assets} />,
-      },
-      {
-        ...TVL_META,
-        cell: ({ row }) => (
-          <TVL
-            denom={(row.original as AstroLp).cap?.denom}
-            amount={(row.original as AstroLp).cap?.used}
-          />
-        ),
-      },
-      {
-        ...DEPOSIT_CAP_META,
-        cell: ({ row }) => (
-          <DepositCap vault={row.original as AstroLp} isLoading={props.isLoading} />
-        ),
-        sortingFn: depositCapSortingFn,
+        ...MAX_LEV_META,
+        cell: ({ row }) => <MaxLeverage farm={row.original as HlsFarm} />,
       },
       {
         ...LTV_MAX_META,
-        cell: ({ row }) => <MaxLTV vault={row.original as AstroLp} />,
+        cell: ({ row }) => <MaxLTV vault={row.original.farm as AstroLp} />,
+      },
+      {
+        ...DEPOSIT_CAP_META,
+        cell: ({ row }) => <DepositCap farm={row.original} isLoading={props.isLoading} />,
+        sortingFn: depositCapSortingFn,
+      },
+      {
+        ...APY_META,
+        cell: ({ row }) => <ApyRange hlsFarm={row.original} isLoading={props.isLoading} />,
+        sortingFn: apyRangeSortingFn,
       },
       {
         ...DEPOSIT_META,
-        cell: ({ row }) => (
-          <AstroLpDeposit astroLp={row.original as AstroLp} isLoading={props.isLoading} />
-        ),
+        cell: ({ row }) => <Deposit hlsFarm={row.original} />,
       },
     ]
-  }, [props.isLoading, assets])
+  }, [props.isLoading])
 }

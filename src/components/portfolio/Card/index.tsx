@@ -44,45 +44,40 @@ export default function PortfolioCard(props: Props) {
     getDefaultChainSettings(chainConfig).reduceMotion,
   )
 
-  const { netWorth, apr, leverage } = getAccountSummaryStats(
-    account as Account,
-    borrowAssets,
-    lendingAssets,
-    hlsStrategies,
-    assets,
-    vaultAprs,
-    astroLpAprs,
-  )
-
   const stats: { title: ReactNode; sub: string }[] = useMemo(() => {
-    const isLoaded = account && assets.length && apr !== null
+    if (!account || !assets.length || !lendingAssets.length || !borrowAssets.length) {
+      return [
+        { title: <Loading />, sub: 'Net worth' },
+        { title: <Loading />, sub: 'Leverage' },
+        { title: <Loading />, sub: 'APR' },
+      ]
+    }
+
+    const { netWorth, apr, leverage } = getAccountSummaryStats(
+      account as Account,
+      borrowAssets,
+      lendingAssets,
+      hlsStrategies,
+      assets,
+      vaultAprs,
+      astroLpAprs,
+    )
+
     return [
       {
-        title: isLoaded ? (
-          <FormattedNumber amount={netWorth.amount.toNumber()} options={{ prefix: '$' }} />
-        ) : (
-          <Loading />
-        ),
+        title: <FormattedNumber amount={netWorth.amount.toNumber()} options={{ prefix: '$' }} />,
         sub: 'Net worth',
       },
       {
-        title: isLoaded ? (
-          <FormattedNumber amount={leverage.toNumber() || 1} options={{ suffix: 'x' }} />
-        ) : (
-          <Loading />
-        ),
+        title: <FormattedNumber amount={leverage.toNumber() || 1} options={{ suffix: 'x' }} />,
         sub: 'Leverage',
       },
       {
-        title: isLoaded ? (
-          <FormattedNumber amount={apr.toNumber()} options={{ suffix: '%' }} />
-        ) : (
-          <Loading />
-        ),
+        title: <FormattedNumber amount={apr.toNumber()} options={{ suffix: '%' }} />,
         sub: 'APR',
       },
     ]
-  }, [account, assets, apr, leverage, netWorth])
+  }, [account, assets, borrowAssets, hlsStrategies, lendingAssets, vaultAprs, astroLpAprs])
 
   if (!account) {
     return (

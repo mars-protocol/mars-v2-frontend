@@ -20,7 +20,7 @@ export default function Background() {
   const [isHls, isV1] = useMemo(() => [page.split('-')[0] === 'hls', page === 'v1'], [page])
 
   useEffect(() => {
-    useStore.setState({ isHls: isHls, isV1: isV1 })
+    useStore.setState({ isHls, isV1 })
   }, [isHls, isV1])
 
   const [primaryOrbClassName, secondaryOrbClassName, tertiaryOrbClassName, bodyClassName] =

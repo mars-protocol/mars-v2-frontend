@@ -1,5 +1,5 @@
 import DropDownButton from 'components/common/Button/DropDownButton'
-import { ArrowDownLine, Cross, HandCoins, Plus, Scale } from 'components/common/Icons'
+import { ArrowDownLine, Cross, HandCoins, Plus } from 'components/common/Icons'
 import { useCallback, useMemo } from 'react'
 import useStore from 'store'
 
@@ -11,40 +11,56 @@ export const MANAGE_META = {
 }
 
 interface Props {
-  account: HlsAccountWithStrategy
+  hlsFarm: DepositedHlsFarm
 }
 
 export default function Manage(props: Props) {
   const openModal = useCallback(
-    (action: HlsStakingManageAction) =>
-      useStore.setState({
-        hlsManageModal: {
-          accountId: props.account.id,
-          staking: { strategy: props.account.strategy },
-          action,
-        },
-      }),
-    [props.account.id, props.account.strategy],
+    (action: HlsStakingManageAction) => {
+      switch (action) {
+        case 'deposit':
+        case 'withdraw':
+          useStore.setState({
+            farmModal: {
+              farm: props.hlsFarm.farm,
+              selectedBorrowDenoms: [props.hlsFarm.borrowAsset.denom],
+              account: props.hlsFarm.account,
+              maxLeverage: props.hlsFarm.maxLeverage,
+              action: action,
+              type: 'high_leverage',
+            },
+          })
+          break
+        default:
+          useStore.setState({
+            hlsManageModal: {
+              accountId: props.hlsFarm.account.id,
+              farming: props.hlsFarm,
+              action,
+            },
+          })
+          break
+      }
+    },
+    [props.hlsFarm],
   )
 
   const closeHlsStakingPosition = useCallback(() => {
     useStore.setState({
       hlsCloseModal: {
-        account: props.account,
-        staking: { strategy: props.account.strategy },
+        account: props.hlsFarm.account,
+        farming: props.hlsFarm,
       },
     })
-  }, [props.account])
+  }, [props.hlsFarm])
 
-  const hasNoDebt = useMemo(() => props.account.debts.length === 0, [props.account.debts.length])
+  const hasNoDebt = useMemo(
+    () => props.hlsFarm.account.debts.length === 0,
+    [props.hlsFarm.account.debts.length],
+  )
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [
-      {
-        icon: <Scale width={16} />,
-        text: 'Change leverage',
-        onClick: () => openModal('leverage'),
-      },
       {
         icon: <Plus width={16} />,
         text: 'Deposit more',

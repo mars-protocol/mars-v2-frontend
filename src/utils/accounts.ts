@@ -93,8 +93,8 @@ export const calculateAccountApr = (
   assets: Asset[],
   vaultAprs: Apr[],
   astroLpAprs: Apr[],
-  isHls?: boolean,
 ): BigNumber => {
+  const isHls = account.kind === 'high_levered_strategy'
   const depositValue = calculateAccountValue('deposits', account, assets)
   const lendsValue = calculateAccountValue('lends', account, assets)
   const vaultsValue = calculateAccountValue('vaults', account, assets)
@@ -402,7 +402,6 @@ export function getAccountSummaryStats(
   assets: Asset[],
   vaultAprs: Apr[],
   astroLpAprs: Apr[],
-  isHls?: boolean,
 ) {
   const [deposits, lends, debts, vaults, perps, perpsVault, stakedAstroLps] =
     getAccountPositionValues(account, assets)
@@ -420,7 +419,6 @@ export function getAccountSummaryStats(
     assets,
     vaultAprs,
     astroLpAprs,
-    isHls,
   )
   const leverage = calculateAccountLeverage(account, assets)
   return {
@@ -453,6 +451,18 @@ export function getAccountNetValue(account: Account, assets: Asset[]) {
     .plus(perpsVault)
     .plus(staked_astro_lps)
     .minus(debts)
+}
+
+export function getAccountTotalValue(account: Account, assets: Asset[]) {
+  const [deposits, lends, debts, vaults, perps, perpsVault, staked_astro_lps] =
+    getAccountPositionValues(account, assets)
+  return deposits.plus(lends).plus(vaults).plus(perps).plus(perpsVault).plus(staked_astro_lps)
+}
+
+export function getAccountDebtValue(account: Account, assets: Asset[]) {
+  const [deposits, lends, debts, vaults, perps, perpsVault, staked_astro_lps] =
+    getAccountPositionValues(account, assets)
+  return debts
 }
 
 export function convertCoinArrayIntoBNCoinArrayAndRemoveEmptyCoins(coins: Coin[]) {

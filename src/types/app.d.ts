@@ -86,7 +86,7 @@ interface AccountIdAndKind {
   kind: AccountKind
 }
 
-interface HlsAccountWithStakingStrategy extends Account {
+interface HlsAccountWithStrategy extends Account {
   leverage: number
   strategy: HlsStrategy
   values: {
@@ -182,11 +182,20 @@ interface DepositedHlsStrategy extends HlsStrategy {
 
 interface HlsFarm {
   farm: AstroLp
-  borrowAssets: Asset[]
+  borrowAsset: Asset
+  maxLeverage: number
 }
 
 interface DepositedHlsFarm extends HlsFarm {
   farm: DepositedAstroLp
+  account: Account
+  netValue: BigNumber
+  leverage: number
+}
+
+interface DepositedAstroLpAccounts {
+  account: Account
+  astroLp: DepositedAstroLp
 }
 
 interface StakingApr {
@@ -983,7 +992,7 @@ interface BroadcastSlice {
     stakedAstroLpRewards?: StakedAstroLpRewards[]
     lend: boolean
   }) => Promise<boolean>
-  closeHlsStakingPosition: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
+  closeHlsPosition: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
   createAccount: (
     accountKind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind,
     isAutoLendEnabled: boolean,
@@ -1040,6 +1049,8 @@ interface BroadcastSlice {
     accountId: string
     astroLps: DepositedAstroLp[]
     amount: string
+    toWallet: boolean
+    rewards: BNCoin[]
   }) => Promise<boolean>
   withdrawFromVaults: (options: {
     accountId: string
@@ -1204,7 +1215,9 @@ interface FarmModal {
   farm: Vault | DepositedVault | AstroLp | DepositedAstroLp
   isCreate?: boolean
   action?: 'deposit' | 'withdraw'
-  type: 'vault' | 'astroLp'
+  type: 'vault' | 'astroLp' | 'high_leverage'
+  account?: Account
+  maxLeverage?: number
 }
 
 interface AddFarmBorrowingsModal {
@@ -1228,26 +1241,30 @@ interface HlsModal {
 
 interface HlsManageModal {
   accountId: string
-  staking: {
+  farming?: DepositedHlsFarm
+  staking?: {
     strategy: HlsStrategy
-    action: HlsStakingManageAction
   }
+  action: HlsStakingManageAction
 }
 
 interface HlsCloseModal {
-  account: HlsAccountWithStakingStrategy
-  staking: {
+  account: HlsAccountWithStrategy | Account
+  farming?: DepositedHlsFarm
+  staking?: {
     strategy: HlsStrategy
   }
 }
 
 interface HlsClosingChanges {
+  widthdraw: BNCoin[] | null
   swap: {
     coinIn: BNCoin
     coinOut: BNCoin
   } | null
   repay: BNCoin | null
   refund: BNCoin[]
+  rewards?: BNCoin[]
 }
 
 type HlsStakingManageAction = 'deposit' | 'withdraw' | 'repay' | 'leverage'
@@ -1315,7 +1332,20 @@ interface FarmBorrowingsProps {
   displayCurrency: string
   depositCapReachedCoins: BNCoin[]
   totalValue: BigNumber
-  type: 'vault' | 'astroLp'
+  type: FarmModal['type']
+}
+
+interface HlsFarmLeverageProps {
+  borrowings: BNCoin[]
+  deposits: BNCoin[]
+  account: Account
+  primaryAsset: Asset
+  secondaryAsset: Asset
+  onChangeBorrowings: (borrowings: BNCoin[]) => void
+  toggleOpen: (index: number) => void
+  displayCurrency: string
+  depositCapReachedCoins: BNCoin[]
+  totalValue: BigNumber
 }
 
 type AvailableOrderType = 'Market' | 'Limit' | 'Stop'

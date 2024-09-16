@@ -9,7 +9,12 @@ import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 
-export const DEPOSIT_META = { accessorKey: 'deposit', header: 'Deposit' }
+export const DEPOSIT_META = {
+  accessorKey: 'deposit',
+  header: '',
+  enableSorting: false,
+  meta: { className: 'w-30' },
+}
 
 interface Props {
   isLoading: boolean
@@ -40,7 +45,7 @@ export default function Deposit(props: Props) {
 
     openAlertDialog({
       title: 'Understanding Hls Positions',
-      content: <AlertDialogItems items={INFO_ITEMS} />,
+      content: <AlertDialogItems items={HLS_INFO_ITEMS} />,
       positiveButton: {
         text: 'Continue',
         icon: <ArrowRight />,
@@ -69,7 +74,7 @@ export default function Deposit(props: Props) {
   )
 }
 
-const INFO_ITEMS = [
+export const HLS_INFO_ITEMS = [
   {
     icon: <Circle />,
     title: 'One account, one position',

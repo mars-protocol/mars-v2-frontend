@@ -1,65 +1,57 @@
 import { ColumnDef, Row } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import AstroLpApy, { APY_META } from 'components/earn/farm/astroLp/Table/Columns/AstroLpApy'
-import AstroLpManage, {
-  MANAGE_META,
-} from 'components/earn/farm/astroLp/Table/Columns/AstroLpManage'
 import AstroLpPositionValue, {
   POSITION_VALUE_META,
 } from 'components/earn/farm/astroLp/Table/Columns/AstroLpPositionValue'
+import Account, { ACCOUNT_META } from 'components/hls/Farm/Table/Columns/Account'
+import Apy, { APY_META } from 'components/hls/Farm/Table/Columns/Apy'
 import DepositCap, {
   DEPOSIT_CAP_META,
   depositCapSortingFn,
-} from 'components/earn/farm/common/Table/Columns/DepositCap'
-import MaxLTV, { LTV_MAX_META } from 'components/earn/farm/common/Table/Columns/MaxLTV'
-import Name, { NAME_META } from 'components/earn/farm/common/Table/Columns/Name'
-import TVL, { TVL_META } from 'components/earn/farm/common/Table/Columns/TVL'
+} from 'components/hls/Farm/Table/Columns/DepositCap'
+import Leverage, { LEV_META, leverageSortingFn } from 'components/hls/Farm/Table/Columns/Leverage'
+import Manage, { MANAGE_META } from 'components/hls/Farm/Table/Columns/Manage'
+import Name, { NAME_META } from 'components/hls/Farm/Table/Columns/Name'
+import NetValue, { NET_VAL_META, netValueSorting } from 'components/hls/Farm/Table/Columns/NetValue'
 
 export default function useActiveHlsFarmsColumns(assets: Asset[]) {
-  return useMemo<ColumnDef<DepositedAstroLp>[]>(() => {
+  return useMemo<ColumnDef<DepositedHlsFarm>[]>(() => {
     return [
       {
         ...NAME_META,
-        cell: ({ row }) => <Name vault={row.original as DepositedAstroLp} />,
+        cell: ({ row }) => <Name farm={row.original.farm as DepositedAstroLp} />,
+      },
+      { ...ACCOUNT_META, cell: ({ row }) => <Account account={row.original.account} /> },
+      {
+        ...LEV_META,
+        cell: ({ row }) => <Leverage leverage={row.original.leverage} />,
+        sortingFn: leverageSortingFn,
       },
       {
         ...POSITION_VALUE_META,
-        cell: ({ row }: { row: Row<DepositedAstroLp> }) => (
-          <AstroLpPositionValue vault={row.original as DepositedAstroLp} />
+        cell: ({ row }: { row: Row<DepositedHlsFarm> }) => (
+          <AstroLpPositionValue vault={row.original.farm as DepositedAstroLp} />
         ),
       },
       {
-        ...APY_META,
-        cell: ({ row }) => <AstroLpApy astroLp={row.original as AstroLp} assets={assets} />,
-      },
-      {
-        ...TVL_META,
-        cell: ({ row }) => (
-          <TVL
-            denom={(row.original as DepositedAstroLp).cap?.denom}
-            amount={(row.original as DepositedAstroLp).cap?.used}
-          />
-        ),
+        ...NET_VAL_META,
+        cell: ({ row }) => <NetValue netValue={row.original.netValue} />,
+        sortingFn: netValueSorting,
       },
       {
         ...DEPOSIT_CAP_META,
         cell: ({ row }) => {
-          if (row.original.cap === null) return null
-          return <DepositCap vault={row.original as DepositedAstroLp} />
+          if (row.original.farm.cap === null) return null
+          return <DepositCap farm={row.original} />
         },
         sortingFn: depositCapSortingFn,
       },
       {
-        ...LTV_MAX_META,
-        cell: ({ row }) => <MaxLTV vault={row.original as DepositedAstroLp} />,
+        ...APY_META,
+        cell: ({ row }) => <Apy hlsFarm={row.original} />,
       },
-      {
-        ...MANAGE_META,
-        cell: ({ row }) => (
-          <AstroLpManage astroLp={row.original} isExpanded={row.getIsExpanded()} />
-        ),
-      },
+      { ...MANAGE_META, cell: ({ row }) => <Manage hlsFarm={row.original} /> },
     ]
-  }, [assets])
+  }, [])
 }

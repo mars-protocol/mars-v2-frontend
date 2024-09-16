@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import classNames from 'classnames'
 import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
@@ -11,33 +11,76 @@ import ModalContentWithSummary from 'components/Modals/ModalContentWithSummary'
 import { BN_ZERO } from 'constants/math'
 import useAccount from 'hooks/accounts/useAccount'
 import useAsset from 'hooks/assets/useAsset'
+import useAssets from 'hooks/assets/useAssets'
 import useMarket from 'hooks/markets/useMarket'
 import useStore from 'store'
+import { getAccountDebtValue, getAccountTotalValue } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 
 export default function HlsManageModalController() {
   const modal = useStore((s) => s.hlsManageModal)
+  const { data: assets } = useAssets()
   const { data: account } = useAccount(modal?.accountId)
-  const collateralAsset = useAsset(modal?.staking.strategy.denoms.deposit || '')
-  const market = useMarket(modal?.staking.strategy.denoms.borrow || '')
+  const isFarming = !!modal?.farming
+  const isStaking = !!modal?.staking
 
-  if (!modal || !collateralAsset || !market || !account) return null
+  const collateralAsset = useAsset(
+    isFarming
+      ? modal?.farming?.farm.denoms.lp || ''
+      : modal?.staking?.strategy.denoms.deposit || '',
+  )
+  const market = useMarket(
+    isFarming
+      ? modal?.farming?.borrowAsset.denom || ''
+      : modal?.staking?.strategy.denoms.borrow || '',
+  )
+
+  const usedAccount = useMemo(() => {
+    if (isStaking) return { ...account, strategy: modal.staking?.strategy }
+    if (isFarming && modal.farming) {
+      return {
+        ...account,
+        strategy: {
+          maxLTV: modal.farming.farm.ltv.max,
+          maxLeverage: modal.farming.maxLeverage,
+          apy: modal.farming.farm.apy,
+          denoms: {
+            deposit: modal.farming.farm.denoms.lp,
+            borrow: modal.farming.borrowAsset.denom,
+          },
+          depositCap: modal.farming.farm.cap?.max,
+        },
+        values: {
+          net: modal.farming.netValue,
+          debt: getAccountDebtValue(modal.farming.account, assets),
+          total: getAccountTotalValue(modal.farming.account, assets),
+        },
+        leverage: modal.farming.leverage,
+      }
+    }
+    return null
+  }, [isStaking, account, modal, isFarming, assets])
+
+  if ((!isFarming && !isStaking) || !modal || !collateralAsset || !market || !usedAccount)
+    return null
 
   return (
     <HlsModal
-      account={{ ...account, strategy: modal.staking.strategy } as HlsAccountWithStakingStrategy}
-      action={modal.staking.action}
+      account={usedAccount as HlsAccountWithStrategy}
+      action={modal.action}
       collateralAsset={collateralAsset}
       borrowMarket={market}
+      isFarming={isFarming}
     />
   )
 }
 
 interface Props {
-  account: HlsAccountWithStakingStrategy
+  account: HlsAccountWithStrategy
   action: HlsStakingManageAction
   borrowMarket: Market
   collateralAsset: Asset
+  isFarming: boolean
 }
 
 function HlsModal(props: Props) {
@@ -45,8 +88,9 @@ function HlsModal(props: Props) {
   const showCampaignHeader =
     props.collateralAsset.campaigns.filter((campaign) => campaign.type === 'points_with_multiplier')
       .length > 0
-  const collateralAmount =
-    updatedAccount?.deposits.find(byDenom(props.collateralAsset.denom))?.amount ?? BN_ZERO
+  const collateralAmount = props.isFarming
+    ? (updatedAccount?.stakedAstroLps.find(byDenom(props.collateralAsset.denom))?.amount ?? BN_ZERO)
+    : (updatedAccount?.deposits.find(byDenom(props.collateralAsset.denom))?.amount ?? BN_ZERO)
   const handleClose = useCallback(() => {
     useStore.setState({ hlsManageModal: null })
   }, [])
@@ -54,13 +98,13 @@ function HlsModal(props: Props) {
   return (
     <ModalContentWithSummary
       account={props.account}
-      isHls
       header={
         <div className='flex flex-wrap w-full'>
           <Header
             action={props.action}
             primaryAsset={props.collateralAsset}
             secondaryAsset={props.borrowMarket.asset}
+            isFarming={props.isFarming}
           />
           {showCampaignHeader &&
             props.collateralAsset.campaigns.map((campaign, index) => {

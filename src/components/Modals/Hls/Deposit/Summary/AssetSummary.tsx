@@ -18,6 +18,7 @@ interface Props {
   borrowAsset: Asset
   swapOutputAmount?: BigNumber
   isBorrow?: boolean
+  isFarm?: boolean
 }
 export default function AssetSummary(props: Props) {
   const market = useMarket(props.borrowAsset.denom)
@@ -40,8 +41,10 @@ export default function AssetSummary(props: Props) {
   }, [props.swapOutputAmount, props.asset.denom, props.amount, props.borrowAsset.denom, assets])
 
   if (props.amount.isZero()) return null
+  const stakingTitle = props.isBorrow ? 'Borrow + Swap' : 'Supplying'
+  const farmingTitle = props.isBorrow ? 'Borrow' : 'Supplying'
   return (
-    <Container title={props.isBorrow ? 'Borrow + swap' : 'Supplying'}>
+    <Container title={props.isFarm ? farmingTitle : stakingTitle}>
       <div className={classNames(props.isBorrow && 'flex')}>
         <div className='flex justify-between flex-1'>
           <span className='flex items-center gap-2'>
@@ -53,7 +56,7 @@ export default function AssetSummary(props: Props) {
           <AmountAndValue asset={asset} amount={props.amount} isApproximation />
         </div>
 
-        {props.isBorrow && (
+        {props.isBorrow && !props.isFarm && (
           <>
             <div className='flex items-center w-5 mx-5'>
               <ArrowRight />
