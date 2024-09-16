@@ -19,7 +19,7 @@ interface Props {
   required?: boolean
 }
 
-export default function Input(props: Props) {
+export default function VaultInputElement(props: Props) {
   const {
     type,
     suffix,

@@ -8,8 +8,7 @@ import { ChevronDown, Logo } from 'components/common/Icons'
 interface Props {
   showMenu: boolean
   setShowMenu: (show: boolean) => void
-  // TODO: update TS once we know assets type
-  assets: any[]
+  assets: Asset[]
   setSelectedAsset: (asset: any) => void
 }
 
@@ -51,7 +50,7 @@ export default function AssetSelect(props: Props) {
           <div className='w-full flex items-center gap-2' onClick={() => handleSelectAsset(asset)}>
             {/* TODO: temp asset picture */}
             <Logo className='h-6 w-6' />
-            <Text size='base'>{asset.label}</Text>
+            <Text size='base'>{asset.name}</Text>
           </div>
           <ChevronDown className='h-4 w-4 -rotate-90' />
         </div>

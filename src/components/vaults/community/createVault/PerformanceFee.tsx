@@ -1,5 +1,5 @@
 import Button from 'components/common/Button'
-import Input from 'components/vaults/community/createVault/Input'
+import VaultInputElement from 'components/vaults/community/createVault/VaultInputElement'
 import classNames from 'classnames'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { useState } from 'react'
@@ -24,7 +24,7 @@ export default function PerformanceFee() {
   return (
     <div className='w-full mb-6 space-y-3'>
       {/* TODO: add logic for max number for fees */}
-      <Input
+      <VaultInputElement
         type='text'
         value={feeValue}
         onChange={(value) => setFeeValue(value)}

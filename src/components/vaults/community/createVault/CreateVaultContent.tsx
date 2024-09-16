@@ -7,7 +7,7 @@ interface Props {
   cardClassName?: string
 }
 
-export default function CreateVaultOverlay(props: Props) {
+export default function CreateVaultContent(props: Props) {
   const { children, cardClassName } = props
 
   return (
