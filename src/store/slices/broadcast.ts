@@ -20,7 +20,6 @@ import {
 import { ExecuteMsg as IncentivesExecuteMsg } from 'types/generated/mars-incentives/MarsIncentives.types'
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
-import { removeEmptyBNCoins } from 'utils/accounts'
 import { byDenom, bySymbol } from 'utils/array'
 import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
@@ -472,7 +471,9 @@ export default function createBroadcastSlice(
             get().address,
             cmContract,
             msg,
-            options.kind === 'default' ? [] : options.deposits.map((coin) => coin.toCoin()),
+            options.kind === 'default'
+              ? []
+              : sortFunds(options.deposits.map((coin) => coin.toCoin())),
           ),
         ],
       })
