@@ -13,7 +13,6 @@ import TradingFee from 'components/perps/Module/TradingFee'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
-import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatLeverage } from 'utils/formatters'
@@ -32,69 +31,38 @@ type Props = {
 }
 
 export default function PerpsSummary(props: Props) {
-  const openPerpPosition = useStore((s) => s.openPerpPosition)
-  const modifyPerpPosition = useStore((s) => s.modifyPerpPosition)
-  const closePerpPosition = useStore((s) => s.closePerpPosition)
+  const { amount, previousAmount, tradeDirection, asset, onTxExecuted, disabled } = props
+  const executePerpOrder = useStore((s) => s.executePerpOrder)
   const currentAccount = useCurrentAccount()
 
   const newAmount = useMemo(
-    () => (props.previousAmount ?? BN_ZERO).plus(props.amount),
-    [props.amount, props.previousAmount],
+    () => (previousAmount ?? BN_ZERO).plus(amount),
+    [amount, previousAmount],
   )
-  const { data: tradingFee } = useTradingFeeAndPrice(
-    props.asset.denom,
-    newAmount,
-    props.previousAmount,
-  )
-
-  const perpsParams = usePerpsParams(props.asset.denom)
+  const perpsParams = usePerpsParams(asset.denom)
 
   const onConfirm = useCallback(async () => {
     if (!currentAccount) return
+    const modifyAmount = newAmount.minus(previousAmount)
 
-    if (!props.previousAmount.isZero() && newAmount.isZero()) {
-      await closePerpPosition({
-        accountId: currentAccount.id,
-        denom: props.asset.denom,
-      })
-      return props.onTxExecuted()
-    }
-
-    if (!props.previousAmount.isZero() && !newAmount.isZero()) {
-      await modifyPerpPosition({
-        accountId: currentAccount.id,
-        coin: BNCoin.fromDenomAndBigNumber(props.asset.denom, newAmount),
-        changeDirection: props.previousAmount.isNegative() !== newAmount.isNegative(),
-      })
-      return props.onTxExecuted()
-    }
-
-    await openPerpPosition({
+    await executePerpOrder({
       accountId: currentAccount.id,
-      coin: BNCoin.fromDenomAndBigNumber(props.asset.denom, props.amount),
+      coin: BNCoin.fromDenomAndBigNumber(asset.denom, modifyAmount),
     })
-    return props.onTxExecuted()
-  }, [closePerpPosition, currentAccount, modifyPerpPosition, newAmount, openPerpPosition, props])
+    return onTxExecuted()
+  }, [asset.denom, currentAccount, executePerpOrder, newAmount, onTxExecuted, previousAmount])
 
-  const disabled = useMemo(() => props.amount.isZero(), [props.amount])
+  const isDisabled = useMemo(() => amount.isZero() || disabled, [amount, disabled])
 
-  /*PERPS
   const tradingFeeTooltip = useMemo(() => {
-    let text = 'Trading Fees'
+    const text = 'Trading Fees'
     if (!perpsParams) return text
-    if (
-      props.amount
-        .plus(props.previousAmount)
-        .abs()
-        .isGreaterThanOrEqualTo(props.previousAmount.abs())
-    ) {
+    if (amount.plus(previousAmount).abs().isGreaterThanOrEqualTo(previousAmount.abs())) {
       return `${perpsParams.openingFeeRate.times(100)}% ${text}`
     }
 
     return `${perpsParams.closingFeeRate.times(100)}% ${text}`
-  }, [perpsParams, props.amount, props.previousAmount])
-  */
-  const tradingFeeTooltip = ''
+  }, [perpsParams, amount, previousAmount])
 
   return (
     <div className='flex flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20'>
@@ -105,41 +73,42 @@ export default function PerpsSummary(props: Props) {
         </Text>
         <SummaryLine label='Expected Price'>
           <ExpectedPrice
-            denom={props.asset.denom}
+            denom={asset.denom}
             newAmount={newAmount}
-            previousAmount={props.previousAmount}
+            previousAmount={previousAmount}
           />
         </SummaryLine>
         <SummaryLine label='Fees' tooltip={tradingFeeTooltip}>
-          <TradingFee
-            denom={props.asset.denom}
-            newAmount={newAmount}
-            previousAmount={props.previousAmount}
-          />
+          <TradingFee denom={asset.denom} newAmount={newAmount} previousAmount={previousAmount} />
         </SummaryLine>
       </div>
-      <ActionButton
-        onClick={onConfirm}
-        disabled={disabled || props.disabled}
-        className='w-full py-2.5 !text-base'
-      >
-        <span className='mr-1 capitalize'>{props.tradeDirection}</span>
-        {props.asset.symbol}
+      <ActionButton onClick={onConfirm} disabled={isDisabled} className='w-full py-2.5 !text-base'>
+        <span className='mr-1 capitalize'>{tradeDirection}</span>
+        {asset.symbol}
       </ActionButton>
     </div>
   )
 }
 
 function ManageSummary(props: Props & { newAmount: BigNumber }) {
+  const {
+    previousAmount,
+    newAmount,
+    leverage,
+    previousLeverage,
+    hasActivePosition,
+    amount,
+    previousTradeDirection,
+    tradeDirection,
+    asset,
+  } = props
   const showTradeDirection =
-    props.previousAmount && props.previousAmount.isNegative() !== props.newAmount.isNegative()
-  const showAmount = !props.amount.isZero() && props.previousAmount
+    previousAmount && previousAmount.isNegative() !== newAmount.isNegative()
+  const showAmount = !amount.isZero() && previousAmount
   const showLeverage =
-    props.previousLeverage &&
-    props.leverage &&
-    props.previousLeverage.toFixed(2) !== props.leverage.toFixed(2)
+    previousLeverage && leverage && previousLeverage.toFixed(2) !== leverage.toFixed(2)
 
-  if ((!showTradeDirection && !showLeverage && !showAmount) || !props.hasActivePosition) return null
+  if ((!showTradeDirection && !showLeverage && !showAmount) || !hasActivePosition) return null
 
   return (
     <div className='flex flex-col gap-1 px-3 pt-4'>
@@ -147,52 +116,45 @@ function ManageSummary(props: Props & { newAmount: BigNumber }) {
         Your new position
       </Text>
 
-      {props.newAmount.isZero() && (
+      {newAmount.isZero() && (
         <Callout type={CalloutType.INFO} className='mb-2'>
           Your position will be closed
         </Callout>
       )}
 
-      {showTradeDirection && props.previousTradeDirection && !props.newAmount.isZero() && (
+      {showTradeDirection && previousTradeDirection && !newAmount.isZero() && (
         <SummaryLine label='Side' contentClassName='flex gap-1'>
-          <TradeDirection tradeDirection={props.previousTradeDirection} />
+          <TradeDirection tradeDirection={previousTradeDirection} />
           <div className='w-4'>
             <ArrowRight />
           </div>
-          <TradeDirection tradeDirection={props.tradeDirection} />
+          <TradeDirection tradeDirection={tradeDirection} />
         </SummaryLine>
       )}
 
-      {showAmount && props.newAmount && props.previousAmount && !props.newAmount.isZero() && (
+      {showAmount && newAmount && previousAmount && !newAmount.isZero() && (
         <SummaryLine label='Size' contentClassName='flex gap-1'>
-          <AssetAmount asset={props.asset} amount={props.previousAmount.abs().toNumber()} />
+          <AssetAmount asset={asset} amount={previousAmount.abs().toNumber()} />
           <div className='w-4'>
             <ArrowRight
               className={classNames(
-                props.previousAmount.abs().isGreaterThan(props.newAmount)
-                  ? 'text-error'
-                  : 'text-success',
+                previousAmount.abs().isGreaterThan(newAmount) ? 'text-error' : 'text-success',
               )}
             />
           </div>
-          <AssetAmount
-            asset={props.asset}
-            amount={props.previousAmount.plus(props.amount).abs().toNumber()}
-          />
+          <AssetAmount asset={asset} amount={previousAmount.plus(amount).abs().toNumber()} />
         </SummaryLine>
       )}
 
-      {showLeverage && props.previousLeverage && (
+      {showLeverage && previousLeverage && (
         <SummaryLine label='Leverage' contentClassName='flex gap-1'>
-          <span>{formatLeverage(props.previousLeverage)}</span>
+          <span>{formatLeverage(previousLeverage)}</span>
           <div className='w-4'>
             <ArrowRight
-              className={classNames(
-                props.leverage > props.previousLeverage ? 'text-error' : 'text-success',
-              )}
+              className={classNames(leverage > previousLeverage ? 'text-error' : 'text-success')}
             />
           </div>
-          <span>{formatLeverage(props.leverage)}</span>
+          <span>{formatLeverage(leverage)}</span>
         </SummaryLine>
       )}
     </div>

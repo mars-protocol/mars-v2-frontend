@@ -62,6 +62,7 @@ export interface AssetParamsBaseForAddr {
 export interface CmSettingsForAddr {
   hls?: HlsParamsBaseForAddr | null
   whitelisted: boolean
+  withdraw_enabled: boolean
 }
 export interface HlsParamsBaseForAddr {
   correlations: HlsAssetTypeForAddr[]
@@ -77,52 +78,19 @@ export interface LiquidationBonus {
 export interface RedBankSettings {
   borrow_enabled: boolean
   deposit_enabled: boolean
+  withdraw_enabled: boolean
 }
 export interface PerpsData {
-  denom_states: {
-    [k: string]: PerpDenomState
-  }
   params: {
     [k: string]: PerpParams
   }
 }
-export interface PerpDenomState {
-  denom: string
-  enabled: boolean
-  funding: Funding
-  long_oi: Uint128
-  pnl_values: PnlValues
-  rate: SignedDecimal
-  short_oi: Uint128
-  total_entry_cost: SignedUint
-  total_entry_funding: SignedUint
-}
-export interface Funding {
-  last_funding_accrued_per_unit_in_base_denom: SignedDecimal
-  last_funding_rate: SignedDecimal
-  max_funding_velocity: Decimal
-  skew_scale: Uint128
-}
-export interface SignedDecimal {
-  abs: Decimal
-  negative: boolean
-  [k: string]: unknown
-}
-export interface PnlValues {
-  accrued_funding: SignedUint
-  closing_fee: SignedUint
-  pnl: SignedUint
-  price_pnl: SignedUint
-}
-export interface SignedUint {
-  abs: Uint128
-  negative: boolean
-  [k: string]: unknown
-}
 export interface PerpParams {
   closing_fee_rate: Decimal
   denom: string
+  enabled: boolean
   liquidation_threshold: Decimal
+  max_funding_velocity: Decimal
   max_loan_to_value: Decimal
   max_long_oi_value: Uint128
   max_net_oi_value: Uint128
@@ -130,6 +98,7 @@ export interface PerpParams {
   max_short_oi_value: Uint128
   min_position_value: Uint128
   opening_fee_rate: Decimal
+  skew_scale: Uint128
 }
 export interface Positions {
   account_id: string
@@ -185,6 +154,11 @@ export interface PnlAmounts {
   opening_fee: SignedUint
   pnl: SignedUint
   price_pnl: SignedUint
+}
+export interface SignedUint {
+  abs: Uint128
+  negative: boolean
+  [k: string]: unknown
 }
 export interface VaultPosition {
   amount: VaultPositionAmount

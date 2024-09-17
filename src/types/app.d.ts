@@ -32,8 +32,8 @@ interface Account {
   lends: BNCoin[]
   vaults: DepositedVault[]
   stakedAstroLps: BNCoin[]
-  perps?: PerpsPosition[]
-  perpsVault?: PerpsVaultPositions | null
+  perps: PerpsPosition[]
+  perpsVault: PerpsVaultPositions | null
   kind: AccountKind
 }
 
@@ -43,8 +43,8 @@ interface AccountChange extends Account {
   lends?: BNCoin[]
   vaults?: DepositedVault[]
   stakedAstroLps?: BNCoin[]
-  perps?: PerpsPosition[]
-  perpsVault?: PerpsVaultPositions
+  perps: PerpsPosition[]
+  perpsVault: PerpsVaultPositions
 }
 
 interface AccountBalanceRow {
@@ -1012,12 +1012,10 @@ interface BroadcastSlice {
     isPythUpdate?: boolean
   }) => Promise<BroadcastResult>
   lend: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
-  closePerpPosition: (options: { accountId: string; denom: string }) => Promise<boolean>
-  openPerpPosition: (options: { accountId: string; coin: BNCoin }) => Promise<boolean>
-  modifyPerpPosition: (options: {
+  executePerpOrder: (options: {
     accountId: string
     coin: BNCoin
-    changeDirection: boolean
+    reduceOnly?: boolean
   }) => Promise<boolean>
   reclaim: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
   repay: (options: {

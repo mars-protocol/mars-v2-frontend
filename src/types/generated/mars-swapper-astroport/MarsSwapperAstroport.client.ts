@@ -16,7 +16,6 @@ import {
   Addr,
   Uint128,
   SwapperRoute,
-  Decimal,
   AstroportRoute,
   Coin,
   AstroRoute,
@@ -155,13 +154,11 @@ export interface MarsSwapperAstroportInterface extends MarsSwapperAstroportReadO
       coinIn,
       denomOut,
       minReceive,
-      slippage,
       route,
     }: {
       coinIn: Coin
       denomOut: string
-      minReceive?: Uint128
-      slippage?: Decimal
+      minReceive: Uint128
       route?: SwapperRoute
     },
     fee?: number | StdFee | 'auto',
@@ -262,13 +259,11 @@ export class MarsSwapperAstroportClient
       coinIn,
       denomOut,
       minReceive,
-      slippage,
       route,
     }: {
       coinIn: Coin
       denomOut: string
-      minReceive?: Uint128
-      slippage?: Decimal
+      minReceive: Uint128
       route?: SwapperRoute
     },
     fee: number | StdFee | 'auto' = 'auto',
@@ -283,7 +278,6 @@ export class MarsSwapperAstroportClient
           coin_in: coinIn,
           denom_out: denomOut,
           min_receive: minReceive,
-          slippage,
           route,
         },
       },

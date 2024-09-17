@@ -6,10 +6,12 @@ import { PRICE_STALE_TIME } from 'constants/query'
 import useCampaignApys from 'hooks/campaign/useCampaignApys'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useAssetParams from 'hooks/params/useAssetParams'
+import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
 import useStore from 'store'
 import useSWR from 'swr'
 import { BNCoin } from 'types/classes/BNCoin'
 import { AssetParamsBaseForAddr } from 'types/generated/mars-params/MarsParams.types'
+import { PerpParams } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import { byDenom } from 'utils/array'
 import { resolveAssetCampaigns } from 'utils/assets'
 import { BN } from 'utils/helpers'
@@ -19,19 +21,13 @@ export default function useAssetsNoOraclePrices() {
   const chainConfig = useChainConfig()
   const { data: assetParams } = useAssetParams()
   const { data: campaignApys } = useCampaignApys()
-  /* PERPS
   const { data: perpsParams } = useAllPerpsParamsSC()
   const fetchedPerpsParams = chainConfig.perps ? perpsParams : ([] as PerpParams[])
-  */
 
   return useSWR(
-    /* PERPS
     assetParams && fetchedPerpsParams && `chains/${chainConfig.id}/noOraclePrices`,
-    async () => fetchSortAndMapAllAssets(chainConfig, assetParams, fetchedPerpsParams),
-    */
-
-    assetParams && `chains/${chainConfig.id}/noOraclePrices`,
-    async () => fetchSortAndMapAllAssets(chainConfig, assetParams, campaignApys),
+    async () =>
+      fetchSortAndMapAllAssets(chainConfig, assetParams, campaignApys, fetchedPerpsParams),
     {
       suspense: true,
       revalidateOnFocus: false,
@@ -45,9 +41,7 @@ async function fetchSortAndMapAllAssets(
   chainConfig: ChainConfig,
   assetParams: AssetParamsBaseForAddr[],
   campaignApys: AssetCampaignApy[],
-  /* PERPS
-  perpsParams: PerpParams[], 
-  */
+  perpsParams: PerpParams[],
 ) {
   const [assets, pools] = await Promise.all([getDexAssets(chainConfig), getDexPools(chainConfig)])
   const poolAssets: Asset[] = pools.map((pool) => {
@@ -115,9 +109,7 @@ async function fetchSortAndMapAllAssets(
       asset.name = `${symbol} LP`
     }
 
-    /* PERPS
-    const currentAssetPerpsParams = perpsParams ? perpsParams.find(byDenom(asset.denom)) : undefined 
-    */
+    const currentAssetPerpsParams = perpsParams ? perpsParams.find(byDenom(asset.denom)) : undefined
 
     const isDeprecated = deprecatedAssets.includes(asset.denom)
     const isAnyAssetAndNoPool = chainConfig.anyAsset && !currentAssetPoolInfo
@@ -140,9 +132,7 @@ async function fetchSortAndMapAllAssets(
       isStable: chainConfig.stables.includes(asset.denom),
       isStaking:
         !!currentAssetParams?.credit_manager.hls && !currentAssetParams?.red_bank.borrow_enabled,
-      /* PERPS
       isPerpsEnabled: !!currentAssetPerpsParams,
-      */
       isDeprecated,
       isTradeEnabled,
       poolInfo: currentAssetPoolInfo,

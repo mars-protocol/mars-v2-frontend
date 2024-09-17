@@ -27,6 +27,7 @@ import {
   VaultPositionType,
   SwapperRoute,
   AccountNftBaseForString,
+  PerpsBaseForString,
   OwnerUpdate,
   Action2,
   Expiration,
@@ -37,8 +38,10 @@ import {
   HealthState,
   LiquidateRequestForVaultBaseForAddr,
   ChangeExpected,
+  PnL,
   Coin,
   ActionCoin,
+  SignedUint,
   VaultBaseForString,
   AstroRoute,
   AstroSwap,
@@ -48,6 +51,7 @@ import {
   NftConfigUpdates,
   VaultBaseForAddr,
   QueryMsg,
+  ActionKind,
   VaultPositionAmount,
   VaultAmount,
   VaultAmount1,
@@ -74,6 +78,11 @@ import {
   ArrayOfCoin,
   Positions,
   DebtAmount,
+  PerpVaultPosition,
+  PerpVaultDeposit,
+  PerpVaultUnlock,
+  PerpPosition,
+  PnlAmounts,
   ArrayOfVaultBinding,
   VaultBinding,
   VaultPositionValue,
@@ -455,6 +464,7 @@ export interface MarsCreditManagerPositionsQuery<TData>
   extends MarsCreditManagerReactQuery<Positions, TData> {
   args: {
     accountId: string
+    action?: ActionKind
   }
 }
 export function useMarsCreditManagerPositionsQuery<TData = Positions>({
@@ -468,6 +478,7 @@ export function useMarsCreditManagerPositionsQuery<TData = Positions>({
       client
         ? client.positions({
             accountId: args.accountId,
+            action: args.action,
           })
         : Promise.reject(new Error('Invalid client')),
     {
@@ -593,6 +604,30 @@ export function useMarsCreditManagerAccountKindQuery<TData = AccountKind>({
       ...options,
       enabled: !!client && (options?.enabled != undefined ? options.enabled : true),
     },
+  )
+}
+export interface MarsCreditManagerUpdateBalanceAfterDeleverageMutation {
+  client: MarsCreditManagerClient
+  msg: {
+    accountId: string
+    pnl: PnL
+  }
+  args?: {
+    fee?: number | StdFee | 'auto'
+    memo?: string
+    funds?: Coin[]
+  }
+}
+export function useMarsCreditManagerUpdateBalanceAfterDeleverageMutation(
+  options?: Omit<
+    UseMutationOptions<ExecuteResult, Error, MarsCreditManagerUpdateBalanceAfterDeleverageMutation>,
+    'mutationFn'
+  >,
+) {
+  return useMutation<ExecuteResult, Error, MarsCreditManagerUpdateBalanceAfterDeleverageMutation>(
+    ({ client, msg, args: { fee, memo, funds } = {} }) =>
+      client.updateBalanceAfterDeleverage(msg, fee, memo, funds),
+    options,
   )
 }
 export interface MarsCreditManagerCallbackMutation {
@@ -727,30 +762,6 @@ export function useMarsCreditManagerUpdateCreditAccountMutation(
   return useMutation<ExecuteResult, Error, MarsCreditManagerUpdateCreditAccountMutation>(
     ({ client, msg, args: { fee, memo, funds } = {} }) =>
       client.updateCreditAccount(msg, fee, memo, funds),
-    options,
-  )
-}
-export interface MarsCreditManagerCreateCreditAccountV2Mutation {
-  client: MarsCreditManagerClient
-  msg: {
-    accountId?: string
-    kind: AccountKind
-  }
-  args?: {
-    fee?: number | StdFee | 'auto'
-    memo?: string
-    funds?: Coin[]
-  }
-}
-export function useMarsCreditManagerCreateCreditAccountV2Mutation(
-  options?: Omit<
-    UseMutationOptions<ExecuteResult, Error, MarsCreditManagerCreateCreditAccountV2Mutation>,
-    'mutationFn'
-  >,
-) {
-  return useMutation<ExecuteResult, Error, MarsCreditManagerCreateCreditAccountV2Mutation>(
-    ({ client, msg, args: { fee, memo, funds } = {} }) =>
-      client.createCreditAccountV2(msg, fee, memo, funds),
     options,
   )
 }

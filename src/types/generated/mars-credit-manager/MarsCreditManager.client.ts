@@ -26,6 +26,7 @@ import {
   VaultPositionType,
   SwapperRoute,
   AccountNftBaseForString,
+  PerpsBaseForString,
   OwnerUpdate,
   Action2,
   Expiration,
@@ -36,8 +37,10 @@ import {
   HealthState,
   LiquidateRequestForVaultBaseForAddr,
   ChangeExpected,
+  PnL,
   Coin,
   ActionCoin,
+  SignedUint,
   VaultBaseForString,
   AstroRoute,
   AstroSwap,
@@ -47,6 +50,7 @@ import {
   NftConfigUpdates,
   VaultBaseForAddr,
   QueryMsg,
+  ActionKind,
   VaultPositionAmount,
   VaultAmount,
   VaultAmount1,
@@ -73,6 +77,11 @@ import {
   ArrayOfCoin,
   Positions,
   DebtAmount,
+  PerpVaultPosition,
+  PerpVaultDeposit,
+  PerpVaultUnlock,
+  PerpPosition,
+  PnlAmounts,
   ArrayOfVaultBinding,
   VaultBinding,
   VaultPositionValue,
@@ -99,7 +108,13 @@ export interface MarsCreditManagerReadOnlyInterface {
     limit?: number
     startAfter?: string
   }) => Promise<PaginationResponseForVaultUtilizationResponse>
-  positions: ({ accountId }: { accountId: string }) => Promise<Positions>
+  positions: ({
+    accountId,
+    action,
+  }: {
+    accountId: string
+    action?: ActionKind
+  }) => Promise<Positions>
   allCoinBalances: ({
     limit,
     startAfter,
@@ -226,10 +241,17 @@ export class MarsCreditManagerQueryClient implements MarsCreditManagerReadOnlyIn
       },
     })
   }
-  positions = async ({ accountId }: { accountId: string }): Promise<Positions> => {
+  positions = async ({
+    accountId,
+    action,
+  }: {
+    accountId: string
+    action?: ActionKind
+  }): Promise<Positions> => {
     return this.client.queryContractSmart(this.contractAddress, {
       positions: {
         account_id: accountId,
+        action,
       },
     })
   }
@@ -350,18 +372,6 @@ export interface MarsCreditManagerInterface extends MarsCreditManagerReadOnlyInt
     memo?: string,
     _funds?: Coin[],
   ) => Promise<ExecuteResult>
-  createCreditAccountV2: (
-    {
-      accountId,
-      kind,
-    }: {
-      accountId?: string
-      kind: AccountKind
-    },
-    fee?: number | StdFee | 'auto',
-    memo?: string,
-    _funds?: Coin[],
-  ) => Promise<ExecuteResult>
   updateCreditAccount: (
     {
       accountId,
@@ -420,6 +430,18 @@ export interface MarsCreditManagerInterface extends MarsCreditManagerReadOnlyInt
     memo?: string,
     _funds?: Coin[],
   ) => Promise<ExecuteResult>
+  updateBalanceAfterDeleverage: (
+    {
+      accountId,
+      pnl,
+    }: {
+      accountId: string
+      pnl: PnL
+    },
+    fee?: number | StdFee | 'auto',
+    memo?: string,
+    _funds?: Coin[],
+  ) => Promise<ExecuteResult>
 }
 export class MarsCreditManagerClient
   extends MarsCreditManagerQueryClient
@@ -434,13 +456,13 @@ export class MarsCreditManagerClient
     this.sender = sender
     this.contractAddress = contractAddress
     this.createCreditAccount = this.createCreditAccount.bind(this)
-    this.createCreditAccountV2 = this.createCreditAccountV2.bind(this)
     this.updateCreditAccount = this.updateCreditAccount.bind(this)
     this.repayFromWallet = this.repayFromWallet.bind(this)
     this.updateConfig = this.updateConfig.bind(this)
     this.updateOwner = this.updateOwner.bind(this)
     this.updateNftConfig = this.updateNftConfig.bind(this)
     this.callback = this.callback.bind(this)
+    this.updateBalanceAfterDeleverage = this.updateBalanceAfterDeleverage.bind(this)
   }
   createCreditAccount = async (
     accountKind: AccountKind,
@@ -453,32 +475,6 @@ export class MarsCreditManagerClient
       this.contractAddress,
       {
         create_credit_account: accountKind,
-      },
-      fee,
-      memo,
-      _funds,
-    )
-  }
-  createCreditAccountV2 = async (
-    {
-      accountId,
-      kind,
-    }: {
-      accountId?: string
-      kind: AccountKind
-    },
-    fee: number | StdFee | 'auto' = 'auto',
-    memo?: string,
-    _funds?: Coin[],
-  ): Promise<ExecuteResult> => {
-    return await this.client.execute(
-      this.sender,
-      this.contractAddress,
-      {
-        create_credit_account_v2: {
-          account_id: accountId,
-          kind,
-        },
       },
       fee,
       memo,
@@ -614,6 +610,32 @@ export class MarsCreditManagerClient
       this.contractAddress,
       {
         callback: callbackMsg,
+      },
+      fee,
+      memo,
+      _funds,
+    )
+  }
+  updateBalanceAfterDeleverage = async (
+    {
+      accountId,
+      pnl,
+    }: {
+      accountId: string
+      pnl: PnL
+    },
+    fee: number | StdFee | 'auto' = 'auto',
+    memo?: string,
+    _funds?: Coin[],
+  ): Promise<ExecuteResult> => {
+    return await this.client.execute(
+      this.sender,
+      this.contractAddress,
+      {
+        update_balance_after_deleverage: {
+          account_id: accountId,
+          pnl,
+        },
       },
       fee,
       memo,

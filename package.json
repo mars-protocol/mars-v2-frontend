@@ -2,8 +2,8 @@
   "name": "mars-v2-frontend",
   "version": "2.7.1",
   "homepage": "./",
-  "license": "SEE LICENSE IN LICENSE FILE",
   "private": false,
+  "license": "SEE LICENSE IN LICENSE FILE",
   "scripts": {
     "build": "yarn install-charting-library && next build",
     "dev": "next dev",

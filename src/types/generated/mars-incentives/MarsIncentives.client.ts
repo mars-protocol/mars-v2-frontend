@@ -11,10 +11,11 @@ import {
   InstantiateMsg,
   ExecuteMsg,
   Uint128,
+  IncentiveKind,
   Addr,
   ActionAmount,
   OwnerUpdate,
-  MigrateV1ToV2,
+  MigrateV2ToV2_0_1,
   WhitelistEntry,
   Coin,
   ActionCoin,
@@ -44,44 +45,54 @@ export interface MarsIncentivesReadOnlyInterface {
     lpDenom: string
   }) => Promise<PaginationResponseForTupleOfStringAndArrayOfCoin>
   activeEmissions: ({
-    collateralDenom,
+    denom,
+    kind,
   }: {
-    collateralDenom: string
+    denom: string
+    kind: IncentiveKind
   }) => Promise<ArrayOfActiveEmission>
   config: () => Promise<ConfigResponse>
   incentiveState: ({
-    collateralDenom,
+    denom,
     incentiveDenom,
+    kind,
   }: {
-    collateralDenom: string
+    denom: string
     incentiveDenom: string
+    kind: IncentiveKind
   }) => Promise<IncentiveStateResponse>
   incentiveStates: ({
     limit,
-    startAfterCollateralDenom,
+    startAfterDenom,
     startAfterIncentiveDenom,
+    startAfterKind,
   }: {
     limit?: number
-    startAfterCollateralDenom?: string
+    startAfterDenom?: string
     startAfterIncentiveDenom?: string
+    startAfterKind?: IncentiveKind
   }) => Promise<ArrayOfIncentiveStateResponse>
   emission: ({
-    collateralDenom,
+    denom,
     incentiveDenom,
+    kind,
     timestamp,
   }: {
-    collateralDenom: string
+    denom: string
     incentiveDenom: string
+    kind: IncentiveKind
     timestamp: number
   }) => Promise<Uint128>
   emissions: ({
-    collateralDenom,
+    denom,
     incentiveDenom,
+    kind,
     limit,
     startAfterTimestamp,
   }: {
-    collateralDenom: string
+    denom: string
     incentiveDenom: string
+    kind: IncentiveKind
     limit?: number
     startAfterTimestamp?: number
   }) => Promise<ArrayOfEmissionResponse>
@@ -104,14 +115,16 @@ export interface MarsIncentivesReadOnlyInterface {
   userUnclaimedRewards: ({
     accountId,
     limit,
-    startAfterCollateralDenom,
+    startAfterDenom,
     startAfterIncentiveDenom,
+    startAfterKind,
     user,
   }: {
     accountId?: string
     limit?: number
-    startAfterCollateralDenom?: string
+    startAfterDenom?: string
     startAfterIncentiveDenom?: string
+    startAfterKind?: IncentiveKind
     user: string
   }) => Promise<ArrayOfCoin>
   whitelist: () => Promise<ArrayOfWhitelistEntry>
@@ -149,13 +162,16 @@ export class MarsIncentivesQueryClient implements MarsIncentivesReadOnlyInterfac
     })
   }
   activeEmissions = async ({
-    collateralDenom,
+    denom,
+    kind,
   }: {
-    collateralDenom: string
+    denom: string
+    kind: IncentiveKind
   }): Promise<ArrayOfActiveEmission> => {
     return this.client.queryContractSmart(this.contractAddress, {
       active_emissions: {
-        collateral_denom: collateralDenom,
+        denom,
+        kind,
       },
     })
   }
@@ -165,68 +181,80 @@ export class MarsIncentivesQueryClient implements MarsIncentivesReadOnlyInterfac
     })
   }
   incentiveState = async ({
-    collateralDenom,
+    denom,
     incentiveDenom,
+    kind,
   }: {
-    collateralDenom: string
+    denom: string
     incentiveDenom: string
+    kind: IncentiveKind
   }): Promise<IncentiveStateResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       incentive_state: {
-        collateral_denom: collateralDenom,
+        denom,
         incentive_denom: incentiveDenom,
+        kind,
       },
     })
   }
   incentiveStates = async ({
     limit,
-    startAfterCollateralDenom,
+    startAfterDenom,
     startAfterIncentiveDenom,
+    startAfterKind,
   }: {
     limit?: number
-    startAfterCollateralDenom?: string
+    startAfterDenom?: string
     startAfterIncentiveDenom?: string
+    startAfterKind?: IncentiveKind
   }): Promise<ArrayOfIncentiveStateResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       incentive_states: {
         limit,
-        start_after_collateral_denom: startAfterCollateralDenom,
+        start_after_denom: startAfterDenom,
         start_after_incentive_denom: startAfterIncentiveDenom,
+        start_after_kind: startAfterKind,
       },
     })
   }
   emission = async ({
-    collateralDenom,
+    denom,
     incentiveDenom,
+    kind,
     timestamp,
   }: {
-    collateralDenom: string
+    denom: string
     incentiveDenom: string
+    kind: IncentiveKind
     timestamp: number
   }): Promise<Uint128> => {
     return this.client.queryContractSmart(this.contractAddress, {
       emission: {
-        collateral_denom: collateralDenom,
+        denom,
         incentive_denom: incentiveDenom,
+        kind,
         timestamp,
       },
     })
   }
   emissions = async ({
-    collateralDenom,
+    denom,
     incentiveDenom,
+    kind,
     limit,
     startAfterTimestamp,
   }: {
-    collateralDenom: string
+    denom: string
     incentiveDenom: string
+    kind: IncentiveKind
     limit?: number
     startAfterTimestamp?: number
   }): Promise<ArrayOfEmissionResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       emissions: {
-        collateral_denom: collateralDenom,
+        denom,
         incentive_denom: incentiveDenom,
+        kind,
         limit,
         start_after_timestamp: startAfterTimestamp,
       },
@@ -266,22 +294,25 @@ export class MarsIncentivesQueryClient implements MarsIncentivesReadOnlyInterfac
   userUnclaimedRewards = async ({
     accountId,
     limit,
-    startAfterCollateralDenom,
+    startAfterDenom,
     startAfterIncentiveDenom,
+    startAfterKind,
     user,
   }: {
     accountId?: string
     limit?: number
-    startAfterCollateralDenom?: string
+    startAfterDenom?: string
     startAfterIncentiveDenom?: string
+    startAfterKind?: IncentiveKind
     user: string
   }): Promise<ArrayOfCoin> => {
     return this.client.queryContractSmart(this.contractAddress, {
       user_unclaimed_rewards: {
         account_id: accountId,
         limit,
-        start_after_collateral_denom: startAfterCollateralDenom,
+        start_after_denom: startAfterDenom,
         start_after_incentive_denom: startAfterIncentiveDenom,
+        start_after_kind: startAfterKind,
         user,
       },
     })
@@ -309,16 +340,18 @@ export interface MarsIncentivesInterface extends MarsIncentivesReadOnlyInterface
   ) => Promise<ExecuteResult>
   setAssetIncentive: (
     {
-      collateralDenom,
+      denom,
       duration,
       emissionPerSecond,
       incentiveDenom,
+      kind,
       startTime,
     }: {
-      collateralDenom: string
+      denom: string
       duration: number
       emissionPerSecond: Uint128
       incentiveDenom: string
+      kind: IncentiveKind
       startTime: number
     },
     fee?: number | StdFee | 'auto',
@@ -329,15 +362,17 @@ export interface MarsIncentivesInterface extends MarsIncentivesReadOnlyInterface
     {
       accountId,
       denom,
-      totalAmountScaledBefore,
+      kind,
+      totalAmount,
       userAddr,
-      userAmountScaledBefore,
+      userAmount,
     }: {
       accountId?: string
       denom: string
-      totalAmountScaledBefore: Uint128
+      kind: IncentiveKind
+      totalAmount: Uint128
       userAddr: Addr
-      userAmountScaledBefore: Uint128
+      userAmount: Uint128
     },
     fee?: number | StdFee | 'auto',
     memo?: string,
@@ -347,13 +382,15 @@ export interface MarsIncentivesInterface extends MarsIncentivesReadOnlyInterface
     {
       accountId,
       limit,
-      startAfterCollateralDenom,
+      startAfterDenom,
       startAfterIncentiveDenom,
+      startAfterKind,
     }: {
       accountId?: string
       limit?: number
-      startAfterCollateralDenom?: string
+      startAfterDenom?: string
       startAfterIncentiveDenom?: string
+      startAfterKind?: IncentiveKind
     },
     fee?: number | StdFee | 'auto',
     memo?: string,
@@ -414,7 +451,7 @@ export interface MarsIncentivesInterface extends MarsIncentivesReadOnlyInterface
     _funds?: Coin[],
   ) => Promise<ExecuteResult>
   migrate: (
-    migrateV1ToV2: MigrateV1ToV2,
+    migrateV2ToV201: MigrateV2ToV2_0_1,
     fee?: number | StdFee | 'auto',
     memo?: string,
     _funds?: Coin[],
@@ -471,16 +508,18 @@ export class MarsIncentivesClient
   }
   setAssetIncentive = async (
     {
-      collateralDenom,
+      denom,
       duration,
       emissionPerSecond,
       incentiveDenom,
+      kind,
       startTime,
     }: {
-      collateralDenom: string
+      denom: string
       duration: number
       emissionPerSecond: Uint128
       incentiveDenom: string
+      kind: IncentiveKind
       startTime: number
     },
     fee: number | StdFee | 'auto' = 'auto',
@@ -492,10 +531,11 @@ export class MarsIncentivesClient
       this.contractAddress,
       {
         set_asset_incentive: {
-          collateral_denom: collateralDenom,
+          denom,
           duration,
           emission_per_second: emissionPerSecond,
           incentive_denom: incentiveDenom,
+          kind,
           start_time: startTime,
         },
       },
@@ -508,15 +548,17 @@ export class MarsIncentivesClient
     {
       accountId,
       denom,
-      totalAmountScaledBefore,
+      kind,
+      totalAmount,
       userAddr,
-      userAmountScaledBefore,
+      userAmount,
     }: {
       accountId?: string
       denom: string
-      totalAmountScaledBefore: Uint128
+      kind: IncentiveKind
+      totalAmount: Uint128
       userAddr: Addr
-      userAmountScaledBefore: Uint128
+      userAmount: Uint128
     },
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
@@ -529,9 +571,10 @@ export class MarsIncentivesClient
         balance_change: {
           account_id: accountId,
           denom,
-          total_amount_scaled_before: totalAmountScaledBefore,
+          kind,
+          total_amount: totalAmount,
           user_addr: userAddr,
-          user_amount_scaled_before: userAmountScaledBefore,
+          user_amount: userAmount,
         },
       },
       fee,
@@ -543,13 +586,15 @@ export class MarsIncentivesClient
     {
       accountId,
       limit,
-      startAfterCollateralDenom,
+      startAfterDenom,
       startAfterIncentiveDenom,
+      startAfterKind,
     }: {
       accountId?: string
       limit?: number
-      startAfterCollateralDenom?: string
+      startAfterDenom?: string
       startAfterIncentiveDenom?: string
+      startAfterKind?: IncentiveKind
     },
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
@@ -562,8 +607,9 @@ export class MarsIncentivesClient
         claim_rewards: {
           account_id: accountId,
           limit,
-          start_after_collateral_denom: startAfterCollateralDenom,
+          start_after_denom: startAfterDenom,
           start_after_incentive_denom: startAfterIncentiveDenom,
+          start_after_kind: startAfterKind,
         },
       },
       fee,
@@ -693,7 +739,7 @@ export class MarsIncentivesClient
     )
   }
   migrate = async (
-    migrateV1ToV2: MigrateV1ToV2,
+    migrateV2ToV201: MigrateV2ToV2_0_1,
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
     _funds?: Coin[],
@@ -702,7 +748,7 @@ export class MarsIncentivesClient
       this.sender,
       this.contractAddress,
       {
-        migrate: migrateV1ToV2,
+        migrate: migrateV2ToV201,
       },
       fee,
       memo,

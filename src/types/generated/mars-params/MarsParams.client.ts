@@ -8,17 +8,19 @@
 import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
 import {
-  Decimal,
   InstantiateMsg,
   ExecuteMsg,
   OwnerUpdate,
   AssetParamsUpdate,
+  Decimal,
   HlsAssetTypeForString,
   Uint128,
   VaultConfigUpdate,
+  PerpParamsUpdate,
   EmergencyUpdate,
   CmEmergencyUpdate,
   RedBankEmergencyUpdate,
+  PerpsEmergencyUpdate,
   AssetParamsBaseForString,
   CmSettingsForString,
   HlsParamsBaseForString,
@@ -26,6 +28,7 @@ import {
   RedBankSettings,
   VaultConfigBaseForString,
   Coin,
+  PerpParams,
   QueryMsg,
   HlsAssetTypeForAddr,
   Addr,
@@ -33,6 +36,7 @@ import {
   AssetParamsBaseForAddr,
   CmSettingsForAddr,
   HlsParamsBaseForAddr,
+  ArrayOfPerpParams,
   PaginationResponseForTotalDepositResponse,
   TotalDepositResponse,
   Metadata,
@@ -70,7 +74,14 @@ export interface MarsParamsReadOnlyInterface {
     limit?: number
     startAfter?: string
   }) => Promise<PaginationResponseForVaultConfigBaseForAddr>
-  targetHealthFactor: () => Promise<Decimal>
+  perpParams: ({ denom }: { denom: string }) => Promise<PerpParams>
+  allPerpParams: ({
+    limit,
+    startAfter,
+  }: {
+    limit?: number
+    startAfter?: string
+  }) => Promise<ArrayOfPerpParams>
   totalDeposit: ({ denom }: { denom: string }) => Promise<TotalDepositResponse>
   allTotalDepositsV2: ({
     limit,
@@ -93,7 +104,8 @@ export class MarsParamsQueryClient implements MarsParamsReadOnlyInterface {
     this.vaultConfig = this.vaultConfig.bind(this)
     this.allVaultConfigs = this.allVaultConfigs.bind(this)
     this.allVaultConfigsV2 = this.allVaultConfigsV2.bind(this)
-    this.targetHealthFactor = this.targetHealthFactor.bind(this)
+    this.perpParams = this.perpParams.bind(this)
+    this.allPerpParams = this.allPerpParams.bind(this)
     this.totalDeposit = this.totalDeposit.bind(this)
     this.allTotalDepositsV2 = this.allTotalDepositsV2.bind(this)
   }
@@ -163,9 +175,25 @@ export class MarsParamsQueryClient implements MarsParamsReadOnlyInterface {
       },
     })
   }
-  targetHealthFactor = async (): Promise<Decimal> => {
+  perpParams = async ({ denom }: { denom: string }): Promise<PerpParams> => {
     return this.client.queryContractSmart(this.contractAddress, {
-      target_health_factor: {},
+      perp_params: {
+        denom,
+      },
+    })
+  }
+  allPerpParams = async ({
+    limit,
+    startAfter,
+  }: {
+    limit?: number
+    startAfter?: string
+  }): Promise<ArrayOfPerpParams> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      all_perp_params: {
+        limit,
+        start_after: startAfter,
+      },
     })
   }
   totalDeposit = async ({ denom }: { denom: string }): Promise<TotalDepositResponse> => {
@@ -209,11 +237,6 @@ export interface MarsParamsInterface extends MarsParamsReadOnlyInterface {
     memo?: string,
     _funds?: Coin[],
   ) => Promise<ExecuteResult>
-  updateTargetHealthFactor: (
-    fee?: number | StdFee | 'auto',
-    memo?: string,
-    _funds?: Coin[],
-  ) => Promise<ExecuteResult>
   updateAssetParams: (
     assetParamsUpdate: AssetParamsUpdate,
     fee?: number | StdFee | 'auto',
@@ -222,6 +245,12 @@ export interface MarsParamsInterface extends MarsParamsReadOnlyInterface {
   ) => Promise<ExecuteResult>
   updateVaultConfig: (
     vaultConfigUpdate: VaultConfigUpdate,
+    fee?: number | StdFee | 'auto',
+    memo?: string,
+    _funds?: Coin[],
+  ) => Promise<ExecuteResult>
+  updatePerpParams: (
+    perpParamsUpdate: PerpParamsUpdate,
     fee?: number | StdFee | 'auto',
     memo?: string,
     _funds?: Coin[],
@@ -244,9 +273,9 @@ export class MarsParamsClient extends MarsParamsQueryClient implements MarsParam
     this.contractAddress = contractAddress
     this.updateOwner = this.updateOwner.bind(this)
     this.updateConfig = this.updateConfig.bind(this)
-    this.updateTargetHealthFactor = this.updateTargetHealthFactor.bind(this)
     this.updateAssetParams = this.updateAssetParams.bind(this)
     this.updateVaultConfig = this.updateVaultConfig.bind(this)
+    this.updatePerpParams = this.updatePerpParams.bind(this)
     this.emergencyUpdate = this.emergencyUpdate.bind(this)
   }
   updateOwner = async (
@@ -289,22 +318,6 @@ export class MarsParamsClient extends MarsParamsQueryClient implements MarsParam
       _funds,
     )
   }
-  updateTargetHealthFactor = async (
-    fee: number | StdFee | 'auto' = 'auto',
-    memo?: string,
-    _funds?: Coin[],
-  ): Promise<ExecuteResult> => {
-    return await this.client.execute(
-      this.sender,
-      this.contractAddress,
-      {
-        update_target_health_factor: {},
-      },
-      fee,
-      memo,
-      _funds,
-    )
-  }
   updateAssetParams = async (
     assetParamsUpdate: AssetParamsUpdate,
     fee: number | StdFee | 'auto' = 'auto',
@@ -333,6 +346,23 @@ export class MarsParamsClient extends MarsParamsQueryClient implements MarsParam
       this.contractAddress,
       {
         update_vault_config: vaultConfigUpdate,
+      },
+      fee,
+      memo,
+      _funds,
+    )
+  }
+  updatePerpParams = async (
+    perpParamsUpdate: PerpParamsUpdate,
+    fee: number | StdFee | 'auto' = 'auto',
+    memo?: string,
+    _funds?: Coin[],
+  ): Promise<ExecuteResult> => {
+    return await this.client.execute(
+      this.sender,
+      this.contractAddress,
+      {
+        update_perp_params: perpParamsUpdate,
       },
       fee,
       memo,
