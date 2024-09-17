@@ -104,6 +104,8 @@ export default function AstroLpWithdraw(props: Props) {
 
   if (!astroLpAsset) return null
 
+  const withdrawNote = isHls ? 'and withdrawn to your wallet' : 'to your Credit Account'
+
   return (
     <div
       className={classNames(
@@ -168,8 +170,7 @@ export default function AstroLpWithdraw(props: Props) {
                 />
               ))}
               <Callout type={CalloutType.INFO} className='mt-4'>
-                Note: when withdrawing any amount of LP shares, all accrued rewards will be
-                automatically claimed to your Credit Account.
+                {`Note: when withdrawing any amount of LP shares, all accrued rewards will be automatically claimed ${withdrawNote}.`}
               </Callout>
             </>
           )}
