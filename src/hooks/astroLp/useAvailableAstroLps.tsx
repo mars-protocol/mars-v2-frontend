@@ -25,7 +25,7 @@ export default function useAvailableAstroLps() {
       if (!depositCap || !params) return
       const farm = getAstroLpFromPoolAsset(asset, chainConfig, depositCap, params)
 
-      if (!farm) return
+      if (!farm || farm.ltv.max === 0) return
       mappedAstroLps.push(farm)
     })
     return mappedAstroLps
