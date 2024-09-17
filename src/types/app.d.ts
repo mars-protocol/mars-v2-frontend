@@ -1269,6 +1269,12 @@ interface HlsClosingChanges {
   rewards?: BNCoin[]
 }
 
+interface HlsApyInfo {
+  hlsFarm: HlsFarm
+  borrowRate: number
+  maxApy: number
+}
+
 type HlsStakingManageAction = 'deposit' | 'withdraw' | 'repay' | 'leverage'
 
 interface PerpsVaultModal {

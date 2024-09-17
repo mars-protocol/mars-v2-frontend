@@ -40,7 +40,9 @@ export default function useAvailableHlsFarmsColumns(props: Props) {
       },
       {
         ...APY_META,
-        cell: ({ row }) => <ApyRange hlsFarm={row.original} isLoading={props.isLoading} />,
+        cell: ({ row }) => (
+          <ApyRange hlsFarm={row.original} isLoading={props.isLoading} assets={assets} />
+        ),
         sortingFn: apyRangeSortingFn,
       },
       {
@@ -48,5 +50,5 @@ export default function useAvailableHlsFarmsColumns(props: Props) {
         cell: ({ row }) => <Deposit hlsFarm={row.original} />,
       },
     ]
-  }, [props.isLoading])
+  }, [assets, props.isLoading])
 }
