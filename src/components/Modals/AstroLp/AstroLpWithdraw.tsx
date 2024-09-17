@@ -74,7 +74,8 @@ export default function AstroLpWithdraw(props: Props) {
 
   const maxAmount = useMemo(() => {
     if (!isHls) return astroLpPosition.amount
-    return computeMaxWithdrawAmount(astroLp.denoms.lp)
+    // keep a small buffer to avoid HF errors
+    return computeMaxWithdrawAmount(astroLp.denoms.lp).times(0.99).integerValue()
   }, [astroLp.denoms.lp, astroLpPosition.amount, computeMaxWithdrawAmount, isHls])
 
   const onClick = useCallback(async () => {

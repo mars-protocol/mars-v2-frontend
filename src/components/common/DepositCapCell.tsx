@@ -4,7 +4,6 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
-import useAsset from 'hooks/assets/useAsset'
 import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
@@ -17,7 +16,6 @@ export default function DepositCapCell(props: Props) {
     .multipliedBy(100)
     .integerValue()
   const depositCapUsed = Math.min(percent.toNumber(), 100)
-  const decimals = useAsset(props.depositCap.denom)?.decimals ?? 6
 
   return (
     <TitleAndSubCell
