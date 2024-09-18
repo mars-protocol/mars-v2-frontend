@@ -10,8 +10,7 @@ export default function AvailablePerpsVaultsTable() {
 
   return (
     <Table
-      hideCard
-      title='Available vaults'
+      title='Available Perps Vaults'
       columns={columns}
       data={[vault]}
       initialSorting={[{ id: 'name', desc: false }]}

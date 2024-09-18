@@ -13,6 +13,7 @@ import PortfolioAccountPage from 'pages/PortfolioAccountPage'
 import PortfolioPage from 'pages/PortfolioPage'
 import TradePage from 'pages/TradePage'
 import V1Page from 'pages/V1Page'
+import PerpsVaultPage from 'pages/PerpsVaultPage'
 
 export default function Routes() {
   const chainConfig = useChainConfig()
@@ -30,6 +31,7 @@ export default function Routes() {
         {chainConfig.perps && <Route path='/perps' element={<PerpsPage />} />}
         <Route path='/farm' element={<FarmPage />} />
         <Route path='/lend' element={<LendPage />} />
+        {chainConfig.perps && <Route path='/perps-vault' element={<PerpsVaultPage />} />}
         <Route path='/borrow' element={<BorrowPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
         <Route path='/v1' element={<V1Page />} />
@@ -43,6 +45,7 @@ export default function Routes() {
           {chainConfig.perps && <Route path='perps' element={<PerpsPage />} />}
           <Route path='farm' element={<FarmPage />} />
           <Route path='lend' element={<LendPage />} />
+          {chainConfig.perps && <Route path='perps-vault' element={<PerpsVaultPage />} />}
           <Route path='borrow' element={<BorrowPage />} />
           <Route path='portfolio' element={<PortfolioPage />} />
           {chainConfig.hls && <Route path='hls-staking' element={<HlsStakingPage />} />}

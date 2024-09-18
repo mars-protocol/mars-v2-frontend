@@ -395,6 +395,7 @@ type Page =
   | 'borrow'
   | 'farm'
   | 'lend'
+  | 'perps-vault'
   | 'portfolio'
   | 'portfolio/{accountId}'
   | 'hls-farm'

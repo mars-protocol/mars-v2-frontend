@@ -67,7 +67,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const isFullWidth =
     location.pathname.includes('trade') ||
     location.pathname === '/' ||
-    location.pathname.includes('perps')
+    (location.pathname.includes('perps') && !location.pathname.includes('perps-vault'))
   const accountId = useAccountId()
 
   useEffect(() => {
