@@ -3,7 +3,6 @@ import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
 import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
@@ -11,10 +10,7 @@ interface Props {
 }
 
 export default function DepositCapCell(props: Props) {
-  const percent = props.depositCap.used
-    .dividedBy(props.depositCap.max.multipliedBy(VAULT_DEPOSIT_BUFFER))
-    .multipliedBy(100)
-    .integerValue()
+  const percent = props.depositCap.used.dividedBy(props.depositCap.max).multipliedBy(100)
   const depositCapUsed = Math.min(percent.toNumber(), 100)
 
   return (
