@@ -20,7 +20,7 @@ import { byDenom } from 'utils/array'
 export default function HlsManageModalController() {
   const modal = useStore((s) => s.hlsManageModal)
   const { data: assets } = useAssets()
-  const { data: account } = useAccount(modal?.accountId)
+  const { data: account, isLoading } = useAccount(modal?.accountId)
   const isFarming = !!modal?.farming
   const isStaking = !!modal?.staking
 
@@ -61,7 +61,14 @@ export default function HlsManageModalController() {
     return null
   }, [isStaking, account, modal, isFarming, assets])
 
-  if ((!isFarming && !isStaking) || !modal || !collateralAsset || !market || !usedAccount)
+  if (
+    (!isFarming && !isStaking) ||
+    isLoading ||
+    !modal ||
+    !collateralAsset ||
+    !market ||
+    !usedAccount
+  )
     return null
 
   return (
