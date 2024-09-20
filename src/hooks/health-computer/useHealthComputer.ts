@@ -220,7 +220,6 @@ export default function useHealthComputer(account?: Account) {
     (denom: string) => {
       if (!healthComputer) return BN_ZERO
       try {
-        console.log('healthComputer', healthComputer)
         return BN(max_withdraw_estimate_js(healthComputer, denom))
       } catch (err) {
         console.error('Failed to calculate max withdraw amount: ', err)
