@@ -15,7 +15,7 @@ export default function useAccount(accountId?: string, suspense?: boolean) {
   const v1Account = useV1Account()
   const v2Account = useSWR(
     !!accountId && !isV1 && `chains/${chainConfig.id}/accounts/${accountId}`,
-    () => getAccount(chainConfig, assets, accountId),
+    () => getAccount(chainConfig, assets, accountId, address),
     {
       suspense: suspense,
       revalidateOnFocus: false,
