@@ -10,6 +10,7 @@ import {
   TotalDepositResponse,
   VaultConfigBaseForAddr,
 } from 'types/generated/mars-params/MarsParams.types'
+import { VaultPositionResponse } from 'types/generated/mars-perps/MarsPerps.types'
 import {
   ArrayOfMarket,
   ArrayOfUserDebtResponse,
@@ -66,3 +67,4 @@ export const previewDepositCache: Cache<{ vaultAddress: string; amount: string }
 export const stakingAprCache: Cache<StakingApr[]> = new Map()
 export const assetParamsCache: Cache<AssetParamsBaseForAddr[]> = new Map()
 export const userDebtCache: Cache<ArrayOfUserDebtResponse> = new Map()
+export const vaultPositionResponse: Cache<VaultPositionResponse | null> = new Map()

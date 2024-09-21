@@ -1,14 +1,12 @@
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
-import {
-  PerpVaultUnlock,
-  Positions,
-} from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import {
   AssetParamsBaseForAddr as AssetParams,
   AssetParamsBaseForAddr,
   TotalDepositResponse,
 } from 'types/generated/mars-params/MarsParams.types'
+import { VaultPositionResponse, VaultUnlock } from 'types/generated/mars-perps/MarsPerps.types'
 import { Market as RedBankMarket } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { BN, getLeverageFromLTV } from 'utils/helpers'
 import { convertAprToApy } from 'utils/parsers'
@@ -114,7 +112,6 @@ export function resolvePerpsPositions(
       baseDenom: position.base_denom,
       amount: BN(position.size as any), // Amount is negative for SHORT positions
       tradeDirection: BN(position.size as any).isNegative() ? 'short' : 'long',
-      closingFeeRate: BN(position.closing_fee_rate),
       entryPrice: BN(position.entry_exec_price),
       currentPrice: BN(position.current_exec_price),
       pnl: {
@@ -168,7 +165,7 @@ export function resolvePerpsPositions(
 }
 
 export function resolvePerpsVaultPositions(
-  perpsVaultPositions?: Positions['perp_vault'],
+  perpsVaultPositions?: VaultPositionResponse,
 ): PerpsVaultPositions | null {
   if (!perpsVaultPositions) return null
 
@@ -182,7 +179,7 @@ export function resolvePerpsVaultPositions(
       prev[0].push(curr)
       return prev
     },
-    [[] as PerpVaultUnlock[], BN_ZERO],
+    [[] as VaultUnlock[], BN_ZERO],
   )
 
   return {

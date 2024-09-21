@@ -233,7 +233,6 @@ export function convertAccountToPositions(account: Account): Positions {
     perps: account.perps.map((perpPosition) => {
       return {
         base_denom: perpPosition.baseDenom,
-        closing_fee_rate: perpPosition.closingFeeRate.toString(),
         current_price: perpPosition.currentPrice.toString(),
         current_exec_price: perpPosition.currentPrice.toString(),
         denom: perpPosition.denom,
