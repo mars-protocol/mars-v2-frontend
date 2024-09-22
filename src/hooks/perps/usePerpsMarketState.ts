@@ -5,14 +5,14 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 
-export default function usePerpsDenomState() {
+export default function usePerpsMarketState() {
   const chainConfig = useChainConfig()
   const { perpsAsset } = usePerpsAsset()
   const clients = useClients()
 
   return useSWR(
     clients && perpsAsset && `chains/${chainConfig.id}/perps/${perpsAsset.denom}/state`,
-    () => clients!.perps.perpDenomState({ ...PERPS_DEFAULT_ACTION, denom: perpsAsset.denom }),
+    () => clients!.perps.marketState({ ...PERPS_DEFAULT_ACTION, denom: perpsAsset.denom }),
     {
       refreshInterval: 30000,
       dedupingInterval: 30000,

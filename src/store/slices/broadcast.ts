@@ -947,7 +947,9 @@ export default function createBroadcastSlice(
                 ]
               : []),
             {
-              deposit_to_perp_vault: depositCoin.toActionCoin(),
+              deposit_to_perp_vault: {
+                coin: depositCoin.toActionCoin(),
+              },
             },
           ],
         },

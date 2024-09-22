@@ -5,7 +5,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
 import { useAllPerpsParams } from 'hooks/perps/usePerpsParams'
 
-export default function useAllPerpsDenomStates() {
+export default function useAllPerpsMarketStates() {
   const chainConfig = useChainConfig()
   const clients = useClients()
   const perpsParams = useAllPerpsParams()
@@ -14,7 +14,7 @@ export default function useAllPerpsDenomStates() {
     clients && perpsParams && `chains/${chainConfig.id}/perps/state`,
     () => {
       const promises = perpsParams!.map((perp) =>
-        clients!.perps.perpDenomState({ ...PERPS_DEFAULT_ACTION, denom: perp.denom }),
+        clients!.perps.marketState({ ...PERPS_DEFAULT_ACTION, denom: perp.denom }),
       )
 
       return Promise.all(promises)

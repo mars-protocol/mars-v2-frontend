@@ -5,19 +5,16 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-export type OracleBaseForString = string
-export type ParamsBaseForString = string
 export type Decimal = string
 export interface InstantiateMsg {
   address_provider: string
   base_denom: string
   cooldown_period: number
-  credit_manager: string
+  deleverage_enabled: boolean
   max_positions: number
-  oracle: OracleBaseForString
-  params: ParamsBaseForString
   protocol_fee_rate: Decimal
-  target_vault_collaterization_ratio: Decimal
+  target_vault_collateralization_ratio: Decimal
+  vault_withdraw_enabled: boolean
 }
 export type ExecuteMsg =
   | {
@@ -26,6 +23,7 @@ export type ExecuteMsg =
   | {
       deposit: {
         account_id?: string | null
+        max_shares_receivable?: Uint128 | null
       }
     }
   | {
@@ -37,10 +35,11 @@ export type ExecuteMsg =
   | {
       withdraw: {
         account_id?: string | null
+        min_receive?: Uint128 | null
       }
     }
   | {
-      execute_perp_order: {
+      execute_order: {
         account_id: string
         denom: string
         reduce_only?: boolean | null
@@ -60,8 +59,13 @@ export type ExecuteMsg =
       }
     }
   | {
-      update_params: {
+      update_market: {
         params: PerpParams
+      }
+    }
+  | {
+      update_config: {
+        updates: ConfigUpdates
       }
     }
 export type OwnerUpdate =
@@ -101,6 +105,15 @@ export interface PerpParams {
   opening_fee_rate: Decimal
   skew_scale: Uint128
 }
+export interface ConfigUpdates {
+  address_provider?: string | null
+  cooldown_period?: number | null
+  deleverage_enabled?: boolean | null
+  max_positions?: number | null
+  protocol_fee_rate?: Decimal | null
+  target_vault_collateralization_ratio?: Decimal | null
+  vault_withdraw_enabled?: boolean | null
+}
 export type QueryMsg =
   | {
       owner: {}
@@ -114,44 +127,23 @@ export type QueryMsg =
       }
     }
   | {
-      denom_state: {
+      market_state: {
         denom: string
       }
     }
   | {
-      perp_denom_state: {
-        action: ActionKind
+      market: {
         denom: string
       }
     }
   | {
-      perp_denom_states: {
-        action: ActionKind
+      markets: {
         limit?: number | null
         start_after?: string | null
       }
     }
   | {
-      denom_states: {
-        limit?: number | null
-        start_after?: string | null
-      }
-    }
-  | {
-      perp_vault_position: {
-        account_id?: string | null
-        action?: ActionKind | null
-        user_address: string
-      }
-    }
-  | {
-      deposit: {
-        account_id?: string | null
-        user_address: string
-      }
-    }
-  | {
-      unlocks: {
+      vault_position: {
         account_id?: string | null
         user_address: string
       }
@@ -176,16 +168,13 @@ export type QueryMsg =
       }
     }
   | {
-      total_pnl: {}
-    }
-  | {
-      opening_fee: {
+      realized_pnl_by_account_and_market: {
+        account_id: string
         denom: string
-        size: SignedUint
       }
     }
   | {
-      denom_accounting: {
+      market_accounting: {
         denom: string
       }
     }
@@ -193,9 +182,9 @@ export type QueryMsg =
       total_accounting: {}
     }
   | {
-      denom_realized_pnl_for_account: {
-        account_id: string
+      opening_fee: {
         denom: string
+        size: SignedUint
       }
     }
   | {
@@ -209,12 +198,27 @@ export interface ConfigForString {
   address_provider: string
   base_denom: string
   cooldown_period: number
-  credit_manager: string
+  deleverage_enabled: boolean
   max_positions: number
-  oracle: OracleBaseForString
-  params: ParamsBaseForString
   protocol_fee_rate: Decimal
-  target_vault_collaterization_ratio: Decimal
+  target_vault_collateralization_ratio: Decimal
+  vault_withdraw_enabled: boolean
+}
+export interface MarketResponse {
+  current_funding_rate: SignedDecimal
+  denom: string
+  enabled: boolean
+  long_oi: Uint128
+  short_oi: Uint128
+}
+export interface SignedDecimal {
+  abs: Decimal
+  negative: boolean
+  [k: string]: unknown
+}
+export interface AccountingResponse {
+  accounting: Accounting
+  unrealized_pnl: PnlAmounts
 }
 export interface Accounting {
   balance: Balance
@@ -233,6 +237,7 @@ export interface CashFlow {
   closing_fee: SignedUint
   opening_fee: SignedUint
   price_pnl: SignedUint
+  protocol_fee: Uint128
 }
 export interface PnlAmounts {
   accrued_funding: SignedUint
@@ -241,12 +246,19 @@ export interface PnlAmounts {
   pnl: SignedUint
   price_pnl: SignedUint
 }
-export interface DenomStateResponse {
+export type Uint256 = string
+export interface MarketStateResponse {
+  cash_flow: CashFlow
   denom: string
   enabled: boolean
   funding: Funding
   last_updated: number
-  total_cost_base: SignedUint
+  long_oi: Uint128
+  short_oi: Uint128
+  total_abs_multiplied_positions: SignedUint
+  total_entry_cost: SignedUint
+  total_entry_funding: SignedUint
+  total_squared_positions: Uint256
 }
 export interface Funding {
   last_funding_accrued_per_unit_in_base_denom: SignedDecimal
@@ -254,15 +266,12 @@ export interface Funding {
   max_funding_velocity: Decimal
   skew_scale: Uint128
 }
-export interface SignedDecimal {
-  abs: Decimal
-  negative: boolean
-  [k: string]: unknown
+export interface PaginationResponseForMarketResponse {
+  data: MarketResponse[]
+  metadata: Metadata
 }
-export type ArrayOfDenomStateResponse = DenomStateResponse[]
-export interface PerpVaultDeposit {
-  amount: Uint128
-  shares: Uint128
+export interface Metadata {
+  has_more: boolean
 }
 export interface TradingFee {
   fee: Coin
@@ -280,49 +289,12 @@ export interface OwnerResponse {
   owner?: string | null
   proposed?: string | null
 }
-export interface PerpDenomState {
-  denom: string
-  enabled: boolean
-  funding: Funding
-  long_oi: Uint128
-  pnl_values: PnlValues
-  rate: SignedDecimal
-  short_oi: Uint128
-  total_entry_cost: SignedUint
-  total_entry_funding: SignedUint
-}
-export interface PnlValues {
-  accrued_funding: SignedUint
-  closing_fee: SignedUint
-  pnl: SignedUint
-  price_pnl: SignedUint
-}
-export interface PaginationResponseForPerpDenomState {
-  data: PerpDenomState[]
-  metadata: Metadata
-}
-export interface Metadata {
-  has_more: boolean
-}
-export type NullablePerpVaultPosition = PerpVaultPosition | null
-export interface PerpVaultPosition {
-  denom: string
-  deposit: PerpVaultDeposit
-  unlocks: PerpVaultUnlock[]
-}
-export interface PerpVaultUnlock {
-  amount: Uint128
-  cooldown_end: number
-  created_at: number
-  shares: Uint128
-}
 export interface PositionResponse {
   account_id: string
   position?: PerpPosition | null
 }
 export interface PerpPosition {
   base_denom: string
-  closing_fee_rate: Decimal
   current_exec_price: Decimal
   current_price: Decimal
   denom: string
@@ -344,7 +316,6 @@ export interface PositionsByAccountResponse {
   account_id: string
   positions: PerpPosition[]
 }
-export type ArrayOfPerpVaultUnlock = PerpVaultUnlock[]
 export interface VaultResponse {
   collateralization_ratio?: Decimal | null
   share_price?: Decimal | null
@@ -353,4 +324,20 @@ export interface VaultResponse {
   total_liquidity: Uint128
   total_shares: Uint128
   total_withdrawal_balance: Uint128
+}
+export type NullableVaultPositionResponse = VaultPositionResponse | null
+export interface VaultPositionResponse {
+  denom: string
+  deposit: VaultDeposit
+  unlocks: VaultUnlock[]
+}
+export interface VaultDeposit {
+  amount: Uint128
+  shares: Uint128
+}
+export interface VaultUnlock {
+  amount: Uint128
+  cooldown_end: number
+  created_at: number
+  shares: Uint128
 }

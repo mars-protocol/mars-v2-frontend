@@ -13,7 +13,7 @@ export default async function getAccounts(
 
   const $accounts = accountIdsAndKinds
     .filter((a) => a.kind === kind)
-    .map((account) => getAccount(chainConfig, assets, account.id))
+    .map((account) => getAccount(chainConfig, assets, account.id, address))
 
   const accounts = await Promise.all($accounts).then((accounts) => accounts)
   if (accounts) {
