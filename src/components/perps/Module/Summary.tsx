@@ -167,6 +167,7 @@ function ManageSummary(props: Props & { newAmount: BigNumber }) {
           </SummaryLine>
         </>
       )}
+
       <SummaryLine label={isNewPosition ? 'Size' : 'New Size'} contentClassName='flex gap-1'>
         <AssetAmount asset={asset} amount={size.toNumber()} className={sizeClassName} />
       </SummaryLine>
