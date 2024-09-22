@@ -126,7 +126,7 @@ function ManageSummary(props: Props & { newAmount: BigNumber }) {
 
   const size = useMemo(() => previousAmount.plus(amount).abs(), [amount, previousAmount])
 
-  if (amount.isZero()) return
+  if (amount.isZero()) return null
 
   return (
     <div className='flex flex-col gap-1 px-3 pt-4'>
@@ -146,7 +146,9 @@ function ManageSummary(props: Props & { newAmount: BigNumber }) {
           contentClassName='flex gap-1'
         >
           <TradeDirection
-            tradeDirection={isDirectionChange ? tradeDirection : previousTradeDirection}
+            tradeDirection={
+              isNewPosition || isDirectionChange ? tradeDirection : previousTradeDirection
+            }
           />
         </SummaryLine>
       )}
