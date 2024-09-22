@@ -10,6 +10,7 @@ export function checkPositionValue(
 ) {
   if (amount.plus(previousAmount).isZero()) return null
 
+  const wasLong = previousAmount.isGreaterThan(0)
   const positionValue = amount.plus(previousAmount).abs().times(price)
   if (positionValue?.isLessThan(params.minPositionValue)) {
     const minPositionValue = formatValue(params.minPositionValue.toNumber(), {
@@ -17,11 +18,20 @@ export function checkPositionValue(
       prefix: '$',
       decimals: PRICE_ORACLE_DECIMALS,
     })
-    const minPositionSize = formatValue(params.minPositionValue.div(price).toNumber(), {
-      abbreviated: true,
-      decimals: perpsAsset.decimals,
-      suffix: ` ${perpsAsset.symbol}`,
-    })
+    const minPositionSize = formatValue(
+      params.minPositionValue.div(price).plus(previousAmount.abs()).toNumber(),
+      {
+        abbreviated: false,
+        decimals: perpsAsset.decimals,
+        suffix: ` ${perpsAsset.symbol}`,
+      },
+    )
+    if (!previousAmount.isZero()) {
+      const introMessage = wasLong
+        ? 'You are changing your Long position to a Short position.'
+        : 'You are changing your Short position to a Long position.'
+      return `${introMessage} To open the new position it has to be at least worth ${minPositionValue}. To achieve that you need to set the size to ${minPositionSize} at minumum.`
+    }
     return `Minimum position value is ${minPositionValue} (${minPositionSize})`
   }
 

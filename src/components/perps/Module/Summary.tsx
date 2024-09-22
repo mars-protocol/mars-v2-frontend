@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react'
 
 import ActionButton from 'components/common/Button/ActionButton'
 import { Callout, CalloutType } from 'components/common/Callout'
+import DisplayCurrency from 'components/common/DisplayCurrency'
 import { ArrowRight } from 'components/common/Icons'
 import SummaryLine from 'components/common/SummaryLine'
 import Text from 'components/common/Text'
@@ -96,19 +97,36 @@ function ManageSummary(props: Props & { newAmount: BigNumber }) {
     newAmount,
     leverage,
     previousLeverage,
-    hasActivePosition,
     amount,
     previousTradeDirection,
     tradeDirection,
     asset,
   } = props
-  const showTradeDirection =
-    previousAmount && previousAmount.isNegative() !== newAmount.isNegative()
-  const showAmount = !amount.isZero() && previousAmount
-  const showLeverage =
-    previousLeverage && leverage && previousLeverage.toFixed(2) !== leverage.toFixed(2)
 
-  if ((!showTradeDirection && !showLeverage && !showAmount) || !hasActivePosition) return null
+  const isNewPosition = previousAmount.isZero()
+  const isDirectionChange = useMemo(
+    () => !isNewPosition && previousAmount.isNegative() !== newAmount.isNegative(),
+    [isNewPosition, previousAmount, newAmount],
+  )
+  const changeAmount = useMemo(() => {
+    if (isDirectionChange) return amount.negated()
+
+    if (previousTradeDirection === 'short' && amount.isPositive()) return amount.negated()
+    if (previousTradeDirection === 'short' && amount.isNegative()) return amount.abs()
+
+    return amount
+  }, [amount, isDirectionChange, previousTradeDirection])
+  const [changeClassName, sizeClassName] = useMemo(() => {
+    if (isNewPosition) return ['', '']
+    return [
+      changeAmount.isPositive() ? 'text-success' : 'text-loss',
+      previousAmount.abs().isLessThan(newAmount.abs()) ? 'text-success' : 'text-loss',
+    ]
+  }, [changeAmount, isNewPosition, newAmount, previousAmount])
+
+  const size = useMemo(() => previousAmount.plus(amount).abs(), [amount, previousAmount])
+
+  if (amount.isZero()) return
 
   return (
     <div className='flex flex-col gap-1 px-3 pt-4'>
@@ -122,41 +140,54 @@ function ManageSummary(props: Props & { newAmount: BigNumber }) {
         </Callout>
       )}
 
-      {showTradeDirection && previousTradeDirection && !newAmount.isZero() && (
-        <SummaryLine label='Side' contentClassName='flex gap-1'>
-          <TradeDirection tradeDirection={previousTradeDirection} />
-          <div className='w-4'>
-            <ArrowRight />
-          </div>
-          <TradeDirection tradeDirection={tradeDirection} />
+      {previousTradeDirection && !newAmount.isZero() && (
+        <SummaryLine
+          label={isDirectionChange && !isNewPosition ? 'New Side' : 'Side'}
+          contentClassName='flex gap-1'
+        >
+          <TradeDirection
+            tradeDirection={isDirectionChange ? tradeDirection : previousTradeDirection}
+          />
         </SummaryLine>
       )}
 
-      {showAmount && newAmount && previousAmount && !newAmount.isZero() && (
-        <SummaryLine label='Size' contentClassName='flex gap-1'>
-          <AssetAmount asset={asset} amount={previousAmount.abs().toNumber()} />
-          <div className='w-4'>
-            <ArrowRight
-              className={classNames(
-                previousAmount.abs().isGreaterThan(newAmount) ? 'text-error' : 'text-success',
-              )}
+      {!isNewPosition && (
+        <>
+          <SummaryLine label='Previous Size' contentClassName='flex gap-1'>
+            <AssetAmount asset={asset} amount={previousAmount.abs().toNumber()} />
+          </SummaryLine>
+          <SummaryLine label='Change' contentClassName='flex gap-1'>
+            <AssetAmount
+              asset={asset}
+              amount={changeAmount.toNumber()}
+              className={changeClassName}
             />
-          </div>
-          <AssetAmount asset={asset} amount={previousAmount.plus(amount).abs().toNumber()} />
-        </SummaryLine>
+          </SummaryLine>
+        </>
       )}
-
-      {showLeverage && previousLeverage && (
-        <SummaryLine label='Leverage' contentClassName='flex gap-1'>
-          <span>{formatLeverage(previousLeverage)}</span>
-          <div className='w-4'>
-            <ArrowRight
-              className={classNames(leverage > previousLeverage ? 'text-error' : 'text-success')}
-            />
-          </div>
-          <span>{formatLeverage(leverage)}</span>
-        </SummaryLine>
-      )}
+      <SummaryLine label={isNewPosition ? 'Size' : 'New Size'} contentClassName='flex gap-1'>
+        <AssetAmount asset={asset} amount={size.toNumber()} className={sizeClassName} />
+      </SummaryLine>
+      <SummaryLine label={isNewPosition ? 'Value' : 'New Value'} contentClassName='flex gap-1'>
+        <DisplayCurrency
+          coin={BNCoin.fromDenomAndBigNumber(asset.denom, size)}
+          options={{ abbreviated: false }}
+          className={sizeClassName}
+        />
+      </SummaryLine>
+      <SummaryLine label='Leverage' contentClassName='flex gap-1 pt-2'>
+        {previousLeverage && !previousAmount.isZero() && (
+          <>
+            <span>{formatLeverage(previousLeverage)}</span>
+            <div className='w-4'>
+              <ArrowRight
+                className={classNames(leverage > previousLeverage ? 'text-error' : 'text-success')}
+              />
+            </div>
+          </>
+        )}
+        <span>{formatLeverage(leverage)}</span>
+      </SummaryLine>
     </div>
   )
 }
