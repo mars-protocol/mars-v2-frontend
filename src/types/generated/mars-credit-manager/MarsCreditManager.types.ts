@@ -104,7 +104,10 @@ export type Action =
       }
     }
   | {
-      deposit_to_perp_vault: ActionCoin
+      deposit_to_perp_vault: {
+        coin: ActionCoin
+        max_receivable_shares?: Uint128 | null
+      }
     }
   | {
       unlock_from_perp_vault: {
@@ -112,7 +115,9 @@ export type Action =
       }
     }
   | {
-      withdraw_from_perp_vault: {}
+      withdraw_from_perp_vault: {
+        min_receive?: Uint128 | null
+      }
     }
   | {
       execute_perp_order: {
@@ -320,6 +325,7 @@ export type CallbackMsg =
       deposit_to_perp_vault: {
         account_id: string
         coin: ActionCoin
+        max_receivable_shares?: Uint128 | null
       }
     }
   | {
@@ -331,6 +337,7 @@ export type CallbackMsg =
   | {
       withdraw_from_perp_vault: {
         account_id: string
+        min_receive?: Uint128 | null
       }
     }
   | {
@@ -386,6 +393,7 @@ export type CallbackMsg =
         debt_coin: Coin
         liquidatee_account_id: string
         liquidator_account_id: string
+        prev_health: HealthValuesResponse
         request: LiquidateRequestForVaultBaseForAddr
       }
     }
@@ -543,6 +551,19 @@ export interface NftConfigUpdates {
 }
 export interface VaultBaseForAddr {
   address: Addr
+}
+export interface HealthValuesResponse {
+  above_max_ltv: boolean
+  has_perps: boolean
+  liquidatable: boolean
+  liquidation_health_factor?: Decimal | null
+  liquidation_threshold_adjusted_collateral: Uint128
+  max_ltv_adjusted_collateral: Uint128
+  max_ltv_health_factor?: Decimal | null
+  perps_pnl_losses: Uint128
+  perps_pnl_profit: Uint128
+  total_collateral_value: Uint128
+  total_debt_value: Uint128
 }
 export type QueryMsg =
   | {
@@ -720,7 +741,6 @@ export interface Positions {
   debts: DebtAmount[]
   deposits: Coin[]
   lends: Coin[]
-  perp_vault?: PerpVaultPosition | null
   perps: PerpPosition[]
   staked_astro_lps: Coin[]
   vaults: VaultPosition[]
@@ -730,24 +750,8 @@ export interface DebtAmount {
   denom: string
   shares: Uint128
 }
-export interface PerpVaultPosition {
-  denom: string
-  deposit: PerpVaultDeposit
-  unlocks: PerpVaultUnlock[]
-}
-export interface PerpVaultDeposit {
-  amount: Uint128
-  shares: Uint128
-}
-export interface PerpVaultUnlock {
-  amount: Uint128
-  cooldown_end: number
-  created_at: number
-  shares: Uint128
-}
 export interface PerpPosition {
   base_denom: string
-  closing_fee_rate: Decimal
   current_exec_price: Decimal
   current_price: Decimal
   denom: string

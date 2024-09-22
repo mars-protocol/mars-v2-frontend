@@ -334,7 +334,6 @@ interface PerpsPosition {
   pnl: PerpsPnL
   currentPrice: BigNumber
   entryPrice: BigNumber
-  closingFeeRate: BigNumber
 }
 
 interface PerpPositionRow extends PerpsPosition {

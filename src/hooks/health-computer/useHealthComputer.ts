@@ -3,7 +3,7 @@ import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useAssets from 'hooks/assets/useAssets'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAssetParams from 'hooks/params/useAssetParams'
-import useAllPerpsDenomStates from 'hooks/perps/usePerpsDenomStates'
+import useAllPerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
 import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useSlippage from 'hooks/settings/useSlippage'
@@ -12,7 +12,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPositionValue } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams.types'
-import { PerpDenomState } from 'types/generated/mars-perps/MarsPerps.types'
+import { MarketStateResponse } from 'types/generated/mars-perps/MarsPerps.types'
 import {
   AssetParamsBaseForAddr,
   HealthComputer,
@@ -46,7 +46,7 @@ export default function useHealthComputer(account?: Account) {
   const { data: assets } = useAssets()
   const whitelistedAssets = useWhitelistedAssets()
   const { data: assetParams } = useAssetParams()
-  const { data: perpsDenomStates } = useAllPerpsDenomStates()
+  const { data: perpsMarketStates } = useAllPerpsMarketStates()
   const { data: perpsParams } = useAllPerpsParamsSC()
   const { data: vaultConfigs } = useVaultConfigs()
   const { data: perpsVault } = usePerpsVault()
@@ -145,16 +145,16 @@ export default function useHealthComputer(account?: Account) {
     )
   }, [perpsParams])
 
-  const denomStates = useMemo(() => {
-    const denomStates: { [key: string]: PerpDenomState } = {}
+  const marketStates = useMemo(() => {
+    const marketStates: { [key: string]: MarketStateResponse } = {}
 
-    if (!perpsDenomStates) return denomStates
+    if (!perpsMarketStates) return marketStates
 
-    for (const denomState of perpsDenomStates) {
-      denomStates[denomState.denom] = denomState
+    for (const marketState of perpsMarketStates) {
+      marketStates[marketState.denom] = marketState
     }
-    return denomStates
-  }, [perpsDenomStates])
+    return marketStates
+  }, [perpsMarketStates])
 
   const healthComputer: HealthComputer | null = useMemo(() => {
     if (
@@ -162,7 +162,7 @@ export default function useHealthComputer(account?: Account) {
       !positions ||
       !vaultPositionValues ||
       !vaultConfigsData ||
-      !denomStates ||
+      !marketStates ||
       !perpsParamsData ||
       Object.keys(assetsParams).length === 0 ||
       Object.keys(priceData).length === 0 ||
@@ -189,7 +189,7 @@ export default function useHealthComputer(account?: Account) {
     vaultPositionValues,
     vaultConfigsData,
     perpsParamsData,
-    denomStates,
+    marketStates,
     assetsParams,
     priceData,
   ])
@@ -280,15 +280,15 @@ export default function useHealthComputer(account?: Account) {
 
   const computeMaxPerpAmount = useCallback(
     (denom: string, tradeDirection: TradeDirection) => {
-      if (!healthComputer || !perpsVault || !denomStates) return BN_ZERO
+      if (!healthComputer || !perpsVault || !marketStates) return BN_ZERO
       try {
         return BN(
           max_perp_size_estimate_js(
             healthComputer,
             denom,
             perpsVault.denom,
-            denomStates[denom].long_oi.toString(),
-            denomStates[denom].short_oi.toString(),
+            marketStates[denom].long_oi.toString(),
+            marketStates[denom].short_oi.toString(),
             tradeDirection,
           ),
         ).abs()
@@ -297,7 +297,7 @@ export default function useHealthComputer(account?: Account) {
         return BN_ZERO
       }
     },
-    [healthComputer, perpsVault, denomStates],
+    [healthComputer, perpsVault, marketStates],
   )
 
   const health = useMemo(() => {
