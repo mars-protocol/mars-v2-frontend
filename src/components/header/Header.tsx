@@ -38,7 +38,10 @@ const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
     ],
   },
   ...(chainConfig.perps ? [{ pages: ['perps'] as Page[], label: 'Perps' }] : []),
-  { pages: chainConfig.farm || chainConfig.perps ? ['lend', 'farm'] : ['lend'], label: 'Earn' },
+  {
+    pages: chainConfig.farm || chainConfig.perps ? ['lend', 'farm', 'perps-vault'] : ['lend'],
+    label: 'Earn',
+  },
   { pages: ['borrow'], label: 'Borrow' },
   ...(chainConfig.hls
     ? [{ pages: ['hls-staking', 'hls-farm'] as Page[], label: 'High Leverage' }]
