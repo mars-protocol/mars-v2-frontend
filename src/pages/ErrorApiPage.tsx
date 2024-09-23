@@ -46,7 +46,7 @@ export default function ErrorApiPage() {
             Reason: {apiError.message}
           </Text>
           <Text size='sm' className='w-full leading-4 text-center text-white/70'>
-            Data provided by this endpoint is mandatory and the App won't work without it.
+            Data provided by this endpoint is mandatory and the app won't work without it.
           </Text>
 
           <Text size='sm' className='w-full leading-4 text-center text-white/70'>
