@@ -137,7 +137,12 @@ export default function useHealthComputer(account?: Account) {
     if (!perpsParams) return {}
     return perpsParams.reduce(
       (prev, curr) => {
-        prev[curr.denom] = curr
+        prev[curr.denom] = {
+          ...curr,
+          max_long_oi_value: BN(curr.max_long_oi_value).shiftedBy(VALUE_SCALE_FACTOR).toString(),
+          max_short_oi_value: BN(curr.max_short_oi_value).shiftedBy(VALUE_SCALE_FACTOR).toString(),
+          max_net_oi_value: BN(curr.max_net_oi_value).shiftedBy(VALUE_SCALE_FACTOR).toString(),
+        }
 
         return prev
       },
@@ -282,7 +287,7 @@ export default function useHealthComputer(account?: Account) {
     (denom: string, tradeDirection: TradeDirection) => {
       if (!healthComputer || !perpsVault || !marketStates) return BN_ZERO
       try {
-        return BN(
+        const result = BN(
           max_perp_size_estimate_js(
             healthComputer,
             denom,
@@ -292,6 +297,7 @@ export default function useHealthComputer(account?: Account) {
             tradeDirection,
           ),
         ).abs()
+        return result
       } catch (err) {
         console.error('Failed to calculate max perp size: ', err)
         return BN_ZERO
@@ -309,7 +315,7 @@ export default function useHealthComputer(account?: Account) {
       .toNumber()
 
     if (convertedHealth > 100) return 100
-    if (convertedHealth === 0 && healthFactor > 1) return 1
+    if (convertedHealth === 0 && healthFactor > 1) return 1009
     if (convertedHealth < 0) return 0
     return convertedHealth
   }, [healthFactor, account?.kind])
