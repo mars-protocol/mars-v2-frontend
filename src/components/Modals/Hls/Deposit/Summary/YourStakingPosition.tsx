@@ -1,4 +1,5 @@
 import Button from 'components/common/Button'
+import Container from 'components/common/Container'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
 import { FormattedNumber } from 'components/common/FormattedNumber'
@@ -6,7 +7,6 @@ import { ArrowRight } from 'components/common/Icons'
 import { RouteInfo, SwapAssets } from 'components/common/RouteInfo'
 import SummaryLine from 'components/common/SummaryLine'
 import AprBreakdown from 'components/Modals/Hls/Deposit/Summary/ApyBreakdown'
-import Container from 'components/Modals/Hls/Deposit/Summary/Container'
 import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 
