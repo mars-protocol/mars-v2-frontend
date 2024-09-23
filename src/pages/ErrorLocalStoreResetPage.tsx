@@ -5,11 +5,15 @@ import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
 import { useState } from 'react'
 
-export default function ErrorPage() {
+export default function ErrorLocalStoreResetPage() {
   const [clicked, setClicked] = useState(false)
-  const onButtonClick = () => {
-    setClicked(true)
+  const onResetButtonClick = () => {
     localStorage.clear()
+    refresh()
+  }
+
+  const refresh = () => {
+    setClicked(true)
     if (typeof window !== 'undefined') {
       setTimeout(() => {
         window.location.href = '/'
@@ -27,8 +31,8 @@ export default function ErrorPage() {
           </Text>
           <Text size='sm' className='w-full leading-4 text-center text-white/70'>
             The Mars Protocol app encountered an error. <br />
-            Please click the button below to reset your local storage, as this is the most common
-            issue when the app is crashing.
+            Please try to refresh the page. If you get here again try reseting your local storage by
+            clicking on the button below. This will ensure your local browser store isn't corrupted.
             <br />
             If this doesn't solve your problem, please contact a moderator on{' '}
             <TextLink
@@ -51,13 +55,22 @@ export default function ErrorPage() {
               <ExternalLink className='ml-1 inline w-3.5' />
             </TextLink>
           </Text>
-          <Button
-            onClick={onButtonClick}
-            className='min-w-[150px]'
-            text='Reset Local Storage'
-            color='secondary'
-            showProgressIndicator={clicked}
-          />
+          <div className='flex flex-wrap items-center justify-center gap-4'>
+            <Button
+              onClick={refresh}
+              className='min-w-[150px]'
+              text='Reload Page'
+              color='primary'
+              showProgressIndicator={clicked}
+            />
+            <Button
+              onClick={onResetButtonClick}
+              className='min-w-[150px]'
+              text='Reset Local Storage'
+              color='secondary'
+              showProgressIndicator={clicked}
+            />
+          </div>
         </div>
       </main>
     </>

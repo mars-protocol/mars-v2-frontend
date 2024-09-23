@@ -106,6 +106,7 @@ const Osmosis1: ChainConfig = {
   },
   endpoints: {
     rpc: process.env.NEXT_PUBLIC_OSMOSIS_RPC ?? 'https://rpc-osmosis.blockapsis.com',
+    fallbackRpc: 'https://rpc.osmosis.zone',
     rest: process.env.NEXT_PUBLIC_OSMOSIS_REST ?? 'https://lcd-osmosis.blockapsis.com',
     swap: 'https://app.osmosis.zone',
     explorer: 'https://www.mintscan.io/osmosis',

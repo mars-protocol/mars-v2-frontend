@@ -80,6 +80,7 @@ const Neutron1: ChainConfig = {
   endpoints: {
     routes: 'https://app.astroport.fi/api/routes',
     rpc: process.env.NEXT_PUBLIC_NEUTRON_RPC ?? 'https://rpc-kralum.neutron-1.neutron.org',
+    fallbackRpc: 'https://rpc.novel.remedy.tm.p2p.org',
     rest: process.env.NEXT_PUBLIC_NEUTRON_REST ?? 'https://rest-kralum.neutron-1.neutron.org',
     swap: 'https://neutron.astroport.fi/swap',
     explorer: 'https://mintscan.io/neutron',

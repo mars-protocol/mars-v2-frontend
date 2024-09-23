@@ -1,3 +1,5 @@
+import { setApiError } from 'utils/error'
+
 export default async function getDexPools(chainConfig: ChainConfig) {
   if (!chainConfig.endpoints.dexPools) return []
   const uri = new URL(chainConfig.endpoints.dexPools)
@@ -8,7 +10,7 @@ export default async function getDexPools(chainConfig: ChainConfig) {
     })
     return pools
   } catch (e) {
-    console.error(e)
+    setApiError(uri.toString(), e)
+    return []
   }
-  return []
 }

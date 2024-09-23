@@ -56,6 +56,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
   const focusComponent = useStore((s) => s.focusComponent)
   const mobileNavExpanded = useStore((s) => s.mobileNavExpanded)
+  const errorStore = useStore((s) => s.errorStore)
   const address = useStore((s) => s.address)
   const [currentChainId, setCurrentChainId] = useCurrentChainId()
   const chainConfig = useChainConfig()
@@ -85,7 +86,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }, [chainConfig.id, currentChainId, setCurrentChainId])
 
   return (
-    <ErrorBoundary>
+    <ErrorBoundary errorStore={errorStore}>
       <SWRConfig value={{ use: [debugSWR] }}>
         <Suspense
           fallback={
