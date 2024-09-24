@@ -22,6 +22,7 @@ interface Props {
   onBlur?: () => void
   onFocus?: () => void
   onRef?: (ref: React.RefObject<HTMLInputElement>) => void
+  isUSD?: boolean
 }
 
 export default function NumberInput(props: Props) {
@@ -36,15 +37,16 @@ export default function NumberInput(props: Props) {
   useEffect(() => {
     if (props.amount.isZero()) return setFormattedAmount('')
 
-    setFormattedAmount(
-      formatValue(props.amount.toNumber(), {
-        decimals: props.asset.decimals,
-        minDecimals: 0,
-        maxDecimals: props.maxDecimals,
-        thousandSeparator: false,
-      }),
-    )
-  }, [props.amount, props.asset, props.maxDecimals])
+    if (!props.isUSD)
+      setFormattedAmount(
+        formatValue(props.amount.toNumber(), {
+          decimals: props.asset.decimals,
+          minDecimals: 0,
+          maxDecimals: props.maxDecimals,
+          thousandSeparator: false,
+        }),
+      )
+  }, [props.amount, props.asset, props.isUSD, props.maxDecimals])
 
   useEffect(() => {
     if (!onRef) return

@@ -79,6 +79,7 @@ export default function AssetAmountInput(props: Props) {
             onChange={setAmount}
             onFocus={onFocus}
             onBlur={onBlur}
+            isUSD={isUSD}
           />
           <span>{isUSD ? 'USD' : asset.symbol}</span>
         </div>
