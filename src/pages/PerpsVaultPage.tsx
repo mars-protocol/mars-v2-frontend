@@ -1,5 +1,5 @@
 import AvailablePerpsVaultsTable from 'components/earn/farm/perps/Table/AvailablePerpsVaultTable'
-import FarmIntro from 'components/earn/farm/common/FarmIntro'
+import PerpsIntro from 'components/earn/farm/perps/PerpsIntro'
 import Tab from 'components/earn/Tab'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -21,7 +21,7 @@ export default function PerpsVaultPage() {
   return (
     <div className='flex flex-wrap w-full gap-6'>
       <Tab tabs={EARN_TABS} activeTabIdx={2} />
-      <FarmIntro />
+      <PerpsIntro />
       <ActiveVaults />
       {chainConfig.perps && activeVaults === 0 && <AvailablePerpsVaultsTable />}
     </div>
