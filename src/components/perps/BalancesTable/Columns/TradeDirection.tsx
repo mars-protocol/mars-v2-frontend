@@ -7,7 +7,6 @@ export const PERP_TYPE_META = { accessorKey: 'tradeDirection', header: 'Side' }
 type Props = {
   tradeDirection: TradeDirection
   className?: string
-  directionChange?: boolean
 }
 
 export default function TradeDirection(props: Props) {
