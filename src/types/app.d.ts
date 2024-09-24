@@ -1378,9 +1378,8 @@ interface HlsFarmLeverageProps {
   totalValue: BigNumber
 }
 
-type AvailableOrderType = 'Market' | 'Limit' | 'Stop'
 interface OrderTab {
-  type: AvailableOrderType
+  type: import('types/enums').OrderType
   isDisabled: boolean
   tooltipText: string
 }

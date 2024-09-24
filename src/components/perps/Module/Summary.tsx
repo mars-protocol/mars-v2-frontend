@@ -75,7 +75,10 @@ export default function PerpsSummary(props: Props) {
   )
 
   const perpsParams = usePerpsParams(props.asset.denom)
-  const feeToken = useMemo(() => assets.find(byDenom(perpsConfig.base_denom)), [chainConfig])
+  const feeToken = useMemo(
+    () => assets.find(byDenom(perpsConfig?.base_denom ?? '')),
+    [assets, perpsConfig?.base_denom],
+  )
 
   const onConfirm = useCallback(async () => {
     if (!currentAccount || !feeToken) return
@@ -100,7 +103,20 @@ export default function PerpsSummary(props: Props) {
       coin: BNCoin.fromDenomAndBigNumber(asset.denom, modifyAmount),
     })
     return onTxExecuted()
-  }, [asset.denom, currentAccount, executePerpOrder, newAmount, onTxExecuted, previousAmount])
+  }, [
+    asset.denom,
+    currentAccount,
+    executePerpOrder,
+    feeToken,
+    isLimitOrder,
+    makerFee.amount,
+    newAmount,
+    onTxExecuted,
+    previousAmount,
+    props.asset.denom,
+    props.limitPrice,
+    props.tradeDirection,
+  ])
 
   const isDisabled = useMemo(() => amount.isZero() || disabled, [amount, disabled])
 
@@ -183,7 +199,7 @@ export default function PerpsSummary(props: Props) {
   ])
 
   return (
-    <div className='flex flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20'>
+    <div className='flex w-full flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20'>
       <ManageSummary
         {...props}
         newAmount={newAmount}
