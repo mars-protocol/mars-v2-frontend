@@ -1,7 +1,6 @@
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useClients from 'hooks/chain/useClients'
 import useSWR from 'swr'
-
-import useChainConfig from 'hooks/useChainConfig'
-import useClients from 'hooks/useClients'
 
 export default function usePerpsConfig() {
   const chainConfig = useChainConfig()

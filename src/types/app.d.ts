@@ -1190,6 +1190,7 @@ interface ModalSlice {
   lendAndReclaimModal: LendAndReclaimModalConfig | null
   perpsVaultModal: PerpsVaultModal | null
   settingsModal: boolean
+  makerFeeModal: boolean
   unlockModal: UnlockModal | null
   farmModal: FarmModal | null
   walletAssetsModal: WalletAssetModal | null

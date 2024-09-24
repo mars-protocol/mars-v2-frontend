@@ -4,24 +4,27 @@ import { useCallback, useEffect, useState } from 'react'
 import Modal from 'components/Modals/Modal'
 import AssetAmountInput from 'components/common/AssetAmountInput'
 import Button from 'components/common/Button'
-import { Callout } from 'components/common/Callout'
+import { Callout, CalloutType } from 'components/common/Callout'
 import Text from 'components/common/Text'
-import USD from 'configs/assets/USDollar'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ONE } from 'constants/math'
+import useAsset from 'hooks/assets/useAsset'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
-import { CalloutType } from 'types/enums/callOut'
 import { magnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 export default function MakerFeeModal() {
+  const chainConfig = useChainConfig()
   const [makerFee, setMakerFee] = useLocalStorage(
     LocalStorageKeys.PERPS_MAKER_FEE,
-    DEFAULT_SETTINGS.perpsMakerFee,
+    getDefaultChainSettings(chainConfig).perpsMakerFee,
   )
   const [amount, setAmount] = useState(BN(makerFee.amount))
+  const USD = useAsset('usd')
+
   const onClose = useCallback(() => {
     useStore.setState({ makerFeeModal: false })
   }, [])
@@ -35,13 +38,17 @@ export default function MakerFeeModal() {
     onClose()
   }
 
-  const onUpdateAmount = useCallback((amount: BigNumber) => {
-    setAmount(magnify(amount.toString(), USD))
-  }, [])
+  const onUpdateAmount = useCallback(
+    (amount: BigNumber) => {
+      if (!USD) return
+      setAmount(magnify(amount.toString(), USD))
+    },
+    [USD],
+  )
 
   const modal = useStore((s) => s.makerFeeModal)
 
-  if (!modal) return
+  if (!modal || !USD) return
 
   return (
     <Modal

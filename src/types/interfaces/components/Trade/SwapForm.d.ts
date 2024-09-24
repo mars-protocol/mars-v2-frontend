@@ -1,5 +1,5 @@
 interface OrderTab {
-  type: import('types/enums/orderType').OrderType
+  type: import('types/enums').OrderType
   isDisabled: boolean
   tooltipText?: string
 }

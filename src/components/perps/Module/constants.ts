@@ -1,5 +1,5 @@
-import { CalloutType } from 'types/enums/callOut'
-import { OrderType } from 'types/enums/orderType'
+import { CalloutType } from 'components/common/Callout'
+import { OrderType } from 'types/enums'
 
 const ORDER_TYPE_UNAVAILABLE_MESSAGE = 'This type of order is coming soon.'
 

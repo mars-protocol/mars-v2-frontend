@@ -1,16 +1,18 @@
 import Button from 'components/common/Button'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Text from 'components/common/Text'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 
 export default function MakerFee() {
+  const chainConfig = useChainConfig()
   const [makerFee] = useLocalStorage<Coin>(
     LocalStorageKeys.PERPS_MAKER_FEE,
-    DEFAULT_SETTINGS.perpsMakerFee,
+    getDefaultChainSettings(chainConfig).perpsMakerFee,
   )
 
   if (!makerFee) return

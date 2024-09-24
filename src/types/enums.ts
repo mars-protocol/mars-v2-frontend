@@ -63,7 +63,7 @@ export enum RewardsCenterType {
 }
 
 export enum OrderType {
-  LIMIT = 'limit',
-  MARKET = 'market',
-  STOP = 'stop',
+  LIMIT = 'Limit',
+  MARKET = 'Market',
+  STOP = 'Stop',
 }

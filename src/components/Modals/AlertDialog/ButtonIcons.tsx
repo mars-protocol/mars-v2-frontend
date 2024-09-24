@@ -2,11 +2,7 @@ import { Enter } from 'components/common/Icons'
 
 export function NoIcon() {
   return (
-<<<<<<< ours
-    <div className='ml-1 flex items-center rounded-xs border border-white/5 bg-white/5 px-1 py-0.5 text-[8px] font-bold leading-[10px] text-white/60 '>
-=======
     <div className='ml-1 flex items-center rounded-xs border border-white/5 bg-white/5 px-1 py-0.5 text-[8px] font-bold leading-[10px] text-white/60'>
->>>>>>> theirs
       ESC
     </div>
   )

@@ -1,19 +1,20 @@
 import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import AssetAmountInput from 'components/common/AssetAmountInput'
 import AvailableLiquidityMessage from 'components/common/AvailableLiquidityMessage'
 import { CircularProgress } from 'components/common/CircularProgress'
 import DepositCapMessage from 'components/common/DepositCapMessage'
 import Divider from 'components/common/Divider'
 import LeverageSlider from 'components/common/LeverageSlider'
+import OrderTypeSelector from 'components/common/OrderTypeSelector'
 import Text from 'components/common/Text'
 import { TradeDirectionSelector } from 'components/common/TradeDirectionSelector'
 import AssetSelectorPair from 'components/trade/TradeModule/AssetSelector/AssetSelectorPair'
 import AssetSelectorSingle from 'components/trade/TradeModule/AssetSelector/AssetSelectorSingle'
-import AssetAmountInput from 'components/trade/TradeModule/SwapForm/AssetAmountInput'
 import AutoRepayToggle from 'components/trade/TradeModule/SwapForm/AutoRepayToggle'
+import { ORDER_TYPE_TABS } from 'components/trade/TradeModule/SwapForm/constants'
 import MarginToggle from 'components/trade/TradeModule/SwapForm/MarginToggle'
-import OrderTypeSelector from 'components/trade/TradeModule/SwapForm/OrderTypeSelector'
 import TradeSummary from 'components/trade/TradeModule/SwapForm/TradeSummary'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -29,6 +30,7 @@ import useRouteInfo from 'hooks/trade/useRouteInfo'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
 import { ENABLE_AUTO_REPAY } from 'utils/constants'
 import { formatValue } from 'utils/formatters'
@@ -69,7 +71,7 @@ export default function SwapForm(props: Props) {
     isRepayable && ENABLE_AUTO_REPAY ? useAutoRepay : false,
   )
   const [inputAssetAmount, setInputAssetAmount] = useState(BN_ZERO)
-  const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
+  const [selectedOrderType, setSelectedOrderType] = useState<OrderType>(OrderType.MARKET)
   const [isConfirming, setIsConfirming] = useToggle()
   const { isAutoLendEnabledForCurrentAccount: isAutoLendEnabled } = useAutoLend()
   const modal = useStore<string | null>((s) => s.fundAndWithdrawModal)
@@ -328,7 +330,11 @@ export default function SwapForm(props: Props) {
           />
         )}
         <div className='px-3'>
-          <OrderTypeSelector selected={selectedOrderType} onChange={setSelectedOrderType} />
+          <OrderTypeSelector
+            orderTabs={ORDER_TYPE_TABS}
+            selected={selectedOrderType}
+            onChange={setSelectedOrderType}
+          />
         </div>
         <div className='flex flex-col w-full gap-6 px-3 mt-6'>
           {!isAdvanced && (
