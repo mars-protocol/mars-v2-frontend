@@ -1,11 +1,12 @@
 import { cacheFn, pythPriceCache } from 'api/cache'
 import { pythEndpoints } from 'constants/pyth'
 import { BNCoin } from 'types/classes/BNCoin'
+import { setApiError } from 'utils/error'
 import { BN } from 'utils/helpers'
 
 export default async function fetchPythPrices(priceFeedIds: string[], assets: Asset[]) {
+  const pricesUrl = new URL(`${pythEndpoints.api}/latest_price_feeds`)
   try {
-    const pricesUrl = new URL(`${pythEndpoints.api}/latest_price_feeds`)
     priceFeedIds.forEach((id) => pricesUrl.searchParams.append('ids[]', id))
 
     const pythResponse: PythPriceData[] = await cacheFn(
@@ -28,6 +29,7 @@ export default async function fetchPythPrices(priceFeedIds: string[], assets: As
 
     return mappedPriceData
   } catch (ex) {
+    setApiError(pricesUrl.toString(), ex)
     throw ex
   }
 }

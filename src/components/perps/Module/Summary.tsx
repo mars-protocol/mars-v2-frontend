@@ -4,19 +4,25 @@ import { useCallback, useMemo } from 'react'
 import ActionButton from 'components/common/Button/ActionButton'
 import { Callout, CalloutType } from 'components/common/Callout'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import { ArrowRight } from 'components/common/Icons'
+import { ArrowRight, Check } from 'components/common/Icons'
 import SummaryLine from 'components/common/SummaryLine'
 import Text from 'components/common/Text'
 import AssetAmount from 'components/common/assets/AssetAmount'
 import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
 import { ExpectedPrice } from 'components/perps/Module/ExpectedPrice'
 import TradingFee from 'components/perps/Module/TradingFee'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useAlertDialog from 'hooks/common/useAlertDialog'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatLeverage } from 'utils/formatters'
+import ConfirmationSummary from './ConfirmationSummary'
 
 type Props = {
   leverage: number
@@ -24,7 +30,7 @@ type Props = {
   tradeDirection: TradeDirection
   asset: Asset
   previousAmount: BigNumber
-  previousTradeDirection?: 'long' | 'short'
+  previousTradeDirection?: TradeDirection
   previousLeverage?: number | null
   hasActivePosition: boolean
   onTxExecuted: () => void
@@ -32,9 +38,23 @@ type Props = {
 }
 
 export default function PerpsSummary(props: Props) {
-  const { amount, previousAmount, tradeDirection, asset, onTxExecuted, disabled } = props
+  const {
+    amount,
+    previousAmount,
+    tradeDirection,
+    asset,
+    leverage,
+    onTxExecuted,
+    disabled,
+    previousTradeDirection,
+  } = props
   const executePerpOrder = useStore((s) => s.executePerpOrder)
   const currentAccount = useCurrentAccount()
+  const chainConfig = useChainConfig()
+  const [showSummary, setShowSummary] = useLocalStorage<boolean>(
+    LocalStorageKeys.SHOW_SUMMARY,
+    getDefaultChainSettings(chainConfig).showSummary,
+  )
 
   const newAmount = useMemo(
     () => (previousAmount ?? BN_ZERO).plus(amount),
@@ -65,9 +85,82 @@ export default function PerpsSummary(props: Props) {
     return `${perpsParams.closingFeeRate.times(100)}% ${text}`
   }, [perpsParams, amount, previousAmount])
 
+  const isNewPosition = previousAmount.isZero()
+  const isDirectionChange = useMemo(
+    () => !isNewPosition && previousAmount.isNegative() !== newAmount.isNegative(),
+    [isNewPosition, previousAmount, newAmount],
+  )
+
+  const { open: openAlertDialog, close } = useAlertDialog()
+
+  const handleOnClick = useCallback(() => {
+    if (!currentAccount) return
+    if (!showSummary) {
+      onConfirm()
+      return
+    }
+    openAlertDialog({
+      header: (
+        <div className='flex items-center justify-between w-full'>
+          <Text size='2xl'>Order Summary</Text>
+          <TradeDirection
+            tradeDirection={
+              isNewPosition || isDirectionChange
+                ? tradeDirection
+                : (previousTradeDirection ?? 'long')
+            }
+            className='capitalize !text-sm'
+          />
+        </div>
+      ),
+      content: (
+        <ConfirmationSummary
+          amount={amount}
+          accountId={currentAccount.id}
+          asset={asset}
+          leverage={leverage}
+        />
+      ),
+      positiveButton: {
+        text: 'Confirm',
+        icon: <Check />,
+        onClick: onConfirm,
+      },
+      negativeButton: {
+        text: 'Cancel',
+        onClick: () => {
+          close()
+        },
+      },
+      checkbox: {
+        text: 'Hide summary in the future',
+        onClick: (isChecked: boolean) => setShowSummary(!isChecked),
+      },
+    })
+  }, [
+    asset,
+    close,
+    currentAccount,
+    isDirectionChange,
+    isNewPosition,
+    leverage,
+    newAmount,
+    onConfirm,
+    openAlertDialog,
+    previousTradeDirection,
+    setShowSummary,
+    showSummary,
+    tradeDirection,
+  ])
+
   return (
     <div className='flex flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20'>
-      <ManageSummary {...props} newAmount={newAmount} />
+      <ManageSummary
+        {...props}
+        newAmount={newAmount}
+        isNewPosition={isNewPosition}
+        isDirectionChange={isDirectionChange}
+      />
       <div className='flex flex-col gap-1 px-3 py-4'>
         <Text size='xs' className='mb-2 font-bold'>
           Summary
@@ -83,7 +176,11 @@ export default function PerpsSummary(props: Props) {
           <TradingFee denom={asset.denom} newAmount={newAmount} previousAmount={previousAmount} />
         </SummaryLine>
       </div>
-      <ActionButton onClick={onConfirm} disabled={isDisabled} className='w-full py-2.5 !text-base'>
+      <ActionButton
+        onClick={handleOnClick}
+        disabled={isDisabled}
+        className='w-full py-2.5 !text-base'
+      >
         <span className='mr-1 capitalize'>{tradeDirection}</span>
         {asset.symbol}
       </ActionButton>
@@ -91,7 +188,9 @@ export default function PerpsSummary(props: Props) {
   )
 }
 
-function ManageSummary(props: Props & { newAmount: BigNumber }) {
+function ManageSummary(
+  props: Props & { newAmount: BigNumber; isNewPosition: boolean; isDirectionChange: boolean },
+) {
   const {
     previousAmount,
     newAmount,
@@ -101,28 +200,9 @@ function ManageSummary(props: Props & { newAmount: BigNumber }) {
     previousTradeDirection,
     tradeDirection,
     asset,
+    isNewPosition,
+    isDirectionChange,
   } = props
-
-  const isNewPosition = previousAmount.isZero()
-  const isDirectionChange = useMemo(
-    () => !isNewPosition && previousAmount.isNegative() !== newAmount.isNegative(),
-    [isNewPosition, previousAmount, newAmount],
-  )
-  const changeAmount = useMemo(() => {
-    if (isDirectionChange) return amount.negated()
-
-    if (previousTradeDirection === 'short' && amount.isPositive()) return amount.negated()
-    if (previousTradeDirection === 'short' && amount.isNegative()) return amount.abs()
-
-    return amount
-  }, [amount, isDirectionChange, previousTradeDirection])
-  const [changeClassName, sizeClassName] = useMemo(() => {
-    if (isNewPosition) return ['', '']
-    return [
-      changeAmount.isPositive() ? 'text-success' : 'text-loss',
-      previousAmount.abs().isLessThan(newAmount.abs()) ? 'text-success' : 'text-loss',
-    ]
-  }, [changeAmount, isNewPosition, newAmount, previousAmount])
 
   const size = useMemo(() => previousAmount.plus(amount).abs(), [amount, previousAmount])
 
@@ -153,28 +233,13 @@ function ManageSummary(props: Props & { newAmount: BigNumber }) {
         </SummaryLine>
       )}
 
-      {!isNewPosition && (
-        <>
-          <SummaryLine label='Previous Size' contentClassName='flex gap-1'>
-            <AssetAmount asset={asset} amount={previousAmount.abs().toNumber()} />
-          </SummaryLine>
-          <SummaryLine label='Change' contentClassName='flex gap-1'>
-            <AssetAmount
-              asset={asset}
-              amount={changeAmount.toNumber()}
-              className={changeClassName}
-            />
-          </SummaryLine>
-        </>
-      )}
       <SummaryLine label={isNewPosition ? 'Size' : 'New Size'} contentClassName='flex gap-1'>
-        <AssetAmount asset={asset} amount={size.toNumber()} className={sizeClassName} />
+        <AssetAmount asset={asset} amount={size.toNumber()} />
       </SummaryLine>
       <SummaryLine label={isNewPosition ? 'Value' : 'New Value'} contentClassName='flex gap-1'>
         <DisplayCurrency
           coin={BNCoin.fromDenomAndBigNumber(asset.denom, size)}
           options={{ abbreviated: false }}
-          className={sizeClassName}
         />
       </SummaryLine>
       <SummaryLine label='Leverage' contentClassName='flex gap-1 pt-2'>

@@ -77,6 +77,7 @@ function PnLRow(props: PnLRowProps) {
         className={classNames('self-end text-sm text-end', props.className)}
         showZero
         showSignPrefix={props.showSignPrefix}
+        options={{ abbreviated: false }}
       />
     </div>
   )

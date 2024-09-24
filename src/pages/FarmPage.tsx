@@ -15,11 +15,13 @@ export default function AstroLpPage() {
       <FarmIntro />
       {isOsmosis ? (
         <>
-          <ActiveVaults /> <AvailableVaults />
+          <ActiveVaults />
+          <AvailableVaults />
         </>
       ) : (
         <>
-          <ActiveAstroLps /> <AvailableAstroLps />
+          <ActiveAstroLps />
+          <AvailableAstroLps />
         </>
       )}
     </div>

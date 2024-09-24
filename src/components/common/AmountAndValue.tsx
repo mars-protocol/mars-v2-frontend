@@ -10,6 +10,7 @@ interface Props {
   amount: BigNumber
   changePercentage?: BigNumber
   isApproximation?: boolean
+  abbreviated?: boolean
 }
 
 export default function AmountAndValue(props: Props) {
@@ -22,7 +23,7 @@ export default function AmountAndValue(props: Props) {
       <FormattedNumber
         amount={isZero ? 0 : displayAmount}
         smallerThanThreshold={!isZero && isBelowMinAmount}
-        options={{ abbreviated: true, maxDecimals: MAX_AMOUNT_DECIMALS }}
+        options={{ abbreviated: props.abbreviated ?? true, maxDecimals: MAX_AMOUNT_DECIMALS }}
         animate
       />
       <div className='flex'>
@@ -34,13 +35,18 @@ export default function AmountAndValue(props: Props) {
               'mx-1',
             )}
             parentheses
-            options={{ suffix: '%', prefix: props.changePercentage.isNegative() ? '' : '+' }}
+            options={{
+              suffix: '%',
+              prefix: props.changePercentage.isNegative() ? '' : '+',
+              abbreviated: props.abbreviated ?? true,
+            }}
           />
         )}
         <DisplayCurrency
           className='justify-end text-xs text-white/50'
           coin={BNCoin.fromDenomAndBigNumber(props.asset.denom, props.amount)}
           isApproximation={props.isApproximation}
+          options={{ abbreviated: props.abbreviated ?? true }}
         />
       </div>
     </div>

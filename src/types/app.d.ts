@@ -250,6 +250,7 @@ interface ChainConfig {
   endpoints: {
     rest: string
     rpc: string
+    fallbackRpc: string
     swap: string
     explorer: string
     pools?: string
@@ -394,6 +395,7 @@ type Page =
   | 'borrow'
   | 'farm'
   | 'lend'
+  | 'perps-vault'
   | 'portfolio'
   | 'portfolio/{accountId}'
   | 'hls-farm'
@@ -1145,6 +1147,17 @@ interface CommonSlice {
   isV1: boolean
   assets: Asset[]
   hlsBorrowAmount: BigNumber | null
+  errorStore: ErrorStore
+}
+
+interface ErrorStore {
+  apiError: FetchError | null
+  nodeError: FetchError | null
+}
+
+interface FetchError {
+  api: string
+  message: string
 }
 
 interface FocusComponent {
@@ -1185,6 +1198,7 @@ interface AlertDialogButton {
 
 interface AlertDialogConfig {
   icon?: JSX.Element
+  header?: JSX.Element
   checkbox?: {
     text: string
     onClick: (isChecked: boolean) => void
@@ -1192,7 +1206,7 @@ interface AlertDialogConfig {
   content: JSX.Element | string
   negativeButton?: AlertDialogButton
   positiveButton?: AlertDialogButton
-  title: string
+  title?: string
 }
 
 interface BorrowModal {

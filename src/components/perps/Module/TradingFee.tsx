@@ -9,6 +9,8 @@ type Props = {
   denom: string
   newAmount: BigNumber
   previousAmount: BigNumber
+  className?: string
+  showPrefix?: boolean
 }
 
 export default function TradingFee(props: Props) {
@@ -21,12 +23,15 @@ export default function TradingFee(props: Props) {
   if (isLoading) return <CircularProgress className='h-full' size={12} />
   if (props.newAmount.isEqualTo(props.previousAmount) || !tradingFeeAndPrice?.fee) return '-'
 
+  const fee = tradingFeeAndPrice.fee.opening.plus(tradingFeeAndPrice.fee.closing)
   return (
     <DisplayCurrency
       coin={BNCoin.fromDenomAndBigNumber(
         tradingFeeAndPrice.baseDenom,
-        tradingFeeAndPrice.fee.opening.plus(tradingFeeAndPrice.fee.closing),
+        props.showPrefix ? fee.negated() : fee,
       )}
+      className={props.className}
+      showSignPrefix={!!props.showPrefix}
     />
   )
 }
