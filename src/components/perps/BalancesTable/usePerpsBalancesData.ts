@@ -22,7 +22,7 @@ export default function usePerpsBalancesTable() {
   const allAssets = useDepositEnabledAssets()
 
   return useMemo<PerpPositionRow[]>(() => {
-    if (!currentAccount || !currentAccount.perps) return []
+    if (!currentAccount || !currentAccount.perps || !perpsConfig) return []
 
     const netValue = getAccountNetValue(currentAccount, allAssets)
 
@@ -50,25 +50,35 @@ export default function usePerpsBalancesTable() {
 
     if (!limitOrders) return activePerpsPositions
 
-    if (!perpsConfig.base_denom) return activePerpsPositions
+    if (!perpsConfig?.base_denom) return activePerpsPositions
     const zeroCoin = BNCoin.fromDenomAndBigNumber(perpsConfig.base_denom, BN_ZERO)
-
-    const activeLimitOrders = limitOrders
+    const activeLimitOrders: PerpPositionRow[] = []
+    limitOrders
       .filter((order) => order['account_id'] === currentAccount.id)
-      .map((limitOrder) => {
-        const assetPrice = prices.find(byDenom(limitOrder.denom))?.amount ?? BN_ZERO
-        const asset = perpAssets.find(byDenom(limitOrder.denom))!
-        const amount = BN(limitOrder.size)
-        return {
-          orderId: limitOrder.order_id,
+      .forEach((limitOrder) => {
+        const limitOrderAction = limitOrder.order.actions.find((action) =>
+          action.toString().includes('execute_perp_order'),
+        ) as ExceutePerpsOrder | undefined
+        const limitOrderCondition = limitOrder.order.conditions.find((condition) =>
+          condition.toString().includes('oracle_price'),
+        ) as TriggerCondition | undefined
+
+        if (!limitOrderAction || !limitOrderCondition) return
+        const perpOrder = limitOrderAction.execute_perp_order
+        const perpTrigger = limitOrderCondition.oracle_price
+        const asset = perpAssets.find(byDenom(perpOrder.denom))!
+        const amount = BN(perpOrder.order_size)
+        if (!asset) return
+        activeLimitOrders.push({
+          orderId: limitOrder.order.order_id,
           asset,
-          denom: limitOrder.denom,
+          denom: perpOrder.denom,
           baseDenom: perpsConfig.base_denom,
-          tradeDirection: BN(limitOrder.size).isGreaterThanOrEqualTo(0) ? 'long' : 'short',
+          tradeDirection: BN(perpOrder.order_size).isGreaterThanOrEqualTo(0) ? 'long' : 'short',
           amount: amount.abs(),
           type: 'limit',
           pnl: {
-            net: BNCoin.fromCoin(limitOrder.keeper_fee).negated(),
+            net: BNCoin.fromCoin(limitOrder.order.keeper_fee).negated(),
             realized: {
               fees: zeroCoin,
               funding: zeroCoin,
@@ -82,13 +92,13 @@ export default function usePerpsBalancesTable() {
               price: zeroCoin,
             },
           },
-          entryPrice: BN(limitOrder.trigger_price),
-          currentPrice: assetPrice,
+          entryPrice: BN(perpTrigger.price),
+          currentPrice: asset.price?.amount ?? BN_ZERO,
           liquidationPrice: BN_ONE, // TODO: 📈 Get actual liquidation price from HC
           leverage: 1,
-        } as PerpPositionRow
+        })
       })
 
     return [...activePerpsPositions, ...activeLimitOrders]
-  }, [currentAccount, perpAssets, limitOrders])
+  }, [currentAccount, perpsConfig, allAssets, limitOrders, perpAssets])
 }

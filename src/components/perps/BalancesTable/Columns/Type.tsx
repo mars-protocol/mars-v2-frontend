@@ -8,7 +8,7 @@ export const TYPE_META = {
 }
 
 interface Props {
-  type: PerpsPositionType
+  type: PerpsPosition['type']
 }
 
 export function Type(props: Props) {

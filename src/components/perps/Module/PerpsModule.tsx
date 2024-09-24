@@ -144,7 +144,7 @@ export function PerpsModule() {
       perpsAsset,
     ])
     return maxAmountValue.dividedBy(limitPrice)
-  }, [limitPrice, maxAmount, limitPriceInfo])
+  }, [limitPrice, limitPriceInfo, perpsAsset, maxAmount])
 
   const currentMaxAmount = useMemo(() => {
     return isLimitOrder ? maxAmountLimitOrder : maxAmount

@@ -336,13 +336,14 @@ interface PerpsPosition {
   pnl: PerpsPnL
   currentPrice: BigNumber
   entryPrice: BigNumber
+  type: PositionType
 }
 
 interface PerpPositionRow extends PerpsPosition {
   asset: Asset
   liquidationPrice: BigNumber
   leverage: number
-  type: PositionType
+  orderId?: string
 }
 
 interface PerpsPnL {
@@ -1625,5 +1626,21 @@ interface Trigger {
     denom: string
     oracle_price: string
     trigger_type: TriggerType
+  }
+}
+
+interface ExceutePerpsOrder {
+  execute_perp_order: {
+    denom: string
+    order_size: SignedUint
+    reduce_only?: boolean | null
+  }
+}
+
+interface TriggerCondition {
+  oracle_price: {
+    comparison: Comparison
+    denom: string
+    price: Decimal
   }
 }

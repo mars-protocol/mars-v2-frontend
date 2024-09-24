@@ -11,7 +11,7 @@ export const PNL_META = { accessorKey: 'pnl.net.amount', header: 'Total PnL', id
 
 type Props = {
   pnl: PerpsPnL
-  type: PerpsPositionType
+  type: PerpsPosition['type']
 }
 
 export default function PnL(props: Props) {

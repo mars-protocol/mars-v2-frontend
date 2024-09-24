@@ -189,7 +189,8 @@ export type Action =
       swap_exact_in: {
         coin_in: ActionCoin
         denom_out: string
-        min_receive: Uint128
+        min_receive?: Uint128
+        slippage?: string
         route?: SwapperRoute | null
       }
     }
