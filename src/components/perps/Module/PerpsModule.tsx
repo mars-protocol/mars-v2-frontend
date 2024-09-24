@@ -38,6 +38,7 @@ import { byDenom } from 'utils/array'
 import { demagnify, getCoinValue } from 'utils/formatters'
 import getPerpsPosition from 'utils/getPerpsPosition'
 import { BN, capitalizeFirstLetter } from 'utils/helpers'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 
 export function PerpsModule() {
   const chainConfig = useChainConfig()
@@ -50,7 +51,7 @@ export function PerpsModule() {
   const { perpsAsset } = usePerpsAsset()
   const [selectedOrderType, setSelectedOrderType] = useState<OrderType>(OrderType.MARKET)
   const account = useCurrentAccount()
-  const { data: allAssets } = useAssets()
+  const allAssets = useWhitelistedAssets()
   const { simulatePerps, updatedPerpPosition } = useUpdatedAccount(account)
   const [amount, setAmount] = useState<BigNumber>(BN_ZERO)
   const [limitPrice, setLimitPrice] = useState<BigNumber>(BN_ZERO)
@@ -293,6 +294,7 @@ export function PerpsModule() {
           </>
         )}
         <AssetAmountInput
+          containerClassName='pb-2'
           label='Amount'
           max={currentMaxAmount}
           amount={amount.abs()}
