@@ -19,6 +19,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountApr, getAccountDebtValue, getAccountTotalValue } from 'utils/accounts'
 import useAccountPerpData from 'components/account/AccountPerpPositionTable/useAccountPerpData'
 import { getCoinValue } from 'utils/formatters'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 interface Props {
   account: Account
@@ -34,6 +35,7 @@ interface ItemProps {
 }
 
 export default function AccountComposition(props: Props) {
+  const chainConfig = useChainConfig()
   const updatedAccount = useStore((s) => s.updatedAccount)
   const { account } = props
   const hasChanged = !!updatedAccount
@@ -54,17 +56,6 @@ export default function AccountComposition(props: Props) {
     [lendingAvailableAssets, accountLentAssets],
   )
 
-  const debtsBalance = useMemo(() => getAccountDebtValue(account, assets), [account, assets])
-  const totalBalance = useMemo(() => getAccountTotalValue(account, assets), [account, assets])
-  const updatedDebtsBalance = useMemo(
-    () => getAccountDebtValue(updatedAccount ?? account, assets),
-    [updatedAccount, account, assets],
-  )
-  const updatedPositionValue = useMemo(
-    () => getAccountTotalValue(updatedAccount ?? account, assets),
-    [updatedAccount, account, assets],
-  )
-
   const totalUnrealizedPnL = useMemo(
     () =>
       accountPerpData
@@ -75,6 +66,17 @@ export default function AccountComposition(props: Props) {
         })
         .reduce((sum, coin) => sum.plus(coin), BN_ZERO),
     [accountPerpData, assets],
+  )
+
+  const debtsBalance = useMemo(() => getAccountDebtValue(account, assets), [account, assets])
+  const totalBalance = useMemo(() => getAccountTotalValue(account, assets), [account, assets])
+  const updatedDebtsBalance = useMemo(
+    () => getAccountDebtValue(updatedAccount ?? account, assets),
+    [updatedAccount, account, assets],
+  )
+  const updatedPositionValue = useMemo(
+    () => getAccountTotalValue(updatedAccount ?? account, assets),
+    [updatedAccount, account, assets],
   )
 
   const apr = useMemo(
@@ -129,12 +131,14 @@ export default function AccountComposition(props: Props) {
         className='pb-3'
         isDecrease
       />
-      <Item
-        title='Unrealized PnL'
-        current={totalUnrealizedPnL}
-        change={totalUnrealizedPnL}
-        className='pb-3'
-      />
+      {chainConfig.perps && accountPerpData.length !== 0 && (
+        <Item
+          title='Unrealized PnL'
+          current={totalUnrealizedPnL}
+          change={totalUnrealizedPnL}
+          className='pb-3'
+        />
+      )}
       <Item
         title='APR'
         current={apr}
@@ -176,7 +180,6 @@ function Item(props: ItemProps) {
             className='text-sm'
             options={{ abbreviated: false }}
             {...(title === 'Unrealized PnL' && {
-              isProfitOrLoss: true,
               showSignPrefix: true,
             })}
           />
