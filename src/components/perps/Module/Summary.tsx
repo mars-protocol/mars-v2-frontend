@@ -138,13 +138,13 @@ export default function PerpsSummary(props: Props) {
       },
     })
   }, [
+    amount,
     asset,
     close,
     currentAccount,
     isDirectionChange,
     isNewPosition,
     leverage,
-    newAmount,
     onConfirm,
     openAlertDialog,
     previousTradeDirection,
@@ -166,11 +166,7 @@ export default function PerpsSummary(props: Props) {
           Summary
         </Text>
         <SummaryLine label='Expected Price'>
-          <ExpectedPrice
-            denom={asset.denom}
-            newAmount={newAmount}
-            previousAmount={previousAmount}
-          />
+          <ExpectedPrice denom={asset.denom} newAmount={newAmount} />
         </SummaryLine>
         <SummaryLine label='Fees' tooltip={tradingFeeTooltip}>
           <TradingFee denom={asset.denom} newAmount={newAmount} previousAmount={previousAmount} />

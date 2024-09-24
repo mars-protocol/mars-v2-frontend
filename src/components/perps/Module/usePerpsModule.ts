@@ -27,7 +27,6 @@ export default function usePerpsModule(amount: BigNumber | null) {
   const { data: tradingFee } = useTradingFeeAndPrice(
     perpsAsset.denom,
     (amount || BN_ZERO).plus(previousAmount),
-    previousAmount,
   )
 
   const hasActivePosition = useMemo(

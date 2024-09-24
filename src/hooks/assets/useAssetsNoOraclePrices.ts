@@ -31,8 +31,7 @@ export default function useAssetsNoOraclePrices() {
     {
       suspense: true,
       revalidateOnFocus: false,
-      staleTime: PRICE_STALE_TIME,
-      revalidateIfStale: true,
+      refreshInterval: PRICE_STALE_TIME,
     },
   )
 }

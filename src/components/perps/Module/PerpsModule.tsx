@@ -51,11 +51,7 @@ export function PerpsModule() {
 
   const { computeMaxPerpAmount } = useHealthComputer(account)
 
-  const { data: tradingFee } = useTradingFeeAndPrice(
-    perpsAsset.denom,
-    amount.plus(previousAmount),
-    previousAmount,
-  )
+  const { data: tradingFee } = useTradingFeeAndPrice(perpsAsset.denom, amount.plus(previousAmount))
   const perpsOraclePrice = usePrice(perpsAsset.denom)
   const perpsParams = usePerpsParams(perpsAsset.denom)
 
