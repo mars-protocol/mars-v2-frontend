@@ -10,18 +10,22 @@ import { StdFee } from '@cosmjs/amino'
 import {
   HealthContractBaseForString,
   IncentivesUnchecked,
-  Decimal,
   Uint128,
+  Decimal,
   OracleBaseForString,
   ParamsBaseForString,
   RedBankUnchecked,
   SwapperBaseForString,
   ZapperBaseForString,
   InstantiateMsg,
+  KeeperFeeConfig,
+  Coin,
   ExecuteMsg,
   AccountKind,
   Action,
   ActionAmount,
+  Condition,
+  Comparison,
   LiquidateRequestForVaultBaseForString,
   VaultPositionType,
   SwapperRoute,
@@ -38,7 +42,6 @@ import {
   LiquidateRequestForVaultBaseForAddr,
   ChangeExpected,
   PnL,
-  Coin,
   ActionCoin,
   SignedUint,
   VaultBaseForString,
@@ -61,6 +64,10 @@ import {
   VaultUnlockingPosition,
   ArrayOfAccount,
   Account,
+  PaginationResponseForTriggerOrderResponse,
+  TriggerOrderResponse,
+  TriggerOrder,
+  Metadata,
   ArrayOfCoinBalanceResponseItem,
   CoinBalanceResponseItem,
   ArrayOfSharesResponseItem,
@@ -71,7 +78,6 @@ import {
   VaultPositionResponseItem,
   PaginationResponseForVaultUtilizationResponse,
   VaultUtilizationResponse,
-  Metadata,
   ConfigResponse,
   OwnerResponse,
   RewardsCollector,
@@ -155,6 +161,22 @@ export interface MarsCreditManagerReadOnlyInterface {
   }: {
     vaultPosition: VaultPosition
   }) => Promise<VaultPositionValue>
+  allTriggerOrders: ({
+    limit,
+    startAfter,
+  }: {
+    limit?: number
+    startAfter?: string[][]
+  }) => Promise<PaginationResponseForTriggerOrderResponse>
+  allAccountTriggerOrders: ({
+    accountId,
+    limit,
+    startAfter,
+  }: {
+    accountId: string
+    limit?: number
+    startAfter?: string
+  }) => Promise<PaginationResponseForTriggerOrderResponse>
   vaultBindings: ({
     limit,
     startAfter,
@@ -183,6 +205,8 @@ export class MarsCreditManagerQueryClient implements MarsCreditManagerReadOnlyIn
     this.estimateProvideLiquidity = this.estimateProvideLiquidity.bind(this)
     this.estimateWithdrawLiquidity = this.estimateWithdrawLiquidity.bind(this)
     this.vaultPositionValue = this.vaultPositionValue.bind(this)
+    this.allTriggerOrders = this.allTriggerOrders.bind(this)
+    this.allAccountTriggerOrders = this.allAccountTriggerOrders.bind(this)
     this.vaultBindings = this.vaultBindings.bind(this)
   }
   accountKind = async ({ accountId }: { accountId: string }): Promise<AccountKind> => {
@@ -346,6 +370,37 @@ export class MarsCreditManagerQueryClient implements MarsCreditManagerReadOnlyIn
       },
     })
   }
+  allTriggerOrders = async ({
+    limit,
+    startAfter,
+  }: {
+    limit?: number
+    startAfter?: string[][]
+  }): Promise<PaginationResponseForTriggerOrderResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      all_trigger_orders: {
+        limit,
+        start_after: startAfter,
+      },
+    })
+  }
+  allAccountTriggerOrders = async ({
+    accountId,
+    limit,
+    startAfter,
+  }: {
+    accountId: string
+    limit?: number
+    startAfter?: string
+  }): Promise<PaginationResponseForTriggerOrderResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      all_account_trigger_orders: {
+        account_id: accountId,
+        limit,
+        start_after: startAfter,
+      },
+    })
+  }
   vaultBindings = async ({
     limit,
     startAfter,
@@ -389,6 +444,18 @@ export interface MarsCreditManagerInterface extends MarsCreditManagerReadOnlyInt
       accountId,
     }: {
       accountId: string
+    },
+    fee?: number | StdFee | 'auto',
+    memo?: string,
+    _funds?: Coin[],
+  ) => Promise<ExecuteResult>
+  executeTriggerOrder: (
+    {
+      accountId,
+      triggerOrderId,
+    }: {
+      accountId: string
+      triggerOrderId: string
     },
     fee?: number | StdFee | 'auto',
     memo?: string,
@@ -456,6 +523,7 @@ export class MarsCreditManagerClient
     this.createCreditAccount = this.createCreditAccount.bind(this)
     this.updateCreditAccount = this.updateCreditAccount.bind(this)
     this.repayFromWallet = this.repayFromWallet.bind(this)
+    this.executeTriggerOrder = this.executeTriggerOrder.bind(this)
     this.updateConfig = this.updateConfig.bind(this)
     this.updateOwner = this.updateOwner.bind(this)
     this.updateNftConfig = this.updateNftConfig.bind(this)
@@ -524,6 +592,32 @@ export class MarsCreditManagerClient
       {
         repay_from_wallet: {
           account_id: accountId,
+        },
+      },
+      fee,
+      memo,
+      _funds,
+    )
+  }
+  executeTriggerOrder = async (
+    {
+      accountId,
+      triggerOrderId,
+    }: {
+      accountId: string
+      triggerOrderId: string
+    },
+    fee: number | StdFee | 'auto' = 'auto',
+    memo?: string,
+    _funds?: Coin[],
+  ): Promise<ExecuteResult> => {
+    return await this.client.execute(
+      this.sender,
+      this.contractAddress,
+      {
+        execute_trigger_order: {
+          account_id: accountId,
+          trigger_order_id: triggerOrderId,
         },
       },
       fee,

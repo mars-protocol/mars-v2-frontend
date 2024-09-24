@@ -9,21 +9,25 @@ import SummaryLine from 'components/common/SummaryLine'
 import Text from 'components/common/Text'
 import AssetAmount from 'components/common/assets/AssetAmount'
 import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
+import ConfirmationSummary from 'components/perps/Module/ConfirmationSummary'
 import { ExpectedPrice } from 'components/perps/Module/ExpectedPrice'
 import TradingFee from 'components/perps/Module/TradingFee'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import usePerpsConfig from 'hooks/perps/usePerpsConfig'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
+import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { formatLeverage } from 'utils/formatters'
-import ConfirmationSummary from './ConfirmationSummary'
-import useAutoLend from 'hooks/wallet/useAutoLend'
+import { OrderType } from 'types/enums'
+import { byDenom } from 'utils/array'
+import { formatLeverage, magnify } from 'utils/formatters'
 
 type Props = {
   leverage: number
@@ -36,6 +40,8 @@ type Props = {
   hasActivePosition: boolean
   onTxExecuted: () => void
   disabled: boolean
+  orderType: OrderType
+  limitPrice: BigNumber
   baseDenom: string
 }
 
@@ -51,10 +57,18 @@ export default function PerpsSummary(props: Props) {
     previousTradeDirection,
     baseDenom,
   } = props
-  const executePerpOrder = useStore((s) => s.executePerpOrder)
+
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
-  const currentAccount = useCurrentAccount()
   const chainConfig = useChainConfig()
+  const [makerFee, _] = useLocalStorage(
+    LocalStorageKeys.PERPS_MAKER_FEE,
+    getDefaultChainSettings(chainConfig).perpsMakerFee,
+  )
+  const currentAccount = useCurrentAccount()
+  const isLimitOrder = props.orderType === OrderType.LIMIT
+  const { data: perpsConfig } = usePerpsConfig()
+  const assets = useDepositEnabledAssets()
+  const executePerpOrder = useStore((s) => s.executePerpOrder)
   const [showSummary, setShowSummary] = useLocalStorage<boolean>(
     LocalStorageKeys.SHOW_SUMMARY,
     getDefaultChainSettings(chainConfig).showSummary,
@@ -64,10 +78,29 @@ export default function PerpsSummary(props: Props) {
     () => (previousAmount ?? BN_ZERO).plus(amount),
     [amount, previousAmount],
   )
-  const perpsParams = usePerpsParams(asset.denom)
+
+  const perpsParams = usePerpsParams(props.asset.denom)
+  const feeToken = useMemo(
+    () => assets.find(byDenom(perpsConfig?.base_denom ?? '')),
+    [assets, perpsConfig?.base_denom],
+  )
 
   const onConfirm = useCallback(async () => {
-    if (!currentAccount) return
+    if (!currentAccount || !feeToken) return
+    const keeperFee = isLimitOrder
+      ? BNCoin.fromDenomAndBigNumber(feeToken.denom, magnify(makerFee.amount, feeToken))
+      : undefined
+    const triggers: Trigger[] = []
+
+    if (isLimitOrder)
+      triggers.push({
+        price_trigger: {
+          denom: props.asset.denom,
+          oracle_price: props.limitPrice.toString(),
+          trigger_type: props.tradeDirection === 'long' ? 'less_than' : 'greater_than',
+        },
+      })
+
     const modifyAmount = newAmount.minus(previousAmount)
 
     await executePerpOrder({
@@ -77,7 +110,22 @@ export default function PerpsSummary(props: Props) {
       baseDenom,
     })
     return onTxExecuted()
-  }, [asset.denom, currentAccount, executePerpOrder, newAmount, onTxExecuted, previousAmount])
+  }, [
+    asset.denom,
+    baseDenom,
+    currentAccount,
+    executePerpOrder,
+    feeToken,
+    isAutoLendEnabledForCurrentAccount,
+    isLimitOrder,
+    makerFee.amount,
+    newAmount,
+    onTxExecuted,
+    previousAmount,
+    props.asset.denom,
+    props.limitPrice,
+    props.tradeDirection,
+  ])
 
   const isDisabled = useMemo(() => amount.isZero() || disabled, [amount, disabled])
 
@@ -160,7 +208,7 @@ export default function PerpsSummary(props: Props) {
   ])
 
   return (
-    <div className='flex flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20'>
+    <div className='flex w-full flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20'>
       <ManageSummary
         {...props}
         newAmount={newAmount}

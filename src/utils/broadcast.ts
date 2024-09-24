@@ -96,6 +96,8 @@ function getTransactionTypesByAction() {
   transactionTypes.set('burn', 'burn')
   transactionTypes.set('update_price_feeds', 'oracle')
   transactionTypes.set('unlock', 'unlock')
+  transactionTypes.set('create_trigger_order', 'create-order')
+  transactionTypes.set('cancel_trigger_order', 'cancel-order')
 
   return transactionTypes
 }
@@ -127,7 +129,6 @@ function getRules() {
 
 function getTransactionCoinsGrouped(result: BroadcastResult, address: string, isHls: boolean) {
   const transactionCoins: TransactionCoin[] = []
-
   // Event types that include coins are wasm, token_swapped and pool_joined
   // This should be streamlined by SC one day
   const eventTypes = ['wasm', 'token_swapped', 'pool_joined']

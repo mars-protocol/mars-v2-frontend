@@ -11,18 +11,22 @@ import { StdFee } from '@cosmjs/amino'
 import {
   HealthContractBaseForString,
   IncentivesUnchecked,
-  Decimal,
   Uint128,
+  Decimal,
   OracleBaseForString,
   ParamsBaseForString,
   RedBankUnchecked,
   SwapperBaseForString,
   ZapperBaseForString,
   InstantiateMsg,
+  KeeperFeeConfig,
+  Coin,
   ExecuteMsg,
   AccountKind,
   Action,
   ActionAmount,
+  Condition,
+  Comparison,
   LiquidateRequestForVaultBaseForString,
   VaultPositionType,
   SwapperRoute,
@@ -39,7 +43,6 @@ import {
   LiquidateRequestForVaultBaseForAddr,
   ChangeExpected,
   PnL,
-  Coin,
   ActionCoin,
   SignedUint,
   VaultBaseForString,
@@ -62,6 +65,10 @@ import {
   VaultUnlockingPosition,
   ArrayOfAccount,
   Account,
+  PaginationResponseForTriggerOrderResponse,
+  TriggerOrderResponse,
+  TriggerOrder,
+  Metadata,
   ArrayOfCoinBalanceResponseItem,
   CoinBalanceResponseItem,
   ArrayOfSharesResponseItem,
@@ -72,7 +79,6 @@ import {
   VaultPositionResponseItem,
   PaginationResponseForVaultUtilizationResponse,
   VaultUtilizationResponse,
-  Metadata,
   ConfigResponse,
   OwnerResponse,
   RewardsCollector,
@@ -215,6 +221,22 @@ export const marsCreditManagerQueryKeys = {
         args,
       },
     ] as const,
+  allTriggerOrders: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
+    [
+      {
+        ...marsCreditManagerQueryKeys.address(contractAddress)[0],
+        method: 'all_trigger_orders',
+        args,
+      },
+    ] as const,
+  allAccountTriggerOrders: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
+    [
+      {
+        ...marsCreditManagerQueryKeys.address(contractAddress)[0],
+        method: 'all_account_trigger_orders',
+        args,
+      },
+    ] as const,
   vaultBindings: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
     [
       {
@@ -250,6 +272,58 @@ export function useMarsCreditManagerVaultBindingsQuery<TData = ArrayOfVaultBindi
     () =>
       client
         ? client.vaultBindings({
+            limit: args.limit,
+            startAfter: args.startAfter,
+          })
+        : Promise.reject(new Error('Invalid client')),
+    {
+      ...options,
+      enabled: !!client && (options?.enabled != undefined ? options.enabled : true),
+    },
+  )
+}
+export interface MarsCreditManagerAllAccountTriggerOrdersQuery<TData>
+  extends MarsCreditManagerReactQuery<PaginationResponseForTriggerOrderResponse, TData> {
+  args: {
+    accountId: string
+    limit?: number
+    startAfter?: string
+  }
+}
+export function useMarsCreditManagerAllAccountTriggerOrdersQuery<
+  TData = PaginationResponseForTriggerOrderResponse,
+>({ client, args, options }: MarsCreditManagerAllAccountTriggerOrdersQuery<TData>) {
+  return useQuery<PaginationResponseForTriggerOrderResponse, Error, TData>(
+    marsCreditManagerQueryKeys.allAccountTriggerOrders(client?.contractAddress, args),
+    () =>
+      client
+        ? client.allAccountTriggerOrders({
+            accountId: args.accountId,
+            limit: args.limit,
+            startAfter: args.startAfter,
+          })
+        : Promise.reject(new Error('Invalid client')),
+    {
+      ...options,
+      enabled: !!client && (options?.enabled != undefined ? options.enabled : true),
+    },
+  )
+}
+export interface MarsCreditManagerAllTriggerOrdersQuery<TData>
+  extends MarsCreditManagerReactQuery<PaginationResponseForTriggerOrderResponse, TData> {
+  args: {
+    limit?: number
+    startAfter?: string[][]
+  }
+}
+export function useMarsCreditManagerAllTriggerOrdersQuery<
+  TData = PaginationResponseForTriggerOrderResponse,
+>({ client, args, options }: MarsCreditManagerAllTriggerOrdersQuery<TData>) {
+  return useQuery<PaginationResponseForTriggerOrderResponse, Error, TData>(
+    marsCreditManagerQueryKeys.allTriggerOrders(client?.contractAddress, args),
+    () =>
+      client
+        ? client.allTriggerOrders({
             limit: args.limit,
             startAfter: args.startAfter,
           })
@@ -712,6 +786,30 @@ export function useMarsCreditManagerUpdateConfigMutation(
   return useMutation<ExecuteResult, Error, MarsCreditManagerUpdateConfigMutation>(
     ({ client, msg, args: { fee, memo, funds } = {} }) =>
       client.updateConfig(msg, fee, memo, funds),
+    options,
+  )
+}
+export interface MarsCreditManagerExecuteTriggerOrderMutation {
+  client: MarsCreditManagerClient
+  msg: {
+    accountId: string
+    triggerOrderId: string
+  }
+  args?: {
+    fee?: number | StdFee | 'auto'
+    memo?: string
+    funds?: Coin[]
+  }
+}
+export function useMarsCreditManagerExecuteTriggerOrderMutation(
+  options?: Omit<
+    UseMutationOptions<ExecuteResult, Error, MarsCreditManagerExecuteTriggerOrderMutation>,
+    'mutationFn'
+  >,
+) {
+  return useMutation<ExecuteResult, Error, MarsCreditManagerExecuteTriggerOrderMutation>(
+    ({ client, msg, args: { fee, memo, funds } = {} }) =>
+      client.executeTriggerOrder(msg, fee, memo, funds),
     options,
   )
 }

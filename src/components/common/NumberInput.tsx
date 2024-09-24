@@ -156,6 +156,7 @@ export default function NumberInput(props: Props) {
       disabled={props.disabled}
       className={classNames(
         'w-full hover:cursor-pointer appearance-none border-none bg-transparent text-right outline-none',
+        props.disabled && 'pointer-events-none',
         props.className,
         props.disabled && 'pointer-events-none',
       )}

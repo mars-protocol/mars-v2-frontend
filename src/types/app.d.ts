@@ -21,7 +21,7 @@ type ActionCoin = import('types/generated/mars-credit-manager/MarsCreditManager.
 type Action = import('types/generated/mars-credit-manager/MarsCreditManager.types').Action
 type BNCoin = import('types/classes/BNCoin').BNCoin
 
-type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp'
+type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp' | 'market' | 'limit'
 type TableType = 'balances' | 'strategies' | 'perps'
 type AccountKind = import('types/generated/mars-credit-manager/MarsCreditManager.types').AccountKind
 
@@ -336,12 +336,14 @@ interface PerpsPosition {
   pnl: PerpsPnL
   currentPrice: BigNumber
   entryPrice: BigNumber
+  type: PositionType
 }
 
 interface PerpPositionRow extends PerpsPosition {
   asset: Asset
   liquidationPrice: BigNumber
   leverage: number
+  orderId?: string
 }
 
 interface PerpsPnL {
@@ -1124,7 +1126,15 @@ interface TransactionEventAttribute {
   value: string
 }
 
-type TransactionType = 'default' | 'oracle' | 'create' | 'burn' | 'unlock' | 'transaction'
+type TransactionType =
+  | 'default'
+  | 'oracle'
+  | 'create'
+  | 'burn'
+  | 'unlock'
+  | 'transaction'
+  | 'cancel-order'
+  | 'create-order'
 
 interface CommonSlice {
   address?: string
@@ -1183,6 +1193,7 @@ interface ModalSlice {
   lendAndReclaimModal: LendAndReclaimModalConfig | null
   perpsVaultModal: PerpsVaultModal | null
   settingsModal: boolean
+  makerFeeModal: boolean
   unlockModal: UnlockModal | null
   farmModal: FarmModal | null
   walletAssetsModal: WalletAssetModal | null
@@ -1370,9 +1381,8 @@ interface HlsFarmLeverageProps {
   totalValue: BigNumber
 }
 
-type AvailableOrderType = 'Market' | 'Limit' | 'Stop'
 interface OrderTab {
-  type: AvailableOrderType
+  type: import('types/enums').OrderType
   isDisabled: boolean
   tooltipText: string
 }
@@ -1609,5 +1619,41 @@ interface AssetCampaignPoints {
 }
 
 type KeplrMode = 'core' | 'extension' | 'mobile-web' | 'walletconnect'
+type TriggerType = 'less_than' | 'greater_than'
 
 type DatafeedErrorCallback = (reason: string) => void
+
+interface Trigger {
+  price_trigger: {
+    denom: string
+    oracle_price: string
+    trigger_type: TriggerType
+  }
+}
+
+interface ExceutePerpsOrder {
+  execute_perp_order: {
+    denom: string
+    order_size: SignedUint
+    reduce_only?: boolean | null
+  }
+}
+
+interface TriggerCondition {
+  oracle_price: {
+    comparison: Comparison
+    denom: string
+    price: Decimal
+  }
+}
+
+interface OrderTab {
+  type: import('types/enums').OrderType
+  isDisabled: boolean
+  tooltipText?: string
+}
+
+interface CallOut {
+  message: string
+  type: import('components/common/Callout').CalloutType
+}
