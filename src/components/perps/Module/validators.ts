@@ -1,5 +1,6 @@
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
-import { formatValue } from 'utils/formatters'
+import { BNCoin } from 'types/classes/BNCoin'
+import { formatValue, getCoinValue } from 'utils/formatters'
 
 export function checkPositionValue(
   amount: BigNumber,
@@ -58,30 +59,46 @@ export function checkOpenInterest(
   currentTradeDirection: TradeDirection,
   amount: BigNumber,
   previousAmount: BigNumber,
+  asset: Asset,
   price: BigNumber,
   params: PerpsParams,
 ) {
   if (amount.plus(previousAmount).isZero()) return null
-
   let openInterestLong = perpsMarket.openInterest.long.times(price)
   let openInterestShort = perpsMarket.openInterest.short.times(price)
 
   if (previousTradeDirection === 'long' && currentTradeDirection === 'long') {
-    openInterestLong = openInterestLong.plus(amount.times(price))
+    openInterestLong = openInterestLong.plus(
+      getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, amount), [asset]),
+    )
   }
 
   if (previousTradeDirection === 'short' && currentTradeDirection === 'short') {
-    openInterestShort = openInterestShort.plus(amount.abs().times(price))
+    openInterestShort = openInterestShort.plus(
+      getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, amount.abs()), [asset]),
+    )
   }
 
   if (previousTradeDirection === 'long' && currentTradeDirection === 'short') {
-    openInterestLong = openInterestLong.minus(previousAmount.times(price))
-    openInterestShort = openInterestShort.plus(amount.plus(previousAmount).abs().times(price))
+    openInterestLong = openInterestLong.minus(
+      getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, previousAmount), [asset]),
+    )
+    openInterestShort = openInterestShort.plus(
+      getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, amount.plus(previousAmount).abs()), [
+        asset,
+      ]),
+    )
   }
 
   if (previousTradeDirection === 'short' && currentTradeDirection === 'long') {
-    openInterestShort = openInterestShort.minus(previousAmount.times(price))
-    openInterestLong = openInterestLong.plus(amount.plus(previousAmount).abs().times(price))
+    openInterestShort = openInterestShort.minus(
+      getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, previousAmount), [asset]),
+    )
+    openInterestLong = openInterestLong.plus(
+      getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, amount.plus(previousAmount).abs()), [
+        asset,
+      ]),
+    )
   }
 
   if (openInterestLong.isGreaterThan(params.maxOpenInterestLong)) {

@@ -100,6 +100,7 @@ export default function usePerpsModule(amount: BigNumber | null) {
         currentTradeDirection,
         amount,
         previousAmount,
+        perpsAsset,
         price,
         params,
       ),
