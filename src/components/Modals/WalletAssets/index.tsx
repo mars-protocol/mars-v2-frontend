@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react'
 
 import Button from 'components/common/Button'
+import Text from 'components/common/Text'
 import Modal from 'components/Modals/Modal'
 import WalletAssetsModalContent from 'components/Modals/WalletAssets/WalletAssetsModalContent'
-import Text from 'components/common/Text'
 import useStore from 'store'
 
 export default function WalletAssetsModal() {
@@ -22,7 +22,7 @@ export default function WalletAssetsModal() {
     <Modal
       header={<Text>Your wallet</Text>}
       onClose={onClose}
-      modalClassName='max-w-modal-xs'
+      modalClassName='max-w-modal-lg'
       headerClassName='bg-white/10 border-b-white/5 border-b items-center p-4'
       dialogId='wallet-assets-modal'
     >

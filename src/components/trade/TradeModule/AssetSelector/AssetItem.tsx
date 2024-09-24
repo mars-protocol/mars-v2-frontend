@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
 
-import AssetImage from 'components/common/assets/AssetImage'
-import AssetSymbol from 'components/common/assets/AssetSymbol'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { StarFilled, StarOutlined } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import AssetImage from 'components/common/assets/AssetImage'
+import AssetSymbol from 'components/common/assets/AssetSymbol'
 import { BN_ONE, BN_ZERO, MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from 'constants/math'
 import useFavoriteAssets from 'hooks/localStorage/useFavoriteAssets'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -110,6 +110,7 @@ export default function AssetItem(props: Props) {
           coin={
             new BNCoin({ denom: asset.denom, amount: BN_ONE.shiftedBy(asset.decimals).toString() })
           }
+          showDetailedPrice
         />
       </button>
     </li>

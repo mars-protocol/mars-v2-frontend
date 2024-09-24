@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
+import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
 
 interface Props {
   row: Row<BorrowMarketTableData | LendingMarketTableData>
@@ -31,15 +31,6 @@ export default function MarketDetails({ row, type }: Props) {
     function getLendingMarketDetails() {
       return [
         {
-          amount: convertAmount(asset, deposits).toNumber(),
-          options: {
-            abbreviated: true,
-            suffix: isDollar ? undefined : ` ${displayCurrencySymbol}`,
-            prefix: isDollar ? '$' : undefined,
-          },
-          title: 'Total Supplied',
-        },
-        {
           amount: ltv.max * 100,
           options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
           title: 'Max LTV',
@@ -60,7 +51,7 @@ export default function MarketDetails({ row, type }: Props) {
           title: 'Oracle Price',
         },
         {
-          amount: debt.isZero() ? 0 : debt.dividedBy(deposits).multipliedBy(100).toNumber(), // TODO: Check if this number is still correct
+          amount: debt.isZero() ? 0 : debt.dividedBy(deposits).multipliedBy(100).toNumber(),
           options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
           title: 'Utilization Rate',
         },
@@ -89,7 +80,7 @@ export default function MarketDetails({ row, type }: Props) {
           title: 'Oracle Price',
         },
         {
-          amount: debt.isZero() ? 0 : debt.dividedBy(deposits).multipliedBy(100).toNumber(), // TODO: CHeck if this is still correct
+          amount: debt.isZero() ? 0 : debt.dividedBy(deposits).multipliedBy(100).toNumber(),
           options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
           title: 'Utilization Rate',
         },
@@ -112,7 +103,10 @@ export default function MarketDetails({ row, type }: Props) {
 
   return (
     <tr>
-      <td colSpan={row.getAllCells().length} className='p-4 border-b bg-black/20 border-white/10'>
+      <td
+        colSpan={row.getAllCells().length}
+        className='p-4 border-b gradient-header border-white/10'
+      >
         <div className='flex justify-between flex-1 rounded-md bg-white/5'>
           {details.map((detail, index) => (
             <TitleAndSubCell

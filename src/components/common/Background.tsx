@@ -2,28 +2,30 @@ import classNames from 'classnames'
 import { useEffect, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { getPage } from 'utils/route'
 
 export default function Background() {
+  const chainConfig = useChainConfig()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
   const { pathname } = useLocation()
   const page = getPage(pathname)
-  const [isHLS, isV1] = useMemo(() => [page.split('-')[0] === 'hls', page === 'v1'], [page])
+  const [isHls, isV1] = useMemo(() => [page.split('-')[0] === 'hls', page === 'v1'], [page])
 
   useEffect(() => {
-    useStore.setState({ isHLS: isHLS, isV1: isV1 })
-  }, [isHLS, isV1])
+    useStore.setState({ isHls, isV1 })
+  }, [isHls, isV1])
 
   const [primaryOrbClassName, secondaryOrbClassName, tertiaryOrbClassName, bodyClassName] =
     useMemo(() => {
-      if (isHLS) {
+      if (isHls) {
         return ['bg-orb-primary-hls', 'bg-orb-secondary-hls', 'bg-orb-tertiary-hls', 'bg-body-hls']
       }
       if (isV1) {
@@ -36,7 +38,7 @@ export default function Background() {
       }
 
       return ['bg-orb-primary', 'bg-orb-secondary', 'bg-orb-tertiary', 'bg-body']
-    }, [isHLS, isV1])
+    }, [isHls, isV1])
 
   return (
     <div

@@ -3,14 +3,13 @@ import { useMemo } from 'react'
 import { checkOpenInterest, checkPositionValue } from 'components/perps/Module/validators'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import usePerpPosition from 'hooks/perps/usePerpPosition'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import usePerpsMarket from 'hooks/perps/usePerpsMarket'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
-import usePrice from 'hooks/usePrice'
-import usePrices from 'hooks/usePrices'
+import usePrice from 'hooks/prices/usePrice'
 import { List } from 'types/classes/List'
 import { getAccountNetValue } from 'utils/accounts'
 import { byDenom } from 'utils/array'
@@ -21,26 +20,24 @@ export default function usePerpsModule(amount: BigNumber | null) {
   const params = usePerpsParams(perpsAsset.denom)
   const perpsMarket = usePerpsMarket()
   const perpPosition = usePerpPosition(perpsAsset.denom)
-  const { data: prices } = usePrices()
-  const assets = useAllAssets()
+  const assets = useDepositEnabledAssets()
   const account = useCurrentAccount()
   const price = usePrice(perpsAsset.denom)
   const previousAmount = useMemo(() => perpPosition?.amount ?? BN_ZERO, [perpPosition?.amount])
   const { data: tradingFee } = useTradingFeeAndPrice(
     perpsAsset.denom,
     (amount || BN_ZERO).plus(previousAmount),
-    previousAmount,
   )
 
   const hasActivePosition = useMemo(
-    () => !!account?.perps.find(byDenom(perpsAsset.denom)),
+    () => !!account?.perps?.find(byDenom(perpsAsset.denom)),
     [account?.perps, perpsAsset.denom],
   )
 
   const accountNetValue = useMemo(() => {
-    if (!account || !prices || !assets) return BN_ZERO
-    return getAccountNetValue(account, prices, assets)
-  }, [account, assets, prices])
+    if (!account || !assets) return BN_ZERO
+    return getAccountNetValue(account, assets)
+  }, [account, assets])
 
   const previousTradeDirection = useMemo(
     () => perpPosition?.tradeDirection || 'long',
@@ -102,6 +99,7 @@ export default function usePerpsModule(amount: BigNumber | null) {
         currentTradeDirection,
         amount,
         previousAmount,
+        perpsAsset,
         price,
         params,
       ),

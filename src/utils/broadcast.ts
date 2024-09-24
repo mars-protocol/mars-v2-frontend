@@ -1,7 +1,8 @@
 import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
-import { getAssetSymbol } from 'utils/assets'
+import { removeEmptyCoins } from 'utils/accounts'
+import { getAssetSymbolByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
 import { getVaultNameByCoins } from 'utils/vaults'
 
@@ -34,7 +35,7 @@ export async function analizeTransaction(
   address: string,
 ): Promise<{
   target: string
-  isHLS: boolean
+  isHls: boolean
   transactionType: TransactionType
   txCoinGroups: GroupedTransactionCoin[]
 }> {
@@ -48,18 +49,18 @@ export async function analizeTransaction(
   if (accountId) {
     // If it is a credit account, get the AccountKind of the credit account
     const creditManagerQueryClient = await getCreditManagerQueryClient(chainConfig)
-    accountKind = await creditManagerQueryClient.accountKind({ accountId: accountId })
+    accountKind = (await creditManagerQueryClient.accountKind({ accountId: accountId })) as any
     if (accountKind) {
       target =
         accountKind === 'high_levered_strategy'
-          ? `HLS Account ${accountId}`
+          ? `Hls Account ${accountId}`
           : `Account ${accountId}`
     }
   }
-  const isHLS = accountKind === 'high_levered_strategy'
+  const isHls = accountKind === 'high_levered_strategy'
 
   // Fetch all coins from the BroadcastResult
-  const txCoinGroups = getTransactionCoinsGrouped(result, address, isHLS)
+  const txCoinGroups = getTransactionCoinsGrouped(result, address, isHls)
 
   // If there are no coins involved, try to identify the transaction type, otherwise set it to 'transaction'
   const transactionType = txCoinGroups.length
@@ -68,7 +69,7 @@ export async function analizeTransaction(
 
   return {
     target,
-    isHLS,
+    isHls,
     transactionType,
     txCoinGroups,
   }
@@ -118,11 +119,15 @@ function getRules() {
   coinRules.set('open_position', 'perps')
   coinRules.set('close_position', 'perps')
   coinRules.set('modify_position', 'perps')
+  coinRules.set('withdraw_liquidity', 'farm')
+  coinRules.set('provide_liquidity', 'provide_liquidity')
+  coinRules.set('claim_rewards', 'claim_rewards')
+  coinRules.set('swap', 'swap')
 
   return coinRules
 }
 
-function getTransactionCoinsGrouped(result: BroadcastResult, address: string, isHLS: boolean) {
+function getTransactionCoinsGrouped(result: BroadcastResult, address: string, isHls: boolean) {
   const transactionCoins: TransactionCoin[] = []
   // Event types that include coins are wasm, token_swapped and pool_joined
   // This should be streamlined by SC one day
@@ -137,6 +142,7 @@ function getTransactionCoinsGrouped(result: BroadcastResult, address: string, is
   filteredEvents.forEach((event: TransactionEvent) => {
     if (!Array.isArray(event.attributes)) return
     // Check if the event type is a token_swapped and get coins from the event
+    // This is needed for the "old" swap event, while the new swap event has an action attribute
     if (event.type === 'token_swapped') {
       const { tokenIn, tokenOut } = getCoinFromSwapEvent(event)
       if (tokenIn && tokenOut) {
@@ -167,15 +173,17 @@ function getTransactionCoinsGrouped(result: BroadcastResult, address: string, is
       const action = attr.value
 
       // Find the CoinType for the action and target
+
       let coinType = coinRules.get(`${action}_${target}`) ?? coinRules.get(action)
 
-      if (isHLS && action === 'callback/deposit')
+      if (isHls && action === 'callback/deposit')
         coinType = 'deposit_from_wallet' as TransactionCoinType
       coins.forEach((eventCoin) => {
         // check for duplicates
         const existingCoin = transactionCoins.find(
           (c) =>
             c.type === coinType &&
+            c.type !== 'swap' &&
             c.coin.denom === eventCoin.coin.denom &&
             c.coin.amount.isEqualTo(eventCoin.coin.amount),
         )
@@ -196,14 +204,14 @@ function getTransactionCoinsGrouped(result: BroadcastResult, address: string, is
         })
       }
 
-      if (isHLS) {
+      if (isHls) {
         // If the account is an hls account, check for a deposit_from_wallet event and add the amount of the 'update_coin_balance' event
         // This is because the deposit from wallet is sent to the hls account first and then the result of a potential swap event
         // gets added to the hls account via 'update_coin_balance'.
         // To display those transaction correctly a 'deposit' coin has to be added to transactionCoins that has the sum of the deposit and the swap amount
-        const HLSDeposit = findUpdateCoinBalanceAndAddDeposit(event, transactionCoins)
-        if (HLSDeposit) {
-          transactionCoins.push({ type: 'deposit', coin: HLSDeposit })
+        const HlsDeposit = findUpdateCoinBalanceAndAddDeposit(event, transactionCoins)
+        if (HlsDeposit) {
+          transactionCoins.push({ type: 'deposit', coin: HlsDeposit })
         }
       }
     })
@@ -221,6 +229,8 @@ function getCoinsFromEvent(event: TransactionEvent) {
     'coin_repaid',
     'borrow',
     'repay',
+    'provide_liquidity',
+    'claimed_reward',
   ]
 
   // Check for denom and amount and add the coin to the return
@@ -251,10 +261,45 @@ function getCoinsFromEvent(event: TransactionEvent) {
   event.attributes.forEach((attr: TransactionEventAttribute) => {
     const amountDenomString = denomAmountActions.includes(attr.key) ? attr.value : undefined
     if (amountDenomString) {
-      const coin = getCoinFromAmountDenomString(amountDenomString)
+      const coin = getCoinFromAmountDenomString(amountDenomString.trim())
       if (coin) coins.push({ coin: coin })
     }
   })
+
+  // Check for 'withdraw_liquidity' event and add the coins to the return
+  const isWithdrawLiquidity =
+    event.attributes.find((a) => a.key === 'action')?.value === 'withdraw_liquidity'
+  if (isWithdrawLiquidity) {
+    const withdrawTokens = getVaultTokensFromEvent(event)
+    if (withdrawTokens) withdrawTokens.map((coin) => coins.push({ coin: coin }))
+  }
+
+  // Check for 'provide_liquidity' event and add the coins to the return
+  const isProvideLiquidity =
+    event.attributes.find((a) => a.key === 'action')?.value === 'provide_liquidity'
+  if (isProvideLiquidity) {
+    const depositTokens = getVaultTokensFromEvent(event)
+    if (depositTokens) depositTokens.map((coin) => coins.push({ coin: coin }))
+  }
+
+  // Check if the event is a swap event and then return the coins
+  const isSwap = event.attributes.find((a) => a.key === 'action')?.value === 'swap'
+  if (isSwap) {
+    const coinInDenom = event.attributes.find((a) => a.key === 'offer_asset')?.value
+    const coinInAmount = event.attributes.find((a) => a.key === 'offer_amount')?.value
+    const coinOutDenom = event.attributes.find((a) => a.key === 'ask_asset')?.value
+    const coinOutAmount = event.attributes.find((a) => a.key === 'return_amount')?.value
+    if (coinInDenom && coinInAmount && coinOutDenom && coinOutAmount) {
+      coins.push(
+        {
+          coin: BNCoin.fromDenomAndBigNumber(coinInDenom, BN(coinInAmount)),
+        },
+        {
+          coin: BNCoin.fromDenomAndBigNumber(coinOutDenom, BN(coinOutAmount)),
+        },
+      )
+    }
+  }
 
   return coins
 }
@@ -267,8 +312,8 @@ function getCoinFromSwapEvent(event: TransactionEvent) {
     return { tokenIn: undefined, tokenOut: undefined }
 
   return {
-    tokenIn: getCoinFromAmountDenomString(tokenInAmountDenomString),
-    tokenOut: getCoinFromAmountDenomString(tokenOutAmountDenomString),
+    tokenIn: getCoinFromAmountDenomString(tokenInAmountDenomString.trim()),
+    tokenOut: getCoinFromAmountDenomString(tokenOutAmountDenomString.trim()),
   }
 }
 
@@ -279,7 +324,7 @@ function findUpdateCoinBalanceAndAddDeposit(
   if (event.attributes.find((a) => a.key === 'action')?.value !== 'update_coin_balance') return
   const amountDenomString = event.attributes.find((a) => a.key === 'coin')?.value
   if (!amountDenomString) return
-  const result = getCoinFromAmountDenomString(amountDenomString)
+  const result = getCoinFromAmountDenomString(amountDenomString.trim())
   if (!result) return
 
   const depositFromWallet = transactionCoins.find(
@@ -288,7 +333,7 @@ function findUpdateCoinBalanceAndAddDeposit(
   if (!depositFromWallet) return result
 
   // If a deposit from wallet was found add the update_coin_balance to it
-  // This is needed for HLS accounts, where the deposit_from_wallet and the update_coin_balance combined make up the final hls account deposit
+  // This is needed for Hls accounts, where the deposit_from_wallet and the update_coin_balance combined make up the final hls account deposit
   return result.plus(depositFromWallet.amount)
 }
 
@@ -328,17 +373,19 @@ function getTransactionTypeFromBroadcastResult(result: BroadcastResult): Transac
 
 function getVaultTokensFromEvent(event: TransactionEvent): BNCoin[] | undefined {
   const denomAndAmountStringArray = event.attributes
-    .find((a) => a.key === 'tokens_in')
+    .find((a) => a.key === 'tokens_in' || a.key === 'coins_out' || a.key === 'assets')
     ?.value.split(',')
   if (!denomAndAmountStringArray) return
   if (denomAndAmountStringArray.length !== 2) return
-  const vaultToken1 = getCoinFromAmountDenomString(denomAndAmountStringArray[0])
-  const vaultToken2 = getCoinFromAmountDenomString(denomAndAmountStringArray[1])
+  const vaultToken1 = getCoinFromAmountDenomString(denomAndAmountStringArray[0].trim())
+  const vaultToken2 = getCoinFromAmountDenomString(denomAndAmountStringArray[1].trim())
   if (!vaultToken1 || !vaultToken2) return
   return [vaultToken1, vaultToken2]
 }
 
 function getCoinFromAmountDenomString(amountDenomString: string): BNCoin | undefined {
+  if (amountDenomString.charAt(0) === '0')
+    return BNCoin.fromDenomAndBigNumber(amountDenomString.substring(1), BN_ZERO)
   const regex = /(?:(\d+).*)/g
   const matches = regex.exec(amountDenomString)
   if (!matches || matches.length < 2) return
@@ -359,7 +406,7 @@ function getCoinFromPnLString(pnlString: string): BNCoin | undefined {
 
 function groupTransactionCoins(coins: TransactionCoin[]): GroupedTransactionCoin[] {
   // Group coins by type so that for example multiple deposit objects are passed as a single deposit array
-  return coins.reduce((grouped, coin) => {
+  const reducedCoins = coins.reduce((grouped, coin) => {
     const existingGroup = grouped.find((g) => g.type === coin.type)
 
     if (existingGroup) {
@@ -370,13 +417,15 @@ function groupTransactionCoins(coins: TransactionCoin[]): GroupedTransactionCoin
     grouped.push({ type: coin.type, coins: [coin] })
     return grouped
   }, [] as GroupedTransactionCoin[])
+  return reducedCoins
 }
 
 export function getToastContentsFromGroupedTransactionCoin(
   transactionCoin: GroupedTransactionCoin,
-  isHLS: boolean,
+  isHls: boolean,
   target: string,
   chainConfig: ChainConfig,
+  assets: Asset[],
 ): ToastContent[] {
   const toastContents = [] as ToastContent[]
   const coins = transactionCoin.coins.map((c) => c.coin.toCoin())
@@ -385,48 +434,66 @@ export function getToastContentsFromGroupedTransactionCoin(
     case 'borrow':
       toastContents.push({
         text: 'Borrowed',
-        coins,
+        coins: removeEmptyCoins(coins),
       })
       break
     case 'deposit':
       toastContents.push({
-        text: isHLS ? 'Deposited into HLS account' : 'Deposited',
-        coins,
+        text: isHls ? 'Deposited into Hls account' : 'Deposited',
+        coins: removeEmptyCoins(coins),
       })
       break
     case 'deposit_from_wallet':
       toastContents.push({
         text: 'Deposited from wallet',
-        coins,
+        coins: removeEmptyCoins(coins),
       })
       break
     case 'lend':
       toastContents.push({
         text: target === 'Red Bank' ? 'Deposited' : 'Lent',
-        coins,
+        coins: removeEmptyCoins(coins),
       })
       break
     case 'reclaim':
       toastContents.push({
         text: 'Unlent',
-        coins,
+        coins: removeEmptyCoins(coins),
       })
       break
     case 'repay':
       toastContents.push({
         text: 'Repaid',
-        coins,
+        coins: removeEmptyCoins(coins),
       })
       break
     case 'swap':
       toastContents.push({
         text: 'Swapped',
-        coins,
+        coins: removeEmptyCoins(coins),
       })
       break
     case 'withdraw':
       toastContents.push({
         text: 'Withdrew to wallet',
+        coins: removeEmptyCoins(coins),
+      })
+      break
+    case 'farm':
+      toastContents.push({
+        text:
+          coins.length === 2
+            ? `Withdrew from ${getAssetSymbolByDenom(coins[0].denom, assets)}-${getAssetSymbolByDenom(coins[1].denom, assets)}`
+            : 'Withdrew from farm',
+        coins,
+      })
+      break
+    case 'provide_liquidity':
+      toastContents.push({
+        text:
+          coins.length === 2
+            ? `Added to ${getAssetSymbolByDenom(coins[0].denom, assets)}-${getAssetSymbolByDenom(coins[1].denom, assets)}`
+            : 'Deposited into farm',
         coins,
       })
       break
@@ -436,7 +503,7 @@ export function getToastContentsFromGroupedTransactionCoin(
         text:
           transactionCoin.coins.length === 2
             ? `Deposited into the ${getVaultNameByCoins(chainConfig, vaultCoins)} vault`
-            : `Deposited into the Perps ${getAssetSymbol(chainConfig, vaultCoins[0].denom)} vault`,
+            : `Deposited into the Perps ${getAssetSymbolByDenom(vaultCoins[0].denom, assets)} vault`,
         coins: vaultCoins,
       })
       break
@@ -444,7 +511,7 @@ export function getToastContentsFromGroupedTransactionCoin(
       transactionCoin.coins.forEach((txCoin) => {
         if (!txCoin.before) return
         const type = getPerpsTransactionTypeFromCoin({ coin: txCoin.coin, before: txCoin.before })
-        const perpsAssetSymbol = getAssetSymbol(chainConfig, txCoin.coin.denom)
+        const perpsAssetSymbol = getAssetSymbolByDenom(txCoin.coin.denom, assets)
 
         const beforeTradeDirection: TradeDirection = txCoin.before.amount.isPositive()
           ? 'long'
@@ -513,6 +580,13 @@ export function getToastContentsFromGroupedTransactionCoin(
             coins: [coin.abs().toCoin()],
           })
         }
+      })
+      break
+
+    case 'claim_rewards':
+      toastContents.push({
+        text: 'Claimed rewards',
+        coins: removeEmptyCoins(coins),
       })
       break
   }

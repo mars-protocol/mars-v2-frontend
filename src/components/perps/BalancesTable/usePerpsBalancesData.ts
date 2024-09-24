@@ -2,10 +2,11 @@ import { useMemo } from 'react'
 
 import { BN_ONE, BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
+import usePerpsConfig from 'hooks/perps/usePerpsConfig'
 import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
-import useChainConfig from 'hooks/useChainConfig'
-import usePrices from 'hooks/usePrices'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getAccountNetValue } from 'utils/accounts'
 import { byDenom } from 'utils/array'
@@ -15,14 +16,15 @@ import { BN } from 'utils/helpers'
 export default function usePerpsBalancesTable() {
   const currentAccount = useCurrentAccount()
   const perpAssets = usePerpsEnabledAssets()
-  const chainConfig = useChainConfig()
-  const { data: prices } = usePrices()
   const { data: limitOrders } = usePerpsLimitOrders()
+  const { data: perpsConfig } = usePerpsConfig()
+
+  const allAssets = useDepositEnabledAssets()
 
   return useMemo<PerpPositionRow[]>(() => {
-    if (!currentAccount) return []
+    if (!currentAccount || !currentAccount.perps) return []
 
-    const netValue = getAccountNetValue(currentAccount, prices, chainConfig.assets)
+    const netValue = getAccountNetValue(currentAccount, allAssets)
 
     const activePerpsPositions = currentAccount.perps.map((position) => {
       const asset = perpAssets.find(byDenom(position.denom))!
@@ -31,6 +33,8 @@ export default function usePerpsBalancesTable() {
         asset,
         tradeDirection: position.tradeDirection,
         amount: position.amount,
+        denom: position.denom,
+        baseDenom: perpsConfig.base_denom,
         type: 'market',
         pnl: position.pnl,
         entryPrice: position.entryPrice,
@@ -46,10 +50,8 @@ export default function usePerpsBalancesTable() {
 
     if (!limitOrders) return activePerpsPositions
 
-    const usdc = chainConfig.assets.find((asset) => asset.symbol === 'USDC')
-
-    if (!usdc) return activePerpsPositions
-    const zeroCoin = BNCoin.fromDenomAndBigNumber(usdc.denom, BN_ZERO)
+    if (!perpsConfig.base_denom) return activePerpsPositions
+    const zeroCoin = BNCoin.fromDenomAndBigNumber(perpsConfig.base_denom, BN_ZERO)
 
     const activeLimitOrders = limitOrders
       .filter((order) => order['account_id'] === currentAccount.id)
@@ -60,6 +62,8 @@ export default function usePerpsBalancesTable() {
         return {
           orderId: limitOrder.order_id,
           asset,
+          denom: limitOrder.denom,
+          baseDenom: perpsConfig.base_denom,
           tradeDirection: BN(limitOrder.size).isGreaterThanOrEqualTo(0) ? 'long' : 'short',
           amount: amount.abs(),
           type: 'limit',
@@ -81,10 +85,10 @@ export default function usePerpsBalancesTable() {
           entryPrice: BN(limitOrder.trigger_price),
           currentPrice: assetPrice,
           liquidationPrice: BN_ONE, // TODO: 📈 Get actual liquidation price from HC
-          leverage: null,
+          leverage: 1,
         } as PerpPositionRow
       })
 
     return [...activePerpsPositions, ...activeLimitOrders]
-  }, [chainConfig, currentAccount, perpAssets, prices, limitOrders])
+  }, [currentAccount, perpAssets, limitOrders])
 }

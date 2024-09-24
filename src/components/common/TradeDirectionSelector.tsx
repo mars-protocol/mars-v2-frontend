@@ -49,19 +49,14 @@ function Direction(props: DirectionProps) {
     <button
       className={classNames(
         'px-4 py-3 rounded-sm flex-1',
-        props.isActive && 'border bg-white/10',
+        props.isActive && `border bg-white/10 text-${classString}`,
+
+        !props.isActive && 'text-white/20 hover:text-white',
         `border-${classString}`,
       )}
       onClick={props.onClick}
     >
-      <Text
-        className={classNames(
-          'text-center first-letter:uppercase',
-          props.isActive ? `text-${classString}` : 'text-white/20',
-        )}
-      >
-        {label}
-      </Text>
+      <Text className={classNames('text-center first-letter:uppercase')}>{label}</Text>
     </button>
   )
 }

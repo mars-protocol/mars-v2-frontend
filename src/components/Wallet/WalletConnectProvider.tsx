@@ -1,4 +1,5 @@
 import {
+  CosmiframeExtensionProvider,
   CosmostationExtensionProvider,
   CosmostationMobileProvider,
   KeplrExtensionProvider,
@@ -15,36 +16,43 @@ import {
 } from '@delphi-labs/shuttle-react'
 import { FC } from 'react'
 
-import chains from 'configs/chains'
-import { WALLETS } from 'constants/wallets'
-import { WalletID } from 'types/enums/wallet'
+import chains from 'chains'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import { DAODAO_ORIGINS, WALLETS } from 'constants/wallets'
+import { WalletID } from 'types/enums'
 
 type Props = {
   children?: React.ReactNode
 }
 
+function getLocalStorageEndpoint(key: string, fallback: string) {
+  if (typeof window !== 'undefined') return localStorage.getItem(key) ?? fallback
+  return fallback
+}
+
 function mapChainConfigToChainInfo(chainConfig: ChainConfig): ChainInfo {
-  const chainInfo: ChainInfo = {
-    rpc: chainConfig.endpoints.rpc,
-    rest: chainConfig.endpoints.rest,
+  return {
+    rpc: getLocalStorageEndpoint(
+      `${chainConfig.id}/${LocalStorageKeys.RPC_ENDPOINT}`,
+      chainConfig.endpoints.rpc,
+    ),
+    rest: getLocalStorageEndpoint(
+      `${chainConfig.id}/${LocalStorageKeys.REST_ENDPOINT}`,
+      chainConfig.endpoints.rest,
+    ),
     explorer: chainConfig.endpoints.explorer,
     explorerName: chainConfig.explorerName,
     chainId: chainConfig.id,
     name: chainConfig.name,
-    gasPrice: chainConfig.gasPrice,
     bech32Config: chainConfig.bech32Config,
     defaultCurrency: chainConfig.defaultCurrency,
     features: ['ibc-transfer', 'ibc-go'],
   }
-
-  return chainInfo
 }
 
 function getSupportedChainsInfos(walletId: WalletID) {
   return WALLETS[walletId].supportedChains.map((chain) => {
-    const chainInfo = mapChainConfigToChainInfo(chains[chain])
-
-    return chainInfo
+    return mapChainConfigToChainInfo(chains[chain])
   })
 }
 
@@ -70,6 +78,10 @@ const extensionProviders: WalletExtensionProvider[] = [
   new XDEFICosmosExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Xdefi) }),
   new StationExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Station) }),
   new VectisCosmosExtensionProvider({ networks: getSupportedChainsInfos(WalletID.Vectis) }),
+  new CosmiframeExtensionProvider({
+    allowedParentOrigins: DAODAO_ORIGINS,
+    networks: getSupportedChainsInfos(WalletID.DaoDao),
+  }),
 ]
 
 export const WalletConnectProvider: FC<Props> = ({ children }) => {

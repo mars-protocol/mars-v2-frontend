@@ -1,5 +1,5 @@
 import { cacheFn, oraclePriceCache } from 'api/cache'
-import { getOracleQueryClient } from 'api/cosmwasm-client'
+import { getOracleQueryClientNeutron, getOracleQueryClientOsmosis } from 'api/cosmwasm-client'
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -8,14 +8,22 @@ import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 import iterateContractQuery from 'utils/iterateContractQuery'
 
+function getAssetPrice(asset: Asset, priceResult: PriceResponse): BNCoin {
+  const price = BN(priceResult?.price ?? BN_ZERO)
+  const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
+  return BNCoin.fromDenomAndBigNumber(asset.denom, price.shiftedBy(decimalDiff))
+}
+
 export default async function getOraclePrices(
   chainConfig: ChainConfig,
   assets: Asset[],
 ): Promise<BNCoin[]> {
+  const oracleQueryClient = chainConfig.isOsmosis
+    ? await getOracleQueryClientOsmosis(chainConfig)
+    : await getOracleQueryClientNeutron(chainConfig)
   try {
     if (!assets.length) return []
 
-    const oracleQueryClient = await getOracleQueryClient(chainConfig)
     const priceResults = await cacheFn(
       () => iterateContractQuery(oracleQueryClient.prices),
       oraclePriceCache,
@@ -25,13 +33,19 @@ export default async function getOraclePrices(
 
     return assets.map((asset) => {
       const priceResponse = priceResults.find(byDenom(asset.denom)) as PriceResponse
-      const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
-      return BNCoin.fromDenomAndBigNumber(
-        asset.denom,
-        BN(priceResponse?.price ?? BN_ZERO).shiftedBy(decimalDiff),
-      )
+      return getAssetPrice(asset, priceResponse)
     })
-  } catch (ex) {
-    throw ex
+  } catch (error) {
+    console.error(error)
+    try {
+      return Promise.all(
+        assets.map(async (asset) => {
+          const priceResponse = await oracleQueryClient.price({ denom: asset.denom })
+          return getAssetPrice(asset, priceResponse)
+        }),
+      )
+    } catch (ex) {
+      throw ex
+    }
   }
 }

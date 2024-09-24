@@ -1,9 +1,8 @@
-import { useMemo } from 'react'
-
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useMarkets from 'hooks/markets/useMarkets'
-import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
+import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
+import { useMemo } from 'react'
 
 export default function useBorrowMarketAssetsTableData() {
   const account = useCurrentAccount()
@@ -40,7 +39,7 @@ export default function useBorrowMarketAssetsTableData() {
 
     return {
       accountBorrowedAssets,
-      availableAssets,
+      availableAssets: availableAssets.filter((a) => !a.asset.isDeprecated),
       allAssets: [...accountBorrowedAssets, ...availableAssets],
     }
   }, [account?.debts, markets, convertAmount])

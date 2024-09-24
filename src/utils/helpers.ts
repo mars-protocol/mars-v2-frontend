@@ -3,8 +3,6 @@ import throttle from 'lodash.throttle'
 
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
-import { DocURL } from 'types/enums/docURL'
-import { WalletID } from 'types/enums/wallet'
 import { getCoinValue } from 'utils/formatters'
 
 BigNumber.config({ EXPONENTIAL_AT: 1e9 })
@@ -49,29 +47,26 @@ export function mergeBNCoinArrays(array1: BNCoin[], array2: BNCoin[]) {
   return merged
 }
 
-export function getValueFromBNCoins(coins: BNCoin[], prices: BNCoin[], assets: Asset[]): BigNumber {
+export function getValueFromBNCoins(coins: BNCoin[], assets: Asset[]): BigNumber {
   let totalValue = BN_ZERO
 
   coins.forEach((coin) => {
-    totalValue = totalValue.plus(getCoinValue(coin, prices, assets))
+    totalValue = totalValue.plus(getCoinValue(coin, assets))
   })
 
   return totalValue
 }
 
-export function getLeverageFromLTV(ltv: number) {
-  return +(1 / (1 - ltv)).toPrecision(2)
+export function getBNCoinFromValue(value: BigNumber, asset: Asset): BNCoin {
+  if (!asset.price) return new BNCoin({ denom: asset.denom, amount: '0' })
+  return BNCoin.fromDenomAndBigNumber(
+    asset.denom,
+    value.dividedBy(asset.price.amount).shiftedBy(asset.decimals),
+  )
 }
 
-export function getGovernanceUrl(walletId: WalletID) {
-  switch (walletId) {
-    case WalletID.Station:
-      return DocURL.COUNCIL_STATION
-    case WalletID.Leap:
-      return DocURL.COUNCIL_LEAP
-    default:
-      return DocURL.COUNCIL_KEPLR
-  }
+export function getLeverageFromLTV(ltv: number) {
+  return +(1 / (1 - ltv)).toPrecision(2)
 }
 
 export function capitalizeFirstLetter(string: string) {

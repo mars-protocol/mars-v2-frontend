@@ -2,44 +2,94 @@ import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action, Uint128 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { byDenom } from 'utils/array'
-import { VAULT_DEPOSIT_BUFFER } from 'utils/constants'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
-import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
+import { BN, getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
 import { getTokenPrice } from 'utils/tokens'
 
-export function getVaultDepositCoinsAndValue(
+export function getVaultBaseDepositCoinsAndValue(
   vault: Vault,
   deposits: BNCoin[],
   borrowings: BNCoin[],
   reclaims: BNCoin[],
-  prices: BNCoin[],
   slippage: number,
   assets: Asset[],
 ) {
+  let primaryDepositValue = BN_ZERO
+  let secondaryDepositValue = BN_ZERO
   const depositsAndReclaims = mergeBNCoinArrays(deposits, reclaims)
   const borrowingsAndDepositsAndReclaims = mergeBNCoinArrays(borrowings, depositsAndReclaims)
 
   // The slippage is to account for rounding errors. Otherwise, it might happen we try to deposit more value
   // into the vaults than there are funds available.
-  const totalValue = getValueFromBNCoins(borrowingsAndDepositsAndReclaims, prices, assets).times(
+  const totalValue = getValueFromBNCoins(borrowingsAndDepositsAndReclaims, assets).times(
     1 - slippage,
   )
-  const halfValue = totalValue.dividedBy(2)
 
   const primaryAsset = assets.find(byDenom(vault.denoms.primary)) ?? assets[0]
   const secondaryAsset = assets.find(byDenom(vault.denoms.secondary)) ?? assets[0]
 
-  // The buffer is needed as sometimes the pools are a bit skew, or because of other inaccuracies in the messages
-  const primaryDepositAmount = halfValue
-    .dividedBy(getTokenPrice(primaryAsset.denom, prices))
+  const primaryAssetAmount =
+    borrowingsAndDepositsAndReclaims.find(byDenom(primaryAsset.denom))?.amount ?? BN_ZERO
+  const primaryAssetValue = getCoinValue(
+    BNCoin.fromDenomAndBigNumber(vault.denoms.primary, primaryAssetAmount),
+    assets,
+  )
+  const secondaryAssetAmount =
+    borrowingsAndDepositsAndReclaims.find(byDenom(secondaryAsset.denom))?.amount ?? BN_ZERO
+  const secondaryAssetValue = getCoinValue(
+    BNCoin.fromDenomAndBigNumber(vault.denoms.secondary, secondaryAssetAmount),
+    assets,
+  )
+
+  const depositAndReclaimsValue = getValueFromBNCoins(depositsAndReclaims, assets)
+
+  if (totalValue.isZero())
+    return {
+      primaryCoin: new BNCoin({
+        denom: vault.denoms.primary,
+        amount: '0',
+      }),
+      secondaryCoin: new BNCoin({
+        denom: vault.denoms.secondary,
+        amount: '0',
+      }),
+      totalValue: totalValue,
+    }
+  // only use the halfValue of the depositsAndReclaims to calculate the base deposit amount
+  const halfValue = depositAndReclaimsValue.dividedBy(2)
+
+  // get the ratio by dividing the totals of the primary and secondary assets
+  const ratio = primaryAssetValue.dividedBy(secondaryAssetValue)
+
+  // a custom ratio is given if the ratio is bigger than the buffer + slippage or smaller than the buffer - slippage
+  const isCustomRatio =
+    primaryAssetValue.isZero() || secondaryAssetValue.isZero()
+      ? true
+      : ratio.isLessThan(BN(0.999).minus(slippage)) || ratio.isGreaterThan(BN(0.999).plus(slippage))
+
+  if (isCustomRatio) {
+    // on a custom ratio the value of the asset with the highe value has to deducted by the value of the asset with the lower value
+    // this value is then divided by 2 to get the leftover value that will be swapped to the asset with the lower value
+
+    // e.g.: $250 ATOM (primary) and $500 stATOM (secondary) -> $750 totalValue, $375 halfValue
+    // return $250 ATOM and $375 stATOM as depositAmounts, since the swapFunction will return $125 worth of ATOM to add to the depositAmounts
+    const hasMorePrimaryAsset = primaryAssetValue.isGreaterThan(secondaryAssetValue)
+
+    primaryDepositValue = hasMorePrimaryAsset ? halfValue : primaryAssetValue
+    secondaryDepositValue = hasMorePrimaryAsset ? secondaryAssetValue : halfValue
+  } else {
+    primaryDepositValue = halfValue
+    secondaryDepositValue = halfValue
+  }
+
+  const primaryDepositAmount = primaryDepositValue
+    .dividedBy(getTokenPrice(primaryAsset.denom, assets))
     .shiftedBy(primaryAsset.decimals)
-    .times(VAULT_DEPOSIT_BUFFER)
     .integerValue()
 
-  const secondaryDepositAmount = halfValue
-    .dividedBy(getTokenPrice(secondaryAsset.denom, prices))
+  const secondaryDepositAmount = secondaryDepositValue
+    .dividedBy(getTokenPrice(secondaryAsset.denom, assets))
     .shiftedBy(secondaryAsset.decimals)
-    .times(VAULT_DEPOSIT_BUFFER)
     .integerValue()
 
   return {
@@ -60,14 +110,13 @@ export function getVaultSwapActions(
   deposits: BNCoin[],
   reclaims: BNCoin[],
   borrowings: BNCoin[],
-  prices: BNCoin[],
   assets: Asset[],
   slippage: number,
 ): Action[] {
   const swapActions: Action[] = []
   const coins = [...deposits, ...borrowings, ...reclaims]
 
-  const value = getValueFromBNCoins(coins, prices, assets)
+  const value = getValueFromBNCoins(coins, assets)
 
   let primaryLeftoverValue = value.dividedBy(2)
   let secondaryLeftoverValue = value.dividedBy(2)
@@ -90,44 +139,38 @@ export function getVaultSwapActions(
   )
 
   primaryCoins.forEach((bnCoin) => {
-    let value = getCoinValue(bnCoin, prices, assets)
+    let value = getCoinValue(bnCoin, assets)
     if (value.isLessThanOrEqualTo(primaryLeftoverValue)) {
       primaryLeftoverValue = primaryLeftoverValue.minus(value)
     } else {
       value = value.minus(primaryLeftoverValue)
       primaryLeftoverValue = primaryLeftoverValue.minus(primaryLeftoverValue)
       otherCoins.push(
-        BNCoin.fromDenomAndBigNumber(
-          bnCoin.denom,
-          getCoinAmount(bnCoin.denom, value, prices, assets),
-        ),
+        BNCoin.fromDenomAndBigNumber(bnCoin.denom, getCoinAmount(bnCoin.denom, value, assets)),
       )
     }
   })
 
   secondaryCoins.forEach((bnCoin) => {
-    let value = getCoinValue(bnCoin, prices, assets)
+    let value = getCoinValue(bnCoin, assets)
     if (value.isLessThanOrEqualTo(secondaryLeftoverValue)) {
       secondaryLeftoverValue = secondaryLeftoverValue.minus(value)
     } else {
       value = value.minus(secondaryLeftoverValue)
       secondaryLeftoverValue = secondaryLeftoverValue.minus(secondaryLeftoverValue)
       otherCoins.push(
-        BNCoin.fromDenomAndBigNumber(
-          bnCoin.denom,
-          getCoinAmount(bnCoin.denom, value, prices, assets),
-        ),
+        BNCoin.fromDenomAndBigNumber(bnCoin.denom, getCoinAmount(bnCoin.denom, value, assets)),
       )
     }
   })
 
   otherCoins.forEach((bnCoin) => {
-    let value = getCoinValue(bnCoin, prices, assets)
+    let value = getCoinValue(bnCoin, assets)
     let amount = bnCoin.amount
 
     if (primaryLeftoverValue.isGreaterThan(0)) {
       const swapValue = value.isLessThan(primaryLeftoverValue) ? value : primaryLeftoverValue
-      const swapAmount = getCoinAmount(bnCoin.denom, swapValue, prices, assets)
+      const swapAmount = getCoinAmount(bnCoin.denom, swapValue, assets)
 
       value = value.minus(swapValue)
       amount = amount.minus(swapAmount)
@@ -152,9 +195,6 @@ export function getEnterVaultActions(
   secondaryCoin: BNCoin,
   slippage: number,
 ): Action[] {
-  primaryCoin.amount = primaryCoin.amount.times(0.8).integerValue()
-  secondaryCoin.amount = secondaryCoin.amount.times(0.8).integerValue()
-
   return [
     {
       provide_liquidity: {
@@ -178,7 +218,12 @@ export function getEnterVaultActions(
   ]
 }
 
-function getSwapAction(denomIn: string, denomOut: string, amount: BigNumber, slippage: number) {
+export function getSwapAction(
+  denomIn: string,
+  denomOut: string,
+  amount: BigNumber,
+  slippage: number,
+) {
   return {
     swap_exact_in: {
       coin_in: {

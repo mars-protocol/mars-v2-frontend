@@ -1,11 +1,13 @@
 import { useCallback, useMemo } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useSWRConfig } from 'swr'
 
-import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
+import AccountAlertDialog from 'components/Modals/Account/AccountAlertDialog'
 import { ArrowRight, ExclamationMarkCircled } from 'components/common/Icons'
-import AccountDeleteAlertDialog from 'components/Modals/Account/AccountDeleteAlertDialog'
 import Text from 'components/common/Text'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -26,21 +28,34 @@ export default function AccountDeleteController() {
 
 function AccountDeleteModal(props: Props) {
   const modal = props.modal
+  const chainConfig = useChainConfig()
   const deleteAccount = useStore((s) => s.deleteAccount)
+  const { mutate } = useSWRConfig()
+  const { address: urlAddress } = useParams()
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { address } = useParams()
   const { debts, vaults, id: accountId } = modal || {}
   const [searchParams] = useSearchParams()
-  const assets = useAllAssets()
+  const assets = useDepositEnabledAssets()
   const closeDeleteAccountModal = useCallback(() => {
     useStore.setState({ accountDeleteModal: null })
   }, [])
 
-  const deleteAccountHandler = useCallback(() => {
+  const deleteAccountHandler = useCallback(async () => {
+    useStore.setState({ accountDeleteModal: null })
     const options = { accountId: modal.id, lends: modal.lends }
-    deleteAccount(options)
-    navigate(getRoute(getPage(pathname), searchParams, address))
+    const path = getPage(pathname)
+    const isDeleted = await deleteAccount(options)
+    if (isDeleted) {
+      mutate(`chains/${chainConfig.id}/wallets/${urlAddress}/account-ids`)
+      if (path.includes('portfolio')) {
+        // If the current page is the portfolio accounts detail page. Reroute the user to the portfolio overview page.
+        navigate(getRoute('portfolio', searchParams, urlAddress))
+      } else {
+        navigate(getRoute(path, searchParams, address))
+      }
+    }
     closeDeleteAccountModal()
   }, [
     modal.id,
@@ -50,6 +65,9 @@ function AccountDeleteModal(props: Props) {
     pathname,
     searchParams,
     address,
+    urlAddress,
+    chainConfig.id,
+    mutate,
     closeDeleteAccountModal,
   ])
 
@@ -60,7 +78,7 @@ function AccountDeleteModal(props: Props) {
 
   if (debts.length > 0)
     return (
-      <AccountDeleteAlertDialog
+      <AccountAlertDialog
         title='Repay your Debts to delete your account'
         icon={<ExclamationMarkCircled width={18} />}
         content='You must repay all borrowings before deleting your account.'
@@ -78,7 +96,7 @@ function AccountDeleteModal(props: Props) {
 
   if (vaults.length > 0)
     return (
-      <AccountDeleteAlertDialog
+      <AccountAlertDialog
         title='Close your positions to delete your account'
         content='You must first close your farming positions before deleting your account.'
         closeHandler={closeDeleteAccountModal}
@@ -95,7 +113,7 @@ function AccountDeleteModal(props: Props) {
 
   if (depositsAndLends.length === 0)
     return (
-      <AccountDeleteAlertDialog
+      <AccountAlertDialog
         title={`Delete Credit Account ${accountId}`}
         content='Deleting your Credit Account is irreversible.'
         closeHandler={closeDeleteAccountModal}
@@ -108,7 +126,7 @@ function AccountDeleteModal(props: Props) {
     )
 
   return (
-    <AccountDeleteAlertDialog
+    <AccountAlertDialog
       title={`Delete Credit Account ${accountId}`}
       content={
         <>

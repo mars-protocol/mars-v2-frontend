@@ -8,45 +8,47 @@ import AccountSummaryHeader from 'components/account/AccountSummary/AccountSumma
 import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import Accordion from 'components/common/Accordion'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import useHlsStakingAssets from 'hooks/hls/useHlsStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useHealthComputer from 'hooks/useHealthComputer'
-import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
-import usePrices from 'hooks/usePrices'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApr, calculateAccountLeverage } from 'utils/accounts'
 
 interface Props {
   account: Account
-  isAccountDetails?: boolean
-  isHls?: boolean
+  isInModal?: boolean
 }
 
 export default function AccountSummary(props: Props) {
-  const { account, isAccountDetails, isHls } = props
-  const storageKey = isAccountDetails
-    ? LocalStorageKeys.ACCOUNT_DETAILS_TABS
-    : LocalStorageKeys.ACCOUNT_SUMMARY_TABS
-  const defaultSetting = isAccountDetails
-    ? DEFAULT_SETTINGS.accountDetailsTabs
-    : DEFAULT_SETTINGS.accountSummaryTabs
+  const { account, isInModal } = props
+  const isHls = account.kind === 'high_levered_strategy'
+  const chainConfig = useChainConfig()
+  const storageKey = isInModal
+    ? `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_IN_MODAL_TABS_EXPANDED}`
+    : `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_TABS_EXPANDED}`
+  const defaultSetting = isInModal
+    ? getDefaultChainSettings(chainConfig).accountSummaryInModalTabsExpanded
+    : getDefaultChainSettings(chainConfig).accountSummaryTabsExpanded
   const [accountSummaryTabs, setAccountSummaryTabs] = useLocalStorage<boolean[]>(
     storageKey,
     defaultSetting,
   )
   const { data: vaultAprs } = useVaultAprs()
-  const { data: prices } = usePrices()
-  const assets = useAllAssets()
+  const astroLpAprs = useAstroLpAprs()
+  const assets = useWhitelistedAssets()
   const updatedAccount = useStore((s) => s.updatedAccount)
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
     useLendingMarketAssetsTableData()
-  const { data: hlsStrategies } = useHLSStakingAssets()
+  const { data: hlsStrategies } = useHlsStakingAssets()
   const lendingAssetsData = useMemo(
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
@@ -56,22 +58,26 @@ export default function AccountSummary(props: Props) {
     updatedAccount || account,
   )
   const leverage = useMemo(
-    () => (account ? calculateAccountLeverage(account, prices, assets) : BN_ZERO),
-    [account, prices, assets],
+    () => (account ? calculateAccountLeverage(account, assets) : BN_ZERO),
+    [account, assets],
   )
   const updatedLeverage = useMemo(() => {
     if (!updatedAccount) return null
-    const updatedLeverage = calculateAccountLeverage(updatedAccount, prices, assets)
+    const updatedLeverage = calculateAccountLeverage(updatedAccount, assets)
 
     if (updatedLeverage.eq(leverage)) return null
     return updatedLeverage
-  }, [updatedAccount, prices, assets, leverage])
+  }, [updatedAccount, assets, leverage])
 
   const handleToggle = useCallback(
     (index: number) => {
-      setAccountSummaryTabs(accountSummaryTabs.map((tab, i) => (i === index ? !tab : tab)))
+      setAccountSummaryTabs(
+        defaultSetting.map((_, i) =>
+          i === index ? !accountSummaryTabs[i] : accountSummaryTabs[i],
+        ),
+      )
     },
-    [accountSummaryTabs, setAccountSummaryTabs],
+    [accountSummaryTabs, setAccountSummaryTabs, defaultSetting],
   )
 
   const apr = useMemo(
@@ -80,21 +86,20 @@ export default function AccountSummary(props: Props) {
         updatedAccount ?? account,
         borrowAssetsData,
         lendingAssetsData,
-        prices,
         hlsStrategies,
         assets,
         vaultAprs,
-        account.kind === 'high_levered_strategy',
+        astroLpAprs,
       ),
     [
       account,
       updatedAccount,
       borrowAssetsData,
       lendingAssetsData,
-      prices,
       hlsStrategies,
       assets,
       vaultAprs,
+      astroLpAprs,
     ],
   )
 
@@ -102,8 +107,7 @@ export default function AccountSummary(props: Props) {
     const itemsArray = [
       {
         title: `Composition`,
-        renderContent: () =>
-          account ? <AccountComposition account={account} isHls={isHls} /> : null,
+        renderContent: () => (account ? <AccountComposition account={account} /> : null),
         isOpen: accountSummaryTabs[0],
         toggleOpen: (index: number) => handleToggle(index),
         renderSubTitle: () => <></>,
@@ -117,7 +121,6 @@ export default function AccountSummary(props: Props) {
               borrowingData={borrowAssetsData}
               lendingData={lendingAssetsData}
               hideCard
-              isHls={isHls}
             />
           ) : null,
         isOpen: accountSummaryTabs[1],
@@ -130,7 +133,9 @@ export default function AccountSummary(props: Props) {
       !!account.vaults.length ||
       !!updatedAccount?.vaults.length ||
       !!account.perpsVault ||
-      !!updatedAccount?.perpsVault
+      !!updatedAccount?.perpsVault ||
+      !!account.stakedAstroLps.length ||
+      !!updatedAccount?.stakedAstroLps.length
 
     if (showStrategies)
       itemsArray.push({
@@ -142,7 +147,10 @@ export default function AccountSummary(props: Props) {
         renderSubTitle: () => <></>,
       })
 
-    if (account.perps.length > 0 || (updatedAccount && updatedAccount.perps.length > 0))
+    if (
+      (account.perps && account.perps.length > 0) ||
+      (updatedAccount && updatedAccount.perps && updatedAccount.perps.length > 0)
+    )
       itemsArray.push({
         title: 'Perp Positions',
         renderContent: () =>
@@ -157,7 +165,6 @@ export default function AccountSummary(props: Props) {
     account,
     borrowAssetsData,
     lendingAssetsData,
-    isHls,
     handleToggle,
     accountSummaryTabs,
     updatedAccount,
@@ -169,7 +176,6 @@ export default function AccountSummary(props: Props) {
       <AccountSummaryHeader
         account={account}
         updatedAccount={updatedAccount}
-        prices={prices}
         assets={assets}
         leverage={leverage.toNumber() || 1}
         updatedLeverage={updatedLeverage?.toNumber() || null}
@@ -178,7 +184,7 @@ export default function AccountSummary(props: Props) {
         updatedHealth={updatedHealth}
         healthFactor={healthFactor}
         updatedHealthFactor={updatedHealthFactor}
-        isAccountDetails={isAccountDetails}
+        isInModal={isInModal}
       />
       <Accordion items={items} allowMultipleOpen />
     </>

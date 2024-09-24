@@ -1,37 +1,35 @@
 import { Row } from '@tanstack/react-table'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useMarket from 'hooks/markets/useMarket'
-import usePrices from 'hooks/usePrices'
 import { calculateAccountLeverage } from 'utils/accounts'
 import { getLeveragedApy } from 'utils/math'
 
 export const ACTIVE_APY_META = { header: 'APY', accessorKey: 'strategy.apy' }
 
 export const activeApySortingFn = (
-  a: Row<HLSAccountWithStrategy>,
-  b: Row<HLSAccountWithStrategy>,
+  a: Row<HlsAccountWithStrategy>,
+  b: Row<HlsAccountWithStrategy>,
 ): number => {
   // TODO: Properly implement this
   return 0
 }
 
 interface Props {
-  account: HLSAccountWithStrategy
+  account: HlsAccountWithStrategy
 }
 
 export default function ActiveAPY(props: Props) {
-  const { data: prices } = usePrices()
-  const assets = useAllAssets()
+  const assets = useDepositEnabledAssets()
   const borrowRate = useMarket(props.account.strategy.denoms.borrow)?.apy.borrow
 
   const leverage = useMemo(
-    () => calculateAccountLeverage(props.account, prices, assets),
-    [assets, prices, props.account],
+    () => calculateAccountLeverage(props.account, assets),
+    [assets, props.account],
   )
 
   const leveragedApy = useMemo(() => {

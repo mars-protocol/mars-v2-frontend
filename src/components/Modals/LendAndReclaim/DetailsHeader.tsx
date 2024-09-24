@@ -1,8 +1,8 @@
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import useAssetIncentivesApy from 'hooks/useAssetIncentiveApy'
-import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
+import useAssetIncentivesApy from 'hooks/incentives/useAssetIncentiveApy'
+import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
@@ -59,7 +59,9 @@ function DetailsHeader({ data }: Props) {
       )}
       <TitleAndSubCell
         title={
-          <DisplayCurrency coin={new BNCoin({ denom: asset.denom, amount: cap.max.toString() })} />
+          <DisplayCurrency
+            coin={new BNCoin({ denom: asset.denom, amount: cap?.max.toString() ?? '0' })}
+          />
         }
         sub={'Deposit Cap'}
       />

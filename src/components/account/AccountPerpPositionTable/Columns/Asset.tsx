@@ -30,7 +30,7 @@ function LabelAndValue(props: { label: string; children: ReactNode; className?: 
 
   return (
     <div className='flex items-center justify-between'>
-      <Text size='sm' className='text-white/60'>
+      <Text size='sm' tag='div' className='text-white/60'>
         {label}
       </Text>
       {children}
@@ -79,9 +79,13 @@ export default function Asset(props: Props) {
 
   return (
     <Tooltip content={<TooltipContent row={row} asset={asset} />} type='info'>
-      <Text size='xs' className='flex items-center gap-2 no-wrap group/asset hover:cursor-help'>
+      <Text
+        tag='div'
+        size='xs'
+        className='flex items-center gap-2 no-wrap group/asset hover:cursor-help'
+      >
         <AssetImage asset={asset} className='w-4 h-4' />
-        <span className='pb-[1px] border-b border-white/20 border-dashed group-hover/asset:border-transparent'>
+        <span className='pb-[1px] border-b border-white/40 border-dashed group-hover/asset:border-transparent'>
           {row.symbol}
         </span>
         <TradeDirection tradeDirection={row.tradeDirection} />

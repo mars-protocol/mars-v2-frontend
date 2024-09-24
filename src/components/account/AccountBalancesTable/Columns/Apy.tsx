@@ -17,14 +17,12 @@ export default function Apr(props: Props) {
   if (apy === undefined) return <Loading />
   if (apy === null) return <Text size='xs'>N/A</Text>
 
-  if (apy === 0) return <p className='w-full text-xs text-right number'>&ndash;</p>
-
   const isEnabled =
     markets.find((market) => market.asset.denom === props.denom)?.borrowEnabled ?? false
 
   return (
     <AssetRate
-      className='justify-end text-xs my-auto'
+      className='justify-end my-auto text-xs'
       rate={apy}
       isEnabled={type !== 'lend' || isEnabled}
       type='apy'

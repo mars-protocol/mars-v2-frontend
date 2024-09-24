@@ -3,9 +3,9 @@ import { ArrowUpLine } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
-import useAccountId from 'hooks/useAccountId'
-import useCurrentAccountDeposits from 'hooks/useCurrentAccountDeposits'
-import useLendAndReclaimModal from 'hooks/useLendAndReclaimModal'
+import useAccountId from 'hooks/accounts/useAccountId'
+import useLendAndReclaimModal from 'hooks/common/useLendAndReclaimModal'
+import useCurrentAccountDeposits from 'hooks/wallet/useCurrentAccountDeposits'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 
@@ -24,11 +24,13 @@ interface Props {
 export default function LendButton(props: Props) {
   const { openLend } = useLendAndReclaimModal()
   const accountDeposits = useCurrentAccountDeposits()
+  const isAutoLendEnabled = props.data.asset.isAutoLendEnabled
   const assetDepositAmount = accountDeposits.find(byDenom(props.data.asset.denom))?.amount
   const address = useStore((s) => s.address)
   const accountId = useAccountId()
   const hasNoDeposit = !!(!assetDepositAmount && accountId)
 
+  if (!isAutoLendEnabled && address) return null
   return (
     <div className='flex justify-end'>
       <ConditionalWrapper

@@ -4,10 +4,10 @@ import AssetAmountSelectActionModal from 'components/Modals/AssetAmountSelectAct
 import DetailsHeader from 'components/Modals/LendAndReclaim/DetailsHeader'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import { BN_ZERO } from 'constants/math'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
-import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
-import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
-import useWalletBalances from 'hooks/useWalletBalances'
+import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
+import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -51,15 +51,13 @@ export default function Deposit(props: Props) {
     }
   }, [baseBalance])
 
-  const onDebounce = useCallback(() => {
-    simulateDeposits('lend', [fundingAsset])
-  }, [fundingAsset, simulateDeposits])
-
   const handleAmountChange = useCallback(
     (value: BigNumber) => {
-      setFundingAsset(BNCoin.fromDenomAndBigNumber(asset.denom, value))
+      const newFundingAsset = BNCoin.fromDenomAndBigNumber(asset.denom, value)
+      setFundingAsset(newFundingAsset)
+      simulateDeposits('lend', [newFundingAsset])
     },
-    [asset.denom],
+    [asset.denom, simulateDeposits],
   )
 
   if (!modal) return
@@ -75,7 +73,7 @@ export default function Deposit(props: Props) {
       onClose={close}
       onAction={handleClick}
       onChange={handleAmountChange}
-      onDebounce={onDebounce}
+      checkForCampaign
     />
   )
 }

@@ -4,7 +4,7 @@ import { InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
-import { OrderType } from 'types/enums/orderType'
+import { OrderType } from 'types/enums'
 import { capitalizeFirstLetter } from 'utils/helpers'
 
 interface Props {

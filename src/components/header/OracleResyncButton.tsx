@@ -6,14 +6,14 @@ import { Tooltip } from 'components/common/Tooltip'
 import useStore from 'store'
 
 export default function OracleResyncButton() {
-  const updateOracle = useStore((s) => s.updateOracle)
-  const updatePythOracle = useCallback(() => updateOracle(), [updateOracle])
+  const resyncOracle = useStore((s) => s.resyncOracle)
+  const updatePythOracle = useCallback(() => resyncOracle(), [resyncOracle])
 
   return (
     <Tooltip
       type='warning'
       content='The on-chain Pyth oracle prices are too old/stale. Update them by executing a resync transaction.'
-      hideArrow={true}
+      hideArrow
     >
       <Button
         leftIcon={<ExclamationMarkCircled className='w-4' />}

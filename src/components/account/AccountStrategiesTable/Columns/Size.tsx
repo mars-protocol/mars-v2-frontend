@@ -4,13 +4,17 @@ import { useMemo } from 'react'
 import { getSizeChangeColor } from 'components/account/AccountStrategiesTable/functions'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from 'constants/math'
-import useAllAssets from 'hooks/assets/useAllAssets'
 import useAsset from 'hooks/assets/useAsset'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { formatAmountToPrecision } from 'utils/formatters'
 
+<<<<<<< HEAD
 export const SIZE_META = { header: 'Size', meta: { className: 'w-20 min-w-20' } }
+=======
+export const SIZE_META = { header: 'Size' }
+>>>>>>> 1d249b39f39cd53cdfeb346a7531cc96f29e0afc
 
 interface Props {
   coins: AccountStrategyRow['coins']
@@ -39,7 +43,7 @@ type FormattedSizeProps = {
 }
 
 function FormattedSize(props: FormattedSizeProps) {
-  const assets = useAllAssets()
+  const assets = useDepositEnabledAssets()
   const asset = useAsset(props.coin.denom)
 
   const symbol = assets.find(byDenom(props.coin.denom))?.symbol

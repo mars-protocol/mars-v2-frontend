@@ -8,11 +8,12 @@ import { CircularProgress } from 'components/common/CircularProgress'
 import { ChevronDown, Cross, CrossCircled, ExternalLink } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useAssetsNoOraclePrices from 'hooks/assets/useAssetsNoOraclePrices'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useTransactionStore from 'hooks/common/useTransactionStore'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useChainConfig from 'hooks/useChainConfig'
-import useTransactionStore from 'hooks/useTransactionStore'
 import useStore from 'store'
 import { formatAmountWithSymbol } from 'utils/formatters'
 import { BN } from 'utils/helpers'
@@ -33,9 +34,11 @@ export function generateToastContent(content: ToastSuccess['content'], assets: A
     <React.Fragment key={index}>
       {item.text && (
         <div className='flex flex-wrap w-full mb-1'>
-          <Text size='sm' className='w-full mb-1 text-white'>
-            {item.text}
-          </Text>
+          {(!item.coins || item.coins.length > 0) && (
+            <Text size='sm' className='w-full mb-1 text-white'>
+              {item.text}
+            </Text>
+          )}
           {item.coins.length > 0 && (
             <ul className='flex flex-wrap w-full gap-1 p-1 pl-4 list-disc'>
               {item.coins.map((coin, index) => {
@@ -61,11 +64,12 @@ export function generateToastContent(content: ToastSuccess['content'], assets: A
 }
 
 export default function Toaster() {
+  const chainConfig = useChainConfig()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
-  const chainConfig = useChainConfig()
+  const { data: assets } = useAssetsNoOraclePrices()
 
   const toast = useStore((s) => s.toast)
   const { addTransaction } = useTransactionStore()
@@ -156,9 +160,7 @@ export default function Toaster() {
               {toast.message}
             </Text>
           )}
-          {!isError &&
-            toast.content?.length > 0 &&
-            generateToastContent(toast.content, chainConfig.assets)}
+          {!isError && toast.content?.length > 0 && generateToastContent(toast.content, assets)}
           {toast.hash && (
             <div className='w-full'>
               <TextLink

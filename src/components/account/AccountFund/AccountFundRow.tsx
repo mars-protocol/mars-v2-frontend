@@ -1,3 +1,4 @@
+import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
 import useAsset from 'hooks/assets/useAsset'
@@ -10,7 +11,6 @@ interface Props {
   denom: string
   isConfirming: boolean
   updateFundingAssets: (amount: BigNumber, denom: string) => void
-  onDebounce: () => void
 }
 
 export default function AccountFundRow(props: Props) {
@@ -21,16 +21,33 @@ export default function AccountFundRow(props: Props) {
   const balance = props.balances.find(byDenom(props.denom))?.amount ?? BN_ZERO
 
   return (
-    <TokenInputWithSlider
-      asset={asset}
-      onChange={(amount) => props.updateFundingAssets(amount, asset.denom)}
-      onDebounce={props.onDebounce}
-      amount={props.amount}
-      max={balance}
-      balances={props.balances}
-      maxText='Max'
-      disabled={props.isConfirming}
-      warningMessages={[]}
-    />
+    <>
+      <TokenInputWithSlider
+        asset={asset}
+        onChange={(amount) => props.updateFundingAssets(amount, asset.denom)}
+        amount={props.amount}
+        max={balance}
+        balances={props.balances}
+        maxText='Max'
+        disabled={props.isConfirming}
+        warningMessages={[]}
+      />
+      {asset.campaigns.length > 0 &&
+        asset.campaigns.map((campaign, index) => (
+          <div
+            className='flex justify-center w-full p-2 mt-4 border rounded border-white/20'
+            key={index}
+          >
+            <AssetCampaignCopy
+              campaign={campaign}
+              asset={asset}
+              size='sm'
+              amount={props.amount}
+              withLogo
+              className='justify-center'
+            />
+          </div>
+        ))}
+    </>
   )
 }

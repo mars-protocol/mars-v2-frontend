@@ -10,6 +10,7 @@ import {
   TotalDepositResponse,
   VaultConfigBaseForAddr,
 } from 'types/generated/mars-params/MarsParams.types'
+import { VaultPositionResponse } from 'types/generated/mars-perps/MarsPerps.types'
 import {
   ArrayOfMarket,
   ArrayOfUserDebtResponse,
@@ -17,14 +18,14 @@ import {
 
 interface Cache<T> extends Map<string, { data: T | null; timestamp: number }> {}
 
-let totalRequests: number = 0
-let cachedRequests: number = 0
+let totalRequests = 0
+let cachedRequests = 0
 
 export async function cacheFn<T>(
   fn: () => Promise<T>,
   cache: Cache<T>,
   key: string,
-  staleAfter: number = 5,
+  staleAfter = 5,
 ) {
   const cachedData = cache.get(key)?.data
   const isStale = (cache.get(key)?.timestamp || 0) + 1000 * staleAfter < new Date().getTime()
@@ -66,3 +67,4 @@ export const previewDepositCache: Cache<{ vaultAddress: string; amount: string }
 export const stakingAprCache: Cache<StakingApr[]> = new Map()
 export const assetParamsCache: Cache<AssetParamsBaseForAddr[]> = new Map()
 export const userDebtCache: Cache<ArrayOfUserDebtResponse> = new Map()
+export const vaultPositionResponse: Cache<VaultPositionResponse | null> = new Map()

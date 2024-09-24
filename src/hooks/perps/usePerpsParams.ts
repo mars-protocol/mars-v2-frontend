@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
-import useSWR from 'swr'
+import useSWRImmutable from 'swr/immutable'
 
-import useChainConfig from 'hooks/useChainConfig'
-import useClients from 'hooks/useClients'
-import { PerpParams } from 'types/generated/mars-params/MarsParams.types'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useClients from 'hooks/chain/useClients'
+import { PerpParams } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 import iterateContractQuery from 'utils/iterateContractQuery'
@@ -26,12 +26,16 @@ export function useAllPerpsParams() {
 export function useAllPerpsParamsSC() {
   const chainConfig = useChainConfig()
   const clients = useClients()
-  return useSWR(clients && `chains/${chainConfig.id}/perps/params`, async () =>
-    getPerpsParams(clients!),
+
+  return useSWRImmutable(
+    clients && chainConfig.perps && `chains/${chainConfig.id}/perps/params`,
+    async () => getPerpsParams(chainConfig, clients!),
+    { suspense: true },
   )
 }
 
-async function getPerpsParams(clients: ContractClients) {
+async function getPerpsParams(chainConfig: ChainConfig, clients: ContractClients) {
+  if (!chainConfig.perps) return []
   return iterateContractQuery(clients.params.allPerpParams, undefined, [])
 }
 
@@ -45,14 +49,4 @@ function resolvePerpsParams(param: PerpParams) {
     maxOpenInterestShort: BN(param.max_short_oi_value),
     maxOpenInterestLong: BN(param.max_long_oi_value),
   } as PerpsParams
-}
-
-export interface PerpsParams {
-  denom: string
-  closingFeeRate: BigNumber
-  maxOpenInterestLong: BigNumber
-  maxOpenInterestShort: BigNumber
-  maxPositionValue: BigNumber | null
-  minPositionValue: BigNumber
-  openingFeeRate: BigNumber
 }

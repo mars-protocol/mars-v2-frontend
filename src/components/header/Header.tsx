@@ -14,12 +14,12 @@ import MobileNavigationToggle from 'components/header/navigation/mobile/MobileNa
 import OracleResyncButton from 'components/header/OracleResyncButton'
 import RewardsCenter from 'components/header/RewardsCenter'
 import Wallet from 'components/Wallet'
-import useAccountId from 'hooks/useAccountId'
+import useAccountId from 'hooks/accounts/useAccountId'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
-import { WalletID } from 'types/enums/wallet'
-import { getGovernanceUrl } from 'utils/helpers'
+import { DocURL } from 'types/enums'
 
-const menuTree = (walletId: WalletID, chainConfig: ChainConfig): MenuTreeEntry[] => [
+const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
   {
     pages: ['trade', 'trade-advanced'],
     label: 'Trade',
@@ -39,36 +39,45 @@ const menuTree = (walletId: WalletID, chainConfig: ChainConfig): MenuTreeEntry[]
     ],
   },
   ...(chainConfig.perps ? [{ pages: ['perps'] as Page[], label: 'Perps' }] : []),
-  { pages: chainConfig.farm || chainConfig.perps ? ['lend', 'farm'] : ['lend'], label: 'Earn' },
+  {
+    pages: chainConfig.farm || chainConfig.perps ? ['lend', 'farm', 'perps-vault'] : ['lend'],
+    label: 'Earn',
+  },
   { pages: ['borrow'], label: 'Borrow' },
-  ...(chainConfig.hls ? [{ pages: ['hls-staking'] as Page[], label: 'High Leverage' }] : []),
+  ...(chainConfig.hls
+    ? [{ pages: ['hls-staking', 'hls-farm'] as Page[], label: 'High Leverage' }]
+    : []),
   { pages: ['portfolio'], label: 'Portfolio' },
-  { pages: ['governance'], label: 'Governance', externalUrl: getGovernanceUrl(walletId) },
+  { pages: ['governance'], label: 'Governance', externalUrl: DocURL.COUNCIL },
 ]
 
-const menuTreeV1 = (walletId: WalletID, chainConfig: ChainConfig): MenuTreeEntry[] => [
+const menuTreeV1 = (): MenuTreeEntry[] => [
   {
     pages: ['v1'],
     label: 'Red Bank',
   },
-  { pages: ['governance'], label: 'Governance', externalUrl: getGovernanceUrl(walletId) },
+  { pages: ['governance'], label: 'Governance', externalUrl: DocURL.COUNCIL },
 ]
 
 export default function Header() {
   const address = useStore((s) => s.address)
+  const chainConfig = useChainConfig()
   const focusComponent = useStore((s) => s.focusComponent)
   const isOracleStale = useStore((s) => s.isOracleStale)
-  const isHLS = useStore((s) => s.isHLS)
+  const isHls = useStore((s) => s.isHls)
   const accountId = useAccountId()
   const isV1 = useStore((s) => s.isV1)
-  const showAccountMenu = address && !isHLS && !isMobile && !isV1
+  const showAccountMenu = address && !isHls && !isMobile && !isV1
 
   function handleCloseFocusMode() {
     if (focusComponent && focusComponent.onClose) focusComponent.onClose()
     useStore.setState({ focusComponent: null })
   }
 
-  const showStaleOracle = useMemo(() => isOracleStale && address, [isOracleStale, address])
+  const showStaleOracle = useMemo(
+    () => (chainConfig.slinky ? false : isOracleStale && address),
+    [chainConfig.slinky, isOracleStale, address],
+  )
   const showRewardsCenter = useMemo(
     () => (isV1 ? address && !isMobile : accountId && !isMobile),
     [isV1, address, accountId],

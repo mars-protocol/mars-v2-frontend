@@ -1,10 +1,10 @@
 import useSWR from 'swr'
 
+import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useMarketDepositCaps from 'hooks/markets/useMarketDepositCaps'
 import useMarketsInfo from 'hooks/markets/useMarketsInfo'
 import useAssetParams from 'hooks/params/useAssetParams'
-import useAssets from 'hooks/useAssets'
-import useChainConfig from 'hooks/useChainConfig'
 import {
   AssetParamsBaseForAddr as AssetParams,
   TotalDepositResponse,
@@ -18,7 +18,7 @@ export default function useMarkets() {
   const { data: marketInfos } = useMarketsInfo()
   const { data: marketDepositCaps } = useMarketDepositCaps()
   const { data: assetParams } = useAssetParams()
-  const assets = useAssets()
+  const assets = useTradeEnabledAssets()
 
   const result = useSWR(
     !!marketInfos?.length &&

@@ -2,7 +2,7 @@ import useSWR from 'swr'
 
 import getLimitOrders from 'api/perps/getAccountLimitOrders'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useChainConfig from 'hooks/useChainConfig'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 export default function usePerpsLimitOrders() {
   const chainConfig = useChainConfig()

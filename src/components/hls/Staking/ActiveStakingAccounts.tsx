@@ -1,7 +1,7 @@
-import { NAME_META } from 'components/hls/Farm/Table/Columns/Name'
-import useDepositedColumns from 'components/hls/Staking/Table/Columns/useDepositedColumns'
 import Table from 'components/common/Table'
-import useHLSStakingAccounts from 'hooks/useHLSStakingAccounts'
+import { NAME_META } from 'components/hls/Staking/Table/Columns/Name'
+import useDepositedColumns from 'components/hls/Staking/Table/Columns/useDepositedColumns'
+import useHlsStakingAccounts from 'hooks/hls/useHlsStakingAccounts'
 import useStore from 'store'
 
 const title = 'Active Strategies'
@@ -9,7 +9,7 @@ const title = 'Active Strategies'
 export default function ActiveStakingAccounts() {
   const address = useStore((s) => s.address)
   const columns = useDepositedColumns({ isLoading: false })
-  const { data: hlsStakingAccounts } = useHLSStakingAccounts(address)
+  const { data: hlsStakingAccounts } = useHlsStakingAccounts(address)
 
   if (!hlsStakingAccounts.length) return null
 
@@ -18,7 +18,7 @@ export default function ActiveStakingAccounts() {
       title={title}
       columns={columns}
       data={hlsStakingAccounts}
-      initialSorting={[{ id: NAME_META.id, desc: true }]}
+      initialSorting={[{ id: NAME_META.id, desc: false }]}
     />
   )
 }

@@ -4,8 +4,9 @@ import { ReactNode } from 'react'
 
 import { Questionmark } from 'components/common/Icons'
 import TooltipContent from 'components/common/Tooltip/TooltipContent'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 
 interface Props extends TippyProps {
@@ -21,9 +22,10 @@ interface Props extends TippyProps {
 }
 
 export const Tooltip = (props: Props) => {
+  const chainConfig = useChainConfig()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
 
   const isInWalletAssetModal = document.getElementById('wallet-assets-modal')
@@ -51,7 +53,7 @@ export const Tooltip = (props: Props) => {
         <div
           className={classNames(
             props.underline &&
-              'border-b hover:cursor-help  border-dashed border-white/20 pb-1 hover:border-transparent',
+              'border-b hover:cursor-help border-dashed border-white/40 hover:border-transparent',
             !reduceMotion && 'transition-all duration-200',
             props.className,
           )}
@@ -61,7 +63,7 @@ export const Tooltip = (props: Props) => {
       ) : (
         <div
           className={classNames(
-            'inline-block w-[18px] hover:cursor-pointer opacity-40 hover:opacity-80',
+            'inline-block w-[18px] hover:cursor-help opacity-40 hover:opacity-80',
             props.className,
           )}
         >

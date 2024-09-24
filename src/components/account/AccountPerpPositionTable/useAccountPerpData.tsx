@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { getAssetAccountPerpRow } from 'components/account/AccountPerpPositionTable/functions'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import { byDenom } from 'utils/array'
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 
 export default function useAccountPerpData(props: Props) {
   const { account, updatedAccount } = props
-  const assets = useAllAssets()
+  const assets = usePerpsEnabledAssets()
 
   return useMemo<AccountPerpRow[]>(() => {
     const usedAccount = updatedAccount ?? account
@@ -20,7 +20,7 @@ export default function useAccountPerpData(props: Props) {
     return accountPerps.map((perp) => {
       const asset = assets.find(byDenom(perp.denom)) ?? assets[0]
       const prevPerp = updatedAccount
-        ? account?.perps.find((position) => position.denom === perp.denom)
+        ? account?.perps?.find((position) => position.denom === perp.denom)
         : perp
       return getAssetAccountPerpRow(asset, perp, prevPerp)
     })

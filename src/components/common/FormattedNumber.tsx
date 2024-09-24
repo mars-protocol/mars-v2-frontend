@@ -2,9 +2,11 @@ import classNames from 'classnames'
 import React, { useEffect, useRef } from 'react'
 import { animated, useSpring } from 'react-spring'
 
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import _ from 'lodash'
 import { formatValue } from 'utils/formatters'
 
 interface Props {
@@ -18,13 +20,15 @@ interface Props {
 
 export const FormattedNumber = React.memo(
   (props: Props) => {
+    const chainConfig = useChainConfig()
     const [reduceMotion] = useLocalStorage<boolean>(
       LocalStorageKeys.REDUCE_MOTION,
-      DEFAULT_SETTINGS.reduceMotion,
+      getDefaultChainSettings(chainConfig).reduceMotion,
     )
     const prevAmountRef = useRef<number>(0)
 
-    let { options, smallerThanThreshold } = props
+    let options = props.options
+    const smallerThanThreshold = props.smallerThanThreshold
 
     if (smallerThanThreshold) {
       if (!options) options = { prefix: '< ' }
@@ -73,7 +77,7 @@ export const FormattedNumber = React.memo(
       </animated.p>
     )
   },
-  (prevProps, nextProps) => prevProps.amount === nextProps.amount,
+  (prevProps, nextProps) => _.isEqual(prevProps, nextProps),
 )
 
 FormattedNumber.displayName = 'FormattedNumber'

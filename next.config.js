@@ -3,10 +3,19 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: [
-      'assets.leapwallet.io',
-      'raw.githubusercontent.com',
-      'xdefi-static.s3.eu-west-1.amazonaws.com',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'assets.leapwallet.io',
+      },
+      {
+        protocol: 'https',
+        hostname: 'raw.githubusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'xdefi-static.s3.eu-west-1.amazonaws.com',
+      },
     ],
   },
   async headers() {

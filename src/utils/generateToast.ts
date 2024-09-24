@@ -7,8 +7,9 @@ export async function generateToast(
   result: BroadcastResult,
   toastOptions: Partial<ToastObjectOptions>,
   address: string,
+  assets: Asset[],
 ): Promise<ToastResponse> {
-  const { target, isHLS, transactionType, txCoinGroups } = await analizeTransaction(
+  const { target, isHls, transactionType, txCoinGroups } = await analizeTransaction(
     chainConfig,
     result,
     address,
@@ -58,9 +59,10 @@ export async function generateToast(
       txCoinGroups.forEach((txCoinGroup: GroupedTransactionCoin) => {
         const toastContents = getToastContentsFromGroupedTransactionCoin(
           txCoinGroup,
-          isHLS,
+          isHls,
           target,
           chainConfig,
+          assets,
         )
         toast.content.push(...toastContents)
       })

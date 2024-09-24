@@ -12,11 +12,11 @@ import { ORACLE_DENOM } from 'constants/oracle'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountBalanceValue } from 'utils/accounts'
+import { BN } from 'utils/helpers'
 
 interface Props {
   account: Account
   updatedAccount?: Account
-  prices: BNCoin[]
   assets: Asset[]
   leverage: number
   updatedLeverage: number | null
@@ -25,14 +25,13 @@ interface Props {
   updatedHealth: number
   healthFactor: number
   updatedHealthFactor: number
-  isAccountDetails?: boolean
+  isInModal?: boolean
 }
 
 export default function AccountSummaryHeader(props: Props) {
   const {
     account,
     updatedAccount,
-    prices,
     assets,
     leverage,
     updatedLeverage,
@@ -40,34 +39,35 @@ export default function AccountSummaryHeader(props: Props) {
     healthFactor,
     updatedHealth,
     updatedHealthFactor,
-    isAccountDetails,
+    isInModal,
   } = props
   const onClose = useCallback(() => useStore.setState({ accountDetailsExpanded: false }), [])
   const accountBalance = useMemo(
-    () => (account ? calculateAccountBalanceValue(account, prices, assets) : BN_ZERO),
-    [account, prices, assets],
+    () => (account ? calculateAccountBalanceValue(account, assets) : BN_ZERO),
+    [account, assets],
   )
   const updatedAccountBalance = useMemo(
-    () =>
-      updatedAccount ? calculateAccountBalanceValue(updatedAccount, prices, assets) : undefined,
-    [updatedAccount, prices, assets],
+    () => (updatedAccount ? calculateAccountBalanceValue(updatedAccount, assets) : undefined),
+    [updatedAccount, assets],
   )
-  const hasChanged = !updatedAccountBalance?.isEqualTo(accountBalance)
+  const hasChanged = !BN(updatedAccountBalance?.toFixed(2) ?? 0)?.isEqualTo(
+    accountBalance.toFixed(2),
+  )
   const increase = updatedAccountBalance?.isGreaterThan(accountBalance)
 
   return (
     <div className='relative flex flex-wrap w-full p-4 pb-2 border-b bg-white/10 border-white/10'>
-      {isAccountDetails && (
+      {!isInModal && (
         <Button
           onClick={onClose}
           leftIcon={<ArrowRightLine />}
           iconClassName='w-full'
-          className='!absolute top-4 right-4 w-8 h-6 px-2 z-4'
+          className='!absolute top-4 right-4 w-8 h-6 px-2 z-4 hidden md:flex'
           size='xs'
           color='secondary'
         />
       )}
-      {isAccountDetails && (
+      {!isInModal && (
         <Text
           size='sm'
           className='w-full pb-1 text-white/50'
@@ -102,7 +102,7 @@ export default function AccountSummaryHeader(props: Props) {
         )}
 
         <Text className='text-white/50' size='xs'>
-          Networth
+          Net worth
         </Text>
       </div>
       <div className='flex items-center w-full pt-2'>

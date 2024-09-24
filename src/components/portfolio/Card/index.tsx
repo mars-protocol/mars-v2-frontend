@@ -7,22 +7,18 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import Skeleton from 'components/portfolio/Card/Skeleton'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import { BN_ZERO } from 'constants/math'
 import useAccount from 'hooks/accounts/useAccount'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import useAccountId from 'hooks/accounts/useAccountId'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import useHlsStakingAssets from 'hooks/hls/useHlsStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useAccountId from 'hooks/useAccountId'
-import useHealthComputer from 'hooks/useHealthComputer'
-import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
-import usePrices from 'hooks/usePrices'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
-import {
-  calculateAccountApr,
-  calculateAccountLeverage,
-  getAccountPositionValues,
-} from 'utils/accounts'
+import { getAccountSummaryStats } from 'utils/accounts'
 import { getRoute } from 'utils/route'
 
 interface Props {
@@ -30,79 +26,58 @@ interface Props {
 }
 
 export default function PortfolioCard(props: Props) {
+  const chainConfig = useChainConfig()
   const { data: account } = useAccount(props.accountId)
   const { health, healthFactor } = useHealthComputer(account)
   const { address: urlAddress } = useParams()
-  const { data: prices } = usePrices()
+  const astroLpAprs = useAstroLpAprs()
   const currentAccountId = useAccountId()
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const data = useBorrowMarketAssetsTableData()
-  const { data: hlsStrategies } = useHLSStakingAssets()
+  const { data: hlsStrategies } = useHlsStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
   const [searchParams] = useSearchParams()
-  const assets = useAllAssets()
+  const assets = useWhitelistedAssets()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
 
-  const [deposits, lends, debts, vaults] = useMemo(() => {
-    if (!prices.length || !account) return Array(4).fill(BN_ZERO)
-    return getAccountPositionValues(account, prices, assets)
-  }, [prices, account, assets])
+  const stats: { title: ReactNode; sub: string }[] = useMemo(() => {
+    if (!account || !assets.length || !lendingAssets.length || !borrowAssets.length) {
+      return [
+        { title: <Loading />, sub: 'Net worth' },
+        { title: <Loading />, sub: 'Leverage' },
+        { title: <Loading />, sub: 'APR' },
+      ]
+    }
 
-  const leverage = useMemo(() => {
-    if (!prices.length || !account) return BN_ZERO
-    return calculateAccountLeverage(account, prices, assets)
-  }, [account, assets, prices])
-
-  const apr = useMemo(() => {
-    if (!lendingAssets.length || !borrowAssets.length || !prices.length || !account) return null
-    return calculateAccountApr(
-      account,
+    const { netWorth, apr, leverage } = getAccountSummaryStats(
+      account as Account,
       borrowAssets,
       lendingAssets,
-      prices,
       hlsStrategies,
       assets,
       vaultAprs,
-      account.kind === 'high_levered_strategy',
+      astroLpAprs,
     )
-  }, [lendingAssets, borrowAssets, prices, account, hlsStrategies, assets, vaultAprs])
 
-  const stats: { title: ReactNode; sub: string }[] = useMemo(() => {
-    const isLoaded = account && prices.length && apr !== null
     return [
       {
-        title: isLoaded ? (
-          <FormattedNumber
-            amount={deposits.plus(lends).plus(vaults).minus(debts).toNumber()}
-            options={{ prefix: '$' }}
-          />
-        ) : (
-          <Loading />
-        ),
+        title: <FormattedNumber amount={netWorth.amount.toNumber()} options={{ prefix: '$' }} />,
         sub: 'Net worth',
       },
       {
-        title: isLoaded ? (
-          <FormattedNumber amount={leverage.toNumber() || 1} options={{ suffix: 'x' }} />
-        ) : (
-          <Loading />
-        ),
+        title: <FormattedNumber amount={leverage.toNumber() || 1} options={{ suffix: 'x' }} />,
         sub: 'Leverage',
       },
       {
-        title: isLoaded ? (
-          <FormattedNumber amount={apr.toNumber()} options={{ suffix: '%' }} />
-        ) : (
-          <Loading />
-        ),
+        title: <FormattedNumber amount={apr.toNumber()} options={{ suffix: '%' }} />,
         sub: 'APR',
       },
     ]
-  }, [account, prices.length, deposits, lends, vaults, debts, leverage, apr])
+  }, [account, assets, borrowAssets, hlsStrategies, lendingAssets, vaultAprs, astroLpAprs])
 
   if (!account) {
     return (

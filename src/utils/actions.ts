@@ -1,7 +1,7 @@
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
-import { getCoinAmount, getCoinValue } from 'utils/formatters'
+import { getSwapExactInAction } from 'utils/swap'
 
 export function getHlsStakingChangeLevActions(
   previousAmount: BigNumber,
@@ -9,27 +9,21 @@ export function getHlsStakingChangeLevActions(
   collateralDenom: string,
   borrowDenom: string,
   slippage: number,
-  prices: BNCoin[],
-  assets: Asset[],
+  routeInfo: SwapRouteInfo,
+  swapInAmount: BigNumber,
+  isOsmosis: boolean,
 ): Action[] {
   let actions: Action[] = []
 
   if (currentAmount.isLessThan(previousAmount)) {
-    const debtValue = getCoinValue(
-      BNCoin.fromDenomAndBigNumber(borrowDenom, previousAmount.minus(currentAmount)),
-      prices,
-      assets,
-    )
-    const collateralAmount = getCoinAmount(collateralDenom, debtValue, prices, assets)
-
     actions = [
-      {
-        swap_exact_in: {
-          coin_in: BNCoin.fromDenomAndBigNumber(collateralDenom, collateralAmount).toActionCoin(),
-          denom_out: borrowDenom,
-          slippage: slippage.toString(),
-        },
-      },
+      getSwapExactInAction(
+        BNCoin.fromDenomAndBigNumber(collateralDenom, swapInAmount).toActionCoin(),
+        borrowDenom,
+        routeInfo,
+        slippage,
+        isOsmosis,
+      ),
       {
         repay: {
           coin: BNCoin.fromDenomAndBigNumber(
@@ -53,16 +47,13 @@ export function getHlsStakingChangeLevActions(
           currentAmount.minus(previousAmount),
         ).toCoin(),
       },
-      {
-        swap_exact_in: {
-          denom_out: collateralDenom,
-          coin_in: BNCoin.fromDenomAndBigNumber(
-            borrowDenom,
-            currentAmount.minus(previousAmount),
-          ).toActionCoin(true),
-          slippage: slippage.toString(),
-        },
-      },
+      getSwapExactInAction(
+        BNCoin.fromDenomAndBigNumber(borrowDenom, swapInAmount).toActionCoin(),
+        collateralDenom,
+        routeInfo,
+        slippage,
+        isOsmosis,
+      ),
     ]
   }
 

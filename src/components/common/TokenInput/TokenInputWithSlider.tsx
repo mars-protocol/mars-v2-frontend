@@ -12,7 +12,6 @@ interface Props {
   asset: Asset
   max: BigNumber
   onChange: (amount: BigNumber) => void
-  onDebounce?: () => void
   accountId?: string
   balances?: BNCoin[]
   className?: string
@@ -23,6 +22,7 @@ interface Props {
   leverage?: {
     current: number
     max: number
+    min?: number
   }
   warningMessages: string[]
 }
@@ -33,14 +33,7 @@ export default function TokenInputWithSlider(props: Props) {
 
   function onChangeSlider(percentage: number) {
     const newAmount = BN(percentage).dividedBy(100).multipliedBy(props.max).integerValue()
-    setPercentage(percentage)
-    setAmount(newAmount)
-    props.onChange(newAmount)
-  }
-
-  function onDebounce() {
-    if (!props.onDebounce) return
-    props.onDebounce()
+    onChangeAmount(newAmount)
   }
 
   function onChangeAmount(newAmount: BigNumber) {
@@ -82,7 +75,6 @@ export default function TokenInputWithSlider(props: Props) {
       <Slider
         value={percentage || 0}
         onChange={(value) => onChangeSlider(value)}
-        onDebounce={onDebounce}
         disabled={props.disabled}
         leverage={props.leverage}
       />

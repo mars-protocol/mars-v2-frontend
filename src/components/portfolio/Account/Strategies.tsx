@@ -4,16 +4,15 @@ import AccountStrategiesTable from 'components/account/AccountStrategiesTable'
 import Card from 'components/common/Card'
 import TableSkeleton from 'components/common/Table/TableSkeleton'
 import Text from 'components/common/Text'
-import useAccount from 'hooks/accounts/useAccount'
 
 interface Props {
-  accountId: string
+  account: Account
 }
 
 function Content(props: Props) {
-  const { data: account } = useAccount(props.accountId, true)
+  const { account } = props
 
-  if (!account || account?.vaults.length === 0) {
+  if (account.vaults.length === 0 && account.stakedAstroLps.length === 0) {
     return null
   }
 

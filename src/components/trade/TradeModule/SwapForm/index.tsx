@@ -1,56 +1,57 @@
 import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import estimateExactIn from 'api/swap/estimateExactIn'
-import AssetAmountInput from 'components/common/AssetAmountInput'
 import AvailableLiquidityMessage from 'components/common/AvailableLiquidityMessage'
+import { CircularProgress } from 'components/common/CircularProgress'
 import DepositCapMessage from 'components/common/DepositCapMessage'
 import Divider from 'components/common/Divider'
 import LeverageSlider from 'components/common/LeverageSlider'
-import OrderTypeSelector from 'components/common/OrderTypeSelector'
 import Text from 'components/common/Text'
 import { TradeDirectionSelector } from 'components/common/TradeDirectionSelector'
 import AssetSelectorPair from 'components/trade/TradeModule/AssetSelector/AssetSelectorPair'
 import AssetSelectorSingle from 'components/trade/TradeModule/AssetSelector/AssetSelectorSingle'
+import AssetAmountInput from 'components/trade/TradeModule/SwapForm/AssetAmountInput'
 import AutoRepayToggle from 'components/trade/TradeModule/SwapForm/AutoRepayToggle'
-import { TRADE_ORDER_TYPE_TABS } from 'components/trade/TradeModule/SwapForm/constants'
 import MarginToggle from 'components/trade/TradeModule/SwapForm/MarginToggle'
+import OrderTypeSelector from 'components/trade/TradeModule/SwapForm/OrderTypeSelector'
 import TradeSummary from 'components/trade/TradeModule/SwapForm/TradeSummary'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
+import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
+import useToggle from 'hooks/common/useToggle'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useMarkets from 'hooks/markets/useMarkets'
 import useRouteInfo from 'hooks/trade/useRouteInfo'
-import useAutoLend from 'hooks/useAutoLend'
-import useChainConfig from 'hooks/useChainConfig'
-import useHealthComputer from 'hooks/useHealthComputer'
-import useToggle from 'hooks/useToggle'
-import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
+import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { defaultFee, ENABLE_AUTO_REPAY } from 'utils/constants'
+import { ENABLE_AUTO_REPAY } from 'utils/constants'
 import { formatValue } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
-import { asyncThrottle, BN } from 'utils/helpers'
-import { OrderType } from 'types/enums/orderType'
+import { BN } from 'utils/helpers'
 
 interface Props {
   buyAsset: Asset
   sellAsset: Asset
   isAdvanced: boolean
+  chainConfig: ChainConfig
 }
 
 export default function SwapForm(props: Props) {
-  const { buyAsset, sellAsset, isAdvanced } = props
+  const { buyAsset, sellAsset, isAdvanced, chainConfig } = props
   const useMargin = useStore((s) => s.useMargin)
   const useAutoRepay = useStore((s) => s.useAutoRepay)
   const account = useCurrentAccount()
   const swap = useStore((s) => s.swap)
-  const [slippage] = useLocalStorage(LocalStorageKeys.SLIPPAGE, DEFAULT_SETTINGS.slippage)
+  const [slippage] = useLocalStorage(
+    LocalStorageKeys.SLIPPAGE,
+    getDefaultChainSettings(chainConfig).slippage,
+  )
   const { computeMaxSwapAmount } = useHealthComputer(account)
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
   const markets = useMarkets()
@@ -67,27 +68,25 @@ export default function SwapForm(props: Props) {
   const [isAutoRepayChecked, setAutoRepayChecked] = useToggle(
     isRepayable && ENABLE_AUTO_REPAY ? useAutoRepay : false,
   )
-  const [outputAssetAmount, setOutputAssetAmount] = useState(BN_ZERO)
   const [inputAssetAmount, setInputAssetAmount] = useState(BN_ZERO)
-  const [maxOutputAmountEstimation, setMaxBuyableAmountEstimation] = useState(BN_ZERO)
-  const [selectedOrderType, setSelectedOrderType] = useState<OrderType>(OrderType.MARKET)
+  const [selectedOrderType, setSelectedOrderType] = useState<AvailableOrderType>('Market')
   const [isConfirming, setIsConfirming] = useToggle()
-  const [estimatedFee, setEstimatedFee] = useState(defaultFee)
-  const { autoLendEnabledAccountIds } = useAutoLend()
-  const isAutoLendEnabled = account ? autoLendEnabledAccountIds.includes(account.id) : false
+  const { isAutoLendEnabledForCurrentAccount: isAutoLendEnabled } = useAutoLend()
   const modal = useStore<string | null>((s) => s.fundAndWithdrawModal)
   const { simulateTrade, removedLends, updatedAccount } = useUpdatedAccount(account)
-  const throttledEstimateExactIn = useMemo(() => asyncThrottle(estimateExactIn, 250), [])
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount)
-  const chainConfig = useChainConfig()
-  const assets = useMarketEnabledAssets()
+  const assets = useTradeEnabledAssets()
 
   const { data: routeInfo } = useRouteInfo(inputAsset.denom, outputAsset.denom, inputAssetAmount)
+
+  const outputAssetAmount = useMemo(() => {
+    return routeInfo?.amountOut || BN_ZERO
+  }, [routeInfo])
 
   const depositCapReachedCoins: BNCoin[] = useMemo(() => {
     const outputMarketAsset = markets.find((market) => market.asset.denom === outputAsset.denom)
 
-    if (!outputMarketAsset) return []
+    if (!outputMarketAsset || !outputMarketAsset.cap) return []
 
     const depositCapLeft = getCapLeftWithBuffer(outputMarketAsset.cap)
     if (outputAssetAmount.isGreaterThan(depositCapLeft)) {
@@ -97,76 +96,47 @@ export default function SwapForm(props: Props) {
     return []
   }, [markets, outputAsset.denom, outputAssetAmount])
 
-  const onChangeInputAmount = useCallback(
-    (amount: BigNumber) => {
-      setInputAssetAmount(amount)
-      const swapTo = { denom: inputAsset.denom, amount: amount.toString() }
-      throttledEstimateExactIn(chainConfig, swapTo, outputAsset.denom).then(setOutputAssetAmount)
-    },
-    [inputAsset.denom, throttledEstimateExactIn, chainConfig, outputAsset.denom],
-  )
-
-  const onChangeOutputAmount = useCallback(
-    (amount: BigNumber) => {
-      setOutputAssetAmount(amount)
-      const swapFrom = {
-        denom: outputAsset.denom,
-        amount: amount.toString(),
-      }
-      throttledEstimateExactIn(chainConfig, swapFrom, inputAsset.denom).then(setInputAssetAmount)
-    },
-    [outputAsset.denom, throttledEstimateExactIn, chainConfig, inputAsset.denom],
-  )
-
   const handleRangeInputChange = useCallback(
     (value: number) => {
-      onChangeOutputAmount(BN(value).shiftedBy(outputAsset.decimals).integerValue())
+      setInputAssetAmount(BN(value).shiftedBy(inputAsset.decimals).integerValue())
     },
-    [onChangeOutputAmount, outputAsset.decimals],
+    [setInputAssetAmount, inputAsset.decimals],
   )
 
-  const [maxInputAmount, imputMarginThreshold, marginRatio] = useMemo(() => {
-    const maxAmount = computeMaxSwapAmount(inputAsset.denom, outputAsset.denom, 'default')
+  const [maxInputAmount, inputMarginThreshold] = useMemo(() => {
+    const maxAmount = computeMaxSwapAmount(
+      inputAsset.denom,
+      outputAsset.denom,
+      'default',
+      isAutoRepayChecked,
+    )
     const maxAmountOnMargin = computeMaxSwapAmount(
       inputAsset.denom,
       outputAsset.denom,
       'margin',
+      isAutoRepayChecked,
     ).integerValue()
-    const marginRatio = maxAmount.dividedBy(maxAmountOnMargin)
 
-    estimateExactIn(
-      chainConfig,
-      {
-        denom: inputAsset.denom,
-        amount: (isMarginChecked ? maxAmountOnMargin : maxAmount).toString(),
-      },
-      outputAsset.denom,
-    ).then(setMaxBuyableAmountEstimation)
+    if (isMarginChecked) return [maxAmountOnMargin, maxAmount]
 
-    if (isMarginChecked) return [maxAmountOnMargin, maxAmount, marginRatio]
+    if (inputAssetAmount.isGreaterThan(maxAmount)) setInputAssetAmount(maxAmount)
 
-    if (inputAssetAmount.isGreaterThan(maxAmount)) onChangeInputAmount(maxAmount)
-
-    return [maxAmount, maxAmount, marginRatio]
+    return [maxAmount, maxAmount]
   }, [
     computeMaxSwapAmount,
     inputAsset.denom,
     outputAsset.denom,
-    chainConfig,
     isMarginChecked,
     inputAssetAmount,
-    onChangeInputAmount,
+    setInputAssetAmount,
+    isAutoRepayChecked,
   ])
-
-  const outputSideMarginThreshold = useMemo(() => {
-    return maxOutputAmountEstimation.multipliedBy(marginRatio)
-  }, [marginRatio, maxOutputAmountEstimation])
 
   const swapTx = useMemo(() => {
     if (!routeInfo) return
 
-    const borrowCoin = inputAssetAmount.isGreaterThan(imputMarginThreshold)
-      ? BNCoin.fromDenomAndBigNumber(inputAsset.denom, inputAssetAmount.minus(imputMarginThreshold))
+    const borrowCoin = inputAssetAmount.isGreaterThan(inputMarginThreshold)
+      ? BNCoin.fromDenomAndBigNumber(inputAsset.denom, inputAssetAmount.minus(inputMarginThreshold))
       : undefined
 
     return swap({
@@ -178,12 +148,12 @@ export default function SwapForm(props: Props) {
       slippage,
       isMax: inputAssetAmount.isEqualTo(maxInputAmount),
       repay: isAutoRepayChecked,
-      route: routeInfo.route,
+      routeInfo,
     })
   }, [
     routeInfo,
     inputAssetAmount,
-    imputMarginThreshold,
+    inputMarginThreshold,
     inputAsset.denom,
     swap,
     account?.id,
@@ -196,15 +166,18 @@ export default function SwapForm(props: Props) {
 
   const debouncedUpdateAccount = useMemo(
     () =>
-      debounce((removeCoin: BNCoin, addCoin: BNCoin, debtCoin: BNCoin) => {
-        simulateTrade(
-          removeCoin,
-          addCoin,
-          debtCoin,
-          isAutoLendEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
-          isAutoRepayChecked,
-        )
-      }, 250),
+      debounce(
+        (removeCoin: BNCoin, addCoin: BNCoin, debtCoin: BNCoin, isBorrowEnabled: boolean) => {
+          simulateTrade(
+            removeCoin,
+            addCoin,
+            debtCoin,
+            isAutoLendEnabled && isBorrowEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
+            isAutoRepayChecked,
+          )
+        },
+        250,
+      ),
     [simulateTrade, isAutoLendEnabled, isAutoRepayChecked],
   )
 
@@ -228,10 +201,6 @@ export default function SwapForm(props: Props) {
     [computeLiquidationPrice, outputAsset.denom],
   )
 
-  useEffect(() => {
-    swapTx?.estimateFee().then(setEstimatedFee)
-  }, [swapTx])
-
   const handleBuyClick = useCallback(async () => {
     if (account?.id) {
       setIsConfirming(true)
@@ -240,27 +209,27 @@ export default function SwapForm(props: Props) {
 
       if (isSucceeded) {
         setInputAssetAmount(BN_ZERO)
-        setOutputAssetAmount(BN_ZERO)
       }
       setIsConfirming(false)
     }
   }, [account?.id, swapTx, setIsConfirming])
 
-  useEffect(() => {
-    onChangeOutputAmount(BN_ZERO)
-    onChangeInputAmount(BN_ZERO)
-  }, [tradeDirection, onChangeOutputAmount, onChangeInputAmount])
+  const changeTradeDirection = useCallback(
+    (direction: TradeDirection) => {
+      setInputAssetAmount(BN_ZERO)
+      setTradeDirection(direction)
+    },
+    [setInputAssetAmount],
+  )
 
   useEffect(() => {
-    setOutputAssetAmount(BN_ZERO)
-    setInputAssetAmount(BN_ZERO)
     setMarginChecked(isBorrowEnabled ? useMargin : false)
     setAutoRepayChecked(isRepayable ? useAutoRepay : false)
     simulateTrade(
       BNCoin.fromDenomAndBigNumber(inputAsset.denom, BN_ZERO),
       BNCoin.fromDenomAndBigNumber(outputAsset.denom, BN_ZERO),
       BNCoin.fromDenomAndBigNumber(inputAsset.denom, BN_ZERO),
-      isAutoLendEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
+      isAutoLendEnabled && outputAsset.isBorrowEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
       isAutoRepayChecked,
     )
   }, [
@@ -269,6 +238,7 @@ export default function SwapForm(props: Props) {
     useMargin,
     useAutoRepay,
     outputAsset.denom,
+    outputAsset.isBorrowEnabled,
     inputAsset.denom,
     isAutoLendEnabled,
     isAutoRepayChecked,
@@ -278,11 +248,11 @@ export default function SwapForm(props: Props) {
   ])
 
   useEffect(() => {
-    const removeDepositAmount = inputAssetAmount.isGreaterThanOrEqualTo(imputMarginThreshold)
-      ? imputMarginThreshold
+    const removeDepositAmount = inputAssetAmount.isGreaterThanOrEqualTo(inputMarginThreshold)
+      ? inputMarginThreshold
       : inputAssetAmount
-    const addDebtAmount = inputAssetAmount.isGreaterThan(imputMarginThreshold)
-      ? inputAssetAmount.minus(imputMarginThreshold)
+    const addDebtAmount = inputAssetAmount.isGreaterThan(inputMarginThreshold)
+      ? inputAssetAmount.minus(inputMarginThreshold)
       : BN_ZERO
 
     if (
@@ -296,12 +266,13 @@ export default function SwapForm(props: Props) {
     const addCoin = BNCoin.fromDenomAndBigNumber(outputAsset.denom, outputAssetAmount)
     const debtCoin = BNCoin.fromDenomAndBigNumber(inputAsset.denom, addDebtAmount)
 
-    debouncedUpdateAccount(removeCoin, addCoin, debtCoin)
+    debouncedUpdateAccount(removeCoin, addCoin, debtCoin, outputAsset.isBorrowEnabled ?? true)
   }, [
     inputAssetAmount,
     outputAssetAmount,
-    imputMarginThreshold,
+    inputMarginThreshold,
     outputAsset.denom,
+    outputAsset.isBorrowEnabled,
     inputAsset.denom,
     debouncedUpdateAccount,
     modal,
@@ -312,17 +283,12 @@ export default function SwapForm(props: Props) {
     [markets, inputAsset.denom],
   )
 
-  useEffect(() => {
-    if (inputAssetAmount.isEqualTo(maxInputAmount) || outputAssetAmount.isZero()) return
-    if (outputAssetAmount.isEqualTo(maxOutputAmountEstimation)) setInputAssetAmount(maxInputAmount)
-  }, [inputAssetAmount, maxInputAmount, outputAssetAmount, maxOutputAmountEstimation])
-
   const borrowAmount = useMemo(
     () =>
-      inputAssetAmount.isGreaterThan(imputMarginThreshold)
-        ? inputAssetAmount.minus(imputMarginThreshold)
+      inputAssetAmount.isGreaterThan(inputMarginThreshold)
+        ? inputAssetAmount.minus(inputMarginThreshold)
         : BN_ZERO,
-    [inputAssetAmount, imputMarginThreshold],
+    [inputAssetAmount, inputMarginThreshold],
   )
 
   const availableLiquidity = useMemo(
@@ -362,51 +328,34 @@ export default function SwapForm(props: Props) {
           />
         )}
         <div className='px-3'>
-          <OrderTypeSelector
-            orderTabs={TRADE_ORDER_TYPE_TABS}
-            selected={selectedOrderType}
-            onChange={setSelectedOrderType}
-          />
+          <OrderTypeSelector selected={selectedOrderType} onChange={setSelectedOrderType} />
         </div>
         <div className='flex flex-col w-full gap-6 px-3 mt-6'>
-          {isAdvanced ? (
-            <AssetAmountInput
-              label='Buy'
-              max={maxOutputAmountEstimation}
-              amount={outputAssetAmount}
-              setAmount={onChangeOutputAmount}
-              asset={outputAsset}
-              maxButtonLabel='Max Amount:'
-              disabled={isConfirming}
+          {!isAdvanced && (
+            <TradeDirectionSelector
+              direction={tradeDirection}
+              onChangeDirection={changeTradeDirection}
+              asset={buyAsset}
             />
-          ) : (
-            <>
-              <TradeDirectionSelector
-                direction={tradeDirection}
-                onChangeDirection={setTradeDirection}
-                asset={buyAsset}
-              />
-              <AssetAmountInput
-                max={maxInputAmount}
-                amount={inputAssetAmount}
-                setAmount={onChangeInputAmount}
-                asset={inputAsset}
-                maxButtonLabel='Balance:'
-                disabled={isConfirming}
-              />
-            </>
           )}
-
-          {!isAdvanced && <Divider />}
+          <AssetAmountInput
+            max={maxInputAmount}
+            amount={inputAssetAmount}
+            setAmount={setInputAssetAmount}
+            asset={inputAsset}
+            maxButtonLabel='Balance:'
+            disabled={isConfirming}
+          />
+          <Divider />
           <LeverageSlider
-            disabled={isConfirming || maxOutputAmountEstimation.isZero()}
+            disabled={isConfirming || maxInputAmount.isZero()}
             onChange={handleRangeInputChange}
-            value={outputAssetAmount.shiftedBy(-outputAsset.decimals).toNumber()}
-            max={maxOutputAmountEstimation.shiftedBy(-outputAsset.decimals).toNumber()}
+            value={inputAssetAmount.shiftedBy(-inputAsset.decimals).toNumber()}
+            max={maxInputAmount.shiftedBy(-inputAsset.decimals).toNumber()}
             type='margin'
             marginThreshold={
               isMarginChecked
-                ? outputSideMarginThreshold.shiftedBy(-outputAsset.decimals).toNumber()
+                ? inputMarginThreshold.shiftedBy(-inputAsset.decimals).toNumber()
                 : undefined
             }
           />
@@ -416,36 +365,28 @@ export default function SwapForm(props: Props) {
             className='p-4 bg-white/5'
           />
 
-          {borrowMarket && borrowAmount.isGreaterThanOrEqualTo(availableLiquidity) && (
-            <AvailableLiquidityMessage market={borrowMarket} />
-          )}
-          {isAdvanced ? (
-            <AssetAmountInput
-              label='Sell'
-              max={maxInputAmount}
-              amount={inputAssetAmount}
-              setAmount={onChangeInputAmount}
-              asset={inputAsset}
-              maxButtonLabel='Balance:'
-              disabled={isConfirming}
-            />
-          ) : (
-            <>
-              <Divider />
-              <div className='flex justify-between w-full'>
-                <Text size='sm'>You receive</Text>
-                <Text size='sm'>
-                  {formatValue(outputAssetAmount.toNumber(), {
-                    decimals: outputAsset.decimals,
-                    abbreviated: false,
-                    suffix: ` ${outputAsset.symbol}`,
-                    minDecimals: 0,
-                    maxDecimals: outputAsset.decimals,
-                  })}
-                </Text>
-              </div>
-            </>
-          )}
+          {isMarginChecked &&
+            borrowMarket &&
+            borrowAmount.isGreaterThanOrEqualTo(availableLiquidity) && (
+              <AvailableLiquidityMessage market={borrowMarket} />
+            )}
+          <Divider />
+          <div className='flex justify-between w-full'>
+            <Text size='sm'>You receive</Text>
+            {!inputAssetAmount.isZero() && outputAssetAmount.isZero() ? (
+              <CircularProgress size={14} />
+            ) : (
+              <Text size='sm'>
+                {formatValue(outputAssetAmount.toNumber(), {
+                  decimals: outputAsset.decimals,
+                  abbreviated: false,
+                  suffix: ` ${outputAsset.symbol}`,
+                  minDecimals: 0,
+                  maxDecimals: outputAsset.decimals,
+                })}
+              </Text>
+            )}
+          </div>
         </div>
       </div>
       <div className='flex w-full px-3 pt-6'>
@@ -458,12 +399,10 @@ export default function SwapForm(props: Props) {
           showProgressIndicator={isConfirming}
           isMargin={isMarginChecked}
           borrowAmount={borrowAmount}
-          estimatedFee={estimatedFee}
           liquidationPrice={liquidationPrice}
-          sellAmount={inputAssetAmount}
-          buyAmount={outputAssetAmount}
           isAdvanced={isAdvanced}
           direction={tradeDirection}
+          routeInfo={routeInfo}
         />
       </div>
     </>

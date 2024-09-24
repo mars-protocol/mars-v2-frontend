@@ -2,8 +2,8 @@ import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import Modal from 'components/Modals/Modal'
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
+import AssetImage from 'components/common/assets/AssetImage'
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
 import DisplayCurrency from 'components/common/DisplayCurrency'
@@ -13,11 +13,11 @@ import { ArrowRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
-import AssetImage from 'components/common/assets/AssetImage'
+import Modal from 'components/Modals/Modal'
 import { BN_ZERO } from 'constants/math'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
-import useHealthComputer from 'hooks/useHealthComputer'
-import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatPercent } from 'utils/formatters'
@@ -57,18 +57,16 @@ export default function Borrow(props: Props) {
 
   const handleChange = useCallback(
     (newAmount: BigNumber) => {
-      if (!amount.isEqualTo(newAmount)) setAmount(newAmount)
+      if (amount.isEqualTo(newAmount)) return
+      setAmount(newAmount)
+      const borrowCoin = BNCoin.fromDenomAndBigNumber(
+        asset.denom,
+        newAmount.isGreaterThan(max) ? max : newAmount,
+      )
+      simulateBorrow('wallet', borrowCoin)
     },
-    [amount, setAmount],
+    [amount, asset.denom, max, simulateBorrow],
   )
-
-  const onDebounce = useCallback(() => {
-    const borrowCoin = BNCoin.fromDenomAndBigNumber(
-      asset.denom,
-      amount.isGreaterThan(max) ? max : amount,
-    )
-    simulateBorrow('wallet', borrowCoin)
-  }, [amount, max, asset, simulateBorrow])
 
   const maxBorrow = useMemo(() => {
     const maxBorrowAmount = computeMaxBorrowAmount(asset.denom, 'wallet')
@@ -162,7 +160,6 @@ export default function Borrow(props: Props) {
           <TokenInputWithSlider
             asset={asset}
             onChange={handleChange}
-            onDebounce={onDebounce}
             amount={amount}
             max={max}
             disabled={max.isZero()}

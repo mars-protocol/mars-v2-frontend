@@ -3,19 +3,18 @@ import React, { useCallback, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
+import chains from 'chains'
 import Button from 'components/common/Button'
 import { ChevronDown, Cross, ExternalLink } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Radio from 'components/common/Radio'
 import Text from 'components/common/Text'
 import ChainLogo from 'components/common/chain/ChainLogo'
-import chains from 'configs/chains'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useToggle from 'hooks/common/useToggle'
 import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
-import useChainConfig from 'hooks/useChainConfig'
-import useToggle from 'hooks/useToggle'
 import useStore from 'store'
-import { NETWORK } from 'types/enums/network'
-import { ChainInfoID } from 'types/enums/wallet'
+import { ChainInfoID, NETWORK } from 'types/enums'
 import { getRoute } from 'utils/route'
 
 interface Props {
@@ -42,9 +41,9 @@ const v1Outposts: V1Outpost[] = [
   {
     chainId: ChainInfoID.Neutron1,
     name: 'Neutron',
-    url: 'https://neutron.marsprotocol.io',
+    url: '/v1',
     network: NETWORK.MAINNET,
-    target: '_blank',
+    target: '_self',
   },
   {
     chainId: ChainInfoID.Pion1,
@@ -58,13 +57,6 @@ const v1Outposts: V1Outpost[] = [
     name: 'Osmosis',
     url: '/v1',
     network: NETWORK.MAINNET,
-    target: '_self',
-  },
-  {
-    chainId: ChainInfoID.OsmosisDevnet,
-    name: 'Osmosis Devnet',
-    network: NETWORK.TESTNET,
-    url: '/v1',
     target: '_self',
   },
 ]

@@ -2,18 +2,18 @@ import { useShuttle } from '@delphi-labs/shuttle-react'
 import Image from 'next/image'
 import { useCallback, useEffect, useMemo } from 'react'
 
-import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalancesAndAccounts'
-import WalletSelect from 'components/Wallet/WalletSelect'
 import Button from 'components/common/Button'
 import FullOverlayContent from 'components/common/FullOverlayContent'
 import { ChevronRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalancesAndAccounts'
+import WalletSelect from 'components/Wallet/WalletSelect'
 import { BRIDGES } from 'constants/bridges'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
-import useChainConfig from 'hooks/useChainConfig'
-import useCurrentWallet from 'hooks/useCurrentWallet'
-import useToggle from 'hooks/useToggle'
-import useWalletBalances from 'hooks/useWalletBalances'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useToggle from 'hooks/common/useToggle'
+import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
+import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { defaultFee } from 'utils/constants'
@@ -62,9 +62,12 @@ export default function WalletBridges() {
       return
     }
 
-    if (BN(baseBalance).isGreaterThanOrEqualTo(defaultFee.amount[0].amount) && !isLoading)
+    if (
+      BN(baseBalance).isGreaterThanOrEqualTo(defaultFee(chainConfig).amount[0].amount) &&
+      !isLoading
+    )
       setHasFunds(true)
-  }, [baseBalance, isLoading, hasFunds, setHasFunds])
+  }, [baseBalance, isLoading, hasFunds, setHasFunds, chainConfig])
 
   return (
     <FullOverlayContent

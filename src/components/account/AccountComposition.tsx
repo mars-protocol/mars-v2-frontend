@@ -10,17 +10,16 @@ import Text from 'components/common/Text'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import { BN_ZERO, MAX_AMOUNT_DECIMALS } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useAllAssets from 'hooks/assets/useAllAssets'
-import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
-import usePrices from 'hooks/usePrices'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
+import useHlsStakingAssets from 'hooks/hls/useHlsStakingAssets'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { calculateAccountApr, getAccountPositionValues } from 'utils/accounts'
+import { calculateAccountApr, getAccountDebtValue, getAccountTotalValue } from 'utils/accounts'
 
 interface Props {
   account: Account
-  isHls?: boolean
 }
 
 interface ItemProps {
@@ -36,10 +35,10 @@ export default function AccountComposition(props: Props) {
   const updatedAccount = useStore((s) => s.updatedAccount)
   const { account } = props
   const hasChanged = !!updatedAccount
-  const { data: prices } = usePrices()
-  const { data: hlsStrategies } = useHLSStakingAssets()
+  const { data: hlsStrategies } = useHlsStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
-  const assets = useAllAssets()
+  const astroLpAprs = useAstroLpAprs()
+  const assets = useWhitelistedAssets()
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
@@ -49,35 +48,16 @@ export default function AccountComposition(props: Props) {
     [lendingAvailableAssets, accountLentAssets],
   )
 
-  const [depositsBalance, lendsBalance, debtsBalance, vaultsBalance, perps, perpsVault] = useMemo(
-    () => getAccountPositionValues(account, prices, assets),
-    [account, assets, prices],
+  const debtsBalance = useMemo(() => getAccountDebtValue(account, assets), [account, assets])
+  const totalBalance = useMemo(() => getAccountTotalValue(account, assets), [account, assets])
+  const updatedDebtsBalance = useMemo(
+    () => getAccountDebtValue(updatedAccount ?? account, assets),
+    [updatedAccount, account, assets],
   )
-  const totalBalance = useMemo(
-    () => depositsBalance.plus(lendsBalance).plus(vaultsBalance).plus(perps).plus(perpsVault),
-    [depositsBalance, lendsBalance, perps, perpsVault, vaultsBalance],
+  const updatedPositionValue = useMemo(
+    () => getAccountTotalValue(updatedAccount ?? account, assets),
+    [updatedAccount, account, assets],
   )
-
-  const [updatedPositionValue, updatedDebtsBalance] = useMemo(() => {
-    const [
-      updatedDepositsBalance,
-      updatedLendsBalance,
-      updatedDebtsBalance,
-      updatedVaultsBalance,
-      updatedPerpsBalance,
-      updatedPerpsVaultBalance,
-    ] = updatedAccount
-      ? getAccountPositionValues(updatedAccount, prices, assets)
-      : [BN_ZERO, BN_ZERO, BN_ZERO]
-
-    const updatedPositionValue = updatedDepositsBalance
-      .plus(updatedLendsBalance)
-      .plus(updatedVaultsBalance)
-      .plus(updatedPerpsBalance)
-      .plus(updatedPerpsVaultBalance)
-
-    return [updatedPositionValue, updatedDebtsBalance]
-  }, [updatedAccount, prices, assets])
 
   const apr = useMemo(
     () =>
@@ -85,22 +65,12 @@ export default function AccountComposition(props: Props) {
         account,
         borrowAssetsData,
         lendingAssetsData,
-        prices,
         hlsStrategies,
         assets,
         vaultAprs,
-        props.isHls,
+        astroLpAprs,
       ),
-    [
-      account,
-      assets,
-      borrowAssetsData,
-      hlsStrategies,
-      lendingAssetsData,
-      prices,
-      props.isHls,
-      vaultAprs,
-    ],
+    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, vaultAprs, astroLpAprs],
   )
   const updatedApr = useMemo(
     () =>
@@ -109,22 +79,20 @@ export default function AccountComposition(props: Props) {
             updatedAccount,
             borrowAssetsData,
             lendingAssetsData,
-            prices,
             hlsStrategies,
             assets,
             vaultAprs,
-            props.isHls,
+            astroLpAprs,
           )
         : BN_ZERO,
     [
       updatedAccount,
       borrowAssetsData,
       lendingAssetsData,
-      prices,
       hlsStrategies,
       assets,
       vaultAprs,
-      props.isHls,
+      astroLpAprs,
     ],
   )
 

@@ -2,33 +2,34 @@ import classNames from 'classnames'
 import { ReactElement, ReactNode } from 'react'
 
 import { Tooltip } from 'components/common/Tooltip'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 
 interface Props {
   tooltip: string | ReactNode
-  strokeColor?: string
+  strokeClass?: string
   strokeWidth?: number
   background?: string
   diameter?: number
   percentage: number
-  labelClassName?: string
   icon?: ReactElement
 }
 
 export const Gauge = ({
-  background = '#FFFFFF22',
-  strokeColor,
+  background = 'rgba(255, 255, 255, 0.13)',
+  strokeClass,
   strokeWidth = 4,
   diameter = 40,
   percentage = 0,
   tooltip,
   icon,
 }: Props) => {
+  const chainConfig = useChainConfig()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
   const radius = 16
   const percentageValue = percentage > 100 ? 100 : percentage < 0 ? 0 : percentage
@@ -49,7 +50,7 @@ export const Gauge = ({
           style={{ transform: 'rotate(-90deg)' }}
           className='absolute top-0 left-0'
         >
-          {!strokeColor && (
+          {!strokeClass && (
             <linearGradient id='gradient'>
               <stop stopColor='rgba(255, 160, 187)' offset='0%'></stop>
               <stop stopColor='rgba(186, 8, 189)' offset='50%'></stop>
@@ -71,7 +72,7 @@ export const Gauge = ({
             cx={radius}
             cy={radius}
             fill='transparent'
-            stroke={strokeColor ? strokeColor : `url(#gradient)`}
+            stroke={strokeClass ? strokeClass : `url(#gradient)`}
             strokeWidth={strokeWidth}
             strokeDashoffset={circlePercent}
             strokeDasharray='100'

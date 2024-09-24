@@ -1,15 +1,16 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { useShuttle } from '@delphi-labs/shuttle-react'
+import { isAndroid, isIOS, useShuttle } from '@delphi-labs/shuttle-react'
 import { useCallback, useEffect, useMemo } from 'react'
 
 import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
 import WalletSelect from 'components/Wallet//WalletSelect'
 import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalancesAndAccounts'
-import useChainConfig from 'hooks/useChainConfig'
-import useCurrentWallet from 'hooks/useCurrentWallet'
-import useToggle from 'hooks/useToggle'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useToggle from 'hooks/common/useToggle'
+import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useStore from 'store'
+import { setNodeError } from 'utils/error'
 
 interface Props {
   providerId?: string
@@ -46,6 +47,19 @@ export default function WalletConnecting(props: Props) {
   const providerId = props.providerId ?? recentWallet?.providerId
   const client = useStore((s) => s.client)
 
+  // this is currently "true" for other embeded browsers like leap and compass mobile apps
+  const isKeplrMobileInApp =
+    /**
+     * type here currently comes from shuttle and doesn't define the mode property
+     * @see https://github.com/chainapsis/keplr-wallet/blob/master/packages/types/src/wallet/keplr.ts#L63
+     */
+    typeof window !== 'undefined' &&
+    (
+      window.keplr as typeof window.keplr & {
+        mode: KeplrMode
+      }
+    )?.mode === 'mobile-web'
+
   const handleConnect = useCallback(
     (extensionProviderId: string) => {
       async function handleConnectAsync() {
@@ -76,6 +90,7 @@ export default function WalletConnecting(props: Props) {
         } catch (error) {
           setIsConnecting(false)
           if (error instanceof Error) {
+            if (error.message === 'Failed to fetch') setNodeError(chainConfig.endpoints.rpc, error)
             useStore.setState({
               client: undefined,
               address: undefined,
@@ -136,7 +151,7 @@ export default function WalletConnecting(props: Props) {
         if (client || isConnecting) return
         setIsConnecting(true)
         try {
-          await mobileConnect({ mobileProviderId, chainId: chainConfig.id })
+          const urls = await mobileConnect({ mobileProviderId, chainId: chainConfig.id })
           const cosmClient = await CosmWasmClient.connect(chainConfig.endpoints.rpc)
           const walletClient: WalletClient = {
             broadcast,
@@ -146,6 +161,13 @@ export default function WalletConnecting(props: Props) {
             simulate,
           }
           setIsConnecting(false)
+          if (isAndroid()) {
+            window.location.href = urls.androidUrl
+          } else if (isIOS()) {
+            window.location.href = urls.iosUrl
+          } else {
+            window.location.href = urls.androidUrl
+          }
           useStore.setState({
             client: walletClient,
             address: recentWallet.account.address,
@@ -161,6 +183,7 @@ export default function WalletConnecting(props: Props) {
         } catch (error) {
           setIsConnecting(false)
           if (error instanceof Error) {
+            if (error.message === 'Failed to fetch') setNodeError(chainConfig.endpoints.rpc, error)
             useStore.setState({
               client: undefined,
               address: undefined,
@@ -220,7 +243,7 @@ export default function WalletConnecting(props: Props) {
     }
 
     const isMobileProvider = provider.id.split('-')[0] === 'mobile'
-    if (isMobileProvider) {
+    if (isMobileProvider && !isKeplrMobileInApp) {
       handleMobileConnect(provider.id)
       return
     }
@@ -233,6 +256,7 @@ export default function WalletConnecting(props: Props) {
     handleMobileConnect,
     disconnect,
     chainConfig.id,
+    isKeplrMobileInApp,
   ])
 
   return (

@@ -1,9 +1,9 @@
 import BigNumber from 'bignumber.js'
-import { useCallback, useEffect, useMemo, useState } from 'react'
 import classNames from 'classnames'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import Modal from 'components/Modals/Modal'
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
+import AssetImage from 'components/common/assets/AssetImage'
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
 import DisplayCurrency from 'components/common/DisplayCurrency'
@@ -13,12 +13,12 @@ import { ArrowRight, InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
-import AssetImage from 'components/common/assets/AssetImage'
+import Modal from 'components/Modals/Modal'
 import { BN_ZERO } from 'constants/math'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useMarkets from 'hooks/markets/useMarkets'
-import useCurrentWalletBalance from 'hooks/useCurrentWalletBalance'
-import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
+import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatPercent } from 'utils/formatters'
@@ -67,7 +67,7 @@ export default function Repay(props: Props) {
 
   const overpayExeedsCap = useMemo(() => {
     const marketAsset = markets.find((market) => market.asset.denom === asset.denom)
-    if (!marketAsset) return
+    if (!marketAsset || !marketAsset.cap) return
     const overpayAmount = accountDebtWithInterest.minus(accountDebt)
     const marketCapAfterOverpay = marketAsset.cap.used.plus(overpayAmount)
 
@@ -92,17 +92,14 @@ export default function Repay(props: Props) {
   const handleChange = useCallback(
     (newAmount: BigNumber) => {
       if (!amount.isEqualTo(newAmount)) setAmount(newAmount)
+      const repayCoin = BNCoin.fromDenomAndBigNumber(
+        asset.denom,
+        newAmount.isGreaterThan(accountDebt) ? accountDebt : newAmount,
+      )
+      simulateRepay(repayCoin, true)
     },
-    [amount, setAmount],
+    [accountDebt, amount, asset.denom, simulateRepay],
   )
-
-  const onDebounce = useCallback(() => {
-    const repayCoin = BNCoin.fromDenomAndBigNumber(
-      asset.denom,
-      amount.isGreaterThan(accountDebt) ? accountDebt : amount,
-    )
-    simulateRepay(repayCoin, true)
-  }, [amount, accountDebt, asset, simulateRepay])
 
   useEffect(() => {
     if (maxRepayAmount.isEqualTo(max)) return
@@ -188,7 +185,6 @@ export default function Repay(props: Props) {
           <TokenInputWithSlider
             asset={asset}
             onChange={handleChange}
-            onDebounce={onDebounce}
             amount={amount}
             max={max}
             disabled={max.isZero()}

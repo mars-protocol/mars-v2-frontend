@@ -1,16 +1,17 @@
-export const defaultFee: StdFee = {
-  amount: [
-    {
-      denom: 'uosmo',
-      amount: '100000',
-    },
-  ],
-  gas: '10000000',
+export const defaultFee = (chainConfig: ChainConfig) => {
+  return {
+    amount: [
+      {
+        denom: chainConfig.isOsmosis ? 'uosmo' : 'ntrn',
+        amount: chainConfig.isOsmosis ? '90000' : '70000',
+      },
+    ],
+    gas: '15000000',
+  } as StdFee
 }
 
 export const SECONDS_IN_A_YEAR = 31540000
 export const DEPOSIT_CAP_BUFFER = 0.999
-export const VAULT_DEPOSIT_BUFFER = 0.999
 export const SWAP_FEE_BUFFER = 0.005
 export const DEFAULT_PORTFOLIO_STATS = [
   { title: null, sub: 'Total Balance' },
@@ -22,3 +23,4 @@ export const DEFAULT_PORTFOLIO_STATS = [
 
 export const ENABLE_AUTO_REPAY = true
 export const STANDARD_SWAP_FEE = 0.002
+export const HF_THRESHOLD = 1.03

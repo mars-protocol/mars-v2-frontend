@@ -199,9 +199,10 @@ export function max_borrow_estimate_js(c, borrow_denom, target) {
  * @param {string} to_denom
  * @param {SwapKind} kind
  * @param {Number} slippage
+ * @param {boolean} is_repaying_debt
  * @returns {string}
  */
-export function max_swap_estimate_js(c, from_denom, to_denom, kind, slippage) {
+export function max_swap_estimate_js(c, from_denom, to_denom, kind, slippage, is_repaying_debt) {
   let deferred3_0
   let deferred3_1
   try {
@@ -219,6 +220,7 @@ export function max_swap_estimate_js(c, from_denom, to_denom, kind, slippage) {
       len1,
       addHeapObject(kind),
       addHeapObject(slippage),
+      is_repaying_debt,
     )
     var r0 = getInt32Memory0()[retptr / 4 + 0]
     var r1 = getInt32Memory0()[retptr / 4 + 1]

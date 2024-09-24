@@ -1,9 +1,10 @@
 import moment from 'moment'
 import useSWR from 'swr'
 
-import useChainConfig from 'hooks/useChainConfig'
-import useClients from 'hooks/useClients'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useClients from 'hooks/chain/useClients'
 import { BN } from 'utils/helpers'
+import { PERPS_DEFAULT_ACTION } from 'constants/perps'
 
 export default function usePerpsVault() {
   const chainConfig = useChainConfig()
@@ -12,7 +13,7 @@ export default function usePerpsVault() {
   return useSWR(
     clients && `chains/${chainConfig.id}/perps/vault`,
     async (): Promise<PerpsVault> => {
-      const vaultState = await clients!.perps.vaultState()
+      const vaultState = await clients!.perps.vault(PERPS_DEFAULT_ACTION)
       const perpsVault = await clients!.perps.config()
 
       const timeframe = moment.duration(perpsVault.cooldown_period, 'seconds').humanize().split(' ')

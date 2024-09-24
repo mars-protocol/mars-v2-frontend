@@ -4,9 +4,10 @@ import classNames from 'classnames'
 import { resolvePrimaryDomainByAddress } from 'ibc-domains-sdk'
 import { useCallback, useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import useClipboard from 'react-use-clipboard'
 
+import chains from 'chains'
 import RecentTransactions from 'components/Wallet/RecentTransactions'
 import WalletSelect from 'components/Wallet/WalletSelect'
 import Button from 'components/common/Button'
@@ -15,18 +16,15 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { Check, Copy, ExternalLink, Wallet } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
-import chains from 'configs/chains'
 import { BN_ZERO } from 'constants/math'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
-import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
-import useChainConfig from 'hooks/useChainConfig'
-import useCurrentWallet from 'hooks/useCurrentWallet'
-import useICNSDomain from 'hooks/useICNSDomain'
-import useToggle from 'hooks/useToggle'
-import useWalletBalances from 'hooks/useWalletBalances'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useToggle from 'hooks/common/useToggle'
+import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
+import useICNSDomain from 'hooks/wallet/useICNSDomain'
+import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
-import { NETWORK } from 'types/enums/network'
-import { ChainInfoID } from 'types/enums/wallet'
+import { ChainInfoID, NETWORK } from 'types/enums'
 import { truncate } from 'utils/formatters'
 import { getPage, getRoute } from 'utils/route'
 
@@ -35,7 +33,6 @@ export default function WalletConnectedButton() {
   // EXTERNAL HOOKS
   // ---------------
 
-  const marketAssets = useMarketEnabledAssets()
   const currentWallet = useCurrentWallet()
   const { disconnectWallet } = useShuttle()
   const address = currentWallet?.account.address
@@ -48,7 +45,6 @@ export default function WalletConnectedButton() {
   const { data: icnsData, isLoading: isLoadingICNS } = useICNSDomain(address)
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const [searchParams] = useSearchParams()
 
   // ---------------
   // LOCAL STATE
@@ -120,15 +116,11 @@ export default function WalletConnectedButton() {
   useEffect(() => {
     const newAmount = BigNumber(
       walletBalances.find((coin: Coin) => coin.denom === baseAsset.denom)?.amount ?? 0,
-    ).dividedBy(10 ** baseAsset.decimals)
-
+    ).shiftedBy(-baseAsset.decimals)
     if (walletAmount.isEqualTo(newAmount)) return
     setWalletAmount(newAmount)
-
-    const assetDenoms = marketAssets.map((asset) => asset.denom)
-    const balances = walletBalances.filter((coin) => assetDenoms.includes(coin.denom))
-    useStore.setState({ balances })
-  }, [walletBalances, baseAsset.denom, baseAsset.decimals, marketAssets, walletAmount])
+    useStore.setState({ balances: walletBalances })
+  }, [walletBalances, baseAsset.denom, baseAsset.decimals, walletAmount])
 
   return (
     <div className='relative'>

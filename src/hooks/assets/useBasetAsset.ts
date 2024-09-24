@@ -1,8 +1,15 @@
-import useChainConfig from 'hooks/useChainConfig'
+import useAssets from 'hooks/assets/useAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import { useMemo } from 'react'
 
 export default function useBaseAsset() {
   const chainConfig = useChainConfig()
-  const assets = chainConfig.assets
+  const { data: assets } = useAssets()
 
-  return assets[0]
+  return useMemo(
+    () =>
+      assets.find((asset) => asset.denom === chainConfig.defaultCurrency.coinMinimalDenom) ??
+      assets[0],
+    [assets, chainConfig.defaultCurrency.coinMinimalDenom],
+  )
 }

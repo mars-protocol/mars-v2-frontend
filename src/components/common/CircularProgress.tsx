@@ -1,7 +1,8 @@
 import classNames from 'classnames'
 
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 
 interface Props {
@@ -10,16 +11,16 @@ interface Props {
   className?: string
 }
 
-export const CircularProgress = ({ color = '#FFFFFF', size = 20, className }: Props) => {
+export const CircularProgress = ({ size = 20, className }: Props) => {
+  const chainConfig = useChainConfig()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
   const borderWidth = `${size / 10}px`
-  const borderColor = `${color} transparent transparent transparent`
   const loaderClasses = classNames('inline-block relative', className)
   const elementClasses =
-    'block absolute w-4/5 h-4/5 m-[10%] rounded-full animate-progress border-solid'
+    'block absolute w-4/5 h-4/5 m-[10%] rounded-full animate-progress border border-transparent border-l-white'
 
   if (reduceMotion)
     return (
@@ -28,8 +29,8 @@ export const CircularProgress = ({ color = '#FFFFFF', size = 20, className }: Pr
         style={{ width: `${size}px`, height: `${size}px` }}
       >
         <p
-          className='w-full text-center'
-          style={{ fontSize: `${size}px`, lineHeight: `${size}px`, color: `${color}` }}
+          className='w-full text-center text-white'
+          style={{ fontSize: `${size}px`, lineHeight: `${size}px` }}
         >
           ...
         </p>
@@ -42,7 +43,6 @@ export const CircularProgress = ({ color = '#FFFFFF', size = 20, className }: Pr
         className={elementClasses}
         style={{
           borderWidth: borderWidth,
-          borderColor: borderColor,
         }}
       />
       <div
@@ -50,7 +50,6 @@ export const CircularProgress = ({ color = '#FFFFFF', size = 20, className }: Pr
         style={{
           animationDelay: '-0.45s',
           borderWidth: borderWidth,
-          borderColor: borderColor,
         }}
       />
       <div
@@ -58,7 +57,6 @@ export const CircularProgress = ({ color = '#FFFFFF', size = 20, className }: Pr
         style={{
           animationDelay: '-0.3s',
           borderWidth: borderWidth,
-          borderColor: borderColor,
         }}
       />
       <div
@@ -66,7 +64,6 @@ export const CircularProgress = ({ color = '#FFFFFF', size = 20, className }: Pr
         style={{
           animationDelay: '-0.15s',
           borderWidth: borderWidth,
-          borderColor: borderColor,
         }}
       />
     </div>

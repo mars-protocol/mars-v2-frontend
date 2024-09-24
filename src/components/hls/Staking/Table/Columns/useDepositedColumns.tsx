@@ -30,11 +30,11 @@ interface Props {
 }
 
 export default function useDepositedColumns(props: Props) {
-  return useMemo<ColumnDef<HLSAccountWithStrategy>[]>(
+  return useMemo<ColumnDef<HlsAccountWithStrategy>[]>(
     () => [
       {
         ...NAME_META,
-        cell: ({ row }) => <Name strategy={row.original.strategy} />,
+        cell: ({ row }) => <Name strategy={row.original.strategy} account={row.original} />,
       },
       {
         ...ACCOUNT_META,

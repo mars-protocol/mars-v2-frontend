@@ -1,8 +1,8 @@
 export enum LocalStorageKeys {
   TRADING_PAIR_SIMPLE = 'tradingPairSimple',
   TRADING_PAIR_ADVANCED = 'tradingPairAdvanced',
-  ACCOUNT_SUMMARY_TABS = 'accountSummaryTabs',
-  ACCOUNT_DETAILS_TABS = 'accountDetailsTabs',
+  ACCOUNT_SUMMARY_IN_MODAL_TABS_EXPANDED = 'accountSummaryInModalTabsExpanded',
+  ACCOUNT_SUMMARY_TABS_EXPANDED = 'accountSummaryInPageTabsExpanded',
   DISPLAY_CURRENCY = 'displayCurrency',
   REDUCE_MOTION = 'reduceMotion',
   FAVORITE_ASSETS = 'favoriteAssets',
@@ -20,4 +20,9 @@ export enum LocalStorageKeys {
   CHART_INTERVAL = 'tradingview.chart.lastUsedTimeBasedResolution',
   PERPS_VAULT_INFORMATION = 'perpsVaultInformation',
   PERPS_MAKER_FEE = 'perpsMakerFee',
+  THEME = 'theme',
+  RPC_ENDPOINT = 'rpcEndpoint',
+  REST_ENDPOINT = 'restEndpoint',
+  REWARDS_CENTER_TYPE = 'rewardsCenterType',
+  SHOW_SUMMARY = 'showSummary',
 }

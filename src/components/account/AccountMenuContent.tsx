@@ -3,7 +3,6 @@ import { useCallback } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
-import WalletBridges from 'components/Wallet/WalletBridges'
 import AccountCreateFirst from 'components/account/AccountCreateFirst'
 import AccountFund from 'components/account/AccountFund/AccountFundFullPage'
 import AccountList from 'components/account/AccountList'
@@ -11,12 +10,13 @@ import Button from 'components/common/Button'
 import { Account, Plus, PlusCircled } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
+import WalletBridges from 'components/Wallet/WalletBridges'
+import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
+import useToggle from 'hooks/common/useToggle'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
-import useAccountId from 'hooks/useAccountId'
-import useAutoLend from 'hooks/useAutoLend'
-import useHasFundsForTxFee from 'hooks/useHasFundsForTxFee'
-import useToggle from 'hooks/useToggle'
+import useAutoLend from 'hooks/wallet/useAutoLend'
+import useHasFundsForTxFee from 'hooks/wallet/useHasFundsForTxFee'
 import useStore from 'store'
 import { isNumber } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
@@ -42,6 +42,7 @@ export default function AccountMenuContent(props: Props) {
   const hasFundsForTxFee = useHasFundsForTxFee()
   const [enableAutoLendGlobal] = useEnableAutoLendGlobal()
   const { enableAutoLendAccountId } = useAutoLend()
+  const [isAutoLendEnabled] = useEnableAutoLendGlobal()
 
   const hasCreditAccounts = !!accountIds?.length
   const isAccountSelected =
@@ -50,7 +51,7 @@ export default function AccountMenuContent(props: Props) {
   const performCreateAccount = useCallback(async () => {
     setShowMenu(false)
     setIsCreating(true)
-    const accountId = await createAccount('default')
+    const accountId = await createAccount('default', isAutoLendEnabled)
     setIsCreating(false)
 
     if (accountId) {
@@ -74,6 +75,7 @@ export default function AccountMenuContent(props: Props) {
     searchParams,
     address,
     enableAutoLendGlobal,
+    isAutoLendEnabled,
     enableAutoLendAccountId,
   ])
 

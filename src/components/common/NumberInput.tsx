@@ -27,6 +27,7 @@ interface Props {
 export default function NumberInput(props: Props) {
   const inputRef = React.useRef<HTMLInputElement>(null)
   const cursorRef = React.useRef(0)
+  const { onRef } = props
 
   const [formattedAmount, setFormattedAmount] = useState(
     props.amount.shiftedBy(-1 * props.asset.decimals).toString(),
@@ -46,10 +47,9 @@ export default function NumberInput(props: Props) {
   }, [props.amount, props.asset, props.maxDecimals])
 
   useEffect(() => {
-    if (!props.onRef) return
-    props.onRef(inputRef)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputRef, props.onRef])
+    if (!onRef) return
+    onRef(inputRef)
+  }, [inputRef, onRef])
 
   const onInputFocus = () => {
     inputRef.current?.select()
@@ -158,6 +158,7 @@ export default function NumberInput(props: Props) {
         'w-full hover:cursor-pointer appearance-none border-none bg-transparent text-right outline-none',
         props.disabled && 'pointer-events-none',
         props.className,
+        props.disabled && 'pointer-events-none',
       )}
       style={props.style}
       placeholder={props.placeholder ?? '0'}

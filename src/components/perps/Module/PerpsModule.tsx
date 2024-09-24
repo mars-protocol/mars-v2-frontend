@@ -4,7 +4,7 @@ import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import AssetAmountInput from 'components/common/AssetAmountInput'
-import { Callout } from 'components/common/Callout'
+import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
 import Divider from 'components/common/Divider'
 import LeverageSlider from 'components/common/LeverageSlider'
@@ -18,52 +18,42 @@ import PerpsSummary from 'components/perps/Module/Summary'
 import { DEFAULT_LIMIT_PRICE_INFO, PERPS_ORDER_TYPE_TABS } from 'components/perps/Module/constants'
 import usePerpsModule from 'components/perps/Module/usePerpsModule'
 import AssetSelectorPerps from 'components/trade/TradeModule/AssetSelector/AssetSelectorPerps'
-import USD from 'configs/assets/USDollar'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useAllAssets from 'hooks/assets/useAllAssets'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
+import useAssets from 'hooks/assets/useAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
-import usePerpsConfig from 'hooks/perps/usePerpsConfig'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
-import useChainConfig from 'hooks/useChainConfig'
-import useHealthComputer from 'hooks/useHealthComputer'
-import usePrice from 'hooks/usePrice'
-import usePrices from 'hooks/usePrices'
-import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
-import { CalloutType } from 'types/enums/callOut'
-import { OrderType } from 'types/enums/orderType'
+import { BNCoin } from 'types/classes/BNCoin'
+import { OrderType } from 'types/enums'
 import { getAccountNetValue } from 'utils/accounts'
 import { byDenom } from 'utils/array'
-import { demagnify } from 'utils/formatters'
+import { demagnify, getCoinValue } from 'utils/formatters'
 import getPerpsPosition from 'utils/getPerpsPosition'
 import { BN, capitalizeFirstLetter } from 'utils/helpers'
 
 export function PerpsModule() {
+  const chainConfig = useChainConfig()
   const [makerFee, _] = useLocalStorage(
     LocalStorageKeys.PERPS_MAKER_FEE,
-    DEFAULT_SETTINGS.perpsMakerFee,
+    getDefaultChainSettings(chainConfig).perpsMakerFee,
   )
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
   const { data: perpsVault } = usePerpsVault()
   const { perpsAsset } = usePerpsAsset()
   const [selectedOrderType, setSelectedOrderType] = useState<OrderType>(OrderType.MARKET)
   const account = useCurrentAccount()
-  const chainConfig = useChainConfig()
-  const { data: prices } = usePrices()
-  const allAssets = useAllAssets()
-  const { data: perpsConfig } = usePerpsConfig()
+  const { data: allAssets } = useAssets()
   const { simulatePerps, updatedPerpPosition } = useUpdatedAccount(account)
   const [amount, setAmount] = useState<BigNumber>(BN_ZERO)
   const [limitPrice, setLimitPrice] = useState<BigNumber>(BN_ZERO)
-  const perpsBaseAsset = useMemo(() => {
-    if (!perpsConfig) return
-    return chainConfig.assets.find(byDenom(perpsConfig.base_denom))
-  }, [chainConfig, perpsConfig])
   const {
     warningMessages,
     previousAmount,
@@ -79,15 +69,10 @@ export function PerpsModule() {
   )
 
   const isLimitOrder = selectedOrderType === OrderType.LIMIT
-
+  const USD = allAssets.find(byDenom('usd'))
   const { computeMaxPerpAmount } = useHealthComputer(account)
 
-  const { data: tradingFee } = useTradingFeeAndPrice(
-    perpsAsset.denom,
-    amount.plus(previousAmount),
-    previousAmount,
-  )
-  const perpsOraclePrice = usePrice(perpsAsset.denom)
+  const { data: tradingFee } = useTradingFeeAndPrice(perpsAsset.denom, amount.plus(previousAmount))
   const perpsParams = usePerpsParams(perpsAsset.denom)
 
   const debouncedUpdateAccount = useMemo(
@@ -136,14 +121,13 @@ export function PerpsModule() {
     tradingFee,
     perpsVault,
     account?.perps,
-    perpsOraclePrice,
   ])
 
   const netValue = useMemo(() => {
     if (!account) return BN_ZERO
 
-    return getAccountNetValue(account, prices, allAssets)
-  }, [account, allAssets, prices])
+    return getAccountNetValue(account, allAssets)
+  }, [account, allAssets])
 
   const maxAmount = useMemo(() => {
     let maxAmount = computeMaxPerpAmount(perpsAsset.denom, tradeDirection)
@@ -156,9 +140,11 @@ export function PerpsModule() {
 
   const maxAmountLimitOrder = useMemo(() => {
     if (limitPrice.isZero() || limitPriceInfo) return BN_ZERO
-    const maxAmountValue = maxAmount.times(perpsOraclePrice)
+    const maxAmountValue = getCoinValue(BNCoin.fromDenomAndBigNumber(perpsAsset.denom, maxAmount), [
+      perpsAsset,
+    ])
     return maxAmountValue.dividedBy(limitPrice)
-  }, [perpsOraclePrice, limitPrice, maxAmount, limitPriceInfo])
+  }, [limitPrice, maxAmount, limitPriceInfo])
 
   const currentMaxAmount = useMemo(() => {
     return isLimitOrder ? maxAmountLimitOrder : maxAmount
@@ -166,7 +152,7 @@ export function PerpsModule() {
 
   const maxLeverage = useMemo(() => {
     let maxLeverage = 1
-    const priceToUse = isLimitOrder ? limitPrice : perpsOraclePrice
+    const priceToUse = isLimitOrder ? limitPrice : (perpsAsset.price?.amount ?? BN_ZERO)
     if (!hasActivePosition) {
       maxLeverage = priceToUse
         .times(demagnify(currentMaxAmount, perpsAsset))
@@ -176,15 +162,7 @@ export function PerpsModule() {
     }
 
     return maxLeverage
-  }, [
-    hasActivePosition,
-    perpsOraclePrice,
-    currentMaxAmount,
-    perpsAsset,
-    netValue,
-    isLimitOrder,
-    limitPrice,
-  ])
+  }, [hasActivePosition, currentMaxAmount, perpsAsset, netValue, isLimitOrder, limitPrice])
 
   const reset = useCallback(() => {
     setLimitPrice(BN_ZERO)
@@ -236,16 +214,16 @@ export function PerpsModule() {
   )
 
   useEffect(() => {
-    if (!prices || !perpsAsset) return
+    if (!perpsAsset) return
     if (limitPrice.isZero()) {
       setLimitPriceInfo(DEFAULT_LIMIT_PRICE_INFO)
       return
     }
-    if (!perpsOraclePrice) return
+    if (!perpsAsset.price) return
 
     if (
-      (limitPrice.isLessThanOrEqualTo(perpsOraclePrice) && tradeDirection === 'short') ||
-      (limitPrice.isGreaterThanOrEqualTo(perpsOraclePrice) && tradeDirection === 'long')
+      (limitPrice.isLessThanOrEqualTo(perpsAsset.price.amount) && tradeDirection === 'short') ||
+      (limitPrice.isGreaterThanOrEqualTo(perpsAsset.price.amount) && tradeDirection === 'long')
     ) {
       const belowOrAbove = tradeDirection === 'short' ? 'below' : 'above'
       setLimitPriceInfo({
@@ -257,15 +235,7 @@ export function PerpsModule() {
     if (limitPriceInfo) setLimitPriceInfo(undefined)
 
     return
-  }, [
-    limitPrice,
-    prices,
-    perpsAsset,
-    limitPriceInfo,
-    perpsOraclePrice,
-    tradeDirection,
-    perpsAsset.symbol,
-  ])
+  }, [limitPrice, perpsAsset, limitPriceInfo, tradeDirection, perpsAsset.symbol])
 
   const isDisabledExecution = useMemo(() => {
     if (!isLimitOrder) return amount.isGreaterThan(currentMaxAmount) || warningMessages.isNotEmpty()
@@ -306,7 +276,7 @@ export function PerpsModule() {
           onChangeDirection={onChangeTradeDirection}
         />
 
-        {isLimitOrder && (
+        {isLimitOrder && USD && (
           <>
             <AssetAmountInput
               asset={USD}

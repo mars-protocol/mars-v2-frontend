@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 
 import { BN_ZERO } from 'constants/math'
-import useMarkets from 'hooks/markets/useMarkets'
-import useCurrentAccountLends from 'hooks/useCurrentAccountLends'
-import useDisplayCurrencyPrice from 'hooks/useDisplayCurrencyPrice'
+import useLendingMarkets from 'hooks/markets/useLendingMarkets'
+import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
+import useCurrentAccountLends from 'hooks/wallet/useCurrentAccountLends'
 import { byDenom } from 'utils/array'
 
 function useLendingMarketAssetsTableData(): {
@@ -11,7 +11,7 @@ function useLendingMarketAssetsTableData(): {
   availableAssets: LendingMarketTableData[]
   allAssets: LendingMarketTableData[]
 } {
-  const markets = useMarkets()
+  const markets = useLendingMarkets()
   const accountLentAmounts = useCurrentAccountLends()
   const { convertAmount } = useDisplayCurrencyPrice()
 
@@ -33,7 +33,7 @@ function useLendingMarketAssetsTableData(): {
       }
 
       if (lendingMarketAsset.accountLentAmount?.isZero()) {
-        availableAssets.push(lendingMarketAsset)
+        if (!market.asset.isDeprecated) availableAssets.push(lendingMarketAsset)
       } else {
         accountLentAssets.push(lendingMarketAsset)
       }

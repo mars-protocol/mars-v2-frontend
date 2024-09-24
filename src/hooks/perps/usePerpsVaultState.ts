@@ -1,7 +1,8 @@
 import useSWR from 'swr'
 
-import useChainConfig from 'hooks/useChainConfig'
-import useClients from 'hooks/useClients'
+import { PERPS_DEFAULT_ACTION } from 'constants/perps'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useClients from 'hooks/chain/useClients'
 
 export default function usePerpsVaultState() {
   const chainConfig = useChainConfig()
@@ -12,5 +13,5 @@ export default function usePerpsVaultState() {
 }
 
 async function getPerpsVaultState(clients: ContractClients) {
-  return clients.perps.vaultState()
+  return clients.perps.vault(PERPS_DEFAULT_ACTION)
 }

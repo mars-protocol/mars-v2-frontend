@@ -24,7 +24,11 @@ export default function AssetSelectorPerps(props: Props) {
   const onChangePerpsAsset = useCallback(
     (asset: Asset) => {
       let hasPosition = false
-      if (currentAccount && currentAccount.perps.find((perp) => perp.denom === asset.denom)) {
+      if (
+        currentAccount &&
+        currentAccount.perps &&
+        currentAccount.perps.find((perp) => perp.denom === asset.denom)
+      ) {
         hasPosition = true
       }
       updatePerpsAsset(asset.denom, hasPosition)
@@ -35,16 +39,15 @@ export default function AssetSelectorPerps(props: Props) {
   const handleChangeState = useCallback(() => {
     useStore.setState({ assetOverlayState: 'closed' })
   }, [])
-
   return (
     <>
       <Button
         color='quaternary'
         variant='transparent'
         onClick={() => useStore.setState({ assetOverlayState: 'pair' })}
-        className='flex items-center justify-between w-full py-5 bg-white/5'
+        className='flex items-center justify-between w-full py-5 rounded-b-none bg-white/5 '
       >
-        <div className='flex gap-2 items-center'>
+        <div className='flex items-center gap-2'>
           <Text size='sm' className='text-white/60'>
             <span className='text-white'>{perpsAsset.symbol}</span>/USD
           </Text>

@@ -4,7 +4,8 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 import FullOverlayContent from 'components/common/FullOverlayContent'
 import WalletSelect from 'components/Wallet/WalletSelect'
-import useToggle from 'hooks/useToggle'
+import useToggle from 'hooks/common/useToggle'
+import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
 
@@ -15,6 +16,7 @@ export default function AccountCreateFirst() {
   const createAccount = useStore((s) => s.createAccount)
   const [isCreating, setIsCreating] = useToggle(false)
   const [searchParams] = useSearchParams()
+  const [isAutoLendEnabled] = useEnableAutoLendGlobal()
 
   useEffect(() => {
     if (!address) useStore.setState({ focusComponent: { component: <WalletSelect /> } })
@@ -22,7 +24,7 @@ export default function AccountCreateFirst() {
 
   const handleClick = useCallback(async () => {
     setIsCreating(true)
-    const accountId = await createAccount('default')
+    const accountId = await createAccount('default', isAutoLendEnabled)
     setIsCreating(false)
     if (accountId) {
       navigate(getRoute(getPage(pathname), searchParams, address, accountId))
@@ -35,7 +37,7 @@ export default function AccountCreateFirst() {
         },
       })
     }
-  }, [setIsCreating, createAccount, navigate, pathname, searchParams, address])
+  }, [setIsCreating, createAccount, isAutoLendEnabled, navigate, pathname, searchParams, address])
 
   return (
     <FullOverlayContent

@@ -1,8 +1,8 @@
+import Text from 'components/common/Text'
 import FundWithdrawModalContent from 'components/Modals/FundWithdraw/FundAndWithdrawModalContent'
 import ModalContentWithSummary from 'components/Modals/ModalContentWithSummary'
-import Text from 'components/common/Text'
 import useAccount from 'hooks/accounts/useAccount'
-import useAccountId from 'hooks/useAccountId'
+import useAccountId from 'hooks/accounts/useAccountId'
 import useStore from 'store'
 
 export default function FundAndWithdrawModal() {
@@ -29,6 +29,7 @@ export default function FundAndWithdrawModal() {
           </Text>
         </span>
       }
+      headerClassName='pl-2 pr-2.5 py-3'
       onClose={onClose}
       content={<FundWithdrawModalContent account={account} isFunding={isFunding} />}
     />

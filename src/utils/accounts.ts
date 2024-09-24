@@ -12,39 +12,38 @@ import { convertApyToApr } from 'utils/parsers'
 
 export const calculateAccountBalanceValue = (
   account: Account | AccountChange,
-  prices: BNCoin[],
   assets: Asset[],
 ): BigNumber => {
-  const [deposits, lends, debts, vaults, perps, perpsVault] = getAccountPositionValues(
-    account,
-    prices,
-    assets,
-  )
+  const [deposits, lends, debts, vaults, perps, perpsVault, stakedAstroLps] =
+    getAccountPositionValues(account, assets)
 
-  return deposits.plus(lends).plus(vaults).plus(perps).plus(perpsVault).minus(debts)
+  return deposits
+    .plus(lends)
+    .plus(vaults)
+    .plus(perps)
+    .plus(perpsVault)
+    .plus(stakedAstroLps)
+    .minus(debts)
 }
 
-export const getAccountPositionValues = (
-  account: Account | AccountChange,
-  prices: BNCoin[],
-  assets: Asset[],
-) => {
-  const deposits = calculateAccountValue('deposits', account, prices, assets)
-  const lends = calculateAccountValue('lends', account, prices, assets)
-  const debts = calculateAccountValue('debts', account, prices, assets)
-  const vaults = calculateAccountValue('vaults', account, prices, assets)
-  const perps = calculateAccountValue('perps', account, prices, assets)
-  const perpsVault = calculateAccountValue('perpsVault', account, prices, assets)
-  return [deposits, lends, debts, vaults, perps, perpsVault]
+export const getAccountPositionValues = (account: Account | AccountChange, assets: Asset[]) => {
+  const deposits = calculateAccountValue('deposits', account, assets)
+  const lends = calculateAccountValue('lends', account, assets)
+  const debts = calculateAccountValue('debts', account, assets)
+  const vaults = calculateAccountValue('vaults', account, assets)
+  const perps = calculateAccountValue('perps', account, assets)
+  const perpsVault = calculateAccountValue('perpsVault', account, assets)
+  const stakedAstroLps = calculateAccountValue('stakedAstroLps', account, assets)
+
+  return [deposits, lends, debts, vaults, perps, perpsVault, stakedAstroLps]
 }
 
 export const calculateAccountValue = (
-  type: 'deposits' | 'lends' | 'debts' | 'vaults' | 'perps' | 'perpsVault',
+  type: 'deposits' | 'lends' | 'debts' | 'vaults' | 'perps' | 'perpsVault' | 'stakedAstroLps',
   account: Account | AccountChange,
-  prices: BNCoin[],
   assets: Asset[],
 ): BigNumber => {
-  if (!account[type] || !prices) return BN_ZERO
+  if (!account || !account[type] || !assets) return BN_ZERO
 
   if (type === 'vaults') {
     return (
@@ -61,7 +60,7 @@ export const calculateAccountValue = (
   if (type === 'perps') {
     return (
       account.perps?.reduce((acc, perpPosition) => {
-        acc = acc.plus(getCoinValue(perpPosition.pnl.unrealized.net, prices, assets))
+        acc = acc.plus(getCoinValue(perpPosition.pnl.unrealized.net, assets))
         return acc
       }, BN_ZERO) || BN_ZERO
     )
@@ -77,22 +76,12 @@ export const calculateAccountValue = (
     const unlockedAmount = account.perpsVault.unlocked ?? BN_ZERO
     const totalAmount = activeAmount.plus(unlockingAmount).plus(unlockedAmount)
 
-    return getCoinValue(
-      BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, totalAmount),
-      prices,
-      assets,
-    )
+    return getCoinValue(BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, totalAmount), assets)
   }
 
   return (
-    account[type]?.reduce((acc, position) => {
-      const asset = assets.find(byDenom(position.denom))
-      if (!asset) return acc
-      const price = prices.find((price) => price.denom === position.denom)?.amount ?? 0
-      const amount = BN(position.amount).shiftedBy(-asset.decimals)
-      const positionValue = amount.multipliedBy(price)
-      return acc.plus(positionValue)
-    }, BN_ZERO) ?? BN_ZERO
+    account[type]?.reduce((acc, position) => acc.plus(getCoinValue(position, assets)), BN_ZERO) ??
+    BN_ZERO
   )
 }
 
@@ -100,35 +89,40 @@ export const calculateAccountApr = (
   account: Account,
   borrowAssetsData: BorrowMarketTableData[],
   lendingAssetsData: LendingMarketTableData[],
-  prices: BNCoin[],
-  hlsStrategies: HLSStrategy[],
+  hlsStrategies: HlsStrategy[],
   assets: Asset[],
   vaultAprs: Apr[],
-  isHls?: boolean,
+  astroLpAprs: Apr[],
 ): BigNumber => {
-  const depositValue = calculateAccountValue('deposits', account, prices, assets)
-  const lendsValue = calculateAccountValue('lends', account, prices, assets)
-  const vaultsValue = calculateAccountValue('vaults', account, prices, assets)
-  const debtsValue = calculateAccountValue('debts', account, prices, assets)
-  const perpsValue = calculateAccountValue('perps', account, prices, assets)
-
-  const totalValue = depositValue.plus(lendsValue).plus(vaultsValue).plus(perpsValue)
+  const isHls = account.kind === 'high_levered_strategy'
+  const depositValue = calculateAccountValue('deposits', account, assets)
+  const lendsValue = calculateAccountValue('lends', account, assets)
+  const vaultsValue = calculateAccountValue('vaults', account, assets)
+  const debtsValue = calculateAccountValue('debts', account, assets)
+  const perpsValue = calculateAccountValue('perps', account, assets)
+  const stakedAstroLpsValue = calculateAccountValue('stakedAstroLps', account, assets)
+  const totalValue = depositValue
+    .plus(lendsValue)
+    .plus(vaultsValue)
+    .plus(perpsValue)
+    .plus(stakedAstroLpsValue)
   const totalNetValue = totalValue.minus(debtsValue)
 
   if (totalNetValue.isLessThanOrEqualTo(0)) return BN_ZERO
-  const { vaults, lends, debts, deposits } = account
+  const { vaults, lends, debts, deposits, stakedAstroLps } = account
 
   let totalDepositsInterestValue = BN_ZERO
   let totalLendsInterestValue = BN_ZERO
   let totalVaultsInterestValue = BN_ZERO
   let totalDebtInterestValue = BN_ZERO
+  let totalAstroStakedLpsValue = BN_ZERO
 
   if (isHls) {
     deposits?.forEach((deposit) => {
       const asset = assets.find(byDenom(deposit.denom))
       if (!asset) return BN_ZERO
-      const price = prices.find(byDenom(deposit.denom))?.amount ?? 0
-      const amount = BN(deposit.amount).shiftedBy(-asset.decimals)
+      const price = asset.price?.amount ?? BN_ZERO
+      const amount = deposit.amount.shiftedBy(-asset.decimals)
       const apy =
         hlsStrategies.find((strategy) => strategy.denoms.deposit === deposit.denom)?.apy || 0
 
@@ -144,8 +138,8 @@ export const calculateAccountApr = (
   lends?.forEach((lend) => {
     const asset = assets.find(byDenom(lend.denom))
     if (!asset) return BN_ZERO
-    const price = prices.find(byDenom(lend.denom))?.amount ?? 0
-    const amount = BN(lend.amount).shiftedBy(-asset.decimals)
+    const price = asset.price?.amount ?? BN_ZERO
+    const amount = lend.amount.shiftedBy(-asset.decimals)
     const apy = lendingAssetsData.find((lendingAsset) => lendingAsset.asset.denom === lend.denom)
       ?.apy.deposit
 
@@ -169,8 +163,8 @@ export const calculateAccountApr = (
   debts?.forEach((debt) => {
     const asset = assets.find(byDenom(debt.denom))
     if (!asset) return BN_ZERO
-    const price = prices.find(byDenom(debt.denom))?.amount ?? 0
-    const amount = BN(debt.amount).shiftedBy(-asset.decimals)
+    const price = asset.price?.amount ?? BN_ZERO
+    const amount = debt.amount.shiftedBy(-asset.decimals)
     const apy = borrowAssetsData.find((borrowAsset) => borrowAsset.asset.denom === debt.denom)?.apy
       .borrow
 
@@ -184,18 +178,31 @@ export const calculateAccountApr = (
     totalDebtInterestValue = totalDebtInterestValue.plus(positionInterest)
   })
 
+  stakedAstroLps.forEach((stakedAstroLp) => {
+    const farm = astroLpAprs.find((farmApr) => farmApr.address === stakedAstroLp.denom)
+    if (!farm) return
+    const farmApr = farm.apr ?? 0
+    const farmValue = getCoinValue(stakedAstroLp, assets)
+    const positionInterest = farmValue.multipliedBy(farmApr).dividedBy(100)
+    totalAstroStakedLpsValue = totalAstroStakedLpsValue.plus(positionInterest)
+  })
+
   const totalInterestValue = totalLendsInterestValue
     .plus(totalVaultsInterestValue)
     .minus(totalDebtInterestValue)
     .plus(totalDepositsInterestValue)
+    .plus(totalAstroStakedLpsValue)
 
   return totalInterestValue.dividedBy(totalNetValue).times(100)
 }
 
-export function calculateAccountLeverage(account: Account, prices: BNCoin[], assets: Asset[]) {
+export function calculateAccountLeverage(account: Account, assets: Asset[]) {
   // TODO: MP-2307: Include perps positions into account leverage calculation
-  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices, assets)
-  const netValue = deposits.plus(lends).plus(vaults).minus(debts)
+  const [deposits, lends, debts, vaults, _, __, stakedAstroLps] = getAccountPositionValues(
+    account,
+    assets,
+  )
+  const netValue = deposits.plus(lends).plus(vaults).plus(stakedAstroLps).minus(debts)
   return debts.dividedBy(netValue).plus(1)
 }
 
@@ -209,6 +216,7 @@ export function accumulateAmounts(denom: string, coins: BNCoin[]): BigNumber {
 
 export function convertAccountToPositions(account: Account): Positions {
   return {
+    account_kind: account.kind,
     account_id: account.id,
     debts: account.debts.map((debt) => ({
       shares: '0', // This is not needed, but required by the contract
@@ -221,10 +229,10 @@ export function convertAccountToPositions(account: Account): Positions {
       amount: lend.amount.toString(),
       denom: lend.denom,
     })),
+    staked_astro_lps: account.stakedAstroLps?.map((stakedAstroLp) => stakedAstroLp.toCoin()) ?? [],
     perps: account.perps.map((perpPosition) => {
       return {
         base_denom: perpPosition.baseDenom,
-        closing_fee_rate: perpPosition.closingFeeRate.toString(),
         current_price: perpPosition.currentPrice.toString(),
         current_exec_price: perpPosition.currentPrice.toString(),
         denom: perpPosition.denom,
@@ -314,6 +322,8 @@ export function cloneAccount(account: Account): Account {
         unlocked: vault.values.unlocked,
       },
     })),
+    stakedAstroLps:
+      account.stakedAstroLps?.map((stakedAstroLp) => new BNCoin(stakedAstroLp.toCoin())) ?? [],
     perps: account.perps.map((perpPosition) => ({
       ...perpPosition,
       amount: perpPosition.amount,
@@ -385,28 +395,31 @@ export function computeHealthGaugePercentage(health: number) {
 
 export function getAccountSummaryStats(
   account: Account,
-  prices: BNCoin[],
   borrowAssets: BorrowMarketTableData[],
   lendingAssets: LendingMarketTableData[],
-  hlsStrategies: HLSStrategy[],
+  hlsStrategies: HlsStrategy[],
   assets: Asset[],
   vaultAprs: Apr[],
-  isHls?: boolean,
+  astroLpAprs: Apr[],
 ) {
-  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices, assets)
-  const positionValue = deposits.plus(lends).plus(vaults)
+  const [deposits, lends, debts, vaults, perps, perpsVault, stakedAstroLps] =
+    getAccountPositionValues(account, assets)
+  const positionValue = deposits
+    .plus(lends)
+    .plus(vaults)
+    .plus(perps)
+    .plus(perpsVault)
+    .plus(stakedAstroLps)
   const apr = calculateAccountApr(
     account,
     borrowAssets,
     lendingAssets,
-    prices,
     hlsStrategies,
     assets,
     vaultAprs,
-    isHls,
+    astroLpAprs,
   )
-  const leverage = calculateAccountLeverage(account, prices, assets)
-
+  const leverage = calculateAccountLeverage(account, assets)
   return {
     positionValue: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionValue),
     debts: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, debts),
@@ -417,16 +430,62 @@ export function getAccountSummaryStats(
 }
 
 export function isAccountEmpty(account: Account) {
-  return (
-    account.vaults.length === 0 &&
-    account.lends.length === 0 &&
-    account.debts.length === 0 &&
-    account.deposits.length === 0 &&
-    account.perpsVault === null
-  )
+  if (account.vaults.length > 0) return false
+  if (account.lends.length > 0) return false
+  if (account.debts.length > 0) return false
+  if (account.deposits.length > 0) return false
+  if (account.stakedAstroLps.length > 0) return false
+  if (account.perpsVault) return false
+
+  return true
 }
 
-export function getAccountNetValue(account: Account, prices: BNCoin[], assets: Asset[]) {
-  const [deposits, lends, debts, vaults] = getAccountPositionValues(account, prices, assets)
-  return deposits.plus(lends).plus(vaults).minus(debts)
+export function getAccountNetValue(account: Account, assets: Asset[]) {
+  const [deposits, lends, debts, vaults, perps, perpsVault, staked_astro_lps] =
+    getAccountPositionValues(account, assets)
+  return deposits
+    .plus(lends)
+    .plus(vaults)
+    .plus(perps)
+    .plus(perpsVault)
+    .plus(staked_astro_lps)
+    .minus(debts)
+}
+
+export function getAccountTotalValue(account: Account, assets: Asset[]) {
+  const [deposits, lends, debts, vaults, perps, perpsVault, staked_astro_lps] =
+    getAccountPositionValues(account, assets)
+  return deposits.plus(lends).plus(vaults).plus(perps).plus(perpsVault).plus(staked_astro_lps)
+}
+
+export function getAccountDebtValue(account: Account, assets: Asset[]) {
+  const [deposits, lends, debts, vaults, perps, perpsVault, staked_astro_lps] =
+    getAccountPositionValues(account, assets)
+  return debts
+}
+
+export function convertCoinArrayIntoBNCoinArrayAndRemoveEmptyCoins(coins: Coin[]) {
+  const BNCoins = [] as BNCoin[]
+  coins.forEach((coin) => {
+    if (coin.amount !== '0') BNCoins.push(BNCoin.fromCoin(coin))
+  })
+  return BNCoins
+}
+
+export function removeEmptyCoins(coins: Coin[]) {
+  const newCoins = [] as Coin[]
+  coins.forEach((coin) => {
+    if (coin.amount === '0') return
+    newCoins.push(coin)
+  })
+  return newCoins
+}
+
+export function removeEmptyBNCoins(coins: BNCoin[]) {
+  const newCoins = [] as BNCoin[]
+  coins.forEach((coin) => {
+    if (coin.amount.isZero()) return
+    newCoins.push(coin)
+  })
+  return newCoins
 }

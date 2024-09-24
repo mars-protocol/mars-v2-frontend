@@ -3,10 +3,11 @@ import { useMemo } from 'react'
 
 import HealthIcon from 'components/account/Health/HealthIcon'
 import HealthTooltip from 'components/account/Health/HealthTooltip'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useHealthColor from 'hooks/health-computer/useHealthColor'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useHealthColor from 'hooks/useHealthColor'
 import { getHealthIndicatorColors } from 'utils/healthIndicator'
 
 interface Props {
@@ -43,9 +44,10 @@ export default function HealthBar({
   iconClassName = 'w-5',
   showIcon = false,
 }: Props) {
+  const chainConfig = useChainConfig()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
-    DEFAULT_SETTINGS.reduceMotion,
+    getDefaultChainSettings(chainConfig).reduceMotion,
   )
   const width = calculateHealth(health)
   const updatedWidth = calculateHealth(updatedHealth)

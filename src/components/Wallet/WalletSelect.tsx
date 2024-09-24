@@ -10,11 +10,12 @@ import Button from 'components/common/Button'
 import FullOverlayContent from 'components/common/FullOverlayContent'
 import { ChevronLeft, ChevronRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import { WALLETS } from 'constants/wallets'
-import useChainConfig from 'hooks/useChainConfig'
-import useCurrentWallet from 'hooks/useCurrentWallet'
+import { DAODAO_ORIGINS, WALLETS } from 'constants/wallets'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useStore from 'store'
-import { WalletID } from 'types/enums/wallet'
+import { WalletID } from 'types/enums'
+import { setNodeError } from 'utils/error'
 import { isAndroid, isIOS } from 'utils/mobile'
 
 interface Props {
@@ -59,8 +60,8 @@ export default function WalletSelect(props: Props) {
   const { extensionProviders, mobileProviders, mobileConnect } = useShuttle()
   const [qrCodeUrl, setQRCodeUrl] = useState('')
   const [error, setError] = useState(props.error)
+  const errorStore = useStore((s) => s.errorStore)
   const [isLoading, setIsLoading] = useState<string | boolean>(false)
-  const sortedExtensionProviders = extensionProviders.sort((a, b) => +b - +a)
   const recentWallet = useCurrentWallet()
   const handleConnectClick = (extensionProviderId: string) => {
     useStore.setState({
@@ -72,6 +73,32 @@ export default function WalletSelect(props: Props) {
       },
     })
   }
+  // this is currently "true" for other embeded browsers like leap and compass mobile apps
+  const isKeplrMobileInApp =
+    /**
+     * type here currently comes from shuttle and doesn't define the mode property
+     * @see https://github.com/chainapsis/keplr-wallet/blob/master/packages/types/src/wallet/keplr.ts#L63
+     */
+    typeof window !== 'undefined' &&
+    (
+      window.keplr as typeof window.keplr & {
+        mode: KeplrMode
+      }
+    )?.mode === 'mobile-web'
+
+  const isDaodaoIframe =
+    window.location !== window.parent.location &&
+    /**
+     * referrer has a trailing slash like https://daodao.zone/
+     * origins don't have a trailing slash like https://daodao.zone - doesn't work otherwise
+     */
+    DAODAO_ORIGINS.some((url) => document.referrer.startsWith(url))
+
+  const sortedExtensionProviders = extensionProviders
+    .sort((a, b) => +b - +a)
+    .filter((provider) =>
+      isDaodaoIframe ? provider.id === WalletID.DaoDao : provider.id !== WalletID.DaoDao,
+    )
 
   const handleMobileConnectClick = async (mobileProviderId: string, chainId: string) => {
     setIsLoading(mobileProviderId)
@@ -189,34 +216,39 @@ export default function WalletSelect(props: Props) {
             })}
           </>
         )}
-        {mobileProviders.map((provider) => {
-          const walletId = provider.id as WalletID
-          return (
-            <React.Fragment key={walletId}>
-              {Array.from(provider.networks.values())
-                .filter((network) => network.chainId === chainConfig.id)
-                .map((network) => {
-                  return (
-                    <WalletOption
-                      key={`${walletId}-${network.chainId}`}
-                      name={
-                        isMobile
-                          ? WALLETS[walletId].name
-                          : WALLETS[walletId].walletConnect ?? 'WalletConnect'
-                      }
-                      imageSrc={
-                        isMobile
-                          ? WALLETS[walletId].imageURL
-                          : WALLETS[walletId].mobileImageURL ?? '/'
-                      }
-                      handleClick={() => handleMobileConnectClick(walletId, network.chainId)}
-                      showLoader={isLoading === walletId}
-                    />
-                  )
-                })}
-            </React.Fragment>
-          )
-        })}
+        {!isDaodaoIframe &&
+          mobileProviders.map((provider) => {
+            const walletId = provider.id as WalletID
+            return (
+              <React.Fragment key={walletId}>
+                {Array.from(provider.networks.values())
+                  .filter((network) => network.chainId === chainConfig.id)
+                  .map((network) => {
+                    return (
+                      <WalletOption
+                        key={`${walletId}-${network.chainId}`}
+                        name={
+                          isMobile
+                            ? WALLETS[walletId].name
+                            : (WALLETS[walletId].walletConnect ?? 'WalletConnect')
+                        }
+                        imageSrc={
+                          isMobile
+                            ? WALLETS[walletId].imageURL
+                            : (WALLETS[walletId].mobileImageURL ?? '/')
+                        }
+                        handleClick={() =>
+                          isKeplrMobileInApp
+                            ? handleConnectClick(walletId.replace('mobile-', ''))
+                            : handleMobileConnectClick(walletId, network.chainId)
+                        }
+                        showLoader={isLoading === walletId}
+                      />
+                    )
+                  })}
+              </React.Fragment>
+            )
+          })}
       </div>
     </FullOverlayContent>
   )

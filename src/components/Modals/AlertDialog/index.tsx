@@ -1,12 +1,12 @@
 import classNames from 'classnames'
 
-import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
-import Modal from 'components/Modals/Modal'
 import Button from 'components/common/Button'
 import Checkbox from 'components/common/Checkbox'
 import Text from 'components/common/Text'
-import useAlertDialog from 'hooks/useAlertDialog'
-import useToggle from 'hooks/useToggle'
+import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
+import Modal from 'components/Modals/Modal'
+import useAlertDialog from 'hooks/common/useAlertDialog'
+import useToggle from 'hooks/common/useToggle'
 
 export default function AlertDialogController() {
   const { config, close } = useAlertDialog()
@@ -22,7 +22,7 @@ interface Props {
 }
 
 function AlertDialog(props: Props) {
-  const { title, icon, content, negativeButton, positiveButton, checkbox } = props.config
+  const { title, icon, content, negativeButton, positiveButton, checkbox, header } = props.config
 
   const [toggle, handleToggle] = useToggle()
 
@@ -41,19 +41,23 @@ function AlertDialog(props: Props) {
       onClose={props.close}
       hideTxLoader
       header={
-        <div className='flex flex-col'>
-          {icon && (
-            <div className='grid w-12 h-12 mb-4 rounded-sm place-items-center bg-white/5'>
-              {icon}
-            </div>
-          )}
-          <Text size='2xl'>{title}</Text>
-        </div>
+        header ? (
+          header
+        ) : (
+          <div className='flex flex-col'>
+            {icon && (
+              <div className='grid w-12 h-12 mb-4 rounded-sm place-items-center bg-white/5'>
+                {icon}
+              </div>
+            )}
+            <Text size='2xl'>{title ?? ''}</Text>
+          </div>
+        )
       }
       className='md:h-auto h-screen-full'
-      modalClassName='max-w-screen-full md:max-w-modal-sm h-screen-full flex items-center justify-center '
-      headerClassName='p-4 md:p-8'
-      contentClassName='md:px-8 md:pb-8 p-4'
+      modalClassName='max-w-screen-full md:max-w-modal-md h-screen-full flex items-center justify-center '
+      headerClassName='p-4 md:p-6'
+      contentClassName='md:px-6 md:pb-6 p-4'
       hideCloseBtn
     >
       {typeof content === 'string' ? (
@@ -76,6 +80,7 @@ function AlertDialog(props: Props) {
               rightIcon={positiveButton.icon ?? <YesIcon />}
               iconClassName='h-4 w-5'
               onClick={() => handleButtonClick(positiveButton)}
+              disabled={positiveButton.disabled}
             />
           )}
           {checkbox && (

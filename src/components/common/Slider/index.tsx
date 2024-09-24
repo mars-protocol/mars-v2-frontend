@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import debounce from 'lodash.debounce'
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 
@@ -7,30 +6,31 @@ import { OverlayMark } from 'components/common/Icons'
 import LeverageLabel from 'components/common/Slider/LeverageLabel'
 import Mark from 'components/common/Slider/Mark'
 import Track from 'components/common/Slider/Track'
-import useToggle from 'hooks/useToggle'
-
-const colors = {
-  '1': '#897E83',
-  '2': '#BD8898',
-  '3': '#DB83A5',
-  '4': '#B5469B',
-  '5': '#920D92',
-}
+import useToggle from 'hooks/common/useToggle'
 
 type Props = {
   value: number
   onChange: (value: number) => void
-  onDebounce?: () => void
   leverage?: {
     current: number
     max: number
+    min?: number
   }
   className?: string
   disabled?: boolean
 }
 
+function getActiveIndex(value: number) {
+  if (value >= 100) return '7'
+  if (value >= 75) return '6'
+  if (value >= 50) return '4'
+  if (value >= 25) return '2'
+  return '1'
+}
+
 export default function Slider(props: Props) {
-  const { value, onChange, onDebounce, leverage, className, disabled } = props
+  const { value, onChange, leverage, className, disabled } = props
+  const [newValue, setNewValue] = useState(value)
   const [showTooltip, setShowTooltip] = useToggle()
   const [sliderRect, setSliderRect] = useState({ width: 0, left: 0, right: 0 })
   const ref = useRef<HTMLDivElement>(null)
@@ -55,77 +55,81 @@ export default function Slider(props: Props) {
     }
   }, [sliderRect.left, sliderRect.right, sliderRect.width])
 
-  const debounceFunction = useMemo(
-    () =>
-      debounce(() => {
-        if (!onDebounce) return
-        onDebounce()
-      }, 250),
-    [onDebounce],
+  const handleOnChange = useCallback(
+    (value: number) => {
+      if (value === newValue) return
+      setNewValue(value)
+      onChange(value)
+    },
+    [newValue, onChange],
   )
 
-  function handleOnChange(value: number) {
-    onChange(value)
-    debounceFunction()
-  }
+  const handleDrag = useCallback(
+    (e: any) => {
+      if (!isDragging) {
+        setIsDragging(true)
+      }
 
-  function handleDrag(e: any) {
-    if (!isDragging) {
-      setIsDragging(true)
-    }
+      const current: number = e.clientX
 
-    const current: number = e.clientX
+      if (current < sliderRect.left) {
+        handleOnChange(0)
+        return
+      }
 
-    if (current < sliderRect.left) {
-      handleOnChange(0)
-      return
-    }
+      if (current > sliderRect.right) {
+        handleOnChange(100)
+        return
+      }
 
-    if (current > sliderRect.right) {
-      handleOnChange(100)
-      return
-    }
+      const currentValue = Math.round(((current - sliderRect.left) / sliderRect.width) * 100)
 
-    const currentValue = Math.round(((current - sliderRect.left) / sliderRect.width) * 100)
+      if (currentValue !== value) {
+        handleOnChange(currentValue)
+      }
+    },
+    [
+      handleOnChange,
+      isDragging,
+      setIsDragging,
+      sliderRect.left,
+      sliderRect.right,
+      sliderRect.width,
+      value,
+    ],
+  )
 
-    if (currentValue !== value) {
-      handleOnChange(currentValue)
-    }
-  }
+  const handleSliderClick = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      handleOnChange(Number(e.target.value))
+    },
+    [handleOnChange],
+  )
 
-  function handleSliderClick(e: ChangeEvent<HTMLInputElement>) {
-    handleOnChange(Number(e.target.value))
-  }
-
-  function handleShowTooltip() {
+  const handleShowTooltip = useCallback(() => {
     setShowTooltip(true)
-  }
+  }, [setShowTooltip])
 
-  function handleHideTooltip() {
+  const handleHideTooltip = useCallback(() => {
     setShowTooltip(false)
-  }
-
-  function getActiveIndex() {
-    if (value >= 100) return '5'
-    if (value >= 75) return '4'
-    if (value >= 50) return '3'
-    if (value >= 25) return '2'
-    return '1'
-  }
+  }, [setShowTooltip])
 
   const DraggableElement: any = Draggable
 
   const [positionOffset, position] = useMemo(() => {
-    debounceFunction()
     return [
       { x: (value / 100) * -12, y: 0 },
       { x: (sliderRect.width / 100) * value, y: -2 },
     ]
-  }, [value, sliderRect.width, debounceFunction])
+  }, [value, sliderRect.width])
 
-  useEffect(() => {
-    handleSliderRect()
-  }, [handleSliderRect])
+  useEffect(
+    () => {
+      handleSliderRect()
+    },
+    //eslint-disable-next-line
+    [],
+  )
 
   return (
     <div>
@@ -151,23 +155,21 @@ export default function Slider(props: Props) {
             value={0}
             sliderValue={value}
             disabled={disabled}
-            style={{ backgroundColor: colors['1'] }}
+            backgroundClassName='bg-slider-1'
           />
           <Track maxValue={23} sliderValue={value} bg='before:gradient-slider-1' />
           <Mark
             onClick={() => handleOnChange(25)}
             value={25}
             sliderValue={value}
-            disabled={disabled}
-            style={{ backgroundColor: colors['2'] }}
+            backgroundClassName='bg-slider-3'
           />
           <Track maxValue={48} sliderValue={value} bg='before:gradient-slider-2' />
           <Mark
             onClick={() => handleOnChange(50)}
             value={50}
             sliderValue={value}
-            disabled={disabled}
-            style={{ backgroundColor: colors['3'] }}
+            backgroundClassName='bg-slider-5'
           />
           <Track maxValue={73} sliderValue={value} bg='before:gradient-slider-3' />
           <Mark
@@ -175,7 +177,7 @@ export default function Slider(props: Props) {
             value={75}
             sliderValue={value}
             disabled={disabled}
-            style={{ backgroundColor: colors['4'] }}
+            backgroundClassName='bg-slider-6'
           />
           <Track maxValue={98} sliderValue={value} bg='before:gradient-slider-4' />
           <Mark
@@ -183,7 +185,7 @@ export default function Slider(props: Props) {
             value={100}
             sliderValue={value}
             disabled={disabled}
-            style={{ backgroundColor: colors['5'] }}
+            backgroundClassName='bg-slider-8'
           />
         </div>
         {!disabled && (
@@ -201,9 +203,9 @@ export default function Slider(props: Props) {
               <div ref={nodeRef} className='absolute z-20 leading-3'>
                 <div
                   className={classNames(
-                    'z-20 h-3 w-3 rotate-45 hover:cursor-pointer rounded-xs border-[2px] border-white !outline-none',
+                    `bg-slider-${Number(getActiveIndex(value)) + 1}`,
+                    'z-20 h-3 w-3 rotate-45 hover:cursor-pointer rounded-xs border-[2px] border-white/60 !outline-none',
                   )}
-                  style={{ background: colors[getActiveIndex()] }}
                 />
                 {leverage ? (
                   <div className='pt-2.5'>
@@ -233,8 +235,8 @@ export default function Slider(props: Props) {
       {leverage && (
         <div className='flex justify-between pt-2'>
           <LeverageLabel
-            leverage={1}
-            decimals={0}
+            leverage={leverage.min || 1}
+            decimals={leverage.min ? 2 : 0}
             className='-translate-x-0.5'
             style={{ opacity: value < 5 ? 0 : 1 }}
           />

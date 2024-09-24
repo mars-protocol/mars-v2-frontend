@@ -2,8 +2,8 @@ import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import Modal from 'components/Modals/Modal'
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
-import AssetImage from 'components/common/assets/AssetImage'
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
 import DisplayCurrency from 'components/common/DisplayCurrency'
@@ -14,16 +14,16 @@ import Switch from 'components/common/Switch'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
-import Modal from 'components/Modals/Modal'
+import AssetImage from 'components/common/assets/AssetImage'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
+import { getDepositAndLendCoinsToSpend } from 'hooks/accounts/useUpdatedAccount/functions'
+import useToggle from 'hooks/common/useToggle'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useMarkets from 'hooks/markets/useMarkets'
-import useAutoLend from 'hooks/useAutoLend'
-import useHealthComputer from 'hooks/useHealthComputer'
-import useToggle from 'hooks/useToggle'
-import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
-import { getDepositAndLendCoinsToSpend } from 'hooks/useUpdatedAccount/functions'
-import useWalletBalances from 'hooks/useWalletBalances'
+import useAutoLend from 'hooks/wallet/useAutoLend'
+import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -78,9 +78,8 @@ function BorrowModal(props: Props) {
   const isRepay = modal.isRepay ?? false
   const [max, setMax] = useState(BN_ZERO)
   const { simulateBorrow, simulateRepay } = useUpdatedAccount(account)
-  const { autoLendEnabledAccountIds } = useAutoLend()
   const apy = modal.marketData.apy.borrow
-  const isAutoLendEnabled = autoLendEnabledAccountIds.includes(account.id)
+  const { isAutoLendEnabledForCurrentAccount: isAutoLendEnabled } = useAutoLend()
   const { computeMaxBorrowAmount } = useHealthComputer(account)
   const accountDebt = account.debts.find(byDenom(asset.denom))?.amount ?? BN_ZERO
   const markets = useMarkets()
@@ -100,7 +99,7 @@ function BorrowModal(props: Props) {
 
   const overpayExeedsCap = useMemo(() => {
     const marketAsset = markets.find((market) => market.asset.denom === asset.denom)
-    if (!marketAsset) return
+    if (!marketAsset || !marketAsset.cap) return
     const overpayAmount = accountDebtWithInterest.minus(accountDebt)
     const marketCapAfterOverpay = marketAsset.cap.used.plus(overpayAmount)
 
@@ -163,39 +162,36 @@ function BorrowModal(props: Props) {
 
   const handleChange = useCallback(
     (newAmount: BigNumber) => {
-      if (!amount.isEqualTo(newAmount)) setAmount(newAmount)
+      if (amount.isEqualTo(newAmount)) return
+      setAmount(newAmount)
+      if (isRepay) {
+        const repayCoin = BNCoin.fromDenomAndBigNumber(
+          asset.denom,
+          newAmount.isGreaterThan(accountDebt) ? accountDebt : newAmount,
+        )
+        simulateRepay(repayCoin, repayFromWallet)
+      } else {
+        const borrowCoin = BNCoin.fromDenomAndBigNumber(
+          asset.denom,
+          newAmount.isGreaterThan(max) ? max : newAmount,
+        )
+        const target = borrowToWallet ? 'wallet' : isAutoLendEnabled ? 'lend' : 'deposit'
+        simulateBorrow(target, borrowCoin)
+      }
     },
-    [amount, setAmount],
+    [
+      accountDebt,
+      amount,
+      asset.denom,
+      borrowToWallet,
+      isAutoLendEnabled,
+      isRepay,
+      max,
+      repayFromWallet,
+      simulateBorrow,
+      simulateRepay,
+    ],
   )
-
-  const onDebounce = useCallback(() => {
-    if (max.isZero() || amount.isZero()) return
-    if (isRepay) {
-      const repayCoin = BNCoin.fromDenomAndBigNumber(
-        asset.denom,
-        amount.isGreaterThan(accountDebt) ? accountDebt : amount,
-      )
-      simulateRepay(repayCoin, repayFromWallet)
-    } else {
-      const borrowCoin = BNCoin.fromDenomAndBigNumber(
-        asset.denom,
-        amount.isGreaterThan(max) ? max : amount,
-      )
-      const target = borrowToWallet ? 'wallet' : isAutoLendEnabled ? 'lend' : 'deposit'
-      simulateBorrow(target, borrowCoin)
-    }
-  }, [
-    amount,
-    accountDebt,
-    isRepay,
-    repayFromWallet,
-    max,
-    asset,
-    borrowToWallet,
-    isAutoLendEnabled,
-    simulateBorrow,
-    simulateRepay,
-  ])
 
   const maxBorrow = useMemo(() => {
     const maxBorrowAmount = isRepay
@@ -305,7 +301,6 @@ function BorrowModal(props: Props) {
           <TokenInputWithSlider
             asset={asset}
             onChange={handleChange}
-            onDebounce={onDebounce}
             amount={amount}
             max={max}
             disabled={max.isZero()}

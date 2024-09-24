@@ -1,19 +1,19 @@
 import classNames from 'classnames'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import WalletBridges from 'components/Wallet/WalletBridges'
 import AccountFundRow from 'components/account/AccountFund/AccountFundRow'
 import Button from 'components/common/Button'
 import DepositCapMessage from 'components/common/DepositCapMessage'
 import { ArrowRight, Plus } from 'components/common/Icons'
 import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
 import Text from 'components/common/Text'
-import WalletBridges from 'components/Wallet/WalletBridges'
 import { BN_ZERO } from 'constants/math'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useMarkets from 'hooks/markets/useMarkets'
-import useAutoLend from 'hooks/useAutoLend'
-import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
-import useWalletBalances from 'hooks/useWalletBalances'
+import useAutoLend from 'hooks/wallet/useAutoLend'
+import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -110,25 +110,25 @@ export default function AccountFundContent(props: Props) {
     setFundingAssets(newFundingAssets)
   }, [selectedDenoms, fundingAssets])
 
-  const updateFundingAssets = useCallback((amount: BigNumber, denom: string) => {
-    setFundingAssets((fundingAssets) => {
-      const updateIdx = fundingAssets.findIndex(byDenom(denom))
-      if (updateIdx === -1) return fundingAssets
+  const updateFundingAssets = useCallback(
+    (amount: BigNumber, denom: string) => {
+      setFundingAssets((fundingAssets) => {
+        const updateIdx = fundingAssets.findIndex(byDenom(denom))
+        if (updateIdx === -1) return fundingAssets
 
-      fundingAssets[updateIdx].amount = amount
-      return [...fundingAssets]
-    })
-  }, [])
-
-  const onDebounce = useCallback(() => {
-    simulateDeposits(isLending ? 'lend' : 'deposit', fundingAssets)
-  }, [isLending, fundingAssets, simulateDeposits])
+        fundingAssets[updateIdx].amount = amount
+        simulateDeposits(isLending ? 'lend' : 'deposit', fundingAssets)
+        return [...fundingAssets]
+      })
+    },
+    [isLending, simulateDeposits],
+  )
 
   const depositCapReachedCoins = useMemo(() => {
     const depositCapReachedCoins: BNCoin[] = []
     fundingAssets.forEach((asset) => {
       const marketAsset = markets.find((market) => market.asset.denom === asset.denom)
-      if (!marketAsset) return
+      if (!marketAsset || !marketAsset.cap) return
 
       const capLeft = getCapLeftWithBuffer(marketAsset.cap)
 
@@ -158,7 +158,6 @@ export default function AccountFundContent(props: Props) {
                 amount={coin.amount ?? BN_ZERO}
                 isConfirming={isConfirming}
                 updateFundingAssets={updateFundingAssets}
-                onDebounce={onDebounce}
               />
             </div>
           )

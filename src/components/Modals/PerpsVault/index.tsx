@@ -10,10 +10,10 @@ import { ArrowRight } from 'components/common/Icons'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useAsset from 'hooks/assets/useAsset'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
-import useChainConfig from 'hooks/useChainConfig'
-import { useUpdatedAccount } from 'hooks/useUpdatedAccount'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { CalloutType } from 'types/enums/callOut'
@@ -79,6 +79,8 @@ function PerpsVaultModal(props: Props) {
     if (!account || !perpsVault) return
     setIsConfirming(true)
 
+    useStore.setState({ perpsVaultModal: null })
+
     if (props.modal.type === 'deposit') {
       const amountFromDeposits = amount.isLessThanOrEqualTo(amountInDeposits)
         ? amount
@@ -92,6 +94,7 @@ function PerpsVaultModal(props: Props) {
         ...(!amountFromDeposits.isZero() ? { fromDeposits: amountFromDeposits } : {}),
         ...(!amountFromLends.isZero() ? { fromLends: amountFromLends } : {}),
       })
+      await mutate(`chains/${chainConfig.id}/vaults/${account.id}/deposited`)
     }
 
     const activeVaultPosition = account.perpsVault?.active
@@ -103,6 +106,7 @@ function PerpsVaultModal(props: Props) {
         accountId: account.id,
         amount: amountOfShares.integerValue(),
       })
+      await mutate(`chains/${chainConfig.id}/accounts/${account.id}`)
     }
 
     setIsConfirming(false)
@@ -128,7 +132,7 @@ function PerpsVaultModal(props: Props) {
     <ModalContentWithSummary
       isContentCard
       subHeader={<SubHeader />}
-      headerClassName='p-0'
+      headerClassName='pl-2 pr-2.5 py-3'
       account={account}
       content={
         <>

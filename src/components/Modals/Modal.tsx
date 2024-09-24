@@ -1,23 +1,8 @@
 import classNames from 'classnames'
-import { ReactNode, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 import EscButton from 'components/common/Button/EscButton'
 import Card from 'components/common/Card'
-
-export interface ModalProps {
-  header: string | ReactNode
-  subHeader?: string | ReactNode
-  headerClassName?: string
-  hideCloseBtn?: boolean
-  children?: ReactNode | string
-  content?: ReactNode | string
-  className?: string
-  contentClassName?: string
-  modalClassName?: string
-  onClose: () => void
-  hideTxLoader?: boolean
-  dialogId?: string
-}
 
 export default function Modal(props: ModalProps) {
   const ref: React.RefObject<HTMLDialogElement> = useRef(null)
@@ -60,21 +45,19 @@ export default function Modal(props: ModalProps) {
     >
       <Card
         className={classNames(
-          'flex max-w-full h-full flex-1 bg-white/5 backdrop-blur-3xl md:overflow-hidden overflow-y-scroll md:h-auto',
+          'flex max-w-full h-full flex-1 bg-white/5 backdrop-blur-3xl md:h-auto',
           props.className,
         )}
+        contentClassName='overflow-y-scroll scrollbar-hide max-h-screen-full'
       >
-        <div className={classNames('flex justify-between', props.headerClassName)}>
+        <div className={classNames('flex justify-between relative', props.headerClassName)}>
           {props.header}
-          {!props.hideCloseBtn && <EscButton onClick={props.onClose} />}
-        </div>
-        <div className='gradient-header'>{props.subHeader}</div>
-        <div
-          className={classNames(
-            props.contentClassName,
-            'flex-1 overflow-y-scroll scrollbar-hide relative',
+          {!props.hideCloseBtn && (
+            <EscButton className='!absolute right-2 top-2' onClick={props.onClose} />
           )}
-        >
+        </div>
+        {props.subHeader && <div className='gradient-header'>{props.subHeader}</div>}
+        <div className={classNames(props.contentClassName, 'flex-1 relative')}>
           {props.children ? props.children : props.content}
         </div>
       </Card>

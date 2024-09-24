@@ -15,6 +15,7 @@ export default function TotalPnL(props: Props) {
       coin={pnl.net}
       options={{ abbreviated: false }}
       isProfitOrLoss
+      showSignPrefix
       showZero
     />
   )

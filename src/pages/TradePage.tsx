@@ -1,14 +1,14 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import AccountDetailsCard from 'components/trade/AccountDetailsCard'
 import TradeChart from 'components/trade/TradeChart'
 import TradeModule from 'components/trade/TradeModule'
-import { DEFAULT_SETTINGS } from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
+import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useChainConfig from 'hooks/useChainConfig'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { getPage } from 'utils/route'
@@ -17,33 +17,60 @@ export default function TradePage() {
   const { pathname } = useLocation()
   const chainConfig = useChainConfig()
   const page = getPage(pathname)
-  const isAdvanced = useMemo(() => page === 'trade-advanced', [page])
+  const isAdvanced = useMemo(() => {
+    useStore.setState({ assetOverlayState: 'closed' })
+    return page === 'trade-advanced'
+  }, [page])
 
-  const [tradingPairAdvanced] = useLocalStorage<Settings['tradingPairAdvanced']>(
+  const [tradingPairAdvanced, setTradingPairAdvanced] = useLocalStorage<
+    Settings['tradingPairAdvanced']
+  >(
     chainConfig.id + '/' + LocalStorageKeys.TRADING_PAIR_ADVANCED,
-    DEFAULT_SETTINGS.tradingPairAdvanced,
+    getDefaultChainSettings(chainConfig).tradingPairAdvanced,
   )
-  const [tradingPairSimple] = useLocalStorage<Settings['tradingPairSimple']>(
+  const [tradingPairSimple, setTraidingPairSimple] = useLocalStorage<Settings['tradingPairSimple']>(
     chainConfig.id + '/' + LocalStorageKeys.TRADING_PAIR_SIMPLE,
-    DEFAULT_SETTINGS.tradingPairSimple,
+    getDefaultChainSettings(chainConfig).tradingPairSimple,
   )
+  const assets = useTradeEnabledAssets()
 
-  const enabledMarketAssets = useMarketEnabledAssets()
+  useEffect(() => {
+    if (localStorage.getItem(LocalStorageKeys.CURRENT_CHAIN_ID) !== chainConfig.id) return
+    if (
+      !assets.find(byDenom(tradingPairSimple.buy)) ||
+      !assets.find(byDenom(tradingPairSimple.sell))
+    )
+      setTraidingPairSimple(getDefaultChainSettings(chainConfig).tradingPairSimple)
+    if (
+      !assets.find(byDenom(tradingPairAdvanced.buy)) ||
+      !assets.find(byDenom(tradingPairAdvanced.sell))
+    )
+      setTradingPairAdvanced(getDefaultChainSettings(chainConfig).tradingPairSimple)
+  }, [
+    assets,
+    tradingPairSimple,
+    setTraidingPairSimple,
+    chainConfig,
+    tradingPairAdvanced.buy,
+    tradingPairAdvanced.sell,
+    setTradingPairAdvanced,
+    tradingPairAdvanced,
+  ])
+
   const assetOverlayState = useStore((s) => s.assetOverlayState)
   const buyAsset = useMemo(
     () =>
-      enabledMarketAssets.find(
-        byDenom(isAdvanced ? tradingPairAdvanced.buy : tradingPairSimple.buy),
-      ) ?? enabledMarketAssets[0],
-    [tradingPairAdvanced, tradingPairSimple, enabledMarketAssets, isAdvanced],
+      assets.find(byDenom(isAdvanced ? tradingPairAdvanced.buy : tradingPairSimple.buy)) ??
+      assets[0],
+    [tradingPairAdvanced, tradingPairSimple, assets, isAdvanced],
   )
   const sellAsset = useMemo(
     () =>
-      enabledMarketAssets.find(
-        byDenom(isAdvanced ? tradingPairAdvanced.sell : tradingPairSimple.sell),
-      ) ?? enabledMarketAssets[1],
-    [tradingPairAdvanced, tradingPairSimple, enabledMarketAssets, isAdvanced],
+      assets.find(byDenom(isAdvanced ? tradingPairAdvanced.sell : tradingPairSimple.sell)) ??
+      assets[1],
+    [tradingPairAdvanced, tradingPairSimple, assets, isAdvanced],
   )
+
   return (
     <div className='flex flex-col w-full h-full gap-4'>
       <div className='md:grid flex flex-wrap w-full md:grid-cols-[auto_346px] gap-4'>

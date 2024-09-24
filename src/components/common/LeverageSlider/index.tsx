@@ -55,7 +55,7 @@ function LeverageSlider(props: Props) {
   return (
     <div
       className={classNames(
-        'relative min-h-3 w-full transition-opacity',
+        'relative min-h-3 w-full transition-opacity pb-5',
         wrapperClassName,
         disabled && 'pointer-events-none opacity-50',
       )}

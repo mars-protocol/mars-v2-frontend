@@ -3,7 +3,7 @@ import { useCallback } from 'react'
 
 import SwitchWithLabel from 'components/common/Switch/SwitchWithLabel'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
-import useAutoLend from 'hooks/useAutoLend'
+import useAutoLend from 'hooks/wallet/useAutoLend'
 
 interface Props {
   accountId: string
@@ -12,12 +12,11 @@ interface Props {
 
 export default function SwitchAutoLend(props: Props) {
   const { accountId, className } = props
-  const { autoLendEnabledAccountIds, disableAutoLend, enableAutoLend } = useAutoLend()
-  const isAutoLendEnabledForAccount = autoLendEnabledAccountIds.includes(accountId)
+  const { disableAutoLend, enableAutoLend, isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const [_, setIsAutoLendEnabled] = useEnableAutoLendGlobal()
 
   const handleToggle = useCallback(() => {
-    if (!isAutoLendEnabledForAccount) {
+    if (!isAutoLendEnabledForCurrentAccount) {
       enableAutoLend(accountId)
       return
     }
@@ -28,7 +27,7 @@ export default function SwitchAutoLend(props: Props) {
     accountId,
     disableAutoLend,
     enableAutoLend,
-    isAutoLendEnabledForAccount,
+    isAutoLendEnabledForCurrentAccount,
     setIsAutoLendEnabled,
   ])
 
@@ -37,7 +36,7 @@ export default function SwitchAutoLend(props: Props) {
       <SwitchWithLabel
         name={`isLending-${accountId}`}
         label='Lend assets to earn yield'
-        value={isAutoLendEnabledForAccount}
+        value={isAutoLendEnabledForCurrentAccount}
         onChange={handleToggle}
         tooltip={`Fund your account and lend assets effortlessly! By lending, you'll earn attractive interest (APY) without impacting your loan to value (LTV). It's a win-win situation - don't miss out on this easy opportunity to grow your holdings!`}
       />

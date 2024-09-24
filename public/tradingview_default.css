@@ -1,0 +1,341 @@
+.theme-dark:root {
+  --tv-background: #220e1d;
+  --tv-form-background: #7f78e8;
+  --tv-button-background: linear-gradient(180deg, #7f78e8 0%, #926ac8 100%);
+  --tv-button-background-hover: linear-gradient(180deg, #926ac8 0%, #7f78e8 100%);
+  --tv-menu-background: #31142a;
+  --tv-menu-text: rgba(255, 255, 255, 0.3);
+  --tv-menu-text-hover: rgba(255, 255, 255, 1);
+  --tv-color-pane-background: var(--tv-background);
+  --tv-color-platform-background: var(--tv-background);
+  --tv-color-toolbar-button-text: var(--tv-menu-text);
+  --tv-color-toolbar-button-text-hover: var(--tv-menu-text-hover);
+  --tv-color-toolbar-button-text-active: var(--tv-menu-text-hover);
+  --tv-color-toolbar-button-text-active-hover: var(--tv-menu-text-hover);
+  --tv-color-toolbar-button-background-hover: var(--tv-background);
+  --tv-color-toolbar-button-background-expanded: var(--tv-background);
+  --tv-color-toolbar-button-background-active: var(--tv-background);
+  --tv-color-toolbar-button-background-active-hover: var(--tv-background);
+  --tv-horizontal-scroll-fade-color: var(--tv-background);
+  --tv-vertical-scroll-fade-color: var(--tv-background);
+  --tv-color-popup-background: var(--tv-background);
+  --tv-color-toolbar-toggle-button-background-active: rgba(255, 255, 255, 0.2);
+  --tv-color-toolbar-toggle-button-background-active-hover: rgba(255, 255, 255, 0.2);
+  --tv-color-toolbar-divider-background: var(--tv-menu-text);
+  --ui-lib-button-default-color-content: #fff;
+  --ui-lib-button-default-color-border: var(--tv-form-background);
+  --ui-lib-button-default-color-bg: var(--tv-button-background);
+}
+
+
+/* Favorited menus */
+.tv-floating-toolbar__widget-wrapper > div {
+  background: var(--tv-menu-background) !important;
+}
+.tv-floating-toolbar__widget:hover,
+.tv-favorited-drawings-toolbar__widget:hover *,
+.tv-favorited-drawings-toolbar__widget:hover:before {
+  background: var(--tv-menu-background) !important;
+  color: var(--tv-menu-text-hover) !important;
+  border-color: var(--tv-menu-background) !important;
+  cursor: pointer;
+}
+
+.layout__area--center {
+  background: var(--tv-background) !important;
+}
+
+.chart-widget.chart-widget--themed-dark.chart-widget__top--themed-dark.chart-widget__bottom--themed-dark
+  > table
+  canvas {
+  background: transparent !important;
+}
+
+/* Floating menu */
+.floating-toolbar-react-widgets__button:hover,
+[class^='button-']:hover:before {
+  background: var(--tv-menu-background) !important;
+  color: var(--tv-menu-text-hover) !important;
+  border-color: var(--tv-menu-background) !important;
+  cursor: pointer;
+}
+
+.layout__area--left {
+  min-width: 10px !important;
+}
+
+div[data-role='button']:hover,
+/* Indiator dialog list items */
+div[data-role="dialog-content"] div[data-role="list-item"]:hover,
+/* Series left sidebar */
+[class^='active-'] {
+  cursor: pointer;
+}
+
+/* General pop-up menus */
+div[data-name='popup-menu-container'] div:not([class^='swatch-'], [class^='opacitySliderGradient-']),
+/* Indicator dialog */
+div[data-name='indicators-dialog'] *,
+/* Layers dialog */
+div[data-name="object-tree-dialog"] * ,
+/* Layers dialog */
+div[data-name="series-properties-dialog"],
+/* Checkbox */
+[class^='close-'],
+/* Close buton series popup */
+[class^='close-']:hover {
+  background: var(--tv-menu-background) !important;
+  outline: white !important;
+}
+
+/* Element Highlighting */
+[class^='highlight-'] {
+  border-color: transparent !important;
+}
+
+/* Element Highlighting */
+[class^='wrap-'] [class^='title-'],
+[class^='label-'] [class^='title-'] {
+  color: var(--tv-menu-text-hover) !important;
+}
+
+/* Range Slider */
+[class^='opacitySliderGradient-'] {
+  background: linear-gradient(90deg, transparent, rgb(255, 160, 187)) !important;
+}
+
+[class^='opacitySlider-'] {
+  color: var(--tv-menu-text) !important;
+}
+
+[class^='rangeSliderMiddle-'] {
+  background-color: var(--tv-form-background) !important;
+}
+
+/* Devider Lines */
+[class^='content-'],
+[class^='container-'],
+[class^='footer-'] {
+  border-color: var(--tv-menu-text) !important;
+}
+
+/* General toolbar popup list items */
+[class^='item-'],
+/* Emoji topbar items */
+/* Emoji items */
+[class^='wrapper-'],
+[class^='categories-'],
+/* Indiator dialog list items */
+div[data-role="dialog-content"] div[data-role="list-item"] span,
+/*  Layers dialog list item */
+[class^='wrap-'],
+/* Series proerties */
+div[data-name="series-properties-dialog"],
+/* Series left sidetabs */
+[class^='tab-'],
+/* Close buton series popup */
+[class^='close-'] {
+  color: var(--tv-menu-text) !important;
+}
+/* General toolbar popup list items */
+[class^='item-']:hover,
+[class^='item-'][class*='interactive-'][class*='hovered-'],
+/* Sub headers for inteval popup */
+[class^='section-']:hover,
+/* Emoji topbar items */
+[class^='isActive-'],
+[class^='categories-'],
+[class^='categories-']:hover,
+/* Indiator dialog list items */
+div[data-role="dialog-content"] div[data-role="list-item"]:hover span,
+/*  Layers dialog list item */
+[class^='wrap-'] [class^='dropdown-']:hover span,
+[class^='wrap-'] [class^='dropdown-']:hover [class^='arrowIcon-'],
+[class^='menuItem-']:hover,
+/* Close buton series popup */
+[class^='close-']:hover {
+  cursor: pointer !important;
+  color: var(--tv-menu-text-hover) !important;
+  background-color: transparent !important;
+}
+
+[class^='scroll-wrap-']:before {
+  background-color: var(--tv-menu-text) !important;
+}
+
+[class^='underline-tabs-']:before {
+  background-color: transparent !important;
+}
+
+/* Series left sidetabs */
+[class^='tab-'][class*='active-'],
+[class^='tab-'][class*='active-'] svg,
+[class^='tab-']:hover,
+[class^='tab-'][class*='active-']:hover,
+[class^='tab-'][class*='active-']:hover svg {
+  background-color: transparent !important;
+  color: var(--tv-menu-text-hover) !important;
+  cursor: pointer !important;
+}
+
+/* Top info bar */
+[class^='legendMainSourceWrapper-'] [class^='item-'],
+[class^='legendMainSourceWrapper-'] [class^='item-']:hover {
+  color: transparent !important;
+}
+
+/* Menu Boxes */
+[class^='menuBox-'],
+[class^='dialog'] {
+  background: var(--tv-menu-background) !important;
+}
+
+/* Top and bottom scroll indicator for toolbar */
+[class^='scrollBot-'],
+[class^='scrollTop-'] {
+  cursor: pointer;
+  background: var(--tv-menu-background) !important;
+}
+
+/* Buttons for series popup */
+button,
+button:hover {
+  cursor: pointer !important;
+}
+
+[class^='button-'] {
+  background-color: transparent !important;
+  border-radius: 4px !important;
+}
+
+[class^='button-']:hover {
+  cursor: pointer !important;
+  background-color: transparent !important;
+}
+
+button[class^='button-'][class*='primary-'] {
+  border: none !important;
+  color: var(--tv-menu-text-hover) !important;
+  background: var(--tv-button-background) !important;
+}
+
+button[class^='button-'][class*='primary-']:hover {
+  color: var(--tv-menu-text-hover) !important;
+  background: var(--tv-button-background-hover) !important;
+}
+
+button[class^='button-'][class*='secondary-'] {
+  border: 1px solid var(--tv-menu-text) !important;
+  color: var(--tv-menu-text-hover) !important;
+  background: none !important;
+}
+
+button[class^='button-'][class*='secondary-']:hover {
+  border: 1px solid var(--tv-menu-text-hover) !important;
+  color: var(--tv-menu-text-hover) !important;
+  background: none !important;
+}
+
+/* Checkbox */
+[class^='check-'] {
+  border-color: var(--tv-menu-text) !important;
+}
+
+[class^='checkbox-'] [class^='wrapper-'] [class^='input-'] + [class^='box-'] {
+  border-color: var(--tv-menu-text) !important;
+}
+
+[class^='checkbox-'] [class^='wrapper-'] [class^='input-']:hover + [class^='box-'] {
+  border-color: var(--tv-form-background) !important;
+  cursor: pointer !important;
+}
+
+[class^='checkbox-'] [class^='wrapper-'] [class^='input-']:checked + [class^='box-'] {
+  border-color: var(--tv-form-background) !important;
+  background-color: var(--tv-form-background) !important;
+}
+
+[class^='checkbox-'] [class^='wrapper-'] [class^='input-']:disabled + [class^='box-'] {
+  opacity: 0.5 !important;
+  border-color: var(--tv-menu-text) !important;
+  background-color: transparent !important;
+}
+
+[class^='checkbox-'] [class^='wrapper-'] [class^='input-']:disabled + [class^='box-'] {
+  cursor: default !important;
+}
+
+[class^='checkbox-'] [class^='wrapper-'] [class^='input-']:checked:disabled + [class^='box-'] {
+  border-color: var(--tv-menu-text) !important;
+  background-color: transparent !important;
+}
+
+[class^='checkbox-'] [class^='wrapper-'] [class^='input-']:checked:disabled + [class^='box-'] svg {
+  color: var(--tv-menu-text) !important;
+  stroke: var(--tv-menu-text) !important;
+}
+
+[class^='checkbox-'] [class^='wrapper-'] [class^='input-']:checked + [class^='box-'] svg {
+  color: var(--tv-menu-text-hover) !important;
+  stroke: var(--tv-menu-text-hover) !important;
+}
+
+/* Input */
+[class^='container-'][class*='disabled-'] {
+  background-color: transparent !important;
+  opacity: 0.5 !important;
+}
+
+/* Select */
+[class^='container-'][class*='button-'] {
+  border: 1px solid var(--tv-menu-text) !important;
+}
+
+[class^='container-'][class*='button-'][class*='disabled-'] {
+  opacity: 0.5 !important;
+  border: 1px solid var(--tv-menu-text) !important;
+  background-color: transparent !important;
+}
+
+[class^='button-children-'] span {
+  color: var(--tv-menu-text-hover) !important;
+}
+
+/* Scrollbars */
+[class^='scrollWrap-']::-webkit-scrollbar,
+[class^='tabContent-']::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+}
+
+[class^='scrollWrap-']::-webkit-scrollbar-thumb,
+[class^='tabContent-']::-webkit-scrollbar-thumb {
+  background-color: var(--tv-menu-text) !important;
+  border: transparent !important;
+  border-radius: 2px;
+}
+
+[class^='scrollWrap-']::-webkit-scrollbar-track,
+[class^='tabContent-']::-webkit-scrollbar-track {
+  border-radius: 2px;
+}
+
+[class^='fadeTop-'] {
+  background-image: linear-gradient(180deg, var(--tv-background), transparent) !important;
+}
+
+[class^='fadeBot-'] {
+  background-image: linear-gradient(0deg, var(--tv-background), transparent) !important;
+}
+
+[class^='noWrapWrapper-'] * {
+  pointer-events: none !important;
+  border: none !important;
+  background: transparent !important;
+  outline: none !important;
+}
+
+html.theme-dark ::selection {
+  background: var(--tv-background) !important;
+  color: var(--tv-menu-text-hover) !important;
+}

@@ -8,9 +8,9 @@ import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendi
 import SummarySkeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import useAccounts from 'hooks/accounts/useAccounts'
-import useAllAssets from 'hooks/assets/useAllAssets'
-import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
-import usePrices from 'hooks/usePrices'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
+import useHlsStakingAssets from 'hooks/hls/useHlsStakingAssets'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { getAccountSummaryStats } from 'utils/accounts'
@@ -19,14 +19,15 @@ import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 export default function PortfolioSummary() {
   const { address: urlAddress } = useParams()
   const walletAddress = useStore((s) => s.address)
-  const { data: prices } = usePrices()
   const data = useBorrowMarketAssetsTableData()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const { data: accounts } = useAccounts('default', urlAddress || walletAddress)
-  const { data: hlsStrategies } = useHLSStakingAssets()
+  const { data: hlsStrategies } = useHlsStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
-  const assets = useAllAssets()
+  const assets = useWhitelistedAssets()
+  const astroLpAprs = useAstroLpAprs()
+
   const stats = useMemo(() => {
     if (!accounts?.length) return
     const combinedAccount = accounts.reduce(
@@ -35,6 +36,9 @@ export default function PortfolioSummary() {
         combinedAccount.deposits = combinedAccount.deposits.concat(account.deposits)
         combinedAccount.lends = combinedAccount.lends.concat(account.lends)
         combinedAccount.vaults = combinedAccount.vaults.concat(account.vaults)
+        combinedAccount.stakedAstroLps = combinedAccount.stakedAstroLps.concat(
+          account.stakedAstroLps,
+        )
         return combinedAccount
       },
       {
@@ -45,18 +49,19 @@ export default function PortfolioSummary() {
         vaults: [],
         perps: [],
         perpsVault: null,
+        stakedAstroLps: [],
         kind: 'default' as AccountKind,
       } as Account,
     )
 
     const { positionValue, debts, netWorth, apr, leverage } = getAccountSummaryStats(
       combinedAccount,
-      prices,
       borrowAssets,
       lendingAssets,
       hlsStrategies,
       assets,
       vaultAprs,
+      astroLpAprs,
     )
 
     return [
@@ -97,7 +102,7 @@ export default function PortfolioSummary() {
         sub: 'Combined leverage',
       },
     ]
-  }, [accounts, assets, borrowAssets, hlsStrategies, lendingAssets, prices, vaultAprs])
+  }, [accounts, assets, borrowAssets, hlsStrategies, lendingAssets, vaultAprs, astroLpAprs])
 
   if (!walletAddress && !urlAddress) return null
 

@@ -8,13 +8,14 @@ import { ArrowDownLine, ArrowUpLine, TrashBin } from 'components/common/Icons'
 import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import useAccount from 'hooks/accounts/useAccount'
-import useAllAssets from 'hooks/assets/useAllAssets'
-import useHealthComputer from 'hooks/useHealthComputer'
-import useHLSStakingAssets from 'hooks/useHLSStakingAssets'
-import usePrices from 'hooks/usePrices'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import useHlsStakingAssets from 'hooks/hls/useHlsStakingAssets'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApr, calculateAccountBalanceValue } from 'utils/accounts'
+import { mergeBNCoinArrays } from 'utils/helpers'
 
 interface Props {
   accountId: string
@@ -24,15 +25,14 @@ interface Props {
 
 export default function AccountStats(props: Props) {
   const { accountId, isActive, setShowMenu } = props
-  const assets = useAllAssets()
+  const assets = useWhitelistedAssets()
   const { data: account } = useAccount(accountId)
-  const { data: prices } = usePrices()
-  const { data: hlsStrategies } = useHLSStakingAssets()
+  const { data: hlsStrategies } = useHlsStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
-
+  const astroLpAprs = useAstroLpAprs()
   const positionBalance = useMemo(
-    () => (!account ? null : calculateAccountBalanceValue(account, prices, assets)),
-    [account, assets, prices],
+    () => (!account ? null : calculateAccountBalanceValue(account, assets)),
+    [account, assets],
   )
   const { health, healthFactor } = useHealthComputer(account)
   const data = useBorrowMarketAssetsTableData()
@@ -51,13 +51,12 @@ export default function AccountStats(props: Props) {
             account,
             borrowAssetsData,
             lendingAssetsData,
-            prices,
             hlsStrategies,
             assets,
             vaultAprs,
-            account.kind === 'high_levered_strategy',
+            astroLpAprs,
           ),
-    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, prices, vaultAprs],
+    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, vaultAprs, astroLpAprs],
   )
 
   const deleteAccountHandler = useCallback(() => {
@@ -107,7 +106,7 @@ export default function AccountStats(props: Props) {
               setShowMenu(false)
               useStore.setState({ fundAndWithdrawModal: 'withdraw' })
             }}
-            disabled={!positionBalance || positionBalance.isLessThanOrEqualTo(0)}
+            disabled={!account || mergeBNCoinArrays(account.deposits, account.lends).length === 0}
           />
           <Button
             className='w-full col-span-2'

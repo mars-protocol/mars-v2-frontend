@@ -5,7 +5,7 @@ import { ChevronDown } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { getIsActive } from 'components/header/navigation/desktop/DesktopNavigation'
 import { NavLink } from 'components/header/navigation/desktop/NavLink'
-import useToggle from 'hooks/useToggle'
+import useToggle from 'hooks/common/useToggle'
 
 interface Props {
   item: MenuTreeEntry

@@ -1,4 +1,3 @@
-import { useShuttle } from '@delphi-labs/shuttle-react'
 import classNames from 'classnames'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
@@ -10,15 +9,15 @@ import { ChevronDown } from 'components/common/Icons'
 import Settings from 'components/common/Settings'
 import Text from 'components/common/Text'
 import ChainSelect from 'components/header/ChainSelect'
+import RewardsCenter from 'components/header/RewardsCenter'
 import useAccount from 'hooks/accounts/useAccount'
-import useAccountId from 'hooks/useAccountId'
-import useChainConfig from 'hooks/useChainConfig'
+import useAccountId from 'hooks/accounts/useAccountId'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
-import { WalletID } from 'types/enums/wallet'
 import { getPage, getRoute } from 'utils/route'
 
 interface Props {
-  menuTree: (walletId: WalletID, chainConfig: ChainConfig) => MenuTreeEntry[]
+  menuTree: (chainConfig: ChainConfig) => MenuTreeEntry[]
 }
 
 export default function MobileNavigation(props: Props) {
@@ -26,17 +25,15 @@ export default function MobileNavigation(props: Props) {
   const currentAccountId = useAccountId()
   const mobileNavExpanded = useStore((s) => s.mobileNavExpanded)
   const isV1 = useStore((s) => s.isV1)
-  const { recentWallet } = useShuttle()
   const chainConfig = useChainConfig()
-  const walletId = (recentWallet?.providerId as WalletID) ?? WalletID.Keplr
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const address = useStore((s) => s.address)
   const { pathname } = useLocation()
   const currentPage = getPage(pathname)
-  const { data: account } = useAccount(isV1 ? address : currentAccountId ?? undefined)
+  const { data: account } = useAccount(isV1 ? address : (currentAccountId ?? undefined))
 
-  const menu = useMemo(() => menuTree(walletId, chainConfig), [walletId, chainConfig, menuTree])
+  const menu = useMemo(() => menuTree(chainConfig), [chainConfig, menuTree])
 
   useEffect(() => {
     if (mobileNavExpanded) {
@@ -123,6 +120,14 @@ export default function MobileNavigation(props: Props) {
             <Text size='sm'>Account:</Text>
             <div className='relative'>
               <AccountMenu />
+            </div>
+          </div>
+        )}
+        {address && account && (
+          <div className='flex items-center justify-between w-full'>
+            <Text size='sm'>Rewards Center:</Text>
+            <div className='relative'>
+              <RewardsCenter />
             </div>
           </div>
         )}

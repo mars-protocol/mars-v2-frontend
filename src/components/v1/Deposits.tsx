@@ -1,7 +1,7 @@
 import DepositsTable from 'components/earn/lend/Table/DepositedLendsTable'
 import useV1DepositsTableData from 'components/v1/Table/useV1DepositsTableData'
 import { BN_ZERO } from 'constants/math'
-import useMarketEnabledAssets from 'hooks/assets/useMarketEnabledAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 
 export default function Deposits() {
   const { depositAssets } = useV1DepositsTableData()
@@ -18,7 +18,7 @@ export default function Deposits() {
 }
 
 function Fallback() {
-  const assets = useMarketEnabledAssets()
+  const assets = useDepositEnabledAssets()
 
   const data: LendingMarketTableData[] = assets.map((asset) => ({
     asset,

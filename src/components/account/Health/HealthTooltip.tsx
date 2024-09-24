@@ -3,7 +3,7 @@ import { ReactElement, useMemo } from 'react'
 import { CircularProgress } from 'components/common/CircularProgress'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
-import { BN } from 'utils/helpers'
+import { formatValue } from 'utils/formatters'
 
 interface Props {
   health: number
@@ -39,7 +39,8 @@ function HealthTooltipContent({ health, healthFactor }: { health: number; health
         ({healthStatus})
       </Text>
       <Text size='2xs' className='text-center text-white/70'>
-        Health Factor: {BN(healthFactor).toPrecision(4)}
+        Health Factor:{' '}
+        {formatValue(healthFactor > 100 ? 100 : healthFactor, { maxDecimals: 4, minDecimals: 0 })}
       </Text>
       {health > 0 && health <= 10 && (
         <Text size='2xs' className='mt-2 text-center text-info'>

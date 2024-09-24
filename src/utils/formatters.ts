@@ -15,17 +15,6 @@ export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
   return text.length > h + t ? [head, tail].join('...') : text
 }
 
-export interface FormatOptions {
-  decimals?: number
-  minDecimals?: number
-  maxDecimals?: number
-  thousandSeparator?: boolean
-  prefix?: string
-  suffix?: string
-  rounded?: boolean
-  abbreviated?: boolean
-}
-
 export const produceCountdown = (remainingTime: number) => {
   const duration = moment.duration(remainingTime, 'milliseconds')
   const days = formatValue(duration.asDays(), { minDecimals: 0, maxDecimals: 0 })
@@ -189,19 +178,33 @@ export function demagnify(amount: number | string | BigNumber, asset: Asset | Ps
   return _amount.isZero() ? 0 : _amount.shiftedBy(-1 * asset.decimals).toNumber()
 }
 
-export function getCoinValue(coin: BNCoin, prices: BNCoin[], assets: Asset[]) {
+function getAssetAndCoinPrice(coin: BNCoin, assets: Asset[]) {
   const asset = assets.find(byDenom(coin.denom))
-  const coinPrice = prices.find(byDenom(coin.denom))
+  const coinPrice = asset?.price
 
-  if (!coinPrice || !asset) return BN_ZERO
-
-  const decimals = asset.denom === ORACLE_DENOM ? 0 : asset.decimals * -1
-  return coin.amount.shiftedBy(decimals).multipliedBy(coinPrice.amount)
+  return { asset, coinPrice }
 }
 
-export function getCoinAmount(denom: string, value: BigNumber, prices: BNCoin[], assets: Asset[]) {
+function getAdjustedCoinProce(asset: Asset, coinPrice: BNCoin) {
+  const decimals = asset.denom === ORACLE_DENOM ? 0 : asset.decimals * -1
+  return coinPrice.amount.shiftedBy(decimals)
+}
+
+export function getCoinValueWithoutFallback(coin: BNCoin, assets: Asset[]) {
+  const { asset, coinPrice } = getAssetAndCoinPrice(coin, assets)
+  if (!coinPrice || !asset) return
+  return getAdjustedCoinProce(asset, coinPrice).multipliedBy(coin.amount)
+}
+
+export function getCoinValue(coin: BNCoin, assets: Asset[]) {
+  const { asset, coinPrice } = getAssetAndCoinPrice(coin, assets)
+  if (!coinPrice || !asset) return BN_ZERO
+  return getAdjustedCoinProce(asset, coinPrice).multipliedBy(coin.amount)
+}
+
+export function getCoinAmount(denom: string, value: BigNumber, assets: Asset[]) {
   const asset = assets.find(byDenom(denom))
-  const coinPrice = prices.find(byDenom(denom))
+  const coinPrice = asset?.price
 
   if (!coinPrice || !asset) return BN_ZERO
 
