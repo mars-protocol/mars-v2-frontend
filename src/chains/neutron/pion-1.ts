@@ -54,6 +54,7 @@ const Pion1: ChainConfig = {
   perps: true,
   farm: true,
   anyAsset: true,
+  slinky: true,
 }
 
 export default Pion1
