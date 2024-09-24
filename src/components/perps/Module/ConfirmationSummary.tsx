@@ -70,11 +70,7 @@ export default function ConfirmationSummary(props: Props) {
     if (!tradingFeeAndPrice) return zeroCoin
     const tradingFee = tradingFeeAndPrice.fee.closing.plus(tradingFeeAndPrice.fee.opening).negated()
     if (!position) return BNCoin.fromDenomAndBigNumber(baseDenom, tradingFee)
-
-    return BNCoin.fromDenomAndBigNumber(
-      baseDenom,
-      BN(position.unrealised_pnl.pnl as any).plus(tradingFee),
-    )
+    return BNCoin.fromDenomAndBigNumber(baseDenom, BN(position.unrealised_pnl.pnl as any))
   }, [baseDenom, position, tradingFeeAndPrice, zeroCoin])
 
   const [withdrawCoin, borrowCoin] = useMemo(() => {
@@ -135,15 +131,17 @@ export default function ConfirmationSummary(props: Props) {
         <Text size='xs' className='mt-2 text-white/60' uppercase={true}>
           {feeLabel}
         </Text>
-        <SummaryRow label='Trading Fee'>
-          <TradingFee
-            denom={asset.denom}
-            newAmount={newAmount}
-            previousAmount={previousAmount}
-            className='text-xs'
-            showPrefix={true}
-          />
-        </SummaryRow>
+        {!position && (
+          <SummaryRow label='Trading Fee'>
+            <TradingFee
+              denom={asset.denom}
+              newAmount={newAmount}
+              previousAmount={previousAmount}
+              className='text-xs'
+              showPrefix={true}
+            />
+          </SummaryRow>
+        )}
         {position &&
           tradingFeeAndPrice &&
           (Object.keys(position.unrealised_pnl) as Array<keyof PnlAmounts>).map((key, index) => {
