@@ -1,4 +1,5 @@
 import { convertAstroportAssetsResponse } from 'utils/assets'
+import { setApiError } from 'utils/error'
 
 export default async function getDexAssets(chainConfig: ChainConfig) {
   const uri = new URL(chainConfig.endpoints.dexAssets)
@@ -9,7 +10,7 @@ export default async function getDexAssets(chainConfig: ChainConfig) {
     })
     return assets
   } catch (e) {
-    console.error(e)
+    setApiError(uri.toString(), e)
+    return []
   }
-  return []
 }
