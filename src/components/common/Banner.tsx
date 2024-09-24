@@ -29,8 +29,8 @@ export default function Banner(props: Props) {
       <div className='flex gap-4 items-center'>
         <span className='w-10 h-10'>{icon}</span>
         <div className='space-y-2'>
-          {title}
-          <Text size='sm' className='text-white/50'>
+          <Text size='sm'>{title}</Text>
+          <Text size='xs' className='text-white/50'>
             {description}
           </Text>
         </div>
