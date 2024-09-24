@@ -279,6 +279,7 @@ function ManageSummary(
             tradeDirection={
               isNewPosition || isDirectionChange ? tradeDirection : previousTradeDirection
             }
+            previousTradeDirection={isDirectionChange ? previousTradeDirection : undefined}
           />
         </SummaryLine>
       )}
