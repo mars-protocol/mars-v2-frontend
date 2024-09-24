@@ -34,11 +34,10 @@ export default function usePerpsBalancesTable() {
         tradeDirection: position.tradeDirection,
         amount: position.amount,
         denom: position.denom,
-        baseDenom: perpsConfig.base_denom,
+        baseDenom: position.baseDenom,
         type: 'market',
         pnl: position.pnl,
         entryPrice: position.entryPrice,
-        baseDenom: position.baseDenom,
         currentPrice: position.currentPrice,
         liquidationPrice: position.entryPrice, // TODO: 📈 Get actual liquidation price from HC
         leverage: position.currentPrice
