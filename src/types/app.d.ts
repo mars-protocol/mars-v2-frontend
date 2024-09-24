@@ -229,6 +229,7 @@ interface ChainConfig {
   lp?: Asset[]
   stables: string[]
   deprecated?: string[]
+  campaignAssets?: AssetCampaignInfo[]
   defaultTradingPair: TradingPair
   bech32Config: import('@keplr-wallet/types').Bech32Config
   contracts: {
@@ -275,7 +276,7 @@ interface ChainConfig {
   perps: boolean
   farm: boolean
   anyAsset: boolean
-  campaignAssets?: AssetCampaignInfo[]
+  slinky: boolean
 }
 
 interface AssetCampaignInfo {
