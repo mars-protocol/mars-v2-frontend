@@ -1,16 +1,17 @@
 import classNames from 'classnames'
 import Text from 'components/common/Text'
 import React from 'react'
+import AssetImage from 'components/common/assets/AssetImage'
 
 interface Props {
-  icon: React.ReactNode
+  asset?: Asset
   title: React.ReactNode
   description: string
   button: React.ReactNode
 }
 
 export default function Banner(props: Props) {
-  const { icon, title, description, button } = props
+  const { asset, title, description, button } = props
 
   return (
     <div
@@ -27,7 +28,7 @@ export default function Banner(props: Props) {
         )}
       />
       <div className='flex gap-4 items-center'>
-        <span className='w-10 h-10'>{icon}</span>
+        {asset && <AssetImage asset={asset} className='w-10 h-10' />}
         <div className='space-y-2'>
           <Text size='sm'>{title}</Text>
           <Text size='xs' className='text-white/50'>
