@@ -69,35 +69,43 @@ export function checkOpenInterest(
 
   if (previousTradeDirection === 'long' && currentTradeDirection === 'long') {
     openInterestLong = openInterestLong.plus(
-      getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, amount), [asset]),
+      getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, amount), [asset]).shiftedBy(
+        PRICE_ORACLE_DECIMALS,
+      ),
     )
   }
 
   if (previousTradeDirection === 'short' && currentTradeDirection === 'short') {
     openInterestShort = openInterestShort.plus(
-      getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, amount.abs()), [asset]),
+      getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, amount.abs()), [asset]).shiftedBy(
+        PRICE_ORACLE_DECIMALS,
+      ),
     )
   }
 
   if (previousTradeDirection === 'long' && currentTradeDirection === 'short') {
     openInterestLong = openInterestLong.minus(
-      getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, previousAmount), [asset]),
+      getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, previousAmount), [asset]).shiftedBy(
+        PRICE_ORACLE_DECIMALS,
+      ),
     )
     openInterestShort = openInterestShort.plus(
       getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, amount.plus(previousAmount).abs()), [
         asset,
-      ]),
+      ]).shiftedBy(PRICE_ORACLE_DECIMALS),
     )
   }
 
   if (previousTradeDirection === 'short' && currentTradeDirection === 'long') {
     openInterestShort = openInterestShort.minus(
-      getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, previousAmount), [asset]),
+      getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, previousAmount), [asset]).shiftedBy(
+        PRICE_ORACLE_DECIMALS,
+      ),
     )
     openInterestLong = openInterestLong.plus(
       getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, amount.plus(previousAmount).abs()), [
         asset,
-      ]),
+      ]).shiftedBy(PRICE_ORACLE_DECIMALS),
     )
   }
 
