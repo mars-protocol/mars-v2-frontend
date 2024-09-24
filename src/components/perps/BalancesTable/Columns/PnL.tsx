@@ -18,7 +18,7 @@ export default function PnL(props: Props) {
   if (props.type === 'limit')
     return (
       <Tooltip
-        content={<PnLTooltipLIimitOrder {...props} />}
+        content={<PnLTooltipLimitOrder {...props} />}
         type='info'
         underline
         className='ml-auto w-min'
@@ -45,7 +45,7 @@ export default function PnL(props: Props) {
   )
 }
 
-function PnLTooltipLIimitOrder(props: Props) {
+function PnLTooltipLimitOrder(props: Props) {
   return (
     <div className='flex flex-col w-full gap-2 min-w-[280px]'>
       <div className='flex items-center w-full gap-8 space-between'>

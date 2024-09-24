@@ -1644,3 +1644,14 @@ interface TriggerCondition {
     price: Decimal
   }
 }
+
+interface OrderTab {
+  type: import('types/enums').OrderType
+  isDisabled: boolean
+  tooltipText?: string
+}
+
+interface CallOut {
+  message: string
+  type: import('components/common/Callout').CalloutType
+}
