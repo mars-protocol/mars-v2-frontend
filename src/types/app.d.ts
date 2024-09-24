@@ -250,6 +250,7 @@ interface ChainConfig {
   endpoints: {
     rest: string
     rpc: string
+    fallbackRpc: string
     swap: string
     explorer: string
     pools?: string
@@ -1146,6 +1147,17 @@ interface CommonSlice {
   isV1: boolean
   assets: Asset[]
   hlsBorrowAmount: BigNumber | null
+  errorStore: ErrorStore
+}
+
+interface ErrorStore {
+  apiError: FetchError | null
+  nodeError: FetchError | null
+}
+
+interface FetchError {
+  api: string
+  message: string
 }
 
 interface FocusComponent {
