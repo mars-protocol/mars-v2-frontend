@@ -22,6 +22,7 @@ import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePerpsConfig from 'hooks/perps/usePerpsConfig'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
+import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { OrderType } from 'types/enums'
@@ -41,6 +42,7 @@ type Props = {
   disabled: boolean
   orderType: OrderType
   limitPrice: BigNumber
+  baseDenom: string
 }
 
 export default function PerpsSummary(props: Props) {
@@ -53,7 +55,10 @@ export default function PerpsSummary(props: Props) {
     onTxExecuted,
     disabled,
     previousTradeDirection,
+    baseDenom,
   } = props
+
+  const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const chainConfig = useChainConfig()
   const [makerFee, _] = useLocalStorage(
     LocalStorageKeys.PERPS_MAKER_FEE,
@@ -101,13 +106,17 @@ export default function PerpsSummary(props: Props) {
     await executePerpOrder({
       accountId: currentAccount.id,
       coin: BNCoin.fromDenomAndBigNumber(asset.denom, modifyAmount),
+      autolend: isAutoLendEnabledForCurrentAccount,
+      baseDenom,
     })
     return onTxExecuted()
   }, [
     asset.denom,
+    baseDenom,
     currentAccount,
     executePerpOrder,
     feeToken,
+    isAutoLendEnabledForCurrentAccount,
     isLimitOrder,
     makerFee.amount,
     newAmount,

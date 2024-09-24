@@ -347,8 +347,9 @@ export function PerpsModule() {
           previousTradeDirection={previousTradeDirection}
           previousLeverage={previousLeverage}
           hasActivePosition={hasActivePosition}
-          onTxExecuted={() => reset()}
-          disabled={isDisabledExecution}
+          onTxExecuted={() => setAmount(BN_ZERO)}
+          disabled={amount.isGreaterThan(maxAmount) || warningMessages.isNotEmpty()}
+          baseDenom={tradingFee?.baseDenom ?? ''}
           limitPrice={limitPrice}
           orderType={selectedOrderType}
         />
