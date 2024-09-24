@@ -17,6 +17,8 @@ import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountApr, getAccountDebtValue, getAccountTotalValue } from 'utils/accounts'
+import useAccountPerpData from 'components/account/AccountPerpPositionTable/useAccountPerpData'
+import { getCoinValue } from 'utils/formatters'
 
 interface Props {
   account: Account
@@ -37,6 +39,10 @@ export default function AccountComposition(props: Props) {
   const hasChanged = !!updatedAccount
   const { data: hlsStrategies } = useHlsStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
+  const accountPerpData = useAccountPerpData({
+    account,
+    updatedAccount,
+  })
   const astroLpAprs = useAstroLpAprs()
   const assets = useWhitelistedAssets()
   const data = useBorrowMarketAssetsTableData()
@@ -57,6 +63,18 @@ export default function AccountComposition(props: Props) {
   const updatedPositionValue = useMemo(
     () => getAccountTotalValue(updatedAccount ?? account, assets),
     [updatedAccount, account, assets],
+  )
+
+  const totalUnrealizedPnL = useMemo(
+    () =>
+      accountPerpData
+        .map((position) => {
+          const unrealizedNet = position.pnl.unrealized?.net
+          const value = getCoinValue(unrealizedNet, assets)
+          return value
+        })
+        .reduce((sum, coin) => sum.plus(coin), BN_ZERO),
+    [accountPerpData, assets],
   )
 
   const apr = useMemo(
@@ -112,6 +130,12 @@ export default function AccountComposition(props: Props) {
         isDecrease
       />
       <Item
+        title='Unrealized PnL'
+        current={totalUnrealizedPnL}
+        change={totalUnrealizedPnL}
+        className='pb-3'
+      />
+      <Item
         title='APR'
         current={apr}
         change={hasChanged ? updatedApr : apr}
@@ -123,7 +147,7 @@ export default function AccountComposition(props: Props) {
 }
 
 function Item(props: ItemProps) {
-  const { current, change } = props
+  const { current, change, title } = props
   const increase = props.isDecrease ? current.isGreaterThan(change) : current.isLessThan(change)
 
   return (
@@ -151,6 +175,10 @@ function Item(props: ItemProps) {
             coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, current)}
             className='text-sm'
             options={{ abbreviated: false }}
+            {...(title === 'Unrealized PnL' && {
+              isProfitOrLoss: true,
+              showSignPrefix: true,
+            })}
           />
         )}
         {current.toFixed(2) !== change.toFixed(2) && (
