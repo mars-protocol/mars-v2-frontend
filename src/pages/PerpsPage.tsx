@@ -17,11 +17,10 @@ export default function PerpsPage() {
           icon={<USDC />}
           title={
             <>
-              Deposit in the counter-party vault, earn up to{' '}
-              <span className='text-purple'>5% APY</span>.
+              Counterparty vault: earn up to <span className='text-purple'>5% APY.</span>
             </>
           }
-          description='Earn Perps Trading Fees by depositing USDC into the counter-party vault. Note: Deposits are subject to 7 days lockup period.'
+          description='Earn perps trading fees by depositing USDC into the counterparty vault, with deposits subject to a 7-day lockup.'
           button={
             <Deposit vault={vault as PerpsVault} isLoading={false} isPerps buttonColor='primary' />
           }

@@ -8,8 +8,8 @@ export default function PerpsIntro() {
     <Intro
       text={
         <>
-          <span className='text-white'>Perps counter party vaults</span> entails providing liquidity
-          to decentralized exchanges and earning rewards from transaction fees and yield incentives.
+          <span className='text-white'>Earn perps trading fees</span> by depositing USDC into the
+          counterparty vault, with deposits subject to a 7-day lockup.
         </>
       }
       bg='perps-vault'
