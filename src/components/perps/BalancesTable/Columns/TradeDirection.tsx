@@ -31,12 +31,7 @@ export default function TradeDirection(props: Props) {
           </Text>
 
           <div className='w-4'>
-            <ArrowRight
-              className={classNames(
-                previousTradeDirection === 'long' && 'text-error',
-                previousTradeDirection === 'short' && 'text-success',
-              )}
-            />
+            <ArrowRight />
           </div>
         </>
       )}
