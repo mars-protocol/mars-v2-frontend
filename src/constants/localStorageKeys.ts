@@ -23,4 +23,5 @@ export enum LocalStorageKeys {
   RPC_ENDPOINT = 'rpcEndpoint',
   REST_ENDPOINT = 'restEndpoint',
   REWARDS_CENTER_TYPE = 'rewardsCenterType',
+  SHOW_SUMMARY = 'showSummary',
 }

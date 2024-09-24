@@ -1186,6 +1186,7 @@ interface AlertDialogButton {
 
 interface AlertDialogConfig {
   icon?: JSX.Element
+  header?: JSX.Element
   checkbox?: {
     text: string
     onClick: (isChecked: boolean) => void
@@ -1193,7 +1194,7 @@ interface AlertDialogConfig {
   content: JSX.Element | string
   negativeButton?: AlertDialogButton
   positiveButton?: AlertDialogButton
-  title: string
+  title?: string
 }
 
 interface BorrowModal {
