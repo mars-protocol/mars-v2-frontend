@@ -143,7 +143,7 @@ export function PerpsModule() {
     const maxAmountValue = getCoinValue(BNCoin.fromDenomAndBigNumber(perpsAsset.denom, maxAmount), [
       perpsAsset,
     ])
-    return maxAmountValue.dividedBy(limitPrice)
+    return maxAmountValue.dividedBy(limitPrice).shiftedBy(perpsAsset.decimals)
   }, [limitPrice, limitPriceInfo, perpsAsset, maxAmount])
 
   const currentMaxAmount = useMemo(() => {
@@ -213,29 +213,30 @@ export function PerpsModule() {
     [currentMaxAmount, maxLeverage, tradeDirection],
   )
 
-  useEffect(() => {
-    if (!perpsAsset) return
-    if (limitPrice.isZero()) {
-      setLimitPriceInfo(DEFAULT_LIMIT_PRICE_INFO)
-      return
-    }
-    if (!perpsAsset.price) return
+  const calculateLimitPriceInfo = useCallback(() => {
+    if (!perpsAsset) return DEFAULT_LIMIT_PRICE_INFO
+    if (limitPrice.isZero()) return DEFAULT_LIMIT_PRICE_INFO
+    if (!perpsAsset.price) return undefined
 
     if (
       (limitPrice.isLessThanOrEqualTo(perpsAsset.price.amount) && tradeDirection === 'short') ||
       (limitPrice.isGreaterThanOrEqualTo(perpsAsset.price.amount) && tradeDirection === 'long')
     ) {
       const belowOrAbove = tradeDirection === 'short' ? 'below' : 'above'
-      setLimitPriceInfo({
+      return {
         message: `You can not create a ${capitalizeFirstLetter(tradeDirection)} Limit order, ${belowOrAbove} the current ${perpsAsset.symbol} price.`,
         type: CalloutType.WARNING,
-      })
-      return
+      }
     }
-    if (limitPriceInfo) setLimitPriceInfo(undefined)
 
-    return
-  }, [limitPrice, perpsAsset, limitPriceInfo, tradeDirection, perpsAsset.symbol])
+    return undefined
+  }, [limitPrice, perpsAsset, tradeDirection])
+
+  const newLimitPriceInfo = useMemo(() => calculateLimitPriceInfo(), [calculateLimitPriceInfo])
+
+  useEffect(() => {
+    setLimitPriceInfo(newLimitPriceInfo)
+  }, [newLimitPriceInfo])
 
   const isDisabledExecution = useMemo(() => {
     if (!isLimitOrder) return amount.isGreaterThan(currentMaxAmount) || warningMessages.isNotEmpty()
