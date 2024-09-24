@@ -13,7 +13,7 @@ export default function useTradingFeeAndPrice(denom: string, newAmount: BigNumbe
   const accountId = useCurrentAccount()?.id
   const debouncedAmount = useDebounce<BigNumber>(newAmount, 500)
   const clients = useClients()
-  const enabled = !debouncedAmount.isEqualTo(newAmount) && clients && !!accountId
+  const enabled = clients && !!accountId
 
   return useSWR(
     enabled && `${chainConfig.id}/perps/${denom}/positionFeeAndPrice/${debouncedAmount}`,
