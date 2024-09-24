@@ -1018,6 +1018,8 @@ interface BroadcastSlice {
     accountId: string
     coin: BNCoin
     reduceOnly?: boolean
+    autolend: boolean
+    baseDenom: string
   }) => Promise<boolean>
   reclaim: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
   repay: (options: {

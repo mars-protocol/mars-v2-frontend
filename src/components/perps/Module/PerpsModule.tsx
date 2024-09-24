@@ -234,6 +234,7 @@ export function PerpsModule() {
         hasActivePosition={hasActivePosition}
         onTxExecuted={() => setAmount(BN_ZERO)}
         disabled={amount.isGreaterThan(maxAmount) || warningMessages.isNotEmpty()}
+        baseDenom={tradingFee?.baseDenom ?? ''}
       />
     </Card>
   )

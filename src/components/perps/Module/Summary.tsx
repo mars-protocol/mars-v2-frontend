@@ -23,6 +23,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatLeverage } from 'utils/formatters'
 import ConfirmationSummary from './ConfirmationSummary'
+import useAutoLend from 'hooks/wallet/useAutoLend'
 
 type Props = {
   leverage: number
@@ -35,6 +36,7 @@ type Props = {
   hasActivePosition: boolean
   onTxExecuted: () => void
   disabled: boolean
+  baseDenom: string
 }
 
 export default function PerpsSummary(props: Props) {
@@ -47,8 +49,10 @@ export default function PerpsSummary(props: Props) {
     onTxExecuted,
     disabled,
     previousTradeDirection,
+    baseDenom,
   } = props
   const executePerpOrder = useStore((s) => s.executePerpOrder)
+  const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const currentAccount = useCurrentAccount()
   const chainConfig = useChainConfig()
   const [showSummary, setShowSummary] = useLocalStorage<boolean>(
@@ -69,6 +73,8 @@ export default function PerpsSummary(props: Props) {
     await executePerpOrder({
       accountId: currentAccount.id,
       coin: BNCoin.fromDenomAndBigNumber(asset.denom, modifyAmount),
+      autolend: isAutoLendEnabledForCurrentAccount,
+      baseDenom,
     })
     return onTxExecuted()
   }, [asset.denom, currentAccount, executePerpOrder, newAmount, onTxExecuted, previousAmount])
