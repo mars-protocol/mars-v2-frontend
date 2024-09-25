@@ -1,10 +1,10 @@
 import moment from 'moment'
 import useSWR from 'swr'
 
+import { PERPS_DEFAULT_ACTION } from 'constants/perps'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
 import { BN } from 'utils/helpers'
-import { PERPS_DEFAULT_ACTION } from 'constants/perps'
 
 export default function usePerpsVault() {
   const chainConfig = useChainConfig()
@@ -15,6 +15,18 @@ export default function usePerpsVault() {
     async (): Promise<PerpsVault> => {
       const vaultState = await clients!.perps.vault(PERPS_DEFAULT_ACTION)
       const perpsVault = await clients!.perps.config()
+      let perpVaultApy = 0
+      try {
+        if (chainConfig.endpoints.aprs.perpsVault) {
+          const response = await fetch(chainConfig.endpoints.aprs.perpsVault)
+          if (response.ok) {
+            const data = await response.json()
+            perpVaultApy = data.projected_apy
+          }
+        }
+      } catch (e) {
+        console.error(e)
+      }
 
       const timeframe = moment.duration(perpsVault.cooldown_period, 'seconds').humanize().split(' ')
 
@@ -22,7 +34,7 @@ export default function usePerpsVault() {
         name: 'Perps USDC Vault',
         provider: 'MARS',
         denom: perpsVault.base_denom,
-        apy: 0,
+        apy: perpVaultApy,
         collateralizationRatio: 1.1,
         liquidity: BN(vaultState.total_liquidity),
         lockup: {
