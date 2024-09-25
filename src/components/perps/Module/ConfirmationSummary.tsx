@@ -26,6 +26,8 @@ interface Props {
   asset: Asset
   leverage: number
   amount: BigNumber
+  limitPrice?: BigNumber
+  keeperFee?: BNCoin
 }
 
 const FEE_LABELS: Record<keyof PnlAmounts, string> = {
@@ -37,7 +39,7 @@ const FEE_LABELS: Record<keyof PnlAmounts, string> = {
 }
 
 export default function ConfirmationSummary(props: Props) {
-  const { accountId, asset, leverage, amount } = props
+  const { accountId, asset, leverage, amount, keeperFee, limitPrice } = props
   const { data: account } = useAccount(accountId)
   const { data: updatePerpsPosition, isLoading } = useUpdatePerpsPosition(
     asset.denom,
@@ -49,7 +51,7 @@ export default function ConfirmationSummary(props: Props) {
     const positionSize = updatePerpsPosition?.position?.size || '0'
     const previousAmount = BN(positionSize as string)
     const newAmount = previousAmount.plus(amount)
-    const isNewPosition = newAmount.isZero()
+    const isNewPosition = previousAmount.isZero()
     const tradeDirection = newAmount.isPositive() ? 'long' : 'short'
 
     return [newAmount, tradeDirection, isNewPosition, previousAmount]
@@ -67,11 +69,17 @@ export default function ConfirmationSummary(props: Props) {
   const zeroCoin = useMemo(() => BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO), [baseDenom])
 
   const totalFeeAndPnLCoin = useMemo(() => {
-    if (!tradingFeeAndPrice) return zeroCoin
-    const tradingFee = tradingFeeAndPrice.fee.closing.plus(tradingFeeAndPrice.fee.opening).negated()
-    if (!position) return BNCoin.fromDenomAndBigNumber(baseDenom, tradingFee)
-    return BNCoin.fromDenomAndBigNumber(baseDenom, BN(position.unrealised_pnl.pnl as any))
-  }, [baseDenom, position, tradingFeeAndPrice, zeroCoin])
+    let tradingFee = BN_ZERO
+    if (!tradingFeeAndPrice && !keeperFee) return zeroCoin
+    if (keeperFee) tradingFee = keeperFee.amount
+    if (tradingFeeAndPrice)
+      tradingFee = tradingFee
+        .plus(tradingFeeAndPrice.fee.closing)
+        .plus(tradingFeeAndPrice.fee.opening)
+    tradingFee = tradingFee.negated()
+    if (position) tradingFee = BN(position.unrealised_pnl.pnl as any).minus(keeperFee?.amount ?? 0)
+    return BNCoin.fromDenomAndBigNumber(baseDenom, tradingFee)
+  }, [baseDenom, keeperFee, position, tradingFeeAndPrice, zeroCoin])
 
   const [withdrawCoin, borrowCoin] = useMemo(() => {
     if (!account || totalFeeAndPnLCoin.amount.isPositive()) return [zeroCoin, zeroCoin]
@@ -109,14 +117,19 @@ export default function ConfirmationSummary(props: Props) {
     <div className='flex flex-wrap w-full gap-4'>
       <Text className='w-full'>{action}</Text>
       <Container title='New Position' className='w-full'>
-        <AssetAmountAndValue asset={asset} amount={newAmount.abs()} />
+        <AssetAmountAndValue asset={asset} amount={newAmount.abs()} priceOverride={limitPrice} />
         {!newAmount.isZero() && (
           <>
             <SummaryRow label='Leverage'>
               <Text size='xs'>{leverage.toFixed(2)}x</Text>
             </SummaryRow>
             <SummaryRow label='Execution Price'>
-              <ExpectedPrice className='text-xs' denom={asset.denom} newAmount={newAmount} />
+              <ExpectedPrice
+                className='text-xs'
+                denom={asset.denom}
+                newAmount={newAmount}
+                override={limitPrice}
+              />
             </SummaryRow>
           </>
         )}
@@ -134,6 +147,18 @@ export default function ConfirmationSummary(props: Props) {
               previousAmount={previousAmount}
               className='text-xs'
               showPrefix={true}
+            />
+          </SummaryRow>
+        )}
+        {keeperFee && (
+          <SummaryRow label='Keeper Fee'>
+            <DisplayCurrency
+              className='text-xs'
+              coin={BNCoin.fromDenomAndBigNumber(keeperFee.denom, keeperFee.amount.negated())}
+              options={{
+                abbreviated: false,
+              }}
+              showSignPrefix={true}
             />
           </SummaryRow>
         )}
@@ -215,8 +240,12 @@ function SummaryRow(props: { label: string; children: React.ReactNode; className
   )
 }
 
-function AssetAmountAndValue(props: { asset: Asset; amount: BigNumber }) {
-  const { asset, amount } = props
+function AssetAmountAndValue(props: {
+  asset: Asset
+  amount: BigNumber
+  priceOverride?: BigNumber
+}) {
+  const { asset, amount, priceOverride } = props
   return (
     <div className='flex justify-between flex-1 w-full'>
       <span className='flex items-center gap-2'>
@@ -225,7 +254,12 @@ function AssetAmountAndValue(props: { asset: Asset; amount: BigNumber }) {
           {asset.symbol}
         </Text>
       </span>
-      <AmountAndValue asset={asset} amount={amount} abbreviated={false} />
+      <AmountAndValue
+        asset={asset}
+        amount={amount}
+        abbreviated={false}
+        priceOverride={priceOverride}
+      />
     </div>
   )
 }

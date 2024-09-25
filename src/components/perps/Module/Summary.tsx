@@ -71,6 +71,7 @@ export default function PerpsSummary(props: Props) {
   const { data: perpsConfig } = usePerpsConfig()
   const assets = useDepositEnabledAssets()
   const executePerpOrder = useStore((s) => s.executePerpOrder)
+  const createTriggerOrder = useStore((s) => s.createTriggerOrder)
   const [showSummary, setShowSummary] = useLocalStorage<boolean>(
     LocalStorageKeys.SHOW_SUMMARY,
     getDefaultChainSettings(chainConfig).showSummary,
@@ -108,6 +109,19 @@ export default function PerpsSummary(props: Props) {
       })
 
     const modifyAmount = newAmount.minus(previousAmount)
+
+    if (isLimitOrder && keeperFee) {
+      await createTriggerOrder({
+        accountId: currentAccount.id,
+        coin: BNCoin.fromDenomAndBigNumber(asset.denom, modifyAmount),
+        autolend: isAutoLendEnabledForCurrentAccount,
+        baseDenom,
+        keeperFee,
+        tradeDirection,
+        price: limitPrice,
+      })
+      return onTxExecuted()
+    }
 
     await executePerpOrder({
       accountId: currentAccount.id,
@@ -161,7 +175,7 @@ export default function PerpsSummary(props: Props) {
     openAlertDialog({
       header: (
         <div className='flex items-center justify-between w-full'>
-          <Text size='2xl'>Order Summary</Text>
+          <Text size='2xl'>{isLimitOrder ? 'Limit Order Summary' : 'Order Summary'}</Text>
           <TradeDirection
             tradeDirection={
               isNewPosition || isDirectionChange
@@ -178,6 +192,8 @@ export default function PerpsSummary(props: Props) {
           accountId={currentAccount.id}
           asset={asset}
           leverage={leverage}
+          limitPrice={isLimitOrder ? limitPrice : undefined}
+          keeperFee={isLimitOrder ? keeperFee : undefined}
         />
       ),
       positiveButton: {
@@ -202,8 +218,11 @@ export default function PerpsSummary(props: Props) {
     close,
     currentAccount,
     isDirectionChange,
+    isLimitOrder,
     isNewPosition,
+    keeperFee,
     leverage,
+    limitPrice,
     onConfirm,
     openAlertDialog,
     previousTradeDirection,
