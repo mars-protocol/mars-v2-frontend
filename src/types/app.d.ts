@@ -1023,6 +1023,16 @@ interface BroadcastSlice {
     autolend: boolean
     baseDenom: string
   }) => Promise<boolean>
+  createTriggerOrder: (options: {
+    accountId: string
+    coin: BNCoin
+    reduceOnly?: boolean
+    autolend: boolean
+    baseDenom: string
+    tradeDirection: TradeDirection
+    price: BigNumber
+    makerFee: BNCoin
+  }) => Promise<boolean>
   reclaim: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
   repay: (options: {
     accountId: string
