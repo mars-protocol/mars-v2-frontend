@@ -1034,6 +1034,12 @@ interface BroadcastSlice {
     price: BigNumber
     keeperFee: BNCoin
   }) => Promise<boolean>
+  cancelTriggerOrder: (options: {
+    accountId: string
+    orderId: string
+    autolend: boolean
+    baseDenom: string
+  }) => Promise<boolean>
   reclaim: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
   repay: (options: {
     accountId: string

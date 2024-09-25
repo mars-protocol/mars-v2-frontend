@@ -887,6 +887,45 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
+    cancelTriggerOrder: async (options: {
+      accountId: string
+      orderId: string
+      autolend: boolean
+      baseDenom: string
+    }) => {
+      const actions: Action[] = [
+        {
+          delete_trigger_order: {
+            account_id: options.accountId,
+            trigger_order_id: options.orderId,
+          },
+        },
+      ]
+      if (options.autolend)
+        actions.push({
+          lend: {
+            denom: options.baseDenom,
+            amount: 'account_balance',
+          },
+        })
+
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions,
+        },
+      }
+
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().handleTransaction({ response })
+
+      return response.then((response) => !!response.result)
+    },
     executeMsg: async (options: {
       messages: MsgExecuteContract[]
       isPythUpdate?: boolean

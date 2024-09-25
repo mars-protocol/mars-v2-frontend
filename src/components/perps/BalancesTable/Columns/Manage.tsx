@@ -38,6 +38,7 @@ export default function Manage(props: Props) {
     getDefaultChainSettings(chainConfig).showSummary,
   )
   const executePerpOrder = useStore((s) => s.executePerpOrder)
+  const cancelTriggerOrder = useStore((s) => s.cancelTriggerOrder)
 
   const { open: openAlertDialog, close } = useAlertDialog()
 
@@ -135,12 +136,14 @@ export default function Manage(props: Props) {
         <ActionButton
           text='Cancel'
           onClick={async () => {
-            //if (!props.perpPosition.orderId || !currentAccount) return
+            if (!props.perpPosition.orderId || !currentAccount) return
             setIsConfirming(true)
-            //await cancelTriggerOrder({
-            //  accountId: currentAccount.id,
-            //  orderId: props.perpPosition.orderId,
-            //})
+            await cancelTriggerOrder({
+              accountId: currentAccount.id,
+              orderId: props.perpPosition.orderId,
+              autolend: isAutoLendEnabledForCurrentAccount,
+              baseDenom: perpPosition.baseDenom,
+            })
             setIsConfirming(false)
           }}
           className='min-w-[105px]'
