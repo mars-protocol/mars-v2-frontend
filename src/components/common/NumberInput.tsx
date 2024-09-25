@@ -36,6 +36,7 @@ export default function NumberInput(props: Props) {
 
   useEffect(() => {
     if (props.amount.isZero()) return setFormattedAmount('')
+    if (props.isUSD) return
 
     if (!props.isUSD)
       setFormattedAmount(

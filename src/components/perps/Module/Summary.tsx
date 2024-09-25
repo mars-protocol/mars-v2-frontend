@@ -60,9 +60,9 @@ export default function PerpsSummary(props: Props) {
 
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const chainConfig = useChainConfig()
-  const [makerFee, _] = useLocalStorage(
-    LocalStorageKeys.PERPS_MAKER_FEE,
-    getDefaultChainSettings(chainConfig).perpsMakerFee,
+  const [takerFee, _] = useLocalStorage(
+    LocalStorageKeys.PERPS_TAKER_FEE,
+    getDefaultChainSettings(chainConfig).perpsTakerFee,
   )
   const currentAccount = useCurrentAccount()
   const isLimitOrder = props.orderType === OrderType.LIMIT
@@ -88,7 +88,7 @@ export default function PerpsSummary(props: Props) {
   const onConfirm = useCallback(async () => {
     if (!currentAccount || !feeToken) return
     const keeperFee = isLimitOrder
-      ? BNCoin.fromDenomAndBigNumber(feeToken.denom, magnify(makerFee.amount, feeToken))
+      ? BNCoin.fromDenomAndBigNumber(feeToken.denom, magnify(takerFee.amount, feeToken))
       : undefined
     const triggers: Trigger[] = []
 
@@ -118,7 +118,7 @@ export default function PerpsSummary(props: Props) {
     feeToken,
     isAutoLendEnabledForCurrentAccount,
     isLimitOrder,
-    makerFee.amount,
+    takerFee.amount,
     newAmount,
     onTxExecuted,
     previousAmount,

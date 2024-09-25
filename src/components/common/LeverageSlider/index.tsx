@@ -33,7 +33,6 @@ function LeverageSlider(props: Props) {
     onDebounce,
   } = props
   const min = props.min ?? 0
-
   const debounceFunction = useMemo(
     () =>
       debounce(() => {
