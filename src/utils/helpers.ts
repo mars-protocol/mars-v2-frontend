@@ -73,3 +73,11 @@ export function capitalizeFirstLetter(string: string) {
   const firstLetter = string.charAt(0).toUpperCase()
   return `${firstLetter}${string.slice(1)}`
 }
+
+export function mergeBNCoins(coin1: BNCoin, coin2: BNCoin) {
+  if (coin1.denom === coin2.denom) {
+    return BNCoin.fromDenomAndBigNumber(coin1.denom, coin1.amount.plus(coin2.amount))
+  }
+
+  return coin1
+}

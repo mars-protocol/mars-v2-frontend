@@ -16,12 +16,18 @@ import useHlsStakingAssets from 'hooks/hls/useHlsStakingAssets'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { calculateAccountApr, getAccountDebtValue, getAccountTotalValue } from 'utils/accounts'
+import {
+  calculateAccountApr,
+  getAccountDebtValue,
+  getAccountTotalValue,
+  getAccountUnrealizedPnlValue,
+} from 'utils/accounts'
+import useAccountPerpData from 'components/account/AccountPerpPositionTable/useAccountPerpData'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 interface Props {
   account: Account
 }
-
 interface ItemProps {
   title: string
   current: BigNumber
@@ -32,11 +38,16 @@ interface ItemProps {
 }
 
 export default function AccountComposition(props: Props) {
+  const chainConfig = useChainConfig()
   const updatedAccount = useStore((s) => s.updatedAccount)
   const { account } = props
   const hasChanged = !!updatedAccount
   const { data: hlsStrategies } = useHlsStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
+  const accountPerpData = useAccountPerpData({
+    account,
+    updatedAccount,
+  })
   const astroLpAprs = useAstroLpAprs()
   const assets = useWhitelistedAssets()
   const data = useBorrowMarketAssetsTableData()
@@ -56,6 +67,16 @@ export default function AccountComposition(props: Props) {
   )
   const updatedPositionValue = useMemo(
     () => getAccountTotalValue(updatedAccount ?? account, assets),
+    [updatedAccount, account, assets],
+  )
+
+  const totalUnrealizedPnl = useMemo(
+    () => getAccountUnrealizedPnlValue(account, assets),
+    [account, assets],
+  )
+
+  const updatedUnrealizedPnl = useMemo(
+    () => getAccountUnrealizedPnlValue(updatedAccount ?? account, assets),
     [updatedAccount, account, assets],
   )
 
@@ -111,6 +132,14 @@ export default function AccountComposition(props: Props) {
         className='pb-3'
         isDecrease
       />
+      {chainConfig.perps && accountPerpData.length !== 0 && (
+        <Item
+          title='Unrealized PnL'
+          current={totalUnrealizedPnl}
+          change={hasChanged ? updatedUnrealizedPnl : totalUnrealizedPnl}
+          className='pb-3'
+        />
+      )}
       <Item
         title='APR'
         current={apr}
@@ -123,8 +152,8 @@ export default function AccountComposition(props: Props) {
 }
 
 function Item(props: ItemProps) {
-  const { current, change } = props
-  const increase = props.isDecrease ? current.isGreaterThan(change) : current.isLessThan(change)
+  const { current, change, title } = props
+  const decrease = props.isDecrease ? change.isGreaterThan(current) : change.isLessThan(current)
 
   return (
     <div className={classNames('flex w-full flex-nowrap', props.className)}>
@@ -151,11 +180,14 @@ function Item(props: ItemProps) {
             coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, current)}
             className='text-sm'
             options={{ abbreviated: false }}
+            {...(title === 'Unrealized PnL' && {
+              showSignPrefix: true,
+            })}
           />
         )}
         {current.toFixed(2) !== change.toFixed(2) && (
           <>
-            <span className={classNames('w-3', increase ? 'text-profit' : 'text-loss')}>
+            <span className={classNames('w-3', decrease ? 'text-loss' : 'text-profit')}>
               <ArrowRight />
             </span>
             {props.isPercentage ? (
@@ -166,14 +198,17 @@ function Item(props: ItemProps) {
                   minDecimals: 2,
                   maxDecimals: change.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
                 }}
-                className={classNames('text-sm', increase ? 'text-profit' : 'text-loss')}
+                className={classNames('text-sm', decrease ? 'text-loss' : 'text-profit')}
                 animate
               />
             ) : (
               <DisplayCurrency
                 coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, change)}
-                className={classNames('text-sm', increase ? 'text-profit' : 'text-loss')}
+                className={classNames('text-sm', decrease ? 'text-loss' : 'text-profit')}
                 options={{ abbreviated: false }}
+                {...(title === 'Unrealized PnL' && {
+                  showSignPrefix: true,
+                })}
               />
             )}
           </>

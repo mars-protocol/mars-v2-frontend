@@ -1657,3 +1657,12 @@ interface CallOut {
   message: string
   type: import('components/common/Callout').CalloutType
 }
+
+interface PerpsTradingFee {
+  baseDenom: sring
+  price: BigNumber
+  fee: {
+    opening: BigNumber
+    closing: BigNumber
+  }
+}

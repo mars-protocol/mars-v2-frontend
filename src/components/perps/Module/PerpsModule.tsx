@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
-import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import AssetAmountInput from 'components/common/AssetAmountInput'
@@ -28,9 +27,9 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
-import { usePerpsParams } from 'hooks/perps/usePerpsParams'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
+import useAutoLend from 'hooks/wallet/useAutoLend'
 import { BNCoin } from 'types/classes/BNCoin'
 import { OrderType } from 'types/enums'
 import { getAccountNetValue } from 'utils/accounts'
@@ -51,9 +50,10 @@ export function PerpsModule() {
   const [selectedOrderType, setSelectedOrderType] = useState<OrderType>(OrderType.MARKET)
   const account = useCurrentAccount()
   const { data: allAssets } = useAssets()
-  const { simulatePerps, updatedPerpPosition } = useUpdatedAccount(account)
+  const { simulatePerps } = useUpdatedAccount(account)
   const [amount, setAmount] = useState<BigNumber>(BN_ZERO)
   const [limitPrice, setLimitPrice] = useState<BigNumber>(BN_ZERO)
+  const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const {
     warningMessages,
     previousAmount,
@@ -73,55 +73,8 @@ export function PerpsModule() {
   const { computeMaxPerpAmount } = useHealthComputer(account)
 
   const { data: tradingFee } = useTradingFeeAndPrice(perpsAsset.denom, amount.plus(previousAmount))
-  const perpsParams = usePerpsParams(perpsAsset.denom)
 
-  const debouncedUpdateAccount = useMemo(
-    () =>
-      debounce((perpsPosition: PerpsPosition) => {
-        if (
-          !!updatedPerpPosition &&
-          perpsPosition.amount.isEqualTo(updatedPerpPosition.amount) &&
-          perpsPosition.tradeDirection === updatedPerpPosition.tradeDirection
-        )
-          return
-
-        //Maker Fee Deduction
-        //if (isLimitOrder && perpsBaseAsset) {
-        //  const makerFeeAmount = magnify(makerFee.amount, perpsBaseAsset).negated()
-        //  perpsPosition.pnl.unrealized.net = perpsPosition.pnl.unrealized.net.plus(makerFeeAmount)
-        //}
-        simulatePerps(perpsPosition)
-      }, 500),
-    [simulatePerps, updatedPerpPosition],
-  )
-
-  useEffect(() => {
-    const currentPerpPosition = account?.perps.find(byDenom(perpsAsset.denom))
-    if (!perpsParams || !tradingFee || !perpsVault) return
-
-    const perpsPosition = getPerpsPosition(
-      perpsVault.denom,
-      perpsAsset,
-      amount.plus(previousAmount),
-      tradeDirection ?? previousTradeDirection,
-      perpsParams,
-      tradingFee,
-      currentPerpPosition,
-    )
-
-    debouncedUpdateAccount(perpsPosition)
-  }, [
-    debouncedUpdateAccount,
-    amount,
-    perpsAsset,
-    tradeDirection,
-    previousAmount,
-    previousTradeDirection,
-    perpsParams,
-    tradingFee,
-    perpsVault,
-    account?.perps,
-  ])
+  const currentPerpPosition = account?.perps.find(byDenom(perpsAsset.denom))
 
   const netValue = useMemo(() => {
     if (!account) return BN_ZERO
@@ -212,6 +165,31 @@ export function PerpsModule() {
     },
     [currentMaxAmount, maxLeverage, tradeDirection],
   )
+
+  useEffect(() => {
+    if (!tradingFee || !perpsVault) return
+
+    const newPosition = getPerpsPosition(
+      perpsVault.denom,
+      perpsAsset,
+      amount.plus(previousAmount),
+      tradeDirection ?? previousTradeDirection,
+      tradingFee,
+      currentPerpPosition,
+    )
+    if (newPosition) simulatePerps(newPosition, isAutoLendEnabledForCurrentAccount)
+  }, [
+    amount,
+    currentPerpPosition,
+    isAutoLendEnabledForCurrentAccount,
+    perpsAsset,
+    perpsVault,
+    previousAmount,
+    previousTradeDirection,
+    simulatePerps,
+    tradeDirection,
+    tradingFee,
+  ])
 
   useEffect(() => {
     if (!perpsAsset) return
