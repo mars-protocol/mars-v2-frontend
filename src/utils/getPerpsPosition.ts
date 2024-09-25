@@ -22,7 +22,7 @@ export default function getPerpsPosition(
 
   return {
     amount,
-    entryPrice: tradingFee.price,
+    entryPrice: asset.price?.amount ?? BN_ZERO,
     currentPrice: asset.price?.amount ?? BN_ZERO,
     baseDenom,
     denom: asset.denom,
