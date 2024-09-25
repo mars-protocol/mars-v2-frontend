@@ -30,6 +30,7 @@ import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import useAutoLend from 'hooks/wallet/useAutoLend'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { OrderType } from 'types/enums'
 import { getAccountNetValue } from 'utils/accounts'
@@ -52,6 +53,7 @@ export function PerpsModule() {
   const { data: allAssets } = useAssets()
   const { simulatePerps } = useUpdatedAccount(account)
   const [amount, setAmount] = useState<BigNumber>(BN_ZERO)
+  const perpsVaultModal = useStore((s) => s.perpsVaultModal)
   const [limitPrice, setLimitPrice] = useState<BigNumber>(BN_ZERO)
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const {
@@ -182,7 +184,7 @@ export function PerpsModule() {
   }, [newLimitPriceInfo])
 
   useEffect(() => {
-    if (!tradingFee || !perpsVault || isLimitOrder || amount.isZero()) return
+    if (!tradingFee || !perpsVault || isLimitOrder || perpsVaultModal) return
 
     const newPosition = getPerpsPosition(
       perpsVault.denom,
@@ -200,6 +202,7 @@ export function PerpsModule() {
     isLimitOrder,
     perpsAsset,
     perpsVault,
+    perpsVaultModal,
     previousAmount,
     previousTradeDirection,
     simulatePerps,

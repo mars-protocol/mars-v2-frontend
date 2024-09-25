@@ -2,7 +2,6 @@ import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from 'constants/math'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify } from 'utils/formatters'
 
@@ -49,7 +48,7 @@ export default function AmountAndValue(props: Props) {
           className='justify-end text-xs text-white/50'
           coin={BNCoin.fromDenomAndBigNumber(
             priceOverride ? 'usd' : asset.denom,
-            priceOverride ? amount.times(priceOverride).shiftedBy(-PRICE_ORACLE_DECIMALS) : amount,
+            priceOverride ? amount.times(priceOverride).shiftedBy(-asset.decimals) : amount,
           )}
           isApproximation={isApproximation}
           options={{ abbreviated: abbreviated ?? true }}
