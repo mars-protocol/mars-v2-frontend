@@ -153,7 +153,7 @@ export default function AccountComposition(props: Props) {
 
 function Item(props: ItemProps) {
   const { current, change, title } = props
-  const isBadChange = props.isDecrease ? change.isGreaterThan(current) : change.isLessThan(current)
+  const decrease = props.isDecrease ? change.isGreaterThan(current) : change.isLessThan(current)
 
   return (
     <div className={classNames('flex w-full flex-nowrap', props.className)}>
@@ -187,7 +187,7 @@ function Item(props: ItemProps) {
         )}
         {current.toFixed(2) !== change.toFixed(2) && (
           <>
-            <span className={classNames('w-3', isBadChange ? 'text-loss' : 'text-profit')}>
+            <span className={classNames('w-3', decrease ? 'text-loss' : 'text-profit')}>
               <ArrowRight />
             </span>
             {props.isPercentage ? (
@@ -198,13 +198,13 @@ function Item(props: ItemProps) {
                   minDecimals: 2,
                   maxDecimals: change.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
                 }}
-                className={classNames('text-sm', isBadChange ? 'text-loss' : 'text-profit')}
+                className={classNames('text-sm', decrease ? 'text-loss' : 'text-profit')}
                 animate
               />
             ) : (
               <DisplayCurrency
                 coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, change)}
-                className={classNames('text-sm', isBadChange ? 'text-loss' : 'text-profit')}
+                className={classNames('text-sm', decrease ? 'text-loss' : 'text-profit')}
                 options={{ abbreviated: false }}
                 {...(title === 'Unrealized PnL' && {
                   showSignPrefix: true,
