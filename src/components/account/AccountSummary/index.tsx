@@ -11,6 +11,7 @@ import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendi
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
+import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -42,7 +43,8 @@ export default function AccountSummary(props: Props) {
   )
   const { data: vaultAprs } = useVaultAprs()
   const astroLpAprs = useAstroLpAprs()
-  const assets = useWhitelistedAssets()
+  const whitelistedAssets = useWhitelistedAssets()
+  const perpsAssets = usePerpsEnabledAssets()
   const updatedAccount = useStore((s) => s.updatedAccount)
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
@@ -58,16 +60,20 @@ export default function AccountSummary(props: Props) {
     updatedAccount || account,
   )
   const leverage = useMemo(
-    () => (account ? calculateAccountLeverage(account, assets) : BN_ZERO),
-    [account, assets],
+    () =>
+      account ? calculateAccountLeverage(account, [...whitelistedAssets, ...perpsAssets]) : BN_ZERO,
+    [account, perpsAssets, whitelistedAssets],
   )
   const updatedLeverage = useMemo(() => {
     if (!updatedAccount) return null
-    const updatedLeverage = calculateAccountLeverage(updatedAccount, assets)
+    const updatedLeverage = calculateAccountLeverage(updatedAccount, [
+      ...whitelistedAssets,
+      ...perpsAssets,
+    ])
 
     if (updatedLeverage.eq(leverage)) return null
     return updatedLeverage
-  }, [updatedAccount, assets, leverage])
+  }, [updatedAccount, whitelistedAssets, perpsAssets, leverage])
 
   const handleToggle = useCallback(
     (index: number) => {
@@ -87,7 +93,7 @@ export default function AccountSummary(props: Props) {
         borrowAssetsData,
         lendingAssetsData,
         hlsStrategies,
-        assets,
+        [...whitelistedAssets, ...perpsAssets],
         vaultAprs,
         astroLpAprs,
       ),
@@ -97,7 +103,8 @@ export default function AccountSummary(props: Props) {
       borrowAssetsData,
       lendingAssetsData,
       hlsStrategies,
-      assets,
+      whitelistedAssets,
+      perpsAssets,
       vaultAprs,
       astroLpAprs,
     ],
@@ -176,7 +183,7 @@ export default function AccountSummary(props: Props) {
       <AccountSummaryHeader
         account={account}
         updatedAccount={updatedAccount}
-        assets={assets}
+        assets={[...whitelistedAssets, ...perpsAssets]}
         leverage={leverage.toNumber() || 1}
         updatedLeverage={updatedLeverage?.toNumber() || null}
         apr={apr.toNumber()}

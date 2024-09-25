@@ -2,6 +2,8 @@ import BigNumber from 'bignumber.js'
 
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import { VALUE_SCALE_FACTOR } from 'hooks/health-computer/useHealthComputer'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPosition } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { Positions } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
@@ -36,6 +38,16 @@ export const getAccountPositionValues = (account: Account | AccountChange, asset
   const stakedAstroLps = calculateAccountValue('stakedAstroLps', account, assets)
 
   return [deposits, lends, debts, vaults, perps, perpsVault, stakedAstroLps]
+}
+
+export const getAccountPerpsExposure = (account: Account | AccountChange, assets: Asset[]) => {
+  const perpsPositions = account.perps
+  let exposure = BN_ZERO
+  perpsPositions.forEach((perp) => {
+    const perpValue = getCoinValue(BNCoin.fromDenomAndBigNumber(perp.denom, perp.amount), assets)
+    exposure = exposure.plus(perpValue)
+  })
+  return exposure
 }
 
 export const calculateAccountValue = (
@@ -197,13 +209,22 @@ export const calculateAccountApr = (
 }
 
 export function calculateAccountLeverage(account: Account, assets: Asset[]) {
-  // TODO: MP-2307: Include perps positions into account leverage calculation
-  const [deposits, lends, debts, vaults, _, __, stakedAstroLps] = getAccountPositionValues(
-    account,
-    assets,
-  )
-  const netValue = deposits.plus(lends).plus(vaults).plus(stakedAstroLps).minus(debts)
-  return debts.dividedBy(netValue).plus(1)
+  const [deposits, lends, debts, vaults, perps, perpsVault, stakedAstroLps] =
+    getAccountPositionValues(account, assets)
+
+  const perpsExposure = getAccountPerpsExposure(account, assets)
+
+  const netValue = deposits
+    .plus(lends)
+    .plus(vaults)
+    .plus(stakedAstroLps)
+    .plus(perps)
+    .plus(perpsVault)
+    .minus(debts)
+
+  const exposureValue = netValue.plus(debts).plus(perpsExposure)
+
+  return exposureValue.dividedBy(netValue)
 }
 
 export function getAmount(denom: string, coins: Coin[]): BigNumber {
@@ -214,7 +235,27 @@ export function accumulateAmounts(denom: string, coins: BNCoin[]): BigNumber {
   return coins.reduce((acc, coin) => acc.plus(getAmount(denom, [coin.toCoin()])), BN_ZERO)
 }
 
-export function convertAccountToPositions(account: Account): Positions {
+export function convertAccountToPositions(account: Account, assets: Asset[]): Positions {
+  const vaults = account.vaults.map(
+    (vault) =>
+      ({
+        vault: {
+          address: vault.address,
+        },
+        amount: {
+          locking: {
+            locked: vault.amounts.locked.toString(),
+            unlocking: [
+              {
+                id: 0,
+                coin: { amount: vault.amounts.unlocking.toString(), denom: vault.denoms.lp },
+              },
+            ],
+          },
+        },
+      }) as VaultPosition,
+  )
+
   return {
     account_kind: account.kind,
     account_id: account.id,
@@ -231,13 +272,28 @@ export function convertAccountToPositions(account: Account): Positions {
     })),
     staked_astro_lps: account.stakedAstroLps?.map((stakedAstroLp) => stakedAstroLp.toCoin()) ?? [],
     perps: account.perps.map((perpPosition) => {
+      const perpAsset = assets.find(byDenom(perpPosition.denom))
+      const perpAssetDecimals = perpAsset?.decimals ?? PRICE_ORACLE_DECIMALS
+      const decimalDiff = perpAssetDecimals - PRICE_ORACLE_DECIMALS
       return {
         base_denom: perpPosition.baseDenom,
-        current_price: perpPosition.currentPrice.toString(),
-        current_exec_price: perpPosition.currentPrice.toString(),
+        current_price: perpPosition.currentPrice
+          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
+          .decimalPlaces(18)
+          .toString(),
+        current_exec_price: perpPosition.currentPrice
+          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
+          .decimalPlaces(18)
+          .toString(),
         denom: perpPosition.denom,
-        entry_price: perpPosition.entryPrice.toString(),
-        entry_exec_price: perpPosition.entryPrice.toString(),
+        entry_price: perpPosition.entryPrice
+          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
+          .decimalPlaces(18)
+          .toString(),
+        entry_exec_price: perpPosition.entryPrice
+          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
+          .decimalPlaces(18)
+          .toString(),
         size: perpPosition.amount.toString() as any,
         unrealised_pnl: {
           accrued_funding: perpPosition.pnl.unrealized.funding.amount
@@ -262,25 +318,7 @@ export function convertAccountToPositions(account: Account): Positions {
         },
       }
     }),
-    vaults: account.vaults.map(
-      (vault) =>
-        ({
-          vault: {
-            address: vault.address,
-          },
-          amount: {
-            locking: {
-              locked: vault.amounts.locked.toString(),
-              unlocking: [
-                {
-                  id: 0,
-                  coin: { amount: vault.amounts.unlocking.toString(), denom: vault.denoms.lp },
-                },
-              ],
-            },
-          },
-        }) as VaultPosition,
-    ),
+    vaults,
   }
 }
 

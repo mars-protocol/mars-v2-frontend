@@ -41,7 +41,7 @@ import { getTokenPrice } from 'utils/tokens'
 // Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
 // avoid "too many decimals" errors.
 // TODO: Remove adjustment properly (after testing). We will just ignore the last 14 decimals.
-const VALUE_SCALE_FACTOR = 12
+export const VALUE_SCALE_FACTOR = 12
 
 export default function useHealthComputer(account?: Account) {
   const { data: assets } = useAssets()
@@ -57,8 +57,8 @@ export default function useHealthComputer(account?: Account) {
   const [healthFactor, setHealthFactor] = useState(0)
   const positions: Positions | null = useMemo(() => {
     if (!account) return null
-    return convertAccountToPositions(account)
-  }, [account])
+    return convertAccountToPositions(account, assets)
+  }, [account, assets])
 
   const vaultPositionValues = useMemo(() => {
     if (!account?.vaults) return null
@@ -97,12 +97,12 @@ export default function useHealthComputer(account?: Account) {
     const prices = assetsWithPrice.map((asset) => asset.price) as BNCoin[]
     return prices.reduce(
       (prev, curr) => {
-        const decimals = assets.find(byDenom(curr.denom))?.decimals || 6
+        const decimals = assets.find(byDenom(curr.denom))?.decimals || PRICE_ORACLE_DECIMALS
+        const decimalDiffrence = decimals - PRICE_ORACLE_DECIMALS
 
         // The HealthComputer needs prices expressed per 1 amount. So we need to correct here for any additional decimals.
         prev[curr.denom] = curr.amount
-          .shiftedBy(VALUE_SCALE_FACTOR)
-          .shiftedBy(-decimals + 6)
+          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiffrence)
           .decimalPlaces(18)
           .toString()
         return prev
