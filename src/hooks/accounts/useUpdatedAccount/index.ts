@@ -311,6 +311,7 @@ export function useUpdatedAccount(account?: Account) {
         (!currentPerpPosition && position.amount.isEqualTo(0))
       ) {
         addDeposits([])
+        removeLends([])
         removeDeposits([])
         addDebts([])
         return setUpdatedPerpPosition(undefined)

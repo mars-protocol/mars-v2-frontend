@@ -20,6 +20,7 @@ import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -81,22 +82,26 @@ function AccountDetails(props: Props) {
     updatedAccount || account,
   )
   const whitelistedAssets = useWhitelistedAssets()
+  const perpsAssets = usePerpsEnabledAssets()
   const accountBalanceValue = useMemo(
     () => calculateAccountBalanceValue(updatedAccount ?? account, whitelistedAssets),
     [updatedAccount, account, whitelistedAssets],
   )
   const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalanceValue)
   const leverage = useMemo(
-    () => calculateAccountLeverage(account, whitelistedAssets),
-    [account, whitelistedAssets],
+    () => calculateAccountLeverage(account, [...whitelistedAssets, ...perpsAssets]),
+    [account, whitelistedAssets, perpsAssets],
   )
   const updatedLeverage = useMemo(() => {
     if (!updatedAccount) return null
-    const updatedLeverage = calculateAccountLeverage(updatedAccount, whitelistedAssets)
+    const updatedLeverage = calculateAccountLeverage(updatedAccount, [
+      ...whitelistedAssets,
+      ...perpsAssets,
+    ])
 
     if (updatedLeverage.eq(leverage)) return null
     return updatedLeverage
-  }, [updatedAccount, leverage, whitelistedAssets])
+  }, [updatedAccount, leverage, whitelistedAssets, perpsAssets])
 
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
