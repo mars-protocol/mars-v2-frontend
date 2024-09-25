@@ -236,7 +236,13 @@ export function PerpsModule() {
   return (
     <Card
       contentClassName='p-4 px-3 h-auto flex flex-grow flex-col justify-between h-full'
-      title={<AssetSelectorPerps asset={perpsAsset} hasActivePosition={hasActivePosition} />}
+      title={
+        <AssetSelectorPerps
+          asset={perpsAsset}
+          hasActivePosition={hasActivePosition}
+          onAssetSelect={reset}
+        />
+      }
       className={classNames(
         'mb-4 md:mb-0',
         'md:min-h-[850px]',

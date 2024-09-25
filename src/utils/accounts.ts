@@ -275,7 +275,6 @@ export function convertAccountToPositions(account: Account, assets: Asset[]): Po
       const perpAsset = assets.find(byDenom(perpPosition.denom))
       const perpAssetDecimals = perpAsset?.decimals ?? PRICE_ORACLE_DECIMALS
       const decimalDiff = perpAssetDecimals - PRICE_ORACLE_DECIMALS
-
       return {
         base_denom: perpPosition.baseDenom,
         current_price: perpPosition.currentPrice

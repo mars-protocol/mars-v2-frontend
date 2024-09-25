@@ -236,7 +236,7 @@ export default function useHealthComputer(account?: Account) {
     },
     [healthComputer],
   )
-  console.log(healthComputer)
+
   const computeMaxSwapAmount = useCallback(
     (from: string, to: string, kind: SwapKind, isRepayDebt: boolean) => {
       if (!healthComputer) return BN_ZERO
