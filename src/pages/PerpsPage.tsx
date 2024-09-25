@@ -11,6 +11,8 @@ export default function PerpsPage() {
   const whitelistedAssets = useWhitelistedAssets()
   const asset = whitelistedAssets?.find((asset) => asset.denom === vault?.denom)
 
+  if (!asset) return null
+
   return (
     <div className='md:grid flex flex-wrap w-full md:grid-cols-[auto_346px] gap-4'>
       <div>
