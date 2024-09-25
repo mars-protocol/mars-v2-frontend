@@ -790,7 +790,7 @@ export default function createBroadcastSlice(
       baseDenom: string
       tradeDirection: TradeDirection
       price: BigNumber
-      makerFee: BNCoin
+      keeperFee: BNCoin
     }) => {
       const triggerActions: Action[] = [
         {
@@ -822,7 +822,7 @@ export default function createBroadcastSlice(
       const actions: Action[] = [
         {
           create_trigger_order: {
-            keeper_fee: options.makerFee.toCoin(),
+            keeper_fee: options.keeperFee.toCoin(),
             actions: triggerActions,
             conditions: triggerConditions,
           },

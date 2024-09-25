@@ -15,6 +15,7 @@ import TradingFee from 'components/perps/Module/TradingFee'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -56,6 +57,7 @@ export default function PerpsSummary(props: Props) {
     disabled,
     previousTradeDirection,
     baseDenom,
+    limitPrice,
   } = props
 
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
@@ -69,6 +71,7 @@ export default function PerpsSummary(props: Props) {
   const { data: perpsConfig } = usePerpsConfig()
   const assets = useDepositEnabledAssets()
   const executePerpOrder = useStore((s) => s.executePerpOrder)
+  const createTriggerOrder = useStore((s) => s.createTriggerOrder)
   const [showSummary, setShowSummary] = useLocalStorage<boolean>(
     LocalStorageKeys.SHOW_SUMMARY,
     getDefaultChainSettings(chainConfig).showSummary,
@@ -84,12 +87,16 @@ export default function PerpsSummary(props: Props) {
     () => assets.find(byDenom(perpsConfig?.base_denom ?? '')),
     [assets, perpsConfig?.base_denom],
   )
-
+  const keeperFee = useMemo(
+    () =>
+      isLimitOrder && feeToken
+        ? BNCoin.fromDenomAndBigNumber(feeToken.denom, magnify(takerFee.amount, feeToken))
+        : undefined,
+    [feeToken, isLimitOrder, takerFee.amount],
+  )
   const onConfirm = useCallback(async () => {
     if (!currentAccount || !feeToken) return
-    const keeperFee = isLimitOrder
-      ? BNCoin.fromDenomAndBigNumber(feeToken.denom, magnify(takerFee.amount, feeToken))
-      : undefined
+
     const triggers: Trigger[] = []
 
     if (isLimitOrder)
@@ -102,6 +109,19 @@ export default function PerpsSummary(props: Props) {
       })
 
     const modifyAmount = newAmount.minus(previousAmount)
+
+    if (isLimitOrder && keeperFee) {
+      await createTriggerOrder({
+        accountId: currentAccount.id,
+        coin: BNCoin.fromDenomAndBigNumber(asset.denom, modifyAmount),
+        autolend: isAutoLendEnabledForCurrentAccount,
+        baseDenom,
+        keeperFee,
+        tradeDirection,
+        price: limitPrice,
+      })
+      return onTxExecuted()
+    }
 
     await executePerpOrder({
       accountId: currentAccount.id,
@@ -118,7 +138,6 @@ export default function PerpsSummary(props: Props) {
     feeToken,
     isAutoLendEnabledForCurrentAccount,
     isLimitOrder,
-    takerFee.amount,
     newAmount,
     onTxExecuted,
     previousAmount,
@@ -156,7 +175,7 @@ export default function PerpsSummary(props: Props) {
     openAlertDialog({
       header: (
         <div className='flex items-center justify-between w-full'>
-          <Text size='2xl'>Order Summary</Text>
+          <Text size='2xl'>{isLimitOrder ? 'Limit Order Summary' : 'Order Summary'}</Text>
           <TradeDirection
             tradeDirection={
               isNewPosition || isDirectionChange
@@ -173,6 +192,8 @@ export default function PerpsSummary(props: Props) {
           accountId={currentAccount.id}
           asset={asset}
           leverage={leverage}
+          limitPrice={isLimitOrder ? limitPrice : undefined}
+          keeperFee={isLimitOrder ? keeperFee : undefined}
         />
       ),
       positiveButton: {
@@ -197,8 +218,11 @@ export default function PerpsSummary(props: Props) {
     close,
     currentAccount,
     isDirectionChange,
+    isLimitOrder,
     isNewPosition,
+    keeperFee,
     leverage,
+    limitPrice,
     onConfirm,
     openAlertDialog,
     previousTradeDirection,
@@ -214,16 +238,26 @@ export default function PerpsSummary(props: Props) {
         newAmount={newAmount}
         isNewPosition={isNewPosition}
         isDirectionChange={isDirectionChange}
+        priceOverride={isLimitOrder ? limitPrice : undefined}
       />
       <div className='flex flex-col gap-1 px-3 py-4'>
         <Text size='xs' className='mb-2 font-bold'>
           Summary
         </Text>
         <SummaryLine label='Expected Price'>
-          <ExpectedPrice denom={asset.denom} newAmount={newAmount} />
+          <ExpectedPrice
+            denom={asset.denom}
+            newAmount={newAmount}
+            override={isLimitOrder ? limitPrice : undefined}
+          />
         </SummaryLine>
         <SummaryLine label='Fees' tooltip={tradingFeeTooltip}>
-          <TradingFee denom={asset.denom} newAmount={newAmount} previousAmount={previousAmount} />
+          <TradingFee
+            denom={asset.denom}
+            newAmount={newAmount}
+            previousAmount={previousAmount}
+            keeperFee={keeperFee}
+          />
         </SummaryLine>
       </div>
       <ActionButton
@@ -231,15 +265,26 @@ export default function PerpsSummary(props: Props) {
         disabled={isDisabled}
         className='w-full py-2.5 !text-base'
       >
-        <span className='mr-1 capitalize'>{tradeDirection}</span>
-        {asset.symbol}
+        {isLimitOrder ? (
+          'Create Limit Order'
+        ) : (
+          <>
+            <span className='mr-1 capitalize'>{tradeDirection}</span>
+            {asset.symbol}
+          </>
+        )}
       </ActionButton>
     </div>
   )
 }
 
 function ManageSummary(
-  props: Props & { newAmount: BigNumber; isNewPosition: boolean; isDirectionChange: boolean },
+  props: Props & {
+    newAmount: BigNumber
+    isNewPosition: boolean
+    isDirectionChange: boolean
+    priceOverride?: BigNumber
+  },
 ) {
   const {
     previousAmount,
@@ -252,6 +297,7 @@ function ManageSummary(
     asset,
     isNewPosition,
     isDirectionChange,
+    priceOverride,
   } = props
 
   const size = useMemo(() => previousAmount.plus(amount).abs(), [amount, previousAmount])
@@ -289,7 +335,10 @@ function ManageSummary(
       </SummaryLine>
       <SummaryLine label={isNewPosition ? 'Value' : 'New Value'} contentClassName='flex gap-1'>
         <DisplayCurrency
-          coin={BNCoin.fromDenomAndBigNumber(asset.denom, size)}
+          coin={BNCoin.fromDenomAndBigNumber(
+            priceOverride ? 'usd' : asset.denom,
+            priceOverride ? size.times(priceOverride).shiftedBy(-PRICE_ORACLE_DECIMALS) : size,
+          )}
           options={{ abbreviated: false }}
         />
       </SummaryLine>

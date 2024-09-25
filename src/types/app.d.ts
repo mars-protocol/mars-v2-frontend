@@ -1032,7 +1032,7 @@ interface BroadcastSlice {
     baseDenom: string
     tradeDirection: TradeDirection
     price: BigNumber
-    makerFee: BNCoin
+    keeperFee: BNCoin
   }) => Promise<boolean>
   reclaim: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
   repay: (options: {

@@ -11,9 +11,9 @@ import OrderTypeSelector from 'components/common/OrderTypeSelector'
 import Text from 'components/common/Text'
 import { TradeDirectionSelector } from 'components/common/TradeDirectionSelector'
 import { LeverageButtons } from 'components/perps/Module/LeverageButtons'
-import TakerFee from 'components/perps/Module/TakerFee'
 import { Or } from 'components/perps/Module/Or'
 import PerpsSummary from 'components/perps/Module/Summary'
+import TakerFee from 'components/perps/Module/TakerFee'
 import { DEFAULT_LIMIT_PRICE_INFO, PERPS_ORDER_TYPE_TABS } from 'components/perps/Module/constants'
 import usePerpsModule from 'components/perps/Module/usePerpsModule'
 import AssetSelectorPerps from 'components/trade/TradeModule/AssetSelector/AssetSelectorPerps'
@@ -182,7 +182,7 @@ export function PerpsModule() {
   }, [newLimitPriceInfo])
 
   useEffect(() => {
-    if (!tradingFee || !perpsVault) return
+    if (!tradingFee || !perpsVault || isLimitOrder) return
 
     const newPosition = getPerpsPosition(
       perpsVault.denom,
@@ -197,6 +197,7 @@ export function PerpsModule() {
     amount,
     currentPerpPosition,
     isAutoLendEnabledForCurrentAccount,
+    isLimitOrder,
     perpsAsset,
     perpsVault,
     previousAmount,
@@ -215,7 +216,7 @@ export function PerpsModule() {
       amount.isGreaterThan(currentMaxAmount) ||
       warningMessages.isNotEmpty()
     )
-  }, [amount, limitPriceInfo, limitPrice, currentMaxAmount, warningMessages, isLimitOrder])
+  }, [isLimitOrder, amount, currentMaxAmount, warningMessages, limitPriceInfo, limitPrice])
 
   const isDisabledAmountInput = useMemo(() => {
     if (!isLimitOrder) return false
@@ -344,7 +345,7 @@ export function PerpsModule() {
           previousLeverage={previousLeverage}
           hasActivePosition={hasActivePosition}
           onTxExecuted={() => setAmount(BN_ZERO)}
-          disabled={amount.isGreaterThan(maxAmount) || warningMessages.isNotEmpty()}
+          disabled={isDisabledExecution}
           baseDenom={tradingFee?.baseDenom ?? ''}
           limitPrice={limitPrice}
           orderType={selectedOrderType}

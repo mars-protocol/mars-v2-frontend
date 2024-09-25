@@ -11,7 +11,7 @@ import { BN } from 'utils/helpers'
 export default function useTradingFeeAndPrice(denom: string, newAmount: BigNumber) {
   const chainConfig = useChainConfig()
   const accountId = useCurrentAccount()?.id
-  const debouncedAmount = useDebounce<BigNumber>(newAmount, 5000)
+  const debouncedAmount = useDebounce<BigNumber>(newAmount, 500)
   const clients = useClients()
   const enabled = clients && !!accountId
 
