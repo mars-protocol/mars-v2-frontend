@@ -192,7 +192,8 @@ export function PerpsModule() {
       tradingFee,
       currentPerpPosition,
     )
-    if (newPosition) simulatePerps(newPosition, isAutoLendEnabledForCurrentAccount)
+    if (newPosition && !amount.isZero())
+      simulatePerps(newPosition, isAutoLendEnabledForCurrentAccount)
   }, [
     amount,
     currentPerpPosition,

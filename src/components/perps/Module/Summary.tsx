@@ -133,17 +133,21 @@ export default function PerpsSummary(props: Props) {
   }, [
     asset.denom,
     baseDenom,
+    createTriggerOrder,
     currentAccount,
     executePerpOrder,
     feeToken,
     isAutoLendEnabledForCurrentAccount,
     isLimitOrder,
+    keeperFee,
+    limitPrice,
     newAmount,
     onTxExecuted,
     previousAmount,
     props.asset.denom,
     props.limitPrice,
     props.tradeDirection,
+    tradeDirection,
   ])
 
   const isDisabled = useMemo(() => amount.isZero() || disabled, [amount, disabled])
