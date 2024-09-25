@@ -2,6 +2,8 @@ import BigNumber from 'bignumber.js'
 
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import { VALUE_SCALE_FACTOR } from 'hooks/health-computer/useHealthComputer'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPosition } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { Positions } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
@@ -233,7 +235,7 @@ export function accumulateAmounts(denom: string, coins: BNCoin[]): BigNumber {
   return coins.reduce((acc, coin) => acc.plus(getAmount(denom, [coin.toCoin()])), BN_ZERO)
 }
 
-export function convertAccountToPositions(account: Account): Positions {
+export function convertAccountToPositions(account: Account, assets: Asset[]): Positions {
   const vaults = account.vaults.map(
     (vault) =>
       ({
@@ -254,30 +256,6 @@ export function convertAccountToPositions(account: Account): Positions {
       }) as VaultPosition,
   )
 
-  const perpsVault = account.perpsVault
-    ? {
-        vault: {
-          address: account.perpsVault.denom,
-        },
-        amount: {
-          locking: {
-            locked: account.perpsVault.active?.amount.toString() ?? '0',
-            unlocking: account.perpsVault.unlocking.map((unlocking, index) => {
-              return {
-                id: index,
-                coin: {
-                  amount: unlocking.amount.toString(),
-                  denom: account.perpsVault?.denom ?? '',
-                },
-              }
-            }),
-          },
-        },
-      }
-    : null
-  //TODO: check if we need the perpsVault positions in the future
-  //if (perpsVault) vaults.push(perpsVault)
-
   return {
     account_kind: account.kind,
     account_id: account.id,
@@ -294,13 +272,29 @@ export function convertAccountToPositions(account: Account): Positions {
     })),
     staked_astro_lps: account.stakedAstroLps?.map((stakedAstroLp) => stakedAstroLp.toCoin()) ?? [],
     perps: account.perps.map((perpPosition) => {
+      const perpAsset = assets.find(byDenom(perpPosition.denom))
+      const perpAssetDecimals = perpAsset?.decimals ?? PRICE_ORACLE_DECIMALS
+      const decimalDiff = perpAssetDecimals - PRICE_ORACLE_DECIMALS
+
       return {
         base_denom: perpPosition.baseDenom,
-        current_price: perpPosition.currentPrice.toString(),
-        current_exec_price: perpPosition.currentPrice.toString(),
+        current_price: perpPosition.currentPrice
+          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
+          .decimalPlaces(18)
+          .toString(),
+        current_exec_price: perpPosition.currentPrice
+          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
+          .decimalPlaces(18)
+          .toString(),
         denom: perpPosition.denom,
-        entry_price: perpPosition.entryPrice.toString(),
-        entry_exec_price: perpPosition.entryPrice.toString(),
+        entry_price: perpPosition.entryPrice
+          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
+          .decimalPlaces(18)
+          .toString(),
+        entry_exec_price: perpPosition.entryPrice
+          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
+          .decimalPlaces(18)
+          .toString(),
         size: perpPosition.amount.toString() as any,
         unrealised_pnl: {
           accrued_funding: perpPosition.pnl.unrealized.funding.amount
