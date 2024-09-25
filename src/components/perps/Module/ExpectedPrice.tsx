@@ -12,15 +12,14 @@ type Props = {
   denom: string
   newAmount: BigNumber
   className?: string
+  override?: BigNumber
 }
 
 export const ExpectedPrice = (props: Props) => {
+  const { denom, newAmount, className, override } = props
   const perpsAssets = usePerpsEnabledAssets()
-  const { data: tradingFeeAndPrice, isLoading } = useTradingFeeAndPrice(
-    props.denom,
-    props.newAmount,
-  )
-  const perpsAsset = perpsAssets.find(byDenom(props.denom))
+  const { data: tradingFeeAndPrice, isLoading } = useTradingFeeAndPrice(denom, newAmount)
+  const perpsAsset = perpsAssets.find(byDenom(denom))
   if (isLoading) return <CircularProgress className='h-full' size={12} />
   if (!tradingFeeAndPrice?.price || !perpsAsset) return '-'
 
@@ -28,9 +27,9 @@ export const ExpectedPrice = (props: Props) => {
 
   return (
     <DisplayCurrency
-      coin={BNCoin.fromDenomAndBigNumber('usd', price)}
+      coin={BNCoin.fromDenomAndBigNumber('usd', override ? override : price)}
       options={{ maxDecimals: price.isGreaterThan(100) ? 2 : 6, abbreviated: false }}
-      className={props.className}
+      className={className}
     />
   )
 }

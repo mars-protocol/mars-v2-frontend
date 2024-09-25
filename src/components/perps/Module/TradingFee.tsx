@@ -11,26 +11,31 @@ type Props = {
   previousAmount: BigNumber
   className?: string
   showPrefix?: boolean
+  keeperFee?: BNCoin
 }
 
 export default function TradingFee(props: Props) {
-  const { data: tradingFeeAndPrice, isLoading } = useTradingFeeAndPrice(
-    props.denom,
-    props.newAmount,
-  )
+  const { denom, newAmount, previousAmount, className, showPrefix, keeperFee } = props
+  const {
+    data: tradingFeeAndPrice,
+    isValidating,
+    isLoading,
+  } = useTradingFeeAndPrice(denom, newAmount)
 
-  if (isLoading) return <CircularProgress className='h-full' size={12} />
-  if (props.newAmount.isEqualTo(props.previousAmount) || !tradingFeeAndPrice?.fee) return '-'
+  if (isValidating || isLoading) return <CircularProgress className='h-full' size={12} />
+  if (newAmount.isEqualTo(previousAmount) || !tradingFeeAndPrice?.fee) return '-'
 
-  const fee = tradingFeeAndPrice.fee.opening.plus(tradingFeeAndPrice.fee.closing)
+  const fee = tradingFeeAndPrice.fee.opening
+    .plus(tradingFeeAndPrice.fee.closing)
+    .plus(keeperFee?.amount ?? 0)
   return (
     <DisplayCurrency
       coin={BNCoin.fromDenomAndBigNumber(
         tradingFeeAndPrice.baseDenom,
-        props.showPrefix ? fee.negated() : fee,
+        showPrefix ? fee.negated() : fee,
       )}
-      className={props.className}
-      showSignPrefix={!!props.showPrefix}
+      className={className}
+      showSignPrefix={!!showPrefix}
     />
   )
 }
