@@ -186,7 +186,7 @@ export default function useHealthComputer(account?: Account) {
         vault_configs: vaultConfigsData,
         vault_values: vaultPositionValues,
       },
-      positions: { ...positions, perps: [] },
+      positions,
       perps_data: {
         params: perpsParamsData,
       },
@@ -201,6 +201,7 @@ export default function useHealthComputer(account?: Account) {
     assetsParams,
     priceData,
   ])
+
   useEffect(() => {
     if (!healthComputer) return
     try {
