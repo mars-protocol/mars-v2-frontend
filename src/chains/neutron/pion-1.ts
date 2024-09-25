@@ -35,6 +35,7 @@ const Pion1: ChainConfig = {
     aprs: {
       vaults: '',
       stride: 'https://edge.stride.zone/api/stake-stats',
+      perpsVault: 'https://testnet-api.marsprotocol.io/v2/perps_vault?chain=neutron',
     },
   },
   network: NETWORK.TESTNET,

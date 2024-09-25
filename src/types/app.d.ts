@@ -262,6 +262,7 @@ interface ChainConfig {
     aprs: {
       vaults: string
       stride: string
+      perpsVault?: string
     }
   }
   dexName: string
