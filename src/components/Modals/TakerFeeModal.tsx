@@ -16,25 +16,25 @@ import useStore from 'store'
 import { magnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
-export default function MakerFeeModal() {
+export default function TakerFeeModal() {
   const chainConfig = useChainConfig()
-  const [makerFee, setMakerFee] = useLocalStorage(
-    LocalStorageKeys.PERPS_MAKER_FEE,
-    getDefaultChainSettings(chainConfig).perpsMakerFee,
+  const [takerFee, setTakerFee] = useLocalStorage(
+    LocalStorageKeys.PERPS_TAKER_FEE,
+    getDefaultChainSettings(chainConfig).perpsTakerFee,
   )
-  const [amount, setAmount] = useState(BN(makerFee.amount))
+  const [amount, setAmount] = useState(BN(takerFee.amount))
   const USD = useAsset('usd')
 
   const onClose = useCallback(() => {
-    useStore.setState({ makerFeeModal: false })
+    useStore.setState({ takerFeeModal: false })
   }, [])
 
   useEffect(() => {
-    setAmount(BN(makerFee.amount))
-  }, [makerFee])
+    setAmount(BN(takerFee.amount))
+  }, [takerFee])
 
   const handleActionClick = () => {
-    setMakerFee({ denom: makerFee.denom, amount: amount.toString() })
+    setTakerFee({ denom: takerFee.denom, amount: amount.toString() })
     onClose()
   }
 
@@ -46,14 +46,14 @@ export default function MakerFeeModal() {
     [USD],
   )
 
-  const modal = useStore((s) => s.makerFeeModal)
+  const modal = useStore((s) => s.takerFeeModal)
 
   if (!modal || !USD) return
 
   return (
     <Modal
       onClose={onClose}
-      header='Maker Fee'
+      header='Taker Fee'
       headerClassName='gradient-header px-2 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col'
       modalClassName='md:max-w-modal-xs'
@@ -73,13 +73,13 @@ export default function MakerFeeModal() {
         />
         {amount.isLessThan(BN_ONE) && (
           <Callout type={CalloutType.WARNING}>
-            You can not set the Maker Fee to less than $1.00 as it is the minimum amount for the
-            Maker Fee.
+            You can not set the Taker Fee to less than $1.00 as it is the minimum amount for the
+            Taker Fee.
           </Callout>
         )}
         <Text size='sm' className='text-white/60'>
-          Limit Orders are executed by third-party facilitators and require a Maker Fee to
-          compensate them for their services. Increasing the maker fee enhances the likelihood of
+          Limit Orders are executed by third-party facilitators and require a Taker Fee to
+          compensate them for their services. Increasing the Taker Fee enhances the likelihood of
           your order being picked up sooner.
         </Text>
         <Button

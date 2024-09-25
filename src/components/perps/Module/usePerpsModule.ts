@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { checkOpenInterest, checkPositionValue } from 'components/perps/Module/validators'
-import { BN_ZERO } from 'constants/math'
+import { BN_ONE, BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import usePerpPosition from 'hooks/perps/usePerpPosition'
@@ -13,13 +13,14 @@ import { List } from 'types/classes/List'
 import { getAccountNetValue } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { getCoinValue } from 'utils/formatters'
+import useAssets from 'hooks/assets/useAssets'
 
-export default function usePerpsModule(amount: BigNumber | null) {
+export default function usePerpsModule(amount: BigNumber | null, limitPrice: BigNumber | null) {
   const { perpsAsset } = usePerpsAsset()
   const params = usePerpsParams(perpsAsset.denom)
   const perpsMarket = usePerpsMarket()
   const perpPosition = usePerpPosition(perpsAsset.denom)
-  const assets = useWhitelistedAssets()
+  const { data: allAssets } = useAssets()
   const account = useCurrentAccount()
   const price = perpsAsset.price?.amount ?? BN_ZERO
   const previousAmount = useMemo(() => perpPosition?.amount ?? BN_ZERO, [perpPosition?.amount])
@@ -30,9 +31,9 @@ export default function usePerpsModule(amount: BigNumber | null) {
   )
 
   const accountNetValue = useMemo(() => {
-    if (!account || !assets) return BN_ZERO
-    return getAccountNetValue(account, assets)
-  }, [account, assets])
+    if (!account || !allAssets) return BN_ZERO
+    return getAccountNetValue(account, allAssets)
+  }, [account, allAssets])
 
   const previousTradeDirection = useMemo(
     () => perpPosition?.tradeDirection || 'long',
@@ -48,34 +49,31 @@ export default function usePerpsModule(amount: BigNumber | null) {
   )
 
   const previousLeverage = useMemo(() => {
-    return previousAmount
-      ? getCoinValue(
-          BNCoin.fromDenomAndBigNumber(
-            perpsAsset.denom,
-            previousAmount.plus(amount ?? BN_ZERO).abs(),
-          ),
-          [perpsAsset],
-        )
+    return previousAmount.isZero()
+      ? null
+      : getCoinValue(BNCoin.fromDenomAndBigNumber(perpsAsset.denom, previousAmount.abs()), [
+          {
+            ...perpsAsset,
+            price: BNCoin.fromDenomAndBigNumber(perpsAsset.denom, limitPrice ?? BN_ONE),
+          },
+        ])
           .div(accountNetValue)
-          .plus(1)
           .toNumber()
-      : null
-  }, [amount, accountNetValue, perpsAsset, previousAmount])
+  }, [accountNetValue, perpsAsset, previousAmount, limitPrice])
 
-  const leverage = useMemo(
-    () =>
-      getCoinValue(
-        BNCoin.fromDenomAndBigNumber(
-          perpsAsset.denom,
-          previousAmount.plus(amount ?? BN_ZERO).abs(),
-        ),
-        [perpsAsset],
-      )
-        .div(accountNetValue)
-        .plus(1)
-        .toNumber(),
-    [accountNetValue, amount, perpsAsset, previousAmount],
-  )
+  const leverage = useMemo(() => {
+    const totalAmount = previousAmount.plus(amount ?? BN_ZERO).abs()
+    return totalAmount.isZero()
+      ? 1
+      : getCoinValue(BNCoin.fromDenomAndBigNumber(perpsAsset.denom, totalAmount), [
+          {
+            ...perpsAsset,
+            price: BNCoin.fromDenomAndBigNumber(perpsAsset.denom, limitPrice ?? BN_ONE),
+          },
+        ])
+          .div(accountNetValue)
+          .toNumber()
+  }, [accountNetValue, amount, perpsAsset, previousAmount, limitPrice])
 
   const warningMessages = useMemo(() => {
     const messages = new List<string>()

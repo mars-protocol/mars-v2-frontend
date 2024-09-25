@@ -8,27 +8,27 @@ import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 
-export default function MakerFee() {
+export default function TakerFee() {
   const chainConfig = useChainConfig()
-  const [makerFee] = useLocalStorage<Coin>(
-    LocalStorageKeys.PERPS_MAKER_FEE,
-    getDefaultChainSettings(chainConfig).perpsMakerFee,
+  const [takerFee] = useLocalStorage<Coin>(
+    LocalStorageKeys.PERPS_TAKER_FEE,
+    getDefaultChainSettings(chainConfig).perpsTakerFee,
   )
 
-  if (!makerFee) return
+  if (!takerFee) return
   return (
     <div className='flex flex-col w-full border rounded bg-white/5 border-white/20'>
       <div className='flex gap-1 px-3 py-4 align-center'>
         <Text size='xs' className='flex flex-grow font-bold'>
-          Maker Fee
+          Taker Fee
         </Text>
-        <DisplayCurrency coin={BNCoin.fromCoin(makerFee)} className='flex text-xs text-white/40' />
+        <DisplayCurrency coin={BNCoin.fromCoin(takerFee)} className='flex text-xs text-white/40' />
         <Button
           text='Edit'
           className='!py-0 !pr-0 ml-2 text-xs border-l border-white/20 !text-martian-red hover:!text-mars !min-h-0'
           variant='transparent'
           color='quaternary'
-          onClick={() => useStore.setState({ makerFeeModal: true })}
+          onClick={() => useStore.setState({ takerFeeModal: true })}
         />
       </div>
     </div>

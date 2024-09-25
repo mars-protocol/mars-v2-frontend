@@ -11,7 +11,7 @@ import OrderTypeSelector from 'components/common/OrderTypeSelector'
 import Text from 'components/common/Text'
 import { TradeDirectionSelector } from 'components/common/TradeDirectionSelector'
 import { LeverageButtons } from 'components/perps/Module/LeverageButtons'
-import MakerFee from 'components/perps/Module/MakerFee'
+import TakerFee from 'components/perps/Module/TakerFee'
 import { Or } from 'components/perps/Module/Or'
 import PerpsSummary from 'components/perps/Module/Summary'
 import { DEFAULT_LIMIT_PRICE_INFO, PERPS_ORDER_TYPE_TABS } from 'components/perps/Module/constants'
@@ -40,9 +40,9 @@ import { BN, capitalizeFirstLetter } from 'utils/helpers'
 
 export function PerpsModule() {
   const chainConfig = useChainConfig()
-  const [makerFee, _] = useLocalStorage(
-    LocalStorageKeys.PERPS_MAKER_FEE,
-    getDefaultChainSettings(chainConfig).perpsMakerFee,
+  const [takerFee, _] = useLocalStorage(
+    LocalStorageKeys.PERPS_TAKER_FEE,
+    getDefaultChainSettings(chainConfig).perpsTakerFee,
   )
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
   const { data: perpsVault } = usePerpsVault()
@@ -61,7 +61,7 @@ export function PerpsModule() {
     previousLeverage,
     leverage,
     hasActivePosition,
-  } = usePerpsModule(amount)
+  } = usePerpsModule(amount, limitPrice)
 
   const [sliderLeverage, setSliderLeverage] = useState<number>(1)
   const [limitPriceInfo, setLimitPriceInfo] = useState<CallOut | undefined>(
@@ -123,12 +123,6 @@ export function PerpsModule() {
     setSliderLeverage(1)
   }, [])
 
-  const onDebounce = useCallback(() => {
-    if (currentMaxAmount.isZero()) return
-    const percentOfMax = BN(sliderLeverage).div(maxLeverage)
-    setAmount(currentMaxAmount.times(percentOfMax).integerValue())
-  }, [currentMaxAmount, maxLeverage, sliderLeverage])
-
   const onChangeTradeDirection = useCallback(
     (tradeDirection: TradeDirection) => {
       setAmount(amount.times(-1))
@@ -150,11 +144,7 @@ export function PerpsModule() {
     (amount: BigNumber) => {
       if (currentMaxAmount.isZero()) return
       const percentOfMax = BN(amount).div(currentMaxAmount)
-      const newLeverage = percentOfMax
-        .times(maxLeverage - 1)
-        .plus(1)
-        .toNumber()
-
+      const newLeverage = percentOfMax.times(maxLeverage).plus(1).toNumber()
       setSliderLeverage(Math.max(newLeverage, 1))
       if (tradeDirection === 'short') {
         setAmount(amount.times(-1))
@@ -232,6 +222,30 @@ export function PerpsModule() {
     return limitPrice.isZero() || !!limitPriceInfo
   }, [limitPrice, limitPriceInfo, isLimitOrder])
 
+  const onChangeLeverage = useCallback(
+    (newLeverage: number) => {
+      setSliderLeverage(newLeverage)
+
+      if (currentMaxAmount.isZero() || netValue.isZero()) return
+      const priceToUse = isLimitOrder ? limitPrice : (perpsAsset.price?.amount ?? BN_ZERO)
+      if (priceToUse.isZero()) return
+
+      let newAmount: BigNumber
+      if (newLeverage === 1) {
+        newAmount = netValue.times(newLeverage).dividedBy(limitPrice)
+        console.log('newLeverage is ', newLeverage, newAmount.toString())
+      } else {
+        newAmount = netValue.times(newLeverage).dividedBy(priceToUse)
+      }
+      console.log('newAmount', newAmount.toString())
+      newAmount = newAmount.shiftedBy(perpsAsset.decimals)
+      const finalAmount = BigNumber.min(newAmount, currentMaxAmount).integerValue()
+
+      setAmount(finalAmount)
+    },
+    [currentMaxAmount, netValue, isLimitOrder, limitPrice, perpsAsset.price, perpsAsset.decimals],
+  )
+
   if (!perpsAsset) return null
 
   return (
@@ -286,6 +300,7 @@ export function PerpsModule() {
           asset={perpsAsset}
           maxButtonLabel='Max:'
           disabled={isDisabledAmountInput}
+          onMaxClick={() => setAmount(currentMaxAmount)}
         />
         {!hasActivePosition && (
           <div className='w-full'>
@@ -297,21 +312,16 @@ export function PerpsModule() {
               min={1}
               max={maxLeverage}
               value={sliderLeverage}
-              onChange={setSliderLeverage}
-              onDebounce={onDebounce}
+              onChange={onChangeLeverage}
               type={tradeDirection}
               disabled={isDisabledAmountInput}
             />
             {maxLeverage > 5 && (
               <LeverageButtons
                 maxLeverage={maxLeverage}
-                currentLeverage={leverage}
+                currentLeverage={sliderLeverage}
                 maxAmount={currentMaxAmount}
-                onChange={(leverage) => {
-                  const percentOfMax = BN(leverage - 1).div(maxLeverage - 1)
-                  setAmount(currentMaxAmount.times(percentOfMax).integerValue())
-                  setSliderLeverage(leverage)
-                }}
+                onChange={onChangeLeverage}
               />
             )}
           </div>
@@ -323,7 +333,7 @@ export function PerpsModule() {
         ))}
       </div>
       <div className='flex flex-wrap w-full gap-4 mt-4'>
-        {isLimitOrder && <MakerFee />}
+        {isLimitOrder && <TakerFee />}
         <PerpsSummary
           amount={amount ?? previousAmount}
           tradeDirection={tradeDirection ?? previousTradeDirection}

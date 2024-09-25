@@ -22,6 +22,6 @@ export const getDefaultChainSettings = (chainConfig: ChainConfig) => {
     theme: 'default',
     rewardsCenterType: RewardsCenterType.Token,
     showSummary: true,
-    perpsMakerFee: BNCoin.fromDenomAndBigNumber('usd', BN_ONE).toCoin(),
+    perpsTakerFee: BNCoin.fromDenomAndBigNumber('usd', BN_ONE).toCoin(),
   }
 }
