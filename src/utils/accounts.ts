@@ -17,10 +17,10 @@ export const calculateAccountBalanceValue = (
   const [deposits, lends, debts, vaults, perps, perpsVault, stakedAstroLps] =
     getAccountPositionValues(account, assets)
 
-  return deposits
+  return perps
+    .plus(deposits)
     .plus(lends)
     .plus(vaults)
-    .plus(perps)
     .plus(perpsVault)
     .plus(stakedAstroLps)
     .minus(debts)
@@ -459,6 +459,12 @@ export function getAccountDebtValue(account: Account, assets: Asset[]) {
   const [deposits, lends, debts, vaults, perps, perpsVault, staked_astro_lps] =
     getAccountPositionValues(account, assets)
   return debts
+}
+
+export function getAccountUnrealizedPnlValue(account: Account, assets: Asset[]) {
+  const [deposits, lends, debts, vaults, perps, perpsVault, staked_astro_lps] =
+    getAccountPositionValues(account, assets)
+  return perps
 }
 
 export function convertCoinArrayIntoBNCoinArrayAndRemoveEmptyCoins(coins: Coin[]) {

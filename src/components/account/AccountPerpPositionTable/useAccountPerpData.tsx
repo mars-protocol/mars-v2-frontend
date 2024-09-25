@@ -19,9 +19,7 @@ export default function useAccountPerpData(props: Props) {
 
     return accountPerps.map((perp) => {
       const asset = assets.find(byDenom(perp.denom)) ?? assets[0]
-      const prevPerp = updatedAccount
-        ? account?.perps?.find((position) => position.denom === perp.denom)
-        : perp
+      const prevPerp = updatedAccount ? account?.perps?.find(byDenom(perp.denom)) : perp
       return getAssetAccountPerpRow(asset, perp, prevPerp)
     })
   }, [updatedAccount, account, assets])
