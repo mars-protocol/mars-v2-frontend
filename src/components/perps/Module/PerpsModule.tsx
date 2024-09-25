@@ -182,7 +182,7 @@ export function PerpsModule() {
   }, [newLimitPriceInfo])
 
   useEffect(() => {
-    if (!tradingFee || !perpsVault || isLimitOrder) return
+    if (!tradingFee || !perpsVault || isLimitOrder || amount.isZero()) return
 
     const newPosition = getPerpsPosition(
       perpsVault.denom,
@@ -192,8 +192,7 @@ export function PerpsModule() {
       tradingFee,
       currentPerpPosition,
     )
-    if (newPosition && !amount.isZero())
-      simulatePerps(newPosition, isAutoLendEnabledForCurrentAccount)
+    if (newPosition) simulatePerps(newPosition, isAutoLendEnabledForCurrentAccount)
   }, [
     amount,
     currentPerpPosition,
