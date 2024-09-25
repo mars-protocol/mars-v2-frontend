@@ -244,10 +244,7 @@ export function convertAccountToPositions(account: Account): Positions {
             .integerValue()
             .toString() as any,
           // TODO: There is now a double fee applied. This might be inaccurate (on the conservative side)
-          opening_fee: perpPosition.pnl.unrealized.fees.amount
-            .abs()
-            .integerValue()
-            .toString() as any,
+          opening_fee: '0' as any,
           closing_fee: perpPosition.pnl.unrealized.fees.amount
             .abs()
             .integerValue()
@@ -258,7 +255,7 @@ export function convertAccountToPositions(account: Account): Positions {
         realised_pnl: {
           // This does not matter for the health calculation
           accrued_funding: perpPosition.pnl.realized.funding.amount.toString() as any,
-          closing_fee: perpPosition.pnl.realized.fees.amount.toString() as any,
+          closing_fee: '0' as any,
           opening_fee: perpPosition.pnl.realized.fees.amount.toString() as any,
           pnl: perpPosition.pnl.realized.net.amount.toString() as any,
           price_pnl: perpPosition.pnl.realized.price.amount.toString() as any,
