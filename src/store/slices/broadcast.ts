@@ -13,6 +13,7 @@ import { ExecuteMsg as AccountNftExecuteMsg } from 'types/generated/mars-account
 import {
   Action,
   ActionCoin,
+  Condition,
   Action as CreditManagerAction,
   ExecuteMsg as CreditManagerExecuteMsg,
   ExecuteMsg,
@@ -781,6 +782,111 @@ export default function createBroadcastSlice(
         return
       })
     },
+    createTriggerOrder: async (options: {
+      accountId: string
+      coin: BNCoin
+      reduceOnly?: boolean
+      autolend: boolean
+      baseDenom: string
+      tradeDirection: TradeDirection
+      price: BigNumber
+      makerFee: BNCoin
+    }) => {
+      const triggerActions: Action[] = [
+        {
+          execute_perp_order: {
+            denom: options.coin.denom,
+            order_size: options.coin.amount.toString() as any,
+            reduce_only: options.reduceOnly,
+          },
+        },
+      ]
+      if (options.autolend)
+        triggerActions.push({
+          lend: {
+            denom: options.baseDenom,
+            amount: 'account_balance',
+          },
+        })
+
+      const triggerConditions: Condition[] = [
+        {
+          oracle_price: {
+            comparison: options.tradeDirection === 'long' ? 'less_than' : 'greater_than',
+            denom: options.coin.denom,
+            price: options.price.toString(),
+          },
+        },
+      ]
+
+      const actions: Action[] = [
+        {
+          create_trigger_order: {
+            keeper_fee: options.makerFee.toCoin(),
+            actions: triggerActions,
+            conditions: triggerConditions,
+          },
+        },
+      ]
+
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions,
+        },
+      }
+
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().handleTransaction({ response })
+
+      return response.then((response) => !!response.result)
+    },
+    executePerpOrder: async (options: {
+      accountId: string
+      coin: BNCoin
+      reduceOnly?: boolean
+      autolend: boolean
+      baseDenom: string
+    }) => {
+      const actions: Action[] = [
+        {
+          execute_perp_order: {
+            denom: options.coin.denom,
+            order_size: options.coin.amount.toString() as any,
+            reduce_only: options.reduceOnly,
+          },
+        },
+      ]
+      if (options.autolend)
+        actions.push({
+          lend: {
+            denom: options.baseDenom,
+            amount: 'account_balance',
+          },
+        })
+
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions,
+        },
+      }
+
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().handleTransaction({ response })
+
+      return response.then((response) => !!response.result)
+    },
     executeMsg: async (options: {
       messages: MsgExecuteContract[]
       isPythUpdate?: boolean
@@ -836,47 +942,6 @@ export default function createBroadcastSlice(
         console.log(e)
         return { result: undefined, error: e.message }
       }
-    },
-    executePerpOrder: async (options: {
-      accountId: string
-      coin: BNCoin
-      reduceOnly?: boolean
-      autolend: boolean
-      baseDenom: string
-    }) => {
-      const actions: Action[] = [
-        {
-          execute_perp_order: {
-            denom: options.coin.denom,
-            order_size: options.coin.amount.toString() as any,
-            reduce_only: options.reduceOnly,
-          },
-        },
-      ]
-      if (options.autolend)
-        actions.push({
-          lend: {
-            denom: options.baseDenom,
-            amount: 'account_balance',
-          },
-        })
-
-      const msg: CreditManagerExecuteMsg = {
-        update_credit_account: {
-          account_id: options.accountId,
-          actions,
-        },
-      }
-
-      const cmContract = get().chainConfig.contracts.creditManager
-
-      const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
-      })
-
-      get().handleTransaction({ response })
-
-      return response.then((response) => !!response.result)
     },
     getPythVaas: async () => {
       const priceFeedIds = get()
