@@ -55,7 +55,7 @@ export default function ConfirmationSummary(props: Props) {
     return [newAmount, tradeDirection, isNewPosition, previousAmount]
   }, [amount, isLoading, updatePerpsPosition])
 
-  const { data: tradingFeeAndPrice } = useTradingFeeAndPrice(asset.denom, newAmount, previousAmount)
+  const { data: tradingFeeAndPrice } = useTradingFeeAndPrice(asset.denom, newAmount)
   const position = useMemo(() => updatePerpsPosition?.position ?? null, [updatePerpsPosition])
 
   const baseDenom = useMemo(
@@ -116,12 +116,7 @@ export default function ConfirmationSummary(props: Props) {
               <Text size='xs'>{leverage.toFixed(2)}x</Text>
             </SummaryRow>
             <SummaryRow label='Execution Price'>
-              <ExpectedPrice
-                className='text-xs'
-                denom={asset.denom}
-                newAmount={newAmount}
-                previousAmount={amount}
-              />
+              <ExpectedPrice className='text-xs' denom={asset.denom} newAmount={newAmount} />
             </SummaryRow>
           </>
         )}

@@ -57,7 +57,7 @@ export default function TradeChart(props: Props) {
       typeof window === 'undefined' ||
       !window.TradingView ||
       !chartContainerRef.current ||
-      !props.buyAsset
+      !props.buyAsset.denom
     )
       return
 
@@ -109,7 +109,14 @@ export default function TradeChart(props: Props) {
     return () => {
       tvWidget.remove()
     }
-  }, [chartInterval, chartContainerRef, theme, props.buyAsset])
+  }, [
+    chartInterval,
+    chartContainerRef,
+    theme,
+    props.buyAsset.symbol,
+    props.buyAsset.denom,
+    props.buyAsset.pythFeedName,
+  ])
 
   return (
     <Card

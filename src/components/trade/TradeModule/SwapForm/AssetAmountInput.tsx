@@ -1,8 +1,9 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import NumberInput from 'components/common/NumberInput'
 import { BNCoin } from 'types/classes/BNCoin'
+import { BN_ZERO } from 'constants/math'
 
 interface Props {
   label?: string
@@ -31,6 +32,15 @@ export default function AssetAmountInput(props: Props) {
     onFocus,
     onBlur,
   } = props
+
+  const [prevDenom, setPrevDenom] = useState(asset.denom)
+
+  useEffect(() => {
+    if (prevDenom !== asset.denom) {
+      setAmount(BN_ZERO)
+      setPrevDenom(asset.denom)
+    }
+  }, [asset.denom, setAmount, prevDenom])
 
   const handleMaxClick = useCallback(() => {
     setAmount(max)

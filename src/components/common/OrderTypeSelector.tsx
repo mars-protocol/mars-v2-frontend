@@ -3,12 +3,14 @@ import classNames from 'classnames'
 import { InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
-import { ORDER_TYPE_TABS } from 'components/trade/TradeModule/SwapForm/OrderTypeSelector/constants'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
+import { OrderType } from 'types/enums'
+import { capitalizeFirstLetter } from 'utils/helpers'
 
 interface Props {
-  selected: AvailableOrderType
-  onChange: (value: AvailableOrderType) => void
+  orderTabs: OrderTab[]
+  selected: OrderType
+  onChange: (value: OrderType) => void
 }
 
 export default function OrderTypeSelector(props: Props) {
@@ -16,12 +18,13 @@ export default function OrderTypeSelector(props: Props) {
 
   return (
     <div className='flex flex-row pt-4'>
-      {ORDER_TYPE_TABS.map((tab) => {
+      {props.orderTabs.map((tab) => {
         const isSelected = tab.type === selected
         const classes = classNames(
-          'mr-4 pb-2 hover:cursor-pointer select-none flex flex-row',
-          isSelected && 'border-b-2 border-pink border-solid',
-          tab.isDisabled && 'opacity-20 pointer-events-none',
+          'text-white/20 mr-4 pb-2 hover:cursor-pointer select-none flex flex-row',
+          'hover:text-white',
+          isSelected && 'border-b-2 border-pink border-solid !text-white',
+          tab.isDisabled && 'pointer-events-none',
         )
 
         return (
@@ -35,7 +38,7 @@ export default function OrderTypeSelector(props: Props) {
             )}
           >
             <div onClick={() => onChange(tab.type)} className={classes}>
-              {tab.type}
+              {capitalizeFirstLetter(tab.type)}
               {tab.isDisabled && <InfoCircle className='w-4 h-4 mt-1 ml-2' />}
             </div>
           </ConditionalWrapper>

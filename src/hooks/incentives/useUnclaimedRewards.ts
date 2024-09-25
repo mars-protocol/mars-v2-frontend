@@ -20,6 +20,7 @@ export default function useUserUnclaimedRewards() {
     : `chains/${chainConfig.id}/accounts/${accountId}/unclaimed-rewards`
 
   return useSWR(enabled && key, () => getUnclaimedRewards(clients!, accountId!, address!, isV1), {
+    refreshInterval: 60_000,
     fallbackData: [] as BNCoin[],
     isPaused: () => !enabled,
     revalidateOnFocus: false,

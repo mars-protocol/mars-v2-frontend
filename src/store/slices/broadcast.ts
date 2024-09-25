@@ -20,7 +20,6 @@ import {
 import { ExecuteMsg as IncentivesExecuteMsg } from 'types/generated/mars-incentives/MarsIncentives.types'
 import { ExecuteMsg as PerpsExecuteMsg } from 'types/generated/mars-perps/MarsPerps.types'
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
-import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
 import { byDenom, bySymbol } from 'utils/array'
 import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
@@ -833,19 +832,30 @@ export default function createBroadcastSlice(
       accountId: string
       coin: BNCoin
       reduceOnly?: boolean
+      autolend: boolean
+      baseDenom: string
     }) => {
+      const actions: Action[] = [
+        {
+          execute_perp_order: {
+            denom: options.coin.denom,
+            order_size: options.coin.amount.toString() as any,
+            reduce_only: options.reduceOnly,
+          },
+        },
+      ]
+      if (options.autolend)
+        actions.push({
+          lend: {
+            denom: options.baseDenom,
+            amount: 'account_balance',
+          },
+        })
+
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
-          actions: [
-            {
-              execute_perp_order: {
-                denom: options.coin.denom,
-                order_size: options.coin.amount.toString() as any,
-                reduce_only: options.reduceOnly,
-              },
-            },
-          ],
+          actions,
         },
       }
 

@@ -68,3 +68,8 @@ export function getBNCoinFromValue(value: BigNumber, asset: Asset): BNCoin {
 export function getLeverageFromLTV(ltv: number) {
   return +(1 / (1 - ltv)).toPrecision(2)
 }
+
+export function capitalizeFirstLetter(string: string) {
+  const firstLetter = string.charAt(0).toUpperCase()
+  return `${firstLetter}${string.slice(1)}`
+}
