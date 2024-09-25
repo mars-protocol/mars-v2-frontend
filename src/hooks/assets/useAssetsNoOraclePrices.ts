@@ -42,7 +42,10 @@ async function fetchSortAndMapAllAssets(
   perpsParams: PerpParams[],
 ) {
   const [assets, pools] = await Promise.all([getDexAssets(chainConfig), getDexPools(chainConfig)])
+  const poolTokensIndexesInAssets: number[] = []
   const poolAssets: Asset[] = pools.map((pool) => {
+    const indexOfPoolInAssets = assets.findIndex(byDenom(pool.lpAddress))
+    if (indexOfPoolInAssets >= 0) poolTokensIndexesInAssets.push(indexOfPoolInAssets)
     return {
       denom: pool.lpAddress,
       name: `${pool.assets[0].symbol}-${pool.assets[1].symbol} LP`,
@@ -55,6 +58,8 @@ async function fetchSortAndMapAllAssets(
       campaigns: [],
     }
   })
+
+  poolTokensIndexesInAssets.map((i) => assets.splice(i, 1))
 
   const allAssets = chainConfig.lp
     ? [...assets, ...poolAssets, USD, ...chainConfig.lp]

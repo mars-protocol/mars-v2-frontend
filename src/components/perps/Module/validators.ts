@@ -1,53 +1,58 @@
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { BNCoin } from 'types/classes/BNCoin'
-import { formatValue, getCoinValue } from 'utils/formatters'
+import { formatValue, getCoinAmount, getCoinValue } from 'utils/formatters'
 
 export function checkPositionValue(
   amount: BigNumber,
   previousAmount: BigNumber,
-  price: BigNumber,
   perpsAsset: Asset,
   params: PerpsParams,
 ) {
   if (amount.plus(previousAmount).isZero()) return null
 
   const wasLong = previousAmount.isGreaterThan(0)
-  const positionValue = amount.plus(previousAmount).abs().times(price)
-  if (positionValue?.isLessThan(params.minPositionValue)) {
-    const minPositionValue = formatValue(params.minPositionValue.toNumber(), {
-      abbreviated: true,
+  const positionValue = getCoinValue(
+    BNCoin.fromDenomAndBigNumber(perpsAsset.denom, amount.plus(previousAmount).abs()),
+    [perpsAsset],
+  )
+  const minPositionValue = params.minPositionValue.shiftedBy(-PRICE_ORACLE_DECIMALS)
+  if (positionValue?.isLessThan(minPositionValue)) {
+    const minPositionValueString = formatValue(minPositionValue.toNumber(), {
+      abbreviated: false,
       prefix: '$',
-      decimals: PRICE_ORACLE_DECIMALS,
     })
-    const minPositionSize = formatValue(
-      params.minPositionValue.div(price).plus(previousAmount.abs()).toNumber(),
-      {
-        abbreviated: false,
-        decimals: perpsAsset.decimals,
-        suffix: ` ${perpsAsset.symbol}`,
-      },
-    )
+    const minPositionAmount = getCoinAmount(perpsAsset.denom, minPositionValue, [perpsAsset])
+    const minPositionSize = formatValue(minPositionAmount.plus(previousAmount.abs()).toNumber(), {
+      abbreviated: false,
+      decimals: perpsAsset.decimals,
+      suffix: ` ${perpsAsset.symbol}`,
+      maxDecimals: perpsAsset.decimals,
+    })
     if (!previousAmount.isZero()) {
       const introMessage = wasLong
         ? 'You are changing your Long position to a Short position.'
         : 'You are changing your Short position to a Long position.'
-      return `${introMessage} To open the new position it has to be at least worth ${minPositionValue}. To achieve that you need to set the size to ${minPositionSize} at minumum.`
+      return `${introMessage} To open the new position it has to be at least worth ${minPositionValueString}. To achieve that you need to set the size to ${minPositionSize} at minumum.`
     }
-    return `Minimum position value is ${minPositionValue} (${minPositionSize})`
+    return `Minimum position value is ${minPositionValueString} (${minPositionSize})`
   }
 
-  if (params.maxPositionValue && positionValue?.isGreaterThan(params.maxPositionValue)) {
-    const maxPositionValue = formatValue(params.maxPositionValue.toNumber(), {
+  const maxPositionValue = params.maxPositionValue
+    ? params.maxPositionValue.shiftedBy(-PRICE_ORACLE_DECIMALS)
+    : null
+  if (maxPositionValue && positionValue?.isGreaterThan(maxPositionValue)) {
+    const maxPositionValueString = formatValue(maxPositionValue.toNumber(), {
       abbreviated: true,
       prefix: '$',
-      decimals: PRICE_ORACLE_DECIMALS,
     })
-    const maxPositionSize = formatValue(params.maxPositionValue.div(price).toNumber(), {
+    const maxPositionAmount = getCoinAmount(perpsAsset.denom, maxPositionValue, [perpsAsset])
+    const maxPositionSize = formatValue(maxPositionAmount.toNumber(), {
       abbreviated: true,
       decimals: perpsAsset.decimals,
       suffix: ` ${perpsAsset.symbol}`,
+      maxDecimals: perpsAsset.decimals,
     })
-    return `Maximum position value is ${maxPositionValue} (${maxPositionSize})`
+    return `Maximum position value is ${maxPositionValueString} (${maxPositionSize})`
   }
 
   return null

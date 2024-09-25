@@ -71,3 +71,18 @@ export async function generateToast(
 
   return toast
 }
+
+export function beautifyErrorMessage(error: string) {
+  if (error.includes('Cannot mint more than 1 account per wallet during trading competition'))
+    return 'You can not mint more than 1 account per wallet during the trading competition.'
+
+  if (error.includes('Deposit and withdraw actions are not allowed during trading competition'))
+    return 'You can not deposit or withdraw funds during trading competition.'
+
+  if (error.includes('Max LTV health factor'))
+    return 'You can not execute this transaction, since it would result in a Health Factor below 1'
+
+  if (error === 'Transaction failed: Request rejected') return 'Transaction rejected by user'
+
+  return `Transaction failed: ${error}`
+}

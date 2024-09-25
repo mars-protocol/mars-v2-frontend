@@ -923,7 +923,7 @@ interface BroadcastResult {
 
 interface ExecutableTx {
   execute: () => Promise<boolean>
-  estimateFee: () => Promise<StdFee>
+  estimateFee: () => Promise<{ fee: StdFee | undefined; error?: string }>
 }
 
 interface ToastObjectOptions extends HandleResponseProps {

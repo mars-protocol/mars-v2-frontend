@@ -24,7 +24,6 @@ import { byDenom, bySymbol } from 'utils/array'
 import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import checkPythUpdateEnabled from 'utils/checkPythUpdateEnabled'
-import { defaultFee } from 'utils/constants'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
@@ -53,9 +52,11 @@ export default function createBroadcastSlice(
   set: StoreApi<Store>['setState'],
   get: StoreApi<Store>['getState'],
 ): BroadcastSlice {
-  const getEstimatedFee = async (messages: MsgExecuteContract[]) => {
+  const getEstimatedFee = async (
+    messages: MsgExecuteContract[],
+  ): Promise<{ fee: StdFee | undefined; error?: string }> => {
     if (!get().client) {
-      return defaultFee(get().chainConfig)
+      return { fee: undefined, error: 'The client disconnected. Please reload the page!' }
     }
     try {
       const gasPrice = await getGasPrice(get().chainConfig)
@@ -74,15 +75,16 @@ export default function createBroadcastSlice(
         if (success) {
           const fee = simulateResult.fee
           return {
-            amount: fee.amount,
-            gas: BN(fee.gas).toFixed(0),
+            fee: {
+              amount: fee.amount,
+              gas: BN(fee.gas).toFixed(0),
+            },
           }
         }
       }
-
-      throw 'Simulation failed'
+      return { fee: undefined, error: simulateResult?.error ?? 'Unknown Error' }
     } catch (ex) {
-      return defaultFee(get().chainConfig)
+      return { fee: undefined, error: ex as string }
     }
   }
 
@@ -800,27 +802,34 @@ export default function createBroadcastSlice(
           const pythUpdateMsg = await get().getPythVaas()
           options.messages.unshift(pythUpdateMsg)
         }
-        const fee = await getEstimatedFee(options.messages)
-        const broadcastOptions = {
-          messages: options.messages,
-          feeAmount: fee.amount[0].amount,
-          gasLimit: fee.gas,
-          memo,
-          wallet: client.connectedWallet,
-          mobile: isMobile,
-          overrides: {
-            gasPrice,
-            gasAdjustment: DEFAULT_GAS_MULTIPLIER,
-          },
-        }
-        const result = await client.broadcast(broadcastOptions)
-        if (result.hash) {
-          return { result }
+        const feeObject = await getEstimatedFee(options.messages)
+        if (feeObject.fee) {
+          const broadcastOptions = {
+            messages: options.messages,
+            feeAmount: feeObject.fee.amount[0].amount,
+            gasLimit: feeObject.fee.gas,
+            memo,
+            wallet: client.connectedWallet,
+            mobile: isMobile,
+            overrides: {
+              gasPrice,
+              gasAdjustment: DEFAULT_GAS_MULTIPLIER,
+            },
+          }
+          const result = await client.broadcast(broadcastOptions)
+          if (result.hash) {
+            return { result }
+          }
+
+          return {
+            result: undefined,
+            error: 'Transaction failed',
+          }
         }
 
         return {
           result: undefined,
-          error: 'Transaction failed',
+          error: feeObject.error ?? 'Transaction failed',
         }
       } catch (error) {
         const e = error as { message: string }
