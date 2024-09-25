@@ -99,36 +99,47 @@ export default function PerpsSummary(props: Props) {
 
     const triggers: Trigger[] = []
 
-    if (isLimitOrder)
+    if (isLimitOrder) {
+      const decimalAdjustment = asset.decimals - PRICE_ORACLE_DECIMALS
+      const adjustedLimitPrice = props.limitPrice.shiftedBy(-decimalAdjustment)
+
       triggers.push({
         price_trigger: {
           denom: props.asset.denom,
-          oracle_price: props.limitPrice.toString(),
+          oracle_price: adjustedLimitPrice.toString(),
           trigger_type: props.tradeDirection === 'long' ? 'less_than' : 'greater_than',
         },
       })
+    }
 
     const modifyAmount = newAmount.minus(previousAmount)
 
     if (isLimitOrder && keeperFee) {
-      await createTriggerOrder({
+      const decimalAdjustment = asset.decimals - PRICE_ORACLE_DECIMALS
+      const adjustedLimitPrice = limitPrice.shiftedBy(-decimalAdjustment)
+
+      const triggerOrderParams = {
         accountId: currentAccount.id,
         coin: BNCoin.fromDenomAndBigNumber(asset.denom, modifyAmount),
         autolend: isAutoLendEnabledForCurrentAccount,
         baseDenom,
         keeperFee,
         tradeDirection,
-        price: limitPrice,
-      })
+        price: adjustedLimitPrice,
+      }
+
+      await createTriggerOrder(triggerOrderParams)
       return onTxExecuted()
     }
 
-    await executePerpOrder({
+    const perpOrderParams = {
       accountId: currentAccount.id,
       coin: BNCoin.fromDenomAndBigNumber(asset.denom, modifyAmount),
       autolend: isAutoLendEnabledForCurrentAccount,
       baseDenom,
-    })
+    }
+
+    await executePerpOrder(perpOrderParams)
     return onTxExecuted()
   }, [
     asset.denom,
@@ -144,6 +155,7 @@ export default function PerpsSummary(props: Props) {
     newAmount,
     onTxExecuted,
     previousAmount,
+    asset.decimals,
     props.asset.denom,
     props.limitPrice,
     props.tradeDirection,
