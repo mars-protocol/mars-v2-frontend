@@ -15,7 +15,11 @@ import { byDenom } from 'utils/array'
 import { getCoinValue } from 'utils/formatters'
 import useAssets from 'hooks/assets/useAssets'
 
-export default function usePerpsModule(amount: BigNumber | null, limitPrice: BigNumber | null) {
+export default function usePerpsModule(
+  amount: BigNumber | null,
+  limitPrice: BigNumber | null,
+  isLimitOrder: boolean,
+) {
   const { perpsAsset } = usePerpsAsset()
   const params = usePerpsParams(perpsAsset.denom)
   const perpsMarket = usePerpsMarket()
@@ -52,28 +56,32 @@ export default function usePerpsModule(amount: BigNumber | null, limitPrice: Big
     return previousAmount.isZero()
       ? null
       : getCoinValue(BNCoin.fromDenomAndBigNumber(perpsAsset.denom, previousAmount.abs()), [
-          {
-            ...perpsAsset,
-            price: BNCoin.fromDenomAndBigNumber(perpsAsset.denom, limitPrice ?? BN_ONE),
-          },
+          isLimitOrder
+            ? {
+                ...perpsAsset,
+                price: BNCoin.fromDenomAndBigNumber(perpsAsset.denom, limitPrice ?? BN_ONE),
+              }
+            : perpsAsset,
         ])
           .div(accountNetValue)
           .toNumber()
-  }, [accountNetValue, perpsAsset, previousAmount, limitPrice])
+  }, [accountNetValue, perpsAsset, previousAmount, limitPrice, isLimitOrder])
 
   const leverage = useMemo(() => {
     const totalAmount = previousAmount.plus(amount ?? BN_ZERO).abs()
     return totalAmount.isZero()
       ? 1
       : getCoinValue(BNCoin.fromDenomAndBigNumber(perpsAsset.denom, totalAmount), [
-          {
-            ...perpsAsset,
-            price: BNCoin.fromDenomAndBigNumber(perpsAsset.denom, limitPrice ?? BN_ONE),
-          },
+          isLimitOrder
+            ? {
+                ...perpsAsset,
+                price: BNCoin.fromDenomAndBigNumber(perpsAsset.denom, limitPrice ?? BN_ONE),
+              }
+            : perpsAsset,
         ])
           .div(accountNetValue)
           .toNumber()
-  }, [accountNetValue, amount, perpsAsset, previousAmount, limitPrice])
+  }, [accountNetValue, amount, perpsAsset, previousAmount, limitPrice, isLimitOrder])
 
   const warningMessages = useMemo(() => {
     const messages = new List<string>()
