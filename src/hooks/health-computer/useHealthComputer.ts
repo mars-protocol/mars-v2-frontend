@@ -1,6 +1,7 @@
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useAssets from 'hooks/assets/useAssets'
+import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAssetParams from 'hooks/params/useAssetParams'
 import useAllPerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
@@ -45,6 +46,7 @@ const VALUE_SCALE_FACTOR = 12
 export default function useHealthComputer(account?: Account) {
   const { data: assets } = useAssets()
   const whitelistedAssets = useWhitelistedAssets()
+  const perpsAsssets = usePerpsEnabledAssets()
   const { data: assetParams } = useAssetParams()
   const { data: perpsMarketStates } = useAllPerpsMarketStates()
   const { data: perpsParams } = useAllPerpsParamsSC()
@@ -90,7 +92,8 @@ export default function useHealthComputer(account?: Account) {
   }, [account?.vaults, assets])
 
   const priceData = useMemo(() => {
-    const assetsWithPrice = whitelistedAssets.filter((asset) => asset.price)
+    const allAssets = [...whitelistedAssets, ...perpsAsssets]
+    const assetsWithPrice = allAssets.filter((asset) => asset.price)
     const prices = assetsWithPrice.map((asset) => asset.price) as BNCoin[]
     return prices.reduce(
       (prev, curr) => {
@@ -106,7 +109,7 @@ export default function useHealthComputer(account?: Account) {
       },
       {} as { [key: string]: string },
     )
-  }, [assets, whitelistedAssets])
+  }, [assets, perpsAsssets, whitelistedAssets])
 
   const assetsParams = useMemo(
     () =>
@@ -183,7 +186,7 @@ export default function useHealthComputer(account?: Account) {
         vault_configs: vaultConfigsData,
         vault_values: vaultPositionValues,
       },
-      positions: { ...positions, perps: [] },
+      positions,
       perps_data: {
         params: perpsParamsData,
       },

@@ -108,6 +108,7 @@ export function resolvePerpsPositions(
 
   return perpPositions.map((position) => {
     return {
+      type: 'market',
       denom: position.denom,
       baseDenom: position.base_denom,
       amount: BN(position.size as any), // Amount is negative for SHORT positions

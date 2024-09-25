@@ -1,6 +1,5 @@
 import getAccount from 'api/accounts/getAccount'
 import getWalletAccountIds from 'api/wallets/getAccountIds'
-import { AccountKind } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 
 export default async function getAccounts(
   kind: AccountKind,

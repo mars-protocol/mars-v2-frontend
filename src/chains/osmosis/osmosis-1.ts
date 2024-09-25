@@ -133,6 +133,7 @@ const Osmosis1: ChainConfig = {
   perps: false,
   farm: true,
   anyAsset: false,
+  slinky: false,
 }
 
 export default Osmosis1

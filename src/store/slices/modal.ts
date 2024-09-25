@@ -24,5 +24,6 @@ export default function createModalSlice(set: SetState<ModalSlice>, get: GetStat
     withdrawFromAstroLpModal: null,
     v1DepositAndWithdrawModal: null,
     v1BorrowAndRepayModal: null,
+    makerFeeModal: false,
   }
 }

@@ -40,6 +40,7 @@ export default function getPerpsPosition(
   if (!currentPerpPosition) {
     return {
       ...basePosition,
+      type: 'market',
       pnl: {
         ...basePosition.pnl,
         net: BNCoin.fromDenomAndBigNumber(baseDenom, unrealizedPricePnL.plus(unrealizedFeePnL)),
@@ -58,6 +59,7 @@ export default function getPerpsPosition(
   )
   return {
     ...basePosition,
+    type: 'market',
     pnl: {
       ...basePosition.pnl,
       net: BNCoin.fromDenomAndBigNumber(

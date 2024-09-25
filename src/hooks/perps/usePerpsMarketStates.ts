@@ -20,8 +20,8 @@ export default function useAllPerpsMarketStates() {
       return Promise.all(promises)
     },
     {
+      revalidateOnFocus: false,
       refreshInterval: 30_000,
-      dedupingInterval: 30_000,
     },
   )
 }
