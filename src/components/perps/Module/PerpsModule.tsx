@@ -56,6 +56,8 @@ export function PerpsModule() {
   const perpsVaultModal = useStore((s) => s.perpsVaultModal)
   const [limitPrice, setLimitPrice] = useState<BigNumber>(BN_ZERO)
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
+  const isLimitOrder = selectedOrderType === OrderType.LIMIT
+
   const {
     warningMessages,
     previousAmount,
@@ -63,14 +65,13 @@ export function PerpsModule() {
     previousLeverage,
     leverage,
     hasActivePosition,
-  } = usePerpsModule(amount, limitPrice)
+  } = usePerpsModule(amount, limitPrice, isLimitOrder)
 
   const [sliderLeverage, setSliderLeverage] = useState<number>(1)
   const [limitPriceInfo, setLimitPriceInfo] = useState<CallOut | undefined>(
     DEFAULT_LIMIT_PRICE_INFO,
   )
 
-  const isLimitOrder = selectedOrderType === OrderType.LIMIT
   const USD = allAssets.find(byDenom('usd'))
   const { computeMaxPerpAmount } = useHealthComputer(account)
 
@@ -95,11 +96,19 @@ export function PerpsModule() {
 
   const maxAmountLimitOrder = useMemo(() => {
     if (limitPrice.isZero() || limitPriceInfo) return BN_ZERO
-    const maxAmountValue = getCoinValue(BNCoin.fromDenomAndBigNumber(perpsAsset.denom, maxAmount), [
-      perpsAsset,
-    ])
+    const maxAmountValue = getCoinValue(
+      BNCoin.fromDenomAndBigNumber(perpsAsset.denom, maxAmount.abs()),
+      [
+        isLimitOrder
+          ? {
+              ...perpsAsset,
+              price: BNCoin.fromDenomAndBigNumber(perpsAsset.denom, limitPrice ?? BN_ZERO),
+            }
+          : perpsAsset,
+      ],
+    )
     return maxAmountValue.dividedBy(limitPrice).shiftedBy(perpsAsset.decimals)
-  }, [limitPrice, limitPriceInfo, perpsAsset, maxAmount])
+  }, [limitPrice, limitPriceInfo, perpsAsset, maxAmount, isLimitOrder])
 
   const currentMaxAmount = useMemo(() => {
     return isLimitOrder ? maxAmountLimitOrder : maxAmount
@@ -236,12 +245,10 @@ export function PerpsModule() {
 
       let newAmount: BigNumber
       if (newLeverage === 1) {
-        newAmount = netValue.times(newLeverage).dividedBy(limitPrice)
-        console.log('newLeverage is ', newLeverage, newAmount.toString())
+        newAmount = netValue.times(newLeverage).dividedBy(isLimitOrder ? limitPrice : priceToUse)
       } else {
         newAmount = netValue.times(newLeverage).dividedBy(priceToUse)
       }
-      console.log('newAmount', newAmount.toString())
       newAmount = newAmount.shiftedBy(perpsAsset.decimals)
       const finalAmount = BigNumber.min(newAmount, currentMaxAmount).integerValue()
 
