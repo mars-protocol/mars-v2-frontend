@@ -311,7 +311,6 @@ export function PerpsModule() {
           asset={perpsAsset}
           maxButtonLabel='Max:'
           disabled={isDisabledAmountInput}
-          onMaxClick={() => setAmount(currentMaxAmount)}
         />
         {!hasActivePosition && (
           <div className='w-full'>

@@ -20,7 +20,6 @@ interface Props {
   onFocus?: () => void
   onBlur?: () => void
   isUSD?: boolean
-  onMaxClick?: () => void
 }
 
 export default function AssetAmountInput(props: Props) {
@@ -37,14 +36,12 @@ export default function AssetAmountInput(props: Props) {
     onFocus,
     onBlur,
     isUSD,
-    onMaxClick,
   } = props
 
   const handleMaxClick = useCallback(() => {
     if (!max || disabled) return
     setAmount(max)
-    onMaxClick?.()
-  }, [max, setAmount, disabled, onMaxClick])
+  }, [max, setAmount, disabled])
 
   const maxValue = useMemo(() => {
     if (!max) return
