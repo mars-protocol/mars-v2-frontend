@@ -15,18 +15,18 @@ export default function usePerpsVault() {
     async (): Promise<PerpsVault> => {
       const vaultState = await clients!.perps.vault(PERPS_DEFAULT_ACTION)
       const perpsVault = await clients!.perps.config()
-      let perpVaultApy = 0
-      try {
-        if (chainConfig.endpoints.aprs.perpsVault) {
-          const response = await fetch(chainConfig.endpoints.aprs.perpsVault)
-          if (response.ok) {
-            const data = await response.json()
-            perpVaultApy = data.projected_apy
-          }
-        }
-      } catch (e) {
-        console.error(e)
-      }
+      const perpVaultApy = 0
+      // try {
+      //   if (chainConfig.endpoints.aprs.perpsVault) {
+      //     const response = await fetch(chainConfig.endpoints.aprs.perpsVault)
+      //     if (response.ok) {
+      //       const data = await response.json()
+      //       perpVaultApy = data.projected_apy
+      //     }
+      //   }
+      // } catch (e) {
+      //   console.error(e)
+      // }
 
       const timeframe = moment.duration(perpsVault.cooldown_period, 'seconds').humanize().split(' ')
 
