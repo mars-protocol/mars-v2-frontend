@@ -30,6 +30,7 @@ interface Props {
   buyAsset: Asset
   sellAsset: Asset
   title?: ReactNode
+  isPerps?: boolean
 }
 
 export default function TradeChart(props: Props) {
@@ -137,27 +138,43 @@ export default function TradeChart(props: Props) {
           ) : (
             <div className='flex items-center gap-1'>
               <Text size='sm'>1 {props.buyAsset.symbol}</Text>
-              <FormattedNumber
-                className='text-sm'
-                amount={Number(ratio.toPrecision(6))}
-                options={{
-                  prefix: '= ',
-                  suffix: ` ${props.sellAsset.symbol}`,
-                  abbreviated: false,
-                  maxDecimals: props.sellAsset.decimals,
-                }}
-              />
-              <DisplayCurrency
-                parentheses
-                options={{ abbreviated: false }}
-                className='justify-end pl-2 text-sm text-white/50'
-                coin={
-                  new BNCoin({
-                    denom: props.buyAsset.denom,
-                    amount: magnify(1, props.buyAsset).toString(),
-                  })
-                }
-              />
+              {props.isPerps ? (
+                <FormattedNumber
+                  className='text-sm'
+                  amount={Number(priceBuyAsset.toPrecision(6))}
+                  options={{
+                    prefix: '= ',
+                    suffix: ` USD`,
+                    abbreviated: false,
+                    maxDecimals: props.buyAsset.decimals,
+                  }}
+                />
+              ) : (
+                <>
+                  <FormattedNumber
+                    className='text-sm'
+                    amount={Number(ratio.toPrecision(6))}
+                    options={{
+                      prefix: '= ',
+                      suffix: ` ${props.sellAsset.symbol}`,
+                      abbreviated: false,
+                      maxDecimals: props.sellAsset.decimals,
+                    }}
+                  />
+
+                  <DisplayCurrency
+                    parentheses
+                    options={{ abbreviated: false }}
+                    className='justify-end pl-2 text-sm text-white/50'
+                    coin={
+                      new BNCoin({
+                        denom: props.buyAsset.denom,
+                        amount: magnify(1, props.buyAsset).toString(),
+                      })
+                    }
+                  />
+                </>
+              )}
             </div>
           )}
         </div>

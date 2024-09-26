@@ -17,6 +17,7 @@ export function PerpsChart() {
         buyAsset={perpsAsset}
         sellAsset={stableAsset ?? whitlistedAssets[0]}
         title={<PerpsInfo />}
+        isPerps
       />
     </div>
   )
