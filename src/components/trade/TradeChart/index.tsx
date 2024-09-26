@@ -141,7 +141,7 @@ export default function TradeChart(props: Props) {
               {props.isPerps ? (
                 <FormattedNumber
                   className='text-sm'
-                  amount={Number(priceBuyAsset.toPrecision(6))}
+                  amount={Number(props.buyAsset?.price?.amount.toPrecision(6) ?? 0)}
                   options={{
                     prefix: '= ',
                     suffix: ` USD`,
