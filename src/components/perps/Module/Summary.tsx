@@ -96,6 +96,7 @@ export default function PerpsSummary(props: Props) {
   )
   const onConfirm = useCallback(async () => {
     if (!currentAccount || !feeToken) return
+    const orderSize = tradeDirection === 'short' && amount.isPositive() ? amount.negated() : amount
 
     const triggers: Trigger[] = []
 
@@ -112,15 +113,13 @@ export default function PerpsSummary(props: Props) {
       })
     }
 
-    const modifyAmount = newAmount.minus(previousAmount)
-
     if (isLimitOrder && keeperFee) {
       const decimalAdjustment = asset.decimals - PRICE_ORACLE_DECIMALS
       const adjustedLimitPrice = limitPrice.shiftedBy(-decimalAdjustment)
 
       const triggerOrderParams = {
         accountId: currentAccount.id,
-        coin: BNCoin.fromDenomAndBigNumber(asset.denom, modifyAmount),
+        coin: BNCoin.fromDenomAndBigNumber(asset.denom, orderSize),
         autolend: isAutoLendEnabledForCurrentAccount,
         baseDenom,
         keeperFee,
@@ -134,7 +133,7 @@ export default function PerpsSummary(props: Props) {
 
     const perpOrderParams = {
       accountId: currentAccount.id,
-      coin: BNCoin.fromDenomAndBigNumber(asset.denom, modifyAmount),
+      coin: BNCoin.fromDenomAndBigNumber(asset.denom, orderSize),
       autolend: isAutoLendEnabledForCurrentAccount,
       baseDenom,
     }
@@ -142,24 +141,23 @@ export default function PerpsSummary(props: Props) {
     await executePerpOrder(perpOrderParams)
     return onTxExecuted()
   }, [
-    asset.denom,
-    baseDenom,
-    createTriggerOrder,
     currentAccount,
-    executePerpOrder,
     feeToken,
-    isAutoLendEnabledForCurrentAccount,
     isLimitOrder,
     keeperFee,
-    limitPrice,
-    newAmount,
-    onTxExecuted,
-    previousAmount,
+    asset.denom,
     asset.decimals,
-    props.asset.denom,
+    amount,
+    isAutoLendEnabledForCurrentAccount,
+    baseDenom,
+    executePerpOrder,
+    onTxExecuted,
     props.limitPrice,
+    props.asset.denom,
     props.tradeDirection,
+    limitPrice,
     tradeDirection,
+    createTriggerOrder,
   ])
 
   const isDisabled = useMemo(() => amount.isZero() || disabled, [amount, disabled])
