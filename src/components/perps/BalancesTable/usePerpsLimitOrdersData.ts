@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { BN_ONE, BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import usePerpsConfig from 'hooks/perps/usePerpsConfig'
 import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
@@ -55,7 +56,9 @@ export default function usePerpsLimitOrdersData() {
           },
         },
         entryPrice: BN(perpTrigger.price),
-        currentPrice: asset.price?.amount ?? BN_ZERO,
+        currentPrice: BN(asset.price?.amount ?? 0).shiftedBy(
+          -asset.decimals + PRICE_ORACLE_DECIMALS,
+        ),
         liquidationPrice: BN_ONE, // TODO: 📈 Get actual liquidation price from HC
         leverage: 1,
       })
