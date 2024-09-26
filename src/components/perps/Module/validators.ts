@@ -69,12 +69,9 @@ export function checkOpenInterest(
   params: PerpsParams,
 ) {
   if (amount.plus(previousAmount).isZero()) return null
-  let openInterestLong = perpsMarket.openInterest.long
-    .times(price)
-    .shiftedBy(-PRICE_ORACLE_DECIMALS)
-  let openInterestShort = perpsMarket.openInterest.short
-    .times(price)
-    .shiftedBy(-PRICE_ORACLE_DECIMALS)
+
+  let openInterestLong = perpsMarket.openInterest.long.times(price).shiftedBy(-asset.decimals)
+  let openInterestShort = perpsMarket.openInterest.short.times(price).shiftedBy(-asset.decimals)
 
   if (previousTradeDirection === 'long' && currentTradeDirection === 'long') {
     openInterestLong = openInterestLong.plus(
