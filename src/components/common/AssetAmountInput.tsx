@@ -5,6 +5,7 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import NumberInput from 'components/common/NumberInput'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
+import Button from './Button'
 
 interface Props {
   label?: string
@@ -20,6 +21,9 @@ interface Props {
   onFocus?: () => void
   onBlur?: () => void
   isUSD?: boolean
+  onClosing?: () => void
+  isLimitOrder?: boolean
+  hasActivePosition?: boolean
 }
 
 export default function AssetAmountInput(props: Props) {
@@ -36,6 +40,9 @@ export default function AssetAmountInput(props: Props) {
     onFocus,
     onBlur,
     isUSD,
+    isLimitOrder,
+    hasActivePosition,
+    onClosing,
   } = props
 
   const handleMaxClick = useCallback(() => {
@@ -83,28 +90,41 @@ export default function AssetAmountInput(props: Props) {
           />
           <span>{isUSD ? 'USD' : asset.symbol}</span>
         </div>
-        {maxValue && (
-          <div
-            className={classNames(
-              'flex flex-row flex-1',
-              disabled && 'pointer-events-none opacity-50',
-            )}
-          >
-            <div className='flex flex-row flex-1 mt-2'>
-              <span className='text-xs font-bold'>{maxButtonLabel ?? 'Max:'}</span>
-              <span className='mx-1 text-xs font-bold text-white text-opacity-60'>{maxValue}</span>
-              <div
-                className='hover:cursor-pointer select-none bg-white bg-opacity-20 text-2xs !leading-3 font-bold py-0.5 px-1.5 rounded'
-                onClick={handleMaxClick}
-              >
-                MAX
+        <div className='flex items-center'>
+          {maxValue && (
+            <div
+              className={classNames(
+                'flex flex-row flex-1',
+                disabled && 'pointer-events-none opacity-50',
+              )}
+            >
+              <div className='flex flex-row flex-1 mt-2'>
+                <span className='text-xs font-bold'>{maxButtonLabel ?? 'Max:'}</span>
+                <span className='mx-1 text-xs font-bold text-white text-opacity-60'>
+                  {maxValue}
+                </span>
+                <div
+                  className='hover:cursor-pointer select-none bg-white bg-opacity-20 text-2xs !leading-3 font-bold py-0.5 px-1.5 rounded'
+                  onClick={handleMaxClick}
+                >
+                  MAX
+                </div>
+                {isLimitOrder && hasActivePosition && onClosing && (
+                  <div
+                    className='hover:cursor-pointer select-none bg-white bg-opacity-20 text-2xs !leading-3 font-bold py-0.5 px-1.5 rounded ml-2'
+                    onClick={onClosing}
+                  >
+                    CLOSE
+                  </div>
+                )}
+              </div>
+
+              <div className='mt-2 text-xs text-white text-opacity-60'>
+                <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(asset.denom, amount)} />
               </div>
             </div>
-            <div className='mt-2 text-xs text-white text-opacity-60'>
-              <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(asset.denom, amount)} />
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </label>
     </div>
   )

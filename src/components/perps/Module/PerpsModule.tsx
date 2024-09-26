@@ -152,17 +152,14 @@ export function PerpsModule() {
   )
 
   const onChangeAmount = useCallback(
-    (amount: BigNumber) => {
+    (newAmount: BigNumber) => {
       if (currentMaxAmount.isZero()) return
-      const percentOfMax = BN(amount).div(currentMaxAmount)
+      const percentOfMax = newAmount.div(currentMaxAmount)
       const newLeverage = percentOfMax.times(maxLeverage).plus(1).toNumber()
       setSliderLeverage(Math.max(newLeverage, 1))
-      if (tradeDirection === 'short') {
-        setAmount(amount.times(-1))
-        return
-      }
 
-      setAmount(amount)
+      const adjustedAmount = tradeDirection === 'long' ? newAmount : newAmount.negated()
+      setAmount(adjustedAmount)
     },
     [currentMaxAmount, maxLeverage, tradeDirection],
   )
@@ -257,6 +254,16 @@ export function PerpsModule() {
     [currentMaxAmount, netValue, isLimitOrder, limitPrice, perpsAsset.price, perpsAsset.decimals],
   )
 
+  const handleClosing = useCallback(() => {
+    if (currentPerpPosition) {
+      if (tradeDirection === 'long') {
+        setAmount(currentPerpPosition.amount)
+      } else {
+        setAmount(currentPerpPosition.amount.negated())
+      }
+    }
+  }, [currentPerpPosition, tradeDirection])
+
   if (!perpsAsset) return null
 
   return (
@@ -311,6 +318,9 @@ export function PerpsModule() {
           asset={perpsAsset}
           maxButtonLabel='Max:'
           disabled={isDisabledAmountInput}
+          isLimitOrder={isLimitOrder}
+          hasActivePosition={hasActivePosition}
+          onClosing={handleClosing}
         />
         {!hasActivePosition && (
           <div className='w-full'>
