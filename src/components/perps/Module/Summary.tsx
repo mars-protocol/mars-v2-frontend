@@ -114,6 +114,9 @@ export default function PerpsSummary(props: Props) {
     }
 
     if (isLimitOrder && keeperFee) {
+      const decimalAdjustment = asset.decimals - PRICE_ORACLE_DECIMALS
+      const adjustedLimitPrice = limitPrice.shiftedBy(-decimalAdjustment)
+
       const triggerOrderParams = {
         accountId: currentAccount.id,
         coin: BNCoin.fromDenomAndBigNumber(asset.denom, orderSize),
@@ -121,7 +124,7 @@ export default function PerpsSummary(props: Props) {
         baseDenom,
         keeperFee,
         tradeDirection,
-        price: limitPrice,
+        price: adjustedLimitPrice,
       }
 
       await createTriggerOrder(triggerOrderParams)
