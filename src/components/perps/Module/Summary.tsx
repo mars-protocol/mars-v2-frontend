@@ -351,7 +351,7 @@ function ManageSummary(
         <DisplayCurrency
           coin={BNCoin.fromDenomAndBigNumber(
             priceOverride ? 'usd' : asset.denom,
-            priceOverride ? size.times(priceOverride).shiftedBy(-PRICE_ORACLE_DECIMALS) : size,
+            priceOverride ? size.times(priceOverride).shiftedBy(-asset.decimals) : size,
           )}
           options={{ abbreviated: false }}
         />
