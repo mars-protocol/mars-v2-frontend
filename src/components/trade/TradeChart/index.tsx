@@ -142,9 +142,9 @@ export default function TradeChart(props: Props) {
                 amount={Number(ratio.toPrecision(6))}
                 options={{
                   prefix: '= ',
-                  suffix: ` ${props.sellAsset.symbol}`,
+                  suffix: ' USD',
                   abbreviated: false,
-                  maxDecimals: props.sellAsset.decimals,
+                  maxDecimals: 2,
                 }}
               />
               <DisplayCurrency
