@@ -44,7 +44,10 @@ export const getAccountPerpsExposure = (account: Account | AccountChange, assets
   const perpsPositions = account.perps
   let exposure = BN_ZERO
   perpsPositions.forEach((perp) => {
-    const perpValue = getCoinValue(BNCoin.fromDenomAndBigNumber(perp.denom, perp.amount), assets)
+    const perpValue = getCoinValue(
+      BNCoin.fromDenomAndBigNumber(perp.denom, perp.amount.abs()),
+      assets,
+    )
     exposure = exposure.plus(perpValue)
   })
   return exposure
