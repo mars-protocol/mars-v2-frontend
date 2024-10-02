@@ -253,8 +253,10 @@ export default function Deposit(props: Props) {
         <SummaryItems items={items} />
         <Button
           onClick={handleDeposit}
-          text={!isCheckingRoute && !routeInfo ? 'Loading Swap Route...' : 'Deposit'}
-          disabled={isCheckingRoute || !routeInfo}
+          text={
+            keepLeverage && !isCheckingRoute && !routeInfo ? 'Loading Swap Route...' : 'Deposit'
+          }
+          disabled={keepLeverage && (isCheckingRoute || !routeInfo)}
         />
       </div>
     </>
