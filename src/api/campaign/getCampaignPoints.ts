@@ -1,3 +1,5 @@
+import { FETCH_TIMEOUT } from 'constants/query'
+import { fetchWithTimeout } from 'utils/fetch'
 import { BN } from 'utils/helpers'
 
 function fetchPoints(points: BigNumber, pointsDecimals: number): number {
@@ -12,7 +14,7 @@ export default async function getCampaignPoints(
   const points = [] as AssetCampaignPoints[]
 
   try {
-    await fetch(url.toString()).then(async (res) => {
+    await fetchWithTimeout(url.toString(), FETCH_TIMEOUT).then(async (res) => {
       const data = (await res.json()) as any
       switch (pointsStructure.length) {
         case 1:
