@@ -1,6 +1,5 @@
 import classNames from 'classnames'
-import debounce from 'lodash.debounce'
-import { ChangeEvent, useCallback, useMemo } from 'react'
+import { ChangeEvent, useCallback } from 'react'
 
 import InputOverlay from 'components/common/LeverageSlider/InputOverlay'
 
@@ -33,21 +32,12 @@ function LeverageSlider(props: Props) {
     onDebounce,
   } = props
   const min = props.min ?? 0
-  const debounceFunction = useMemo(
-    () =>
-      debounce(() => {
-        if (!onDebounce) return
-        onDebounce()
-      }, 250),
-    [onDebounce],
-  )
 
   const handleOnChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       onChange(parseFloat(event.target.value))
-      debounceFunction()
     },
-    [onChange, debounceFunction],
+    [onChange],
   )
 
   const markPosPercent = 100 / (max / (marginThreshold ?? 1))

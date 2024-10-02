@@ -6,7 +6,6 @@ import AssetAmountInput from 'components/common/AssetAmountInput'
 import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
 import Divider from 'components/common/Divider'
-import LeverageSlider from 'components/common/LeverageSlider'
 import OrderTypeSelector from 'components/common/OrderTypeSelector'
 import Text from 'components/common/Text'
 import { TradeDirectionSelector } from 'components/common/TradeDirectionSelector'
@@ -17,34 +16,22 @@ import KeeperFee from 'components/perps/Module/KeeperFee'
 import { DEFAULT_LIMIT_PRICE_INFO, PERPS_ORDER_TYPE_TABS } from 'components/perps/Module/constants'
 import usePerpsModule from 'components/perps/Module/usePerpsModule'
 import AssetSelectorPerps from 'components/trade/TradeModule/AssetSelector/AssetSelectorPerps'
-import { getDefaultChainSettings } from 'constants/defaultSettings'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useAssets from 'hooks/assets/useAssets'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
 import { OrderType } from 'types/enums'
-import { getAccountNetValue } from 'utils/accounts'
 import { byDenom } from 'utils/array'
-import { demagnify, getCoinValue } from 'utils/formatters'
+import { capitalizeFirstLetter } from 'utils/helpers'
 import getPerpsPosition from 'utils/getPerpsPosition'
-import { BN, capitalizeFirstLetter } from 'utils/helpers'
+import LeverageSlider from 'components/common/LeverageSlider'
 
 export function PerpsModule() {
-  const chainConfig = useChainConfig()
-  const [keeperFee, _] = useLocalStorage(
-    LocalStorageKeys.PERPS_KEEPER_FEE,
-    getDefaultChainSettings(chainConfig).perpsKeeperFee,
-  )
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
   const { data: perpsVault } = usePerpsVault()
   const { perpsAsset } = usePerpsAsset()
@@ -52,95 +39,51 @@ export function PerpsModule() {
   const account = useCurrentAccount()
   const { data: allAssets } = useAssets()
   const { simulatePerps } = useUpdatedAccount(account)
-  const [amount, setAmount] = useState<BigNumber>(BN_ZERO)
   const perpsVaultModal = useStore((s) => s.perpsVaultModal)
   const [limitPrice, setLimitPrice] = useState<BigNumber>(BN_ZERO)
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const isLimitOrder = selectedOrderType === OrderType.LIMIT
-
-  const {
-    warningMessages,
-    previousAmount,
-    previousTradeDirection,
-    previousLeverage,
-    leverage,
-    hasActivePosition,
-  } = usePerpsModule(amount, limitPrice, isLimitOrder)
 
   const [sliderLeverage, setSliderLeverage] = useState<number>(1)
   const [limitPriceInfo, setLimitPriceInfo] = useState<CallOut | undefined>(
     DEFAULT_LIMIT_PRICE_INFO,
   )
 
+  const {
+    maxLeverage,
+    maxAmount,
+    isMaxSelected,
+    amount,
+    leverage,
+    warningMessages,
+    hasActivePosition,
+    updateAmount,
+    updateLeverage,
+    setIsMaxSelected,
+    previousAmount,
+    previousLeverage,
+    previousTradeDirection,
+  } = usePerpsModule(tradeDirection, isLimitOrder ? limitPrice : null, setSliderLeverage)
+
   const USD = allAssets.find(byDenom('usd'))
-  const { computeMaxPerpAmount } = useHealthComputer(account)
 
   const { data: tradingFee } = useTradingFeeAndPrice(perpsAsset.denom, amount.plus(previousAmount))
 
   const currentPerpPosition = account?.perps.find(byDenom(perpsAsset.denom))
 
-  const netValue = useMemo(() => {
-    if (!account) return BN_ZERO
-
-    return getAccountNetValue(account, allAssets)
-  }, [account, allAssets])
-
-  const maxAmount = useMemo(() => {
-    let maxAmount = computeMaxPerpAmount(perpsAsset.denom, tradeDirection)
-
-    if (tradeDirection === 'short') maxAmount = maxAmount.plus(previousAmount)
-    if (tradeDirection === 'long') maxAmount = maxAmount.minus(previousAmount)
-
-    return maxAmount
-  }, [computeMaxPerpAmount, perpsAsset, previousAmount, tradeDirection])
-
-  const maxAmountLimitOrder = useMemo(() => {
-    if (limitPrice.isZero() || limitPriceInfo) return BN_ZERO
-    const maxAmountValue = getCoinValue(
-      BNCoin.fromDenomAndBigNumber(perpsAsset.denom, maxAmount.abs()),
-      [
-        isLimitOrder
-          ? {
-              ...perpsAsset,
-              price: BNCoin.fromDenomAndBigNumber(perpsAsset.denom, limitPrice ?? BN_ZERO),
-            }
-          : perpsAsset,
-      ],
-    )
-    return maxAmountValue.dividedBy(limitPrice).shiftedBy(perpsAsset.decimals)
-  }, [limitPrice, limitPriceInfo, perpsAsset, maxAmount, isLimitOrder])
-
-  const currentMaxAmount = useMemo(() => {
-    return isLimitOrder ? maxAmountLimitOrder : maxAmount
-  }, [isLimitOrder, maxAmountLimitOrder, maxAmount])
-
-  const maxLeverage = useMemo(() => {
-    let maxLeverage = 1
-    const priceToUse = isLimitOrder ? limitPrice : (perpsAsset.price?.amount ?? BN_ZERO)
-    if (!hasActivePosition) {
-      maxLeverage = priceToUse
-        .times(demagnify(currentMaxAmount, perpsAsset))
-        .div(netValue)
-        .plus(1)
-        .toNumber()
-    }
-
-    return maxLeverage
-  }, [hasActivePosition, currentMaxAmount, perpsAsset, netValue, isLimitOrder, limitPrice])
-
   const reset = useCallback(() => {
     setLimitPrice(BN_ZERO)
-    setAmount(BN_ZERO)
+    updateAmount(BN_ZERO)
     setSliderLeverage(1)
-  }, [])
+  }, [updateAmount])
 
   const onChangeTradeDirection = useCallback(
-    (tradeDirection: TradeDirection) => {
-      setAmount(amount.times(-1))
-      setTradeDirection(tradeDirection)
+    (newTradeDirection: TradeDirection) => {
+      updateAmount(amount.times(-1))
+      setTradeDirection(newTradeDirection)
       if (isLimitOrder) reset()
     },
-    [amount, isLimitOrder, reset],
+    [amount, isLimitOrder, reset, updateAmount],
   )
 
   const onChangeOrderType = useCallback(
@@ -153,15 +96,26 @@ export function PerpsModule() {
 
   const onChangeAmount = useCallback(
     (newAmount: BigNumber) => {
-      if (currentMaxAmount.isZero()) return
-      const percentOfMax = newAmount.div(currentMaxAmount)
-      const newLeverage = percentOfMax.times(maxLeverage).plus(1).toNumber()
-      setSliderLeverage(Math.max(newLeverage, 1))
-
-      const adjustedAmount = tradeDirection === 'long' ? newAmount : newAmount.negated()
-      setAmount(adjustedAmount)
+      updateAmount(tradeDirection === 'long' ? newAmount : newAmount.negated())
+      if (newAmount.isEqualTo(maxAmount)) {
+        setIsMaxSelected(true)
+      } else {
+        setIsMaxSelected(false)
+      }
     },
-    [currentMaxAmount, maxLeverage, tradeDirection],
+    [tradeDirection, updateAmount, maxAmount, setIsMaxSelected],
+  )
+
+  const onChangeLeverage = useCallback(
+    (newLeverage: number) => {
+      updateLeverage(newLeverage)
+      if (newLeverage === maxLeverage) {
+        setIsMaxSelected(true)
+      } else {
+        setIsMaxSelected(false)
+      }
+    },
+    [updateLeverage, maxLeverage, setIsMaxSelected],
   )
 
   const calculateLimitPriceInfo = useCallback(() => {
@@ -195,8 +149,8 @@ export function PerpsModule() {
     const newPosition = getPerpsPosition(
       perpsVault.denom,
       perpsAsset,
-      amount.plus(previousAmount),
-      tradeDirection ?? previousTradeDirection,
+      amount.plus(amount),
+      tradeDirection,
       tradingFee,
       currentPerpPosition,
     )
@@ -209,60 +163,36 @@ export function PerpsModule() {
     perpsAsset,
     perpsVault,
     perpsVaultModal,
-    previousAmount,
-    previousTradeDirection,
     simulatePerps,
     tradeDirection,
     tradingFee,
   ])
 
   const isDisabledExecution = useMemo(() => {
-    if (!isLimitOrder) return amount.isGreaterThan(currentMaxAmount) || warningMessages.isNotEmpty()
+    if (!isLimitOrder) return amount.isGreaterThan(maxAmount) || warningMessages.isNotEmpty()
 
     return (
       !!limitPriceInfo ||
       limitPrice.isZero() ||
-      amount.isGreaterThan(currentMaxAmount) ||
+      amount.isGreaterThan(maxAmount) ||
       warningMessages.isNotEmpty()
     )
-  }, [isLimitOrder, amount, currentMaxAmount, warningMessages, limitPriceInfo, limitPrice])
+  }, [isLimitOrder, amount, maxAmount, warningMessages, limitPriceInfo, limitPrice])
 
   const isDisabledAmountInput = useMemo(() => {
     if (!isLimitOrder) return false
     return limitPrice.isZero() || !!limitPriceInfo
   }, [limitPrice, limitPriceInfo, isLimitOrder])
 
-  const onChangeLeverage = useCallback(
-    (newLeverage: number) => {
-      setSliderLeverage(newLeverage)
-
-      if (currentMaxAmount.isZero() || netValue.isZero()) return
-      const priceToUse = isLimitOrder ? limitPrice : (perpsAsset.price?.amount ?? BN_ZERO)
-      if (priceToUse.isZero()) return
-
-      let newAmount: BigNumber
-      if (newLeverage === 1) {
-        newAmount = netValue.times(newLeverage).dividedBy(isLimitOrder ? limitPrice : priceToUse)
-      } else {
-        newAmount = netValue.times(newLeverage).dividedBy(priceToUse)
-      }
-      newAmount = newAmount.shiftedBy(perpsAsset.decimals)
-      const finalAmount = BigNumber.min(newAmount, currentMaxAmount).integerValue()
-
-      setAmount(finalAmount)
-    },
-    [currentMaxAmount, netValue, isLimitOrder, limitPrice, perpsAsset.price, perpsAsset.decimals],
-  )
-
   const handleClosing = useCallback(() => {
     if (currentPerpPosition) {
       if (tradeDirection === 'long') {
-        setAmount(currentPerpPosition.amount)
+        updateAmount(currentPerpPosition.amount)
       } else {
-        setAmount(currentPerpPosition.amount.negated())
+        updateAmount(currentPerpPosition.amount.negated())
       }
     }
-  }, [currentPerpPosition, tradeDirection])
+  }, [currentPerpPosition, tradeDirection, updateAmount])
 
   if (!perpsAsset) return null
 
@@ -312,15 +242,17 @@ export function PerpsModule() {
         <AssetAmountInput
           containerClassName='pb-2'
           label='Amount'
-          max={currentMaxAmount}
+          max={maxAmount}
           amount={amount.abs()}
           setAmount={onChangeAmount}
           asset={perpsAsset}
           maxButtonLabel='Max:'
           disabled={isDisabledAmountInput}
-          isLimitOrder={isLimitOrder}
-          hasActivePosition={hasActivePosition}
           onClosing={handleClosing}
+          showCloseButton={
+            !!currentPerpPosition && currentPerpPosition.tradeDirection !== tradeDirection
+          }
+          isMaxSelected={isMaxSelected}
         />
         {!hasActivePosition && (
           <div className='w-full'>
@@ -331,16 +263,22 @@ export function PerpsModule() {
             <LeverageSlider
               min={1}
               max={maxLeverage}
-              value={sliderLeverage}
+              value={Math.max(leverage, 1)}
               onChange={onChangeLeverage}
               type={tradeDirection}
               disabled={isDisabledAmountInput}
             />
+            {leverage < 1 && (
+              <Callout type={CalloutType.INFO}>
+                The current position has a leverage below 1x. The slider shows the minimum leverage
+                of 1x.
+              </Callout>
+            )}
             {maxLeverage > 5 && (
               <LeverageButtons
                 maxLeverage={maxLeverage}
-                currentLeverage={sliderLeverage}
-                maxAmount={currentMaxAmount}
+                currentLeverage={leverage}
+                maxAmount={maxAmount}
                 onChange={onChangeLeverage}
               />
             )}
@@ -355,15 +293,15 @@ export function PerpsModule() {
       <div className='flex flex-wrap w-full gap-4 mt-4'>
         {isLimitOrder && <KeeperFee />}
         <PerpsSummary
-          amount={amount ?? previousAmount}
-          tradeDirection={tradeDirection ?? previousTradeDirection}
+          amount={amount}
+          tradeDirection={tradeDirection}
           asset={perpsAsset}
           leverage={leverage}
           previousAmount={previousAmount}
           previousTradeDirection={previousTradeDirection}
           previousLeverage={previousLeverage}
           hasActivePosition={hasActivePosition}
-          onTxExecuted={() => setAmount(BN_ZERO)}
+          onTxExecuted={() => updateAmount(BN_ZERO)}
           disabled={isDisabledExecution}
           baseDenom={tradingFee?.baseDenom ?? ''}
           limitPrice={limitPrice}
