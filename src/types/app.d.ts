@@ -432,7 +432,7 @@ type OsmosisRoutePool = {
   balances: []
   spread_factor: string
   token_out_denom: string
-  taker_fee: string
+  keeper_fee: string
 }
 
 type SwapRouteInfo = {
@@ -1210,7 +1210,7 @@ interface ModalSlice {
   lendAndReclaimModal: LendAndReclaimModalConfig | null
   perpsVaultModal: PerpsVaultModal | null
   settingsModal: boolean
-  takerFeeModal: boolean
+  keeperFeeModal: boolean
   unlockModal: UnlockModal | null
   farmModal: FarmModal | null
   walletAssetsModal: WalletAssetModal | null
