@@ -13,7 +13,7 @@ import { TradeDirectionSelector } from 'components/common/TradeDirectionSelector
 import { LeverageButtons } from 'components/perps/Module/LeverageButtons'
 import { Or } from 'components/perps/Module/Or'
 import PerpsSummary from 'components/perps/Module/Summary'
-import TakerFee from 'components/perps/Module/TakerFee'
+import KeeperFee from 'components/perps/Module/KeeperFee'
 import { DEFAULT_LIMIT_PRICE_INFO, PERPS_ORDER_TYPE_TABS } from 'components/perps/Module/constants'
 import usePerpsModule from 'components/perps/Module/usePerpsModule'
 import AssetSelectorPerps from 'components/trade/TradeModule/AssetSelector/AssetSelectorPerps'
@@ -41,9 +41,9 @@ import { BN, capitalizeFirstLetter } from 'utils/helpers'
 
 export function PerpsModule() {
   const chainConfig = useChainConfig()
-  const [takerFee, _] = useLocalStorage(
-    LocalStorageKeys.PERPS_TAKER_FEE,
-    getDefaultChainSettings(chainConfig).perpsTakerFee,
+  const [keeperFee, _] = useLocalStorage(
+    LocalStorageKeys.PERPS_KEEPER_FEE,
+    getDefaultChainSettings(chainConfig).perpsKeeperFee,
   )
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
   const { data: perpsVault } = usePerpsVault()
@@ -353,7 +353,7 @@ export function PerpsModule() {
         ))}
       </div>
       <div className='flex flex-wrap w-full gap-4 mt-4'>
-        {isLimitOrder && <TakerFee />}
+        {isLimitOrder && <KeeperFee />}
         <PerpsSummary
           amount={amount ?? previousAmount}
           tradeDirection={tradeDirection ?? previousTradeDirection}

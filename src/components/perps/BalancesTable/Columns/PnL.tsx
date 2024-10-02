@@ -50,7 +50,7 @@ function PnLTooltipLimitOrder(props: Props) {
     <div className='flex flex-col w-full gap-2 min-w-[280px]'>
       <div className='flex items-center w-full gap-8 space-between'>
         <Text className='mr-auto font-bold text-white/60' size='sm'>
-          Taker Fee
+          Keeper Fee
         </Text>
         <DisplayCurrency
           coin={props.pnl.net}
