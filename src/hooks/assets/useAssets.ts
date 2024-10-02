@@ -13,9 +13,8 @@ export default function useAssets() {
     async () => mapPricesToAllAssets(assets!),
     {
       suspense: true,
-      revalidateOnFocus: false,
-      staleTime: 30_000,
-      revalidateIfStale: true,
+      revalidateOnFocus: true,
+      refreshInterval: 5_000,
     },
   )
 

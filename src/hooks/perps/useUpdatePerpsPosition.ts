@@ -12,7 +12,7 @@ export default function useUpdatePerpsPosition(
     `chains/${chainConfig.id}/perps/updatePosition/${denom}/${accountId}`,
     () => getPerpsPosition(chainConfig, denom, orderSize.toString(), accountId),
     {
-      revalidateOnFocus: false,
+      revalidateOnFocus: true,
     },
   )
 }

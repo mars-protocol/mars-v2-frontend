@@ -16,7 +16,7 @@ export default function useHlsStakingAccounts(address?: string) {
     {
       fallbackData: [],
       suspense: true,
-      revalidateOnFocus: false,
+      revalidateOnFocus: true,
     },
   )
 }
