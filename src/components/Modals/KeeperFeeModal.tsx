@@ -16,25 +16,25 @@ import useStore from 'store'
 import { magnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
-export default function TakerFeeModal() {
+export default function KeeperFeeModal() {
   const chainConfig = useChainConfig()
-  const [takerFee, setTakerFee] = useLocalStorage(
-    LocalStorageKeys.PERPS_TAKER_FEE,
-    getDefaultChainSettings(chainConfig).perpsTakerFee,
+  const [keeperFee, setKeeperFee] = useLocalStorage(
+    LocalStorageKeys.PERPS_KEEPER_FEE,
+    getDefaultChainSettings(chainConfig).perpsKeeperFee,
   )
-  const [amount, setAmount] = useState(BN(takerFee.amount))
+  const [amount, setAmount] = useState(BN(keeperFee.amount))
   const USD = useAsset('usd')
 
   const onClose = useCallback(() => {
-    useStore.setState({ takerFeeModal: false })
+    useStore.setState({ keeperFeeModal: false })
   }, [])
 
   useEffect(() => {
-    setAmount(BN(takerFee.amount))
-  }, [takerFee])
+    setAmount(BN(keeperFee.amount))
+  }, [keeperFee])
 
   const handleActionClick = () => {
-    setTakerFee({ denom: takerFee.denom, amount: amount.toString() })
+    setKeeperFee({ denom: keeperFee.denom, amount: amount.toString() })
     onClose()
   }
 
@@ -46,14 +46,14 @@ export default function TakerFeeModal() {
     [USD],
   )
 
-  const modal = useStore((s) => s.takerFeeModal)
+  const modal = useStore((s) => s.keeperFeeModal)
 
   if (!modal || !USD) return
 
   return (
     <Modal
       onClose={onClose}
-      header='Taker Fee'
+      header='Keeper Fee'
       headerClassName='gradient-header px-2 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col'
       modalClassName='md:max-w-modal-xs'
@@ -73,13 +73,13 @@ export default function TakerFeeModal() {
         />
         {amount.isLessThan(BN_ONE) && (
           <Callout type={CalloutType.WARNING}>
-            You can not set the Taker Fee to less than $1.00 as it is the minimum amount for the
-            Taker Fee.
+            You can not set the Keeper Fee to less than $1.00 as it is the minimum amount for the
+            Keeper Fee.
           </Callout>
         )}
         <Text size='sm' className='text-white/60'>
-          Limit Orders are executed by third-party facilitators and require a Taker Fee to
-          compensate them for their services. Increasing the Taker Fee enhances the likelihood of
+          Limit Orders are executed by third-party facilitators and require a Keeper Fee to
+          compensate them for their services. Increasing the Keeper Fee enhances the likelihood of
           your order being picked up sooner.
         </Text>
         <Button
