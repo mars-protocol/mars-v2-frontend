@@ -1,9 +1,8 @@
-import { useMemo } from 'react'
-
+import { useCallback, useMemo, useState } from 'react'
+import BigNumber from 'bignumber.js'
 import { checkOpenInterest, checkPositionValue } from 'components/perps/Module/validators'
 import { BN_ONE, BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import usePerpPosition from 'hooks/perps/usePerpPosition'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import usePerpsMarket from 'hooks/perps/usePerpsMarket'
@@ -12,13 +11,14 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { List } from 'types/classes/List'
 import { getAccountNetValue } from 'utils/accounts'
 import { byDenom } from 'utils/array'
-import { getCoinValue } from 'utils/formatters'
+import { demagnify, getCoinValue } from 'utils/formatters'
 import useAssets from 'hooks/assets/useAssets'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 
 export default function usePerpsModule(
-  amount: BigNumber | null,
+  tradeDirection: TradeDirection,
   limitPrice: BigNumber | null,
-  isLimitOrder: boolean,
+  setLeverage: (leverage: number) => void,
 ) {
   const { perpsAsset } = usePerpsAsset()
   const params = usePerpsParams(perpsAsset.denom)
@@ -27,6 +27,10 @@ export default function usePerpsModule(
   const { data: allAssets } = useAssets()
   const account = useCurrentAccount()
   const price = perpsAsset.price?.amount ?? BN_ZERO
+  const [amount, setAmount] = useState<BigNumber>(BN_ZERO)
+  const [isMaxSelected, setIsMaxSelected] = useState(false)
+  const { computeMaxPerpAmount } = useHealthComputer(account)
+
   const previousAmount = useMemo(() => perpPosition?.amount ?? BN_ZERO, [perpPosition?.amount])
 
   const hasActivePosition = useMemo(
@@ -56,43 +60,59 @@ export default function usePerpsModule(
     return previousAmount.isZero()
       ? null
       : getCoinValue(BNCoin.fromDenomAndBigNumber(perpsAsset.denom, previousAmount.abs()), [
-          isLimitOrder
+          limitPrice
             ? {
                 ...perpsAsset,
-                price: BNCoin.fromDenomAndBigNumber(perpsAsset.denom, limitPrice ?? BN_ONE),
+                price: BNCoin.fromDenomAndBigNumber(perpsAsset.denom, limitPrice),
               }
             : perpsAsset,
         ])
           .div(accountNetValue)
           .toNumber()
-  }, [accountNetValue, perpsAsset, previousAmount, limitPrice, isLimitOrder])
+  }, [accountNetValue, perpsAsset, previousAmount, limitPrice])
+
+  const maxAmount = useMemo(() => {
+    let maxAmount = computeMaxPerpAmount(perpsAsset.denom, tradeDirection)
+    if (tradeDirection === 'short') maxAmount = maxAmount.plus(previousAmount)
+    if (tradeDirection === 'long') maxAmount = maxAmount.minus(previousAmount)
+
+    return maxAmount
+  }, [computeMaxPerpAmount, perpsAsset, previousAmount, tradeDirection])
 
   const leverage = useMemo(() => {
-    const totalAmount = previousAmount.plus(amount ?? BN_ZERO).abs()
-    return totalAmount.isZero()
+    const totalAmount = previousAmount.plus(amount).abs()
+    const newLeverage = totalAmount.isZero()
       ? 1
       : getCoinValue(BNCoin.fromDenomAndBigNumber(perpsAsset.denom, totalAmount), [
-          isLimitOrder
+          limitPrice
             ? {
                 ...perpsAsset,
-                price: BNCoin.fromDenomAndBigNumber(perpsAsset.denom, limitPrice ?? BN_ONE),
+                price: BNCoin.fromDenomAndBigNumber(perpsAsset.denom, limitPrice),
               }
             : perpsAsset,
         ])
           .div(accountNetValue)
           .toNumber()
-  }, [accountNetValue, amount, perpsAsset, previousAmount, limitPrice, isLimitOrder])
+    return newLeverage
+  }, [accountNetValue, amount, perpsAsset, previousAmount, limitPrice])
+
+  const maxLeverage = useMemo(() => {
+    const priceToUse = limitPrice ?? perpsAsset.price?.amount ?? BN_ZERO
+    const totalPositionValue = priceToUse.times(demagnify(maxAmount.toNumber(), perpsAsset))
+    const maxLeverage = totalPositionValue.div(accountNetValue).toNumber()
+    return Math.max(maxLeverage, 1)
+  }, [maxAmount, perpsAsset, accountNetValue, limitPrice])
 
   const warningMessages = useMemo(() => {
     const messages = new List<string>()
-    if (!params || !amount || amount.isZero() || !perpsMarket) return messages
+    if (!params || amount.isZero() || !perpsMarket) return messages
 
     messages.pushIfNotEmpty(checkPositionValue(amount, previousAmount, perpsAsset, params))
     messages.pushIfNotEmpty(
       checkOpenInterest(
         perpsMarket,
-        previousTradeDirection,
-        currentTradeDirection,
+        perpPosition?.tradeDirection ?? 'long',
+        tradeDirection,
         amount,
         previousAmount,
         perpsAsset,
@@ -102,23 +122,66 @@ export default function usePerpsModule(
     )
 
     return messages
-  }, [
-    amount,
-    currentTradeDirection,
-    params,
-    perpsAsset,
-    perpsMarket,
-    previousAmount,
-    previousTradeDirection,
-    price,
-  ])
+  }, [amount, tradeDirection, params, perpsAsset, perpsMarket, previousAmount, price, perpPosition])
+
+  const updateAmount = useCallback(
+    (newAmount: BigNumber) => {
+      setAmount(newAmount)
+      setIsMaxSelected(newAmount.isEqualTo(maxAmount))
+      const newLeverage = newAmount.isZero()
+        ? 1
+        : newAmount
+            .abs()
+            .times(perpsAsset.price?.amount ?? BN_ONE)
+            .div(accountNetValue)
+            .plus(1)
+            .toNumber()
+      setLeverage(Math.min(newLeverage, maxLeverage))
+    },
+    [accountNetValue, maxLeverage, perpsAsset.price, maxAmount, setLeverage],
+  )
+
+  const updateLeverage = useCallback(
+    (newLeverage: number) => {
+      setLeverage(newLeverage)
+
+      if (maxAmount.isZero() || accountNetValue.isZero()) return
+      const priceToUse = limitPrice ?? perpsAsset.price?.amount ?? BN_ZERO
+      if (priceToUse.isZero()) return
+
+      const newAmount = accountNetValue
+        .times(newLeverage)
+        .dividedBy(priceToUse)
+        .shiftedBy(perpsAsset.decimals)
+      const finalAmount = BigNumber.min(newAmount, maxAmount).integerValue()
+
+      setAmount(tradeDirection === 'long' ? finalAmount : finalAmount.negated())
+    },
+    [
+      maxAmount,
+      accountNetValue,
+      limitPrice,
+      perpsAsset.price,
+      perpsAsset.decimals,
+      tradeDirection,
+      setLeverage,
+    ],
+  )
 
   return {
-    previousAmount,
-    previousTradeDirection,
-    previousLeverage,
+    maxLeverage,
+    maxAmount,
+    isMaxSelected,
+    amount,
     leverage,
-    hasActivePosition,
     warningMessages,
+    hasActivePosition,
+    previousAmount,
+    previousLeverage,
+    previousTradeDirection,
+    currentTradeDirection,
+    updateAmount,
+    updateLeverage,
+    setIsMaxSelected,
   }
 }
