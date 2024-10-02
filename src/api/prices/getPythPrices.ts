@@ -1,7 +1,9 @@
 import { cacheFn, pythPriceCache } from 'api/cache'
 import { pythEndpoints } from 'constants/pyth'
+import { FETCH_TIMEOUT } from 'constants/query'
 import { BNCoin } from 'types/classes/BNCoin'
 import { setApiError } from 'utils/error'
+import { fetchWithTimeout } from 'utils/fetch'
 import { BN } from 'utils/helpers'
 
 export default async function fetchPythPrices(priceFeedIds: string[], assets: Asset[]) {
@@ -10,7 +12,7 @@ export default async function fetchPythPrices(priceFeedIds: string[], assets: As
     priceFeedIds.forEach((id) => pricesUrl.searchParams.append('ids[]', id))
 
     const pythResponse: PythPriceData[] = await cacheFn(
-      () => fetch(pricesUrl).then((res) => res.json()),
+      () => fetchWithTimeout(pricesUrl.toString(), FETCH_TIMEOUT).then((res) => res.json()),
       pythPriceCache,
       `pythPrices/${priceFeedIds.flat().join('-')}`,
       30,

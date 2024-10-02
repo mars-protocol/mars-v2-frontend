@@ -36,8 +36,8 @@ export default function useTradingFeeAndPrice(denom: string, newAmount: BigNumbe
       }
     },
     {
-      revalidateOnFocus: false,
-      refreshInterval: 30000,
+      revalidateOnFocus: true,
+      refreshInterval: 10_000,
     },
   )
 }

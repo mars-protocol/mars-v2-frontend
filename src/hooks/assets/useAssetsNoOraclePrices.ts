@@ -2,13 +2,12 @@ import getDexAssets from 'api/assets/getDexAssets'
 import getDexPools from 'api/assets/getDexPools'
 import USD from 'constants/USDollar'
 import { ORACLE_DENOM } from 'constants/oracle'
-import { PRICE_STALE_TIME } from 'constants/query'
 import useCampaignApys from 'hooks/campaign/useCampaignApys'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useAssetParams from 'hooks/params/useAssetParams'
 import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
 import useStore from 'store'
-import useSWR from 'swr'
+import useSWRImmutable from 'swr/immutable'
 import { BNCoin } from 'types/classes/BNCoin'
 import { AssetParamsBaseForAddr, PerpParams } from 'types/generated/mars-params/MarsParams.types'
 import { byDenom } from 'utils/array'
@@ -23,14 +22,13 @@ export default function useAssetsNoOraclePrices() {
   const { data: perpsParams } = useAllPerpsParamsSC()
   const fetchedPerpsParams = chainConfig.perps ? perpsParams : ([] as PerpParams[])
 
-  return useSWR(
+  return useSWRImmutable(
     assetParams && fetchedPerpsParams && `chains/${chainConfig.id}/noOraclePrices`,
     async () =>
       fetchSortAndMapAllAssets(chainConfig, assetParams, campaignApys, fetchedPerpsParams),
     {
       suspense: true,
       revalidateOnFocus: false,
-      refreshInterval: PRICE_STALE_TIME,
     },
   )
 }
