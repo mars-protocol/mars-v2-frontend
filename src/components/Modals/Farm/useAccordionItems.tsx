@@ -179,7 +179,6 @@ export default function useAccordionItems(props: Props) {
             secondaryAsset={secondaryAsset}
             toggleOpen={toggleOpen}
             onChangeBorrowings={onChangeBorrowings}
-            farm={farm as AstroLp}
             depositCapReachedCoins={depositCapReachedCoins}
             displayCurrency={displayCurrency}
             totalValue={totalValue}
@@ -239,6 +238,8 @@ export default function useAccordionItems(props: Props) {
             primaryAsset={primaryAsset}
             secondaryAsset={secondaryAsset}
             totalValue={totalValue}
+            isCreate={!isDeposited}
+            depositCapReachedCoins={depositCapReachedCoins}
           />
         ),
         title: 'Summary',
@@ -258,6 +259,7 @@ export default function useAccordionItems(props: Props) {
     getBorrowingsSubTitle,
     getDepositSubTitle,
     isCustomRatio,
+    isDeposited,
     isOpen,
     onChangeBorrowings,
     onChangeDeposits,
@@ -305,7 +307,6 @@ export default function useAccordionItems(props: Props) {
             secondaryAsset={secondaryAsset}
             toggleOpen={toggleOpen}
             onChangeBorrowings={onChangeBorrowings}
-            farm={farm as AstroLp}
             depositCapReachedCoins={depositCapReachedCoins}
             displayCurrency={displayCurrency}
             totalValue={totalValue}
@@ -326,6 +327,8 @@ export default function useAccordionItems(props: Props) {
             primaryAsset={primaryAsset}
             secondaryAsset={secondaryAsset}
             totalValue={totalValue}
+            isCreate={!isDeposited}
+            depositCapReachedCoins={depositCapReachedCoins}
           />
         ),
         title: 'Summary',
@@ -344,6 +347,7 @@ export default function useAccordionItems(props: Props) {
     getBorrowingsSubTitle,
     getDepositSubTitle,
     isCustomRatio,
+    isDeposited,
     isOpen,
     onChangeBorrowings,
     onChangeDeposits,

@@ -1,11 +1,11 @@
 import { ColumnDef, Row } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import AstroLpApy, { APY_META } from 'components/earn/farm/astroLp/Table/Columns/AstroLpApy'
 import AstroLpPositionValue, {
   POSITION_VALUE_META,
 } from 'components/earn/farm/astroLp/Table/Columns/AstroLpPositionValue'
 import Account, { ACCOUNT_META } from 'components/hls/Farm/Table/Columns/Account'
+import Apy, { APY_META } from 'components/hls/Farm/Table/Columns/Apy'
 import DepositCap, {
   DEPOSIT_CAP_META,
   depositCapSortingFn,
@@ -49,9 +49,9 @@ export default function useActiveHlsFarmsColumns(assets: Asset[]) {
       },
       {
         ...APY_META,
-        cell: ({ row }) => <AstroLpApy astroLp={row.original.farm as AstroLp} assets={assets} />,
+        cell: ({ row }) => <Apy hlsFarm={row.original} />,
       },
       { ...MANAGE_META, cell: ({ row }) => <Manage hlsFarm={row.original} /> },
     ]
-  }, [assets])
+  }, [])
 }

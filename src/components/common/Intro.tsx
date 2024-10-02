@@ -9,6 +9,7 @@ import {
   GridPlanet,
   GridTire,
   GridWeb,
+  PerpsVault,
 } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
@@ -50,6 +51,12 @@ function IntroBackground(props: { bg: Props['bg'] }) {
       return (
         <div className='absolute top-0 right-0 block w-110 opacity-10'>
           <GridPlanet />
+        </div>
+      )
+    case 'perps-vault':
+      return (
+        <div className='absolute top-0 right-0 block w-150 opacity-60'>
+          <PerpsVault />
         </div>
       )
     default:

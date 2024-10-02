@@ -1,9 +1,10 @@
 import AmountAndValue from 'components/common/AmountAndValue'
 import AssetImage from 'components/common/assets/AssetImage'
+import Container from 'components/common/Container'
 import { Plus } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import Container from 'components/Modals/Hls/Deposit/Summary/Container'
 import useAssets from 'hooks/assets/useAssets'
+import React from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 
@@ -22,7 +23,7 @@ export default function MultiAssetSummary(props: Props) {
           const asset = assets.find(byDenom(coin.denom))
           if (!asset) return null
           return (
-            <>
+            <React.Fragment key={index}>
               <div className='flex justify-between flex-1'>
                 <span className='flex items-center gap-2'>
                   <AssetImage asset={asset} className='w-8 h-8' />
@@ -37,7 +38,7 @@ export default function MultiAssetSummary(props: Props) {
                   <Plus />
                 </div>
               )}
-            </>
+            </React.Fragment>
           )
         })}
       </div>

@@ -73,7 +73,6 @@ function StakingContent(props: StakingContentProps) {
   const {
     depositAmount,
     onChangeCollateral,
-    updatedAccount,
     borrowAmount,
     onChangeDebt,
     leverage,
@@ -93,7 +92,6 @@ function StakingContent(props: StakingContentProps) {
     depositAmount,
     emptyHlsAccounts: props.emptyHlsAccounts,
     execute,
-    hlsAccounts: props.hlsAccounts,
     isOpen: props.isOpen,
     leverage,
     onChangeCollateral,
@@ -103,7 +101,6 @@ function StakingContent(props: StakingContentProps) {
     setSelectedAccount: props.setSelectedAccount,
     strategy: props.strategy,
     toggleIsOpen: props.toggleIsOpen,
-    updatedAccount,
     maxBorrowAmount,
     apy: props.strategy.apy || 0,
     walletCollateralAsset: props.walletCollateralAsset,

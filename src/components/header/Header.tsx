@@ -15,6 +15,7 @@ import OracleResyncButton from 'components/header/OracleResyncButton'
 import RewardsCenter from 'components/header/RewardsCenter'
 import Wallet from 'components/Wallet'
 import useAccountId from 'hooks/accounts/useAccountId'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { DocURL } from 'types/enums'
 
@@ -38,7 +39,10 @@ const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
     ],
   },
   ...(chainConfig.perps ? [{ pages: ['perps'] as Page[], label: 'Perps' }] : []),
-  { pages: chainConfig.farm || chainConfig.perps ? ['lend', 'farm'] : ['lend'], label: 'Earn' },
+  {
+    pages: chainConfig.farm || chainConfig.perps ? ['lend', 'farm', 'perps-vault'] : ['lend'],
+    label: 'Earn',
+  },
   { pages: ['borrow'], label: 'Borrow' },
   ...(chainConfig.hls
     ? [{ pages: ['hls-staking', 'hls-farm'] as Page[], label: 'High Leverage' }]
@@ -57,6 +61,7 @@ const menuTreeV1 = (): MenuTreeEntry[] => [
 
 export default function Header() {
   const address = useStore((s) => s.address)
+  const chainConfig = useChainConfig()
   const focusComponent = useStore((s) => s.focusComponent)
   const isOracleStale = useStore((s) => s.isOracleStale)
   const isHls = useStore((s) => s.isHls)
@@ -69,7 +74,10 @@ export default function Header() {
     useStore.setState({ focusComponent: null })
   }
 
-  const showStaleOracle = useMemo(() => isOracleStale && address, [isOracleStale, address])
+  const showStaleOracle = useMemo(
+    () => (chainConfig.slinky ? false : isOracleStale && address),
+    [chainConfig.slinky, isOracleStale, address],
+  )
   const showRewardsCenter = useMemo(
     () => (isV1 ? address && !isMobile : accountId && !isMobile),
     [isV1, address, accountId],

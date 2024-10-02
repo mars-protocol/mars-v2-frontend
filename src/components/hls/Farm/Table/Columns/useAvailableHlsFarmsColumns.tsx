@@ -1,8 +1,9 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import AstroLpApy, { APY_META } from 'components/earn/farm/astroLp/Table/Columns/AstroLpApy'
+import { APY_META } from 'components/earn/farm/astroLp/Table/Columns/AstroLpApy'
 import MaxLTV, { LTV_MAX_META } from 'components/earn/farm/common/Table/Columns/MaxLTV'
+import ApyRange, { apyRangeSortingFn } from 'components/hls/Farm/Table/Columns/ApyRange'
 import Deposit, { DEPOSIT_META } from 'components/hls/Farm/Table/Columns/Deposit'
 import DepositCap, {
   DEPOSIT_CAP_META,
@@ -39,12 +40,15 @@ export default function useAvailableHlsFarmsColumns(props: Props) {
       },
       {
         ...APY_META,
-        cell: ({ row }) => <AstroLpApy astroLp={row.original.farm as AstroLp} assets={assets} />,
+        cell: ({ row }) => (
+          <ApyRange hlsFarm={row.original} isLoading={props.isLoading} assets={assets} />
+        ),
+        sortingFn: apyRangeSortingFn,
       },
       {
         ...DEPOSIT_META,
         cell: ({ row }) => <Deposit hlsFarm={row.original} />,
       },
     ]
-  }, [props.isLoading, assets])
+  }, [assets, props.isLoading])
 }

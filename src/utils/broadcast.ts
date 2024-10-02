@@ -5,6 +5,7 @@ import { removeEmptyCoins } from 'utils/accounts'
 import { getAssetSymbolByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
 import { getVaultNameByCoins } from 'utils/vaults'
+import { beautifyErrorMessage } from './generateToast'
 
 export function getSingleValueFromBroadcastResult(
   response: BroadcastResult['result'],
@@ -24,9 +25,7 @@ export function getSingleValueFromBroadcastResult(
 export function generateErrorMessage(result: BroadcastResult, errorMessage?: string) {
   const error = result.error ? result.error : result.result?.rawLogs
   if (errorMessage) return errorMessage
-  if (error === 'Transaction failed: Request rejected') return 'Transaction rejected by user'
-  /* TODO: beautify error messages */
-  return `Transaction failed: ${error}`
+  return beautifyErrorMessage(error ?? 'Transaction Simulation failed.')
 }
 
 export async function analizeTransaction(
@@ -96,6 +95,8 @@ function getTransactionTypesByAction() {
   transactionTypes.set('burn', 'burn')
   transactionTypes.set('update_price_feeds', 'oracle')
   transactionTypes.set('unlock', 'unlock')
+  transactionTypes.set('create_trigger_order', 'create-order')
+  transactionTypes.set('cancel_trigger_order', 'cancel-order')
 
   return transactionTypes
 }
@@ -127,7 +128,6 @@ function getRules() {
 
 function getTransactionCoinsGrouped(result: BroadcastResult, address: string, isHls: boolean) {
   const transactionCoins: TransactionCoin[] = []
-
   // Event types that include coins are wasm, token_swapped and pool_joined
   // This should be streamlined by SC one day
   const eventTypes = ['wasm', 'token_swapped', 'pool_joined']

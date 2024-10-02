@@ -1,6 +1,7 @@
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 
 export const ENTRY_PRICE_META = {
   accessorKey: 'entryPrice',
@@ -21,8 +22,12 @@ type Props = {
 }
 
 export default function EntryPrice(props: Props) {
-  const entryPrice = props.entryPrice.toNumber()
-  const currentPrice = props.currentPrice.toNumber()
+  const entryPrice = props.entryPrice
+    .shiftedBy(props.asset.decimals - PRICE_ORACLE_DECIMALS)
+    .toNumber()
+  const currentPrice = props.currentPrice
+    .shiftedBy(props.asset.decimals - PRICE_ORACLE_DECIMALS)
+    .toNumber()
   return (
     <TitleAndSubCell
       title={

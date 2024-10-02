@@ -12,10 +12,11 @@ import {
   InstantiateMsg,
   ExecuteMsg,
   Uint128,
+  IncentiveKind,
   Addr,
   ActionAmount,
   OwnerUpdate,
-  MigrateV1ToV2,
+  MigrateV2ToV2_0_1,
   WhitelistEntry,
   Coin,
   ActionCoin,
@@ -167,8 +168,9 @@ export interface MarsIncentivesUserUnclaimedRewardsQuery<TData>
   args: {
     accountId?: string
     limit?: number
-    startAfterCollateralDenom?: string
+    startAfterDenom?: string
     startAfterIncentiveDenom?: string
+    startAfterKind?: IncentiveKind
     user: string
   }
 }
@@ -184,8 +186,9 @@ export function useMarsIncentivesUserUnclaimedRewardsQuery<TData = ArrayOfCoin>(
         ? client.userUnclaimedRewards({
             accountId: args.accountId,
             limit: args.limit,
-            startAfterCollateralDenom: args.startAfterCollateralDenom,
+            startAfterDenom: args.startAfterDenom,
             startAfterIncentiveDenom: args.startAfterIncentiveDenom,
+            startAfterKind: args.startAfterKind,
             user: args.user,
           })
         : Promise.reject(new Error('Invalid client')),
@@ -252,8 +255,9 @@ export function useMarsIncentivesStakedAstroLpPositionsQuery<
 export interface MarsIncentivesEmissionsQuery<TData>
   extends MarsIncentivesReactQuery<ArrayOfEmissionResponse, TData> {
   args: {
-    collateralDenom: string
+    denom: string
     incentiveDenom: string
+    kind: IncentiveKind
     limit?: number
     startAfterTimestamp?: number
   }
@@ -268,8 +272,9 @@ export function useMarsIncentivesEmissionsQuery<TData = ArrayOfEmissionResponse>
     () =>
       client
         ? client.emissions({
-            collateralDenom: args.collateralDenom,
+            denom: args.denom,
             incentiveDenom: args.incentiveDenom,
+            kind: args.kind,
             limit: args.limit,
             startAfterTimestamp: args.startAfterTimestamp,
           })
@@ -283,8 +288,9 @@ export function useMarsIncentivesEmissionsQuery<TData = ArrayOfEmissionResponse>
 export interface MarsIncentivesEmissionQuery<TData>
   extends MarsIncentivesReactQuery<Uint128, TData> {
   args: {
-    collateralDenom: string
+    denom: string
     incentiveDenom: string
+    kind: IncentiveKind
     timestamp: number
   }
 }
@@ -298,8 +304,9 @@ export function useMarsIncentivesEmissionQuery<TData = Uint128>({
     () =>
       client
         ? client.emission({
-            collateralDenom: args.collateralDenom,
+            denom: args.denom,
             incentiveDenom: args.incentiveDenom,
+            kind: args.kind,
             timestamp: args.timestamp,
           })
         : Promise.reject(new Error('Invalid client')),
@@ -313,8 +320,9 @@ export interface MarsIncentivesIncentiveStatesQuery<TData>
   extends MarsIncentivesReactQuery<ArrayOfIncentiveStateResponse, TData> {
   args: {
     limit?: number
-    startAfterCollateralDenom?: string
+    startAfterDenom?: string
     startAfterIncentiveDenom?: string
+    startAfterKind?: IncentiveKind
   }
 }
 export function useMarsIncentivesIncentiveStatesQuery<TData = ArrayOfIncentiveStateResponse>({
@@ -328,8 +336,9 @@ export function useMarsIncentivesIncentiveStatesQuery<TData = ArrayOfIncentiveSt
       client
         ? client.incentiveStates({
             limit: args.limit,
-            startAfterCollateralDenom: args.startAfterCollateralDenom,
+            startAfterDenom: args.startAfterDenom,
             startAfterIncentiveDenom: args.startAfterIncentiveDenom,
+            startAfterKind: args.startAfterKind,
           })
         : Promise.reject(new Error('Invalid client')),
     {
@@ -341,8 +350,9 @@ export function useMarsIncentivesIncentiveStatesQuery<TData = ArrayOfIncentiveSt
 export interface MarsIncentivesIncentiveStateQuery<TData>
   extends MarsIncentivesReactQuery<IncentiveStateResponse, TData> {
   args: {
-    collateralDenom: string
+    denom: string
     incentiveDenom: string
+    kind: IncentiveKind
   }
 }
 export function useMarsIncentivesIncentiveStateQuery<TData = IncentiveStateResponse>({
@@ -355,8 +365,9 @@ export function useMarsIncentivesIncentiveStateQuery<TData = IncentiveStateRespo
     () =>
       client
         ? client.incentiveState({
-            collateralDenom: args.collateralDenom,
+            denom: args.denom,
             incentiveDenom: args.incentiveDenom,
+            kind: args.kind,
           })
         : Promise.reject(new Error('Invalid client')),
     {
@@ -383,7 +394,8 @@ export function useMarsIncentivesConfigQuery<TData = ConfigResponse>({
 export interface MarsIncentivesActiveEmissionsQuery<TData>
   extends MarsIncentivesReactQuery<ArrayOfActiveEmission, TData> {
   args: {
-    collateralDenom: string
+    denom: string
+    kind: IncentiveKind
   }
 }
 export function useMarsIncentivesActiveEmissionsQuery<TData = ArrayOfActiveEmission>({
@@ -396,7 +408,8 @@ export function useMarsIncentivesActiveEmissionsQuery<TData = ArrayOfActiveEmiss
     () =>
       client
         ? client.activeEmissions({
-            collateralDenom: args.collateralDenom,
+            denom: args.denom,
+            kind: args.kind,
           })
         : Promise.reject(new Error('Invalid client')),
     {
@@ -432,7 +445,7 @@ export function useMarsIncentivesStakedAstroLpRewardsQuery<
 }
 export interface MarsIncentivesMigrateMutation {
   client: MarsIncentivesClient
-  msg: MigrateV1ToV2
+  msg: MigrateV2ToV2_0_1
   args?: {
     fee?: number | StdFee | 'auto'
     memo?: string
@@ -571,8 +584,9 @@ export interface MarsIncentivesClaimRewardsMutation {
   msg: {
     accountId?: string
     limit?: number
-    startAfterCollateralDenom?: string
+    startAfterDenom?: string
     startAfterIncentiveDenom?: string
+    startAfterKind?: IncentiveKind
   }
   args?: {
     fee?: number | StdFee | 'auto'
@@ -597,9 +611,10 @@ export interface MarsIncentivesBalanceChangeMutation {
   msg: {
     accountId?: string
     denom: string
-    totalAmountScaledBefore: Uint128
+    kind: IncentiveKind
+    totalAmount: Uint128
     userAddr: Addr
-    userAmountScaledBefore: Uint128
+    userAmount: Uint128
   }
   args?: {
     fee?: number | StdFee | 'auto'
@@ -622,10 +637,11 @@ export function useMarsIncentivesBalanceChangeMutation(
 export interface MarsIncentivesSetAssetIncentiveMutation {
   client: MarsIncentivesClient
   msg: {
-    collateralDenom: string
+    denom: string
     duration: number
     emissionPerSecond: Uint128
     incentiveDenom: string
+    kind: IncentiveKind
     startTime: number
   }
   args?: {

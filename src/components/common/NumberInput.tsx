@@ -22,6 +22,7 @@ interface Props {
   onBlur?: () => void
   onFocus?: () => void
   onRef?: (ref: React.RefObject<HTMLInputElement>) => void
+  isUSD?: boolean
 }
 
 export default function NumberInput(props: Props) {
@@ -35,16 +36,18 @@ export default function NumberInput(props: Props) {
 
   useEffect(() => {
     if (props.amount.isZero()) return setFormattedAmount('')
+    if (props.isUSD) return
 
-    setFormattedAmount(
-      formatValue(props.amount.toNumber(), {
-        decimals: props.asset.decimals,
-        minDecimals: 0,
-        maxDecimals: props.maxDecimals,
-        thousandSeparator: false,
-      }),
-    )
-  }, [props.amount, props.asset, props.maxDecimals])
+    if (!props.isUSD)
+      setFormattedAmount(
+        formatValue(props.amount.toNumber(), {
+          decimals: props.asset.decimals,
+          minDecimals: 0,
+          maxDecimals: props.maxDecimals,
+          thousandSeparator: false,
+        }),
+      )
+  }, [props.amount, props.asset, props.isUSD, props.maxDecimals])
 
   useEffect(() => {
     if (!onRef) return
@@ -156,6 +159,7 @@ export default function NumberInput(props: Props) {
       disabled={props.disabled}
       className={classNames(
         'w-full hover:cursor-pointer appearance-none border-none bg-transparent text-right outline-none',
+        props.disabled && 'pointer-events-none',
         props.className,
         props.disabled && 'pointer-events-none',
       )}

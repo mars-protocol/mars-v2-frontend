@@ -1,13 +1,13 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useSWRConfig } from 'swr'
 
+import ModalContentWithSummary from 'components/Modals/ModalContentWithSummary'
+import { Header } from 'components/Modals/PerpsVault/Header'
+import { SubHeader } from 'components/Modals/PerpsVault/SubHeader'
 import Button from 'components/common/Button'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { ArrowRight } from 'components/common/Icons'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
-import ModalContentWithSummary from 'components/Modals/ModalContentWithSummary'
-import { Header } from 'components/Modals/PerpsVault/Header'
-import { SubHeader } from 'components/Modals/PerpsVault/SubHeader'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
@@ -78,6 +78,8 @@ function PerpsVaultModal(props: Props) {
     if (!account || !perpsVault) return
     setIsConfirming(true)
 
+    useStore.setState({ perpsVaultModal: null })
+
     if (props.modal.type === 'deposit') {
       const amountFromDeposits = amount.isLessThanOrEqualTo(amountInDeposits)
         ? amount
@@ -91,6 +93,7 @@ function PerpsVaultModal(props: Props) {
         ...(!amountFromDeposits.isZero() ? { fromDeposits: amountFromDeposits } : {}),
         ...(!amountFromLends.isZero() ? { fromLends: amountFromLends } : {}),
       })
+      await mutate(`chains/${chainConfig.id}/vaults/${account.id}/deposited`)
     }
 
     const activeVaultPosition = account.perpsVault?.active
@@ -102,6 +105,7 @@ function PerpsVaultModal(props: Props) {
         accountId: account.id,
         amount: amountOfShares.integerValue(),
       })
+      await mutate(`chains/${chainConfig.id}/accounts/${account.id}`)
     }
 
     setIsConfirming(false)

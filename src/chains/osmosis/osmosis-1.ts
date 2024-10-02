@@ -76,11 +76,11 @@ const Osmosis1: ChainConfig = {
       campaignIds: ['lido'],
       campaignDenom: 'stETH',
     },
-    // {
-    //   denom: 'factory/osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0/umilkTIA',
-    //   campaignIds: ['milkyway'],
-    //   campaignDenom: 'milkTIA',
-    // },
+    {
+      denom: 'factory/osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0/umilkTIA',
+      campaignIds: ['milkyway'],
+      campaignDenom: 'milkTIA',
+    },
   ],
   deprecated: ['ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858'],
   defaultTradingPair: {
@@ -106,6 +106,7 @@ const Osmosis1: ChainConfig = {
   },
   endpoints: {
     rpc: process.env.NEXT_PUBLIC_OSMOSIS_RPC ?? 'https://rpc-osmosis.blockapsis.com',
+    fallbackRpc: 'https://osmosis-rpc.polkachu.com',
     rest: process.env.NEXT_PUBLIC_OSMOSIS_REST ?? 'https://lcd-osmosis.blockapsis.com',
     swap: 'https://app.osmosis.zone',
     explorer: 'https://www.mintscan.io/osmosis',
@@ -132,6 +133,7 @@ const Osmosis1: ChainConfig = {
   perps: false,
   farm: true,
   anyAsset: false,
+  slinky: false,
 }
 
 export default Osmosis1

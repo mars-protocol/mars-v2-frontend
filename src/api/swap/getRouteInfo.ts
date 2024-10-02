@@ -1,4 +1,6 @@
+import { FETCH_TIMEOUT } from 'constants/query'
 import { byDenom } from 'utils/array'
+import { fetchWithTimeout } from 'utils/fetch'
 import { BN } from 'utils/helpers'
 
 export default async function getRouteInfo(
@@ -9,7 +11,7 @@ export default async function getRouteInfo(
 ): Promise<SwapRouteInfo | null> {
   if (isOsmosis) {
     try {
-      const resp = await fetch(url)
+      const resp = await fetchWithTimeout(url, FETCH_TIMEOUT)
       const route = (await resp.json()) as OsmosisRouteResponse
 
       return {
@@ -39,7 +41,7 @@ export default async function getRouteInfo(
     }
   } else {
     try {
-      const resp = await fetch(url)
+      const resp = await fetchWithTimeout(url, FETCH_TIMEOUT)
       const route = (await resp.json())[0] as AstroportRouteResponse
 
       return {

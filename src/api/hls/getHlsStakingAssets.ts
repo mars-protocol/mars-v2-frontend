@@ -1,11 +1,15 @@
-import { getParamsQueryClient } from 'api/cosmwasm-client'
 import getAssetParams from 'api/params/getAssetParams'
+import { BN_ZERO } from 'constants/math'
 import { byDenom } from 'utils/array'
-import { BN } from 'utils/helpers'
 import { resolveHlsStrategies } from 'utils/resolvers'
 
-export default async function getHlsStakingAssets(chainConfig: ChainConfig, assets: Asset[]) {
+export default async function getHlsStakingAssets(
+  chainConfig: ChainConfig,
+  assets: Asset[],
+  markets: Market[],
+) {
   const assetParams = await getAssetParams(chainConfig)
+
   const HlsAssets = assetParams
     .filter((asset) => asset.credit_manager.hls)
     .filter((asset) => {
@@ -31,26 +35,20 @@ export default async function getHlsStakingAssets(chainConfig: ChainConfig, asse
       return correlatedAssetParams
     })
   const strategies = resolveHlsStrategies('coin', HlsAssets)
-  const client = await getParamsQueryClient(chainConfig)
-  const depositCaps$ = strategies.map((strategy) =>
-    client.totalDeposit({ denom: strategy.denoms.deposit }),
-  )
 
-  return Promise.all(depositCaps$).then((depositCaps) => {
-    return depositCaps.map((depositCap, index) => {
-      const depositAssetCampaigns = assets.find(
-        byDenom(strategies[index].denoms.deposit),
-      )?.campaigns
-      const apy = depositAssetCampaigns?.find((campaign) => campaign.type === 'apy')?.apy ?? 0
-      return {
-        ...strategies[index],
-        depositCap: {
-          denom: depositCap.denom,
-          used: BN(depositCap.amount),
-          max: BN(depositCap.cap).times(0.95),
-        },
-        apy,
-      } as HlsStrategy
-    })
+  return strategies.map((strategy) => {
+    const depositAssetCampaigns = assets.find(byDenom(strategy.denoms.deposit))?.campaigns
+    const apy = depositAssetCampaigns?.find((campaign) => campaign.type === 'apy')?.apy ?? 0
+    const market = markets.find((market) => market.asset.denom === strategy.denoms.deposit)
+
+    return {
+      ...strategy,
+      depositCap: {
+        denom: strategy.denoms.deposit,
+        used: market && market.cap ? market.cap.used : BN_ZERO,
+        max: market && market.cap ? market.cap.max : BN_ZERO,
+      },
+      apy,
+    } as HlsStrategy
   })
 }
