@@ -62,9 +62,9 @@ export default function PerpsSummary(props: Props) {
 
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const chainConfig = useChainConfig()
-  const [takerFee, _] = useLocalStorage(
-    LocalStorageKeys.PERPS_TAKER_FEE,
-    getDefaultChainSettings(chainConfig).perpsTakerFee,
+  const [keeperFee, _] = useLocalStorage(
+    LocalStorageKeys.PERPS_KEEPER_FEE,
+    getDefaultChainSettings(chainConfig).perpsKeeperFee,
   )
   const currentAccount = useCurrentAccount()
   const isLimitOrder = props.orderType === OrderType.LIMIT
@@ -87,13 +87,14 @@ export default function PerpsSummary(props: Props) {
     () => assets.find(byDenom(perpsConfig?.base_denom ?? '')),
     [assets, perpsConfig?.base_denom],
   )
-  const keeperFee = useMemo(
+  const calculateKeeperFee = useMemo(
     () =>
       isLimitOrder && feeToken
-        ? BNCoin.fromDenomAndBigNumber(feeToken.denom, magnify(takerFee.amount, feeToken))
+        ? BNCoin.fromDenomAndBigNumber(feeToken.denom, magnify(keeperFee.amount, feeToken))
         : undefined,
-    [feeToken, isLimitOrder, takerFee.amount],
+    [feeToken, isLimitOrder, keeperFee.amount],
   )
+
   const onConfirm = useCallback(async () => {
     if (!currentAccount || !feeToken) return
     const orderSize = tradeDirection === 'short' && amount.isPositive() ? amount.negated() : amount
@@ -113,7 +114,7 @@ export default function PerpsSummary(props: Props) {
       })
     }
 
-    if (isLimitOrder && keeperFee) {
+    if (isLimitOrder && calculateKeeperFee) {
       const decimalAdjustment = asset.decimals - PRICE_ORACLE_DECIMALS
       const adjustedLimitPrice = limitPrice.shiftedBy(-decimalAdjustment)
 
@@ -122,7 +123,7 @@ export default function PerpsSummary(props: Props) {
         coin: BNCoin.fromDenomAndBigNumber(asset.denom, orderSize),
         autolend: isAutoLendEnabledForCurrentAccount,
         baseDenom,
-        keeperFee,
+        keeperFee: calculateKeeperFee,
         tradeDirection,
         price: adjustedLimitPrice,
       }
@@ -144,7 +145,7 @@ export default function PerpsSummary(props: Props) {
     currentAccount,
     feeToken,
     isLimitOrder,
-    keeperFee,
+    calculateKeeperFee,
     asset.denom,
     asset.decimals,
     amount,
@@ -207,7 +208,7 @@ export default function PerpsSummary(props: Props) {
           asset={asset}
           leverage={leverage}
           limitPrice={isLimitOrder ? limitPrice : undefined}
-          keeperFee={isLimitOrder ? keeperFee : undefined}
+          keeperFee={isLimitOrder ? calculateKeeperFee : undefined}
         />
       ),
       positiveButton: {
@@ -234,7 +235,7 @@ export default function PerpsSummary(props: Props) {
     isDirectionChange,
     isLimitOrder,
     isNewPosition,
-    keeperFee,
+    calculateKeeperFee,
     leverage,
     limitPrice,
     onConfirm,
@@ -270,7 +271,7 @@ export default function PerpsSummary(props: Props) {
             denom={asset.denom}
             newAmount={newAmount}
             previousAmount={previousAmount}
-            keeperFee={keeperFee}
+            keeperFee={calculateKeeperFee}
           />
         </SummaryLine>
       </div>
