@@ -14,8 +14,8 @@ export default function usePerpsMarketState() {
     clients && perpsAsset && `chains/${chainConfig.id}/perps/${perpsAsset.denom}/state`,
     () => clients!.perps.marketState({ ...PERPS_DEFAULT_ACTION, denom: perpsAsset.denom }),
     {
-      revalidateOnFocus: false,
-      refreshInterval: 30000,
+      revalidateOnFocus: true,
+      refreshInterval: 10_000,
     },
   )
 }

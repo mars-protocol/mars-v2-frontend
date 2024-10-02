@@ -14,7 +14,7 @@ export default function useAccounts(kind: AccountKind, address?: string, suspens
     {
       suspense: suspense,
       fallbackData: [],
-      revalidateOnFocus: false,
+      revalidateOnFocus: true,
     },
   )
 }
