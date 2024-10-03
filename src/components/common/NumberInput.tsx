@@ -35,19 +35,23 @@ export default function NumberInput(props: Props) {
   )
 
   useEffect(() => {
-    if (props.amount.isZero()) return setFormattedAmount('')
+    if (props.amount.isZero() && formattedAmount !== '0.' && formattedAmount !== '.') {
+      setFormattedAmount('')
+      return
+    }
     if (props.isUSD) return
 
-    if (!props.isUSD)
-      setFormattedAmount(
-        formatValue(props.amount.toNumber(), {
-          decimals: props.asset.decimals,
-          minDecimals: 0,
-          maxDecimals: props.maxDecimals,
-          thousandSeparator: false,
-        }),
-      )
-  }, [props.amount, props.asset, props.isUSD, props.maxDecimals])
+    const newFormattedAmount = formatValue(props.amount.toNumber(), {
+      decimals: props.asset.decimals,
+      minDecimals: 0,
+      maxDecimals: props.maxDecimals,
+      thousandSeparator: false,
+    })
+
+    if (!formattedAmount.endsWith('.') && formattedAmount !== newFormattedAmount) {
+      setFormattedAmount(newFormattedAmount)
+    }
+  }, [props.amount, props.asset, props.isUSD, props.maxDecimals, formattedAmount])
 
   useEffect(() => {
     if (!onRef) return
@@ -59,18 +63,41 @@ export default function NumberInput(props: Props) {
     props.onFocus && props.onFocus()
   }
 
-  const updateValues = (formatted: string, amount: BigNumber) => {
-    const lastChar = formatted.charAt(formatted.length - 1)
-    if (lastChar === '.') {
-      cursorRef.current = (inputRef.current?.selectionEnd || 0) + 1
-    } else {
-      cursorRef.current = inputRef.current?.selectionEnd || 0
-    }
-    setFormattedAmount(formatted)
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let newValue = e.target.value
+    let cursorPosition = e.target.selectionStart || 0
 
-    if (!props.amount.isEqualTo(amount)) {
-      props.onChange(amount)
+    if (newValue === '.' && formattedAmount === '') {
+      newValue = '0.'
+      cursorPosition = 2
     }
+
+    setFormattedAmount(newValue)
+
+    const floatValue = Number.isNaN(Number(newValue.replace(',', '.')))
+      ? undefined
+      : Number(newValue.replace(',', '.'))
+
+    if (floatValue !== undefined) {
+      const newAmount = BN(floatValue).shiftedBy(props.asset.decimals)
+
+      if (!newAmount.isEqualTo(props.amount)) {
+        props.onChange(newAmount)
+      }
+    } else if (newValue === '' || newValue === '0.') {
+      props.onChange(BN_ZERO)
+    }
+
+    cursorRef.current = cursorPosition
+  }
+
+  const onInputBlur = () => {
+    if (formattedAmount.endsWith('.')) {
+      const newValue = formattedAmount.slice(0, -1)
+      setFormattedAmount(newValue)
+      props.onChange(BN(newValue).shiftedBy(props.asset.decimals))
+    }
+    props.onBlur && props.onBlur()
   }
 
   useEffect(() => {
@@ -87,81 +114,19 @@ export default function NumberInput(props: Props) {
     inputRef.current.setSelectionRange(cursor, cursor)
   }, [formattedAmount, inputRef])
 
-  const onInputChange = (formattedAmount: string) => {
-    const numberCount = formattedAmount.match(/[0-9]/g)?.length || 0
-    const decimals = formattedAmount.split('.')[1]?.length || 0
-    const lastChar = formattedAmount.charAt(formattedAmount.length - 1)
-    const isNumber = !isNaN(Number(formattedAmount))
-    const hasMultipleDots = (formattedAmount.match(/[.,]/g)?.length || 0) > 1
-    const isSeparator = lastChar === '.' || lastChar === ','
-    const isNegative = formattedAmount.indexOf('-') > -1
-    const isLowerThanMinimum =
-      props.min !== undefined && props.min.isGreaterThan(magnify(formattedAmount, props.asset))
-    const isHigherThanMaximum =
-      props.max !== undefined && props.max.isLessThan(magnify(formattedAmount, props.asset))
-    const isTooLong = props.maxLength !== undefined && numberCount > props.maxLength
-    const exceedsMaxDecimals = props.maxDecimals !== undefined && decimals > props.maxDecimals
-
-    if (formattedAmount === '') {
-      updateValues('0', BN_ZERO)
-      return
-    }
-
-    if (isNegative && !props.allowNegative) return
-
-    if (isSeparator && formattedAmount.length === 1) {
-      updateValues('0.', BN_ZERO)
-      return
-    }
-
-    if (isSeparator && !hasMultipleDots) {
-      updateValues(formattedAmount.replace(',', '.'), props.amount)
-      return
-    }
-
-    if (!isNumber || hasMultipleDots) return
-
-    if (exceedsMaxDecimals) {
-      formattedAmount = formattedAmount.substring(0, formattedAmount.length - 1)
-    }
-
-    if (isTooLong) return
-
-    if (isLowerThanMinimum && props.min) {
-      updateValues(String(demagnify(props.min, props.asset)), props.min)
-      return
-    }
-
-    if (isHigherThanMaximum && props.max) {
-      updateValues(String(demagnify(props.max, props.asset)), props.max)
-      return
-    }
-
-    const amount = BN(formattedAmount).shiftedBy(props.asset.decimals)
-
-    if (lastChar === '0' && amount.isEqualTo(props.amount)) {
-      cursorRef.current = (inputRef.current?.selectionEnd || 0) + 1
-      setFormattedAmount(formattedAmount)
-      return
-    }
-
-    updateValues(amount.shiftedBy(-1 * props.asset.decimals).toString(), amount)
-  }
-
   return (
     <input
       ref={inputRef}
       type='text'
-      value={formattedAmount === '0' ? '0' : formattedAmount}
+      value={formattedAmount}
       onFocus={onInputFocus}
-      onChange={(e) => onInputChange(e.target.value)}
-      onBlur={props.onBlur}
+      onChange={onInputChange}
+      onBlur={props.onBlur ?? onInputBlur}
       disabled={props.disabled}
       className={classNames(
         'w-full hover:cursor-pointer appearance-none border-none bg-transparent text-right outline-none',
         props.disabled && 'pointer-events-none',
         props.className,
-        props.disabled && 'pointer-events-none',
       )}
       style={props.style}
       placeholder={props.placeholder ?? '0'}

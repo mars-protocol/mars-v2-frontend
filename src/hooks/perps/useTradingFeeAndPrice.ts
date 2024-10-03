@@ -5,16 +5,18 @@ import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
+import useDebounce from 'hooks/common/useDebounce'
 import { BN } from 'utils/helpers'
 
 export default function useTradingFeeAndPrice(denom: string, newAmount: BigNumber) {
   const chainConfig = useChainConfig()
   const accountId = useCurrentAccount()?.id
+  const debouncedAmount = useDebounce<BigNumber>(newAmount, 10000)
   const clients = useClients()
   const enabled = clients && !!accountId
 
   return useSWR(
-    enabled && `${chainConfig.id}/perps/${denom}/positionFeeAndPrice/${newAmount}`,
+    enabled && `${chainConfig.id}/perps/${denom}/positionFeeAndPrice/${debouncedAmount}`,
     async () => {
       const positionFees = await clients!.perps.positionFees({
         denom,

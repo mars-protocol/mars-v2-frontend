@@ -1,5 +1,6 @@
 import classNames from 'classnames'
-import { ChangeEvent, useCallback } from 'react'
+import debounce from 'lodash.debounce'
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 
 import InputOverlay from 'components/common/LeverageSlider/InputOverlay'
 
@@ -13,32 +14,43 @@ type Props = {
   marginThreshold?: number
   wrapperClassName?: string
   onChange: (value: number) => void
-  onDebounce?: () => void
   onBlur?: () => void
   type: LeverageSliderType
 }
 
 export type LeverageSliderType = 'margin' | 'long' | 'short'
 function LeverageSlider(props: Props) {
-  const {
-    value,
-    max,
-    onChange,
-    wrapperClassName,
-    disabled,
-    marginThreshold,
-    onBlur,
-    type,
-    onDebounce,
-  } = props
+  const { value, max, onChange, wrapperClassName, disabled, marginThreshold, onBlur, type } = props
   const min = props.min ?? 0
+
+  const [debouncedValue, setDebouncedValue] = useState(value)
+
+  const debouncedOnChange = useMemo(
+    () =>
+      debounce((newValue: number) => {
+        onChange(newValue)
+      }, 500),
+    [onChange],
+  )
+
+  useEffect(() => {
+    setDebouncedValue(value)
+  }, [value])
 
   const handleOnChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      onChange(parseFloat(event.target.value))
+      const newValue = parseFloat(event.target.value)
+      setDebouncedValue(newValue)
+      debouncedOnChange(newValue)
     },
-    [onChange],
+    [debouncedOnChange],
   )
+
+  useEffect(() => {
+    return () => {
+      debouncedOnChange.cancel()
+    }
+  }, [debouncedOnChange])
 
   const markPosPercent = 100 / (max / (marginThreshold ?? 1))
   return (
@@ -59,7 +71,7 @@ function LeverageSlider(props: Props) {
             '[&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:bg-transparent [&::-moz-range-thumb]:opacity-0 [&::-moz-range-thumb]:w-[33px] [&::-moz-range-thumb]:h-4',
           )}
           type='range'
-          value={value.toFixed(2)}
+          value={debouncedValue.toFixed(2)}
           step={(max - min) / 101}
           min={min}
           max={max}
@@ -69,7 +81,7 @@ function LeverageSlider(props: Props) {
         <InputOverlay
           max={max}
           marginThreshold={marginThreshold}
-          value={value}
+          value={debouncedValue}
           type={type}
           min={min}
         />
