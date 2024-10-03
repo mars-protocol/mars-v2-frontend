@@ -54,7 +54,5 @@ export default async function getHlsFarms(
     }
   })
 
-  //TODO: uncomment this line
-  //return hlsFarms
-  return []
+  return hlsFarms
 }
