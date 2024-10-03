@@ -44,7 +44,6 @@ export function PerpsModule() {
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const isLimitOrder = selectedOrderType === OrderType.LIMIT
 
-  const [sliderLeverage, setSliderLeverage] = useState<number>(1)
   const [limitPriceInfo, setLimitPriceInfo] = useState<CallOut | undefined>(
     DEFAULT_LIMIT_PRICE_INFO,
   )
@@ -63,7 +62,7 @@ export function PerpsModule() {
     previousAmount,
     previousLeverage,
     previousTradeDirection,
-  } = usePerpsModule(tradeDirection, isLimitOrder ? limitPrice : null, setSliderLeverage)
+  } = usePerpsModule(tradeDirection, isLimitOrder ? limitPrice : null)
 
   const USD = allAssets.find(byDenom('usd'))
 
@@ -74,7 +73,6 @@ export function PerpsModule() {
   const reset = useCallback(() => {
     setLimitPrice(BN_ZERO)
     updateAmount(BN_ZERO)
-    setSliderLeverage(1)
   }, [updateAmount])
 
   const onChangeTradeDirection = useCallback(
@@ -261,19 +259,12 @@ export function PerpsModule() {
               Position Leverage
             </Text>
             <LeverageSlider
-              min={1}
               max={maxLeverage}
-              value={Math.max(leverage, 1)}
+              value={Math.max(leverage, 0)}
               onChange={onChangeLeverage}
               type={tradeDirection}
               disabled={isDisabledAmountInput}
             />
-            {leverage < 1 && (
-              <Callout type={CalloutType.INFO}>
-                The current position has a leverage below 1x. The slider shows the minimum leverage
-                of 1x.
-              </Callout>
-            )}
             {maxLeverage > 5 && (
               <LeverageButtons
                 maxLeverage={maxLeverage}
