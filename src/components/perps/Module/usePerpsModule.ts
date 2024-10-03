@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { checkOpenInterest, checkPositionValue } from 'components/perps/Module/validators'
 import { BN_ONE, BN_ZERO } from 'constants/math'
@@ -18,7 +18,6 @@ import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 export default function usePerpsModule(
   tradeDirection: TradeDirection,
   limitPrice: BigNumber | null,
-  setLeverage: (leverage: number) => void,
 ) {
   const { perpsAsset } = usePerpsAsset()
   const params = usePerpsParams(perpsAsset.denom)
@@ -79,10 +78,12 @@ export default function usePerpsModule(
     return maxAmount
   }, [computeMaxPerpAmount, perpsAsset, previousAmount, tradeDirection])
 
-  const leverage = useMemo(() => {
+  const [leverage, setLeverage] = useState<number>(0)
+
+  const calculateLeverage = useMemo(() => {
     const totalAmount = previousAmount.plus(amount).abs()
     const newLeverage = totalAmount.isZero()
-      ? 1
+      ? 0
       : getCoinValue(BNCoin.fromDenomAndBigNumber(perpsAsset.denom, totalAmount), [
           limitPrice
             ? {
@@ -124,21 +125,16 @@ export default function usePerpsModule(
     return messages
   }, [amount, tradeDirection, params, perpsAsset, perpsMarket, previousAmount, price, perpPosition])
 
+  useEffect(() => {
+    setLeverage(calculateLeverage)
+  }, [calculateLeverage])
+
   const updateAmount = useCallback(
     (newAmount: BigNumber) => {
       setAmount(newAmount)
       setIsMaxSelected(newAmount.isEqualTo(maxAmount))
-      const newLeverage = newAmount.isZero()
-        ? 1
-        : newAmount
-            .abs()
-            .times(perpsAsset.price?.amount ?? BN_ONE)
-            .div(accountNetValue)
-            .plus(1)
-            .toNumber()
-      setLeverage(Math.min(newLeverage, maxLeverage))
     },
-    [accountNetValue, maxLeverage, perpsAsset.price, maxAmount, setLeverage],
+    [maxAmount],
   )
 
   const updateLeverage = useCallback(
@@ -157,15 +153,7 @@ export default function usePerpsModule(
 
       setAmount(tradeDirection === 'long' ? finalAmount : finalAmount.negated())
     },
-    [
-      maxAmount,
-      accountNetValue,
-      limitPrice,
-      perpsAsset.price,
-      perpsAsset.decimals,
-      tradeDirection,
-      setLeverage,
-    ],
+    [maxAmount, accountNetValue, limitPrice, perpsAsset.price, perpsAsset.decimals, tradeDirection],
   )
 
   return {
