@@ -252,7 +252,7 @@ export function PerpsModule() {
           }
           isMaxSelected={isMaxSelected}
         />
-        {!hasActivePosition && (
+        {!hasActivePosition && !maxAmount.isZero() && (
           <div className='w-full'>
             <Or />
             <Text size='sm' className='mt-5 mb-2'>
