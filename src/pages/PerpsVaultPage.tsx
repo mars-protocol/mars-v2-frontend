@@ -5,7 +5,7 @@ import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useDepositedVaults from 'hooks/vaults/useDepositedVaults'
 import { ActiveVaults } from 'components/earn/farm/vault/ActiveVaults'
-import { EARN_TABS } from 'constants/pages'
+import { getEarnTabs } from 'constants/pages'
 import { useMemo } from 'react'
 import { VaultStatus } from 'types/enums'
 
@@ -18,9 +18,11 @@ export default function PerpsVaultPage() {
     return depositedVaults.filter((vault) => vault.status === VaultStatus.ACTIVE).length
   }, [depositedVaults])
 
+  const tabs = getEarnTabs(chainConfig)
+
   return (
     <div className='flex flex-wrap w-full gap-6'>
-      <Tab tabs={EARN_TABS} activeTabIdx={2} />
+      <Tab tabs={tabs} activeTabIdx={2} />
       <PerpsIntro />
       <ActiveVaults />
       {chainConfig.perps && activeVaults === 0 && <AvailablePerpsVaultsTable />}
