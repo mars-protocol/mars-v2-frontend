@@ -20,11 +20,15 @@ export function AvailableVaults() {
             },
           ]
         : []),
-      ...(chainConfig.perps && !account?.perpsVault
-        ? [{ title: 'Perps Vaults', renderContent: () => <AvailablePerpsVaultsTable /> }]
-        : []),
+      // ...(chainConfig.perps && !account?.perpsVault
+      //   ? [{ title: 'Perps Vaults', renderContent: () => <AvailablePerpsVaultsTable /> }]
+      //   : []),
     ],
-    [account?.perpsVault, chainConfig.farm, chainConfig.perps],
+    [
+      // account?.perpsVault,
+      chainConfig.farm,
+      // chainConfig.perps,
+    ],
   )
 
   return <CardWithTabs tabs={tabs} />
