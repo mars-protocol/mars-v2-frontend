@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { checkOpenInterest, checkPositionValue } from 'components/perps/Module/validators'
-import { BN_ONE, BN_ZERO } from 'constants/math'
+import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import usePerpPosition from 'hooks/perps/usePerpPosition'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
@@ -75,7 +75,7 @@ export default function usePerpsModule(
     if (tradeDirection === 'short') maxAmount = maxAmount.plus(previousAmount)
     if (tradeDirection === 'long') maxAmount = maxAmount.minus(previousAmount)
 
-    return maxAmount
+    return BigNumber.max(maxAmount, BN_ZERO)
   }, [computeMaxPerpAmount, perpsAsset, previousAmount, tradeDirection])
 
   const [leverage, setLeverage] = useState<number>(0)

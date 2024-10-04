@@ -8,7 +8,7 @@ import { Callout, CalloutType } from 'components/common/Callout'
 import Text from 'components/common/Text'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import { BN_ONE } from 'constants/math'
+import { BN_ZERO_ONE } from 'constants/math'
 import useAsset from 'hooks/assets/useAsset'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -71,9 +71,9 @@ export default function KeeperFeeModal() {
           asset={USD}
           isUSD
         />
-        {amount.isLessThan(BN_ONE) && (
+        {amount.isLessThan(BN_ZERO_ONE) && (
           <Callout type={CalloutType.WARNING}>
-            You can not set the Keeper Fee to less than $1.00 as it is the minimum amount for the
+            You can not set the Keeper Fee to less than $0.10 as it is the minimum amount for the
             Keeper Fee.
           </Callout>
         )}
@@ -84,7 +84,7 @@ export default function KeeperFeeModal() {
         </Text>
         <Button
           onClick={handleActionClick}
-          disabled={amount.isLessThan(BN_ONE)}
+          disabled={amount.isLessThan(BN_ZERO_ONE)}
           className='w-full !text-base'
           color='tertiary'
           text='Done'
