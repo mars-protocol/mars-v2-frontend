@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
-import React, { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 
 import { BN_ZERO } from 'constants/math'
 import { demagnify, formatValue, magnify } from 'utils/formatters'
@@ -26,32 +26,32 @@ interface Props {
 }
 
 export default function NumberInput(props: Props) {
-  const inputRef = React.useRef<HTMLInputElement>(null)
-  const cursorRef = React.useRef(0)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const cursorRef = useRef(0)
   const { onRef } = props
 
   const [formattedAmount, setFormattedAmount] = useState(
-    props.amount.shiftedBy(-1 * props.asset.decimals).toString(),
+    props.amount.isZero() ? '' : props.amount.shiftedBy(-1 * props.asset.decimals).toString(),
   )
 
+  const [isEditing, setIsEditing] = useState(false)
+
   useEffect(() => {
-    if (props.amount.isZero() && formattedAmount !== '0.' && formattedAmount !== '.') {
-      setFormattedAmount('')
-      return
-    }
-    if (props.isUSD) return
+    if (props.isUSD || isEditing) return
 
-    const newFormattedAmount = formatValue(props.amount.toNumber(), {
-      decimals: props.asset.decimals,
-      minDecimals: 0,
-      maxDecimals: props.maxDecimals,
-      thousandSeparator: false,
-    })
+    const newFormattedAmount = props.amount.isZero()
+      ? ''
+      : formatValue(props.amount.toNumber(), {
+          decimals: props.asset.decimals,
+          minDecimals: 0,
+          maxDecimals: props.maxDecimals,
+          thousandSeparator: false,
+        })
 
-    if (!formattedAmount.endsWith('.') && formattedAmount !== newFormattedAmount) {
+    if (formattedAmount !== newFormattedAmount) {
       setFormattedAmount(newFormattedAmount)
     }
-  }, [props.amount, props.asset, props.isUSD, props.maxDecimals, formattedAmount])
+  }, [props.amount, props.asset, props.isUSD, props.maxDecimals, formattedAmount, isEditing])
 
   useEffect(() => {
     if (!onRef) return
@@ -63,35 +63,49 @@ export default function NumberInput(props: Props) {
     props.onFocus && props.onFocus()
   }
 
-  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     let newValue = e.target.value
     let cursorPosition = e.target.selectionStart || 0
 
     if (newValue === '.' && formattedAmount === '') {
       newValue = '0.'
       cursorPosition = 2
-    }
-
-    setFormattedAmount(newValue)
-
-    const floatValue = Number.isNaN(Number(newValue.replace(',', '.')))
-      ? undefined
-      : Number(newValue.replace(',', '.'))
-
-    if (floatValue !== undefined) {
-      const newAmount = BN(floatValue).shiftedBy(props.asset.decimals)
-
-      if (!newAmount.isEqualTo(props.amount)) {
-        props.onChange(newAmount)
-      }
-    } else if (newValue === '' || newValue === '0.') {
+      setFormattedAmount(newValue)
+      setIsEditing(true)
       props.onChange(BN_ZERO)
+      cursorRef.current = cursorPosition
+      return
     }
 
-    cursorRef.current = cursorPosition
+    if (/^\d*\.?\d*$/.test(newValue)) {
+      let newAmount = BN(newValue || '0')
+
+      if (props.max && newAmount.isGreaterThan(props.max.shiftedBy(-props.asset.decimals))) {
+        newAmount = props.max.shiftedBy(-props.asset.decimals)
+        newValue = newAmount.toString()
+        cursorPosition = newValue.length
+      }
+
+      setIsEditing(true)
+      setFormattedAmount(newValue)
+      cursorRef.current = cursorPosition
+
+      if (newValue === '') {
+        props.onChange(BN_ZERO)
+      } else if (newValue === '.') {
+        setFormattedAmount('0.')
+        props.onChange(BN_ZERO)
+      } else {
+        const shiftedAmount = newAmount.shiftedBy(props.asset.decimals)
+        props.onChange(shiftedAmount)
+      }
+    } else {
+      cursorRef.current = cursorPosition
+    }
   }
 
   const onInputBlur = () => {
+    setIsEditing(false)
     if (formattedAmount.endsWith('.')) {
       const newValue = formattedAmount.slice(0, -1)
       setFormattedAmount(newValue)
