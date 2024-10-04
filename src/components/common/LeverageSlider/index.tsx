@@ -29,7 +29,7 @@ function LeverageSlider(props: Props) {
     () =>
       debounce((newValue: number) => {
         onChange(newValue)
-      }, 500),
+      }, 100),
     [onChange],
   )
 
