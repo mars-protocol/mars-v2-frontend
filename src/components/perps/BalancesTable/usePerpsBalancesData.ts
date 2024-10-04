@@ -10,8 +10,9 @@ import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getAccountNetValue } from 'utils/accounts'
 import { byDenom } from 'utils/array'
-import { demagnify } from 'utils/formatters'
+import { demagnify, getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 
 export default function usePerpsBalancesTable() {
   const currentAccount = useCurrentAccount()
@@ -43,7 +44,7 @@ export default function usePerpsBalancesTable() {
         leverage: position.currentPrice
           .times(demagnify(position.amount.abs(), asset))
           .div(netValue)
-          .plus(1)
+          .shiftedBy(asset.decimals - PRICE_ORACLE_DECIMALS)
           .toNumber(),
       } as PerpPositionRow
     })
