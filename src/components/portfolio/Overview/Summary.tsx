@@ -6,7 +6,7 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import SummarySkeleton from 'components/portfolio/SummarySkeleton'
-import { MAX_AMOUNT_DECIMALS } from 'constants/math'
+import { BN_ZERO, MAX_AMOUNT_DECIMALS } from 'constants/math'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
@@ -59,7 +59,32 @@ export default function PortfolioSummary() {
       } as Account,
     )
 
-    const { positionValue, debts, netWorth, apr, leverage } = getAccountSummaryStats(
+    let totalNetWorth = BN_ZERO
+    let weightedAprSum = BN_ZERO
+
+    allAccounts.forEach((account) => {
+      const { netWorth, apr } = getAccountSummaryStats(
+        account,
+        borrowAssets,
+        lendingAssets,
+        hlsStrategies,
+        assets,
+        vaultAprs,
+        astroLpAprs,
+      )
+
+      const netWorthAmount = netWorth.amount
+      if (netWorthAmount.isEqualTo(0)) return
+
+      weightedAprSum = weightedAprSum.plus(netWorthAmount.multipliedBy(apr))
+      totalNetWorth = totalNetWorth.plus(netWorthAmount)
+    })
+
+    const combinedApr = totalNetWorth.isEqualTo(0)
+      ? BN_ZERO
+      : weightedAprSum.dividedBy(totalNetWorth)
+
+    const { positionValue, debts, netWorth, leverage } = getAccountSummaryStats(
       combinedAccount,
       borrowAssets,
       lendingAssets,
@@ -86,10 +111,10 @@ export default function PortfolioSummary() {
         title: (
           <FormattedNumber
             className='text-xl'
-            amount={apr.toNumber()}
+            amount={combinedApr.toNumber()}
             options={{
               suffix: '%',
-              maxDecimals: apr.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
+              maxDecimals: combinedApr.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
               minDecimals: 2,
             }}
           />

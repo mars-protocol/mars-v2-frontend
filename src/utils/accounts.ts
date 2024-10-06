@@ -116,6 +116,7 @@ export const calculateAccountApr = (
   const debtsValue = calculateAccountValue('debts', account, assets)
   const perpsValue = calculateAccountValue('perps', account, assets)
   const stakedAstroLpsValue = calculateAccountValue('stakedAstroLps', account, assets)
+
   const totalValue = depositValue
     .plus(lendsValue)
     .plus(vaultsValue)
@@ -132,6 +133,8 @@ export const calculateAccountApr = (
   let totalDebtInterestValue = BN_ZERO
   let totalAstroStakedLpsValue = BN_ZERO
 
+  let totalWeight = BN_ZERO
+
   if (isHls) {
     deposits?.forEach((deposit) => {
       const asset = assets.find(byDenom(deposit.denom))
@@ -147,6 +150,7 @@ export const calculateAccountApr = (
         .dividedBy(100)
 
       totalDepositsInterestValue = totalDepositsInterestValue.plus(positionInterest)
+      totalWeight = totalWeight.plus(amount.multipliedBy(price))
     })
   }
 
@@ -164,7 +168,9 @@ export const calculateAccountApr = (
       .multipliedBy(price)
       .multipliedBy(convertApyToApr(apy, 365))
       .dividedBy(100)
+
     totalLendsInterestValue = totalLendsInterestValue.plus(positionInterest)
+    totalWeight = totalWeight.plus(amount.multipliedBy(price))
   })
 
   vaults?.forEach((vault) => {
@@ -172,7 +178,9 @@ export const calculateAccountApr = (
     if (!apr) return
     const lockedValue = vault.values.primary.plus(vault.values.secondary)
     const positionInterest = lockedValue.multipliedBy(apr).dividedBy(100)
+
     totalVaultsInterestValue = totalVaultsInterestValue.plus(positionInterest)
+    totalWeight = totalWeight.plus(lockedValue)
   })
 
   debts?.forEach((debt) => {
@@ -191,6 +199,7 @@ export const calculateAccountApr = (
       .dividedBy(100)
 
     totalDebtInterestValue = totalDebtInterestValue.plus(positionInterest)
+    totalWeight = totalWeight.plus(amount.multipliedBy(price))
   })
 
   stakedAstroLps.forEach((stakedAstroLp) => {
@@ -199,16 +208,24 @@ export const calculateAccountApr = (
     const farmApr = farm.apr ?? 0
     const farmValue = getCoinValue(stakedAstroLp, assets)
     const positionInterest = farmValue.multipliedBy(farmApr).dividedBy(100)
+
     totalAstroStakedLpsValue = totalAstroStakedLpsValue.plus(positionInterest)
+    totalWeight = totalWeight.plus(farmValue)
   })
 
   const totalInterestValue = totalLendsInterestValue
     .plus(totalVaultsInterestValue)
-    .minus(totalDebtInterestValue)
     .plus(totalDepositsInterestValue)
     .plus(totalAstroStakedLpsValue)
+    .minus(totalDebtInterestValue)
 
-  return totalInterestValue.dividedBy(totalNetValue).times(100)
+  if (totalWeight.isEqualTo(0)) return BN_ZERO
+  // console.log(totalInterestValue.toNumber(), 'totalInterestValue')
+  // const totalAPY = totalInterestValue.dividedBy(totalNetValue).times(100)
+  const totalAPY = totalInterestValue.dividedBy(totalWeight).times(100)
+  // console.log(totalAPY.toNumber(), 'totalAPY')
+
+  return totalAPY
 }
 
 export function calculateAccountLeverage(account: Account, assets: Asset[]) {
@@ -457,6 +474,8 @@ export function getAccountSummaryStats(
     vaultAprs,
     astroLpAprs,
   )
+
+  // console.log(apr.toNumber(), 'aprprprpprprp')
   const leverage = calculateAccountLeverage(account, assets)
   return {
     positionValue: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionValue),
