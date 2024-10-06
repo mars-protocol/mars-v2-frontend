@@ -3,7 +3,6 @@ import BigNumber from 'bignumber.js'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
-import { VALUE_SCALE_FACTOR } from 'hooks/health-computer/useHealthComputer'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPosition } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { Positions } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
@@ -280,23 +279,11 @@ export function convertAccountToPositions(account: Account, assets: Asset[]): Po
       const decimalDiff = perpAssetDecimals - PRICE_ORACLE_DECIMALS
       return {
         base_denom: perpPosition.baseDenom,
-        current_price: perpPosition.currentPrice
-          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
-          .decimalPlaces(18)
-          .toString(),
-        current_exec_price: perpPosition.currentPrice
-          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
-          .decimalPlaces(18)
-          .toString(),
+        current_price: perpPosition.currentPrice.decimalPlaces(18).toString(),
+        current_exec_price: perpPosition.currentPrice.decimalPlaces(18).toString(),
         denom: perpPosition.denom,
-        entry_price: perpPosition.entryPrice
-          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
-          .decimalPlaces(18)
-          .toString(),
-        entry_exec_price: perpPosition.entryPrice
-          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
-          .decimalPlaces(18)
-          .toString(),
+        entry_price: perpPosition.entryPrice.decimalPlaces(18).toString(),
+        entry_exec_price: perpPosition.entryPrice.decimalPlaces(18).toString(),
         size: perpPosition.amount.toString() as any,
         unrealised_pnl: {
           accrued_funding: perpPosition.pnl.unrealized.funding.amount

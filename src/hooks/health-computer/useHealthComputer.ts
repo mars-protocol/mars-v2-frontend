@@ -38,11 +38,6 @@ import { findPositionInAccount } from 'utils/healthComputer'
 import { BN } from 'utils/helpers'
 import { getTokenPrice } from 'utils/tokens'
 
-// Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
-// avoid "too many decimals" errors.
-// TODO: Remove adjustment properly (after testing). We will just ignore the last 14 decimals.
-export const VALUE_SCALE_FACTOR = 12
-
 export default function useHealthComputer(account?: Account) {
   const { data: assets } = useAssets()
   const whitelistedAssets = useWhitelistedAssets()
@@ -80,7 +75,7 @@ export default function useHealthComputer(account?: Account) {
             denom: curr.denoms.vault,
             value: curr.values.primary
               .plus(curr.values.secondary)
-              .shiftedBy(VALUE_SCALE_FACTOR + 6) // Need to scale additional 6 to correct for uusd values
+              .shiftedBy(6) // Need to scale additional 6 to correct for uusd values
               .integerValue()
               .toString(),
           },
@@ -98,13 +93,10 @@ export default function useHealthComputer(account?: Account) {
     return prices.reduce(
       (prev, curr) => {
         const decimals = assets.find(byDenom(curr.denom))?.decimals || PRICE_ORACLE_DECIMALS
-        const decimalDiffrence = decimals - PRICE_ORACLE_DECIMALS
+        const decimalDiffrence = decimals
 
         // The HealthComputer needs prices expressed per 1 amount. So we need to correct here for any additional decimals.
-        prev[curr.denom] = curr.amount
-          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiffrence)
-          .decimalPlaces(18)
-          .toString()
+        prev[curr.denom] = curr.amount.shiftedBy(-decimalDiffrence).decimalPlaces(18).toString()
         return prev
       },
       {} as { [key: string]: string },
@@ -142,9 +134,9 @@ export default function useHealthComputer(account?: Account) {
       (prev, curr) => {
         prev[curr.denom] = {
           ...curr,
-          max_long_oi_value: BN(curr.max_long_oi_value).shiftedBy(VALUE_SCALE_FACTOR).toString(),
-          max_short_oi_value: BN(curr.max_short_oi_value).shiftedBy(VALUE_SCALE_FACTOR).toString(),
-          max_net_oi_value: BN(curr.max_net_oi_value).shiftedBy(VALUE_SCALE_FACTOR).toString(),
+          max_long_oi_value: curr.max_long_oi_value.toString(),
+          max_short_oi_value: curr.max_short_oi_value.toString(),
+          max_net_oi_value: curr.max_net_oi_value.toString(),
         }
 
         return prev
@@ -201,6 +193,8 @@ export default function useHealthComputer(account?: Account) {
     assetsParams,
     priceData,
   ])
+
+  console.log(healthComputer)
 
   useEffect(() => {
     if (!healthComputer) return
@@ -268,7 +262,6 @@ export default function useHealthComputer(account?: Account) {
         if (!asset || !assetInAccount) return 0
         const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
         return BN(liquidation_price_js(healthComputer, denom, kind))
-          .shiftedBy(-VALUE_SCALE_FACTOR)
           .shiftedBy(decimalDiff)
           .toNumber()
       } catch (err) {
