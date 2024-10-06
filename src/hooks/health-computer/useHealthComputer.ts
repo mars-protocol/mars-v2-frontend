@@ -194,8 +194,6 @@ export default function useHealthComputer(account?: Account) {
     priceData,
   ])
 
-  console.log(healthComputer)
-
   useEffect(() => {
     if (!healthComputer) return
     try {
