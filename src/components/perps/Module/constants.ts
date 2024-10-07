@@ -11,7 +11,7 @@ export const PERPS_ORDER_TYPE_TABS: OrderTab[] = [
   },
   {
     type: OrderType.STOP,
-    isDisabled: true,
+    isDisabled: false,
     tooltipText: ORDER_TYPE_UNAVAILABLE_MESSAGE,
   },
 ]

@@ -45,6 +45,8 @@ type Props = {
   orderType: OrderType
   limitPrice: BigNumber
   baseDenom: string
+  isReduceOnly: boolean
+  validateReduceOnlyOrder: () => boolean
 }
 
 export default function PerpsSummary(props: Props) {
@@ -59,6 +61,8 @@ export default function PerpsSummary(props: Props) {
     previousTradeDirection,
     baseDenom,
     limitPrice,
+    isReduceOnly,
+    validateReduceOnlyOrder,
   } = props
 
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
@@ -101,6 +105,9 @@ export default function PerpsSummary(props: Props) {
 
   const onConfirm = useCallback(async () => {
     if (!currentAccount || !feeToken) return
+
+    if (isReduceOnly && !validateReduceOnlyOrder()) return
+
     const orderSize = tradeDirection === 'short' && amount.isPositive() ? amount.negated() : amount
 
     const triggers: Trigger[] = []
@@ -130,6 +137,7 @@ export default function PerpsSummary(props: Props) {
         keeperFee: calculateKeeperFee,
         tradeDirection,
         price: adjustedLimitPrice,
+        reduceOnly: isReduceOnly,
       }
 
       await createTriggerOrder(triggerOrderParams)
@@ -141,6 +149,7 @@ export default function PerpsSummary(props: Props) {
       coin: BNCoin.fromDenomAndBigNumber(asset.denom, orderSize),
       autolend: isAutoLendEnabledForCurrentAccount,
       baseDenom,
+      reduceOnly: isReduceOnly,
     }
 
     await executePerpOrder(perpOrderParams)
@@ -160,6 +169,8 @@ export default function PerpsSummary(props: Props) {
     props.limitPrice,
     props.asset.denom,
     props.tradeDirection,
+    isReduceOnly,
+    validateReduceOnlyOrder,
     limitPrice,
     tradeDirection,
     createTriggerOrder,
