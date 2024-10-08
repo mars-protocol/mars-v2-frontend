@@ -9,11 +9,6 @@ export const PERPS_ORDER_TYPE_TABS: OrderTab[] = [
     type: OrderType.LIMIT,
     isDisabled: false,
   },
-  {
-    type: OrderType.STOP,
-    isDisabled: false,
-    tooltipText: ORDER_TYPE_UNAVAILABLE_MESSAGE,
-  },
 ]
 
 export const DEFAULT_LIMIT_PRICE_INFO: CallOut = {

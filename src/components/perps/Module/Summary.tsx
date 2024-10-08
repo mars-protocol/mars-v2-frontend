@@ -15,7 +15,6 @@ import TradingFee from 'components/perps/Module/TradingFee'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -23,6 +22,7 @@ import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePerpsConfig from 'hooks/perps/usePerpsConfig'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
+import { useSubmitLimitOrder } from 'hooks/perps/useSubmitLimitOrder'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -103,6 +103,8 @@ export default function PerpsSummary(props: Props) {
     [feeToken, isLimitOrder, keeperFee.amount],
   )
 
+  const submitLimitOrder = useSubmitLimitOrder()
+
   const onConfirm = useCallback(async () => {
     if (!currentAccount || !feeToken) return
 
@@ -110,37 +112,16 @@ export default function PerpsSummary(props: Props) {
 
     const orderSize = tradeDirection === 'short' && amount.isPositive() ? amount.negated() : amount
 
-    const triggers: Trigger[] = []
-
-    if (isLimitOrder) {
-      const decimalAdjustment = asset.decimals - PRICE_ORACLE_DECIMALS
-      const adjustedLimitPrice = props.limitPrice.shiftedBy(-decimalAdjustment)
-
-      triggers.push({
-        price_trigger: {
-          denom: props.asset.denom,
-          oracle_price: adjustedLimitPrice.toString(),
-          trigger_type: props.tradeDirection === 'long' ? 'less_than' : 'greater_than',
-        },
-      })
-    }
-
     if (isLimitOrder && calculateKeeperFee) {
-      const decimalAdjustment = asset.decimals - PRICE_ORACLE_DECIMALS
-      const adjustedLimitPrice = limitPrice.shiftedBy(-decimalAdjustment)
-
-      const triggerOrderParams = {
-        accountId: currentAccount.id,
-        coin: BNCoin.fromDenomAndBigNumber(asset.denom, orderSize),
-        autolend: isAutoLendEnabledForCurrentAccount,
+      await submitLimitOrder({
+        asset,
+        orderSize,
+        limitPrice,
+        tradeDirection,
         baseDenom,
         keeperFee: calculateKeeperFee,
-        tradeDirection,
-        price: adjustedLimitPrice,
-        reduceOnly: isReduceOnly,
-      }
-
-      await createTriggerOrder(triggerOrderParams)
+        isReduceOnly,
+      })
       return onTxExecuted()
     }
 
@@ -159,21 +140,17 @@ export default function PerpsSummary(props: Props) {
     feeToken,
     isLimitOrder,
     calculateKeeperFee,
-    asset.denom,
-    asset.decimals,
+    asset,
     amount,
     isAutoLendEnabledForCurrentAccount,
     baseDenom,
     executePerpOrder,
     onTxExecuted,
-    props.limitPrice,
-    props.asset.denom,
-    props.tradeDirection,
-    isReduceOnly,
-    validateReduceOnlyOrder,
     limitPrice,
     tradeDirection,
-    createTriggerOrder,
+    isReduceOnly,
+    validateReduceOnlyOrder,
+    submitLimitOrder,
   ])
 
   const isDisabled = useMemo(() => amount.isZero() || disabled, [amount, disabled])

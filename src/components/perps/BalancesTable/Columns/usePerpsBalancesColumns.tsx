@@ -11,6 +11,8 @@ import TradeDirection, {
   PERP_TYPE_META,
 } from 'components/perps/BalancesTable/Columns/TradeDirection'
 import { Type, TYPE_META } from 'components/perps/BalancesTable/Columns/Type'
+import { demagnify } from 'utils/formatters'
+import BigNumber from 'bignumber.js'
 
 export default function usePerpsBalancesColumns() {
   return useMemo<ColumnDef<PerpPositionRow>[]>(() => {
@@ -29,7 +31,13 @@ export default function usePerpsBalancesColumns() {
       },
       {
         ...SIZE_META,
-        cell: ({ row }) => <Size amount={row.original.amount} asset={row.original.asset} />,
+        cell: ({ row }) => {
+          const { asset, amount, type, entryPrice } = row.original
+          const price = type === 'limit' ? entryPrice : new BigNumber(asset.price?.amount || 0)
+          const demagnifiedAmount = new BigNumber(demagnify(amount, asset))
+          const value = demagnifiedAmount.times(price)
+          return <Size amount={row.original.amount} asset={row.original.asset} value={value} />
+        },
         sortingFn: sizeSortingFn,
       },
       {

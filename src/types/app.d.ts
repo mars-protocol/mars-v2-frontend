@@ -978,6 +978,19 @@ interface HandleResponseProps {
   message?: string
 }
 
+interface CreateMultipleTriggerOrdersOptions {
+  accountId: string
+  orders: Array<{
+    coin: BNCoin
+    reduceOnly?: boolean
+    autolend: boolean
+    baseDenom: string
+    tradeDirection: TradeDirection
+    price: BigNumber
+    keeperFee: BNCoin
+  }>
+}
+
 interface BroadcastSlice {
   addToStakingStrategy: (options: {
     accountId: string
@@ -1034,6 +1047,18 @@ interface BroadcastSlice {
     price: BigNumber
     keeperFee: BNCoin
   }) => Promise<boolean>
+  createMultipleTriggerOrders: (options: CreateMultipleTriggerOrdersOptions) => Promise<boolean>
+  createTriggerOrder: (options: {
+    accountId: string
+    coin: BNCoin
+    reduceOnly?: boolean
+    autolend: boolean
+    baseDenom: string
+    tradeDirection: TradeDirection
+    price: BigNumber
+    keeperFee: BNCoin
+  }) => Promise<boolean>
+
   cancelTriggerOrder: (options: {
     accountId: string
     orderId: string
@@ -1211,6 +1236,7 @@ interface ModalSlice {
   perpsVaultModal: PerpsVaultModal | null
   settingsModal: boolean
   keeperFeeModal: boolean
+  addSLTPModal: boolean
   unlockModal: UnlockModal | null
   farmModal: FarmModal | null
   walletAssetsModal: WalletAssetModal | null
