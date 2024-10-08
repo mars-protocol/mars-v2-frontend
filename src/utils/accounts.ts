@@ -117,14 +117,14 @@ export const calculateAccountApr = (
   const perpsValue = calculateAccountValue('perps', account, assets)
   const stakedAstroLpsValue = calculateAccountValue('stakedAstroLps', account, assets)
 
-  const totalValue = depositValue
+  const totalDenominatorValue = depositValue
     .plus(lendsValue)
     .plus(vaultsValue)
     .plus(perpsValue)
     .plus(stakedAstroLpsValue)
-  const totalNetValue = totalValue.minus(debtsValue)
+    .plus(debtsValue.abs())
 
-  if (totalNetValue.isLessThanOrEqualTo(0)) return BN_ZERO
+  if (totalDenominatorValue.isLessThanOrEqualTo(0)) return BN_ZERO
   const { vaults, lends, debts, deposits, stakedAstroLps } = account
 
   let totalDepositsInterestValue = BN_ZERO
@@ -213,7 +213,8 @@ export const calculateAccountApr = (
     .minus(totalDebtInterestValue)
 
   if (totalInterestValue.isEqualTo(0)) return BN_ZERO
-  return totalInterestValue.dividedBy(totalNetValue).times(100)
+
+  return totalInterestValue.dividedBy(totalDenominatorValue).times(100)
 }
 
 export function calculateAccountLeverage(account: Account, assets: Asset[]) {

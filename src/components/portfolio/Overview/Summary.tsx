@@ -59,28 +59,7 @@ export default function PortfolioSummary() {
       } as Account,
     )
 
-    let totalNetWorth = BN_ZERO
-    let weightedAprSum = BN_ZERO
-
-    allAccounts.forEach((account) => {
-      const { netWorth, apr } = getAccountSummaryStats(
-        account,
-        borrowAssets,
-        lendingAssets,
-        hlsStrategies,
-        assets,
-        vaultAprs,
-        astroLpAprs,
-      )
-
-      const netWorthAmount = netWorth.amount
-      if (netWorthAmount.isEqualTo(0)) return
-
-      weightedAprSum = weightedAprSum.plus(netWorthAmount.multipliedBy(apr))
-      totalNetWorth = totalNetWorth.plus(netWorthAmount)
-    })
-
-    const { positionValue, debts, netWorth, leverage } = getAccountSummaryStats(
+    const { positionValue, debts, netWorth, leverage, apr } = getAccountSummaryStats(
       combinedAccount,
       borrowAssets,
       lendingAssets,
@@ -89,10 +68,6 @@ export default function PortfolioSummary() {
       vaultAprs,
       astroLpAprs,
     )
-
-    const combinedApr = totalNetWorth.isEqualTo(0)
-      ? BN_ZERO
-      : weightedAprSum.dividedBy(totalNetWorth).multipliedBy(positionValue.amount)
 
     return [
       {
@@ -111,10 +86,10 @@ export default function PortfolioSummary() {
         title: (
           <FormattedNumber
             className='text-xl'
-            amount={combinedApr.toNumber()}
+            amount={apr.toNumber()}
             options={{
               suffix: '%',
-              maxDecimals: combinedApr.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
+              maxDecimals: apr.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
               minDecimals: 2,
             }}
           />
