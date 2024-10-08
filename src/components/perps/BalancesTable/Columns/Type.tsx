@@ -13,10 +13,7 @@ interface Props {
 
 export function Type(props: Props) {
   return (
-    <Text
-      size='xs'
-      className='inline-block px-2 py-0.5 capitalize rounded-sm bg-white/20 text-white/80'
-    >
+    <Text size='xs' className='inline-block px-2 py-0.5 capitalize text-white/80'>
       {props.type}
     </Text>
   )

@@ -18,6 +18,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { SearchParams } from 'types/enums'
 import { getSearchParamsObject } from 'utils/route'
+import AddSLTPModal from 'components/Modals/AddSLTPModal'
 
 export const MANAGE_META = { id: 'manage', header: 'Manage', meta: { className: 'w-40 min-w-40' } }
 
@@ -51,6 +52,13 @@ export default function Manage(props: Props) {
       baseDenom: perpPosition.baseDenom,
     })
   }, [currentAccount, executePerpOrder, isAutoLendEnabledForCurrentAccount, perpPosition])
+
+  const isAddSLTPModalOpen = useStore((s) => s.addSLTPModal)
+
+  const openAddSLTPModal = () => {
+    useStore.setState({ addSLTPModal: true })
+  }
+
   const handleCloseClick = useCallback(() => {
     if (!currentAccount) return
     if (!showSummary) {
@@ -126,6 +134,11 @@ export default function Manage(props: Props) {
         text: 'Close Position',
         onClick: () => handleCloseClick(),
       },
+      {
+        icon: <Edit />,
+        text: 'Add SL/TP',
+        onClick: () => openAddSLTPModal(),
+      },
     ],
     [handleCloseClick, perpPosition.asset.denom, searchParams, setSearchParams],
   )
@@ -155,6 +168,7 @@ export default function Manage(props: Props) {
 
   return (
     <div className='flex justify-end'>
+      {isAddSLTPModalOpen && <AddSLTPModal />}
       <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
     </div>
   )

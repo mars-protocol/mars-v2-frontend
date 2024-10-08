@@ -1,5 +1,4 @@
 import { Row } from '@tanstack/react-table'
-import { useMemo } from 'react'
 
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
@@ -7,6 +6,7 @@ import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify } from 'utils/formatters'
+import BigNumber from 'bignumber.js'
 
 export const SIZE_META = {
   accessorKey: 'size',
@@ -27,28 +27,22 @@ export const sizeSortingFn = (a: Row<PerpPositionRow>, b: Row<PerpPositionRow>):
 type Props = {
   amount: BigNumber
   asset: Asset
+  value: BigNumber
 }
 
 export default function Size(props: Props) {
-  const amount = useMemo(
-    () => demagnify(props.amount.abs().toString(), props.asset),
-    [props.asset, props.amount],
-  )
+  const { amount, value, asset } = props
 
   return (
     <TitleAndSubCell
       title={
         <FormattedNumber
-          amount={amount}
+          amount={demagnify(amount, asset)}
           options={{ maxDecimals: props.asset.decimals }}
           className='text-xs'
         />
       }
-      sub={
-        <DisplayCurrency
-          coin={BNCoin.fromDenomAndBigNumber(props.asset.denom, props.amount.abs())}
-        />
-      }
+      sub={<DisplayCurrency coin={BNCoin.fromDenomAndBigNumber('usd', value)} />}
     />
   )
 }

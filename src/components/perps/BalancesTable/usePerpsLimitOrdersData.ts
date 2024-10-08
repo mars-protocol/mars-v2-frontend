@@ -1,21 +1,22 @@
 import { useMemo } from 'react'
-
 import { BN_ONE, BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import usePerpsConfig from 'hooks/perps/usePerpsConfig'
 import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
+import { LiquidationPriceKind } from 'utils/health_computer'
 
 export default function usePerpsLimitOrdersData() {
   const currentAccount = useCurrentAccount()
   const perpAssets = usePerpsEnabledAssets()
   const { data: limitOrders } = usePerpsLimitOrders()
   const { data: perpsConfig } = usePerpsConfig()
+  const { computeLiquidationPrice } = useHealthComputer()
 
   return useMemo<PerpPositionRow[]>(() => {
     if (!currentAccount || !perpsConfig || !limitOrders) return []
@@ -32,12 +33,18 @@ export default function usePerpsLimitOrdersData() {
       const asset = perpAssets.find(byDenom(perpOrder.denom))!
       const amount = BN(perpOrder.order_size)
       if (!asset) return
+
+      const tradeDirection = BN(perpOrder.order_size).isGreaterThanOrEqualTo(0) ? 'long' : 'short'
+      const liquidationPriceKind: LiquidationPriceKind =
+        tradeDirection === 'long' ? 'asset' : 'debt'
+
+      const liquidationPrice = computeLiquidationPrice(perpOrder.denom, liquidationPriceKind)
       activeLimitOrders.push({
         orderId: limitOrder.order.order_id,
         asset,
         denom: perpOrder.denom,
         baseDenom: perpsConfig.base_denom,
-        tradeDirection: BN(perpOrder.order_size).isGreaterThanOrEqualTo(0) ? 'long' : 'short',
+        tradeDirection,
         amount: amount.abs(),
         type: 'limit',
         pnl: {
@@ -59,11 +66,11 @@ export default function usePerpsLimitOrdersData() {
         currentPrice: BN(asset.price?.amount ?? 0).shiftedBy(
           -asset.decimals + PRICE_ORACLE_DECIMALS,
         ),
-        liquidationPrice: BN_ONE, // TODO: 📈 Get actual liquidation price from HC
+        liquidationPrice: liquidationPrice !== null ? BN(liquidationPrice) : BN_ONE,
         leverage: 1,
       })
     })
 
     return activeLimitOrders
-  }, [currentAccount, perpsConfig, limitOrders, perpAssets])
+  }, [currentAccount, perpsConfig, limitOrders, perpAssets, computeLiquidationPrice])
 }

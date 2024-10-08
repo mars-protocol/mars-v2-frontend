@@ -25,5 +25,6 @@ export default function createModalSlice(set: SetState<ModalSlice>, get: GetStat
     v1DepositAndWithdrawModal: null,
     v1BorrowAndRepayModal: null,
     keeperFeeModal: false,
+    addSLTPModal: false,
   }
 }

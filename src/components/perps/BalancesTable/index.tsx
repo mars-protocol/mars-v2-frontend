@@ -15,6 +15,7 @@ export default function PerpsBalancesTable() {
   const columns = usePerpsBalancesColumns()
   const [searchParams, setSearchParams] = useSearchParams()
 
+  console.log('limitOrders', activeLimitOrders)
   const onClickRow = useCallback(
     (denom: string) => {
       const params = getSearchParamsObject(searchParams)

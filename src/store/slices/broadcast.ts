@@ -846,6 +846,61 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
+    createMultipleTriggerOrders: async (options: CreateMultipleTriggerOrdersOptions) => {
+      const actions: Action[] = options.orders.map((order) => {
+        const triggerActions: Action[] = [
+          {
+            execute_perp_order: {
+              denom: order.coin.denom,
+              order_size: order.coin.amount.toString() as any,
+              reduce_only: order.reduceOnly,
+            },
+          },
+        ]
+        if (order.autolend)
+          triggerActions.push({
+            lend: {
+              denom: order.baseDenom,
+              amount: 'account_balance',
+            },
+          })
+
+        const triggerConditions: Condition[] = [
+          {
+            oracle_price: {
+              comparison: order.tradeDirection === 'long' ? 'less_than' : 'greater_than',
+              denom: order.coin.denom,
+              price: order.price.toString(),
+            },
+          },
+        ]
+
+        return {
+          create_trigger_order: {
+            keeper_fee: order.keeperFee.toCoin(),
+            actions: triggerActions,
+            conditions: triggerConditions,
+          },
+        }
+      })
+
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions,
+        },
+      }
+
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().handleTransaction({ response })
+
+      return response.then((response) => !!response.result)
+    },
     executePerpOrder: async (options: {
       accountId: string
       coin: BNCoin
