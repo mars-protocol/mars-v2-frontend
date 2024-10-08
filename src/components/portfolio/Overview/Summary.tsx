@@ -80,10 +80,6 @@ export default function PortfolioSummary() {
       totalNetWorth = totalNetWorth.plus(netWorthAmount)
     })
 
-    const combinedApr = totalNetWorth.isEqualTo(0)
-      ? BN_ZERO
-      : weightedAprSum.dividedBy(totalNetWorth)
-
     const { positionValue, debts, netWorth, leverage } = getAccountSummaryStats(
       combinedAccount,
       borrowAssets,
@@ -93,6 +89,10 @@ export default function PortfolioSummary() {
       vaultAprs,
       astroLpAprs,
     )
+
+    const combinedApr = totalNetWorth.isEqualTo(0)
+      ? BN_ZERO
+      : weightedAprSum.dividedBy(totalNetWorth).multipliedBy(positionValue.amount)
 
     return [
       {
