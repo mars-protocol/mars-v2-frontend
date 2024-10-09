@@ -6,7 +6,7 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import SummarySkeleton from 'components/portfolio/SummarySkeleton'
-import { BN_ZERO, MAX_AMOUNT_DECIMALS } from 'constants/math'
+import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
@@ -59,7 +59,7 @@ export default function PortfolioSummary() {
       } as Account,
     )
 
-    const { positionValue, debts, netWorth, leverage, apr } = getAccountSummaryStats(
+    const { positionValue, debts, netWorth, apr, leverage } = getAccountSummaryStats(
       combinedAccount,
       borrowAssets,
       lendingAssets,

@@ -463,7 +463,6 @@ export function getAccountSummaryStats(
     vaultAprs,
     astroLpAprs,
   )
-
   const leverage = calculateAccountLeverage(account, assets)
   return {
     positionValue: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionValue),
