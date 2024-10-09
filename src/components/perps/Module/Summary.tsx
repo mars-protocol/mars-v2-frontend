@@ -15,6 +15,7 @@ import TradingFee from 'components/perps/Module/TradingFee'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -111,6 +112,13 @@ export default function PerpsSummary(props: Props) {
     if (isReduceOnly && !validateReduceOnlyOrder()) return
 
     const orderSize = tradeDirection === 'short' && amount.isPositive() ? amount.negated() : amount
+    let comparison: 'less_than' | 'greater_than'
+
+    if (tradeDirection === 'short') {
+      comparison = 'less_than'
+    } else {
+      comparison = 'greater_than'
+    }
 
     if (isLimitOrder && calculateKeeperFee) {
       await submitLimitOrder({
@@ -119,6 +127,7 @@ export default function PerpsSummary(props: Props) {
         limitPrice,
         tradeDirection,
         baseDenom,
+        comparison,
         keeperFee: calculateKeeperFee,
         isReduceOnly,
       })
