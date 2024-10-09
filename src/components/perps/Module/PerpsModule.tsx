@@ -31,6 +31,7 @@ import { capitalizeFirstLetter } from 'utils/helpers'
 import getPerpsPosition from 'utils/getPerpsPosition'
 import LeverageSlider from 'components/common/LeverageSlider'
 import Switch from 'components/common/Switch'
+import Checkbox from 'components/common/Checkbox'
 
 export function PerpsModule() {
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
@@ -282,15 +283,7 @@ export function PerpsModule() {
           direction={tradeDirection}
           onChangeDirection={onChangeTradeDirection}
         />
-        {currentPerpPosition && (
-          <>
-            <div className='flex items-center justify-between mt-4 rounded'>
-              <Text size='sm'>Reduce Only</Text>
-              <Switch name='reduce-only' checked={isReduceOnly} onChange={setIsReduceOnly} />
-            </div>
-            {reduceOnlyWarning && <Callout type={CalloutType.WARNING}>{reduceOnlyWarning}</Callout>}
-          </>
-        )}
+
         {isLimitOrder && USD && (
           <>
             <AssetAmountInput
@@ -350,6 +343,22 @@ export function PerpsModule() {
             {message}
           </Callout>
         ))}
+        {currentPerpPosition && (
+          <>
+            <Divider />
+            <div className='flex items-center gap-2 rounded'>
+              <Checkbox
+                name='reduce-only'
+                checked={isReduceOnly}
+                onChange={() => setIsReduceOnly(!isReduceOnly)}
+              />
+              <div onClick={() => setIsReduceOnly(!isReduceOnly)}>
+                <Text size='sm'>Reduce Only</Text>
+              </div>
+            </div>
+            {reduceOnlyWarning && <Callout type={CalloutType.WARNING}>{reduceOnlyWarning}</Callout>}
+          </>
+        )}
       </div>
       <div className='flex flex-wrap w-full gap-4 mt-4'>
         {isLimitOrder && <KeeperFee />}
