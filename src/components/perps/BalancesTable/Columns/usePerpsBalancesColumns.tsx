@@ -1,5 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import EntryPrice, { ENTRY_PRICE_META } from 'components/perps/BalancesTable/Columns/EntryPrice'
 import Leverage, { LEVERAGE_META } from 'components/perps/BalancesTable/Columns/Leverage'
@@ -13,17 +13,17 @@ import TradeDirection, {
 import { Type, TYPE_META } from 'components/perps/BalancesTable/Columns/Type'
 import { demagnify } from 'utils/formatters'
 import BigNumber from 'bignumber.js'
+import usePerpsLimitOrdersData from '../usePerpsLimitOrdersData'
+import { checkStopLossAndTakeProfit } from 'utils/perps'
 
 export default function usePerpsBalancesColumns() {
-  return useMemo<ColumnDef<PerpPositionRow>[]>(() => {
-    return [
+  const activeLimitOrders = usePerpsLimitOrdersData()
+
+  const staticColumns = useMemo<ColumnDef<PerpPositionRow>[]>(
+    () => [
       {
         ...PERP_NAME_META,
         cell: ({ row }) => <PerpName asset={row.original.asset} />,
-      },
-      {
-        ...TYPE_META,
-        cell: ({ row }) => <Type type={row.original.type} />,
       },
       {
         ...PERP_TYPE_META,
@@ -67,6 +67,35 @@ export default function usePerpsBalancesColumns() {
         ...MANAGE_META,
         cell: ({ row }) => <Manage perpPosition={row.original} />,
       },
-    ]
-  }, [])
+    ],
+    [],
+  )
+
+  const typeColumn = useMemo<ColumnDef<PerpPositionRow>>(
+    () => ({
+      ...TYPE_META,
+      cell: ({ row }) => {
+        const position = row.original
+        const { hasStopLoss, hasTakeProfit } = checkStopLossAndTakeProfit(
+          position,
+          activeLimitOrders,
+        )
+        return (
+          <Type
+            type={position.type}
+            hasStopLoss={hasStopLoss}
+            hasTakeProfit={hasTakeProfit}
+            showIndicators={position.type !== 'limit'}
+          />
+        )
+      },
+    }),
+    [activeLimitOrders],
+  )
+
+  return useMemo(() => {
+    const allColumns = [...staticColumns]
+    allColumns.splice(1, 0, typeColumn)
+    return allColumns
+  }, [staticColumns, typeColumn])
 }
