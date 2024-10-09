@@ -951,7 +951,6 @@ export default function createBroadcastSlice(
       const actions: Action[] = [
         {
           delete_trigger_order: {
-            account_id: options.accountId,
             trigger_order_id: options.orderId,
           },
         },

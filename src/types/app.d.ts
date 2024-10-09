@@ -356,6 +356,8 @@ interface PerpPositionRow extends PerpsPosition {
   liquidationPrice: BigNumber
   leverage: number
   orderId?: string
+  hasStopLoss?: boolean
+  hasTakeProfit?: boolean
 }
 
 interface PerpsPnL {
@@ -1694,6 +1696,7 @@ interface ExceutePerpsOrder {
     denom: string
     order_size: SignedUint
     reduce_only?: boolean | null
+    order_type: 'stop_loss' | 'take_profit'
   }
 }
 

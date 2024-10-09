@@ -8,13 +8,24 @@ export const TYPE_META = {
 }
 
 interface Props {
-  type: PerpsPosition['type']
+  type: string
+  hasStopLoss?: boolean
+  hasTakeProfit?: boolean
+  showIndicators: boolean
 }
 
-export function Type(props: Props) {
+export function Type({ type, hasStopLoss, hasTakeProfit, showIndicators }: Props) {
   return (
-    <Text size='xs' className='inline-block px-2 py-0.5 capitalize text-white/80'>
-      {props.type}
-    </Text>
+    <div className='flex flex-col items-start'>
+      <Text size='sm' className='capitalize'>
+        {type}
+      </Text>
+      {showIndicators && (hasStopLoss || hasTakeProfit) && (
+        <div className='flex gap-1 mt-1 items-center justify-center'>
+          {hasStopLoss && <span className='bg-gray-700 text-white text-xs px-1 rounded'>SL</span>}
+          {hasTakeProfit && <span className='bg-gray-700 text-white text-xs px-1 rounded'>TP</span>}
+        </div>
+      )}
+    </div>
   )
 }
