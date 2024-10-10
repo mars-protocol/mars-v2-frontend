@@ -3,7 +3,6 @@ import AssetImage from 'components/common/assets/AssetImage'
 import DoubleLogo from 'components/common/DoubleLogo'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
-import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAsset from 'hooks/assets/useAsset'
 import usePoolAssets from 'hooks/assets/usePoolAssets'
 import { useMemo } from 'react'
@@ -18,11 +17,11 @@ export const NAME_META = {
 
 interface Props {
   farm: AstroLp | DepositedAstroLp
+  account?: Account
 }
 
 export default function Name(props: Props) {
-  const { farm } = props
-  const account = useCurrentAccount()
+  const { farm, account } = props
   const primaryAsset = useAsset(farm.denoms.primary)
   const poolAssets = usePoolAssets()
   const poolAsset = poolAssets.find(byDenom(farm.denoms.lp))
