@@ -6,7 +6,6 @@ import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify } from 'utils/formatters'
-import BigNumber from 'bignumber.js'
 
 export const SIZE_META = {
   accessorKey: 'size',

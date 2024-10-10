@@ -30,7 +30,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
 import { formatLeverage, magnify } from 'utils/formatters'
-import BigNumber from 'bignumber.js'
+import { BN } from 'utils/helpers'
 
 type Props = {
   leverage: number
@@ -100,7 +100,7 @@ export default function PerpsSummary(props: Props) {
       isLimitOrder && feeToken
         ? BNCoin.fromDenomAndBigNumber(
             feeToken.denom,
-            magnify(new BigNumber(keeperFee.amount).toNumber(), feeToken),
+            magnify(BN(keeperFee.amount).toNumber(), feeToken),
           )
         : undefined,
     [feeToken, isLimitOrder, keeperFee.amount],

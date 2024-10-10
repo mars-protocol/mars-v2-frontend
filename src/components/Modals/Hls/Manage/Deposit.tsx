@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import { useCallback, useMemo } from 'react'
 
 import Button from 'components/common/Button'

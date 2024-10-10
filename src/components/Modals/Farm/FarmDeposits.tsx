@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import { useCallback, useMemo, useState } from 'react'
 
 import Button from 'components/common/Button'
@@ -92,7 +91,7 @@ export default function FarmDeposits(props: Props) {
   }, [primaryValue, totalValue])
 
   const secondaryValuePercentage = useMemo(
-    () => new BigNumber(100).minus(primaryValuePercentage).integerValue(2).toNumber() ?? 50,
+    () => BN(100).minus(primaryValuePercentage).integerValue(2).toNumber() ?? 50,
     [primaryValuePercentage],
   )
 

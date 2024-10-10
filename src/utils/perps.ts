@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js'
+import { BN } from './helpers'
 
 export const checkStopLossAndTakeProfit = (
   position: PerpPositionRow,
@@ -9,17 +9,17 @@ export const checkStopLossAndTakeProfit = (
   const hasStopLoss = limitOrders.some(
     (order) =>
       (position.tradeDirection === 'long' &&
-        new BigNumber(order.entryPrice).isLessThan(new BigNumber(position.currentPrice))) ||
+        BN(order.entryPrice).isLessThan(BN(position.currentPrice))) ||
       (position.tradeDirection === 'short' &&
-        new BigNumber(order.entryPrice).isGreaterThan(new BigNumber(position.currentPrice))),
+        BN(order.entryPrice).isGreaterThan(BN(position.currentPrice))),
   )
 
   const hasTakeProfit = limitOrders.some(
     (order) =>
       (position.tradeDirection === 'long' &&
-        new BigNumber(order.entryPrice).isGreaterThan(new BigNumber(position.currentPrice))) ||
+        BN(order.entryPrice).isGreaterThan(BN(position.currentPrice))) ||
       (position.tradeDirection === 'short' &&
-        new BigNumber(order.entryPrice).isLessThan(new BigNumber(position.currentPrice))),
+        BN(order.entryPrice).isLessThan(BN(position.currentPrice))),
   )
 
   return { hasStopLoss, hasTakeProfit }

@@ -3,9 +3,10 @@ import Button from 'components/common/Button'
 import Divider from 'components/common/Divider'
 import { AlertCircle, TrashBin } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import useStore from 'store'
 import AssetAmountInput from 'components/common/AssetAmountInput'
+import { Callout, CalloutType } from 'components/common/Callout'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { useSubmitLimitOrder } from 'hooks/perps/useSubmitLimitOrder'
@@ -16,18 +17,22 @@ import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useAssets from 'hooks/assets/useAssets'
 import { byDenom } from 'utils/array'
 import usePrice from 'hooks/prices/usePrice'
-import BigNumber from 'bignumber.js'
 import { formatPercent, magnify } from 'utils/formatters'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import { BN } from 'utils/helpers'
 
-export default function AddSLTPModal() {
+export default function PerpsSlTpModal() {
   const [stopLossPrice, setStopLossPrice] = useState(BN_ZERO)
   const [takeProfitPrice, setTakeProfitPrice] = useState(BN_ZERO)
   const [showStopLoss, setShowStopLoss] = useState(false)
   const [showTakeProfit, setShowTakeProfit] = useState(false)
+
+  const [stopLossError, setStopLossError] = useState<string | null>(null)
+  const [takeProfitError, setTakeProfitError] = useState<string | null>(null)
+  const [isFormValid, setIsFormValid] = useState(false)
 
   const { data: allAssets } = useAssets()
   const USD = allAssets.find(byDenom('usd'))
@@ -38,6 +43,8 @@ export default function AddSLTPModal() {
   const { data: perpsConfig } = usePerpsConfig()
   const assets = useDepositEnabledAssets()
   const currentPrice = usePrice(perpsAsset?.denom)
+
+  const assetName = useMemo(() => perpsAsset?.symbol || 'the asset', [perpsAsset])
 
   const stopLossPercentage = useMemo(() => {
     if (!currentPrice || stopLossPrice.isZero()) return BN_ZERO
@@ -66,7 +73,7 @@ export default function AddSLTPModal() {
       feeToken
         ? BNCoin.fromDenomAndBigNumber(
             feeToken.denom,
-            magnify(new BigNumber(keeperFee.amount).toNumber(), feeToken),
+            magnify(BN(keeperFee.amount).toNumber(), feeToken),
           )
         : undefined,
     [feeToken, keeperFee.amount],
@@ -85,6 +92,76 @@ export default function AddSLTPModal() {
   const positionSize = useMemo(() => {
     return currentAccount?.perps.find((p) => p.denom === perpsAsset?.denom)?.amount ?? BN_ZERO
   }, [currentAccount, perpsAsset])
+
+  const validatePrices = useCallback(() => {
+    if (!currentPrice) return
+
+    let isValid = true
+
+    if (showStopLoss && !stopLossPrice.isZero()) {
+      if (currentTradeDirection === 'long') {
+        if (stopLossPrice.isGreaterThanOrEqualTo(currentPrice)) {
+          setStopLossError(
+            'Stop Loss price must be lower than the current price for long positions',
+          )
+          isValid = false
+        } else {
+          setStopLossError(null)
+        }
+      } else {
+        if (stopLossPrice.isLessThanOrEqualTo(currentPrice)) {
+          setStopLossError(
+            'Stop Loss price must be higher than the current price for short positions',
+          )
+          isValid = false
+        } else {
+          setStopLossError(null)
+        }
+      }
+    } else {
+      setStopLossError(null)
+    }
+
+    if (showTakeProfit && !takeProfitPrice.isZero()) {
+      if (currentTradeDirection === 'long') {
+        if (takeProfitPrice.isLessThanOrEqualTo(currentPrice)) {
+          setTakeProfitError(
+            'Take Profit price must be higher than the current price for long positions',
+          )
+          isValid = false
+        } else {
+          setTakeProfitError(null)
+        }
+      } else {
+        if (takeProfitPrice.isGreaterThanOrEqualTo(currentPrice)) {
+          setTakeProfitError(
+            'Take Profit price must be lower than the current price for short positions',
+          )
+          isValid = false
+        } else {
+          setTakeProfitError(null)
+        }
+      }
+    } else {
+      setTakeProfitError(null)
+    }
+
+    const isAnyTriggerSet =
+      (showStopLoss && !stopLossPrice.isZero()) || (showTakeProfit && !takeProfitPrice.isZero())
+
+    setIsFormValid(isValid && isAnyTriggerSet)
+  }, [
+    currentPrice,
+    currentTradeDirection,
+    showStopLoss,
+    stopLossPrice,
+    showTakeProfit,
+    takeProfitPrice,
+  ])
+
+  useEffect(() => {
+    validatePrices()
+  }, [validatePrices])
 
   const handleDone = useCallback(async () => {
     if (!currentAccount || !perpsAsset || !feeToken) return
@@ -202,16 +279,25 @@ export default function AddSLTPModal() {
                 disabled={false}
                 isUSD
               />
-              <div
-                className={
-                  'flex flex-1 flex-row py-3 border border-white/20 rounded bg-white/5 pl-3 pr-2 mt-2'
-                }
-              >
-                <Text className={stopLossPercentage.isNegative() ? 'text-error' : 'text-success'}>
+              <div className='flex flex-1 flex-row py-3 border border-white/20 rounded bg-white/5 pl-3 pr-2 mt-2'>
+                <Text
+                  className={
+                    stopLossPercentage.isZero()
+                      ? 'text-white'
+                      : stopLossPercentage.isNegative()
+                        ? 'text-error'
+                        : 'text-success'
+                  }
+                >
                   {formatPercent(stopLossPercentage.toNumber())}
                 </Text>
               </div>
             </div>
+            {stopLossError && (
+              <Callout type={CalloutType.WARNING} className='mt-2 text-left'>
+                {stopLossError}
+              </Callout>
+            )}
             <Button
               onClick={handleRemoveStopLoss}
               text='Remove trigger'
@@ -232,18 +318,16 @@ export default function AddSLTPModal() {
           />
         )}
         <Text size='sm' className='text-white/60 text-left'>
-          If ETH falls to your specified price, a market sell will be triggered to prevent any
-          further losses.
+          {`If ${assetName} falls to your specified price, a market sell will be triggered to prevent any further losses.`}
         </Text>
 
-        <div className='flex flex-row items-center justify-between'>
-          <Divider />
-          <Text size='sm' className='text-white/60 text-nowrap px-2'>
+        <div className='flex w-full items-center gap-2'>
+          <Divider className='w-full' />
+          <Text size='sm' className='text-white/60 text-center w-full px-2'>
             AND / OR
           </Text>
-          <Divider />
+          <Divider className='w-full' />
         </div>
-
         {showTakeProfit && USD && (
           <>
             <Text size='lg' className='text-left'>
@@ -257,16 +341,25 @@ export default function AddSLTPModal() {
                 disabled={false}
                 isUSD
               />
-              <div
-                className={
-                  'flex flex-1 flex-row py-3 border border-white/20 rounded bg-white/5 pl-3 pr-2 mt-2'
-                }
-              >
-                <Text className={takeProfitPercentage.isNegative() ? 'text-error' : 'text-success'}>
+              <div className='flex flex-1 flex-row py-3 border border-white/20 rounded bg-white/5 pl-3 pr-2 mt-2'>
+                <Text
+                  className={
+                    takeProfitPercentage.isZero()
+                      ? 'text-white'
+                      : takeProfitPercentage.isNegative()
+                        ? 'text-error'
+                        : 'text-success'
+                  }
+                >
                   {formatPercent(takeProfitPercentage.toNumber())}
                 </Text>
               </div>
             </div>
+            {takeProfitError && (
+              <Callout type={CalloutType.WARNING} className='mt-2 text-left'>
+                {takeProfitError}
+              </Callout>
+            )}
             <Button
               onClick={handleRemoveTakeProfit}
               text='Remove trigger'
@@ -287,21 +380,26 @@ export default function AddSLTPModal() {
           />
         )}
         <Text size='sm' className='text-white/60 text-left'>
-          If ETH increases to your specified price, a market sell will be triggered to capture any
-          profits.
+          {`If ${assetName} increases to your specified price, a market sell will be triggered to capture any
+          profits.`}
         </Text>
         <Divider />
-        <div className='flex flex-row items-start justify-between mt-4 gap-2'>
-          <AlertCircle className='text-white/20 mt-1 flex-shrink-0' />
-          <Text size='sm' className='text-white/20 text-left'>
+        <Callout type={CalloutType.INFO} iconClassName='self-start'>
+          <Text size='sm' className='text-left'>
             The prices listed here are 'Spot Price Triggers', which means they initiate your
             transaction. The actual 'Fill Price' at which your transaction is completed may vary due
             to the Funding Rate. This could result in a better fill price if the funding rate is
             favorable, or a less advantageous price if it is not. Always consider the potential
             impact of the funding rate on the final price.
           </Text>
-        </div>
-        <Button onClick={handleDone} text='Done' color='tertiary' className='w-full mt-4' />
+        </Callout>
+        <Button
+          onClick={handleDone}
+          text='Done'
+          color='tertiary'
+          className='w-full mt-4'
+          disabled={!isFormValid}
+        />
       </div>
     </Modal>
   )

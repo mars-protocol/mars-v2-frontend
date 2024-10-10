@@ -1,5 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table'
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 
 import EntryPrice, { ENTRY_PRICE_META } from 'components/perps/BalancesTable/Columns/EntryPrice'
 import Leverage, { LEVERAGE_META } from 'components/perps/BalancesTable/Columns/Leverage'
@@ -12,9 +12,9 @@ import TradeDirection, {
 } from 'components/perps/BalancesTable/Columns/TradeDirection'
 import { Type, TYPE_META } from 'components/perps/BalancesTable/Columns/Type'
 import { demagnify } from 'utils/formatters'
-import BigNumber from 'bignumber.js'
 import usePerpsLimitOrdersData from '../usePerpsLimitOrdersData'
 import { checkStopLossAndTakeProfit } from 'utils/perps'
+import { BN } from 'utils/helpers'
 
 export default function usePerpsBalancesColumns() {
   const activeLimitOrders = usePerpsLimitOrdersData()
@@ -33,8 +33,8 @@ export default function usePerpsBalancesColumns() {
         ...SIZE_META,
         cell: ({ row }) => {
           const { asset, amount, type, entryPrice } = row.original
-          const price = type === 'limit' ? entryPrice : new BigNumber(asset.price?.amount || 0)
-          const demagnifiedAmount = new BigNumber(demagnify(amount, asset))
+          const price = type === 'limit' ? entryPrice : BN(asset.price?.amount || 0)
+          const demagnifiedAmount = BN(demagnify(amount, asset))
           const value = demagnifiedAmount.times(price)
           return <Size amount={row.original.amount} asset={row.original.asset} value={value} />
         },

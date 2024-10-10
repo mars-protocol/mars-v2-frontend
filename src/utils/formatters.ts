@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import moment from 'moment'
 
 import { BN_ZERO } from 'constants/math'

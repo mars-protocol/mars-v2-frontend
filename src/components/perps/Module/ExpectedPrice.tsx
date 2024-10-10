@@ -1,5 +1,3 @@
-import BigNumber from 'bignumber.js'
-
 import { CircularProgress } from 'components/common/CircularProgress'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
