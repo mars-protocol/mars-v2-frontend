@@ -1039,6 +1039,14 @@ interface BroadcastSlice {
     autolend: boolean
     baseDenom: string
   }) => Promise<boolean>
+  closePerpPosition: (options: {
+    accountId: string
+    coin: BNCoin
+    reduceOnly?: boolean
+    autolend: boolean
+    baseDenom: string
+    orderIds?: string[]
+  }) => Promise<boolean>
   createTriggerOrder: (options: {
     accountId: string
     coin: BNCoin

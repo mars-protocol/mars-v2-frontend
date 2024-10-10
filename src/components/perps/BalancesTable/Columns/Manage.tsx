@@ -19,6 +19,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { SearchParams } from 'types/enums'
 import { getSearchParamsObject } from 'utils/route'
 import PerpsSlTpModal from 'components/Modals/PerpsSlTpModal'
+import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 
 export const MANAGE_META = { id: 'manage', header: 'Manage', meta: { className: 'w-40 min-w-40' } }
 
@@ -33,26 +34,44 @@ export default function Manage(props: Props) {
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const [searchParams, setSearchParams] = useSearchParams()
   const [isConfirming, setIsConfirming] = useState<boolean>(false)
-
+  const { data: limitOrders } = usePerpsLimitOrders()
   const [showSummary, setShowSummary] = useLocalStorage<boolean>(
     LocalStorageKeys.SHOW_SUMMARY,
     getDefaultChainSettings(chainConfig).showSummary,
   )
-  const executePerpOrder = useStore((s) => s.executePerpOrder)
+
   const cancelTriggerOrder = useStore((s) => s.cancelTriggerOrder)
+  const closePerpPosition = useStore((s) => s.closePerpPosition)
 
   const { open: openAlertDialog, close } = useAlertDialog()
 
   const closePosition = useCallback(() => {
-    if (!currentAccount) return
-    executePerpOrder({
+    if (!currentAccount || !limitOrders) return
+
+    const relevantOrderIds = limitOrders
+      .filter((order) =>
+        order.order.actions.some(
+          (action) =>
+            'execute_perp_order' in action &&
+            action.execute_perp_order.denom === perpPosition.asset.denom,
+        ),
+      )
+      .map((order) => order.order.order_id)
+
+    closePerpPosition({
       accountId: currentAccount.id,
       coin: BNCoin.fromDenomAndBigNumber(perpPosition.asset.denom, perpPosition.amount.negated()),
       autolend: isAutoLendEnabledForCurrentAccount,
       baseDenom: perpPosition.baseDenom,
+      orderIds: relevantOrderIds,
     })
-  }, [currentAccount, executePerpOrder, isAutoLendEnabledForCurrentAccount, perpPosition])
-
+  }, [
+    currentAccount,
+    closePerpPosition,
+    isAutoLendEnabledForCurrentAccount,
+    perpPosition,
+    limitOrders,
+  ])
   const isPerpsSlTpModalOpen = useStore((s) => s.addSLTPModal)
 
   const handleCloseClick = useCallback(() => {

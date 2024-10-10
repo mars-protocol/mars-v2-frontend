@@ -941,6 +941,53 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
+    closePerpPosition: async (options: {
+      accountId: string
+      coin: BNCoin
+      reduceOnly?: boolean
+      autolend: boolean
+      baseDenom: string
+      orderIds?: string[]
+    }) => {
+      const actions: Action[] = [
+        {
+          execute_perp_order: {
+            denom: options.coin.denom,
+            order_size: options.coin.amount.toString() as any,
+            reduce_only: options.reduceOnly,
+          },
+        },
+        ...(options.orderIds?.map((orderId) => ({
+          delete_trigger_order: {
+            trigger_order_id: orderId,
+          },
+        })) || []),
+      ]
+      if (options.autolend)
+        actions.push({
+          lend: {
+            denom: options.baseDenom,
+            amount: 'account_balance',
+          },
+        })
+
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions,
+        },
+      }
+
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().handleTransaction({ response })
+
+      return response.then((response) => !!response.result)
+    },
     cancelTriggerOrder: async (options: {
       accountId: string
       orderId: string

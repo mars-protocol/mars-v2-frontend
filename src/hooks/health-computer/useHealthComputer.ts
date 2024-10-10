@@ -165,16 +165,6 @@ export default function useHealthComputer(account?: Account) {
   }, [perpsMarketStates])
 
   const healthComputer: HealthComputer | null = useMemo(() => {
-    console.log('what we pass in HC', {
-      account,
-      positions,
-      vaultPositionValues,
-      vaultConfigsData,
-      marketStates,
-      perpsParamsData,
-      assetsParams,
-      priceData,
-    })
     if (
       !account ||
       !positions ||
@@ -300,14 +290,6 @@ export default function useHealthComputer(account?: Account) {
     (denom: string, tradeDirection: TradeDirection) => {
       if (!healthComputer || !perpsVault || !marketStates) return BN_ZERO
       try {
-        console.log('max_perp_size Params:', {
-          c: healthComputer,
-          denom: denom,
-          base_denom: perpsVault.denom,
-          long_oi_amount: marketStates[denom].long_oi.toString(),
-          short_oi_amount: marketStates[denom].short_oi.toString(),
-          direction: tradeDirection,
-        })
         const result = BN(
           max_perp_size_estimate_js(
             healthComputer,
@@ -318,7 +300,6 @@ export default function useHealthComputer(account?: Account) {
             tradeDirection,
           ),
         ).abs()
-        console.log('max_perp_size Result:', result.toNumber())
         return result
       } catch (err) {
         console.error('Failed to calculate max perp size: ', err)
