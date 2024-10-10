@@ -18,11 +18,11 @@ export const NAME_META = {
 
 interface Props {
   farm: AstroLp | DepositedAstroLp
+  account: Account
 }
 
 export default function Name(props: Props) {
-  const { farm } = props
-  const account = useCurrentAccount()
+  const { farm, account } = props
   const primaryAsset = useAsset(farm.denoms.primary)
   const poolAssets = usePoolAssets()
   const poolAsset = poolAssets.find(byDenom(farm.denoms.lp))
