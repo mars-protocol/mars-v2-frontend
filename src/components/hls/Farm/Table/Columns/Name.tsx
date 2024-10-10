@@ -18,7 +18,7 @@ export const NAME_META = {
 
 interface Props {
   farm: AstroLp | DepositedAstroLp
-  account: Account
+  account?: Account
 }
 
 export default function Name(props: Props) {
