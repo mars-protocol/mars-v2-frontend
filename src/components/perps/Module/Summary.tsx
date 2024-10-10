@@ -89,10 +89,12 @@ export default function PerpsSummary(props: Props) {
   )
 
   const perpsParams = usePerpsParams(props.asset.denom)
+
   const feeToken = useMemo(
     () => assets.find(byDenom(perpsConfig?.base_denom ?? '')),
     [assets, perpsConfig?.base_denom],
   )
+
   const calculateKeeperFee = useMemo(
     () =>
       isLimitOrder && feeToken
