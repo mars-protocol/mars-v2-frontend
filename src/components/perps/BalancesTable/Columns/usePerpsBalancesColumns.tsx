@@ -18,7 +18,6 @@ import { BN } from 'utils/helpers'
 
 export default function usePerpsBalancesColumns() {
   const activeLimitOrders = usePerpsLimitOrdersData()
-
   const staticColumns = useMemo<ColumnDef<PerpPositionRow>[]>(
     () => [
       {
