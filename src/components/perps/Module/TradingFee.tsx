@@ -1,5 +1,3 @@
-import BigNumber from 'bignumber.js'
-
 import { CircularProgress } from 'components/common/CircularProgress'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'

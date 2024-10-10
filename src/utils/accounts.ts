@@ -1,5 +1,3 @@
-import BigNumber from 'bignumber.js'
-
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'

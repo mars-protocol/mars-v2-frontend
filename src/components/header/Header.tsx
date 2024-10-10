@@ -113,7 +113,10 @@ export default function Header() {
                 : 'flex flex-1 items-center relative z-50',
             )}
           >
-            <NavLink isHome item={{ pages: ['perps'], label: 'home' }}>
+            <NavLink
+              isHome
+              item={{ pages: chainConfig.perps ? ['perps'] : ['trade'], label: 'home' }}
+            >
               <span className='block w-10 h-10'>
                 <Logo className='text-white' />
               </span>

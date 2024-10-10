@@ -4,7 +4,6 @@ import useStore from 'store'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
-import BigNumber from 'bignumber.js'
 
 interface LimitOrderParams {
   asset: Asset

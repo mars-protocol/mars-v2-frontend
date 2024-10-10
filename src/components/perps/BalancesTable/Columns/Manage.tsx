@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 
 import ActionButton from 'components/common/Button/ActionButton'
 import DropDownButton from 'components/common/Button/DropDownButton'
-import { Check, Cross, Edit } from 'components/common/Icons'
+import { Check, Cross, Edit, Shield } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
 import ConfirmationSummary from 'components/perps/Module/ConfirmationSummary'
@@ -18,7 +18,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { SearchParams } from 'types/enums'
 import { getSearchParamsObject } from 'utils/route'
-import AddSLTPModal from 'components/Modals/AddSLTPModal'
+import PerpsSlTpModal from 'components/Modals/PerpsSlTpModal'
 
 export const MANAGE_META = { id: 'manage', header: 'Manage', meta: { className: 'w-40 min-w-40' } }
 
@@ -53,11 +53,7 @@ export default function Manage(props: Props) {
     })
   }, [currentAccount, executePerpOrder, isAutoLendEnabledForCurrentAccount, perpPosition])
 
-  const isAddSLTPModalOpen = useStore((s) => s.addSLTPModal)
-
-  const openAddSLTPModal = () => {
-    useStore.setState({ addSLTPModal: true })
-  }
+  const isPerpsSlTpModalOpen = useStore((s) => s.addSLTPModal)
 
   const handleCloseClick = useCallback(() => {
     if (!currentAccount) return
@@ -112,10 +108,20 @@ export default function Manage(props: Props) {
     showSummary,
   ])
 
+  const openPerpsSlTpModal = useCallback(() => {
+    useStore.setState({ addSLTPModal: true })
+  }, [])
+
   const ITEMS: DropDownItem[] = useMemo(
     () => [
       ...(searchParams.get(SearchParams.PERPS_MARKET) === perpPosition.asset.denom
-        ? []
+        ? [
+            {
+              icon: <Shield />,
+              text: 'Add SL/TP',
+              onClick: openPerpsSlTpModal,
+            },
+          ]
         : [
             {
               icon: <Edit />,
@@ -128,19 +134,19 @@ export default function Manage(props: Props) {
                 })
               },
             },
+            {
+              icon: <Shield />,
+              text: 'Add SL/TP',
+              onClick: openPerpsSlTpModal,
+            },
           ]),
       {
         icon: <Cross width={16} />,
         text: 'Close Position',
         onClick: () => handleCloseClick(),
       },
-      {
-        icon: <Edit />,
-        text: 'Add SL/TP',
-        onClick: () => openAddSLTPModal(),
-      },
     ],
-    [handleCloseClick, perpPosition.asset.denom, searchParams, setSearchParams],
+    [handleCloseClick, openPerpsSlTpModal, perpPosition.asset.denom, searchParams, setSearchParams],
   )
 
   if (props.perpPosition.type === 'limit')
@@ -168,7 +174,7 @@ export default function Manage(props: Props) {
 
   return (
     <div className='flex justify-end'>
-      {isAddSLTPModalOpen && <AddSLTPModal />}
+      {isPerpsSlTpModalOpen && <PerpsSlTpModal />}
       <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
     </div>
   )

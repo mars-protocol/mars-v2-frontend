@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 
 import Button from 'components/common/Button'
