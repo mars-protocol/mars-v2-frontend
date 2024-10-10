@@ -13,6 +13,12 @@ const PAGE_METADATA = {
     keywords:
       'crypto trading, spot trading, margin trading, decentralized trading, defi, cross-collateralization, cosmos tokens',
   },
+  perps: {
+    title: 'Mars Protocol - Perps',
+    description: 'Trade perps on leverage with a single liquidation point.',
+    keywords:
+      'crypto trading, spot trading, margin trading, decentralized trading, defi, cross-collateralization, cosmos tokens',
+  },
   farm: {
     title: 'Mars Protocol - Farm',
     description:

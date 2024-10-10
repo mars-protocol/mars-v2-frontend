@@ -54,7 +54,7 @@ export function getPage(pathname: string): Page {
     return page as Page
   }
 
-  return 'trade' as Page
+  return 'perps' as Page
 }
 
 export function getSearchParamsObject(searchParams: URLSearchParams) {

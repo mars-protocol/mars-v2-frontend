@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import { useEffect, useState } from 'react'
 
 import Slider from 'components/common/Slider'

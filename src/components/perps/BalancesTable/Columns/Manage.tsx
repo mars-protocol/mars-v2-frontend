@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 
 import ActionButton from 'components/common/Button/ActionButton'
 import DropDownButton from 'components/common/Button/DropDownButton'
-import { Check, Cross, Edit } from 'components/common/Icons'
+import { Check, Cross, Edit, Shield } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
 import ConfirmationSummary from 'components/perps/Module/ConfirmationSummary'
@@ -18,6 +18,8 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { SearchParams } from 'types/enums'
 import { getSearchParamsObject } from 'utils/route'
+import PerpsSlTpModal from 'components/Modals/PerpsSlTpModal'
+import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 
 export const MANAGE_META = { id: 'manage', header: 'Manage', meta: { className: 'w-40 min-w-40' } }
 
@@ -32,25 +34,46 @@ export default function Manage(props: Props) {
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const [searchParams, setSearchParams] = useSearchParams()
   const [isConfirming, setIsConfirming] = useState<boolean>(false)
-
+  const { data: limitOrders } = usePerpsLimitOrders()
   const [showSummary, setShowSummary] = useLocalStorage<boolean>(
     LocalStorageKeys.SHOW_SUMMARY,
     getDefaultChainSettings(chainConfig).showSummary,
   )
-  const executePerpOrder = useStore((s) => s.executePerpOrder)
+
   const cancelTriggerOrder = useStore((s) => s.cancelTriggerOrder)
+  const closePerpPosition = useStore((s) => s.closePerpPosition)
 
   const { open: openAlertDialog, close } = useAlertDialog()
 
   const closePosition = useCallback(() => {
-    if (!currentAccount) return
-    executePerpOrder({
+    if (!currentAccount || !limitOrders) return
+
+    const relevantOrderIds = limitOrders
+      .filter((order) =>
+        order.order.actions.some(
+          (action) =>
+            'execute_perp_order' in action &&
+            action.execute_perp_order.denom === perpPosition.asset.denom,
+        ),
+      )
+      .map((order) => order.order.order_id)
+
+    closePerpPosition({
       accountId: currentAccount.id,
       coin: BNCoin.fromDenomAndBigNumber(perpPosition.asset.denom, perpPosition.amount.negated()),
       autolend: isAutoLendEnabledForCurrentAccount,
       baseDenom: perpPosition.baseDenom,
+      orderIds: relevantOrderIds,
     })
-  }, [currentAccount, executePerpOrder, isAutoLendEnabledForCurrentAccount, perpPosition])
+  }, [
+    currentAccount,
+    closePerpPosition,
+    isAutoLendEnabledForCurrentAccount,
+    perpPosition,
+    limitOrders,
+  ])
+  const isPerpsSlTpModalOpen = useStore((s) => s.addSLTPModal)
+
   const handleCloseClick = useCallback(() => {
     if (!currentAccount) return
     if (!showSummary) {
@@ -104,10 +127,20 @@ export default function Manage(props: Props) {
     showSummary,
   ])
 
+  const openPerpsSlTpModal = useCallback(() => {
+    useStore.setState({ addSLTPModal: true })
+  }, [])
+
   const ITEMS: DropDownItem[] = useMemo(
     () => [
       ...(searchParams.get(SearchParams.PERPS_MARKET) === perpPosition.asset.denom
-        ? []
+        ? [
+            {
+              icon: <Shield />,
+              text: 'Add SL/TP',
+              onClick: openPerpsSlTpModal,
+            },
+          ]
         : [
             {
               icon: <Edit />,
@@ -120,6 +153,11 @@ export default function Manage(props: Props) {
                 })
               },
             },
+            {
+              icon: <Shield />,
+              text: 'Add SL/TP',
+              onClick: openPerpsSlTpModal,
+            },
           ]),
       {
         icon: <Cross width={16} />,
@@ -127,7 +165,7 @@ export default function Manage(props: Props) {
         onClick: () => handleCloseClick(),
       },
     ],
-    [handleCloseClick, perpPosition.asset.denom, searchParams, setSearchParams],
+    [handleCloseClick, openPerpsSlTpModal, perpPosition.asset.denom, searchParams, setSearchParams],
   )
 
   if (props.perpPosition.type === 'limit')
@@ -155,6 +193,7 @@ export default function Manage(props: Props) {
 
   return (
     <div className='flex justify-end'>
+      {isPerpsSlTpModalOpen && <PerpsSlTpModal />}
       <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
     </div>
   )

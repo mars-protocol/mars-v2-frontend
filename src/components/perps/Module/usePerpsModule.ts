@@ -101,6 +101,8 @@ export default function usePerpsModule(
     const priceToUse = limitPrice ?? perpsAsset.price?.amount ?? BN_ZERO
     const totalPositionValue = priceToUse.times(demagnify(maxAmount.toNumber(), perpsAsset))
     const maxLeverage = totalPositionValue.div(accountNetValue).toNumber()
+    if (maxLeverage < 1 && maxLeverage > 0) return maxLeverage
+
     return Math.max(maxLeverage, 1)
   }, [maxAmount, perpsAsset, accountNetValue, limitPrice])
 

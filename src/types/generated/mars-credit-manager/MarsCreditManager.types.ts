@@ -150,7 +150,6 @@ export type Action =
     }
   | {
       delete_trigger_order: {
-        account_id: string
         trigger_order_id: string
       }
     }

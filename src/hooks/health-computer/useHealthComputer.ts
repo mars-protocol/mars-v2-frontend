@@ -100,11 +100,11 @@ export default function useHealthComputer(account?: Account) {
         const decimals = assets.find(byDenom(curr.denom))?.decimals || PRICE_ORACLE_DECIMALS
         const decimalDiffrence = decimals - PRICE_ORACLE_DECIMALS
 
-        // The HealthComputer needs prices expressed per 1 amount. So we need to correct here for any additional decimals.
         prev[curr.denom] = curr.amount
           .shiftedBy(VALUE_SCALE_FACTOR - decimalDiffrence)
-          .decimalPlaces(18)
+          .decimalPlaces(decimals)
           .toString()
+
         return prev
       },
       {} as { [key: string]: string },
