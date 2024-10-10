@@ -20,7 +20,9 @@ export default function useActiveHlsFarmsColumns(assets: Asset[]) {
     return [
       {
         ...NAME_META,
-        cell: ({ row }) => <Name farm={row.original.farm as DepositedAstroLp} />,
+        cell: ({ row }) => (
+          <Name farm={row.original.farm as DepositedAstroLp} account={row.original.account} />
+        ),
       },
       { ...ACCOUNT_META, cell: ({ row }) => <Account account={row.original.account} /> },
       {

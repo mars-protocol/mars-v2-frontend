@@ -116,14 +116,15 @@ export const calculateAccountApr = (
   const debtsValue = calculateAccountValue('debts', account, assets)
   const perpsValue = calculateAccountValue('perps', account, assets)
   const stakedAstroLpsValue = calculateAccountValue('stakedAstroLps', account, assets)
-  const totalValue = depositValue
+
+  const totalDenominatorValue = depositValue
     .plus(lendsValue)
     .plus(vaultsValue)
     .plus(perpsValue)
     .plus(stakedAstroLpsValue)
-  const totalNetValue = totalValue.minus(debtsValue)
+    .plus(debtsValue.abs())
 
-  if (totalNetValue.isLessThanOrEqualTo(0)) return BN_ZERO
+  if (totalDenominatorValue.isLessThanOrEqualTo(0)) return BN_ZERO
   const { vaults, lends, debts, deposits, stakedAstroLps } = account
 
   let totalDepositsInterestValue = BN_ZERO
@@ -164,6 +165,7 @@ export const calculateAccountApr = (
       .multipliedBy(price)
       .multipliedBy(convertApyToApr(apy, 365))
       .dividedBy(100)
+
     totalLendsInterestValue = totalLendsInterestValue.plus(positionInterest)
   })
 
@@ -172,6 +174,7 @@ export const calculateAccountApr = (
     if (!apr) return
     const lockedValue = vault.values.primary.plus(vault.values.secondary)
     const positionInterest = lockedValue.multipliedBy(apr).dividedBy(100)
+
     totalVaultsInterestValue = totalVaultsInterestValue.plus(positionInterest)
   })
 
@@ -199,16 +202,19 @@ export const calculateAccountApr = (
     const farmApr = farm.apr ?? 0
     const farmValue = getCoinValue(stakedAstroLp, assets)
     const positionInterest = farmValue.multipliedBy(farmApr).dividedBy(100)
+
     totalAstroStakedLpsValue = totalAstroStakedLpsValue.plus(positionInterest)
   })
 
   const totalInterestValue = totalLendsInterestValue
     .plus(totalVaultsInterestValue)
-    .minus(totalDebtInterestValue)
     .plus(totalDepositsInterestValue)
     .plus(totalAstroStakedLpsValue)
+    .minus(totalDebtInterestValue)
 
-  return totalInterestValue.dividedBy(totalNetValue).times(100)
+  if (totalInterestValue.isEqualTo(0)) return BN_ZERO
+
+  return totalInterestValue.dividedBy(totalDenominatorValue).times(100)
 }
 
 export function calculateAccountLeverage(account: Account, assets: Asset[]) {
