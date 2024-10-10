@@ -30,8 +30,7 @@ import { byDenom } from 'utils/array'
 import { capitalizeFirstLetter } from 'utils/helpers'
 import getPerpsPosition from 'utils/getPerpsPosition'
 import LeverageSlider from 'components/common/LeverageSlider'
-import Switch from 'components/common/Switch'
-import Checkbox from 'components/common/Checkbox'
+import SwitchWithLabel from 'components/common/Switch/SwitchWithLabel'
 
 export function PerpsModule() {
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
@@ -343,19 +342,16 @@ export function PerpsModule() {
             {message}
           </Callout>
         ))}
-        {currentPerpPosition && (
+        {currentPerpPosition && isLimitOrder && (
           <>
             <Divider />
-            <div className='flex items-center gap-2 rounded'>
-              <Checkbox
-                name='reduce-only'
-                checked={isReduceOnly}
-                onChange={() => setIsReduceOnly(!isReduceOnly)}
-              />
-              <div onClick={() => setIsReduceOnly(!isReduceOnly)}>
-                <Text size='sm'>Reduce Only</Text>
-              </div>
-            </div>
+            <SwitchWithLabel
+              name='reduce-only'
+              label='Reduce Only'
+              value={isReduceOnly}
+              onChange={() => setIsReduceOnly(!isReduceOnly)}
+              tooltip="Use 'Reduce Only' for limit orders to decrease your position. It prevents new position creation if the existing one is modified or closed."
+            />
             {reduceOnlyWarning && <Callout type={CalloutType.WARNING}>{reduceOnlyWarning}</Callout>}
           </>
         )}
