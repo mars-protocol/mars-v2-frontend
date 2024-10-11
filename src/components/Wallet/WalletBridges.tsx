@@ -8,13 +8,14 @@ import { ChevronRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalancesAndAccounts'
 import WalletSelect from 'components/Wallet/WalletSelect'
-import { BRIDGES } from 'constants/bridges'
+import { BRIDGES, NTRN_FAUCETS } from 'constants/bridges'
 import useBaseAsset from 'hooks/assets/useBasetAsset'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
+import { ChainInfoID } from 'types/enums'
 import { byDenom } from 'utils/array'
 import { defaultFee } from 'utils/constants'
 import { BN } from 'utils/helpers'
@@ -69,12 +70,27 @@ export default function WalletBridges() {
       setHasFunds(true)
   }, [baseBalance, isLoading, hasFunds, setHasFunds, chainConfig])
 
+  const isNeutronTestnet = useMemo(() => chainConfig.id === ChainInfoID.Pion1, [chainConfig])
+  const [bridges, introText] = useMemo(
+    () =>
+      isNeutronTestnet
+        ? [
+            NTRN_FAUCETS,
+            `To get started, you'll need at least a small amount of NTRN to cover transaction fees. You can get testnet funds from the Neutron Faucets in Discord or Telegram.`,
+          ]
+        : [
+            BRIDGES,
+            `To get started, you'll need at least a small amount of ${
+              chainConfig.defaultCurrency?.coinDenom ?? 'the current chains gas token'
+            } to cover transaction fees on Mars. Fund your wallet or bridge some in from another chain.`,
+          ],
+    [chainConfig.defaultCurrency?.coinDenom, isNeutronTestnet],
+  )
+
   return (
     <FullOverlayContent
       title={`${chainConfig.defaultCurrency?.coinDenom ?? 'Gas token'} required!`}
-      copy={`To get started, you'll need at least a small amount of ${
-        chainConfig.defaultCurrency?.coinDenom ?? 'the current chains gas token'
-      } to cover transaction fees on Mars. Fund your wallet or bridge some in from another chain.`}
+      copy={introText}
       button={{
         className: 'w-full mt-4',
         text: 'Connect different wallet',
@@ -85,7 +101,7 @@ export default function WalletBridges() {
       docs='wallet'
     >
       <div className='flex flex-wrap w-full gap-3'>
-        {BRIDGES.map((bridge) => (
+        {bridges.map((bridge) => (
           <Bridge key={bridge.name} {...bridge} />
         ))}
       </div>
