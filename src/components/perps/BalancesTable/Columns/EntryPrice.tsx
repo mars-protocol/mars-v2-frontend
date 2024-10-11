@@ -1,5 +1,4 @@
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
@@ -33,13 +32,13 @@ export default function EntryPrice(props: Props) {
       title={
         <DisplayCurrency
           coin={BNCoin.fromDenomAndBigNumber('usd', entryPrice ?? 0)}
-          options={{ maxDecimals: 2 }}
+          options={{ maxDecimals: entryPrice.isGreaterThanOrEqualTo(10) ? 2 : 6 }}
         />
       }
       sub={
         <DisplayCurrency
           coin={BNCoin.fromDenomAndBigNumber('usd', currentPrice ?? 0)}
-          options={{ maxDecimals: 2 }}
+          options={{ maxDecimals: entryPrice.isGreaterThanOrEqualTo(10) ? 2 : 6 }}
         />
       }
     />
