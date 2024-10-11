@@ -1,7 +1,7 @@
 export const BRIDGES: Bridge[] = [
   {
     name: 'TFM Bridge',
-    url: 'https://tfm.com/bridge?chainTo=osmosis-1',
+    url: 'https://app.tfm.com/bridge?chainFrom=&chainTo=',
     image: '/images/bridges/tfm.png',
   },
   {
@@ -15,8 +15,21 @@ export const BRIDGES: Bridge[] = [
     image: '/images/bridges/satellite.png',
   },
   {
-    name: 'Squidrouter',
-    url: 'https://app.squidrouter.com/',
-    image: '/images/bridges/squid.png',
+    name: 'Skip Go',
+    url: 'https://go.skip.build/',
+    image: '/images/bridges/skip.png',
+  },
+]
+
+export const NTRN_FAUCETS: Bridge[] = [
+  {
+    name: 'Neutron Discord',
+    url: ' https://discord.neutron.org',
+    image: '/images/bridges/discord.png',
+  },
+  {
+    name: 'Neutron Telegram',
+    url: 'https://t.me/+FGa-DRDABrZjMmFi',
+    image: '/images/bridges/telegram.png',
   },
 ]
