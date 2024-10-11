@@ -46,7 +46,7 @@ export const VALUE_SCALE_FACTOR = 12
 export default function useHealthComputer(account?: Account) {
   const { data: assets } = useAssets()
   const whitelistedAssets = useWhitelistedAssets()
-  const perpsAsssets = usePerpsEnabledAssets()
+  const perpsAssets = usePerpsEnabledAssets()
   const { data: assetParams } = useAssetParams()
   const { data: perpsMarketStates } = useAllPerpsMarketStates()
   const { data: perpsParams } = useAllPerpsParamsSC()
@@ -92,7 +92,7 @@ export default function useHealthComputer(account?: Account) {
   }, [account?.vaults, assets])
 
   const priceData = useMemo(() => {
-    const allAssets = [...whitelistedAssets, ...perpsAsssets]
+    const allAssets = [...whitelistedAssets, ...perpsAssets]
     const assetsWithPrice = allAssets.filter((asset) => asset.price)
     const prices = assetsWithPrice.map((asset) => asset.price) as BNCoin[]
     return prices.reduce(
@@ -109,7 +109,7 @@ export default function useHealthComputer(account?: Account) {
       },
       {} as { [key: string]: string },
     )
-  }, [assets, perpsAsssets, whitelistedAssets])
+  }, [assets, perpsAssets, whitelistedAssets])
 
   const assetsParams = useMemo(
     () =>
@@ -263,7 +263,7 @@ export default function useHealthComputer(account?: Account) {
     (denom: string, kind: LiquidationPriceKind) => {
       if (!healthComputer) return null
       try {
-        const asset = perpsAsssets.find(byDenom(denom))
+        const asset = perpsAssets.find(byDenom(denom))
         const assetInAccount = findPositionInAccount(healthComputer, denom)
         if (!asset || !assetInAccount) return 0
 
@@ -286,7 +286,7 @@ export default function useHealthComputer(account?: Account) {
         return null
       }
     },
-    [healthComputer, perpsAsssets],
+    [healthComputer, perpsAssets],
   )
 
   const computeMaxPerpAmount = useCallback(
