@@ -16,7 +16,8 @@ export default function usePerpsLimitOrdersData() {
   const perpAssets = usePerpsEnabledAssets()
   const { data: limitOrders } = usePerpsLimitOrders()
   const { data: perpsConfig } = usePerpsConfig()
-  const { computeLiquidationPrice } = useHealthComputer()
+
+  const { computeLiquidationPrice } = useHealthComputer(currentAccount)
 
   return useMemo<PerpPositionRow[]>(() => {
     if (!currentAccount || !perpsConfig || !limitOrders) return []
@@ -35,10 +36,8 @@ export default function usePerpsLimitOrdersData() {
       if (!asset) return
 
       const tradeDirection = BN(perpOrder.order_size).isGreaterThanOrEqualTo(0) ? 'long' : 'short'
-      const liquidationPriceKind: LiquidationPriceKind =
-        tradeDirection === 'long' ? 'asset' : 'debt'
 
-      const liquidationPrice = computeLiquidationPrice(perpOrder.denom, liquidationPriceKind)
+      const liquidationPrice = computeLiquidationPrice(perpOrder.denom, 'perp')
       activeLimitOrders.push({
         orderId: limitOrder.order.order_id,
         asset,

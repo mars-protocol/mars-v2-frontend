@@ -195,7 +195,7 @@ function getTransactionCoinsGrouped(result: BroadcastResult, address: string, is
       // If the event is a perps event, check for realized profit or loss
       if (coinRules.get(action) === 'perps') {
         event.attributes.forEach((attr: TransactionEventAttribute) => {
-          const realizedProfitOrLoss = attr.key === 'realised_pnl' ? attr.value : undefined
+          const realizedProfitOrLoss = attr.key === 'realized_pnl' ? attr.value : undefined
           if (realizedProfitOrLoss) {
             const pnlCoin = getCoinFromPnLString(realizedProfitOrLoss)
             if (pnlCoin) transactionCoins.push({ type: 'perpsPnl', coin: pnlCoin })
@@ -569,13 +569,13 @@ export function getToastContentsFromGroupedTransactionCoin(
       perpsPnlCoins.forEach((coin) => {
         if (BN(coin.amount).isPositive()) {
           toastContents.push({
-            text: 'Realised profit',
+            text: 'Realized profit',
             coins: [coin.toCoin()],
           })
         }
         if (BN(coin.amount).isNegative()) {
           toastContents.push({
-            text: 'Realised loss',
+            text: 'Realized loss',
             coins: [coin.abs().toCoin()],
           })
         }

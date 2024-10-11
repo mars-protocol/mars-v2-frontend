@@ -77,7 +77,7 @@ export default function ConfirmationSummary(props: Props) {
         .plus(tradingFeeAndPrice.fee.closing)
         .plus(tradingFeeAndPrice.fee.opening)
     tradingFee = tradingFee.negated()
-    if (position) tradingFee = BN(position.unrealised_pnl.pnl as any).minus(keeperFee?.amount ?? 0)
+    if (position) tradingFee = BN(position.unrealized_pnl.pnl as any).minus(keeperFee?.amount ?? 0)
     return BNCoin.fromDenomAndBigNumber(baseDenom, tradingFee)
   }, [baseDenom, keeperFee, position, tradingFeeAndPrice, zeroCoin])
 
@@ -110,8 +110,8 @@ export default function ConfirmationSummary(props: Props) {
     action = 'Flip position from short to long'
 
   let feeLabel = 'Fees'
-  if (position && BN(position.unrealised_pnl.pnl as any).isPositive()) feeLabel = 'Fees + Profit'
-  if (position && BN(position.unrealised_pnl.pnl as any).isNegative()) feeLabel = 'Fees + Loss'
+  if (position && BN(position.unrealized_pnl.pnl as any).isPositive()) feeLabel = 'Fees + Profit'
+  if (position && BN(position.unrealized_pnl.pnl as any).isNegative()) feeLabel = 'Fees + Loss'
 
   return (
     <div className='flex flex-wrap w-full gap-4'>
@@ -164,8 +164,8 @@ export default function ConfirmationSummary(props: Props) {
         )}
         {position &&
           tradingFeeAndPrice &&
-          (Object.keys(position.unrealised_pnl) as Array<keyof PnlAmounts>).map((key, index) => {
-            const pnlAmount = BN(position.unrealised_pnl[key] as any)
+          (Object.keys(position.unrealized_pnl) as Array<keyof PnlAmounts>).map((key, index) => {
+            const pnlAmount = BN(position.unrealized_pnl[key] as any)
             const isPnl = key === 'pnl'
             let label = FEE_LABELS[key]
             if (key === 'opening_fee' && !isNewPosition) label = 'Update Fee'

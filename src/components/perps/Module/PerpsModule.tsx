@@ -43,7 +43,6 @@ export function PerpsModule() {
   const [limitPrice, setLimitPrice] = useState<BigNumber>(BN_ZERO)
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const isLimitOrder = selectedOrderType === OrderType.LIMIT
-
   const [limitPriceInfo, setLimitPriceInfo] = useState<CallOut | undefined>(
     DEFAULT_LIMIT_PRICE_INFO,
   )
@@ -52,11 +51,7 @@ export function PerpsModule() {
   const [reduceOnlyWarning, setReduceOnlyWarning] = useState<string | null>(null)
 
   useEffect(() => {
-    if (selectedOrderType === OrderType.STOP) {
-      setIsReduceOnly(true)
-    } else {
-      setIsReduceOnly(false)
-    }
+    setIsReduceOnly(selectedOrderType === OrderType.STOP)
   }, [selectedOrderType])
 
   const {

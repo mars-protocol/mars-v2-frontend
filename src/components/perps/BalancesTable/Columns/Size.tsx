@@ -36,7 +36,7 @@ export default function Size(props: Props) {
     <TitleAndSubCell
       title={
         <FormattedNumber
-          amount={demagnify(amount, asset)}
+          amount={Math.abs(Number(demagnify(amount, asset).toFixed(2)))}
           options={{ maxDecimals: props.asset.decimals }}
           className='text-xs'
         />

@@ -13,6 +13,7 @@ import { byDenom } from 'utils/array'
 import { demagnify, getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 
 export default function usePerpsBalancesTable() {
   const currentAccount = useCurrentAccount()
@@ -21,6 +22,7 @@ export default function usePerpsBalancesTable() {
   const { data: perpsConfig } = usePerpsConfig()
 
   const allAssets = useDepositEnabledAssets()
+  const { computeLiquidationPrice } = useHealthComputer(currentAccount)
 
   return useMemo<PerpPositionRow[]>(() => {
     if (!currentAccount || !currentAccount.perps || !perpsConfig) return []
@@ -29,6 +31,7 @@ export default function usePerpsBalancesTable() {
 
     const activePerpsPositions = currentAccount.perps.map((position) => {
       const asset = perpAssets.find(byDenom(position.denom))!
+      const liquidationPrice = computeLiquidationPrice(position.denom, 'perp')
 
       return {
         asset,
@@ -40,7 +43,7 @@ export default function usePerpsBalancesTable() {
         pnl: position.pnl,
         entryPrice: position.entryPrice,
         currentPrice: position.currentPrice,
-        liquidationPrice: position.entryPrice, // TODO: 📈 Get actual liquidation price from HC
+        liquidationPrice: liquidationPrice !== null ? BN(liquidationPrice) : BN_ZERO,
         leverage: position.currentPrice
           .times(demagnify(position.amount.abs(), asset))
           .div(netValue)
@@ -69,6 +72,7 @@ export default function usePerpsBalancesTable() {
         const perpTrigger = limitOrderCondition.oracle_price
         const asset = perpAssets.find(byDenom(perpOrder.denom))!
         const amount = BN(perpOrder.order_size)
+        const liquidationPrice = computeLiquidationPrice(perpOrder.denom, 'asset')
         if (!asset) return
         activeLimitOrders.push({
           orderId: limitOrder.order.order_id,
@@ -95,11 +99,11 @@ export default function usePerpsBalancesTable() {
           },
           entryPrice: BN(perpTrigger.price),
           currentPrice: asset.price?.amount ?? BN_ZERO,
-          liquidationPrice: BN_ONE, // TODO: 📈 Get actual liquidation price from HC
+          liquidationPrice: BN(liquidationPrice ?? '0'),
           leverage: 1,
         })
       })
 
     return [...activePerpsPositions, ...activeLimitOrders]
-  }, [currentAccount, perpsConfig, allAssets, limitOrders, perpAssets])
+  }, [currentAccount, perpsConfig, allAssets, limitOrders, perpAssets, computeLiquidationPrice])
 }

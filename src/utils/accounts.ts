@@ -294,7 +294,7 @@ export function convertAccountToPositions(account: Account, assets: Asset[]): Po
           .decimalPlaces(18)
           .toString(),
         size: perpPosition.amount.toString() as any,
-        unrealised_pnl: {
+        unrealized_pnl: {
           accrued_funding: perpPosition.pnl.unrealized.funding.amount
             .integerValue()
             .toString() as any,
@@ -307,7 +307,7 @@ export function convertAccountToPositions(account: Account, assets: Asset[]): Po
           pnl: perpPosition.pnl.unrealized.net.amount.integerValue().toString() as any,
           price_pnl: perpPosition.pnl.unrealized.price.amount.integerValue().toString() as any,
         },
-        realised_pnl: {
+        realized_pnl: {
           // This does not matter for the health calculation
           accrued_funding: perpPosition.pnl.realized.funding.amount.toString() as any,
           closing_fee: '0' as any,
