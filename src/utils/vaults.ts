@@ -233,7 +233,7 @@ export function getSwapAction(
         },
       },
       denom_out: denomOut,
-      slippage: slippage.toString(),
+      min_receive: slippage.toString(),
     },
   }
 }
