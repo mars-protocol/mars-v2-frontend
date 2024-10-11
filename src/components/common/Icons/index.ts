@@ -1,6 +1,5 @@
 export { default as Account } from 'components/common/Icons/Account.svg'
 export { default as AccountArrowDown } from 'components/common/Icons/AccountArrowDown.svg'
-export { default as AlertCircle } from 'components/common/Icons/AlertCircle.svg'
 export { default as ArrowChartLineUp } from 'components/common/Icons/ArrowChartLineUp.svg'
 export { default as ArrowCircle } from 'components/common/Icons/ArrowCircle.svg'
 export { default as ArrowCircledTopRight } from 'components/common/Icons/ArrowCircledTopRight.svg'
