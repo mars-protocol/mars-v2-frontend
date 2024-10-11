@@ -1,27 +1,27 @@
 import Modal from 'components/Modals/Modal'
-import Button from 'components/common/Button'
-import Divider from 'components/common/Divider'
-import { AlertCircle, TrashBin } from 'components/common/Icons'
-import Text from 'components/common/Text'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import useStore from 'store'
 import AssetAmountInput from 'components/common/AssetAmountInput'
+import Button from 'components/common/Button'
 import { Callout, CalloutType } from 'components/common/Callout'
+import Divider from 'components/common/Divider'
+import { TrashBin } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
-import { BNCoin } from 'types/classes/BNCoin'
-import { useSubmitLimitOrder } from 'hooks/perps/useSubmitLimitOrder'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useAssets from 'hooks/assets/useAssets'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import usePerpsConfig from 'hooks/perps/usePerpsConfig'
-import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
-import useAssets from 'hooks/assets/useAssets'
-import { byDenom } from 'utils/array'
+import { useSubmitLimitOrder } from 'hooks/perps/useSubmitLimitOrder'
 import usePrice from 'hooks/prices/usePrice'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
 import { formatPercent, magnify } from 'utils/formatters'
-import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
-import { getDefaultChainSettings } from 'constants/defaultSettings'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import { BN } from 'utils/helpers'
 
 export default function PerpsSlTpModal() {
@@ -265,7 +265,7 @@ export default function PerpsSlTpModal() {
       contentClassName='flex flex-col'
       modalClassName='md:max-w-modal-xs'
     >
-      <div className='flex flex-col p-4 gap-4'>
+      <div className='flex flex-col gap-4 p-4'>
         {showStopLoss && USD && (
           <>
             <Text size='lg' className='text-left'>
@@ -279,7 +279,7 @@ export default function PerpsSlTpModal() {
                 disabled={false}
                 isUSD
               />
-              <div className='flex flex-1 flex-row py-3 border border-white/20 rounded bg-white/5 pl-3 pr-2 mt-2'>
+              <div className='flex flex-row flex-1 py-3 pl-3 pr-2 mt-2 border rounded border-white/20 bg-white/5'>
                 <Text
                   className={
                     stopLossPercentage.isZero()
@@ -302,10 +302,10 @@ export default function PerpsSlTpModal() {
               onClick={handleRemoveStopLoss}
               text='Remove trigger'
               color='secondary'
-              leftIcon={<TrashBin className='h-4 w-4 text-error self-center' />}
+              leftIcon={<TrashBin className='self-center w-4 h-4 text-error' />}
               variant='solid'
               textClassNames='text-error items-center'
-              className='text-sm self-start items-center'
+              className='items-center self-start text-sm'
             />
           </>
         )}
@@ -317,12 +317,12 @@ export default function PerpsSlTpModal() {
             className='w-full'
           />
         )}
-        <Text size='sm' className='text-white/60 text-left'>
+        <Text size='sm' className='text-left text-white/60'>
           {`If ${assetName} falls to your specified price, a market sell will be triggered to prevent any further losses.`}
         </Text>
-        <div className='flex w-full items-center gap-2'>
+        <div className='flex items-center w-full gap-2'>
           <Divider className='w-full' />
-          <Text size='sm' className='text-white/60 text-center w-full px-2'>
+          <Text size='sm' className='w-full px-2 text-center text-white/60'>
             AND / OR
           </Text>
           <Divider className='w-full' />
@@ -340,7 +340,7 @@ export default function PerpsSlTpModal() {
                 disabled={false}
                 isUSD
               />
-              <div className='flex flex-1 flex-row py-3 border border-white/20 rounded bg-white/5 pl-3 pr-2 mt-2'>
+              <div className='flex flex-row flex-1 py-3 pl-3 pr-2 mt-2 border rounded border-white/20 bg-white/5'>
                 <Text
                   className={
                     takeProfitPercentage.isZero()
@@ -363,10 +363,10 @@ export default function PerpsSlTpModal() {
               onClick={handleRemoveTakeProfit}
               text='Remove trigger'
               color='secondary'
-              leftIcon={<TrashBin className='h-4 w-4 text-error self-center' />}
+              leftIcon={<TrashBin className='self-center w-4 h-4 text-error' />}
               variant='solid'
               textClassNames='text-error items-center'
-              className='text-sm self-start items-center'
+              className='items-center self-start text-sm'
             />
           </>
         )}
@@ -378,7 +378,7 @@ export default function PerpsSlTpModal() {
             className='w-full'
           />
         )}
-        <Text size='sm' className='text-white/60 text-left'>
+        <Text size='sm' className='text-left text-white/60'>
           {`If ${assetName} increases to your specified price, a market sell will be triggered to capture any
           profits.`}
         </Text>

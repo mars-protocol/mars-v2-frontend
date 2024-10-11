@@ -1,12 +1,4 @@
-<svg
-  width="100%"
-  className="icon"
-  version="1.1"
-  xmlns="http://www.w3.org/2000/svg"
-  x="0px"
-  y="0px"
-  viewBox="0 0 10 16"
->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 10 16">
   <path
     fill="currentColor"
     d="M9.3,0.2C9.6,0.5,9.6,1,9.3,1.3L9.3,1.4L2.5,8l6.7,6.6c0.3,0.3,0.3,0.7,0.1,1.1l-0.1,0.1c-0.3,0.3-0.8,0.3-1.1,0.1l-0.1-0.1
