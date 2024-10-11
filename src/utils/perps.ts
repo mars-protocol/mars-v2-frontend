@@ -1,4 +1,4 @@
-import { BN } from './helpers'
+import { BN } from 'utils/helpers'
 
 export const checkStopLossAndTakeProfit = (
   position: PerpPositionRow,

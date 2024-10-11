@@ -320,7 +320,6 @@ export default function PerpsSlTpModal() {
         <Text size='sm' className='text-white/60 text-left'>
           {`If ${assetName} falls to your specified price, a market sell will be triggered to prevent any further losses.`}
         </Text>
-
         <div className='flex w-full items-center gap-2'>
           <Divider className='w-full' />
           <Text size='sm' className='text-white/60 text-center w-full px-2'>

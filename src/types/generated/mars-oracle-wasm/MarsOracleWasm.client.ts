@@ -47,6 +47,13 @@ export interface MarsOracleWasmReadOnlyInterface {
     limit?: number
     startAfter?: string
   }) => Promise<ArrayOfPriceResponse>
+  pricesByDenoms: ({
+    denoms,
+    kind,
+  }: {
+    denoms: string[]
+    kind?: ActionKind
+  }) => Promise<ArrayOfPriceResponse>
 }
 export class MarsOracleWasmQueryClient implements MarsOracleWasmReadOnlyInterface {
   client: CosmWasmClient
@@ -59,6 +66,7 @@ export class MarsOracleWasmQueryClient implements MarsOracleWasmReadOnlyInterfac
     this.priceSources = this.priceSources.bind(this)
     this.price = this.price.bind(this)
     this.prices = this.prices.bind(this)
+    this.pricesByDenoms = this.pricesByDenoms.bind(this)
   }
   config = async (): Promise<ConfigResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
@@ -108,6 +116,20 @@ export class MarsOracleWasmQueryClient implements MarsOracleWasmReadOnlyInterfac
         kind,
         limit,
         start_after: startAfter,
+      },
+    })
+  }
+  pricesByDenoms = async ({
+    denoms,
+    kind,
+  }: {
+    denoms: string[]
+    kind?: ActionKind
+  }): Promise<ArrayOfPriceResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      prices_by_denoms: {
+        denoms,
+        kind,
       },
     })
   }

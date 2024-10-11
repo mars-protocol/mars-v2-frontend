@@ -41,12 +41,10 @@ export default function usePerpsBalancesColumns() {
       },
       {
         ...LEVERAGE_META,
-        cell: ({ row }) => (
-          <Leverage
-            liquidationPrice={row.original.liquidationPrice}
-            leverage={row.original.leverage}
-          />
-        ),
+        cell: ({ row }) => {
+          const { liquidationPrice, leverage } = row.original
+          return <Leverage liquidationPrice={liquidationPrice} leverage={leverage} />
+        },
       },
       {
         ...ENTRY_PRICE_META,

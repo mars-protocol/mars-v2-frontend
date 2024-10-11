@@ -81,6 +81,14 @@ export const marsOracleWasmQueryKeys = {
         args,
       },
     ] as const,
+  pricesByDenoms: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
+    [
+      {
+        ...marsOracleWasmQueryKeys.address(contractAddress)[0],
+        method: 'prices_by_denoms',
+        args,
+      },
+    ] as const,
 }
 export interface MarsOracleWasmReactQuery<TResponse, TData = TResponse> {
   client: MarsOracleWasmQueryClient | undefined
@@ -90,6 +98,33 @@ export interface MarsOracleWasmReactQuery<TResponse, TData = TResponse> {
   > & {
     initialData?: undefined
   }
+}
+export interface MarsOracleWasmPricesByDenomsQuery<TData>
+  extends MarsOracleWasmReactQuery<ArrayOfPriceResponse, TData> {
+  args: {
+    denoms: string[]
+    kind?: ActionKind
+  }
+}
+export function useMarsOracleWasmPricesByDenomsQuery<TData = ArrayOfPriceResponse>({
+  client,
+  args,
+  options,
+}: MarsOracleWasmPricesByDenomsQuery<TData>) {
+  return useQuery<ArrayOfPriceResponse, Error, TData>(
+    marsOracleWasmQueryKeys.pricesByDenoms(client?.contractAddress, args),
+    () =>
+      client
+        ? client.pricesByDenoms({
+            denoms: args.denoms,
+            kind: args.kind,
+          })
+        : Promise.reject(new Error('Invalid client')),
+    {
+      ...options,
+      enabled: !!client && (options?.enabled != undefined ? options.enabled : true),
+    },
+  )
 }
 export interface MarsOracleWasmPricesQuery<TData>
   extends MarsOracleWasmReactQuery<ArrayOfPriceResponse, TData> {

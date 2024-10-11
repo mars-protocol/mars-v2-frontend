@@ -137,7 +137,7 @@ export type Action =
   | {
       execute_perp_order: {
         denom: string
-        order_size: SignedUint
+        order_size: Int128
         reduce_only?: boolean | null
       }
     }
@@ -188,8 +188,7 @@ export type Action =
       swap_exact_in: {
         coin_in: ActionCoin
         denom_out: string
-        min_receive?: Uint128
-        slippage?: string
+        min_receive: Uint128
         route?: SwapperRoute | null
       }
     }
@@ -229,6 +228,7 @@ export type ActionAmount =
   | {
       exact: Uint128
     }
+export type Int128 = string
 export type Condition =
   | {
       oracle_price: {
@@ -430,7 +430,7 @@ export type CallbackMsg =
         account_id: string
         denom: string
         reduce_only?: boolean | null
-        size: SignedUint
+        size: Int128
       }
     }
   | {
@@ -566,11 +566,6 @@ export type PnL =
 export interface ActionCoin {
   amount: ActionAmount
   denom: string
-}
-export interface SignedUint {
-  abs: Uint128
-  negative: boolean
-  [k: string]: unknown
 }
 export interface VaultBaseForString {
   address: string
@@ -845,16 +840,16 @@ export interface PerpPosition {
   denom: string
   entry_exec_price: Decimal
   entry_price: Decimal
-  realised_pnl: PnlAmounts
-  size: SignedUint
-  unrealised_pnl: PnlAmounts
+  realized_pnl: PnlAmounts
+  size: Int128
+  unrealized_pnl: PnlAmounts
 }
 export interface PnlAmounts {
-  accrued_funding: SignedUint
-  closing_fee: SignedUint
-  opening_fee: SignedUint
-  pnl: SignedUint
-  price_pnl: SignedUint
+  accrued_funding: Int128
+  closing_fee: Int128
+  opening_fee: Int128
+  pnl: Int128
+  price_pnl: Int128
 }
 export type ArrayOfVaultBinding = VaultBinding[]
 export interface VaultBinding {
