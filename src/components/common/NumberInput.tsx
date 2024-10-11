@@ -18,6 +18,7 @@ interface Props {
   style?: {}
   disabled?: boolean
   placeholder?: string
+  suffix?: string | JSX.Element
   onChange: (amount: BigNumber) => void
   onBlur?: () => void
   onFocus?: () => void
@@ -146,21 +147,28 @@ export default function NumberInput(props: Props) {
   }
 
   return (
-    <input
-      ref={inputRef}
-      type='text'
-      value={formattedAmount === '0' ? '0' : formattedAmount}
-      onFocus={onInputFocus}
-      onChange={(e) => onInputChange(e.target.value)}
-      onBlur={props.onBlur}
-      disabled={props.disabled}
-      className={classNames(
-        'w-full hover:cursor-pointer appearance-none border-none bg-transparent text-right outline-none',
-        props.className,
-        props.disabled && 'pointer-events-none',
+    <div className='relative'>
+      <input
+        ref={inputRef}
+        type='text'
+        value={formattedAmount === '0' ? '0' : formattedAmount}
+        onFocus={onInputFocus}
+        onChange={(e) => onInputChange(e.target.value)}
+        onBlur={props.onBlur}
+        disabled={props.disabled}
+        className={classNames(
+          'w-full hover:cursor-pointer appearance-none border-none bg-transparent text-right outline-none',
+          props.className,
+          props.disabled && 'pointer-events-none',
+        )}
+        style={props.style}
+        placeholder={props.placeholder ?? '0'}
+      />
+      {props.suffix && (
+        <span className='absolute top-1/2 right-4 flex items-center text-white/70 translate-y-[-50%]'>
+          {props.suffix}
+        </span>
       )}
-      style={props.style}
-      placeholder={props.placeholder ?? '0'}
-    />
+    </div>
   )
 }
