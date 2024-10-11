@@ -292,6 +292,13 @@ export default function useHealthComputer(account?: Account) {
   const computeMaxPerpAmount = useCallback(
     (denom: string, tradeDirection: TradeDirection) => {
       if (!healthComputer || !perpsVault || !marketStates) return BN_ZERO
+      const positions = [
+        ...healthComputer.positions.deposits,
+        ...healthComputer.positions.lends,
+        ...healthComputer.positions.perps,
+        ...healthComputer.positions.staked_astro_lps,
+      ]
+      if (positions.length === 0) return BN_ZERO
       try {
         const result = BN(
           max_perp_size_estimate_js(

@@ -1,19 +1,19 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { checkOpenInterest, checkPositionValue } from 'components/perps/Module/validators'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useAssets from 'hooks/assets/useAssets'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import usePerpPosition from 'hooks/perps/usePerpPosition'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import usePerpsMarket from 'hooks/perps/usePerpsMarket'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { List } from 'types/classes/List'
 import { getAccountNetValue } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { demagnify, getCoinValue } from 'utils/formatters'
-import useAssets from 'hooks/assets/useAssets'
-import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 
 export default function usePerpsModule(
   tradeDirection: TradeDirection,
@@ -101,6 +101,7 @@ export default function usePerpsModule(
     const priceToUse = limitPrice ?? perpsAsset.price?.amount ?? BN_ZERO
     const totalPositionValue = priceToUse.times(demagnify(maxAmount.toNumber(), perpsAsset))
     const maxLeverage = totalPositionValue.div(accountNetValue).toNumber()
+    if (maxLeverage === Infinity) return 0
     if (maxLeverage < 1 && maxLeverage > 0) return maxLeverage
 
     return Math.max(maxLeverage, 1)
