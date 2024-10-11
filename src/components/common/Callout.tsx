@@ -8,6 +8,7 @@ import Text from 'components/common/Text'
 interface Props {
   children: string | React.ReactNode
   className?: string
+  iconClassName?: string
   type: CalloutType
 }
 
@@ -33,7 +34,7 @@ export function Callout(props: Props) {
         props.className,
       )}
     >
-      <div className='w-4'>
+      <div className={classNames('w-4', props.iconClassName)}>
         <Icon />
       </div>
       <Text size='xs'>{props.children}</Text>

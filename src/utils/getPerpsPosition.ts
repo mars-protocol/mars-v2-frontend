@@ -1,5 +1,3 @@
-import BigNumber from 'bignumber.js'
-
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 

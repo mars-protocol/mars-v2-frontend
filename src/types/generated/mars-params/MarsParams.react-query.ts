@@ -37,10 +37,12 @@ import {
   AssetParamsBaseForAddr,
   CmSettingsForAddr,
   HlsParamsBaseForAddr,
+  PaginationResponseForAssetParamsBaseForAddr,
+  Metadata,
   ArrayOfPerpParams,
+  PaginationResponseForPerpParams,
   PaginationResponseForTotalDepositResponse,
   TotalDepositResponse,
-  Metadata,
   ArrayOfVaultConfigBaseForAddr,
   VaultConfigBaseForAddr,
   PaginationResponseForVaultConfigBaseForAddr,
@@ -94,6 +96,14 @@ export const marsParamsQueryKeys = {
         args,
       },
     ] as const,
+  allAssetParamsV2: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
+    [
+      {
+        ...marsParamsQueryKeys.address(contractAddress)[0],
+        method: 'all_asset_params_v2',
+        args,
+      },
+    ] as const,
   vaultConfig: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
     [
       {
@@ -131,6 +141,14 @@ export const marsParamsQueryKeys = {
       {
         ...marsParamsQueryKeys.address(contractAddress)[0],
         method: 'all_perp_params',
+        args,
+      },
+    ] as const,
+  allPerpParamsV2: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
+    [
+      {
+        ...marsParamsQueryKeys.address(contractAddress)[0],
+        method: 'all_perp_params_v2',
         args,
       },
     ] as const,
@@ -202,6 +220,33 @@ export function useMarsParamsTotalDepositQuery<TData = TotalDepositResponse>({
       client
         ? client.totalDeposit({
             denom: args.denom,
+          })
+        : Promise.reject(new Error('Invalid client')),
+    {
+      ...options,
+      enabled: !!client && (options?.enabled != undefined ? options.enabled : true),
+    },
+  )
+}
+export interface MarsParamsAllPerpParamsV2Query<TData>
+  extends MarsParamsReactQuery<PaginationResponseForPerpParams, TData> {
+  args: {
+    limit?: number
+    startAfter?: string
+  }
+}
+export function useMarsParamsAllPerpParamsV2Query<TData = PaginationResponseForPerpParams>({
+  client,
+  args,
+  options,
+}: MarsParamsAllPerpParamsV2Query<TData>) {
+  return useQuery<PaginationResponseForPerpParams, Error, TData>(
+    marsParamsQueryKeys.allPerpParamsV2(client?.contractAddress, args),
+    () =>
+      client
+        ? client.allPerpParamsV2({
+            limit: args.limit,
+            startAfter: args.startAfter,
           })
         : Promise.reject(new Error('Invalid client')),
     {
@@ -330,6 +375,31 @@ export function useMarsParamsVaultConfigQuery<TData = VaultConfigBaseForAddr>({
       client
         ? client.vaultConfig({
             address: args.address,
+          })
+        : Promise.reject(new Error('Invalid client')),
+    {
+      ...options,
+      enabled: !!client && (options?.enabled != undefined ? options.enabled : true),
+    },
+  )
+}
+export interface MarsParamsAllAssetParamsV2Query<TData>
+  extends MarsParamsReactQuery<PaginationResponseForAssetParamsBaseForAddr, TData> {
+  args: {
+    limit?: number
+    startAfter?: string
+  }
+}
+export function useMarsParamsAllAssetParamsV2Query<
+  TData = PaginationResponseForAssetParamsBaseForAddr,
+>({ client, args, options }: MarsParamsAllAssetParamsV2Query<TData>) {
+  return useQuery<PaginationResponseForAssetParamsBaseForAddr, Error, TData>(
+    marsParamsQueryKeys.allAssetParamsV2(client?.contractAddress, args),
+    () =>
+      client
+        ? client.allAssetParamsV2({
+            limit: args.limit,
+            startAfter: args.startAfter,
           })
         : Promise.reject(new Error('Invalid client')),
     {
@@ -506,6 +576,7 @@ export interface MarsParamsUpdateConfigMutation {
   client: MarsParamsClient
   msg: {
     addressProvider?: string
+    maxPerpParams?: number
   }
   args?: {
     fee?: number | StdFee | 'auto'

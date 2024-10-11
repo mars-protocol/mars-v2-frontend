@@ -100,11 +100,11 @@ export default function useHealthComputer(account?: Account) {
         const decimals = assets.find(byDenom(curr.denom))?.decimals || PRICE_ORACLE_DECIMALS
         const decimalDiffrence = decimals - PRICE_ORACLE_DECIMALS
 
-        // The HealthComputer needs prices expressed per 1 amount. So we need to correct here for any additional decimals.
         prev[curr.denom] = curr.amount
           .shiftedBy(VALUE_SCALE_FACTOR - decimalDiffrence)
-          .decimalPlaces(18)
+          .decimalPlaces(decimals)
           .toString()
+
         return prev
       },
       {} as { [key: string]: string },
@@ -263,13 +263,14 @@ export default function useHealthComputer(account?: Account) {
     (denom: string, kind: LiquidationPriceKind) => {
       if (!healthComputer) return null
       try {
-        const asset = whitelistedAssets.find(byDenom(denom))
+        const asset = perpsAsssets.find(byDenom(denom))
         const assetInAccount = findPositionInAccount(healthComputer, denom)
         if (!asset || !assetInAccount) return 0
-        const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
-        return BN(liquidation_price_js(healthComputer, denom, kind))
+
+        return BN(liquidation_price_js(healthComputer, asset.denom, kind))
           .shiftedBy(-VALUE_SCALE_FACTOR)
-          .shiftedBy(decimalDiff)
+          .shiftedBy(PRICE_ORACLE_DECIMALS - asset.decimals)
+          .decimalPlaces(asset.decimals)
           .toNumber()
       } catch (err) {
         console.error(
@@ -279,11 +280,13 @@ export default function useHealthComputer(account?: Account) {
           denom,
           'kind:',
           kind,
+          'healthComputer:',
+          healthComputer,
         )
         return null
       }
     },
-    [healthComputer, whitelistedAssets],
+    [healthComputer, perpsAsssets],
   )
 
   const computeMaxPerpAmount = useCallback(

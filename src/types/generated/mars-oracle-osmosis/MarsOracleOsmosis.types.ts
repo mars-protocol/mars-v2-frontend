@@ -183,6 +183,12 @@ export type QueryMsg =
         start_after?: string | null
       }
     }
+  | {
+      prices_by_denoms: {
+        denoms: string[]
+        kind?: ActionKind | null
+      }
+    }
 export type ActionKind = 'default' | 'liquidation'
 export interface ConfigResponse {
   base_denom: string

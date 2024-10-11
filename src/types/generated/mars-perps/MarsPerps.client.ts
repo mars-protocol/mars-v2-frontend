@@ -13,19 +13,20 @@ import {
   ExecuteMsg,
   OwnerUpdate,
   Uint128,
+  Int128,
   ActionKind,
-  SignedUint,
   PerpParams,
   ConfigUpdates,
   QueryMsg,
   ConfigForString,
-  MarketResponse,
   SignedDecimal,
+  MarketResponse,
   AccountingResponse,
   Accounting,
   Balance,
   CashFlow,
   PnlAmounts,
+  Int256,
   Uint256,
   MarketStateResponse,
   Funding,
@@ -73,7 +74,7 @@ export interface MarsPerpsReadOnlyInterface {
   }: {
     accountId: string
     denom: string
-    orderSize?: SignedUint
+    orderSize?: Int128
   }) => Promise<PositionResponse>
   positions: ({
     limit,
@@ -98,7 +99,7 @@ export interface MarsPerpsReadOnlyInterface {
   }) => Promise<PnlAmounts>
   marketAccounting: ({ denom }: { denom: string }) => Promise<AccountingResponse>
   totalAccounting: () => Promise<AccountingResponse>
-  openingFee: ({ denom, size }: { denom: string; size: SignedUint }) => Promise<TradingFee>
+  openingFee: ({ denom, size }: { denom: string; size: Int128 }) => Promise<TradingFee>
   positionFees: ({
     accountId,
     denom,
@@ -106,7 +107,7 @@ export interface MarsPerpsReadOnlyInterface {
   }: {
     accountId: string
     denom: string
-    newSize: SignedUint
+    newSize: Int128
   }) => Promise<PositionFeesResponse>
 }
 export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
@@ -197,7 +198,7 @@ export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
   }: {
     accountId: string
     denom: string
-    orderSize?: SignedUint
+    orderSize?: Int128
   }): Promise<PositionResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       position: {
@@ -261,13 +262,7 @@ export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
       total_accounting: {},
     })
   }
-  openingFee = async ({
-    denom,
-    size,
-  }: {
-    denom: string
-    size: SignedUint
-  }): Promise<TradingFee> => {
+  openingFee = async ({ denom, size }: { denom: string; size: Int128 }): Promise<TradingFee> => {
     return this.client.queryContractSmart(this.contractAddress, {
       opening_fee: {
         denom,
@@ -282,7 +277,7 @@ export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
   }: {
     accountId: string
     denom: string
-    newSize: SignedUint
+    newSize: Int128
   }): Promise<PositionFeesResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       position_fees: {
@@ -348,7 +343,7 @@ export interface MarsPerpsInterface extends MarsPerpsReadOnlyInterface {
       accountId: string
       denom: string
       reduceOnly?: boolean
-      size: SignedUint
+      size: Int128
     },
     fee?: number | StdFee | 'auto',
     memo?: string,
@@ -523,7 +518,7 @@ export class MarsPerpsClient extends MarsPerpsQueryClient implements MarsPerpsIn
       accountId: string
       denom: string
       reduceOnly?: boolean
-      size: SignedUint
+      size: Int128
     },
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,

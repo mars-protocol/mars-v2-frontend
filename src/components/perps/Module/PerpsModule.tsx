@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -30,6 +29,7 @@ import { byDenom } from 'utils/array'
 import { capitalizeFirstLetter } from 'utils/helpers'
 import getPerpsPosition from 'utils/getPerpsPosition'
 import LeverageSlider from 'components/common/LeverageSlider'
+import SwitchWithLabel from 'components/common/Switch/SwitchWithLabel'
 
 export function PerpsModule() {
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
@@ -43,10 +43,16 @@ export function PerpsModule() {
   const [limitPrice, setLimitPrice] = useState<BigNumber>(BN_ZERO)
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const isLimitOrder = selectedOrderType === OrderType.LIMIT
-
   const [limitPriceInfo, setLimitPriceInfo] = useState<CallOut | undefined>(
     DEFAULT_LIMIT_PRICE_INFO,
   )
+
+  const [isReduceOnly, setIsReduceOnly] = useState(false)
+  const [reduceOnlyWarning, setReduceOnlyWarning] = useState<string | null>(null)
+
+  useEffect(() => {
+    setIsReduceOnly(selectedOrderType === OrderType.STOP)
+  }, [selectedOrderType])
 
   const {
     maxLeverage,
@@ -70,6 +76,37 @@ export function PerpsModule() {
 
   const currentPerpPosition = account?.perps.find(byDenom(perpsAsset.denom))
 
+  const validateReduceOnlyOrder = useCallback(() => {
+    if (!isReduceOnly || !currentPerpPosition) {
+      setReduceOnlyWarning(null)
+      return true
+    }
+
+    const isIncreasingPosition =
+      (currentPerpPosition.tradeDirection === 'long' && amount.isGreaterThan(0)) ||
+      (currentPerpPosition.tradeDirection === 'short' && amount.isLessThan(0))
+    const isFlippingPosition =
+      (currentPerpPosition.tradeDirection === 'long' && amount.isLessThan(0)) ||
+      (currentPerpPosition.tradeDirection === 'short' && amount.isGreaterThan(0))
+
+    if (
+      isIncreasingPosition ||
+      (isFlippingPosition && amount.abs().isGreaterThan(currentPerpPosition.amount.abs()))
+    ) {
+      setReduceOnlyWarning(
+        'This order violates the Reduce-Only setting. Reduce-Only orders can only decrease your current position size or close it entirely. Please uncheck Reduce-Only or adjust your order size.',
+      )
+      return false
+    }
+
+    setReduceOnlyWarning(null)
+    return true
+  }, [isReduceOnly, currentPerpPosition, amount])
+
+  useEffect(() => {
+    validateReduceOnlyOrder()
+  }, [validateReduceOnlyOrder, amount, isReduceOnly])
+
   const reset = useCallback(() => {
     setLimitPrice(BN_ZERO)
     updateAmount(BN_ZERO)
@@ -80,8 +117,11 @@ export function PerpsModule() {
       updateAmount(amount.times(-1))
       setTradeDirection(newTradeDirection)
       if (isLimitOrder) reset()
+      if (currentPerpPosition && newTradeDirection === currentPerpPosition.tradeDirection) {
+        setIsReduceOnly(false)
+      }
     },
-    [amount, isLimitOrder, reset, updateAmount],
+    [amount, isLimitOrder, reset, updateAmount, currentPerpPosition],
   )
 
   const onChangeOrderType = useCallback(
@@ -167,15 +207,31 @@ export function PerpsModule() {
   ])
 
   const isDisabledExecution = useMemo(() => {
-    if (!isLimitOrder) return amount.isGreaterThan(maxAmount) || warningMessages.isNotEmpty()
+    if (!isLimitOrder) {
+      return (
+        amount.isGreaterThan(maxAmount) ||
+        warningMessages.isNotEmpty() ||
+        (isReduceOnly && !validateReduceOnlyOrder())
+      )
+    }
 
     return (
       !!limitPriceInfo ||
       limitPrice.isZero() ||
       amount.isGreaterThan(maxAmount) ||
-      warningMessages.isNotEmpty()
+      warningMessages.isNotEmpty() ||
+      (isReduceOnly && !validateReduceOnlyOrder())
     )
-  }, [isLimitOrder, amount, maxAmount, warningMessages, limitPriceInfo, limitPrice])
+  }, [
+    isLimitOrder,
+    amount,
+    maxAmount,
+    warningMessages,
+    limitPriceInfo,
+    limitPrice,
+    isReduceOnly,
+    validateReduceOnlyOrder,
+  ])
 
   const isDisabledAmountInput = useMemo(() => {
     if (!isLimitOrder) return false
@@ -280,6 +336,19 @@ export function PerpsModule() {
             {message}
           </Callout>
         ))}
+        {currentPerpPosition && isLimitOrder && (
+          <>
+            <Divider />
+            <SwitchWithLabel
+              name='reduce-only'
+              label='Reduce Only'
+              value={isReduceOnly}
+              onChange={() => setIsReduceOnly(!isReduceOnly)}
+              tooltip="Use 'Reduce Only' for limit orders to decrease your position. It prevents new position creation if the existing one is modified or closed."
+            />
+            {reduceOnlyWarning && <Callout type={CalloutType.WARNING}>{reduceOnlyWarning}</Callout>}
+          </>
+        )}
       </div>
       <div className='flex flex-wrap w-full gap-4 mt-4'>
         {isLimitOrder && <KeeperFee />}
@@ -297,6 +366,8 @@ export function PerpsModule() {
           baseDenom={tradingFee?.baseDenom ?? ''}
           limitPrice={limitPrice}
           orderType={selectedOrderType}
+          isReduceOnly={isReduceOnly}
+          validateReduceOnlyOrder={validateReduceOnlyOrder}
         />
       </div>
     </Card>

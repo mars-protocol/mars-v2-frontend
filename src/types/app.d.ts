@@ -345,6 +345,8 @@ interface PerpPositionRow extends PerpsPosition {
   liquidationPrice: BigNumber
   leverage: number
   orderId?: string
+  hasStopLoss?: boolean
+  hasTakeProfit?: boolean
 }
 
 interface PerpsPnL {
@@ -978,6 +980,19 @@ interface HandleResponseProps {
   message?: string
 }
 
+interface CreateMultipleTriggerOrdersOptions {
+  accountId: string
+  orders: Array<{
+    coin: BNCoin
+    reduceOnly?: boolean
+    autolend: boolean
+    baseDenom: string
+    tradeDirection: TradeDirection
+    price: BigNumber
+    keeperFee: BNCoin
+  }>
+}
+
 interface BroadcastSlice {
   addToStakingStrategy: (options: {
     accountId: string
@@ -1024,6 +1039,14 @@ interface BroadcastSlice {
     autolend: boolean
     baseDenom: string
   }) => Promise<boolean>
+  closePerpPosition: (options: {
+    accountId: string
+    coin: BNCoin
+    reduceOnly?: boolean
+    autolend: boolean
+    baseDenom: string
+    orderIds?: string[]
+  }) => Promise<boolean>
   createTriggerOrder: (options: {
     accountId: string
     coin: BNCoin
@@ -1034,6 +1057,18 @@ interface BroadcastSlice {
     price: BigNumber
     keeperFee: BNCoin
   }) => Promise<boolean>
+  createMultipleTriggerOrders: (options: CreateMultipleTriggerOrdersOptions) => Promise<boolean>
+  createTriggerOrder: (options: {
+    accountId: string
+    coin: BNCoin
+    reduceOnly?: boolean
+    autolend: boolean
+    baseDenom: string
+    tradeDirection: TradeDirection
+    price: BigNumber
+    keeperFee: BNCoin
+  }) => Promise<boolean>
+
   cancelTriggerOrder: (options: {
     accountId: string
     orderId: string
@@ -1211,6 +1246,7 @@ interface ModalSlice {
   perpsVaultModal: PerpsVaultModal | null
   settingsModal: boolean
   keeperFeeModal: boolean
+  addSLTPModal: boolean
   unlockModal: UnlockModal | null
   farmModal: FarmModal | null
   walletAssetsModal: WalletAssetModal | null
@@ -1653,6 +1689,7 @@ interface ExceutePerpsOrder {
     denom: string
     order_size: SignedUint
     reduce_only?: boolean | null
+    order_type: 'stop_loss' | 'take_profit'
   }
 }
 

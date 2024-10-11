@@ -14,19 +14,20 @@ import {
   ExecuteMsg,
   OwnerUpdate,
   Uint128,
+  Int128,
   ActionKind,
-  SignedUint,
   PerpParams,
   ConfigUpdates,
   QueryMsg,
   ConfigForString,
-  MarketResponse,
   SignedDecimal,
+  MarketResponse,
   AccountingResponse,
   Accounting,
   Balance,
   CashFlow,
   PnlAmounts,
+  Int256,
   Uint256,
   MarketStateResponse,
   Funding,
@@ -198,7 +199,7 @@ export interface MarsPerpsPositionFeesQuery<TData>
   args: {
     accountId: string
     denom: string
-    newSize: SignedUint
+    newSize: Int128
   }
 }
 export function useMarsPerpsPositionFeesQuery<TData = PositionFeesResponse>({
@@ -225,7 +226,7 @@ export function useMarsPerpsPositionFeesQuery<TData = PositionFeesResponse>({
 export interface MarsPerpsOpeningFeeQuery<TData> extends MarsPerpsReactQuery<TradingFee, TData> {
   args: {
     denom: string
-    size: SignedUint
+    size: Int128
   }
 }
 export function useMarsPerpsOpeningFeeQuery<TData = TradingFee>({
@@ -374,7 +375,7 @@ export interface MarsPerpsPositionQuery<TData>
   args: {
     accountId: string
     denom: string
-    orderSize?: SignedUint
+    orderSize?: Int128
   }
 }
 export function useMarsPerpsPositionQuery<TData = PositionResponse>({
@@ -652,7 +653,7 @@ export interface MarsPerpsExecuteOrderMutation {
     accountId: string
     denom: string
     reduceOnly?: boolean
-    size: SignedUint
+    size: Int128
   }
   args?: {
     fee?: number | StdFee | 'auto'

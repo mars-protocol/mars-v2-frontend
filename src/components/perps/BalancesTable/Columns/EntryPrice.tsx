@@ -1,7 +1,8 @@
-import { FormattedNumber } from 'components/common/FormattedNumber'
+import DisplayCurrency from 'components/common/DisplayCurrency'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import { BNCoin } from 'types/classes/BNCoin'
 
 export const ENTRY_PRICE_META = {
   accessorKey: 'entryPrice',
@@ -22,24 +23,22 @@ type Props = {
 }
 
 export default function EntryPrice(props: Props) {
-  const entryPrice = props.entryPrice
-    .shiftedBy(props.asset.decimals - PRICE_ORACLE_DECIMALS)
-    .toNumber()
-  const currentPrice = props.currentPrice
-    .shiftedBy(props.asset.decimals - PRICE_ORACLE_DECIMALS)
-    .toNumber()
+  const entryPrice = props.entryPrice.shiftedBy(props.asset.decimals - PRICE_ORACLE_DECIMALS)
+
+  const currentPrice = props.currentPrice.shiftedBy(props.asset.decimals - PRICE_ORACLE_DECIMALS)
+
   return (
     <TitleAndSubCell
       title={
-        <FormattedNumber
-          amount={entryPrice}
-          options={{ prefix: '$', maxDecimals: entryPrice >= 100 ? 2 : 6 }}
+        <DisplayCurrency
+          coin={BNCoin.fromDenomAndBigNumber('usd', entryPrice ?? 0)}
+          options={{ maxDecimals: entryPrice.isGreaterThanOrEqualTo(10) ? 2 : 6 }}
         />
       }
       sub={
-        <FormattedNumber
-          amount={currentPrice}
-          options={{ prefix: '$', maxDecimals: currentPrice >= 100 ? 2 : 6 }}
+        <DisplayCurrency
+          coin={BNCoin.fromDenomAndBigNumber('usd', currentPrice ?? 0)}
+          options={{ maxDecimals: entryPrice.isGreaterThanOrEqualTo(10) ? 2 : 6 }}
         />
       }
     />
