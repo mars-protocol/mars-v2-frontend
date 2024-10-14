@@ -44,7 +44,7 @@
     "react-qr-code": "^2.0.15",
     "react-router-dom": "^6.27.0",
     "react-spring": "^9.7.4",
-    "react-toastify": "^10.0.5",
+    "react-toastify": "^10.0.6",
     "react-use-clipboard": "^1.0.9",
     "recharts": "^2.13.0",
     "sharp": "^0.33.5",
