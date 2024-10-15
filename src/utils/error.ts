@@ -1,7 +1,14 @@
+import * as Sentry from '@sentry/nextjs'
 import useStore from 'store'
 
 export function setApiError(api: string, error: unknown) {
   const errorStore = useStore.getState().errorStore
+  Sentry.captureException(error, {
+    data: {
+      api,
+      type: 'api',
+    },
+  })
   useStore.setState({
     errorStore: {
       apiError: {
@@ -15,6 +22,12 @@ export function setApiError(api: string, error: unknown) {
 
 export function setNodeError(api: string, error: unknown) {
   const errorStore = useStore.getState().errorStore
+  Sentry.captureException(error, {
+    data: {
+      api,
+      type: 'node',
+    },
+  })
   useStore.setState({
     errorStore: {
       apiError: errorStore.apiError,

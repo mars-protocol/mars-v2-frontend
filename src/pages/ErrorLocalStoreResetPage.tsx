@@ -1,9 +1,10 @@
+import * as Sentry from '@sentry/nextjs'
 import Background from 'components/common/Background'
 import Button from 'components/common/Button'
 import { ExternalLink } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function ErrorLocalStoreResetPage() {
   const [clicked, setClicked] = useState(false)
@@ -20,6 +21,10 @@ export default function ErrorLocalStoreResetPage() {
       }, 1000)
     }
   }
+
+  useEffect(() => {
+    Sentry.captureEvent({ message: 'ErrorLocalStoreResetPage' })
+  }, [])
 
   return (
     <>
