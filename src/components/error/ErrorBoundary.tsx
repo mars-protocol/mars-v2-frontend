@@ -1,6 +1,4 @@
-import ErrorApiPage from 'pages/ErrorApiPage'
 import ErrorLocalStoreResetPage from 'pages/ErrorLocalStoreResetPage'
-import ErrorNodePage from 'pages/ErrorNodePage'
 import React, { Component } from 'react'
 
 interface Props {
