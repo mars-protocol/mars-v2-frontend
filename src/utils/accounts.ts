@@ -277,21 +277,21 @@ export function convertAccountToPositions(account: Account, assets: Asset[]): Po
       return {
         base_denom: perpPosition.baseDenom,
         current_price: perpPosition.currentPrice
-          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
-          .decimalPlaces(18)
+          .shiftedBy(-decimalDiff)
+          .decimalPlaces(perpAssetDecimals)
           .toString(),
         current_exec_price: perpPosition.currentPrice
-          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
-          .decimalPlaces(18)
+          .shiftedBy(-decimalDiff)
+          .decimalPlaces(perpAssetDecimals)
           .toString(),
         denom: perpPosition.denom,
         entry_price: perpPosition.entryPrice
-          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
-          .decimalPlaces(18)
+          .shiftedBy(-decimalDiff)
+          .decimalPlaces(perpAssetDecimals)
           .toString(),
         entry_exec_price: perpPosition.entryPrice
-          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
-          .decimalPlaces(18)
+          .shiftedBy(-decimalDiff)
+          .decimalPlaces(perpAssetDecimals)
           .toString(),
         size: perpPosition.amount.toString() as any,
         unrealized_pnl: {

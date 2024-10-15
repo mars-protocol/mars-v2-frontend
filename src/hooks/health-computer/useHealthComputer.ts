@@ -259,6 +259,7 @@ export default function useHealthComputer(account?: Account) {
     [healthComputer, slippage],
   )
 
+  // TODO: as discussed scaling should only occur on the  smart contracts in the future
   const computeLiquidationPrice = useCallback(
     (denom: string, kind: LiquidationPriceKind) => {
       if (!healthComputer) return null
@@ -267,9 +268,33 @@ export default function useHealthComputer(account?: Account) {
         const assetInAccount = findPositionInAccount(healthComputer, denom)
         if (!asset || !assetInAccount) return 0
 
-        return BN(liquidation_price_js(healthComputer, asset.denom, kind))
-          .shiftedBy(-VALUE_SCALE_FACTOR)
-          .shiftedBy(PRICE_ORACLE_DECIMALS - asset.decimals)
+        // Create a deep copy of the healthComputer object
+        const scaledHealthComputer = JSON.parse(JSON.stringify(healthComputer))
+
+        // Scale down the oracle prices
+        for (const [key, value] of Object.entries(scaledHealthComputer.oracle_prices)) {
+          if (typeof value === 'string') {
+            scaledHealthComputer.oracle_prices[key] = BN(value)
+              .shiftedBy(-VALUE_SCALE_FACTOR)
+              .toString()
+          }
+        }
+
+        const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
+        // Ensure perp prices are at the same scale as the scaled-down oracle prices
+        const perpIndex = scaledHealthComputer.positions.perps.findIndex(
+          (p: any) => p.denom === denom,
+        )
+        if (perpIndex !== -1) {
+          const perp = scaledHealthComputer.positions.perps[perpIndex]
+          perp.current_price = BN(perp.current_price).shiftedBy(decimalDiff).toString()
+          perp.current_exec_price = BN(perp.current_exec_price).shiftedBy(decimalDiff).toString()
+          perp.entry_price = BN(perp.entry_price).shiftedBy(decimalDiff).toString()
+          perp.entry_exec_price = BN(perp.entry_exec_price).shiftedBy(decimalDiff).toString()
+        }
+
+        return BN(liquidation_price_js(scaledHealthComputer, asset.denom, kind))
+          .shiftedBy(decimalDiff)
           .decimalPlaces(asset.decimals)
           .toNumber()
       } catch (err) {
@@ -299,6 +324,9 @@ export default function useHealthComputer(account?: Account) {
         ...healthComputer.positions.staked_astro_lps,
       ]
       if (positions.length === 0) return BN_ZERO
+      const asset = assets.find(byDenom(denom))
+      if (!asset) return BN_ZERO
+
       try {
         const result = BN(
           max_perp_size_estimate_js(
@@ -316,7 +344,7 @@ export default function useHealthComputer(account?: Account) {
         return BN_ZERO
       }
     },
-    [healthComputer, perpsVault, marketStates],
+    [healthComputer, perpsVault, marketStates, assets],
   )
 
   const health = useMemo(() => {

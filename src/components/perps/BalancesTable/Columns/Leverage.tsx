@@ -22,7 +22,7 @@ type Props = {
 export default function Leverage(props: Props) {
   return (
     <TitleAndSubCell
-      title={'-'}
+      title={props.liquidationPrice.toString() ?? '-'}
       sub={
         props.leverage ? <FormattedNumber amount={props.leverage} options={{ suffix: 'x' }} /> : ''
       }
