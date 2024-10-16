@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 
 export default function useCurrentAccount(): Account | undefined {
   const accountId = useAccountId()
-  const { data: account } = useAccount(accountId)
+  const { data: account } = useAccount(accountId || undefined)
 
   return useMemo(() => account, [account])
 }

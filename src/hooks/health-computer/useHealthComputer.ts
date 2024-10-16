@@ -13,7 +13,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPositionValue } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams.types'
-import { MarketStateResponse } from 'types/generated/mars-perps/MarsPerps.types'
+import { MarketResponse } from 'types/generated/mars-perps/MarsPerps.types'
 import {
   AssetParamsBaseForAddr,
   HealthComputer,
@@ -154,7 +154,7 @@ export default function useHealthComputer(account?: Account) {
   }, [perpsParams])
 
   const marketStates = useMemo(() => {
-    const marketStates: { [key: string]: MarketStateResponse } = {}
+    const marketStates: { [key: string]: MarketResponse } = {}
 
     if (!perpsMarketStates) return marketStates
 
