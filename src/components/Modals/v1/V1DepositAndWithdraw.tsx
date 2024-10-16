@@ -1,11 +1,10 @@
 import Deposit from 'components/Modals/v1/Deposit'
 import Withdraw from 'components/Modals/v1/Withdraw'
-import useAccount from 'hooks/accounts/useAccount'
+import useV1Account from 'hooks/v1/useV1Account'
 import useStore from 'store'
 
 export default function V1DepositAndWithdraw() {
-  const address = useStore((s) => s.address)
-  const { data: account } = useAccount(address)
+  const { data: account } = useV1Account()
   const modal = useStore<V1DepositAndWithdrawModal | null>((s) => s.v1DepositAndWithdrawModal)
   const isDeposit = modal?.type === 'deposit'
 
