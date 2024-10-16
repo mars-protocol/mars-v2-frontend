@@ -7,13 +7,13 @@ import { BN } from 'utils/helpers'
 export default function usePerpsMarket() {
   const { perpsAsset } = usePerpsAsset()
 
-  const { data: perpsMarketState } = usePerpsMarketState()
+  const perpsMarketState = usePerpsMarketState()
 
   return useMemo(() => {
     if (!perpsMarketState) return null
     return {
       // Funding rate is per 24h
-      fundingRate: BN(perpsMarketState.funding.last_funding_rate as any).times(100),
+      fundingRate: BN(perpsMarketState.current_funding_rate as any).times(100),
       asset: perpsAsset,
       openInterest: {
         long: BN(perpsMarketState.long_oi),

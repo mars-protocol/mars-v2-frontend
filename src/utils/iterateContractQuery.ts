@@ -1,6 +1,6 @@
 import { ITEM_LIMIT_PER_QUERY } from 'constants/query'
 
-interface KeyProperties {
+export interface KeyProperties {
   denom?: string
   addr?: string
 }
