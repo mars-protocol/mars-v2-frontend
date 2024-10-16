@@ -16,7 +16,7 @@ import V1Page from 'pages/V1Page'
 import VaultsOfficialPage from 'pages/VaultsOfficialPage'
 import VaultsCommunityPage from 'pages/VaultsCommunityPage'
 import CreateVault from 'components/vaults/community/createVault/index'
-import CreateVaultAccount from 'components/vaults/community/createVault/CreateVaultAccount'
+import MintVaultAccount from 'components/vaults/community/createVault/MintVaultAccount'
 import PerpsVaultPage from 'pages/PerpsVaultPage'
 
 export default function Routes() {
@@ -45,8 +45,8 @@ export default function Routes() {
           <Route path='create' element={<CreateVault />} />
         </Route>
         <Route path='/vaults-community' element={<VaultsCommunityPage />} />
-        <Route path='/vaults/:vaultAddress' element={<CreateVault />}>
-          <Route path='mint-account' element={<CreateVaultAccount />} />
+        <Route path='/vaults/:vaultAddress'>
+          <Route path='mint-account' element={<MintVaultAccount />} />
           {/* TODO */}
           {/* <Route path='delete' element={<CreateVault />} /> */}
         </Route>
@@ -67,8 +67,8 @@ export default function Routes() {
             <Route path='create' element={<CreateVault />} />
           </Route>
           <Route path='vaults-community' element={<VaultsCommunityPage />} />
-          <Route path='vaults/:vaultAddress' element={<CreateVault />}>
-            <Route path='mint-account' element={<CreateVaultAccount />} />
+          <Route path='vaults/:vaultAddress'>
+            <Route path='mint-account' element={<MintVaultAccount />} />
             {/* TODO */}
             {/* <Route path='delete' element={} /> */}
           </Route>

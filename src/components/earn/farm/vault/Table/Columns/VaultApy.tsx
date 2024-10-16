@@ -5,7 +5,7 @@ import Text from 'components/common/Text'
 export const APY_META = { accessorKey: 'apy', header: 'APY' }
 
 interface Props {
-  vault: Vault | DepositedVault
+  vault: Vault | DepositedVault | any //get the right ts
 }
 
 export default function Apy(props: Props) {

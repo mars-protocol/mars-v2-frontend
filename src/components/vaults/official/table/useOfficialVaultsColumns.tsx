@@ -2,12 +2,13 @@ import { ColumnDef } from '@tanstack/react-table'
 import React, { useMemo } from 'react'
 import Name, { NAME_META } from 'components/vaults/common/table/columns/Name'
 import Fee, { FEE_META } from 'components/vaults/common/table/columns/Fee'
-import Tvl, { TVL_META } from 'components/vaults/common/table/columns/Tvl'
-import Apy, { APY_META } from 'components/vaults/common/table/columns/Apy'
 import FreezePeriod, {
   FREEZE_PERIOD_META,
 } from 'components/vaults/common/table/columns/FreezePeriod'
 import Deposit, { DEPOSIT_META } from 'components/vaults/official/table/column/Deposit'
+import Apy, { APY_META } from 'components/earn/farm/vault/Table/Columns/VaultApy'
+import TVL, { TVL_META } from 'components/earn/farm/common/Table/Columns/TVL'
+import BigNumber from 'bignumber.js'
 
 interface Props {
   isLoading: boolean
@@ -24,11 +25,11 @@ export default function useOfficialVaultsColumns(props: Props) {
       },
       {
         ...TVL_META,
-        cell: ({ row }) => <Tvl value={row.original.tvl} isLoading={isLoading} />,
+        cell: ({ row }) => <TVL amount={BigNumber(1000)} denom={'usd'} />,
       },
       {
         ...APY_META,
-        cell: ({ row }) => <Apy value={row.original.apy} isLoading={isLoading} />,
+        cell: ({ row }) => <Apy vault={row.original.apy} />,
       },
       {
         ...FEE_META,
