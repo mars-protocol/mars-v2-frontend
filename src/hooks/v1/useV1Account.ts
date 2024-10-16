@@ -11,7 +11,7 @@ export default function useV1Account() {
   const isV1 = useStore((s) => s.isV1)
   const enabled = isV1 && !!address
 
-  return useSWR<Account>(
+  return useSWR(
     enabled && `chains/${chainConfig.id}/v1/user/${address}`,
     async () => {
       const [debts, lends] = await Promise.all([

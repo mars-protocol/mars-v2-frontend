@@ -1,4 +1,3 @@
-import { ITEM_LIMIT_PER_QUERY } from 'constants/query'
 import { KeyProperties } from 'utils/iterateContractQuery'
 
 type PaginationQuery<T> = ({
@@ -16,7 +15,7 @@ type PaginationResponse<T> = {
   }
 }
 
-export async function iteratePaginationQuery<T>(
+export async function iteratePaginationQuery<T extends KeyProperties>(
   query: PaginationQuery<T>,
   keyProperty: keyof KeyProperties = 'denom',
   previousResults?: T[],
@@ -24,7 +23,7 @@ export async function iteratePaginationQuery<T>(
   const lastItem = previousResults && previousResults.at(-1)
   const lastItemKey = lastItem && lastItem[keyProperty]
   const params = {
-    limit: ITEM_LIMIT_PER_QUERY,
+    limit: 1,
     startAfter: lastItemKey,
   }
 

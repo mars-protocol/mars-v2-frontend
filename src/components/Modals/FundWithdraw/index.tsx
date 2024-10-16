@@ -7,7 +7,7 @@ import useStore from 'store'
 
 export default function FundAndWithdrawModal() {
   const accountId = useAccountId()
-  const { data: account } = useAccount(accountId)
+  const { data: account } = useAccount(accountId ?? undefined)
   const modal = useStore<string | null>((s) => s.fundAndWithdrawModal)
   const isFunding = modal === 'fund'
 

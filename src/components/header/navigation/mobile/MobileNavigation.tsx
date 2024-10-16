@@ -37,7 +37,7 @@ function V1Controller(props: Props) {
 
 function Controller(props: Props) {
   const currentAccountId = useAccountId()
-  const { data: account } = useAccount(currentAccountId)
+  const { data: account } = useAccount(currentAccountId ?? undefined)
 
   return <Content {...props} account={account} />
 }
