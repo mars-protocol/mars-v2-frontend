@@ -11,6 +11,7 @@ import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { useCallback } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { getPage, getRoute } from 'utils/route'
+import useAccountId from 'hooks/accounts/useAccountId'
 
 export default function VaultsCommunityIntro() {
   const [showVaultInformation, setShowVaultInformation] = useLocalStorage<boolean>(
@@ -18,6 +19,7 @@ export default function VaultsCommunityIntro() {
     true,
   )
   const { open: showAlertDialog, close } = useAlertDialog()
+  const accountId = useAccountId()
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
@@ -25,9 +27,11 @@ export default function VaultsCommunityIntro() {
 
   const openCreateVaultOverlay = useCallback(() => {
     // TODO: check for better option how to construct the route
-    const baseUrl = address ? `/wallets/${address}/vaults/create` : '/vaults/create'
+    // const baseUrl = address ? `/wallets/${address}/vaults/create` : '/vaults/create'
 
-    navigate(baseUrl)
+    // navigate(baseUrl)
+
+    if (accountId) navigate(getRoute(getPage('vaults/create'), searchParams, address, accountId))
 
     useStore.setState({
       focusComponent: {
@@ -37,7 +41,7 @@ export default function VaultsCommunityIntro() {
         },
       },
     })
-  }, [address, navigate, pathname, searchParams])
+  }, [address, navigate, pathname, searchParams, accountId])
 
   const handleOnClick = useCallback(() => {
     if (!showVaultInformation) {

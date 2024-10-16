@@ -3,7 +3,7 @@ import CreateVaultContent from 'components/vaults/community/createVault/CreateVa
 import Text from 'components/common/Text'
 import { ArrowRight, Vault } from 'components/common/Icons'
 
-export default function CreateVaultAccount() {
+export default function MintVaultAccount() {
   return (
     <CreateVaultContent cardClassName='h-118 flex justify-end'>
       <div className='flex flex-col items-center w-full gap-24'>

@@ -7,10 +7,12 @@ interface Props {
   placeholder?: string
   onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
   className?: string
+  required?: boolean
 }
 
 export default function TextArea(props: Props) {
-  const { value, maxLength, placeholder, onChange, className } = props
+  const { value, maxLength, placeholder, onChange, className, required = false } = props
+
   return (
     <>
       <textarea
@@ -18,8 +20,9 @@ export default function TextArea(props: Props) {
         onChange={onChange}
         maxLength={maxLength}
         placeholder={placeholder}
+        required={required}
         className={classNames(
-          'w-full mt-3 p-4 h-28 outline-none border rounded-sm resize-none bg-white/5 border-white/10 focus:border-white/20 focus:bg-white/10 hover:cursor-pointer',
+          'w-full p-4 mt-3 h-28 outline-none border rounded-sm resize-none bg-white/5 border-white/10 focus:border-white/20 focus:bg-white/10 hover:cursor-pointer',
           className,
         )}
       />
