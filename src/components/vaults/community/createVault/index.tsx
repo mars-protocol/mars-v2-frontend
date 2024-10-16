@@ -1,9 +1,9 @@
-import AssetSelect from 'components/vaults/community/createVault/AssetSelect'
+import AssetSelectContent from 'components/vaults/community/createVault/AssetSelectContent'
 import Button from 'components/common/Button'
 import CreateVaultContent from 'components/vaults/community/createVault/CreateVaultContent'
-import CreateVaultAccount from 'components/vaults/community/createVault/CreateVaultAccount'
+import MintVaultAccount from 'components/vaults/community/createVault/MintVaultAccount'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import HlsSwitch from 'components/vaults/community/createVault/HLSSwitch'
+import HlsSwitch from 'components/vaults/community/createVault/HlsSwitch'
 import VaultInputElement from 'components/vaults/community/createVault/VaultInputElement'
 import PerformanceFee from 'components/vaults/community/createVault/PerformanceFee'
 import Text from 'components/common/Text'
@@ -17,6 +17,8 @@ import { TextLink } from 'components/common/TextLink'
 import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import TextArea from 'components/common/TextArea'
+import useAccountId from 'hooks/accounts/useAccountId'
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -29,14 +31,14 @@ const options = [
 
 export default function CreateVault() {
   const [withdrawFreezePeriod, setWithdrawFreezePeriod] = useState<string>('24')
-  const [selectedAsset, setSelectedAsset] = useState({
-    label: 'USDC',
-    value: 'USDC',
-  })
+  const [description, setDescription] = useState<string>('')
 
   const assets = useWhitelistedAssets()
+  const [selectedAsset, setSelectedAsset] = useState<Asset>(assets[0])
+
   const [enableHlsVault, setEnableHlsVault] = useState<boolean>(false)
   const [showMenu, setShowMenu] = useToggle()
+  const accountId = useAccountId()
   const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
@@ -50,21 +52,24 @@ export default function CreateVault() {
     // temp vault address
     const tempVaultAddress = 'tempvaultaddress'
 
-    const baseUrl = address
-      ? `/wallets/${address}/vaults/${tempVaultAddress}/mint-account`
-      : `/vaults/${tempVaultAddress}/mint-account`
+    // const baseUrl = address
+    //   ? `/wallets/${address}/vaults/${tempVaultAddress}/mint-account`
+    //   : `/vaults/${tempVaultAddress}/mint-account`
 
-    navigate(baseUrl)
+    // navigate(baseUrl)
+
+    if (accountId)
+      navigate(getRoute(getPage('vaults/mint-account'), searchParams, tempVaultAddress, accountId))
 
     useStore.setState({
       focusComponent: {
-        component: <CreateVaultAccount />,
+        component: <MintVaultAccount />,
         onClose: () => {
           navigate(getRoute(getPage(pathname), searchParams, address))
         },
       },
     })
-  }, [navigate, pathname, searchParams, address])
+  }, [navigate, pathname, searchParams, address, accountId])
 
   const handleWithdrawFreezePeriodChange = useCallback((value: string) => {
     setWithdrawFreezePeriod(value)
@@ -74,7 +79,7 @@ export default function CreateVault() {
     setEnableHlsVault(value)
   }, [])
 
-  const handleSelectAssetsClick = useCallback(() => {
+  const handleSelectAssets = useCallback(() => {
     setShowMenu(true)
   }, [])
 
@@ -99,13 +104,14 @@ export default function CreateVault() {
 
             <VaultInputElement
               type='button'
-              value={selectedAsset.label}
-              onClick={handleSelectAssetsClick}
+              value={selectedAsset.symbol}
+              asset={selectedAsset}
+              onClick={handleSelectAssets}
               label='Vault Deposit Asset'
               suffix={<ArrowRight />}
               required
             />
-            <AssetSelect
+            <AssetSelectContent
               showMenu={showMenu}
               setShowMenu={setShowMenu}
               assets={assets}
@@ -124,23 +130,46 @@ export default function CreateVault() {
               label='Withdraw Freeze Period'
             />
 
-            <VaultInputElement
-              type='textarea'
-              // TODO: add value and onChange
-              value={''}
-              onChange={() => {}}
-              label='Description'
-              placeholder='Enter a detailed description...'
-              maxLength={240}
-              required
-            />
+            <div>
+              <label className='text-xs flex items-center'>
+                Description
+                <span className='text-error ml-1'>*</span>
+              </label>
+              <TextArea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                maxLength={240}
+                placeholder='Enter a detailed description...'
+                required
+              />
+            </div>
+
             <div className='flex flex-wrap w-full'>
               <Text size='sm' className='w-full mb-2'>
                 Details of your vault
               </Text>
               <Text size='xs' className='text-white/50'>
-                Setup your wallet with Stargaze or an IBC/ICNS Domain so that you can populate a
-                profile image, name and social links.
+                Setup your wallet with{' '}
+                <TextLink
+                  href='https://www.stargaze.zone/names'
+                  target='_blank'
+                  title='Stargaze'
+                  textSize='extraSmall'
+                  className='text-white'
+                >
+                  Stargaze
+                </TextLink>{' '}
+                or an{' '}
+                <TextLink
+                  href='https://medium.com/@icns/announcing-icns-the-interchain-name-service-e61e0c3e2abb'
+                  target='_blank'
+                  title='Stargaze'
+                  textSize='extraSmall'
+                  className='text-white'
+                >
+                  IBC/ICNS Domain
+                </TextLink>{' '}
+                so that you can populate a profile image, name and social links.
               </Text>
             </div>
           </div>

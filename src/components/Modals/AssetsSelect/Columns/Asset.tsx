@@ -11,6 +11,7 @@ export const ASSET_META = { id: 'name', header: 'Asset', accessorKey: 'asset.sym
 
 interface Props {
   row: Row<AssetTableRow>
+  hideApy?: boolean
 }
 
 function isBorrowAsset(object?: any): object is BorrowAsset {
@@ -19,7 +20,7 @@ function isBorrowAsset(object?: any): object is BorrowAsset {
 }
 
 export default function Asset(props: Props) {
-  const { row } = props
+  const { row, hideApy } = props
   const asset = row.original.asset
   const market = row.original.market
   const isBorrow = isBorrowAsset(asset)
@@ -40,7 +41,7 @@ export default function Asset(props: Props) {
           {asset.symbol}
         </Text>
         <div className='flex items-center'>
-          {showRate && market ? (
+          {!hideApy && showRate && market ? (
             <AssetRate
               rate={apy ?? 0}
               isEnabled={market.borrowEnabled}
