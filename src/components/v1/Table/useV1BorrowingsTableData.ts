@@ -1,15 +1,12 @@
-import { useMemo } from 'react'
-
 import { BN_ZERO } from 'constants/math'
-import useAccount from 'hooks/accounts/useAccount'
 import useMarkets from 'hooks/markets/useMarkets'
 import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
-import useStore from 'store'
+import useV1Account from 'hooks/v1/useV1Account'
+import { useMemo } from 'react'
 
 export default function useV1BorrowingsTableData() {
-  const address = useStore((s) => s.address)
   const markets = useMarkets()
-  const { data: v1Positions } = useAccount(address)
+  const { data: v1Positions } = useV1Account()
   const { convertAmount } = useDisplayCurrencyPrice()
 
   return useMemo((): {

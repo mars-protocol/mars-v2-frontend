@@ -3,7 +3,7 @@ import { Plus } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
-import useAccount from 'hooks/accounts/useAccount'
+import useV1Account from 'hooks/v1/useV1Account'
 import useStore from 'store'
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 }
 export default function BorrowButton(props: Props) {
   const address = useStore((s) => s.address)
-  const { data: account } = useAccount(address)
+  const { data: account } = useV1Account()
 
   const hasCollateral = account?.lends?.length ?? 0 > 0
 
