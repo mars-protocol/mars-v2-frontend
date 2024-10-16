@@ -4,7 +4,7 @@ import useAssets from 'hooks/assets/useAssets'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAssetParams from 'hooks/params/useAssetParams'
-import useAllPerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
+import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
 import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useSlippage from 'hooks/settings/useSlippage'
@@ -48,7 +48,7 @@ export default function useHealthComputer(account?: Account) {
   const whitelistedAssets = useWhitelistedAssets()
   const perpsAssets = usePerpsEnabledAssets()
   const { data: assetParams } = useAssetParams()
-  const { data: perpsMarketStates } = useAllPerpsMarketStates()
+  const { data: perpsMarketStates } = usePerpsMarketStates()
   const { data: perpsParams } = useAllPerpsParamsSC()
   const { data: vaultConfigs } = useVaultConfigs()
   const { data: perpsVault } = usePerpsVault()
