@@ -1,4 +1,6 @@
 import { BN_ZERO } from 'constants/math'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import { VALUE_SCALE_FACTOR } from 'hooks/health-computer/useHealthComputer'
 import { BNCoin } from 'types/classes/BNCoin'
 
 export default function getPerpsPosition(
@@ -18,10 +20,18 @@ export default function getPerpsPosition(
     }
   }
 
+  const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
+
   return {
     amount,
-    entryPrice: asset.price?.amount ?? BN_ZERO,
-    currentPrice: asset.price?.amount ?? BN_ZERO,
+    entryPrice:
+      asset.price?.amount
+        // .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
+        .decimalPlaces(asset.decimals) ?? BN_ZERO,
+    currentPrice:
+      asset.price?.amount
+        // .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
+        .decimalPlaces(asset.decimals) ?? BN_ZERO,
     baseDenom,
     denom: asset.denom,
     tradeDirection,
