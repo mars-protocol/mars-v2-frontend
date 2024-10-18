@@ -101,7 +101,7 @@ export default function useHealthComputer(account?: Account) {
         const decimalDiffrence = decimals - PRICE_ORACLE_DECIMALS
 
         prev[curr.denom] = curr.amount
-          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiffrence)
+          .shiftedBy(-decimalDiffrence)
           .decimalPlaces(decimals)
           .toString()
 
@@ -142,9 +142,9 @@ export default function useHealthComputer(account?: Account) {
       (prev, curr) => {
         prev[curr.denom] = {
           ...curr,
-          max_long_oi_value: BN(curr.max_long_oi_value).shiftedBy(VALUE_SCALE_FACTOR).toString(),
-          max_short_oi_value: BN(curr.max_short_oi_value).shiftedBy(VALUE_SCALE_FACTOR).toString(),
-          max_net_oi_value: BN(curr.max_net_oi_value).shiftedBy(VALUE_SCALE_FACTOR).toString(),
+          max_long_oi_value: BN(curr.max_long_oi_value).toString(),
+          max_short_oi_value: BN(curr.max_short_oi_value).toString(),
+          max_net_oi_value: BN(curr.max_net_oi_value).toString(),
         }
 
         return prev
@@ -181,7 +181,7 @@ export default function useHealthComputer(account?: Account) {
     return {
       kind: account.kind,
       asset_params: assetsParams,
-      oracle_prices: priceData,
+      oracle_prices: { ...priceData, usd: '1000000', uusd: '1' },
       vaults_data: {
         vault_configs: vaultConfigsData,
         vault_values: vaultPositionValues,
@@ -259,7 +259,6 @@ export default function useHealthComputer(account?: Account) {
     [healthComputer, slippage],
   )
 
-  // TODO: as discussed scaling should only occur on the  smart contracts in the future
   const computeLiquidationPrice = useCallback(
     (denom: string, kind: LiquidationPriceKind) => {
       if (!healthComputer) return null
@@ -268,32 +267,9 @@ export default function useHealthComputer(account?: Account) {
         const assetInAccount = findPositionInAccount(healthComputer, denom)
         if (!asset || !assetInAccount) return 0
 
-        // Create a deep copy of the healthComputer object
-        const scaledHealthComputer = JSON.parse(JSON.stringify(healthComputer))
-
-        // Scale down the oracle prices
-        for (const [key, value] of Object.entries(scaledHealthComputer.oracle_prices)) {
-          if (typeof value === 'string') {
-            scaledHealthComputer.oracle_prices[key] = BN(value)
-              .shiftedBy(-VALUE_SCALE_FACTOR)
-              .toString()
-          }
-        }
-
         const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
-        // Ensure perp prices are at the same scale as the scaled-down oracle prices
-        const perpIndex = scaledHealthComputer.positions.perps.findIndex(
-          (p: any) => p.denom === denom,
-        )
-        if (perpIndex !== -1) {
-          const perp = scaledHealthComputer.positions.perps[perpIndex]
-          perp.current_price = BN(perp.current_price).shiftedBy(decimalDiff).toString()
-          perp.current_exec_price = BN(perp.current_exec_price).shiftedBy(decimalDiff).toString()
-          perp.entry_price = BN(perp.entry_price).shiftedBy(decimalDiff).toString()
-          perp.entry_exec_price = BN(perp.entry_exec_price).shiftedBy(decimalDiff).toString()
-        }
 
-        return BN(liquidation_price_js(scaledHealthComputer, asset.denom, kind))
+        return BN(liquidation_price_js(healthComputer, asset.denom, kind))
           .shiftedBy(decimalDiff)
           .decimalPlaces(asset.decimals)
           .toNumber()
@@ -333,8 +309,8 @@ export default function useHealthComputer(account?: Account) {
             healthComputer,
             denom,
             perpsVault.denom,
-            marketStates[denom].long_oi.toString(),
-            marketStates[denom].short_oi.toString(),
+            BN(marketStates[denom]?.long_oi ?? '0').toString(),
+            BN(marketStates[denom]?.short_oi ?? '0').toString(),
             tradeDirection,
           ),
         ).abs()

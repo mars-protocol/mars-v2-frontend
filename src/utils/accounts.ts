@@ -273,26 +273,13 @@ export function convertAccountToPositions(account: Account, assets: Asset[]): Po
     perps: account.perps.map((perpPosition) => {
       const perpAsset = assets.find(byDenom(perpPosition.denom))
       const perpAssetDecimals = perpAsset?.decimals ?? PRICE_ORACLE_DECIMALS
-      const decimalDiff = perpAssetDecimals - PRICE_ORACLE_DECIMALS
       return {
         base_denom: perpPosition.baseDenom,
-        current_price: perpPosition.currentPrice
-          .shiftedBy(-decimalDiff)
-          .decimalPlaces(perpAssetDecimals)
-          .toString(),
-        current_exec_price: perpPosition.currentPrice
-          .shiftedBy(-decimalDiff)
-          .decimalPlaces(perpAssetDecimals)
-          .toString(),
+        current_price: perpPosition.currentPrice.decimalPlaces(perpAssetDecimals).toString(),
+        current_exec_price: perpPosition.currentPrice.toString(),
         denom: perpPosition.denom,
-        entry_price: perpPosition.entryPrice
-          .shiftedBy(-decimalDiff)
-          .decimalPlaces(perpAssetDecimals)
-          .toString(),
-        entry_exec_price: perpPosition.entryPrice
-          .shiftedBy(-decimalDiff)
-          .decimalPlaces(perpAssetDecimals)
-          .toString(),
+        entry_price: perpPosition.entryPrice.decimalPlaces(perpAssetDecimals).toString(),
+        entry_exec_price: perpPosition.entryPrice.toString(),
         size: perpPosition.amount.toString() as any,
         unrealized_pnl: {
           accrued_funding: perpPosition.pnl.unrealized.funding.amount
@@ -300,10 +287,7 @@ export function convertAccountToPositions(account: Account, assets: Asset[]): Po
             .toString() as any,
           // TODO: There is now a double fee applied. This might be inaccurate (on the conservative side)
           opening_fee: '0' as any,
-          closing_fee: perpPosition.pnl.unrealized.fees.amount
-            .abs()
-            .integerValue()
-            .toString() as any,
+          closing_fee: perpPosition.pnl.unrealized.fees.amount.integerValue().toString() as any,
           pnl: perpPosition.pnl.unrealized.net.amount.integerValue().toString() as any,
           price_pnl: perpPosition.pnl.unrealized.price.amount.integerValue().toString() as any,
         },
