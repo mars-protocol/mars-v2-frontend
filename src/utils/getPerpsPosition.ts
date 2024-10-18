@@ -21,17 +21,18 @@ export default function getPerpsPosition(
   }
 
   const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
+  const currentPrice = asset.price?.amount
+    .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
+    .decimalPlaces(asset.decimals)
+  const priceToUse =
+    limitPrice?.shiftedBy(VALUE_SCALE_FACTOR - decimalDiff).decimalPlaces(asset.decimals) ??
+    currentPrice ??
+    BN_ZERO
 
   return {
     amount,
-    entryPrice:
-      asset.price?.amount
-        // .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
-        .decimalPlaces(asset.decimals) ?? BN_ZERO,
-    currentPrice:
-      asset.price?.amount
-        // .shiftedBy(VALUE_SCALE_FACTOR - decimalDiff)
-        .decimalPlaces(asset.decimals) ?? BN_ZERO,
+    entryPrice: priceToUse,
+    currentPrice: currentPrice ?? BN_ZERO,
     baseDenom,
     denom: asset.denom,
     tradeDirection,
