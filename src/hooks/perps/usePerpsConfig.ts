@@ -5,7 +5,7 @@ import useSWR from 'swr'
 export default function usePerpsConfig() {
   const chainConfig = useChainConfig()
   const clients = useClients()
-  return useSWR(clients && `${chainConfig.id}/perps/config`, async () => {
-    return await clients?.perps.config()
-  })
+  return useSWR(clients && `chains/${chainConfig.id}/perps/config`, async () =>
+    clients?.perps.config(),
+  )
 }
