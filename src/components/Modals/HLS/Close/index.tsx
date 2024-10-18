@@ -4,6 +4,7 @@ import AccountAlertDialog from 'components/Modals/Account/AccountAlertDialog'
 import RepayInfo from 'components/Modals/HLS/Close/RepayInfo'
 import SwapInfo from 'components/Modals/HLS/Close/SwapInfo'
 import { Callout, CalloutType } from 'components/common/Callout'
+import { CircularProgress } from 'components/common/CircularProgress'
 import { ArrowRight, Plus } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
@@ -43,7 +44,9 @@ export default function HlsCloseController() {
 
 function HlsCloseModal(props: Props) {
   const { modal, collateralAsset, debtAsset, assets } = props
-  const { actions, changes, hasRouteError } = useHLSClosePositionActions({ account: modal.account })
+  const { actions, changes, isLoadingRoute } = useHLSClosePositionActions({
+    account: modal.account,
+  })
   const closeHlsStakingPosition = useStore((s) => s.closeHlsStakingPosition)
 
   const closeHlsClosingModal = useCallback(() => {
@@ -76,12 +79,12 @@ function HlsCloseModal(props: Props) {
             debtAsset={debtAsset}
           />
           <RepayInfo repayCoin={changes.repay} debtAsset={debtAsset} />
-          {hasRouteError && (
-            <Callout type={CalloutType.WARNING} className='mt-8'>
-              There was an error fetching the swap route. Without a swapping your collateral to
-              repay the debt of the position, you won't be able to close the position. Please try
-              again later.
-            </Callout>
+          {isLoadingRoute && (
+            <>
+              <Callout type={CalloutType.LOADING} className='mt-8'>
+                Loading Swap-Route...
+              </Callout>
+            </>
           )}
           <div className='flex flex-col w-full gap-2 mt-8'>
             <Text className='font-bold' size='sm'>
@@ -119,7 +122,7 @@ function HlsCloseModal(props: Props) {
           closeHlsStakingPosition({ accountId: modal.account.id, actions })
           closeHlsClosingModal()
         },
-        disabled: hasRouteError,
+        disabled: isLoadingRoute,
       }}
     />
   )

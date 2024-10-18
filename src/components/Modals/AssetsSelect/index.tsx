@@ -19,16 +19,34 @@ interface Props {
   selectedDenoms: string[]
   isBorrow?: boolean
   nonCollateralTableAssets?: Asset[]
+  hideColumns?: string[]
+  hideApy?: boolean
 }
 
-export default function AssetsSelect({
-  onChangeSelected,
-  selectedDenoms,
-  isBorrow,
-  assets,
-  nonCollateralTableAssets,
-}: Props) {
-  const columns = useAssetSelectColumns(isBorrow)
+export default function AssetsSelect(props: Props) {
+  const {
+    onChangeSelected,
+    isBorrow,
+    assets,
+    nonCollateralTableAssets,
+    selectedDenoms,
+    hideColumns,
+    hideApy,
+  } = props
+  const columns = useAssetSelectColumns(isBorrow, hideApy)
+
+  const filteredColumns = useMemo(() => {
+    if (!hideColumns || hideColumns.length === 0) {
+      return columns
+    }
+    return columns.filter((column) => {
+      if (!column.id) {
+        return true
+      }
+      return !hideColumns.includes(column.id)
+    })
+  }, [columns, hideColumns])
+
   const markets = useMarkets()
   const whitelistedAssets = useWhitelistedAssets()
   const balances = useStore((s) => s.balances)
@@ -69,15 +87,42 @@ export default function AssetsSelect({
     return { whitelistedData, nonCollateralData }
   }, [assets, nonCollateralTableAssets, whitelistedAssets, balances, createTableData])
 
-  const [whitelistedSelected, setWhitelistedSelected] = useState<RowSelectionState>({})
-  const [nonCollateralSelected, setNonCollateralSelected] = useState<RowSelectionState>({})
+  const [initialSelected, initialNonCollateralSelected] = useMemo(() => {
+    const selectionState = (
+      selectedDenoms: string[],
+      tableData: AssetTableRow[],
+    ): RowSelectionState => {
+      const selectionState = {} as RowSelectionState
+      tableData.forEach((row, index) => {
+        selectionState[index.toString()] = !!selectedDenoms.includes(row.asset.denom)
+      })
+      return selectionState
+    }
+
+    console.log(selectedDenoms, 'selectedDenoms selectedDenoms')
+    return [
+      selectionState(
+        selectedDenoms,
+        isAssetTableRowArray(tableData) ? tableData : tableData.whitelistedData,
+      ),
+      selectionState(
+        selectedDenoms,
+        isAssetTableRowArray(tableData) ? [] : tableData.nonCollateralData,
+      ),
+    ]
+  }, [selectedDenoms, tableData])
+
+  const [whitelistedSelected, setWhitelistedSelected] = useState<RowSelectionState>(initialSelected)
+  const [nonCollateralSelected, setNonCollateralSelected] = useState<RowSelectionState>(
+    initialNonCollateralSelected,
+  )
 
   useEffect(() => {
     let newSelectedDenoms: string[]
 
     if (Array.isArray(tableData)) {
       newSelectedDenoms = assets
-        .filter((asset, index) =>
+        .filter((asset) =>
           tableData.some((row, idx) => row.asset.denom === asset.denom && whitelistedSelected[idx]),
         )
         .map((asset) => asset.denom)
@@ -119,7 +164,7 @@ export default function AssetsSelect({
     return (
       <Table
         title='Assets'
-        columns={columns}
+        columns={filteredColumns}
         data={tableData as AssetTableRow[]}
         initialSorting={sorting}
         onSortingChange={setSorting}
@@ -145,7 +190,7 @@ export default function AssetsSelect({
           titleComponent={
             <Text
               size='xs'
-              className='p-4 font-semibold bg-black/20 text-white/60 border-b border-white/10'
+              className='p-4 font-semibold border-b bg-black/20 text-white/60 border-white/10'
             >
               Assets that can be used as collateral
             </Text>
@@ -154,7 +199,7 @@ export default function AssetsSelect({
       )}
 
       {nonCollateralTableAssets.length === 0 && assets.length === 0 && (
-        <Callout type={CalloutType.INFO} className='mt-4 mx-4 text-white/60'>
+        <Callout type={CalloutType.INFO} className='mx-4 mt-4 text-white/60'>
           No assets that match your search.
         </Callout>
       )}
@@ -179,7 +224,7 @@ export default function AssetsSelect({
           titleComponent={
             <Text
               size='xs'
-              className='p-4 font-semibold bg-black/20 text-white/60 border-t border-b border-white/10'
+              className='p-4 font-semibold border-t border-b bg-black/20 text-white/60 border-white/10'
             >
               Non whitelisted assets, cannot be used as collateral
             </Text>
@@ -188,4 +233,12 @@ export default function AssetsSelect({
       )}
     </>
   )
+}
+
+function isAssetTableRowArray(
+  tableData:
+    | AssetTableRow[]
+    | { whitelistedData: AssetTableRow[]; nonCollateralData: AssetTableRow[] },
+): tableData is AssetTableRow[] {
+  return !('whitelistedData' in tableData)
 }

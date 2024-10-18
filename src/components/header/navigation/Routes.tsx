@@ -15,6 +15,8 @@ import TradePage from 'pages/TradePage'
 import V1Page from 'pages/V1Page'
 import VaultsOfficialPage from 'pages/VaultsOfficialPage'
 import VaultsCommunityPage from 'pages/VaultsCommunityPage'
+import CreateVault from 'components/vaults/community/createVault/index'
+import MintVaultAccount from 'components/vaults/community/createVault/MintVaultAccount'
 
 export default function Routes() {
   const chainConfig = useChainConfig()
@@ -37,8 +39,15 @@ export default function Routes() {
         <Route path='/v1' element={<V1Page />} />
         {chainConfig.hls && <Route path='/hls-staking' element={<HLSStakingPage />} />}
         {chainConfig.hls && <Route path='/hls-farm' element={<HLSFarmPage />} />}
-        <Route path='/vaults' element={<VaultsOfficialPage />} />
+        <Route path='/vaults' element={<VaultsOfficialPage />}>
+          <Route path='create' element={<CreateVault />} />
+        </Route>
         <Route path='/vaults-community' element={<VaultsCommunityPage />} />
+        <Route path='/vaults/:vaultAddress'>
+          <Route path='mint-account' element={<MintVaultAccount />} />
+          {/* TODO */}
+          {/* <Route path='delete' element={<CreateVault />} /> */}
+        </Route>
         <Route path='/' element={<TradePage />} />
         <Route path='/wallets/:address'>
           <Route path='execute' element={<ExecuteMessagePage />} />
@@ -51,8 +60,15 @@ export default function Routes() {
           <Route path='portfolio' element={<PortfolioPage />} />
           {chainConfig.hls && <Route path='hls-staking' element={<HLSStakingPage />} />}
           {chainConfig.hls && <Route path='hls-farm' element={<HLSFarmPage />} />}
-          <Route path='vaults' element={<VaultsOfficialPage />} />
+          <Route path='vaults' element={<VaultsOfficialPage />}>
+            <Route path='create' element={<CreateVault />} />
+          </Route>
           <Route path='vaults-community' element={<VaultsCommunityPage />} />
+          <Route path='vaults/:vaultAddress'>
+            <Route path='mint-account' element={<MintVaultAccount />} />
+            {/* TODO */}
+            {/* <Route path='delete' element={} /> */}
+          </Route>
           <Route path='v1' element={<V1Page />} />
           <Route path='portfolio/:accountId'>
             <Route path='' element={<PortfolioAccountPage />} />

@@ -5,12 +5,11 @@ import Text from 'components/common/Text'
 export const APY_META = { accessorKey: 'apy', header: 'APY' }
 
 interface Props {
-  vault: Vault | DepositedVault
-  assets?: Asset[]
+  vault: Vault | DepositedVault | any //get the right ts
 }
 
 export default function Apy(props: Props) {
-  const { vault, assets } = props
+  const { vault } = props
 
   if (vault.apy === undefined) return <Loading />
   if (vault.apy === null) return <Text size='xs'>N/A</Text>

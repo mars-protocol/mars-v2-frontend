@@ -8,12 +8,12 @@ import Balance, {
 } from 'components/Modals/AssetsSelect/Columns/Balance'
 import BorrowRate, { BORROW_RATE_META } from 'components/Modals/AssetsSelect/Columns/BorrowRate'
 
-export default function useAssetSelectColumns(isBorrow?: boolean) {
+export default function useAssetSelectColumns(isBorrow?: boolean, hideApy?: boolean) {
   return useMemo<ColumnDef<AssetTableRow>[]>(() => {
     return [
       {
         ...ASSET_META,
-        cell: ({ row }) => <Asset row={row} />,
+        cell: ({ row }) => <Asset row={row} hideApy={hideApy} />,
       },
       isBorrow
         ? {
@@ -26,5 +26,5 @@ export default function useAssetSelectColumns(isBorrow?: boolean) {
             sortingFn: valueSortingFn,
           },
     ]
-  }, [isBorrow])
+  }, [isBorrow, hideApy])
 }

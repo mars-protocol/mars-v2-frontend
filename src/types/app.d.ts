@@ -393,6 +393,7 @@ type Page =
   | 'hls-staking'
   | 'vaults'
   | 'vaults-community'
+  | 'vaults/{vaultId}'
   | 'governance'
   | 'execute'
   | 'v1'
@@ -1137,8 +1138,10 @@ interface CommonSlice {
   useAutoRepay: boolean
   isOracleStale: boolean
   isHLS: boolean
+  isVaults: boolean
   isV1: boolean
   assets: Asset[]
+  hlsBorrowAmount: BigNumber | null
 }
 
 interface FocusComponent {
@@ -1514,7 +1517,7 @@ interface StakedAstroLpRewards {
   rewards: BNCoin[]
 }
 
-type AssetCampaignId = 'stride' | 'drop' | 'lido' | 'drop_apy'
+type AssetCampaignId = 'stride' | 'drop' | 'lido' | 'drop_apy' | 'milkyway'
 type AssetCampaignType = 'points_with_multiplier' | 'apy'
 type AssetCampaignPointBase = 'value' | 'amount'
 

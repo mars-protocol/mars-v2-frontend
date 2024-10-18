@@ -1,13 +1,17 @@
-import ActionButton from 'components/common/Button/ActionButton'
 import Button from 'components/common/Button'
+import CreateVault from 'components/vaults/community/createVault/index'
 import Intro from 'components/common/Intro'
 import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useStore from 'store'
 import { Account, ArrowRight, HandCoins, Plus, PlusSquared, Wallet } from 'components/common/Icons'
 import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
 import { DocURL } from 'types/enums'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { useCallback } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { getPage, getRoute } from 'utils/route'
+import useAccountId from 'hooks/accounts/useAccountId'
 
 export default function VaultsCommunityIntro() {
   const [showVaultInformation, setShowVaultInformation] = useLocalStorage<boolean>(
@@ -15,11 +19,33 @@ export default function VaultsCommunityIntro() {
     true,
   )
   const { open: showAlertDialog, close } = useAlertDialog()
+  const accountId = useAccountId()
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const [searchParams] = useSearchParams()
+  const address = useStore((s) => s.address)
+
+  const openCreateVaultOverlay = useCallback(() => {
+    // TODO: check for better option how to construct the route
+    // const baseUrl = address ? `/wallets/${address}/vaults/create` : '/vaults/create'
+
+    // navigate(baseUrl)
+
+    if (accountId) navigate(getRoute(getPage('vaults/create'), searchParams, address, accountId))
+
+    useStore.setState({
+      focusComponent: {
+        component: <CreateVault />,
+        onClose: () => {
+          navigate(getRoute(getPage(pathname), searchParams, address))
+        },
+      },
+    })
+  }, [address, navigate, pathname, searchParams, accountId])
 
   const handleOnClick = useCallback(() => {
     if (!showVaultInformation) {
-      // TODO
-      // opencreatevaultmodal
+      openCreateVaultOverlay()
       return
     }
 
@@ -30,7 +56,7 @@ export default function VaultsCommunityIntro() {
       positiveButton: {
         text: 'Continue',
         icon: <ArrowRight />,
-        onClick: () => {},
+        onClick: openCreateVaultOverlay,
       },
       negativeButton: {
         text: 'Cancel',
@@ -44,7 +70,13 @@ export default function VaultsCommunityIntro() {
         onClick: (isChecked: boolean) => setShowVaultInformation(!isChecked),
       },
     })
-  }, [close, showAlertDialog, showVaultInformation, setShowVaultInformation])
+  }, [
+    close,
+    showAlertDialog,
+    showVaultInformation,
+    setShowVaultInformation,
+    openCreateVaultOverlay,
+  ])
 
   return (
     <Intro
@@ -57,12 +89,7 @@ export default function VaultsCommunityIntro() {
         </>
       }
     >
-      <ActionButton
-        text='Create Vault'
-        color='primary'
-        leftIcon={<Plus />}
-        onClick={handleOnClick}
-      />
+      <Button text='Create Vault' color='primary' leftIcon={<Plus />} onClick={handleOnClick} />
       <Button
         text='Learn more'
         leftIcon={<PlusSquared />}

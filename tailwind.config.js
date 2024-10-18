@@ -62,9 +62,11 @@ module.exports = {
     'gradient-droplets',
     'gradient-stride',
     'gradient-lido',
+    'gradient-milkyway',
     'droplets',
     'stride',
     'lido',
+    'milkyway',
   ],
   theme: {
     extend: {
@@ -447,6 +449,18 @@ module.exports = {
           background:
             'linear-gradient(180deg, hsl(var(--color-hls-primary)) 0%, hsl(var(--color-hls-secondary)) 50%)',
         },
+        '.bg-orb-primary-vaults': {
+          background:
+            'linear-gradient(180deg, hsl(var(--color-vault-blue-primary)) 0%, hsl(var(--color-vault-blue-secondary)) 65%)',
+        },
+        '.bg-orb-secondary-vaults': {
+          background:
+            'linear-gradient(90deg, hsl(var(--color-vault-purple-primary)) 50%, hsl(var(--color-vault-purple-secondary)) 127%)',
+        },
+        '.bg-orb-tertiary-vaults': {
+          background:
+            'linear-gradient(180deg, hsl(var(--color-vault-pink-primary)) 0%, hsl(var(--color-vault-blue-tertiary)) 65%)',
+        },
         '.gradient-popover': {
           background:
             'linear-gradient(180deg, hsl(var(--color-white) /0.1) 0%,  hsl(var(--color-white) /0) 100%), linear-gradient(0deg,  hsl(var(--color-white) /0.1), hsl(var(--color-white) /0.05))',
@@ -504,6 +518,9 @@ module.exports = {
         '.gradient-lido': {
           background:
             'linear-gradient(rgb(101, 98, 255) 11.28%, rgb(0, 163, 255) 61.02%, rgb(99, 214, 210) 100%)',
+        },
+        '.gradient-milkyway': {
+          background: 'linear-gradient(90deg, #FEf7F1 0%, #FDE2FB 50%, #FDE4FC 100%)',
         },
         '.number': {
           whiteSpace: 'nowrap',
@@ -603,6 +620,12 @@ module.exports = {
         '.lido': {
           background:
             'linear-gradient(90deg, rgb(101, 98, 255) 11.28%, rgb(0, 163, 255) 61.02%, rgb(99, 214, 210) 100%)',
+          '-webkit-background-clip': 'text',
+          '-webkit-text-fill-color': 'transparent',
+          fontWeight: 600,
+        },
+        '.milkyway': {
+          background: 'linear-gradient(90deg, #FEf7F1 0%, #FDE2FB 50%, #FDE4FC 100%)',
           '-webkit-background-clip': 'text',
           '-webkit-text-fill-color': 'transparent',
           fontWeight: 600,
