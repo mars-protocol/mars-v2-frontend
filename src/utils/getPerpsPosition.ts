@@ -8,7 +8,6 @@ export default function getPerpsPosition(
   tradeDirection: TradeDirection,
   tradingFee: PerpsTradingFee,
   currentPerpPosition?: PerpsPosition,
-  limitPrice?: BigNumber,
 ): PerpsPosition {
   if (currentPerpPosition) {
     return {
