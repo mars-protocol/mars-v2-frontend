@@ -186,13 +186,13 @@ export function PerpsModule() {
     const newAmount = currentPerpPosition?.amount.plus(amount) ?? amount
     const previousTradeDirection = currentPerpPosition?.amount.isLessThan(0) ? 'short' : 'long'
     const newTradeDirection = newAmount.isLessThan(0) ? 'short' : 'long'
-    const tradeDirection = newAmount.isZero() ? previousTradeDirection : newTradeDirection
+    const updatedTradeDirection = newAmount.isZero() ? previousTradeDirection : newTradeDirection
 
     const newPosition = getPerpsPosition(
       perpsVault.denom,
       perpsAsset,
       newAmount,
-      tradeDirection,
+      updatedTradeDirection,
       tradingFee,
       currentPerpPosition,
     )
@@ -206,7 +206,6 @@ export function PerpsModule() {
     perpsVault,
     perpsVaultModal,
     simulatePerps,
-    tradeDirection,
     tradingFee,
   ])
 
