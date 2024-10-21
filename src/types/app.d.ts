@@ -1506,6 +1506,10 @@ type PnL =
       loss: Coin
     }
 
+interface AstroportAssetsCached {
+  tokens: AstroportAsset[]
+}
+
 interface AstroportAsset {
   chainId: string
   denom: string
@@ -1519,6 +1523,10 @@ interface AstroportAsset {
 }
 
 type PoolType = 'xyk' | 'concentrated' | 'stable' | 'transmuter' | 'astroport-pair-xyk-sale-tax'
+
+interface AstroportPoolsCached {
+  pools: AstroportPool[]
+}
 
 interface AstroportPool {
   chainId: string
