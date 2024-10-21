@@ -121,6 +121,7 @@ export default function useAccountBalancesColumns(
           markets={markets}
           denom={row.original.denom}
           type={row.original.type}
+          hasCampaignApy={row.original.campaigns.find((c) => c.type === 'apy') !== undefined}
         />
       ),
     }),
