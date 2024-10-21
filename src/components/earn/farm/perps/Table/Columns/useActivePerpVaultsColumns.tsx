@@ -6,12 +6,12 @@ import CollateralizationRatio, {
 } from 'components/earn/farm/common/Table/Columns/CollateralizationRatio'
 import { NAME_META } from 'components/earn/farm/common/Table/Columns/Name'
 import TVL, { TVL_META } from 'components/earn/farm/common/Table/Columns/TVL'
+import { PerpsName } from 'components/earn/farm/perps/Table/Columns/PerpsName'
 import VaultManage, { MANAGE_META } from 'components/earn/farm/vault/Table/Columns/VaultManage'
 import VaultPositionValue, {
   POSITION_VALUE_META,
 } from 'components/earn/farm/vault/Table/Columns/VaultPositionValue'
 import Apy, { APY_META } from 'components/earn/lend/Table/Columns/Apy'
-import { PerpsName } from './PerpsName'
 
 export default function useActiveVaultsColumns() {
   return useMemo<ColumnDef<DepositedPerpsVault>[]>(() => {
