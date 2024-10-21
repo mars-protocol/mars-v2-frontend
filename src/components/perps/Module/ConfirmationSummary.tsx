@@ -38,6 +38,15 @@ const FEE_LABELS: Record<keyof PnlAmounts, string> = {
   pnl: 'Total PnL',
 }
 
+function getActionLabel(prevAmount: BigNumber, newAmount: BigNumber): string {
+  if (prevAmount.isZero()) return 'Open new position'
+  if (newAmount.isZero()) return 'Close position'
+  if (prevAmount.isPositive() && newAmount.isNegative()) return 'Flip position from long to short'
+  if (prevAmount.isNegative() && newAmount.isPositive()) return 'Flip position from short to long'
+
+  return 'Update existing position'
+}
+
 export default function ConfirmationSummary(props: Props) {
   const { accountId, asset, leverage, amount, keeperFee, limitPrice } = props
   const { data: account } = useAccount(accountId)
@@ -103,14 +112,7 @@ export default function ConfirmationSummary(props: Props) {
       </div>
     )
 
-  let action = 'Open new position'
-  if (!isNewPosition) action = 'Update existing position'
-  if (newAmount.isZero()) action = 'Close position'
-  if (previousAmount.isPositive() && !previousAmount.isZero() && newAmount.isNegative())
-    action = 'Flip position from long to short'
-  if (previousAmount.isNegative() && newAmount.isPositive() && !newAmount.isZero())
-    action = 'Flip position from short to long'
-
+  const action = getActionLabel(previousAmount, newAmount)
   let feeLabel = 'Fees'
   if (position && BN(position.unrealized_pnl.pnl as any).isPositive()) feeLabel = 'Fees + Profit'
   if (position && BN(position.unrealized_pnl.pnl as any).isNegative()) feeLabel = 'Fees + Loss'
