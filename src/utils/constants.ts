@@ -17,7 +17,7 @@ export const DEFAULT_PORTFOLIO_STATS = [
   { title: null, sub: 'Total Balance' },
   { title: null, sub: 'Total Debt' },
   { title: null, sub: 'Net Worth' },
-  { title: null, sub: 'APR' },
+  { title: null, sub: 'APY' },
   { title: null, sub: 'Account Leverage' },
 ]
 

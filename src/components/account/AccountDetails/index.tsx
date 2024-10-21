@@ -25,13 +25,12 @@ import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import useHlsStakingAssets from 'hooks/hls/useHlsStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import {
-  calculateAccountApr,
+  calculateAccountApy,
   calculateAccountBalanceValue,
   calculateAccountLeverage,
 } from 'utils/accounts'
@@ -68,7 +67,6 @@ function AccountDetails(props: Props) {
   const chainConfig = useChainConfig()
   const { account } = props
   const location = useLocation()
-  const { data: hlsStrategies } = useHlsStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
   const astroLpAprs = useAstroLpAprs()
   const [reduceMotion] = useLocalStorage<boolean>(
@@ -113,13 +111,12 @@ function AccountDetails(props: Props) {
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
   )
-  const apr = useMemo(
+  const apy = useMemo(
     () =>
-      calculateAccountApr(
+      calculateAccountApy(
         updatedAccount ?? account,
         borrowAssetsData,
         lendingAssetsData,
-        hlsStrategies,
         whitelistedAssets,
         vaultAprs,
         astroLpAprs,
@@ -128,7 +125,6 @@ function AccountDetails(props: Props) {
       account,
       whitelistedAssets,
       borrowAssetsData,
-      hlsStrategies,
       lendingAssetsData,
       updatedAccount,
       vaultAprs,
@@ -211,11 +207,11 @@ function AccountDetails(props: Props) {
             </div>
             <div className='w-full py-4 border-t border-white/20'>
               <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
-                APR
+                APY
               </Text>
               <FormattedNumber
                 className={'w-full text-center text-2xs'}
-                amount={apr.toNumber()}
+                amount={apy.toNumber()}
                 options={{ maxDecimals: 2, minDecimals: 2, suffix: '%' }}
                 animate
               />

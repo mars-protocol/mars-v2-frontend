@@ -11,10 +11,9 @@ import useAccount from 'hooks/accounts/useAccount'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import useHlsStakingAssets from 'hooks/hls/useHlsStakingAssets'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
-import { calculateAccountApr, calculateAccountBalanceValue } from 'utils/accounts'
+import { calculateAccountApy, calculateAccountBalanceValue } from 'utils/accounts'
 import { mergeBNCoinArrays } from 'utils/helpers'
 
 interface Props {
@@ -27,7 +26,6 @@ export default function AccountStats(props: Props) {
   const { accountId, isActive, setShowMenu } = props
   const assets = useWhitelistedAssets()
   const { data: account } = useAccount(accountId)
-  const { data: hlsStrategies } = useHlsStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
   const astroLpAprs = useAstroLpAprs()
   const positionBalance = useMemo(
@@ -47,16 +45,15 @@ export default function AccountStats(props: Props) {
     () =>
       !account
         ? null
-        : calculateAccountApr(
+        : calculateAccountApy(
             account,
             borrowAssetsData,
             lendingAssetsData,
-            hlsStrategies,
             assets,
             vaultAprs,
             astroLpAprs,
           ),
-    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, vaultAprs, astroLpAprs],
+    [account, assets, borrowAssetsData, lendingAssetsData, vaultAprs, astroLpAprs],
   )
 
   const deleteAccountHandler = useCallback(() => {
