@@ -4,7 +4,6 @@ import { CardWithTabs } from 'components/common/Card/CardWithTabs'
 import ActivePerpsVaultTable from 'components/earn/farm/perps/Table/ActivePerpsVaultTable'
 import useActivePerpVaultsColumns from 'components/earn/farm/perps/Table/Columns/useActivePerpVaultsColumns'
 import useUnlockPerpsColumns from 'components/earn/farm/perps/Table/Columns/useUnlockPerpsColumns'
-import VaultUnlockBanner from 'components/earn/farm/vault/VaultUnlockBanner'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useDepositedVaults from 'hooks/vaults/useDepositedVaults'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
@@ -78,10 +77,5 @@ export function ActivePerpsVault() {
 
   if (depositedVaults.length === 0) return null
 
-  return (
-    <>
-      <VaultUnlockBanner vaults={unlockedVaults} />
-      <CardWithTabs tabs={tabs} />
-    </>
-  )
+  return <CardWithTabs tabs={tabs} />
 }

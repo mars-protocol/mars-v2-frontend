@@ -13,6 +13,7 @@ import {
   VaultWithdraw,
   WITHDRAW_META,
 } from 'components/earn/farm/vault/Table/Columns/VaultWithdraw'
+import { PerpsName } from 'components/earn/farm/perps/Table/Columns/PerpsName'
 
 interface Props {
   showActions?: boolean
@@ -22,7 +23,7 @@ export default function useUnlockColumns(props: Props) {
     return [
       {
         ...NAME_META,
-        cell: ({ row }) => <Name vault={row.original as DepositedVault} />,
+        cell: ({ row }) => <PerpsName vault={row.original as PerpsVault} />,
       },
       {
         ...UNLOCK_TIME_META,
