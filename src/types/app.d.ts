@@ -598,6 +598,7 @@ interface PerpsVault {
   cap: DepositCap | null
 }
 
+interface DepositedPerpsVault extends PerpsVault, DepositedVault {}
 interface VaultValuesAndAmounts {
   amounts: {
     primary: BigNumber
