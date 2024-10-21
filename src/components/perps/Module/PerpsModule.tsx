@@ -5,13 +5,15 @@ import AssetAmountInput from 'components/common/AssetAmountInput'
 import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
 import Divider from 'components/common/Divider'
+import LeverageSlider from 'components/common/LeverageSlider'
 import OrderTypeSelector from 'components/common/OrderTypeSelector'
+import SwitchWithLabel from 'components/common/Switch/SwitchWithLabel'
 import Text from 'components/common/Text'
 import { TradeDirectionSelector } from 'components/common/TradeDirectionSelector'
+import KeeperFee from 'components/perps/Module/KeeperFee'
 import { LeverageButtons } from 'components/perps/Module/LeverageButtons'
 import { Or } from 'components/perps/Module/Or'
 import PerpsSummary from 'components/perps/Module/Summary'
-import KeeperFee from 'components/perps/Module/KeeperFee'
 import { DEFAULT_LIMIT_PRICE_INFO, PERPS_ORDER_TYPE_TABS } from 'components/perps/Module/constants'
 import usePerpsModule from 'components/perps/Module/usePerpsModule'
 import AssetSelectorPerps from 'components/trade/TradeModule/AssetSelector/AssetSelectorPerps'
@@ -26,10 +28,8 @@ import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
 import { OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
-import { capitalizeFirstLetter } from 'utils/helpers'
 import getPerpsPosition from 'utils/getPerpsPosition'
-import LeverageSlider from 'components/common/LeverageSlider'
-import SwitchWithLabel from 'components/common/Switch/SwitchWithLabel'
+import { capitalizeFirstLetter } from 'utils/helpers'
 
 export function PerpsModule() {
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
@@ -183,16 +183,20 @@ export function PerpsModule() {
 
   useEffect(() => {
     if (!tradingFee || !perpsVault || isLimitOrder || perpsVaultModal) return
+    const newAmount = currentPerpPosition?.amount.plus(amount) ?? amount
+    const previousTradeDirection = currentPerpPosition?.amount.isLessThan(0) ? 'short' : 'long'
+    const newTradeDirection = newAmount.isLessThan(0) ? 'short' : 'long'
+    const tradeDirection = newAmount.isZero() ? previousTradeDirection : newTradeDirection
 
     const newPosition = getPerpsPosition(
       perpsVault.denom,
       perpsAsset,
-      amount.plus(amount),
+      newAmount,
       tradeDirection,
       tradingFee,
       currentPerpPosition,
     )
-    if (newPosition) simulatePerps(newPosition, isAutoLendEnabledForCurrentAccount)
+    simulatePerps(newPosition, isAutoLendEnabledForCurrentAccount)
   }, [
     amount,
     currentPerpPosition,

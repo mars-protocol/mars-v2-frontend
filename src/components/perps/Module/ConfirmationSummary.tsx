@@ -52,7 +52,9 @@ export default function ConfirmationSummary(props: Props) {
     const previousAmount = BN(positionSize as string)
     const newAmount = previousAmount.plus(amount)
     const isNewPosition = previousAmount.isZero()
-    const tradeDirection = newAmount.isPositive() ? 'long' : 'short'
+    const previousTradeDirection = previousAmount.isPositive() ? 'long' : 'short'
+    const newDirection = newAmount.isPositive() ? 'long' : 'short'
+    const tradeDirection = newAmount.isZero() ? previousTradeDirection : newDirection
 
     return [newAmount, tradeDirection, isNewPosition, previousAmount]
   }, [amount, isLoading, updatePerpsPosition])
@@ -104,9 +106,9 @@ export default function ConfirmationSummary(props: Props) {
   let action = 'Open new position'
   if (!isNewPosition) action = 'Update existing position'
   if (newAmount.isZero()) action = 'Close position'
-  if (previousAmount.isPositive() && newAmount.isNegative())
+  if (previousAmount.isPositive() && !previousAmount.isZero() && newAmount.isNegative())
     action = 'Flip position from long to short'
-  if (previousAmount.isNegative() && newAmount.isPositive())
+  if (previousAmount.isNegative() && newAmount.isPositive() && !newAmount.isZero())
     action = 'Flip position from short to long'
 
   let feeLabel = 'Fees'
