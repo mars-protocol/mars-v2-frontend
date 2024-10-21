@@ -378,6 +378,14 @@ interface PerpsPnLCoins {
 
 type PerpsTransactionType = 'open' | 'close' | 'modify'
 
+interface ActivePerps {
+  amount: BigNumber
+  denom: string
+  currentPrice: BigNumber
+  fundingRate: string
+  perpExposure: BigNumber
+}
+
 interface PythPriceData {
   price: PythConfidenceData
   ema_price: PythConfidenceData

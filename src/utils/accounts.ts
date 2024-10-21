@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
@@ -6,7 +7,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPosition } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { Positions } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import { byDenom } from 'utils/array'
-import { getCoinValue } from 'utils/formatters'
+import { demagnify, getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { convertAprToApy } from 'utils/parsers'
 
@@ -73,7 +74,19 @@ export const calculateAccountValue = (
   if (type === 'perps') {
     return (
       account.perps?.reduce((acc, perpPosition) => {
-        acc = acc.plus(getCoinValue(perpPosition.pnl.unrealized.net, assets))
+        const asset = assets.find(byDenom(perpPosition.denom))
+        if (!asset) return acc
+
+        const adjustedPositionAmount = BN(demagnify(perpPosition.amount, asset))
+        const currentPrice = perpPosition.currentPrice.shiftedBy(
+          asset.decimals - PRICE_ORACLE_DECIMALS,
+        )
+        const perpExposure = adjustedPositionAmount.multipliedBy(currentPrice)
+
+        if (!adjustedPositionAmount || !currentPrice) return acc
+
+        acc = acc.plus(perpExposure)
+
         return acc
       }, BN_ZERO) || BN_ZERO
     )
@@ -105,6 +118,7 @@ export const calculateAccountApy = (
   assets: Asset[],
   vaultAprs: Apr[],
   astroLpAprs: Apr[],
+  activePerpsPositions: ActivePerps[] = [],
 ): BigNumber => {
   const isHls = account.kind === 'high_levered_strategy'
   const depositValue = calculateAccountValue('deposits', account, assets)
@@ -122,13 +136,14 @@ export const calculateAccountApy = (
     .minus(debtsValue.abs())
 
   if (totalDenominatorValue.isLessThanOrEqualTo(0)) return BN_ZERO
-  const { vaults, lends, debts, deposits, stakedAstroLps } = account
+  const { vaults, lends, debts, deposits, stakedAstroLps, perps } = account
 
   let totalDepositsInterestValue = BN_ZERO
   let totalLendsInterestValue = BN_ZERO
   let totalVaultsInterestValue = BN_ZERO
   let totalDebtInterestValue = BN_ZERO
   let totalAstroStakedLpsValue = BN_ZERO
+  let totalPerpsInterestValue = BN_ZERO
 
   deposits?.forEach((deposit) => {
     const asset = assets.find(byDenom(deposit.denom))
@@ -196,10 +211,22 @@ export const calculateAccountApy = (
     totalAstroStakedLpsValue = totalAstroStakedLpsValue.plus(positionInterest)
   })
 
+  activePerpsPositions?.forEach((perpPosition) => {
+    const fundingRateBN = new BigNumber(perpPosition.fundingRate)
+    const annualFundingRate = fundingRateBN.multipliedBy(100).multipliedBy(365)
+
+    if (!perpPosition.perpExposure) return BN_ZERO
+
+    const position = perpPosition.perpExposure.multipliedBy(annualFundingRate)
+
+    totalPerpsInterestValue = totalPerpsInterestValue.plus(position)
+  })
+
   const totalInterestValue = totalLendsInterestValue
     .plus(totalVaultsInterestValue)
     .plus(totalDepositsInterestValue)
     .plus(totalAstroStakedLpsValue)
+    .plus(totalPerpsInterestValue)
     .minus(totalDebtInterestValue)
 
   if (totalInterestValue.isEqualTo(0)) return BN_ZERO
@@ -434,6 +461,7 @@ export function getAccountSummaryStats(
   assets: Asset[],
   vaultAprs: Apr[],
   astroLpAprs: Apr[],
+  activePerpsPositions: ActivePerps[] = [],
 ) {
   const [deposits, lends, debts, vaults, perps, perpsVault, stakedAstroLps] =
     getAccountPositionValues(account, assets)
@@ -450,6 +478,7 @@ export function getAccountSummaryStats(
     assets,
     vaultAprs,
     astroLpAprs,
+    activePerpsPositions,
   )
   const leverage = calculateAccountLeverage(account, assets)
   return {

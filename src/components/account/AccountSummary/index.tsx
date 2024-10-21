@@ -20,6 +20,7 @@ import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApy, calculateAccountLeverage } from 'utils/accounts'
+import usePerpsFundingRate from 'hooks/perps/usePerpFundingRate'
 
 interface Props {
   account: Account
@@ -40,6 +41,7 @@ export default function AccountSummary(props: Props) {
     defaultSetting,
   )
   const { data: vaultAprs } = useVaultAprs()
+  const activePerpsPositions = usePerpsFundingRate()
   const astroLpAprs = useAstroLpAprs()
   const whitelistedAssets = useWhitelistedAssets()
   const perpsAssets = usePerpsEnabledAssets()
@@ -92,6 +94,7 @@ export default function AccountSummary(props: Props) {
         [...whitelistedAssets, ...perpsAssets],
         vaultAprs,
         astroLpAprs,
+        activePerpsPositions,
       ),
     [
       account,
@@ -102,6 +105,7 @@ export default function AccountSummary(props: Props) {
       perpsAssets,
       vaultAprs,
       astroLpAprs,
+      activePerpsPositions,
     ],
   )
 

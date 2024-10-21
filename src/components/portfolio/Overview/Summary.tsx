@@ -15,6 +15,7 @@ import useStore from 'store'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 import { mergeBNCoinArrays } from 'utils/helpers'
+import usePerpsFundingRate from 'hooks/perps/usePerpFundingRate'
 
 export default function PortfolioSummary() {
   const { address: urlAddress } = useParams()
@@ -27,6 +28,7 @@ export default function PortfolioSummary() {
   const { data: vaultAprs } = useVaultAprs()
   const assets = useWhitelistedAssets()
   const astroLpAprs = useAstroLpAprs()
+  const activePerpsPositions = usePerpsFundingRate()
 
   const allAccounts = useMemo(() => {
     return [...(defaultAccounts || []), ...(hlsAccounts || [])]
@@ -40,6 +42,7 @@ export default function PortfolioSummary() {
         combinedAccount.deposits = mergeBNCoinArrays(combinedAccount.deposits, account.deposits)
         combinedAccount.lends = mergeBNCoinArrays(combinedAccount.lends, account.lends)
         combinedAccount.vaults = combinedAccount.vaults.concat(account.vaults)
+        combinedAccount.perps = combinedAccount.perps.concat(account.perps)
         combinedAccount.stakedAstroLps = mergeBNCoinArrays(
           combinedAccount.stakedAstroLps,
           account.stakedAstroLps,
@@ -66,6 +69,7 @@ export default function PortfolioSummary() {
       assets,
       vaultAprs,
       astroLpAprs,
+      activePerpsPositions,
     )
 
     return [
@@ -106,7 +110,15 @@ export default function PortfolioSummary() {
         sub: 'Combined leverage',
       },
     ]
-  }, [allAccounts, assets, borrowAssets, lendingAssets, vaultAprs, astroLpAprs])
+  }, [
+    allAccounts,
+    assets,
+    borrowAssets,
+    lendingAssets,
+    vaultAprs,
+    astroLpAprs,
+    activePerpsPositions,
+  ])
 
   if (!walletAddress && !urlAddress) return null
 

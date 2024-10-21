@@ -34,6 +34,7 @@ import {
   calculateAccountBalanceValue,
   calculateAccountLeverage,
 } from 'utils/accounts'
+import usePerpsFundingRates from 'hooks/perps/usePerpFundingRate'
 
 interface Props {
   account: Account
@@ -79,6 +80,7 @@ function AccountDetails(props: Props) {
   const { health: updatedHealth, healthFactor: updatedHealthFactor } = useHealthComputer(
     updatedAccount || account,
   )
+  const activePerpsPositions = usePerpsFundingRates()
   const whitelistedAssets = useWhitelistedAssets()
   const perpsAssets = usePerpsEnabledAssets()
   const accountBalanceValue = useMemo(
@@ -120,6 +122,7 @@ function AccountDetails(props: Props) {
         whitelistedAssets,
         vaultAprs,
         astroLpAprs,
+        activePerpsPositions,
       ),
     [
       account,
@@ -129,6 +132,7 @@ function AccountDetails(props: Props) {
       updatedAccount,
       vaultAprs,
       astroLpAprs,
+      activePerpsPositions,
     ],
   )
   const isFullWidth =

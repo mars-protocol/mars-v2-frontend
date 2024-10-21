@@ -19,6 +19,7 @@ import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { getRoute } from 'utils/route'
+import usePerpsFundingRate from 'hooks/perps/usePerpFundingRate'
 
 interface Props {
   accountId: string
@@ -34,6 +35,7 @@ export default function PortfolioCard(props: Props) {
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const data = useBorrowMarketAssetsTableData()
   const { data: vaultAprs } = useVaultAprs()
+  const activePerpsPositions = usePerpsFundingRate()
   const [searchParams] = useSearchParams()
   const assets = useWhitelistedAssets()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
@@ -58,6 +60,7 @@ export default function PortfolioCard(props: Props) {
       assets,
       vaultAprs,
       astroLpAprs,
+      activePerpsPositions,
     )
 
     return [
@@ -74,7 +77,7 @@ export default function PortfolioCard(props: Props) {
         sub: 'APY',
       },
     ]
-  }, [account, assets, borrowAssets, lendingAssets, vaultAprs, astroLpAprs])
+  }, [account, assets, borrowAssets, lendingAssets, vaultAprs, astroLpAprs, activePerpsPositions])
 
   if (!account) {
     return (

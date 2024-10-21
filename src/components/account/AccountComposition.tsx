@@ -12,6 +12,7 @@ import { BN_ZERO, MAX_AMOUNT_DECIMALS } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
+import usePerpsFundingRate from 'hooks/perps/usePerpFundingRate'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
@@ -46,6 +47,7 @@ export default function AccountComposition(props: Props) {
     updatedAccount,
   })
   const astroLpAprs = useAstroLpAprs()
+  const activePerpsPositions = usePerpsFundingRate()
   const assets = useWhitelistedAssets()
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
@@ -86,8 +88,17 @@ export default function AccountComposition(props: Props) {
         assets,
         vaultAprs,
         astroLpAprs,
+        activePerpsPositions,
       ),
-    [account, assets, borrowAssetsData, lendingAssetsData, vaultAprs, astroLpAprs],
+    [
+      account,
+      assets,
+      borrowAssetsData,
+      lendingAssetsData,
+      vaultAprs,
+      astroLpAprs,
+      activePerpsPositions,
+    ],
   )
   const updatedApy = useMemo(
     () =>
@@ -99,9 +110,18 @@ export default function AccountComposition(props: Props) {
             assets,
             vaultAprs,
             astroLpAprs,
+            activePerpsPositions,
           )
         : BN_ZERO,
-    [updatedAccount, borrowAssetsData, lendingAssetsData, assets, vaultAprs, astroLpAprs],
+    [
+      updatedAccount,
+      borrowAssetsData,
+      lendingAssetsData,
+      assets,
+      vaultAprs,
+      astroLpAprs,
+      activePerpsPositions,
+    ],
   )
 
   return (
