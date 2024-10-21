@@ -8,7 +8,7 @@ import { Positions } from 'types/generated/mars-rover-health-computer/MarsRoverH
 import { byDenom } from 'utils/array'
 import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import { convertApyToApr } from 'utils/parsers'
+import { convertAprToApy } from 'utils/parsers'
 
 export const calculateAccountBalanceValue = (
   account: Account | AccountChange,
@@ -98,11 +98,10 @@ export const calculateAccountValue = (
   )
 }
 
-export const calculateAccountApr = (
+export const calculateAccountApy = (
   account: Account,
   borrowAssetsData: BorrowMarketTableData[],
   lendingAssetsData: LendingMarketTableData[],
-  hlsStrategies: HlsStrategy[],
   assets: Asset[],
   vaultAprs: Apr[],
   astroLpAprs: Apr[],
@@ -120,7 +119,7 @@ export const calculateAccountApr = (
     .plus(vaultsValue)
     .plus(perpsValue)
     .plus(stakedAstroLpsValue)
-    .plus(debtsValue.abs())
+    .minus(debtsValue.abs())
 
   if (totalDenominatorValue.isLessThanOrEqualTo(0)) return BN_ZERO
   const { vaults, lends, debts, deposits, stakedAstroLps } = account
@@ -131,23 +130,20 @@ export const calculateAccountApr = (
   let totalDebtInterestValue = BN_ZERO
   let totalAstroStakedLpsValue = BN_ZERO
 
-  if (isHls) {
-    deposits?.forEach((deposit) => {
-      const asset = assets.find(byDenom(deposit.denom))
-      if (!asset) return BN_ZERO
-      const price = asset.price?.amount ?? BN_ZERO
-      const amount = deposit.amount.shiftedBy(-asset.decimals)
-      const apy =
-        hlsStrategies.find((strategy) => strategy.denoms.deposit === deposit.denom)?.apy || 0
-
-      const positionInterest = amount
-        .multipliedBy(price)
-        .multipliedBy(convertApyToApr(apy, 365))
-        .dividedBy(100)
-
-      totalDepositsInterestValue = totalDepositsInterestValue.plus(positionInterest)
+  deposits?.forEach((deposit) => {
+    const asset = assets.find(byDenom(deposit.denom))
+    if (!asset) return BN_ZERO
+    const price = asset.price?.amount ?? BN_ZERO
+    const amount = deposit.amount.shiftedBy(-asset.decimals)
+    let apy = 0
+    asset.campaigns.forEach((campaign) => {
+      if (campaign.type === 'apy') apy = apy + (campaign.apy ?? 0)
     })
-  }
+
+    const positionInterest = amount.multipliedBy(price).multipliedBy(apy).dividedBy(100)
+
+    totalDepositsInterestValue = totalDepositsInterestValue.plus(positionInterest)
+  })
 
   lends?.forEach((lend) => {
     const asset = assets.find(byDenom(lend.denom))
@@ -159,19 +155,17 @@ export const calculateAccountApr = (
 
     if (!apy) return
 
-    const positionInterest = amount
-      .multipliedBy(price)
-      .multipliedBy(convertApyToApr(apy, 365))
-      .dividedBy(100)
+    const positionInterest = amount.multipliedBy(price).multipliedBy(apy).dividedBy(100)
 
     totalLendsInterestValue = totalLendsInterestValue.plus(positionInterest)
   })
 
   vaults?.forEach((vault) => {
     const apr = vaultAprs.find((vaultApr) => vaultApr.address === vault.address)?.apr
-    if (!apr) return
+    const apy = convertAprToApy(apr ?? 0, 365)
+    if (!apy) return
     const lockedValue = vault.values.primary.plus(vault.values.secondary)
-    const positionInterest = lockedValue.multipliedBy(apr).dividedBy(100)
+    const positionInterest = lockedValue.multipliedBy(apy).dividedBy(100)
 
     totalVaultsInterestValue = totalVaultsInterestValue.plus(positionInterest)
   })
@@ -186,10 +180,7 @@ export const calculateAccountApr = (
 
     if (!apy) return
 
-    const positionInterest = amount
-      .multipliedBy(price)
-      .multipliedBy(convertApyToApr(apy, 365))
-      .dividedBy(100)
+    const positionInterest = amount.multipliedBy(price).multipliedBy(apy).dividedBy(100)
 
     totalDebtInterestValue = totalDebtInterestValue.plus(positionInterest)
   })
@@ -198,8 +189,9 @@ export const calculateAccountApr = (
     const farm = astroLpAprs.find((farmApr) => farmApr.address === stakedAstroLp.denom)
     if (!farm) return
     const farmApr = farm.apr ?? 0
+    const apy = convertAprToApy(farmApr, 365)
     const farmValue = getCoinValue(stakedAstroLp, assets)
-    const positionInterest = farmValue.multipliedBy(farmApr).dividedBy(100)
+    const positionInterest = farmValue.multipliedBy(apy).dividedBy(100)
 
     totalAstroStakedLpsValue = totalAstroStakedLpsValue.plus(positionInterest)
   })
@@ -439,7 +431,6 @@ export function getAccountSummaryStats(
   account: Account,
   borrowAssets: BorrowMarketTableData[],
   lendingAssets: LendingMarketTableData[],
-  hlsStrategies: HlsStrategy[],
   assets: Asset[],
   vaultAprs: Apr[],
   astroLpAprs: Apr[],
@@ -452,11 +443,10 @@ export function getAccountSummaryStats(
     .plus(perps)
     .plus(perpsVault)
     .plus(stakedAstroLps)
-  const apr = calculateAccountApr(
+  const apy = calculateAccountApy(
     account,
     borrowAssets,
     lendingAssets,
-    hlsStrategies,
     assets,
     vaultAprs,
     astroLpAprs,
@@ -466,7 +456,7 @@ export function getAccountSummaryStats(
     positionValue: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionValue),
     debts: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, debts),
     netWorth: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionValue.minus(debts)),
-    apr,
+    apy,
     leverage,
   }
 }

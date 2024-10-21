@@ -56,6 +56,7 @@ interface AccountBalanceRow {
   type: PositionType
   value: string
   amountChange: BigNumber
+  campaigns: AssetCampaign[]
 }
 
 interface AccountStrategyRow {
