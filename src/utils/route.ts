@@ -46,7 +46,10 @@ export function getPage(pathname: string): Page {
     'v1',
   ]
 
-  if (pathname.startsWith('vaults/') && pathname.includes('mint-account')) {
+  if (
+    pathname.startsWith('vaults/') &&
+    (pathname.includes('mint-account') || pathname.includes('details'))
+  ) {
     return pathname as Page
   }
 
