@@ -8,7 +8,7 @@ export const FREEZE_PERIOD_META = {
 }
 
 interface Props {
-  value: number
+  value: string
   isLoading: boolean
 }
 
@@ -19,7 +19,7 @@ export default function FreezePeriod(props: Props) {
 
   return (
     <FormattedNumber
-      amount={value}
+      amount={parseFloat(value)}
       options={{ minDecimals: 0, maxDecimals: 0, suffix: ' hours' }}
       className='text-xs'
       animate

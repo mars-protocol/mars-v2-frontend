@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react'
 
+import classNames from 'classnames'
 import Button from 'components/common/Button/index'
 import { Cross } from 'components/common/Icons'
 
@@ -35,7 +36,7 @@ export default function EscButton(props: Props) {
       leftIcon={<Cross />}
       iconClassName='w-3'
       color='tertiary'
-      className='w-8 h-8'
+      className={classNames('w-8 h-8', props.className)}
       size='xs'
     />
   )

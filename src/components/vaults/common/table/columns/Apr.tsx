@@ -1,26 +1,26 @@
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
 
-export const TVL_META = {
-  accessorKey: 'tvl',
-  header: 'TVL',
+export const APR_META = {
+  accessorKey: 'apr',
+  header: 'APR',
   meta: { className: 'w-25' },
 }
 
 interface Props {
-  value: number
+  value: string
   isLoading: boolean
 }
 
-export default function Tvl(props: Props) {
+export default function Apr(props: Props) {
   const { value, isLoading } = props
 
   if (isLoading) return <Loading />
 
   return (
     <FormattedNumber
-      amount={value}
-      options={{ prefix: '$', minDecimals: 2, maxDecimals: 2, abbreviated: true }}
+      amount={parseFloat(value)}
+      options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
       className='text-xs'
       animate
     />

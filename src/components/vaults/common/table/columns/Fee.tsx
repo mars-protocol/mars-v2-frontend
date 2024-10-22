@@ -8,7 +8,7 @@ export const FEE_META = {
 }
 
 interface Props {
-  value: number
+  value: string
   isLoading: boolean
 }
 
@@ -19,7 +19,7 @@ export default function Fee(props: Props) {
 
   return (
     <FormattedNumber
-      amount={value}
+      amount={parseFloat(value)}
       options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
       className='text-xs'
       animate
