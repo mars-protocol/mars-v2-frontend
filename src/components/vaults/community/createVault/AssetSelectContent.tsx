@@ -9,7 +9,7 @@ interface Props {
   showMenu: boolean
   setShowMenu: (show: boolean) => void
   assets: Asset[]
-  setSelectedAsset: (asset: any) => void
+  setSelectedAsset: (asset: Asset) => void
 }
 
 export default function AssetSelectContent(props: Props) {
@@ -44,10 +44,7 @@ export default function AssetSelectContent(props: Props) {
   const handleChangeSelected = (selected: string[]) => {
     setSelectedDenoms(selected)
 
-    // Find the selected asset by its denom
     const selectedAsset = assets.find((asset) => selected.includes(asset.denom))
-
-    // If an asset is selected, call handleSelectAsset
     if (selectedAsset) {
       handleSelectAsset(selectedAsset)
     }
@@ -67,7 +64,9 @@ export default function AssetSelectContent(props: Props) {
         <SearchBar
           value={searchString}
           placeholder={'Search for e.g. "ATOM" or "Cosmos"'}
-          onChange={onChangeSearchString}
+          onChange={(value: string) => {
+            onChangeSearchString(value)
+          }}
         />
       </div>
       <div className='h-full md:max-h-[446px] overflow-y-scroll scrollbar-hide'>

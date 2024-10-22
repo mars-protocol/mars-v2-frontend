@@ -43,9 +43,20 @@ export function getPage(pathname: string, chainConfig: ChainConfig): Page {
     'execute',
     'vaults',
     'vaults-community',
+    'vaults/create',
     'v1',
   ]
+
+  if (pathname.startsWith('vaults/') && pathname.includes('mint-account')) {
+    return pathname as Page
+  }
+
   const segments = pathname.split('/')
+
+  const fullPath = segments.join('/')
+  if (pages.includes(fullPath as Page)) {
+    return fullPath as Page
+  }
 
   const page = segments.find((segment) => pages.includes(segment as Page))
 
