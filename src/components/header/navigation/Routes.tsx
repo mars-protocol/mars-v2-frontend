@@ -17,6 +17,7 @@ import VaultsOfficialPage from 'pages/VaultsOfficialPage'
 import VaultsCommunityPage from 'pages/VaultsCommunityPage'
 import CreateVault from 'components/vaults/community/createVault/index'
 import MintVaultAccount from 'components/vaults/community/createVault/MintVaultAccount'
+import VaultDetails from 'components/vaults/community/vaultDetails/index'
 import PerpsVaultPage from 'pages/PerpsVaultPage'
 
 export default function Routes() {
@@ -69,6 +70,7 @@ export default function Routes() {
           <Route path='vaults' element={<VaultsOfficialPage />}>
             <Route path='create' element={<CreateVault />} />
             <Route path=':vaultAddress/mint-account' element={<MintVaultAccount />} />
+            <Route path=':vaultAddress/details' element={<VaultDetails />} />
           </Route>
 
           <Route path='portfolio/:accountId'>
