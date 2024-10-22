@@ -17,7 +17,7 @@ interface Props {
   required?: boolean
   // update TS once we know value
   onChange?: (value: any) => void
-  onClick?: () => void
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
 interface InputElementProps extends Props {
@@ -41,10 +41,7 @@ export default function VaultInputElement(props: Props) {
 
   const [inputValue, setInputValue] = useState(value)
 
-  const handleChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
-  ) => {
-    const newValue = event.target.value
+  const handleChange = (newValue: string) => {
     setInputValue(newValue)
     onChange(newValue)
   }
@@ -98,7 +95,7 @@ function InputElement(props: InputElementProps) {
         onClick={onClick}
         variant='transparent'
         color='secondary'
-        className='w-full px-4 py-3 mt-3  bg-white/5 !border !border-white/10 focus:border-white/20 focus:bg-white/10 hover:cursor-pointer'
+        className='w-full px-4 py-3 mt-3 bg-white/5 !border !border-white/10 focus:border-white/20 focus:bg-white/10 hover:cursor-pointer'
         leftIcon={asset && <AssetImage asset={asset} className='h-4 w-4' />}
         rightIcon={<span className='h-4 w-4'>{suffix}</span>}
         text={value}

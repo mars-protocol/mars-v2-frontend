@@ -180,16 +180,6 @@ interface DepositedHLSStrategy extends HLSStrategy {
   depositedAmount: BigNumber
 }
 
-interface Vaults {
-  // TODO: update with correct types
-  vaultName: string
-  vaultSub: string
-  apy: number
-  tvl: number
-  fee: number
-  freezePeriod: number
-}
-
 interface StakingApr {
   chainId: string
   currentYield: number
@@ -393,6 +383,7 @@ type Page =
   | 'hls-staking'
   | 'vaults'
   | 'vaults-community'
+  | 'vaults/create'
   | 'vaults/{vaultId}'
   | 'governance'
   | 'execute'
@@ -583,6 +574,17 @@ interface PerpsVault {
   liquidity: BigNumber
   lockup: Lockup
   cap: DepositCap | null
+}
+
+interface VaultData {
+  vault_address: string
+  name: string
+  subtitle: string
+  tvl: string
+  apr: string
+  fee: string
+  fee_rate: string
+  freezePeriod: string
 }
 
 interface VaultValuesAndAmounts {

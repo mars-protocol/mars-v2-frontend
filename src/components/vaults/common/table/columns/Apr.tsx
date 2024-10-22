@@ -1,10 +1,10 @@
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
 
-export const FREEZE_PERIOD_META = {
-  accessorKey: 'freeze_period',
-  header: 'Freeze Period',
-  meta: { className: 'w-30' },
+export const APR_META = {
+  accessorKey: 'apr',
+  header: 'APR',
+  meta: { className: 'w-25' },
 }
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
   isLoading: boolean
 }
 
-export default function FreezePeriod(props: Props) {
+export default function Apr(props: Props) {
   const { value, isLoading } = props
 
   if (isLoading) return <Loading />
@@ -20,7 +20,7 @@ export default function FreezePeriod(props: Props) {
   return (
     <FormattedNumber
       amount={parseFloat(value)}
-      options={{ minDecimals: 0, maxDecimals: 0, suffix: ' hours' }}
+      options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
       className='text-xs'
       animate
     />

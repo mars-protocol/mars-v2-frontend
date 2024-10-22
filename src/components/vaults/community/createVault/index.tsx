@@ -3,9 +3,9 @@ import Button from 'components/common/Button'
 import CreateVaultContent from 'components/vaults/community/createVault/CreateVaultContent'
 import MintVaultAccount from 'components/vaults/community/createVault/MintVaultAccount'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import HlsSwitch from 'components/vaults/community/createVault/HlsSwitch'
 import VaultInputElement from 'components/vaults/community/createVault/VaultInputElement'
 import PerformanceFee from 'components/vaults/community/createVault/PerformanceFee'
+import HlsSwitch from 'components/vaults/community/createVault/HLSSwitch'
 import Text from 'components/common/Text'
 import useToggle from 'hooks/common/useToggle'
 import useStore from 'store'
@@ -48,18 +48,20 @@ export default function CreateVault() {
   const handleCreate = useCallback(() => {
     // TODO: Implement create vault logic
     //  await for the response. once I have the response with the vault address, proceed to next page
+    // if user filled out the vault details, store them
 
     // temp vault address
     const tempVaultAddress = 'tempvaultaddress'
 
-    // const baseUrl = address
-    //   ? `/wallets/${address}/vaults/${tempVaultAddress}/mint-account`
-    //   : `/vaults/${tempVaultAddress}/mint-account`
-
-    // navigate(baseUrl)
-
     if (accountId)
-      navigate(getRoute(getPage('vaults/mint-account'), searchParams, tempVaultAddress, accountId))
+      navigate(
+        getRoute(
+          getPage(`vaults/${tempVaultAddress}/mint-account`),
+          searchParams,
+          address,
+          accountId,
+        ),
+      )
 
     useStore.setState({
       focusComponent: {
@@ -71,7 +73,7 @@ export default function CreateVault() {
     })
   }, [navigate, pathname, searchParams, address, accountId])
 
-  const handleWithdrawFreezePeriodChange = useCallback((value: string) => {
+  const handleWithdrawFreezePeriod = useCallback((value: string) => {
     setWithdrawFreezePeriod(value)
   }, [])
 
@@ -106,7 +108,10 @@ export default function CreateVault() {
               type='button'
               value={selectedAsset.symbol}
               asset={selectedAsset}
-              onClick={handleSelectAssets}
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                e.preventDefault()
+                handleSelectAssets()
+              }}
               label='Vault Deposit Asset'
               suffix={<ArrowRight />}
               required
@@ -126,7 +131,7 @@ export default function CreateVault() {
               type='dropdown'
               options={options}
               value={withdrawFreezePeriod}
-              onChange={handleWithdrawFreezePeriodChange}
+              onChange={handleWithdrawFreezePeriod}
               label='Withdraw Freeze Period'
             />
 
