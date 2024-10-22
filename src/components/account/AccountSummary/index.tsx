@@ -16,11 +16,10 @@ import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import useHlsStakingAssets from 'hooks/hls/useHlsStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
-import { calculateAccountApr, calculateAccountLeverage } from 'utils/accounts'
+import { calculateAccountApy, calculateAccountLeverage } from 'utils/accounts'
 
 interface Props {
   account: Account
@@ -29,7 +28,6 @@ interface Props {
 
 export default function AccountSummary(props: Props) {
   const { account, isInModal } = props
-  const isHls = account.kind === 'high_levered_strategy'
   const chainConfig = useChainConfig()
   const storageKey = isInModal
     ? `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_IN_MODAL_TABS_EXPANDED}`
@@ -50,7 +48,6 @@ export default function AccountSummary(props: Props) {
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
     useLendingMarketAssetsTableData()
-  const { data: hlsStrategies } = useHlsStakingAssets()
   const lendingAssetsData = useMemo(
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
@@ -88,11 +85,10 @@ export default function AccountSummary(props: Props) {
 
   const apr = useMemo(
     () =>
-      calculateAccountApr(
+      calculateAccountApy(
         updatedAccount ?? account,
         borrowAssetsData,
         lendingAssetsData,
-        hlsStrategies,
         [...whitelistedAssets, ...perpsAssets],
         vaultAprs,
         astroLpAprs,
@@ -102,7 +98,6 @@ export default function AccountSummary(props: Props) {
       updatedAccount,
       borrowAssetsData,
       lendingAssetsData,
-      hlsStrategies,
       whitelistedAssets,
       perpsAssets,
       vaultAprs,
