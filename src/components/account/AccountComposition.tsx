@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
+import useAccountPerpData from 'components/account/AccountPerpPositionTable/useAccountPerpData'
 import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
@@ -11,18 +12,16 @@ import { BN_ZERO, MAX_AMOUNT_DECIMALS } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
-import useHlsStakingAssets from 'hooks/hls/useHlsStakingAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import {
-  calculateAccountApr,
+  calculateAccountApy,
   getAccountDebtValue,
   getAccountTotalValue,
   getAccountUnrealizedPnlValue,
 } from 'utils/accounts'
-import useAccountPerpData from 'components/account/AccountPerpPositionTable/useAccountPerpData'
-import useChainConfig from 'hooks/chain/useChainConfig'
 
 interface Props {
   account: Account
@@ -41,7 +40,6 @@ export default function AccountComposition(props: Props) {
   const updatedAccount = useStore((s) => s.updatedAccount)
   const { account } = props
   const hasChanged = !!updatedAccount
-  const { data: hlsStrategies } = useHlsStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
   const accountPerpData = useAccountPerpData({
     account,
@@ -79,41 +77,31 @@ export default function AccountComposition(props: Props) {
     [updatedAccount, account, assets],
   )
 
-  const apr = useMemo(
+  const apy = useMemo(
     () =>
-      calculateAccountApr(
+      calculateAccountApy(
         account,
         borrowAssetsData,
         lendingAssetsData,
-        hlsStrategies,
         assets,
         vaultAprs,
         astroLpAprs,
       ),
-    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, vaultAprs, astroLpAprs],
+    [account, assets, borrowAssetsData, lendingAssetsData, vaultAprs, astroLpAprs],
   )
-  const updatedApr = useMemo(
+  const updatedApy = useMemo(
     () =>
       updatedAccount
-        ? calculateAccountApr(
+        ? calculateAccountApy(
             updatedAccount,
             borrowAssetsData,
             lendingAssetsData,
-            hlsStrategies,
             assets,
             vaultAprs,
             astroLpAprs,
           )
         : BN_ZERO,
-    [
-      updatedAccount,
-      borrowAssetsData,
-      lendingAssetsData,
-      hlsStrategies,
-      assets,
-      vaultAprs,
-      astroLpAprs,
-    ],
+    [updatedAccount, borrowAssetsData, lendingAssetsData, assets, vaultAprs, astroLpAprs],
   )
 
   return (
@@ -140,9 +128,9 @@ export default function AccountComposition(props: Props) {
         />
       )}
       <Item
-        title='APR'
-        current={apr}
-        change={hasChanged ? updatedApr : apr}
+        title='APY'
+        current={apy}
+        change={hasChanged ? updatedApy : apy}
         className='pb-3'
         isPercentage
       />

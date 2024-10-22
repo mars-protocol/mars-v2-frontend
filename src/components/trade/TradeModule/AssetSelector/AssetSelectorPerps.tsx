@@ -12,7 +12,7 @@ import useStore from 'store'
 interface Props {
   asset: Asset
   hasActivePosition: boolean
-  onAssetSelect: () => void
+  onAssetSelect: (newAsset: Asset) => void
 }
 
 export default function AssetSelectorPerps(props: Props) {
@@ -33,7 +33,7 @@ export default function AssetSelectorPerps(props: Props) {
         hasPosition = true
       }
       updatePerpsAsset(asset.denom, hasPosition)
-      props.onAssetSelect()
+      props.onAssetSelect(asset)
     },
     [currentAccount, props, updatePerpsAsset],
   )

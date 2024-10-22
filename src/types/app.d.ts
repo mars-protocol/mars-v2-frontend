@@ -56,6 +56,7 @@ interface AccountBalanceRow {
   type: PositionType
   value: string
   amountChange: BigNumber
+  campaigns: AssetCampaign[]
 }
 
 interface AccountStrategyRow {
@@ -597,6 +598,7 @@ interface PerpsVault {
   cap: DepositCap | null
 }
 
+interface DepositedPerpsVault extends PerpsVault, DepositedVault {}
 interface VaultValuesAndAmounts {
   amounts: {
     primary: BigNumber
@@ -1505,6 +1507,10 @@ type PnL =
       loss: Coin
     }
 
+interface AstroportAssetsCached {
+  tokens: AstroportAsset[]
+}
+
 interface AstroportAsset {
   chainId: string
   denom: string
@@ -1518,6 +1524,10 @@ interface AstroportAsset {
 }
 
 type PoolType = 'xyk' | 'concentrated' | 'stable' | 'transmuter' | 'astroport-pair-xyk-sale-tax'
+
+interface AstroportPoolsCached {
+  pools: AstroportPool[]
+}
 
 interface AstroportPool {
   chainId: string

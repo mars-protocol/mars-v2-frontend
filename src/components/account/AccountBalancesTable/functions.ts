@@ -21,6 +21,7 @@ export function getAssetAccountBalanceRow(
     amount,
     apy,
     amountChange,
+    campaigns: asset.campaigns,
   }
 }
 

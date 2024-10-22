@@ -40,7 +40,7 @@ export default function usePerpsVault() {
         provider: 'MARS',
         denom: perpsVault.base_denom,
         apy: perpVaultApy,
-        collateralizationRatio: 1.1,
+        collateralizationRatio: Number(vaultState.collateralization_ratio ?? 0),
         liquidity: BN(vaultState.total_liquidity),
         lockup: {
           duration: +timeframe[0],

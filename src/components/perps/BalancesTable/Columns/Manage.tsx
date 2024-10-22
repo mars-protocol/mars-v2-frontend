@@ -135,11 +135,12 @@ export default function Manage(props: Props) {
     () => [
       ...(searchParams.get(SearchParams.PERPS_MARKET) === perpPosition.asset.denom
         ? [
-            {
-              icon: <Shield />,
-              text: 'Add SL/TP',
-              onClick: openPerpsSlTpModal,
-            },
+            // Remove SL/TP for the moment
+            // {
+            //   icon: <Shield />,
+            //   text: 'Add SL/TP',
+            //   onClick: openPerpsSlTpModal,
+            // },
           ]
         : [
             {
@@ -153,11 +154,11 @@ export default function Manage(props: Props) {
                 })
               },
             },
-            {
-              icon: <Shield />,
-              text: 'Add SL/TP',
-              onClick: openPerpsSlTpModal,
-            },
+            // {
+            //   icon: <Shield />,
+            //   text: 'Add SL/TP',
+            //   onClick: openPerpsSlTpModal,
+            // },
           ]),
       {
         icon: <Cross width={16} />,
@@ -165,7 +166,13 @@ export default function Manage(props: Props) {
         onClick: () => handleCloseClick(),
       },
     ],
-    [handleCloseClick, openPerpsSlTpModal, perpPosition.asset.denom, searchParams, setSearchParams],
+    [
+      handleCloseClick,
+      // openPerpsSlTpModal,
+      perpPosition.asset.denom,
+      searchParams,
+      setSearchParams,
+    ],
   )
 
   if (props.perpPosition.type === 'limit')

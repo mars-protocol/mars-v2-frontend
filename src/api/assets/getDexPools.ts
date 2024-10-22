@@ -1,3 +1,4 @@
+import { ChainInfoID } from 'types/enums'
 import { setApiError } from 'utils/error'
 
 export default async function getDexPools(chainConfig: ChainConfig) {
@@ -5,6 +6,11 @@ export default async function getDexPools(chainConfig: ChainConfig) {
   const uri = new URL(chainConfig.endpoints.dexPools)
   try {
     const pools = await fetch(uri.toString()).then(async (res) => {
+      if (chainConfig.id === ChainInfoID.Pion1) {
+        const testnetData = (await res.json()) as AstroportPoolsCached
+        return testnetData.pools
+      }
+
       const data = (await res.json()) as AstroportPool[]
       return data
     })
