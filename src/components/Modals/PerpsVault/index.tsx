@@ -148,8 +148,8 @@ function PerpsVaultModal(props: Props) {
             {props.modal.type === 'deposit' && (
               <>
                 <Callout type={CalloutType.INFO}>
-                  Please note there is an unlocking period of 7 days when depositing into this
-                  vault.
+                  Please note there is an unlocking period of {perpsVault?.lockup.duration}-
+                  {perpsVault?.lockup.timeframe} when depositing into this vault.
                 </Callout>
                 <Callout type={CalloutType.INFO}>
                   Your overall leverage may be increased as any deposits into this vault are removed
