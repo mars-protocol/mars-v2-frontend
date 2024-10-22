@@ -90,13 +90,17 @@ export default function SwapForm(props: Props) {
 
     if (!outputMarketAsset || !outputMarketAsset.cap) return []
 
-    const depositCapLeft = getCapLeftWithBuffer(outputMarketAsset.cap)
+    let depositCapLeft = getCapLeftWithBuffer(outputMarketAsset.cap)
+    if (isAutoRepayChecked && account) {
+      const debtAmount = account.debts.find(byDenom(outputAsset.denom))?.amount ?? BN_ZERO
+      depositCapLeft = depositCapLeft.plus(debtAmount)
+    }
     if (outputAssetAmount.isGreaterThan(depositCapLeft)) {
       return [BNCoin.fromDenomAndBigNumber(outputAsset.denom, depositCapLeft)]
     }
 
     return []
-  }, [markets, outputAsset.denom, outputAssetAmount])
+  }, [account, isAutoRepayChecked, markets, outputAsset.denom, outputAssetAmount])
 
   const handleRangeInputChange = useCallback(
     (value: number) => {

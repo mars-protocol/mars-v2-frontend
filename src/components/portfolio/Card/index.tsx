@@ -15,7 +15,6 @@ import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import useHlsStakingAssets from 'hooks/hls/useHlsStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
@@ -34,7 +33,6 @@ export default function PortfolioCard(props: Props) {
   const currentAccountId = useAccountId()
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const data = useBorrowMarketAssetsTableData()
-  const { data: hlsStrategies } = useHlsStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
   const [searchParams] = useSearchParams()
   const assets = useWhitelistedAssets()
@@ -49,15 +47,14 @@ export default function PortfolioCard(props: Props) {
       return [
         { title: <Loading />, sub: 'Net worth' },
         { title: <Loading />, sub: 'Leverage' },
-        { title: <Loading />, sub: 'APR' },
+        { title: <Loading />, sub: 'APY' },
       ]
     }
 
-    const { netWorth, apr, leverage } = getAccountSummaryStats(
+    const { netWorth, apy, leverage } = getAccountSummaryStats(
       account as Account,
       borrowAssets,
       lendingAssets,
-      hlsStrategies,
       assets,
       vaultAprs,
       astroLpAprs,
@@ -73,11 +70,11 @@ export default function PortfolioCard(props: Props) {
         sub: 'Leverage',
       },
       {
-        title: <FormattedNumber amount={apr.toNumber()} options={{ suffix: '%' }} />,
-        sub: 'APR',
+        title: <FormattedNumber amount={apy.toNumber()} options={{ suffix: '%' }} />,
+        sub: 'APY',
       },
     ]
-  }, [account, assets, borrowAssets, hlsStrategies, lendingAssets, vaultAprs, astroLpAprs])
+  }, [account, assets, borrowAssets, lendingAssets, vaultAprs, astroLpAprs])
 
   if (!account) {
     return (
