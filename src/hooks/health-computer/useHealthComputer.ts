@@ -262,6 +262,7 @@ export default function useHealthComputer(account?: Account) {
   const computeLiquidationPrice = useCallback(
     (denom: string, kind: LiquidationPriceKind) => {
       if (!healthComputer) return null
+
       try {
         const asset = perpsAssets.find(byDenom(denom))
         const assetInAccount = findPositionInAccount(healthComputer, denom)

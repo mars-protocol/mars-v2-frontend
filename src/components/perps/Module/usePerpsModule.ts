@@ -132,13 +132,9 @@ export default function usePerpsModule(
     setLeverage(calculateLeverage)
   }, [calculateLeverage])
 
-  const updateAmount = useCallback(
-    (newAmount: BigNumber) => {
-      setAmount(newAmount)
-      setIsMaxSelected(newAmount.isEqualTo(maxAmount))
-    },
-    [maxAmount],
-  )
+  const updateAmount = useCallback((newAmount: BigNumber) => {
+    setAmount(newAmount)
+  }, [])
 
   const updateLeverage = useCallback(
     (newLeverage: number) => {
