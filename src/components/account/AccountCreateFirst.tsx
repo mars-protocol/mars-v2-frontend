@@ -32,7 +32,8 @@ export default function AccountCreateFirst() {
         focusComponent: {
           component: <AccountFundFullPage />,
           onClose: () => {
-            useStore.setState({ getStartedModal: true })
+            // TODO: update docs to reflect the current state of v2
+            //useStore.setState({ getStartedModal: true })
           },
         },
       })
