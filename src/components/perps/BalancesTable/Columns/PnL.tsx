@@ -7,7 +7,12 @@ import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import { BNCoin } from 'types/classes/BNCoin'
 
-export const PNL_META = { accessorKey: 'pnl.net.amount', header: 'Total PnL', id: 'pnl' }
+export const PNL_META = {
+  accessorKey: 'pnl.net.amount',
+  header: 'Total PnL',
+  id: 'pnl',
+  meta: { className: 'min-w-30' },
+}
 
 type Props = {
   pnl: PerpsPnL
