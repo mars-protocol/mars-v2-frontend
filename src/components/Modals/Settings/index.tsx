@@ -396,7 +396,11 @@ export default function SettingsModal() {
               textSize='extraSmall'
               className='leading-4 text-white hover:underline'
               onClick={() => {
-                useStore.setState({ settingsModal: false, getStartedModal: true })
+                useStore.setState({
+                  settingsModal: false,
+                  // TODO: update docs to reflect the current state of v2
+                  //getStartedModal: true
+                })
               }}
             >
               Get Started.
