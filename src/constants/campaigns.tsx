@@ -6,7 +6,7 @@ export const CAMPAIGNS: AssetCampaign[] = [
     name: 'Stride Staking',
     type: 'apy',
     apyApi: {
-      url: 'https://edge.stride.zone/api/stake-stats',
+      url: 'https://neutron-cache-api.onrender.com/stride',
       isApr: true,
       isPercent: false,
       apyStructure: ['stats', 'strideYield'],
@@ -46,7 +46,7 @@ export const CAMPAIGNS: AssetCampaign[] = [
     name: 'Drop Staking',
     type: 'apy',
     apyApi: {
-      url: 'https://app.drop.money/api/apy',
+      url: 'https://neutron-cache-api.onrender.com/drop',
       isApr: false,
       isPercent: false,
       apyStructure: ['apy'],
@@ -64,7 +64,7 @@ export const CAMPAIGNS: AssetCampaign[] = [
     name: 'Lido Staking',
     type: 'apy',
     apyApi: {
-      url: 'https://eth-api.lido.fi/v1/protocol/steth/apr/sma',
+      url: 'https://neutron-cache-api.onrender.com/lido',
       isApr: true,
       isPercent: true,
       apyStructure: ['data', 'smaApr'],
@@ -83,7 +83,7 @@ export const CAMPAIGNS: AssetCampaign[] = [
     name: 'Milkyway Staking',
     type: 'apy',
     apyApi: {
-      url: 'https://apis.milkyway.zone/v2/protocols/osmosis.milkTIA',
+      url: 'https://neutron-cache-api.onrender.com/milkyway',
       isApr: true,
       isPercent: true,
       apyStructure: ['apr'],
