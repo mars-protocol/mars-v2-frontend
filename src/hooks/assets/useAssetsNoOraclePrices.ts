@@ -63,7 +63,10 @@ async function fetchSortAndMapAllAssets(
     ? [...assets, ...poolAssets, USD, ...chainConfig.lp]
     : [...assets, ...poolAssets, USD]
 
-  const unsortedAssets = allAssets.map((asset) => {
+  const uniqueAssets = allAssets.filter(
+    (asset, index, self) => index === self.findIndex((t) => t.denom === asset.denom),
+  )
+  const unsortedAssets = uniqueAssets.map((asset) => {
     const currentAssetParams = assetParams.find(byDenom(asset.denom))
     const currentAssetPoolParams = pools.find((pool) => pool.lpAddress === asset.denom)
 
