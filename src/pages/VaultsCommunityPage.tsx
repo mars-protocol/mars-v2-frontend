@@ -51,7 +51,7 @@ export default function VaultsCommunityPage() {
     if (vaultWarning === null || vaultWarning === 'true') {
       showDialog()
     }
-  }, [])
+  }, [showDialog])
 
   return (
     <div className='flex flex-wrap w-full gap-6'>
