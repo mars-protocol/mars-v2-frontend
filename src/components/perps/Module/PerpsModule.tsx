@@ -177,7 +177,11 @@ export function PerpsModule() {
   }, [newLimitPriceInfo])
 
   useEffect(() => {
-    if (!tradingFee || !perpsVault || isLimitOrder || perpsVaultModal) return
+    if (!tradingFee || !perpsVault || perpsVaultModal) return
+    if (isLimitOrder) {
+      simulatePerps(currentPerpPosition, isAutoLendEnabledForCurrentAccount)
+      return
+    }
     const newAmount = currentPerpPosition?.amount.plus(amount) ?? amount
     const previousTradeDirection = currentPerpPosition?.amount.isLessThan(0) ? 'short' : 'long'
     const newTradeDirection = newAmount.isLessThan(0) ? 'short' : 'long'

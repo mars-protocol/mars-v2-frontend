@@ -15,8 +15,6 @@ export default function useTradingFeeAndPrice(denom: string, newAmount: BigNumbe
   const clients = useClients()
   const enabled = clients && !!accountId
 
-  // console.log(debouncedAmount.toString())
-
   return useSWRImmutable(
     enabled && `${chainConfig.id}/perps/${denom}/positionFeeAndPrice/${debouncedAmount}`,
     async () => {
