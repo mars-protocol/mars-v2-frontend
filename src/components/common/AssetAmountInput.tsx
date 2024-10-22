@@ -23,6 +23,7 @@ interface Props {
   onClosing?: () => void
   showCloseButton?: boolean
   isMaxSelected?: boolean
+  capMax?: boolean
 }
 
 export default function AssetAmountInput(props: Props) {
@@ -42,6 +43,7 @@ export default function AssetAmountInput(props: Props) {
     onClosing,
     showCloseButton,
     isMaxSelected,
+    capMax,
   } = props
 
   const handleMaxClick = useCallback(() => {
@@ -85,7 +87,7 @@ export default function AssetAmountInput(props: Props) {
             amount={amount}
             className='border-none bg-transparent outline-none flex-1 !text-left'
             maxDecimals={isUSD ? 6 : asset.decimals}
-            max={max}
+            max={capMax ? max : undefined}
             min={min}
             disabled={disabled}
             onChange={setAmount}
