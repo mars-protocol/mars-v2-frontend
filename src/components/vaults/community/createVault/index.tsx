@@ -5,7 +5,7 @@ import MintVaultAccount from 'components/vaults/community/createVault/MintVaultA
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import VaultInputElement from 'components/vaults/community/createVault/VaultInputElement'
 import PerformanceFee from 'components/vaults/community/createVault/PerformanceFee'
-import HlsSwitch from 'components/vaults/community/createVault/HLSSwitch'
+import HlsSwitch from 'components/vaults/community/createVault/HlsSwitch'
 import Text from 'components/common/Text'
 import useToggle from 'hooks/common/useToggle'
 import useStore from 'store'
