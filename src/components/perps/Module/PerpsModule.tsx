@@ -190,6 +190,7 @@ export function PerpsModule() {
       updatedTradeDirection,
       tradingFee,
       currentPerpPosition,
+      limitPrice,
     )
     simulatePerps(newPosition, isAutoLendEnabledForCurrentAccount)
   }, [
@@ -197,6 +198,7 @@ export function PerpsModule() {
     currentPerpPosition,
     isAutoLendEnabledForCurrentAccount,
     isLimitOrder,
+    limitPrice,
     perpsAsset,
     perpsVault,
     perpsVaultModal,
