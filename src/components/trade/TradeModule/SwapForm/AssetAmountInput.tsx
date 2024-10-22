@@ -46,6 +46,13 @@ export default function AssetAmountInput(props: Props) {
     setAmount(max)
   }, [max, setAmount])
 
+  const handleChange = useCallback(
+    (value: BigNumber) => {
+      setAmount(value.isNegative() ? BN_ZERO : value)
+    },
+    [setAmount],
+  )
+
   const maxValue = useMemo(() => {
     const val = max.shiftedBy(-asset.decimals)
     return val.isGreaterThan(1) ? val.toFixed(2) : val.toPrecision(2)
@@ -61,9 +68,8 @@ export default function AssetAmountInput(props: Props) {
             amount={amount}
             className='border-none bg-transparent outline-none flex-1 !text-left'
             maxDecimals={asset.decimals}
-            max={max}
             disabled={disabled}
-            onChange={setAmount}
+            onChange={handleChange}
             onFocus={onFocus}
             onBlur={onBlur}
           />
