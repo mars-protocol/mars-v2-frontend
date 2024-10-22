@@ -20,7 +20,7 @@ export default function MintVaultAccount() {
         </div>
 
         <Button
-          // TODO: add Crate vault acc logic
+          // TODO: add Create vault acc logic
           onClick={() => {}}
           variant='solid'
           color='primary'

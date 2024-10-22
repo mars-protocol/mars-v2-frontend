@@ -429,6 +429,7 @@ type Page =
   | 'hls-staking'
   | 'vaults'
   | 'vaults-community'
+  | 'vaults/create'
   | 'vaults/{vaultId}'
   | 'governance'
   | 'execute'
@@ -621,7 +622,19 @@ interface PerpsVault {
   cap: DepositCap | null
 }
 
+interface VaultData {
+  vault_address: string
+  name: string
+  subtitle: string
+  tvl: string
+  apr: string
+  fee: string
+  fee_rate: string
+  freezePeriod: string
+}
+
 interface DepositedPerpsVault extends PerpsVault, DepositedVault {}
+
 interface VaultValuesAndAmounts {
   amounts: {
     primary: BigNumber

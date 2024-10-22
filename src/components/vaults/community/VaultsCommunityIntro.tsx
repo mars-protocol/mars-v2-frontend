@@ -26,11 +26,6 @@ export default function VaultsCommunityIntro() {
   const address = useStore((s) => s.address)
 
   const openCreateVaultOverlay = useCallback(() => {
-    // TODO: check for better option how to construct the route
-    // const baseUrl = address ? `/wallets/${address}/vaults/create` : '/vaults/create'
-
-    // navigate(baseUrl)
-
     if (accountId) navigate(getRoute(getPage('vaults/create'), searchParams, address, accountId))
 
     useStore.setState({

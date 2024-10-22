@@ -30,54 +30,52 @@ export default function Routes() {
           </Layout>
         }
       >
+        <Route path='/' element={<TradePage />} />
         <Route path='/trade' element={<TradePage />} />
         <Route path='/trade-advanced' element={<TradePage />} />
-        {chainConfig.perps && <Route path='/perps' element={<PerpsPage />} />}
         <Route path='/farm' element={<FarmPage />} />
         <Route path='/lend' element={<LendPage />} />
         {chainConfig.perps && <Route path='/perps-vault' element={<PerpsVaultPage />} />}
         <Route path='/borrow' element={<BorrowPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
         <Route path='/v1' element={<V1Page />} />
+
+        {chainConfig.perps && <Route path='/perps' element={<PerpsPage />} />}
         {chainConfig.hls && <Route path='/hls-staking' element={<HlsStakingPage />} />}
         {chainConfig.hls && <Route path='/hls-farm' element={<HlsFarmPage />} />}
+
         <Route path='/vaults' element={<VaultsOfficialPage />}>
           <Route path='create' element={<CreateVault />} />
         </Route>
         <Route path='/vaults-community' element={<VaultsCommunityPage />} />
-        <Route path='/vaults/:vaultAddress'>
-          <Route path='mint-account' element={<MintVaultAccount />} />
-          {/* TODO */}
-          {/* <Route path='delete' element={<CreateVault />} /> */}
-        </Route>
-        <Route path='/' element={<TradePage />} />
+
         <Route path='/wallets/:address'>
+          <Route path='' element={<TradePage />} />
           <Route path='execute' element={<ExecuteMessagePage />} />
           <Route path='trade' element={<TradePage />} />
           <Route path='trade-advanced' element={<TradePage />} />
-          {chainConfig.perps && <Route path='perps' element={<PerpsPage />} />}
           <Route path='farm' element={<FarmPage />} />
           <Route path='lend' element={<LendPage />} />
           {chainConfig.perps && <Route path='perps-vault' element={<PerpsVaultPage />} />}
           <Route path='borrow' element={<BorrowPage />} />
           <Route path='portfolio' element={<PortfolioPage />} />
+          <Route path='v1' element={<V1Page />} />
+
+          {chainConfig.perps && <Route path='perps' element={<PerpsPage />} />}
           {chainConfig.hls && <Route path='hls-staking' element={<HlsStakingPage />} />}
           {chainConfig.hls && <Route path='hls-farm' element={<HlsFarmPage />} />}
+
+          <Route path='vaults-community' element={<VaultsCommunityPage />} />
           <Route path='vaults' element={<VaultsOfficialPage />}>
             <Route path='create' element={<CreateVault />} />
+            <Route path=':vaultAddress/mint-account' element={<MintVaultAccount />} />
           </Route>
-          <Route path='vaults-community' element={<VaultsCommunityPage />} />
-          <Route path='vaults/:vaultAddress'>
-            <Route path='mint-account' element={<MintVaultAccount />} />
-            {/* TODO */}
-            {/* <Route path='delete' element={} /> */}
-          </Route>
-          <Route path='v1' element={<V1Page />} />
+
           <Route path='portfolio/:accountId'>
             <Route path='' element={<PortfolioAccountPage />} />
           </Route>
-          <Route path='' element={<TradePage />} />
         </Route>
+
         <Route path='*' element={<Navigate to='/' />} />
       </Route>
     </RoutesWrapper>

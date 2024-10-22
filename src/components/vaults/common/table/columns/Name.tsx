@@ -9,7 +9,7 @@ export const NAME_META = {
 }
 
 interface Props {
-  value: Vaults
+  value: VaultData
   isLoading: boolean
 }
 
@@ -22,11 +22,7 @@ export default function Name(props: Props) {
     <div className='flex items-center'>
       {/* demo asset image */}
       <Logo className='h-6 w-6' />
-      <TitleAndSubCell
-        className='ml-2 mr-2 text-left'
-        title={value.vaultName}
-        sub={value.vaultSub}
-      />
+      <TitleAndSubCell className='ml-2 mr-2 text-left' title={value.name} sub={value.subtitle} />
     </div>
   )
 }
