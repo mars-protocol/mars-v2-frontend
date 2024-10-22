@@ -1,15 +1,14 @@
-import { useMemo } from 'react'
 import { BN_ONE, BN_ZERO } from 'constants/math'
-import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import usePerpsConfig from 'hooks/perps/usePerpsConfig'
 import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
-import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
-import { LiquidationPriceKind } from 'utils/health_computer'
 
 export default function usePerpsLimitOrdersData() {
   const currentAccount = useCurrentAccount()

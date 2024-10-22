@@ -13,7 +13,6 @@ type Props = {
 }
 
 export default function ActivePerpsVaultTable(props: Props) {
-  console.log(props)
   if (props.data.length === 0) {
     return (
       <div className='flex flex-col items-center gap-1 py-10'>
