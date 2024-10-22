@@ -8,6 +8,7 @@ export default function getPerpsPosition(
   tradeDirection: TradeDirection,
   tradingFee: PerpsTradingFee,
   currentPerpPosition?: PerpsPosition,
+  limitPrice?: BigNumber,
 ): PerpsPosition {
   if (currentPerpPosition) {
     return {
@@ -18,10 +19,14 @@ export default function getPerpsPosition(
     }
   }
 
+  const currentPrice = asset.price?.amount ?? BN_ZERO
+  const currentLimitPrice = limitPrice ?? BN_ZERO
+  const priceToUse = !limitPrice?.isZero() ? currentLimitPrice : currentPrice
+
   return {
     amount,
-    entryPrice: asset.price?.amount ?? BN_ZERO,
-    currentPrice: asset.price?.amount ?? BN_ZERO,
+    entryPrice: priceToUse,
+    currentPrice: currentPrice,
     baseDenom,
     denom: asset.denom,
     tradeDirection,

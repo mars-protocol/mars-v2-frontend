@@ -114,34 +114,29 @@ export function PerpsModule() {
 
   const onChangeTradeDirection = useCallback(
     (newTradeDirection: TradeDirection) => {
-      updateAmount(amount.times(-1))
+      updateAmount(BN_ZERO)
       setTradeDirection(newTradeDirection)
-      if (isLimitOrder) reset()
-      if (currentPerpPosition && newTradeDirection === currentPerpPosition.tradeDirection) {
-        setIsReduceOnly(false)
-      }
+      setLimitPrice(BN_ZERO)
+      setIsReduceOnly(false)
     },
-    [amount, isLimitOrder, reset, updateAmount, currentPerpPosition],
+    [updateAmount],
   )
 
   const onChangeOrderType = useCallback(
     (orderType: OrderType) => {
-      reset()
+      updateAmount(BN_ZERO)
+      setLimitPrice(BN_ZERO)
       setSelectedOrderType(orderType)
+      setIsReduceOnly(false)
     },
-    [reset],
+    [updateAmount],
   )
 
   const onChangeAmount = useCallback(
     (newAmount: BigNumber) => {
       updateAmount(tradeDirection === 'long' ? newAmount : newAmount.negated())
-      if (newAmount.isEqualTo(maxAmount)) {
-        setIsMaxSelected(true)
-      } else {
-        setIsMaxSelected(false)
-      }
     },
-    [tradeDirection, updateAmount, maxAmount, setIsMaxSelected],
+    [tradeDirection, updateAmount],
   )
 
   const onChangeLeverage = useCallback(
@@ -182,7 +177,11 @@ export function PerpsModule() {
   }, [newLimitPriceInfo])
 
   useEffect(() => {
-    if (!tradingFee || !perpsVault || isLimitOrder || perpsVaultModal) return
+    if (!tradingFee || !perpsVault || perpsVaultModal) return
+    if (isLimitOrder) {
+      simulatePerps(currentPerpPosition, isAutoLendEnabledForCurrentAccount)
+      return
+    }
     const newAmount = currentPerpPosition?.amount.plus(amount) ?? amount
     const previousTradeDirection = currentPerpPosition?.amount.isLessThan(0) ? 'short' : 'long'
     const newTradeDirection = newAmount.isLessThan(0) ? 'short' : 'long'
@@ -195,6 +194,7 @@ export function PerpsModule() {
       updatedTradeDirection,
       tradingFee,
       currentPerpPosition,
+      limitPrice,
     )
     simulatePerps(newPosition, isAutoLendEnabledForCurrentAccount)
   }, [
@@ -202,6 +202,7 @@ export function PerpsModule() {
     currentPerpPosition,
     isAutoLendEnabledForCurrentAccount,
     isLimitOrder,
+    limitPrice,
     perpsAsset,
     perpsVault,
     perpsVaultModal,
@@ -213,6 +214,7 @@ export function PerpsModule() {
     if (!isLimitOrder) {
       return (
         amount.isGreaterThan(maxAmount) ||
+        amount.isZero() ||
         warningMessages.isNotEmpty() ||
         (isReduceOnly && !validateReduceOnlyOrder())
       )
@@ -221,6 +223,7 @@ export function PerpsModule() {
     return (
       !!limitPriceInfo ||
       limitPrice.isZero() ||
+      amount.isZero() ||
       amount.isGreaterThan(maxAmount) ||
       warningMessages.isNotEmpty() ||
       (isReduceOnly && !validateReduceOnlyOrder())
@@ -250,6 +253,17 @@ export function PerpsModule() {
       }
     }
   }, [currentPerpPosition, tradeDirection, updateAmount])
+
+  const effectiveLeverage = useMemo(() => {
+    if (amount.isGreaterThan(maxAmount)) {
+      return 0
+    }
+    return Math.max(leverage, 0)
+  }, [amount, maxAmount, leverage])
+
+  const isAmountExceedingMax = useMemo(() => {
+    return amount.isGreaterThan(maxAmount)
+  }, [amount, maxAmount])
 
   if (!perpsAsset) return null
 
@@ -310,8 +324,14 @@ export function PerpsModule() {
             !!currentPerpPosition && currentPerpPosition.tradeDirection !== tradeDirection
           }
           isMaxSelected={isMaxSelected}
+          capMax={false}
         />
-        {!hasActivePosition && !maxAmount.isZero() && (
+        {isAmountExceedingMax && (
+          <Callout type={CalloutType.WARNING}>
+            The entered amount exceeds the maximum allowed.
+          </Callout>
+        )}
+        {!maxAmount.isZero() && (
           <div className='w-full'>
             <Or />
             <Text size='sm' className='mt-5 mb-2'>
@@ -319,17 +339,18 @@ export function PerpsModule() {
             </Text>
             <LeverageSlider
               max={maxLeverage}
-              value={Math.max(leverage, 0)}
+              value={effectiveLeverage}
               onChange={onChangeLeverage}
               type={tradeDirection}
-              disabled={isDisabledAmountInput}
+              disabled={isDisabledAmountInput || amount.isGreaterThan(maxAmount)}
             />
             {maxLeverage > 5 && (
               <LeverageButtons
                 maxLeverage={maxLeverage}
-                currentLeverage={leverage}
+                currentLeverage={effectiveLeverage}
                 maxAmount={maxAmount}
                 onChange={onChangeLeverage}
+                // disabled={amount.isGreaterThan(maxAmount)}
               />
             )}
           </div>
