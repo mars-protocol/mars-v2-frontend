@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react'
-import TVL, { TVL_META } from 'components/earn/farm/common/Table/Columns/TVL'
 import { ColumnDef } from '@tanstack/react-table'
+import TVL from 'components/earn/farm/common/Table/Columns/TVL'
 import BigNumber from 'bignumber.js'
 import Info, { INFO_META } from 'components/vaults/community/vaultDetails/table/columns/Info'
 import Timestamp, {
   TIMESTAMP_META,
 } from 'components/vaults/community/vaultDetails/table/columns/Timestamp'
-import Shares, { SHARES_META } from './columns/Shares'
+import Shares, { SHARES_META } from 'components/vaults/community/vaultDetails/table/columns/Shares'
 
 interface Props {
   isLoading: boolean
@@ -15,6 +15,7 @@ interface Props {
 export default function useQueuedWithdrawals(props: Props) {
   const { isLoading } = props
 
+  // TODO: update once we know data structure
   return useMemo<ColumnDef<any>[]>(
     () => [
       {
@@ -36,7 +37,8 @@ export default function useQueuedWithdrawals(props: Props) {
         cell: ({ row }) => <Shares value={BigNumber(row.original.shares)} isLoading={isLoading} />,
       },
       {
-        ...TVL_META,
+        header: 'Total Position',
+        meta: { className: 'w-30' },
         cell: ({ row }) => <TVL amount={BigNumber(row.original.totalPosition)} denom={'usd'} />,
       },
       {

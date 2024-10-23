@@ -4,12 +4,11 @@ import Text from 'components/common/Text'
 import { truncate } from 'utils/formatters'
 
 export const INFO_META = {
+  id: 'info',
   meta: { className: 'w-40' },
 }
-
 interface Props {
   // TODO: update once we know data structure
-
   value: any
   isLoading: boolean
 }
@@ -27,10 +26,15 @@ export default function Info(props: Props) {
       {address && (
         <div className='flex items-center gap-1 justify-end'>
           <Text size='xs'>{address}</Text>
+          {/* TODO: copy or mintscan link */}
           <ExternalLink className='w-3.5 h-3.5 text-white/40 hover:text-inherit hover:cursor-pointer' />
         </div>
       )}
-      {status && <Text size='xs'>{status}</Text>}
+      {status && (
+        <Text size='xs' className='text-white/40'>
+          {status}
+        </Text>
+      )}
     </>
   )
 }
