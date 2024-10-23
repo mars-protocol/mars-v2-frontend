@@ -2,10 +2,9 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
 
 export const SHARES_META = {
-  accessorKey: 'shares',
   id: 'shares',
   header: 'Shares',
-  meta: { className: 'min-w-30' },
+  meta: { className: 'min-w-20' },
 }
 
 interface Props {

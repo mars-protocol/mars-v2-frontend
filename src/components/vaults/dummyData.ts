@@ -114,3 +114,26 @@ export const queuedWithdrawDummyData = [
     walletAddress: '0x37wr8fksjksjuncgtyyd36xcfefdsfdsfgjjskfgsdsi',
   },
 ]
+
+export const vaultBalanceData = [
+  {
+    value: '1000',
+    liquidationPrice: '950',
+    apy: '5',
+    asset: {
+      symbol: 'USDC',
+      name: 'USD Coin',
+      logo: 'https://raw.githubusercontent.com/astroport-fi/astroport-token-lists/main/img/usdc.svg',
+    },
+  },
+  {
+    value: '500',
+    liquidationPrice: '450',
+    apy: '12.5',
+    asset: {
+      symbol: 'NTRN',
+      name: 'Neutron',
+      logo: 'https://raw.githubusercontent.com/astroport-fi/astroport-token-lists/main/img/neutron.svg',
+    },
+  },
+]
