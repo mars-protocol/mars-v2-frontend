@@ -140,16 +140,18 @@ export default function ConfirmationSummary(props: Props) {
                 override={limitPrice}
               />
             </SummaryRow>
-            <SummaryRow label='Liquidation Price'>
-              <LiqPrice
-                denom={asset.denom}
-                computeLiquidationPrice={computeLiquidationPrice}
-                type='perp'
-                amount={newAmount.toNumber()}
-                account={updatedAccount ?? account}
-                isWhitelisted={true}
-              />
-            </SummaryRow>
+            {!limitPrice && (
+              <SummaryRow label='Liquidation Price'>
+                <LiqPrice
+                  denom={asset.denom}
+                  computeLiquidationPrice={computeLiquidationPrice}
+                  type='perp'
+                  amount={newAmount.toNumber()}
+                  account={updatedAccount ?? account}
+                  isWhitelisted={true}
+                />
+              </SummaryRow>
+            )}
           </>
         )}
       </Container>

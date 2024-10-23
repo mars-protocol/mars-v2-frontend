@@ -331,7 +331,7 @@ export function PerpsModule() {
             The entered amount exceeds the maximum allowed.
           </Callout>
         )}
-        {!maxAmount.isZero() && (
+        {!maxAmount.isZero() && !currentPerpPosition && (
           <div className='w-full'>
             <Or />
             <Text size='sm' className='mt-5 mb-2'>
