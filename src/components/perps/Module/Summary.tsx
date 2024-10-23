@@ -9,6 +9,7 @@ import { ArrowRight, Check } from 'components/common/Icons'
 import SummaryLine from 'components/common/SummaryLine'
 import Text from 'components/common/Text'
 import AssetAmount from 'components/common/assets/AssetAmount'
+import CloseLabel from 'components/perps/BalancesTable/Columns/CloseLabel'
 import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
 import ConfirmationSummary from 'components/perps/Module/ConfirmationSummary'
 import { ExpectedPrice } from 'components/perps/Module/ExpectedPrice'
@@ -197,14 +198,18 @@ export default function PerpsSummary(props: Props) {
       header: (
         <div className='flex items-center justify-between w-full'>
           <Text size='2xl'>{isLimitOrder ? 'Limit Order Summary' : 'Order Summary'}</Text>
-          <TradeDirection
-            tradeDirection={
-              isNewPosition || isDirectionChange
-                ? tradeDirection
-                : (previousTradeDirection ?? 'long')
-            }
-            className='capitalize !text-sm'
-          />
+          {newAmount.isZero() ? (
+            <CloseLabel className='capitalize !text-sm' />
+          ) : (
+            <TradeDirection
+              tradeDirection={
+                isNewPosition || isDirectionChange
+                  ? tradeDirection
+                  : (previousTradeDirection ?? 'long')
+              }
+              className='capitalize !text-sm'
+            />
+          )}
         </div>
       ),
       content: (
@@ -234,22 +239,23 @@ export default function PerpsSummary(props: Props) {
       },
     })
   }, [
+    currentAccount,
+    showSummary,
+    openAlertDialog,
+    isLimitOrder,
+    newAmount,
+    isNewPosition,
+    isDirectionChange,
+    tradeDirection,
+    previousTradeDirection,
     amount,
     asset,
-    close,
-    currentAccount,
-    isDirectionChange,
-    isLimitOrder,
-    isNewPosition,
-    calculateKeeperFee,
     leverage,
     limitPrice,
+    calculateKeeperFee,
     onConfirm,
-    openAlertDialog,
-    previousTradeDirection,
+    close,
     setShowSummary,
-    showSummary,
-    tradeDirection,
   ])
   if (!account) return null
 
