@@ -74,8 +74,6 @@ export default function HlsFarmingSummary(props: Props) {
       borrowings: borrowings,
       kind: 'high_levered_strategy' as AccountKind,
     })
-    await mutate(`chains/${chainConfig.id}/accounts/${account.id}`)
-    await mutate(`chains/${chainConfig.id}/astroLps/${account.id}/staked-astro-lp-rewards`)
   }, [
     astroLp,
     deposits,
@@ -86,7 +84,6 @@ export default function HlsFarmingSummary(props: Props) {
     depositIntoFarm,
     account.id,
     borrowings,
-    mutate,
   ])
 
   const newTotalValue = useMemo(() => {

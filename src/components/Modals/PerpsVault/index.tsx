@@ -93,7 +93,6 @@ function PerpsVaultModal(props: Props) {
         ...(!amountFromDeposits.isZero() ? { fromDeposits: amountFromDeposits } : {}),
         ...(!amountFromLends.isZero() ? { fromLends: amountFromLends } : {}),
       })
-      await mutate(`chains/${chainConfig.id}/vaults/${account.id}/deposited`)
     }
 
     const activeVaultPosition = account.perpsVault?.active
@@ -105,25 +104,13 @@ function PerpsVaultModal(props: Props) {
         accountId: account.id,
         amount: amountOfShares.integerValue(),
       })
-      await mutate(`chains/${chainConfig.id}/accounts/${account.id}`)
     }
 
     setIsConfirming(false)
     setAmount(BN_ZERO)
-    await mutate(`chains/${chainConfig.id}/accounts/${account.id}`)
-    await mutate(`chains/${chainConfig.id}/vaults/${account.id}/deposited`)
     onClose()
     return
-  }, [
-    account,
-    amount,
-    amountInDeposits,
-    chainConfig.id,
-    props.modal.type,
-    mutate,
-    onClose,
-    perpsVault,
-  ])
+  }, [account, amount, amountInDeposits, props.modal.type, onClose, perpsVault])
 
   if (!asset) return null
 
