@@ -2,7 +2,6 @@ import Loading from 'components/common/Loading'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 
 export const TIMESTAMP_META = {
-  accessorKey: 'unfreezes',
   id: 'name',
   header: 'Unfreezes',
   meta: { className: 'min-w-30' },
