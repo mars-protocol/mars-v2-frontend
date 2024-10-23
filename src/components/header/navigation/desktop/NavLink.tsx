@@ -6,6 +6,7 @@ import { ExternalLink } from 'components/common/Icons'
 import { getIsActive } from 'components/header/navigation/desktop/DesktopNavigation'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useStore from 'store'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { getRoute } from 'utils/route'
 
 interface Props {
@@ -22,11 +23,14 @@ export const NavLink = (props: Props) => {
   const address = useStore((s) => s.address)
   const { isHome, item, className, onClick } = props
   const accountId = useAccountId()
+  const chainConfig = useChainConfig()
+
+  const defaultPage = chainConfig.perps ? 'perps' : 'trade'
 
   const itemLink = item.externalUrl
     ? item.externalUrl
     : getRoute(item.pages[0], searchParams, address, accountId)
-  const link = isHome ? getRoute('trade', searchParams, address, accountId) : itemLink
+  const link = isHome ? getRoute(defaultPage, searchParams, address, accountId) : itemLink
 
   return (
     <Link
