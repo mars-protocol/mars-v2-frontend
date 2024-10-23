@@ -1153,39 +1153,46 @@ export default function createBroadcastSlice(
     depositIntoPerpsVault: async (options: {
       accountId: string
       denom: string
+      fromWallet?: BigNumber
       fromDeposits?: BigNumber
       fromLends?: BigNumber
     }) => {
+      const fromDeposits = options.fromDeposits ?? BN_ZERO
+      const fromLends = options.fromLends ?? BN_ZERO
+      const fromWallet = options.fromWallet ?? BN_ZERO
       const depositCoin = BNCoin.fromDenomAndBigNumber(
         options.denom,
-        (options.fromDeposits || BN_ZERO).plus(options.fromLends || BN_ZERO),
+        fromDeposits.plus(fromLends).plus(fromWallet),
       )
+
+      const actions = [] as Action[]
+      if (fromWallet.isGreaterThan(0))
+        actions.push({
+          deposit: BNCoin.fromDenomAndBigNumber(options.denom, fromWallet).toCoin(),
+        })
+
+      if (fromLends.isGreaterThan(0))
+        actions.push({
+          reclaim: BNCoin.fromDenomAndBigNumber(options.denom, fromLends).toActionCoin(),
+        })
+
+      actions.push({
+        deposit_to_perp_vault: {
+          coin: depositCoin.toActionCoin(),
+        },
+      })
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
-          actions: [
-            ...(options.fromLends
-              ? [
-                  {
-                    reclaim: BNCoin.fromDenomAndBigNumber(
-                      options.denom,
-                      options.fromLends,
-                    ).toActionCoin(),
-                  },
-                ]
-              : []),
-            {
-              deposit_to_perp_vault: {
-                coin: depositCoin.toActionCoin(),
-              },
-            },
-          ],
+          actions,
         },
       }
       const cmContract = get().chainConfig.contracts.creditManager
 
+      const funds = fromWallet.isGreaterThan(0) ? [depositCoin.toCoin()] : []
+
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+        messages: [generateExecutionMessage(get().address, cmContract, msg, funds)],
       })
 
       get().handleTransaction({ response })

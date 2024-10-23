@@ -399,10 +399,15 @@ export function useUpdatedAccount(account?: Account) {
   )
 
   const simulatePerpsVaultDeposit = useCallback(
-    (coin: BNCoin) => {
+    (coin: BNCoin, depositFromWallet: boolean) => {
       const { deposit, lend } = getDepositAndLendCoinsToSpend(coin, account)
-      removeDeposits([deposit])
-      removeLends([lend])
+      if (depositFromWallet) {
+        removeDeposits([])
+        removeLends([])
+      } else {
+        removeDeposits([deposit])
+        removeLends([lend])
+      }
       addPerpsVaultAmount(coin.amount)
     },
     [account],

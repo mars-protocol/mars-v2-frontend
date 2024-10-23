@@ -1138,6 +1138,7 @@ interface BroadcastSlice {
   depositIntoPerpsVault: (options: {
     accountId: string
     denom: string
+    fromWallet?: BigNumber
     fromDeposits?: BigNumber
     fromLends?: BigNumber
   }) => Promise<boolean>
