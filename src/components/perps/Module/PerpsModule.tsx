@@ -247,7 +247,7 @@ export function PerpsModule() {
   const handleClosing = useCallback(() => {
     if (currentPerpPosition) {
       if (tradeDirection === 'long') {
-        updateAmount(currentPerpPosition.amount)
+        updateAmount(currentPerpPosition.amount.abs())
       } else {
         updateAmount(currentPerpPosition.amount.negated())
       }
