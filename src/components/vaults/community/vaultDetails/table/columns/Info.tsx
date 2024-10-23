@@ -4,7 +4,6 @@ import Text from 'components/common/Text'
 import { truncate } from 'utils/formatters'
 
 export const INFO_META = {
-  id: 'info',
   meta: { className: 'w-40' },
 }
 interface Props {
