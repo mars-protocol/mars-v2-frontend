@@ -30,17 +30,17 @@ export function getRoute(
 
 export function getPage(pathname: string): Page {
   const pages: Page[] = [
-    'execute',
     'trade',
     'trade-advanced',
     'perps',
     'borrow',
     'farm',
     'lend',
+    'perps-vault',
     'portfolio',
     'hls-farm',
     'hls-staking',
-    'v1',
+    'execute',
   ]
   const segments = pathname.split('/')
 
