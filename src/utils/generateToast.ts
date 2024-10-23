@@ -1,6 +1,11 @@
 import moment from 'moment'
+import { mutate } from 'swr'
 
-import { analizeTransaction, getToastContentsFromGroupedTransactionCoin } from 'utils/broadcast'
+import {
+  analizeTransaction,
+  getCreditAccountIdFromBroadcastResult,
+  getToastContentsAndMutationKeysFromGroupedTransactionCoin,
+} from 'utils/broadcast'
 
 export async function generateToast(
   chainConfig: ChainConfig,
@@ -16,7 +21,7 @@ export async function generateToast(
     address,
     perpsBaseDenom,
   )
-
+  const accountId = getCreditAccountIdFromBroadcastResult(result)
   const toast = {
     id: toastOptions?.id ?? moment().unix(),
     timestamp: toastOptions?.id ?? moment().unix(),
@@ -27,6 +32,8 @@ export async function generateToast(
     content: [] as ToastContent[],
     message: toastOptions?.message,
   }
+
+  const mutationKeys = [] as string[]
 
   switch (transactionType) {
     case 'default':
@@ -39,17 +46,27 @@ export async function generateToast(
 
     case 'create':
       toast.message = 'Minted the account'
+      mutationKeys.push(
+        `chains/${chainConfig.id}/wallets/##ADDRESS##/account-ids${!isHls ? '-without-hls' : ''}`,
+      )
+      if (isHls) mutationKeys.push(`##ADDRESS##/hlsStakingAccounts`)
       break
 
     case 'burn':
       toast.message = 'Deleted the account'
+      mutationKeys.push(
+        `chains/${chainConfig.id}/wallets/##ADDRESS##/account-ids${!isHls ? '-without-hls' : ''}`,
+      )
+      if (isHls) mutationKeys.push(`##ADDRESS##/hlsStakingAccounts`)
       break
 
     case 'cancel-order':
       toast.message = 'Canceled Limit Order'
+      mutationKeys.push(`chains/${chainConfig.id}/perps/limit-orders/##ACCOUNTORWALLET##`)
       break
 
     case 'create-order':
+      mutationKeys.push(`chains/${chainConfig.id}/perps/limit-orders/##ACCOUNTORWALLET##`)
       toast.message = 'Create Limit Order'
       break
 
@@ -59,17 +76,28 @@ export async function generateToast(
 
     case 'transaction':
       txCoinGroups.forEach((txCoinGroup: GroupedTransactionCoin) => {
-        const toastContents = getToastContentsFromGroupedTransactionCoin(
+        const contentsAndKeys = getToastContentsAndMutationKeysFromGroupedTransactionCoin(
           txCoinGroup,
           isHls,
           target,
           chainConfig,
           assets,
         )
-        toast.content.push(...toastContents)
+        toast.content.push(...contentsAndKeys.content)
+        mutationKeys.push(...contentsAndKeys.mutationKeys)
       })
       break
   }
+
+  const uniqueMutationKeys = [...new Set(mutationKeys)]
+
+  uniqueMutationKeys.forEach(async (key) => {
+    const accountToMutate = accountId ?? address
+    let mutationKey = key.replaceAll('##ACCOUNTORWALLET##', accountToMutate)
+    mutationKey = mutationKey.replaceAll('##ADDRESS##', address)
+    await mutate(mutationKey)
+    process.env.NODE_ENV !== 'production' && console.log('🔁 MUTATE: ', mutationKey)
+  })
 
   return toast
 }

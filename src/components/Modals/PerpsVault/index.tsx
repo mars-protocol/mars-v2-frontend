@@ -117,7 +117,6 @@ function PerpsVaultModal(props: Props) {
           : {}),
         ...(!amountFromLends.isZero() && !depositFromWallet ? { fromLends: amountFromLends } : {}),
       })
-      await mutate(`chains/${chainConfig.id}/vaults/${account.id}/deposited`)
     }
 
     const activeVaultPosition = account.perpsVault?.active
@@ -129,26 +128,13 @@ function PerpsVaultModal(props: Props) {
         accountId: account.id,
         amount: amountOfShares.integerValue(),
       })
-      await mutate(`chains/${chainConfig.id}/accounts/${account.id}`)
     }
 
     setIsConfirming(false)
     setAmount(BN_ZERO)
-    await mutate(`chains/${chainConfig.id}/accounts/${account.id}`)
-    await mutate(`chains/${chainConfig.id}/vaults/${account.id}/deposited`)
     onClose()
     return
-  }, [
-    account,
-    perpsVault,
-    props.modal.type,
-    mutate,
-    chainConfig.id,
-    onClose,
-    amount,
-    amountInDeposits,
-    depositFromWallet,
-  ])
+  }, [account, perpsVault, props.modal.type, onClose, amount, amountInDeposits, depositFromWallet])
 
   useEffect(() => {
     if (!perpsVault?.denom) return

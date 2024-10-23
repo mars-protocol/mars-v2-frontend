@@ -188,8 +188,6 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
       borrowings: props.borrowings,
       kind: 'default' as AccountKind,
     })
-    await mutate(`chains/${chainConfig.id}/accounts/${updatedAccount.id}`)
-    await mutate(`chains/${chainConfig.id}/astroLps/${updatedAccount.id}/staked-astro-lp-rewards`)
   }
 
   return (

@@ -48,7 +48,6 @@ function AccountDeleteModal(props: Props) {
     const path = getPage(pathname)
     const isDeleted = await deleteAccount(options)
     if (isDeleted) {
-      mutate(`chains/${chainConfig.id}/wallets/${urlAddress}/account-ids`)
       if (path.includes('portfolio')) {
         // If the current page is the portfolio accounts detail page. Reroute the user to the portfolio overview page.
         navigate(getRoute('portfolio', searchParams, urlAddress))
@@ -66,8 +65,6 @@ function AccountDeleteModal(props: Props) {
     searchParams,
     address,
     urlAddress,
-    chainConfig.id,
-    mutate,
     closeDeleteAccountModal,
   ])
 

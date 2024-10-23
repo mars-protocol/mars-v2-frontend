@@ -89,18 +89,7 @@ export default function AstroLpWithdraw(props: Props) {
       toWallet: isHls,
       rewards: currentLpRewards,
     })
-    await mutate(`chains/${chainConfig.id}/accounts/${account.id}`)
-    await mutate(`chains/${chainConfig.id}/astroLps/${account.id}/staked-astro-lp-rewards`)
-  }, [
-    account.id,
-    chainConfig.id,
-    currentLpRewards,
-    isHls,
-    mutate,
-    props.astroLp,
-    withdrawAmount,
-    withdrawFromAstroLps,
-  ])
+  }, [account.id, currentLpRewards, isHls, props.astroLp, withdrawAmount, withdrawFromAstroLps])
 
   if (!astroLpAsset) return null
 
