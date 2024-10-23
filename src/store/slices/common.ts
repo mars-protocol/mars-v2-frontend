@@ -7,8 +7,6 @@ export default function createCommonSlice(set: SetState<CommonSlice>, get: GetSt
     accounts: null,
     balances: [],
     chainConfig: Osmosis1,
-    creditAccounts: null,
-    hlsAccounts: null,
     isOpen: true,
     selectedAccount: null,
     focusComponent: null,

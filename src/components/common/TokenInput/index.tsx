@@ -11,7 +11,7 @@ import Text from 'components/common/Text'
 import WarningMessages from 'components/common/WarningMessages'
 import AssetImage from 'components/common/assets/AssetImage'
 import useAssets from 'hooks/assets/useAssets'
-import useBaseAsset from 'hooks/assets/useBasetAsset'
+import useBaseAsset from 'hooks/assets/useBaseAsset'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 

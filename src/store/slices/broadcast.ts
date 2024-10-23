@@ -776,6 +776,7 @@ export default function createBroadcastSlice(
           toastOptions,
           get().address ?? '',
           get().assets,
+          get().perpsBaseDenom,
         )
         toast.then((t) => set({ toast: t }))
         return

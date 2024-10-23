@@ -155,8 +155,6 @@ async function fetchSortAndMapAllAssets(
     return a.symbol.localeCompare(b.symbol)
   })
 
-  // We need to set the assets to the store to use them in the broadcast slice
-  useStore.setState({ assets: sortedAssets })
   if (!chainConfig.anyAsset)
     return sortedAssets.filter((asset) => asset.isWhitelisted || asset.denom === 'usd')
 

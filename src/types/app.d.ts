@@ -1167,6 +1167,8 @@ type TransactionCoinType =
   | 'vault'
   | 'perps'
   | 'perpsPnl'
+  | 'perpsOpeningFee'
+  | 'perpsClosingFee'
   | 'claim_rewards'
 
 interface TransactionCoin {
@@ -1225,6 +1227,7 @@ interface CommonSlice {
   isHls: boolean
   isV1: boolean
   assets: Asset[]
+  perpsBaseDenom?: string
   hlsBorrowAmount: BigNumber | null
   errorStore: ErrorStore
 }

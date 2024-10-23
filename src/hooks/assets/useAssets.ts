@@ -7,7 +7,6 @@ import { BNCoin } from 'types/classes/BNCoin'
 export default function useAssets() {
   const chainConfig = useChainConfig()
   const { data: assets } = useAssetsNoOraclePrices()
-
   return useSWR(
     assets && `chains/${chainConfig.id}/assets`,
     async () => mapPricesToAllAssets(assets!, chainConfig),

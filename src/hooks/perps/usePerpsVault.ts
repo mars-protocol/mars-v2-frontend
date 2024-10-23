@@ -34,7 +34,6 @@ export default function usePerpsVault() {
       }
 
       const timeframe = moment.duration(perpsVault.cooldown_period, 'seconds').humanize().split(' ')
-
       return {
         name: 'Perps USDC Vault',
         provider: 'MARS',
