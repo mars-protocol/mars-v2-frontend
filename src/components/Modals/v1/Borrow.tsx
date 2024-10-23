@@ -16,7 +16,7 @@ import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSli
 import Modal from 'components/Modals/Modal'
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import useBaseAsset from 'hooks/assets/useBasetAsset'
+import useBaseAsset from 'hooks/assets/useBaseAsset'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
