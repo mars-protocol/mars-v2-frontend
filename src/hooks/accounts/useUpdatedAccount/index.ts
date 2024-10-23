@@ -395,7 +395,7 @@ export function useUpdatedAccount(account?: Account) {
       }
       setUpdatedPerpPosition(updatedPostion)
     },
-    [account, setUpdatedPerpPosition],
+    [account, resetPerpPosition],
   )
 
   const simulatePerpsVaultDeposit = useCallback(

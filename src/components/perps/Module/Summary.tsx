@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import { useCallback, useMemo } from 'react'
 
+import LiqPrice from 'components/account/AccountBalancesTable/Columns/LiqPrice'
 import ActionButton from 'components/common/Button/ActionButton'
 import { Callout, CalloutType } from 'components/common/Callout'
 import DisplayCurrency from 'components/common/DisplayCurrency'
@@ -15,11 +16,11 @@ import TradingFee from 'components/perps/Module/TradingFee'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useAlertDialog from 'hooks/common/useAlertDialog'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePerpsConfig from 'hooks/perps/usePerpsConfig'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
@@ -65,7 +66,8 @@ export default function PerpsSummary(props: Props) {
     isReduceOnly,
     validateReduceOnlyOrder,
   } = props
-
+  const account = useCurrentAccount()
+  const updatedAccount = useStore((s) => s.updatedAccount)
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const chainConfig = useChainConfig()
   const [keeperFee, _] = useLocalStorage(
@@ -82,6 +84,7 @@ export default function PerpsSummary(props: Props) {
     LocalStorageKeys.SHOW_SUMMARY,
     getDefaultChainSettings(chainConfig).showSummary,
   )
+  const { computeLiquidationPrice } = useHealthComputer(updatedAccount ?? account)
 
   const newAmount = useMemo(
     () => (previousAmount ?? BN_ZERO).plus(amount),
@@ -248,6 +251,7 @@ export default function PerpsSummary(props: Props) {
     showSummary,
     tradeDirection,
   ])
+  if (!account) return null
 
   return (
     <div className='flex w-full flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20'>
@@ -267,6 +271,16 @@ export default function PerpsSummary(props: Props) {
             denom={asset.denom}
             newAmount={newAmount}
             override={isLimitOrder ? limitPrice : undefined}
+          />
+        </SummaryLine>
+        <SummaryLine label='Liquidation Price'>
+          <LiqPrice
+            denom={asset.denom}
+            computeLiquidationPrice={computeLiquidationPrice}
+            type='perp'
+            amount={newAmount.toNumber()}
+            account={updatedAccount ?? account}
+            isWhitelisted={true}
           />
         </SummaryLine>
         <SummaryLine label='Fees' tooltip={tradingFeeTooltip}>

@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import LiqPrice from 'components/account/AccountBalancesTable/Columns/LiqPrice'
 import AmountAndValue from 'components/common/AmountAndValue'
 import AssetImage from 'components/common/assets/AssetImage'
 import { Callout, CalloutType } from 'components/common/Callout'
@@ -12,10 +13,12 @@ import TradingFee from 'components/perps/Module/TradingFee'
 import { BN_ZERO } from 'constants/math'
 import useAccount from 'hooks/accounts/useAccount'
 import useAsset from 'hooks/assets/useAsset'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useMarket from 'hooks/markets/useMarket'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import useUpdatePerpsPosition from 'hooks/perps/useUpdatePerpsPosition'
 import { useMemo } from 'react'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { PnlAmounts } from 'types/generated/mars-perps/MarsPerps.types'
 import { byDenom } from 'utils/array'
@@ -50,6 +53,7 @@ function getActionLabel(prevAmount: BigNumber, newAmount: BigNumber): string {
 export default function ConfirmationSummary(props: Props) {
   const { accountId, asset, leverage, amount, keeperFee, limitPrice } = props
   const { data: account } = useAccount(accountId)
+  const updatedAccount = useStore((s) => s.updatedAccount)
   const { data: updatePerpsPosition, isLoading } = useUpdatePerpsPosition(
     asset.denom,
     amount,
@@ -68,6 +72,7 @@ export default function ConfirmationSummary(props: Props) {
     return [newAmount, tradeDirection, isNewPosition, previousAmount]
   }, [amount, isLoading, updatePerpsPosition])
 
+  const { computeLiquidationPrice } = useHealthComputer(updatedAccount ?? account)
   const { data: tradingFeeAndPrice } = useTradingFeeAndPrice(asset.denom, newAmount)
   const position = useMemo(() => updatePerpsPosition?.position ?? null, [updatePerpsPosition])
 
@@ -133,6 +138,16 @@ export default function ConfirmationSummary(props: Props) {
                 denom={asset.denom}
                 newAmount={newAmount}
                 override={limitPrice}
+              />
+            </SummaryRow>
+            <SummaryRow label='Liquidation Price'>
+              <LiqPrice
+                denom={asset.denom}
+                computeLiquidationPrice={computeLiquidationPrice}
+                type='perp'
+                amount={newAmount.toNumber()}
+                account={updatedAccount ?? account}
+                isWhitelisted={true}
               />
             </SummaryRow>
           </>
