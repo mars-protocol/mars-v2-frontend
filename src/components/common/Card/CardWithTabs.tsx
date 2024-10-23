@@ -38,7 +38,7 @@ function Tabs(props: TabsProps) {
             className={classNames(
               'py-4 border-b-[2px] border-transparent flex items-center',
               props.tabs.length < 2 && 'cursor-default text-white border-transparent',
-              index === props.activeIdx && props.tabs.length > 1 && 'border-mars',
+              index === props.activeIdx && props.tabs.length > 1 && '!border-mars',
               index !== props.activeIdx && props.tabs.length > 1 && 'text-white/20',
             )}
             onClick={() => props.onChange(index)}

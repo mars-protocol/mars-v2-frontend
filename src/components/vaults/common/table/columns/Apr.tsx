@@ -9,7 +9,7 @@ export const APR_META = {
 
 interface Props {
   value: string
-  isLoading: boolean
+  isLoading?: boolean
 }
 
 export default function Apr(props: Props) {
