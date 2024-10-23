@@ -15,7 +15,7 @@ export default function PerpsBanner() {
       asset={asset}
       title={
         <>
-          Counterparty vault: earn up to{' '}
+          Counterparty vault: Earn up to{' '}
           <span className='text-purple'>
             {formatValue(vault?.apy ?? 0, {
               suffix: '% APY',

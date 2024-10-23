@@ -21,7 +21,7 @@ import { getSearchParamsObject } from 'utils/route'
 import PerpsSlTpModal from 'components/Modals/PerpsSlTpModal'
 import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 
-export const MANAGE_META = { id: 'manage', header: 'Manage', meta: { className: 'w-40 min-w-40' } }
+export const MANAGE_META = { id: 'manage', header: 'Manage', meta: { className: 'w-40 min-w-30' } }
 
 interface Props {
   perpPosition: PerpPositionRow

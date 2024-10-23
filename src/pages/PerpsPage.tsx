@@ -18,7 +18,7 @@ export default function PerpsPage() {
         <PerpsBanner />
         <PerpsChart />
       </div>
-      <div className='row-span-2'>
+      <div className='w-full row-span-2'>
         <PerpsModule />
       </div>
       <PerpsPositions />
