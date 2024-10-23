@@ -1,4 +1,4 @@
-import useBaseAsset from 'hooks/assets/useBasetAsset'
+import useBaseAsset from 'hooks/assets/useBaseAsset'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import { BN } from 'utils/helpers'
 

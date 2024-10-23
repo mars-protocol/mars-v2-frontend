@@ -8,11 +8,13 @@ export async function generateToast(
   toastOptions: Partial<ToastObjectOptions>,
   address: string,
   assets: Asset[],
+  perpsBaseDenom?: string,
 ): Promise<ToastResponse> {
   const { target, isHls, transactionType, txCoinGroups } = await analizeTransaction(
     chainConfig,
     result,
     address,
+    perpsBaseDenom,
   )
 
   const toast = {

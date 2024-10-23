@@ -3,9 +3,9 @@ import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { removeEmptyCoins } from 'utils/accounts'
 import { getAssetSymbolByDenom } from 'utils/assets'
+import { beautifyErrorMessage } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getVaultNameByCoins } from 'utils/vaults'
-import { beautifyErrorMessage } from './generateToast'
 
 export function getSingleValueFromBroadcastResult(
   response: BroadcastResult['result'],
@@ -32,6 +32,7 @@ export async function analizeTransaction(
   chainConfig: ChainConfig,
   result: BroadcastResult,
   address: string,
+  perpsBaseDenom?: string,
 ): Promise<{
   target: string
   isHls: boolean
@@ -59,7 +60,7 @@ export async function analizeTransaction(
   const isHls = accountKind === 'high_levered_strategy'
 
   // Fetch all coins from the BroadcastResult
-  const txCoinGroups = getTransactionCoinsGrouped(result, address, isHls)
+  const txCoinGroups = getTransactionCoinsGrouped(result, address, isHls, perpsBaseDenom)
 
   // If there are no coins involved, try to identify the transaction type, otherwise set it to 'transaction'
   const transactionType = txCoinGroups.length
@@ -115,9 +116,8 @@ function getRules() {
   coinRules.set('deposit_to_perp_vault', 'vault')
   coinRules.set('repay', 'repay')
   coinRules.set('borrow', 'borrow')
-  coinRules.set('open_position', 'perps')
-  coinRules.set('close_position', 'perps')
-  coinRules.set('modify_position', 'perps')
+  coinRules.set('open_perp_position', 'perps')
+  coinRules.set('execute_perp_order', 'perps')
   coinRules.set('withdraw_liquidity', 'farm')
   coinRules.set('provide_liquidity', 'provide_liquidity')
   coinRules.set('claim_rewards', 'claim_rewards')
@@ -126,7 +126,12 @@ function getRules() {
   return coinRules
 }
 
-function getTransactionCoinsGrouped(result: BroadcastResult, address: string, isHls: boolean) {
+function getTransactionCoinsGrouped(
+  result: BroadcastResult,
+  address: string,
+  isHls: boolean,
+  perpsBaseDenom?: string,
+) {
   const transactionCoins: TransactionCoin[] = []
   // Event types that include coins are wasm, token_swapped and pool_joined
   // This should be streamlined by SC one day
@@ -193,12 +198,27 @@ function getTransactionCoinsGrouped(result: BroadcastResult, address: string, is
       })
 
       // If the event is a perps event, check for realized profit or loss
-      if (coinRules.get(action) === 'perps') {
+      if (coinRules.get(action) === 'perps' && perpsBaseDenom) {
         event.attributes.forEach((attr: TransactionEventAttribute) => {
           const realizedProfitOrLoss = attr.key === 'realized_pnl' ? attr.value : undefined
           if (realizedProfitOrLoss) {
-            const pnlCoin = getCoinFromPnLString(realizedProfitOrLoss)
-            if (pnlCoin) transactionCoins.push({ type: 'perpsPnl', coin: pnlCoin })
+            transactionCoins.push({
+              type: 'perpsPnl',
+              coin: BNCoin.fromDenomAndBigNumber(perpsBaseDenom, BN(realizedProfitOrLoss)),
+            })
+          }
+          const openingFee = attr.key === 'opening_fee' ? attr.value : undefined
+          if (openingFee) {
+            const openingFeeCoin = getCoinFromAmountDenomString(openingFee.trim())
+            if (openingFeeCoin)
+              transactionCoins.push({ type: 'perpsOpeningFee', coin: openingFeeCoin })
+          }
+
+          const closingFee = attr.key === 'closing_fee' ? attr.value : undefined
+          if (closingFee) {
+            const closingFeeCoin = getCoinFromAmountDenomString(closingFee.trim())
+            if (closingFeeCoin)
+              transactionCoins.push({ type: 'perpsClosingFee', coin: closingFeeCoin })
           }
         })
       }
@@ -238,22 +258,21 @@ function getCoinsFromEvent(event: TransactionEvent) {
   if (denom && amount) coins.push({ coin: BNCoin.fromDenomAndBigNumber(denom, BN(amount)) })
 
   // For perps actions check for size and new_size or entry_size
-  const size = event.attributes.find((a) => a.key === 'size')?.value
+  const size = event.attributes.find((a) => a.key === 'order_size')?.value
   const newSize = event.attributes.find((a) => a.key === 'new_size')?.value
-  const startingSize = event.attributes.find((a) => a.key === 'entry_size')?.value
 
-  // If there is a size, but no newSize and no startingSize, set the before coin amount to 0 to indicate a new position
-  if (denom && size && !newSize && !startingSize)
+  // If there the size equals the newSize, set the before coin amount to 0 to indicate a new position
+  if (denom && newSize && !size)
     coins.push({
-      coin: BNCoin.fromDenomAndBigNumber(denom, BN(size)),
+      coin: BNCoin.fromDenomAndBigNumber(denom, BN(newSize)),
       before: BNCoin.fromDenomAndBigNumber(denom, BN_ZERO),
     })
 
   // If there is a size and a newSize or a startingSize, set the before coin accordingly to indicate a modification of a position
-  if (denom && newSize && startingSize)
+  if (denom && newSize && size)
     coins.push({
       coin: BNCoin.fromDenomAndBigNumber(denom, BN(newSize)),
-      before: BNCoin.fromDenomAndBigNumber(denom, BN(startingSize)),
+      before: BNCoin.fromDenomAndBigNumber(denom, BN(newSize).minus(BN(size))),
     })
 
   // Check for denomAmount strings like '1000uosmo' and add the coin to the return
@@ -392,17 +411,6 @@ function getCoinFromAmountDenomString(amountDenomString: string): BNCoin | undef
   return BNCoin.fromDenomAndBigNumber(denom, BN(matches[1]))
 }
 
-function getCoinFromPnLString(pnlString: string): BNCoin | undefined {
-  const pnlStringParts = pnlString.split(':')
-  if (pnlStringParts.length !== 3) return
-
-  if (pnlStringParts[0] === 'profit')
-    return BNCoin.fromDenomAndBigNumber(pnlStringParts[1], BN(pnlStringParts[2]))
-  if (pnlStringParts[0] === 'loss')
-    return BNCoin.fromDenomAndBigNumber(pnlStringParts[1], BN(pnlStringParts[2]).negated())
-  return
-}
-
 function groupTransactionCoins(coins: TransactionCoin[]): GroupedTransactionCoin[] {
   // Group coins by type so that for example multiple deposit objects are passed as a single deposit array
   const reducedCoins = coins.reduce((grouped, coin) => {
@@ -430,10 +438,85 @@ export function getToastContentsFromGroupedTransactionCoin(
   const coins = transactionCoin.coins.map((c) => c.coin.toCoin())
 
   switch (transactionCoin.type) {
+    case 'perps':
+      transactionCoin.coins.forEach((txCoin) => {
+        if (!txCoin.before) return
+        const type = getPerpsTransactionTypeFromCoin({ coin: txCoin.coin, before: txCoin.before })
+        const perpsAssetSymbol = getAssetSymbolByDenom(txCoin.coin.denom, assets)
+
+        const beforeTradeDirection: TradeDirection = txCoin.before.amount.isPositive()
+          ? 'long'
+          : 'short'
+        const afterTradeDirection: TradeDirection = txCoin.coin.amount.isPositive()
+          ? 'long'
+          : 'short'
+
+        const modificationAnmount = txCoin.coin.amount.abs().minus(txCoin.before.amount.abs())
+        const modificationCoin = BNCoin.fromDenomAndBigNumber(
+          txCoin.coin.denom,
+          modificationAnmount,
+        )
+
+        switch (type) {
+          case 'open':
+            toastContents.push({
+              text: txCoin.coin.amount.isPositive()
+                ? `Opened ${perpsAssetSymbol} long`
+                : `Opened ${perpsAssetSymbol} short`,
+              coins: [txCoin.coin.abs().toCoin()],
+            })
+            break
+
+          case 'close':
+            toastContents.push({
+              text: txCoin.before.amount.isPositive()
+                ? `Closed ${perpsAssetSymbol} long`
+                : `Closed ${perpsAssetSymbol} short`,
+              coins: [modificationCoin.abs().toCoin()],
+            })
+            break
+
+          case 'modify':
+            if (beforeTradeDirection !== afterTradeDirection && !txCoin.coin.amount.isZero()) {
+              toastContents.push({
+                text: `Switched ${perpsAssetSymbol} from ${beforeTradeDirection} to ${afterTradeDirection}`,
+                coins: [txCoin.coin.abs().toCoin()],
+              })
+              return
+            }
+            toastContents.push({
+              text: modificationAnmount.isPositive()
+                ? `Increased ${perpsAssetSymbol} ${afterTradeDirection} by`
+                : `Decreased ${perpsAssetSymbol} ${afterTradeDirection} by`,
+              coins: [modificationCoin.abs().toCoin()],
+            })
+
+            break
+        }
+      })
+
+      break
     case 'borrow':
       toastContents.push({
         text: 'Borrowed',
         coins: removeEmptyCoins(coins),
+      })
+      break
+    case 'perpsPnl':
+      const perpsPnlCoins = transactionCoin.coins.map((c) => c.coin)
+      perpsPnlCoins.forEach((coin) => {
+        if (BN(coin.amount).isPositive()) {
+          toastContents.push({
+            text: 'Realized profit',
+            coins: [coin.toCoin()],
+          })
+        }
+        if (BN(coin.amount).isNegative()) {
+          toastContents.push({
+            text: 'Realized loss',
+            coins: [coin.abs().toCoin()],
+          })
+        }
       })
       break
     case 'deposit':
@@ -506,79 +589,16 @@ export function getToastContentsFromGroupedTransactionCoin(
         coins: vaultCoins,
       })
       break
-    case 'perps':
-      transactionCoin.coins.forEach((txCoin) => {
-        if (!txCoin.before) return
-        const type = getPerpsTransactionTypeFromCoin({ coin: txCoin.coin, before: txCoin.before })
-        const perpsAssetSymbol = getAssetSymbolByDenom(txCoin.coin.denom, assets)
-
-        const beforeTradeDirection: TradeDirection = txCoin.before.amount.isPositive()
-          ? 'long'
-          : 'short'
-        const afterTradeDirection: TradeDirection = txCoin.coin.amount.isPositive()
-          ? 'long'
-          : 'short'
-
-        const modificationAnmount = txCoin.coin.amount.abs().minus(txCoin.before.amount.abs())
-        const modificationCoin = BNCoin.fromDenomAndBigNumber(
-          txCoin.coin.denom,
-          modificationAnmount,
-        )
-
-        switch (type) {
-          case 'open':
-            toastContents.push({
-              text: txCoin.coin.amount.isPositive()
-                ? `Opened ${perpsAssetSymbol} long`
-                : `Opened ${perpsAssetSymbol} short`,
-              coins: [txCoin.coin.abs().toCoin()],
-            })
-            break
-
-          case 'close':
-            toastContents.push({
-              text: txCoin.before.amount.isPositive()
-                ? `Closed ${perpsAssetSymbol} long`
-                : `Closed ${perpsAssetSymbol} short`,
-              coins: [modificationCoin.abs().toCoin()],
-            })
-            break
-
-          case 'modify':
-            if (beforeTradeDirection !== afterTradeDirection && !txCoin.coin.amount.isZero()) {
-              toastContents.push({
-                text: `Switched ${perpsAssetSymbol} from ${beforeTradeDirection} to ${afterTradeDirection}`,
-                coins: [txCoin.coin.abs().toCoin()],
-              })
-              return
-            }
-            toastContents.push({
-              text: modificationAnmount.isPositive()
-                ? `Increased ${perpsAssetSymbol} ${afterTradeDirection} by`
-                : `Decreased ${perpsAssetSymbol} ${afterTradeDirection} by`,
-              coins: [modificationCoin.abs().toCoin()],
-            })
-
-            break
-        }
+    case 'perpsOpeningFee':
+      toastContents.push({
+        text: 'Payed Opening Fee',
+        coins: removeEmptyCoins(coins),
       })
-
       break
-    case 'perpsPnl':
-      const perpsPnlCoins = transactionCoin.coins.map((c) => c.coin)
-      perpsPnlCoins.forEach((coin) => {
-        if (BN(coin.amount).isPositive()) {
-          toastContents.push({
-            text: 'Realized profit',
-            coins: [coin.toCoin()],
-          })
-        }
-        if (BN(coin.amount).isNegative()) {
-          toastContents.push({
-            text: 'Realized loss',
-            coins: [coin.abs().toCoin()],
-          })
-        }
+    case 'perpsClosingFee':
+      toastContents.push({
+        text: 'Payed Closing Fee',
+        coins: removeEmptyCoins(coins),
       })
       break
 
