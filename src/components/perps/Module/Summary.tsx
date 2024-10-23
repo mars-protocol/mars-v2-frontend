@@ -273,16 +273,18 @@ export default function PerpsSummary(props: Props) {
             override={isLimitOrder ? limitPrice : undefined}
           />
         </SummaryLine>
-        <SummaryLine label='Liquidation Price'>
-          <LiqPrice
-            denom={asset.denom}
-            computeLiquidationPrice={computeLiquidationPrice}
-            type='perp'
-            amount={newAmount.toNumber()}
-            account={updatedAccount ?? account}
-            isWhitelisted={true}
-          />
-        </SummaryLine>
+        {!isLimitOrder && (
+          <SummaryLine label='Liquidation Price'>
+            <LiqPrice
+              denom={asset.denom}
+              computeLiquidationPrice={computeLiquidationPrice}
+              type='perp'
+              amount={newAmount.isEqualTo(previousAmount) ? 0 : newAmount.toNumber()}
+              account={updatedAccount ?? account}
+              isWhitelisted={true}
+            />
+          </SummaryLine>
+        )}
         <SummaryLine label='Fees' tooltip={tradingFeeTooltip}>
           <TradingFee
             denom={asset.denom}

@@ -46,6 +46,13 @@ export default function LiqPrice(props: Props) {
     return 'The position size is too small to liquidate the account, even if the price goes to $0.00.'
   }, [isWhitelisted, type, hasDebt])
 
+  if (amount === 0)
+    return (
+      <Text size='xs' tag='div' className='flex items-center justify-end number'>
+        -
+      </Text>
+    )
+
   if (!liqPrice || (liquidationPrice === 0 && liqPrice === 0))
     return (
       <Text size='xs' tag='div' className='flex items-center justify-end number'>
