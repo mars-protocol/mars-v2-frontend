@@ -5,13 +5,13 @@ import { CardWithTabs } from 'components/common/Card/CardWithTabs'
 import Table from 'components/common/Table'
 import usePerpsBalancesColumns from 'components/perps/BalancesTable/Columns/usePerpsBalancesColumns'
 import usePerpsBalancesData from 'components/perps/BalancesTable/usePerpsBalancesData'
-import usePerpsLimitOrdersData from 'components/perps/BalancesTable/usePerpsLimitOrdersData'
+import usePerpsLimitOrderRows from 'hooks/perps/usePerpsLimitOrdersRows'
 import { SearchParams } from 'types/enums'
 import { getSearchParamsObject } from 'utils/route'
 
 export default function PerpsBalancesTable() {
   const activePerpsPositions = usePerpsBalancesData()
-  const activeLimitOrders = usePerpsLimitOrdersData()
+  const activeLimitOrders = usePerpsLimitOrderRows()
   const columns = usePerpsBalancesColumns()
   const [searchParams, setSearchParams] = useSearchParams()
 
