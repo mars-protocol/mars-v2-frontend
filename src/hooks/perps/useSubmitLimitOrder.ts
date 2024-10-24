@@ -31,6 +31,39 @@ export function useSubmitLimitOrder() {
 
       const orders = Array.isArray(orderOrOrders) ? orderOrOrders : [orderOrOrders]
 
+      const orderKeeperFee = orders[0].keeperFee
+      const totalKeeperFeeAmount = orderKeeperFee.amount.times(orders.length)
+      let keeperFeeAmountLeft = totalKeeperFeeAmount
+
+      const keeperFeeTokenDepositsAmount =
+        currentAccount.deposits.find(byDenom(orderKeeperFee.denom))?.amount ?? BN_ZERO
+
+      keeperFeeAmountLeft = keeperFeeTokenDepositsAmount.isGreaterThan(totalKeeperFeeAmount)
+        ? BN_ZERO
+        : totalKeeperFeeAmount.minus(keeperFeeTokenDepositsAmount)
+
+      const keeperFeeTokenLendsAmount =
+        currentAccount.lends.find(byDenom(orderKeeperFee.denom))?.amount ?? BN_ZERO
+
+      const keeperFeeFromLendsAmount = keeperFeeTokenLendsAmount.isGreaterThan(keeperFeeAmountLeft)
+        ? keeperFeeAmountLeft
+        : keeperFeeTokenLendsAmount
+
+      keeperFeeAmountLeft = keeperFeeAmountLeft.minus(keeperFeeFromLendsAmount)
+
+      const keeperFeeFromBorrowArmount = keeperFeeAmountLeft.isZero()
+        ? BN_ZERO
+        : keeperFeeAmountLeft
+
+      const keeperFeeFromLends = BNCoin.fromDenomAndBigNumber(
+        orderKeeperFee.denom,
+        keeperFeeFromLendsAmount,
+      )
+      const keeperFeeFromBorrows = BNCoin.fromDenomAndBigNumber(
+        orderKeeperFee.denom,
+        keeperFeeFromBorrowArmount,
+      )
+
       const triggerOrderParams = orders.map(
         ({
           asset,
@@ -44,13 +77,6 @@ export function useSubmitLimitOrder() {
         }) => {
           const decimalAdjustment = asset.decimals - PRICE_ORACLE_DECIMALS
           const adjustedLimitPrice = limitPrice.shiftedBy(-decimalAdjustment)
-          const keeperFeeTokenDepositsAmount =
-            currentAccount.deposits.find(byDenom(keeperFee.denom))?.amount ?? BN_ZERO
-
-          const keeperFeeFromLends = BNCoin.fromDenomAndBigNumber(
-            keeperFee.denom,
-            keeperFeeTokenDepositsAmount.minus(keeperFee.amount).abs(),
-          )
 
           return {
             accountId: currentAccount.id,
@@ -58,7 +84,6 @@ export function useSubmitLimitOrder() {
             autolend: isAutoLendEnabledForCurrentAccount,
             baseDenom,
             keeperFee,
-            keeperFeeFromLends,
             tradeDirection,
             price: adjustedLimitPrice,
             reduceOnly: isReduceOnly,
@@ -68,10 +93,16 @@ export function useSubmitLimitOrder() {
       )
 
       if (triggerOrderParams.length === 1) {
-        await createTriggerOrder(triggerOrderParams[0])
+        await createTriggerOrder({
+          ...triggerOrderParams[0],
+          keeperFeeFromLends,
+          keeperFeeFromBorrows,
+        })
       } else {
         await createMultipleTriggerOrders({
           accountId: currentAccount.id,
+          keeperFeeFromLends,
+          keeperFeeFromBorrows,
           orders: triggerOrderParams,
         })
       }
