@@ -112,6 +112,11 @@ export function beautifyErrorMessage(error: string) {
   if (error.includes('Max LTV health factor'))
     return 'You can not execute this transaction, since it would result in a Health Factor below 1'
 
+  if (error.includes('Generic Error')) return 'Generic Error. Please try again'
+
+  if (error.includes('incorrect account sequence'))
+    return 'You have a pending transaction. Wait for it to be executed and try again.'
+
   if (error === 'Transaction failed: Request rejected') return 'Transaction rejected by user'
 
   return `Transaction failed: ${error}`
