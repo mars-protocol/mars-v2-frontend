@@ -34,8 +34,6 @@ export default function VaultUnlockBanner(props: Props) {
         vaults: props.vaults,
         slippage,
       })
-      await mutate(`chains/${chainConfig.id}/accounts/${accountId}`)
-      await mutate(`chains/${chainConfig.id}/vaults/${accountId}/deposited`)
       setIsConfirming(false)
     }
   }
