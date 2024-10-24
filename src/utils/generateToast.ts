@@ -61,13 +61,13 @@ export async function generateToast(
       break
 
     case 'cancel-order':
-      toast.message = 'Canceled Limit Order'
+      toast.message = 'Canceled a Limit Order'
       mutationKeys.push(`chains/${chainConfig.id}/perps/limit-orders/##ACCOUNTORWALLET##`)
       break
 
     case 'create-order':
       mutationKeys.push(`chains/${chainConfig.id}/perps/limit-orders/##ACCOUNTORWALLET##`)
-      toast.message = 'Create Limit Order'
+      toast.message = 'Created a Limit Order'
       break
 
     case 'unlock':
