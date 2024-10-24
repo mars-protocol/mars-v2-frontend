@@ -1149,6 +1149,8 @@ type TransactionCoinType =
   | 'perpsOpeningFee'
   | 'perpsClosingFee'
   | 'claim_rewards'
+  | 'create-order'
+  | 'cancel-order'
 
 interface TransactionCoin {
   type: TransactionCoinType
