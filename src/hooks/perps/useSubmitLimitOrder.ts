@@ -1,9 +1,11 @@
-import { useCallback } from 'react'
-import { BNCoin } from 'types/classes/BNCoin'
-import useStore from 'store'
+import { BN_ZERO } from 'constants/math'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAutoLend from 'hooks/wallet/useAutoLend'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import { useCallback } from 'react'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
 
 interface LimitOrderParams {
   asset: Asset
@@ -42,6 +44,13 @@ export function useSubmitLimitOrder() {
         }) => {
           const decimalAdjustment = asset.decimals - PRICE_ORACLE_DECIMALS
           const adjustedLimitPrice = limitPrice.shiftedBy(-decimalAdjustment)
+          const keeperFeeTokenDepositsAmount =
+            currentAccount.deposits.find(byDenom(keeperFee.denom))?.amount ?? BN_ZERO
+
+          const keeperFeeFromLends = BNCoin.fromDenomAndBigNumber(
+            keeperFee.denom,
+            keeperFeeTokenDepositsAmount.minus(keeperFee.amount).abs(),
+          )
 
           return {
             accountId: currentAccount.id,
@@ -49,6 +58,7 @@ export function useSubmitLimitOrder() {
             autolend: isAutoLendEnabledForCurrentAccount,
             baseDenom,
             keeperFee,
+            keeperFeeFromLends,
             tradeDirection,
             price: adjustedLimitPrice,
             reduceOnly: isReduceOnly,

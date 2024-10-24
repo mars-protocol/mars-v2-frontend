@@ -80,7 +80,6 @@ export default function PerpsSummary(props: Props) {
   const { data: perpsConfig } = usePerpsConfig()
   const assets = useDepositEnabledAssets()
   const executePerpOrder = useStore((s) => s.executePerpOrder)
-  const createTriggerOrder = useStore((s) => s.createTriggerOrder)
   const [showSummary, setShowSummary] = useLocalStorage<boolean>(
     LocalStorageKeys.SHOW_SUMMARY,
     getDefaultChainSettings(chainConfig).showSummary,
