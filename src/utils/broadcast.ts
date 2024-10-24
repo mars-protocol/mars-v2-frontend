@@ -121,6 +121,8 @@ function getRules() {
   coinRules.set('withdraw_liquidity', 'farm')
   coinRules.set('provide_liquidity', 'provide_liquidity')
   coinRules.set('claim_rewards', 'claim_rewards')
+  coinRules.set('create_trigger_order', 'create-order')
+  coinRules.set('cancel_trigger_order', 'cancel-order')
   coinRules.set('swap', 'swap')
 
   return coinRules
@@ -222,6 +224,11 @@ function getTransactionCoinsGrouped(
           }
         })
       }
+      const zeroCoin = BNCoin.fromDenomAndBigNumber('uusd', BN_ZERO)
+      if (coinRules.get(action) === 'create-order')
+        transactionCoins.push({ type: 'create-order', coin: zeroCoin })
+      if (coinRules.get(action) === 'cancel-order')
+        transactionCoins.push({ type: 'cancel-order', coin: zeroCoin })
 
       if (isHls) {
         // If the account is an hls account, check for a deposit_from_wallet event and add the amount of the 'update_coin_balance' event
@@ -612,6 +619,20 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
         coins: removeEmptyCoins(coins),
       })
       break
+
+    case 'cancel-order':
+      toastContents.push({
+        text: 'Canceled a Limit Order',
+        coins,
+      })
+      break
+
+    case 'create-order':
+      toastContents.push({
+        text: 'Created a Limit Order',
+        coins,
+      })
+      break
   }
 
   return {
@@ -676,6 +697,10 @@ function getMutationKeyFromTransactionCoinType(
       mutationKeys.push(
         `chains/${chainConfig.id}/accounts/##ACCOUNTORWALLET##/staked-astro-lp-rewards`,
       )
+      break
+    case 'cancel-order':
+    case 'create-order':
+      mutationKeys.push(`chains/${chainConfig.id}/perps/limit-orders/##ACCOUNTORWALLET##`)
       break
   }
 
