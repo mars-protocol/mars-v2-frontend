@@ -82,7 +82,10 @@ export default function TradeChart(props: Props) {
     const settings = getTradingViewSettings(theme)
     const oraclePriceDecimalDiff = props.buyAsset.decimals - PRICE_ORACLE_DECIMALS
 
-    chartWidget.activeChart().removeAllShapes()
+    const allShapes = chart.getAllShapes()
+    allShapes.forEach((shape) => {
+      if (shape.name === 'horizontal_line') chart.removeEntity(shape.id)
+    })
 
     if (entryPrice) {
       chart.createShape(
@@ -106,7 +109,13 @@ export default function TradeChart(props: Props) {
         { price: liquidationPrice, time: moment().unix() },
         {
           shape: 'horizontal_line',
-          overrides: { linecolor: '#fdb021', linestyle: 0, linewidth: 1 },
+          overrides: {
+            linecolor: '#fdb021',
+            linestyle: 0,
+            linewidth: 1,
+            text: 'Liquidation',
+            textcolor: '#ffffff',
+          },
         },
       )
     }
