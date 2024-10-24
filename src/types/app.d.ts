@@ -996,19 +996,25 @@ interface HandleResponseProps {
 
 interface CreateMultipleTriggerOrdersOptions {
   accountId: string
+  keeperFeeFromLends: BNCoin
+  keeperFeeFromBorrows: BNCoin
   orders: TriggerOrderOptions[]
 }
 
 interface TriggerOrderOptions {
   coin: BNCoin
-  accountId: string
   reduceOnly?: boolean
   autolend: boolean
   baseDenom: string
   tradeDirection: TradeDirection
   price: BigNumber
   keeperFee: BNCoin
+}
+
+interface CreateTriggerOrdersOptions extends TriggerOrderOptions {
   keeperFeeFromLends: BNCoin
+  keeperFeeFromBorrows: BNCoin
+  accountId: string
 }
 
 interface BroadcastSlice {
@@ -1065,7 +1071,7 @@ interface BroadcastSlice {
     baseDenom: string
     orderIds?: string[]
   }) => Promise<boolean>
-  createTriggerOrder: (options: TriggerOrderOptions) => Promise<boolean>
+  createTriggerOrder: (options: CreateTriggerOrdersOptions) => Promise<boolean>
   createMultipleTriggerOrders: (options: CreateMultipleTriggerOrdersOptions) => Promise<boolean>
   cancelTriggerOrder: (options: {
     accountId: string

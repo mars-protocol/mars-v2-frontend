@@ -782,7 +782,7 @@ export default function createBroadcastSlice(
         return
       })
     },
-    createTriggerOrder: async (options: TriggerOrderOptions) => {
+    createTriggerOrder: async (options: CreateTriggerOrdersOptions) => {
       const triggerActions: Action[] = [
         {
           execute_perp_order: {
@@ -792,11 +792,6 @@ export default function createBroadcastSlice(
           },
         },
       ]
-      if (!options.keeperFeeFromLends.amount.isZero()) {
-        triggerActions.push({
-          reclaim: options.keeperFeeFromLends.toActionCoin(),
-        })
-      }
 
       if (options.autolend)
         triggerActions.push({
@@ -816,15 +811,30 @@ export default function createBroadcastSlice(
         },
       ]
 
-      const actions: Action[] = [
-        {
-          create_trigger_order: {
-            keeper_fee: options.keeperFee.toCoin(),
-            actions: triggerActions,
-            conditions: triggerConditions,
+      const actions: Action[] = []
+
+      if (!options.keeperFeeFromLends.amount.isZero()) {
+        actions.push({
+          reclaim: options.keeperFeeFromLends.toActionCoin(),
+        })
+      }
+
+      if (!options.keeperFeeFromBorrows.amount.isZero()) {
+        actions.push({
+          borrow: {
+            amount: options.keeperFeeFromBorrows.amount.toString(),
+            denom: options.keeperFeeFromBorrows.denom,
           },
+        })
+      }
+
+      actions.push({
+        create_trigger_order: {
+          keeper_fee: options.keeperFee.toCoin(),
+          actions: triggerActions,
+          conditions: triggerConditions,
         },
-      ]
+      })
 
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
@@ -844,7 +854,24 @@ export default function createBroadcastSlice(
       return response.then((response) => !!response.result)
     },
     createMultipleTriggerOrders: async (options: CreateMultipleTriggerOrdersOptions) => {
-      const actions: Action[] = options.orders.map((order) => {
+      const actions: Action[] = []
+
+      if (!options.keeperFeeFromLends.amount.isZero()) {
+        actions.push({
+          reclaim: options.keeperFeeFromLends.toActionCoin(),
+        })
+      }
+
+      if (!options.keeperFeeFromBorrows.amount.isZero()) {
+        actions.push({
+          borrow: {
+            amount: options.keeperFeeFromBorrows.amount.toString(),
+            denom: options.keeperFeeFromBorrows.denom,
+          },
+        })
+      }
+
+      options.orders.forEach((order) => {
         const triggerActions: Action[] = [
           {
             execute_perp_order: {
@@ -872,13 +899,13 @@ export default function createBroadcastSlice(
           },
         ]
 
-        return {
+        actions.push({
           create_trigger_order: {
             keeper_fee: order.keeperFee.toCoin(),
             actions: triggerActions,
             conditions: triggerConditions,
           },
-        }
+        })
       })
 
       const msg: CreditManagerExecuteMsg = {
