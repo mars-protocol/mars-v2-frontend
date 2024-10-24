@@ -33,13 +33,19 @@ export default function EntryPrice(props: Props) {
       title={
         <DisplayCurrency
           coin={BNCoin.fromDenomAndBigNumber('usd', entryPrice ?? 0)}
-          options={{ maxDecimals: entryPrice.isGreaterThanOrEqualTo(10) ? 2 : 6 }}
+          options={{
+            maxDecimals: entryPrice.isGreaterThanOrEqualTo(10) ? 2 : 6,
+            abbreviated: false,
+          }}
         />
       }
       sub={
         <DisplayCurrency
           coin={BNCoin.fromDenomAndBigNumber('usd', currentPrice ?? 0)}
-          options={{ maxDecimals: entryPrice.isGreaterThanOrEqualTo(10) ? 2 : 6 }}
+          options={{
+            maxDecimals: entryPrice.isGreaterThanOrEqualTo(10) ? 2 : 6,
+            abbreviated: false,
+          }}
         />
       }
     />
