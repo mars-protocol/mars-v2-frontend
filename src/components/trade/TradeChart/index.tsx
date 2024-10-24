@@ -94,6 +94,7 @@ export default function TradeChart(props: Props) {
           shape: 'horizontal_line',
           lock: true,
           disableSelection: true,
+          zOrder: 'top',
           overrides: {
             linecolor:
               tradeDirection === 'long'
@@ -113,12 +114,14 @@ export default function TradeChart(props: Props) {
           shape: 'horizontal_line',
           lock: true,
           disableSelection: true,
+          text: 'Liquidation',
+          zOrder: 'top',
           overrides: {
             linecolor: '#fdb021',
             linestyle: 0,
             linewidth: 1,
-            textcolor: '#ffffff',
-            text: 'Liquidation',
+            textcolor: '#fdb021',
+            showLabel: true,
           },
         },
       )
@@ -134,6 +137,7 @@ export default function TradeChart(props: Props) {
             shape: 'horizontal_line',
             lock: true,
             disableSelection: true,
+            zOrder: 'top',
             overrides: {
               linecolor:
                 order.tradeDirection === 'long'
