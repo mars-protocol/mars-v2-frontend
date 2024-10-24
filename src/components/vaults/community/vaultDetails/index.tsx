@@ -3,7 +3,7 @@ import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
 import PositionInfo from 'components/vaults/community/vaultDetails/common/PositionInfo'
 import { ArrowDownLine } from 'components/common/Icons'
 import useStore from 'store'
-import ProfileVaultCard from './ProfileVaultCard'
+import ProfileVaultCard from 'components/vaults/community/vaultDetails/profileVaultCard/ProfileVaultCard'
 import { vaultProfileData } from 'components/vaults/dummyData'
 
 export default function VaultDetails() {
@@ -24,45 +24,47 @@ export default function VaultDetails() {
           avatarUrl={vaultProfileData.avatarUrl}
           onEdit={() => console.log('Edit clicked')}
           onDelete={() => console.log('Delete clicked')}
+          address={address}
         />
       </div>
       <div className='md:w-180'>
         <div className='relative flex flex-wrap justify-center w-full gap-4'>
-          {/* // TODO: fetch from contract */}
-          {/* temp: if address - owner of the vault : user who deposited into vault */}
+          {/* // TODO: update data that can be fetched */}
           {address ? (
             <PositionInfo
-              title='Performance Fee'
               value={500.38}
-              subtext='1% Fee'
-              withdraw={true}
+              subtitle='1% Fee'
               primaryButton={{
+                text: 'Edit Fee',
+                color: 'secondary',
+                onClick: () => console.log('Edit Fee clicked'),
+                // TODO: conditional disable
+              }}
+              secondaryButton={{
                 text: 'Withdraw',
                 onClick: () => console.log('Withdraw clicked'),
                 rightIcon: <ArrowDownLine />,
               }}
-              secondaryButton={{
-                text: 'Edit Fee',
-                onClick: () => console.log('Edit Fee clicked'),
-                disabled: true,
-              }}
+              address={address}
             />
           ) : (
             <PositionInfo
-              title='My Position'
               value={149087}
-              subtext='2% of total vault'
+              subtitle='2% of total vault'
               primaryButton={{
                 text: 'Deposit',
                 onClick: () => console.log('Deposit clicked'),
               }}
               secondaryButton={{
                 text: 'Withdraw',
+                color: 'secondary',
                 onClick: () => console.log('Withdraw clicked'),
                 rightIcon: <ArrowDownLine />,
               }}
+              address={''}
             />
           )}
+
           <Withdrawals />
           <VaultSummary />
         </div>
