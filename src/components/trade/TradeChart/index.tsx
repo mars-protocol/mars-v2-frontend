@@ -92,6 +92,7 @@ export default function TradeChart(props: Props) {
         { price: entryPrice, time: moment().unix() },
         {
           shape: 'horizontal_line',
+          lock: true,
           overrides: {
             linecolor:
               tradeDirection === 'long'
@@ -109,12 +110,13 @@ export default function TradeChart(props: Props) {
         { price: liquidationPrice, time: moment().unix() },
         {
           shape: 'horizontal_line',
+          lock: true,
           overrides: {
             linecolor: '#fdb021',
             linestyle: 0,
             linewidth: 1,
-            text: 'Liquidation',
             textcolor: '#ffffff',
+            text: 'Liquidation',
           },
         },
       )
@@ -128,6 +130,7 @@ export default function TradeChart(props: Props) {
           },
           {
             shape: 'horizontal_line',
+            lock: true,
             overrides: {
               linecolor:
                 order.tradeDirection === 'long'
