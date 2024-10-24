@@ -11,13 +11,13 @@ import TradeDirection, {
   PERP_TYPE_META,
 } from 'components/perps/BalancesTable/Columns/TradeDirection'
 import { Type, TYPE_META } from 'components/perps/BalancesTable/Columns/Type'
+import usePerpsLimitOrderRows from 'hooks/perps/usePerpsLimitOrdersRows'
 import { demagnify } from 'utils/formatters'
-import usePerpsLimitOrdersData from '../usePerpsLimitOrdersData'
-import { checkStopLossAndTakeProfit } from 'utils/perps'
 import { BN } from 'utils/helpers'
+import { checkStopLossAndTakeProfit } from 'utils/perps'
 
 export default function usePerpsBalancesColumns() {
-  const activeLimitOrders = usePerpsLimitOrdersData()
+  const activeLimitOrders = usePerpsLimitOrderRows()
   const staticColumns = useMemo<ColumnDef<PerpPositionRow>[]>(
     () => [
       {
