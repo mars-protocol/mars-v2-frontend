@@ -93,6 +93,7 @@ export default function TradeChart(props: Props) {
         {
           shape: 'horizontal_line',
           lock: true,
+          disableSelection: true,
           overrides: {
             linecolor:
               tradeDirection === 'long'
@@ -111,6 +112,7 @@ export default function TradeChart(props: Props) {
         {
           shape: 'horizontal_line',
           lock: true,
+          disableSelection: true,
           overrides: {
             linecolor: '#fdb021',
             linestyle: 0,
@@ -131,6 +133,7 @@ export default function TradeChart(props: Props) {
           {
             shape: 'horizontal_line',
             lock: true,
+            disableSelection: true,
             overrides: {
               linecolor:
                 order.tradeDirection === 'long'
