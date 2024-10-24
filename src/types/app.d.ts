@@ -351,6 +351,13 @@ interface PerpsPosition {
   type: PositionType
 }
 
+interface PerpsLimitOrder {
+  denom: string
+  tradeDirection: TradeDirection
+  amount: BigNumber
+  triggerPrice: BigNumber
+}
+
 interface PerpPositionRow extends PerpsPosition {
   asset: Asset
   liquidationPrice: BigNumber
