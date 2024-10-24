@@ -782,16 +782,7 @@ export default function createBroadcastSlice(
         return
       })
     },
-    createTriggerOrder: async (options: {
-      accountId: string
-      coin: BNCoin
-      reduceOnly?: boolean
-      autolend: boolean
-      baseDenom: string
-      tradeDirection: TradeDirection
-      price: BigNumber
-      keeperFee: BNCoin
-    }) => {
+    createTriggerOrder: async (options: TriggerOrderOptions) => {
       const triggerActions: Action[] = [
         {
           execute_perp_order: {
@@ -801,6 +792,12 @@ export default function createBroadcastSlice(
           },
         },
       ]
+      if (!options.keeperFeeFromLends.amount.isZero()) {
+        triggerActions.push({
+          reclaim: options.keeperFeeFromLends.toActionCoin(),
+        })
+      }
+
       if (options.autolend)
         triggerActions.push({
           lend: {

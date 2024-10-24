@@ -984,15 +984,19 @@ interface HandleResponseProps {
 
 interface CreateMultipleTriggerOrdersOptions {
   accountId: string
-  orders: Array<{
-    coin: BNCoin
-    reduceOnly?: boolean
-    autolend: boolean
-    baseDenom: string
-    tradeDirection: TradeDirection
-    price: BigNumber
-    keeperFee: BNCoin
-  }>
+  orders: TriggerOrderOptions[]
+}
+
+interface TriggerOrderOptions {
+  coin: BNCoin
+  accountId: string
+  reduceOnly?: boolean
+  autolend: boolean
+  baseDenom: string
+  tradeDirection: TradeDirection
+  price: BigNumber
+  keeperFee: BNCoin
+  keeperFeeFromLends: BNCoin
 }
 
 interface BroadcastSlice {
@@ -1049,28 +1053,8 @@ interface BroadcastSlice {
     baseDenom: string
     orderIds?: string[]
   }) => Promise<boolean>
-  createTriggerOrder: (options: {
-    accountId: string
-    coin: BNCoin
-    reduceOnly?: boolean
-    autolend: boolean
-    baseDenom: string
-    tradeDirection: TradeDirection
-    price: BigNumber
-    keeperFee: BNCoin
-  }) => Promise<boolean>
+  createTriggerOrder: (options: TriggerOrderOptions) => Promise<boolean>
   createMultipleTriggerOrders: (options: CreateMultipleTriggerOrdersOptions) => Promise<boolean>
-  createTriggerOrder: (options: {
-    accountId: string
-    coin: BNCoin
-    reduceOnly?: boolean
-    autolend: boolean
-    baseDenom: string
-    tradeDirection: TradeDirection
-    price: BigNumber
-    keeperFee: BNCoin
-  }) => Promise<boolean>
-
   cancelTriggerOrder: (options: {
     accountId: string
     orderId: string
