@@ -75,7 +75,7 @@ export async function analizeTransaction(
   }
 }
 
-function getCreditAccountIdFromBroadcastResult(result: BroadcastResult) {
+export function getCreditAccountIdFromBroadcastResult(result: BroadcastResult) {
   // Check for interaction with an existing credit account
   const existingAccountId = getSingleValueFromBroadcastResult(result.result, 'wasm', 'account_id')
 
@@ -427,19 +427,23 @@ function groupTransactionCoins(coins: TransactionCoin[]): GroupedTransactionCoin
   return reducedCoins
 }
 
-export function getToastContentsFromGroupedTransactionCoin(
+export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
   transactionCoin: GroupedTransactionCoin,
   isHls: boolean,
   target: string,
   chainConfig: ChainConfig,
   assets: Asset[],
-): ToastContent[] {
+): { content: ToastContent[]; mutationKeys: string[] } {
   const toastContents = [] as ToastContent[]
   const coins = transactionCoin.coins.map((c) => c.coin.toCoin())
+  const mutationKeys = getMutationKeyFromTransactionCoinType(transactionCoin.type, chainConfig)
 
   switch (transactionCoin.type) {
     case 'perps':
       transactionCoin.coins.forEach((txCoin) => {
+        mutationKeys.push(
+          `chains/${chainConfig.id}/perps/updatePosition/${txCoin.coin.denom}/##ACCOUNTORWALLET##`,
+        )
         if (!txCoin.before) return
         const type = getPerpsTransactionTypeFromCoin({ coin: txCoin.coin, before: txCoin.before })
         const perpsAssetSymbol = getAssetSymbolByDenom(txCoin.coin.denom, assets)
@@ -610,7 +614,72 @@ export function getToastContentsFromGroupedTransactionCoin(
       break
   }
 
-  return toastContents
+  return {
+    content: toastContents,
+    mutationKeys,
+  }
+}
+
+function getMutationKeyFromTransactionCoinType(
+  transactionType: TransactionCoinType,
+  chainConfig: ChainConfig,
+): string[] {
+  const mutationKeys = [] as string[]
+
+  mutationKeys.push(`chains/${chainConfig.id}/accounts/##ACCOUNTORWALLET##`)
+
+  switch (transactionType) {
+    case 'perps':
+      mutationKeys.push(`chains/${chainConfig.id}/perps/market-states`)
+      break
+    case 'borrow':
+    case 'deposit':
+    case 'deposit_from_wallet':
+    case 'lend':
+    case 'reclaim':
+    case 'swap':
+    case 'repay':
+      mutationKeys.push(
+        `chains/${chainConfig.id}/wallets/##ADDRESS##/balances`,
+        `chains/${chainConfig.id}/markets/depositCap`,
+        `chains/${chainConfig.id}/markets`,
+        `chains/${chainConfig.id}/markets/info`,
+      )
+      break
+    case 'withdraw':
+      mutationKeys.push(
+        `chains/${chainConfig.id}/wallets/##ADDRESS##/balances`,
+        `chains/${chainConfig.id}/accounts/##ACCOUNTORWALLET##/staked-astro-lp-rewards`,
+      )
+      break
+    case 'farm':
+      mutationKeys.push(
+        `chains/${chainConfig.id}/wallets/##ADDRESS##/balances`,
+        `chains/${chainConfig.id}/accounts/##ACCOUNTORWALLET##/unclaimed-rewards`,
+      )
+      break
+    case 'provide_liquidity':
+      mutationKeys.push(
+        `chains/${chainConfig.id}/accounts/##ACCOUNTORWALLET##/staked-astro-lp-rewards`,
+      )
+      break
+    case 'vault':
+      mutationKeys.push(
+        `chains/${chainConfig.id}/perps/vault`,
+        `chains/${chainConfig.id}/vaults/##ACCOUNTORWALLET##/deposited`,
+        `chains/${chainConfig.id}/vaults/aprs`,
+        `chains/${chainConfig.id}/vaults/##ACCOUNTORWALLET##`,
+        `chains/${chainConfig.id}/vaults`,
+      )
+      break
+    case 'claim_rewards':
+      mutationKeys.push(
+        `chains/${chainConfig.id}/accounts/##ACCOUNTORWALLET##/staked-astro-lp-rewards`,
+      )
+      break
+  }
+
+  return mutationKeys
 }
 
 function getPerpsTransactionTypeFromCoin(txCoin: {

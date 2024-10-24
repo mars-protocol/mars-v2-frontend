@@ -33,7 +33,7 @@ export default function FundingRate() {
       <FormattedNumber
         className='inline text-sm'
         amount={fundingRate.toNumber()}
-        options={{ minDecimals: 6, maxDecimals: 6, suffix: '%' }}
+        options={{ minDecimals: 2, maxDecimals: 6, suffix: '%' }}
       />
       <Tooltip
         content={
