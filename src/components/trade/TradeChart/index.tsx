@@ -205,7 +205,6 @@ export default function TradeChart(props: Props) {
     props.buyAsset.denom,
     props.buyAsset.pythFeedName,
     props.buyAsset.decimals,
-    entryPrice,
   ])
 
   // ChartWidget listeners
