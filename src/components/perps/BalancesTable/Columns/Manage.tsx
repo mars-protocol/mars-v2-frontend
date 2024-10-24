@@ -3,9 +3,10 @@ import { useSearchParams } from 'react-router-dom'
 
 import ActionButton from 'components/common/Button/ActionButton'
 import DropDownButton from 'components/common/Button/DropDownButton'
-import { Check, Cross, Edit, Shield } from 'components/common/Icons'
+import { Check, Cross, Edit } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
+import PerpsSlTpModal from 'components/Modals/PerpsSlTpModal'
+import CloseLabel from 'components/perps/BalancesTable/Columns/CloseLabel'
 import ConfirmationSummary from 'components/perps/Module/ConfirmationSummary'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -13,13 +14,12 @@ import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { SearchParams } from 'types/enums'
 import { getSearchParamsObject } from 'utils/route'
-import PerpsSlTpModal from 'components/Modals/PerpsSlTpModal'
-import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 
 export const MANAGE_META = { id: 'manage', header: 'Manage', meta: { className: 'w-40 min-w-30' } }
 
@@ -84,10 +84,7 @@ export default function Manage(props: Props) {
       header: (
         <div className='flex items-center justify-between w-full'>
           <Text size='2xl'>Order Summary</Text>
-          <TradeDirection
-            tradeDirection={perpPosition.tradeDirection}
-            className='capitalize !text-sm'
-          />
+          <CloseLabel className='capitalize !text-sm' />
         </div>
       ),
       content: (
@@ -122,7 +119,6 @@ export default function Manage(props: Props) {
     perpPosition.amount,
     perpPosition.asset,
     perpPosition.leverage,
-    perpPosition.tradeDirection,
     setShowSummary,
     showSummary,
   ])
