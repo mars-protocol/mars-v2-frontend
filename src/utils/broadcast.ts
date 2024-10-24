@@ -632,6 +632,10 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
         text: 'Created a Limit Order',
         coins,
       })
+      toastContents.push({
+        text: 'Payed the Keeper Fee',
+        coins,
+      })
       break
   }
 
