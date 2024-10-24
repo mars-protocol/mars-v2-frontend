@@ -1,7 +1,6 @@
 import classNames from 'classnames'
 import React, { ReactNode } from 'react'
 import { Slide, ToastContainer, toast as toastify } from 'react-toastify'
-import { mutate } from 'swr'
 
 import { CheckMark } from 'components/common/CheckMark'
 import { CircularProgress } from 'components/common/CircularProgress'
@@ -212,7 +211,6 @@ export default function Toaster() {
     }
 
     useStore.setState({ toast: null })
-    mutate(() => true)
   }
 
   if (toast) {

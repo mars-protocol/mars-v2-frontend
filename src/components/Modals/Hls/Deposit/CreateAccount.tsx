@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { mutate } from 'swr'
 
 import Button from 'components/common/Button'
 import DocsLink from 'components/common/DocsLink'
@@ -20,7 +19,6 @@ export default function CreateAccount() {
       setIsTxPending(false)
       return
     }
-    await mutate('accounts/high_levered_strategy')
   }
 
   return (
