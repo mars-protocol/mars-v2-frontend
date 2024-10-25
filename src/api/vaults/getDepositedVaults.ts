@@ -1,12 +1,6 @@
 import moment from 'moment'
 
-import {
-  cacheFn,
-  estimateWithdrawCache,
-  positionsCache,
-  previewRedeemCache,
-  unlockPositionsCache,
-} from 'api/cache'
+import { cacheFn, unlockPositionsCache } from 'api/cache'
 import { getClient, getCreditManagerQueryClient, getVaultQueryClient } from 'api/cosmwasm-client'
 import getVaults from 'api/vaults/getVaults'
 import { BN_ZERO } from 'constants/math'
@@ -101,28 +95,16 @@ export async function getLpTokensForVaultPosition(
     const amounts = flatVaultPositionAmount(vaultPosition.amount)
     const totalAmount = amounts.locked.plus(amounts.unlocked).plus(amounts.unlocking).toString()
 
-    const lpAmount = await cacheFn(
-      () =>
-        vaultQueryClient.previewRedeem({
-          amount: totalAmount,
-        }),
-      previewRedeemCache,
-      `previewRedeem/vaults/${vault.address}/amount/${totalAmount}`,
-      60,
-    )
+    const lpAmount = await vaultQueryClient.previewRedeem({
+      amount: totalAmount,
+    })
 
-    const lpTokens = await cacheFn(
-      () =>
-        creditManagerQueryClient.estimateWithdrawLiquidity({
-          lpToken: {
-            amount: lpAmount,
-            denom: vault.denoms.lp,
-          },
-        }),
-      estimateWithdrawCache,
-      `lpToken/${vault.denoms.lp}/amount/${lpAmount}`,
-      60,
-    )
+    const lpTokens = await creditManagerQueryClient.estimateWithdrawLiquidity({
+      lpToken: {
+        amount: lpAmount,
+        denom: vault.denoms.lp,
+      },
+    })
 
     const primaryLpToken = lpTokens.find((t) => t.denom === vault.denoms.primary) ?? {
       amount: '0',
@@ -184,12 +166,7 @@ async function getDepositedVaults(
   try {
     const creditManagerQueryClient = await getCreditManagerQueryClient(chainConfig)
 
-    if (!positions)
-      positions = await cacheFn(
-        () => creditManagerQueryClient.positions({ accountId }),
-        positionsCache,
-        `depositedVaults/${accountId}`,
-      )
+    if (!positions) positions = await creditManagerQueryClient.positions({ accountId })
 
     if (!positions.vaults.length) return []
 
