@@ -15,6 +15,7 @@ export const DEPOSIT_CAP_BUFFER = 0.999
 export const SWAP_FEE_BUFFER = 0.005
 export const DEFAULT_PORTFOLIO_STATS = [
   { title: null, sub: 'Total Balance' },
+  { title: null, sub: 'Collateral Power' },
   { title: null, sub: 'Total Debt' },
   { title: null, sub: 'Net Worth' },
   { title: null, sub: 'APY' },

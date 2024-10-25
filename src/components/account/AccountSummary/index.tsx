@@ -10,7 +10,6 @@ import Accordion from 'components/common/Accordion'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import { BN_ZERO } from 'constants/math'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
@@ -19,7 +18,8 @@ import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
-import { calculateAccountApy, calculateAccountLeverage } from 'utils/accounts'
+import { calculateAccountApy, getAccountSummaryStats } from 'utils/accounts'
+import useAssetParams from 'hooks/params/useAssetParams'
 
 interface Props {
   account: Account
@@ -56,21 +56,56 @@ export default function AccountSummary(props: Props) {
   const { health: updatedHealth, healthFactor: updatedHealthFactor } = useHealthComputer(
     updatedAccount || account,
   )
-  const leverage = useMemo(
+  const assetParams = useAssetParams()
+  const { leverage } = useMemo(
     () =>
-      account ? calculateAccountLeverage(account, [...whitelistedAssets, ...perpsAssets]) : BN_ZERO,
-    [account, perpsAssets, whitelistedAssets],
+      getAccountSummaryStats(
+        updatedAccount ?? account,
+        borrowAssetsData,
+        lendingAssetsData,
+        [...whitelistedAssets, ...perpsAssets],
+        vaultAprs,
+        astroLpAprs,
+        assetParams.data || [],
+      ),
+    [
+      account,
+      updatedAccount,
+      borrowAssetsData,
+      lendingAssetsData,
+      whitelistedAssets,
+      perpsAssets,
+      vaultAprs,
+      astroLpAprs,
+      assetParams.data,
+    ],
   )
+
   const updatedLeverage = useMemo(() => {
     if (!updatedAccount) return null
-    const updatedLeverage = calculateAccountLeverage(updatedAccount, [
-      ...whitelistedAssets,
-      ...perpsAssets,
-    ])
+    const { leverage: updatedLeverage } = getAccountSummaryStats(
+      updatedAccount,
+      borrowAssetsData,
+      lendingAssetsData,
+      [...whitelistedAssets, ...perpsAssets],
+      vaultAprs,
+      astroLpAprs,
+      assetParams.data || [],
+    )
 
     if (updatedLeverage.eq(leverage)) return null
     return updatedLeverage
-  }, [updatedAccount, whitelistedAssets, perpsAssets, leverage])
+  }, [
+    updatedAccount,
+    borrowAssetsData,
+    lendingAssetsData,
+    whitelistedAssets,
+    perpsAssets,
+    vaultAprs,
+    astroLpAprs,
+    leverage,
+    assetParams.data,
+  ])
 
   const handleToggle = useCallback(
     (index: number) => {
@@ -179,7 +214,7 @@ export default function AccountSummary(props: Props) {
         account={account}
         updatedAccount={updatedAccount}
         assets={[...whitelistedAssets, ...perpsAssets]}
-        leverage={leverage.toNumber() || 1}
+        leverage={leverage?.toNumber() || 1}
         updatedLeverage={updatedLeverage?.toNumber() || null}
         apr={apr.toNumber()}
         health={health}

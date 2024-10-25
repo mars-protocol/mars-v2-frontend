@@ -1,9 +1,9 @@
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
-import { VALUE_SCALE_FACTOR } from 'hooks/health-computer/useHealthComputer'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPosition } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { AssetParamsBaseForAddr } from 'types/generated/mars-params/MarsParams.types'
 import { Positions } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import { byDenom } from 'utils/array'
 import { getCoinValue } from 'utils/formatters'
@@ -55,12 +55,25 @@ export const calculateAccountValue = (
   type: 'deposits' | 'lends' | 'debts' | 'vaults' | 'perps' | 'perpsVault' | 'stakedAstroLps',
   account: Account | AccountChange,
   assets: Asset[],
+  whitelistedOnly: boolean = false,
 ): BigNumber => {
   if (!account || !account[type] || !assets) return BN_ZERO
+
+  const filteredAssets = whitelistedOnly ? assets.filter((asset) => asset.isWhitelisted) : assets
 
   if (type === 'vaults') {
     return (
       account.vaults?.reduce((acc, vaultPosition) => {
+        if (
+          whitelistedOnly &&
+          !filteredAssets.some(
+            (asset) =>
+              asset.denom === vaultPosition.denoms.primary ||
+              asset.denom === vaultPosition.denoms.secondary,
+          )
+        ) {
+          return acc
+        }
         return acc
           .plus(vaultPosition.values.primary)
           .plus(vaultPosition.values.secondary)
@@ -73,14 +86,25 @@ export const calculateAccountValue = (
   if (type === 'perps') {
     return (
       account.perps?.reduce((acc, perpPosition) => {
-        acc = acc.plus(getCoinValue(perpPosition.pnl.unrealized.net, assets))
+        if (
+          whitelistedOnly &&
+          !filteredAssets.some((asset) => asset.denom === perpPosition.denom)
+        ) {
+          return acc
+        }
+        acc = acc.plus(getCoinValue(perpPosition.pnl.unrealized.net, filteredAssets))
         return acc
       }, BN_ZERO) || BN_ZERO
     )
   }
 
   if (type === 'perpsVault') {
-    if (!account.perpsVault) return BN_ZERO
+    if (
+      !account.perpsVault ||
+      (whitelistedOnly &&
+        !filteredAssets.some((asset) => asset.denom === account.perpsVault?.denom))
+    )
+      return BN_ZERO
     const activeAmount = account.perpsVault.active?.amount ?? BN_ZERO
     const unlockingAmount = account.perpsVault.unlocking.reduce(
       (total, unlocking) => total.plus(unlocking.amount),
@@ -89,12 +113,19 @@ export const calculateAccountValue = (
     const unlockedAmount = account.perpsVault.unlocked ?? BN_ZERO
     const totalAmount = activeAmount.plus(unlockingAmount).plus(unlockedAmount)
 
-    return getCoinValue(BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, totalAmount), assets)
+    return getCoinValue(
+      BNCoin.fromDenomAndBigNumber(account.perpsVault.denom, totalAmount),
+      filteredAssets,
+    )
   }
 
   return (
-    account[type]?.reduce((acc, position) => acc.plus(getCoinValue(position, assets)), BN_ZERO) ??
-    BN_ZERO
+    account[type]?.reduce((acc, position) => {
+      if (whitelistedOnly && !filteredAssets.some((asset) => asset.denom === position.denom)) {
+        return acc
+      }
+      return acc.plus(getCoinValue(position, filteredAssets))
+    }, BN_ZERO) ?? BN_ZERO
   )
 }
 
@@ -207,23 +238,17 @@ export const calculateAccountApy = (
   return totalInterestValue.dividedBy(totalDenominatorValue).times(100)
 }
 
-export function calculateAccountLeverage(account: Account, assets: Asset[]) {
-  const [deposits, lends, debts, vaults, perps, perpsVault, stakedAstroLps] =
-    getAccountPositionValues(account, assets)
-
+export function calculateAccountLeverage(
+  account: Account,
+  assets: Asset[],
+  collateralValue: BigNumber,
+) {
   const perpsExposure = getAccountPerpsExposure(account, assets)
+  const debts = calculateAccountValue('debts', account, assets)
 
-  const netValue = deposits
-    .plus(lends)
-    .plus(vaults)
-    .plus(stakedAstroLps)
-    .plus(perps)
-    .plus(perpsVault)
-    .minus(debts)
+  const exposureValue = collateralValue?.plus(debts).plus(perpsExposure)
 
-  const exposureValue = netValue.plus(debts).plus(perpsExposure)
-
-  return exposureValue.dividedBy(netValue)
+  return exposureValue?.dividedBy(collateralValue)
 }
 
 export function getAmount(denom: string, coins: Coin[]): BigNumber {
@@ -418,15 +443,36 @@ export function getAccountSummaryStats(
   assets: Asset[],
   vaultAprs: Apr[],
   astroLpAprs: Apr[],
+  assetParams: AssetParamsBaseForAddr[] | undefined,
 ) {
   const [deposits, lends, debts, vaults, perps, perpsVault, stakedAstroLps] =
     getAccountPositionValues(account, assets)
-  const positionValue = deposits
+
+  const totalBalance = deposits
     .plus(lends)
     .plus(vaults)
     .plus(perps)
     .plus(perpsVault)
     .plus(stakedAstroLps)
+
+  const whitelistedAssets = assets.filter((asset) => asset.isWhitelisted)
+
+  const collateralValue = whitelistedAssets.reduce((acc, asset) => {
+    const assetValue = calculateAccountValue('deposits', account, [asset], true)
+      .plus(calculateAccountValue('lends', account, [asset], true))
+      .plus(calculateAccountValue('vaults', account, [asset], true))
+      .plus(calculateAccountValue('perps', account, [asset], true))
+      .plus(calculateAccountValue('perpsVault', account, [asset], true))
+      .plus(calculateAccountValue('stakedAstroLps', account, [asset], true))
+
+    const assetParam = assetParams?.find((param) => param.denom === asset.denom)
+    const maxLoanToValue = assetParam ? BN(assetParam.max_loan_to_value) : BN_ZERO
+
+    return acc.plus(assetValue.multipliedBy(maxLoanToValue))
+  }, BN_ZERO)
+
+  const netWorth = totalBalance.minus(debts)
+
   const apy = calculateAccountApy(
     account,
     borrowAssets,
@@ -435,11 +481,13 @@ export function getAccountSummaryStats(
     vaultAprs,
     astroLpAprs,
   )
-  const leverage = calculateAccountLeverage(account, assets)
+  const leverage = calculateAccountLeverage(account, whitelistedAssets, collateralValue)
+
   return {
-    positionValue: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionValue),
+    positionValue: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, totalBalance),
     debts: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, debts),
-    netWorth: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionValue.minus(debts)),
+    netWorth: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, netWorth),
+    collateralValue: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, collateralValue),
     apy,
     leverage,
   }
