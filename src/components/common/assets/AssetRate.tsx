@@ -53,7 +53,7 @@ export default function AssetRate(props: Props) {
     <FormattedNumber
       amount={rate}
       className={className}
-      options={{ suffix: props.suffix ? `% ${suffix}` : '%', maxDecimals: 2 }}
+      options={{ suffix: props.suffix ? `% ${suffix}` : '%', maxDecimals: 2, abbreviated: true }}
       animate
     />
   )
