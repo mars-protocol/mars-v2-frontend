@@ -55,7 +55,7 @@ export default function VaultInputElement(props: Props) {
       {label && (
         <label className='text-xs flex items-center'>
           {label}
-          {required && <span className='text-error ml-1'>*</span>}
+          {required && <span className='text-primary ml-1'>*</span>}
         </label>
       )}
 

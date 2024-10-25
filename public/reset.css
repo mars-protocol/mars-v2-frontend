@@ -1714,14 +1714,11 @@ input[type='number']::-webkit-outer-spin-button {
 .w-100 {
   width: 400px;
 }
-.w-110 {
-  width: 440px;
-}
-.w-12 {
-  width: 3rem;
-}
 .w-120 {
   width: 480px;
+}
+.w-140 {
+  width: 560px;
 }
 .w-13 {
   width: 52px;
