@@ -107,17 +107,13 @@ export async function generateToast(
 
   const uniqueMutationKeys = [...new Set(mutationKeys)]
 
-  setTimeout(
-    () =>
-      uniqueMutationKeys.forEach(async (key) => {
-        const accountToMutate = accountId ?? address
-        let mutationKey = key.replaceAll('##ACCOUNTORWALLET##', accountToMutate)
-        mutationKey = mutationKey.replaceAll('##ADDRESS##', address)
-        await mutate(mutationKey)
-        process.env.NODE_ENV !== 'production' && console.log('🔁 MUTATE: ', mutationKey)
-      }),
-    2_000,
-  )
+  uniqueMutationKeys.forEach(async (key) => {
+    const accountToMutate = accountId ?? address
+    let mutationKey = key.replaceAll('##ACCOUNTORWALLET##', accountToMutate)
+    mutationKey = mutationKey.replaceAll('##ADDRESS##', address)
+    await mutate(mutationKey)
+    process.env.NODE_ENV !== 'production' && console.log('🔁 MUTATE: ', mutationKey)
+  })
 
   return toast
 }
