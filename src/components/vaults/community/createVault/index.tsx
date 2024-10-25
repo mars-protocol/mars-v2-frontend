@@ -5,7 +5,7 @@ import MintVaultAccount from 'components/vaults/community/createVault/MintVaultA
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import VaultInputElement from 'components/vaults/community/createVault/VaultInputElement'
 import PerformanceFee from 'components/vaults/community/createVault/PerformanceFee'
-import HlsSwitch from 'components/vaults/community/createVault/HlsSwitch'
+import HlsSwitch from 'components/vaults/community/createVault/HLSSwitch'
 import Text from 'components/common/Text'
 import useToggle from 'hooks/common/useToggle'
 import useStore from 'store'
@@ -138,7 +138,7 @@ export default function CreateVault() {
             <div>
               <label className='text-xs flex items-center'>
                 Description
-                <span className='text-error ml-1'>*</span>
+                <span className='text-primary ml-1'>*</span>
               </label>
               <TextArea
                 value={description}
@@ -202,8 +202,6 @@ export default function CreateVault() {
           </div>
           <Button
             onClick={handleCreate}
-            variant='solid'
-            color='primary'
             size='md'
             rightIcon={<ArrowRight />}
             className='w-full md:w-auto'

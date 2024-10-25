@@ -13,8 +13,9 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { ExternalLink, TrashBin } from 'components/common/Icons'
+import { Edit, ExternalLink, TrashBin } from 'components/common/Icons'
 import { TextLink } from 'components/common/TextLink'
+import EditDescription from './EditDescription'
 
 interface Props {
   vaultName: string
@@ -23,8 +24,8 @@ interface Props {
   accuredPnl: number
   wallet: string
   description: string
-  onEdit: () => void
   onDelete: () => void
+  onEdit: (show: boolean) => void
   avatarUrl: string
   address?: string
 }
@@ -38,8 +39,8 @@ export default function ProfileVaultCard(props: Props) {
     wallet,
     description,
     address,
-    onEdit,
     onDelete,
+    onEdit,
     avatarUrl,
   } = props
 
@@ -136,9 +137,14 @@ export default function ProfileVaultCard(props: Props) {
           <div className='flex justify-between items-center'>
             <Text size='sm'>Description</Text>
             {isOwner && (
-              <Text size='sm' className='text-warning'>
-                Edit
-              </Text>
+              <Button
+                onClick={() => onEdit(true)}
+                variant='transparent'
+                color='quaternary'
+                className='!p-0'
+                textClassNames='text-secondary hover:text-primary'
+                text='Edit'
+              />
             )}
           </div>
           <Text size='xs' className='text-white/60'>
