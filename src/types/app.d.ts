@@ -1155,7 +1155,7 @@ type TransactionCoinType =
   | 'withdraw'
   | 'farm'
   | 'provide_liquidity'
-  | 'vault'
+  | 'deposit_into_vault'
   | 'perps'
   | 'perpsPnl'
   | 'perpsOpeningFee'
@@ -1196,6 +1196,7 @@ type TransactionType =
   | 'transaction'
   | 'cancel-order'
   | 'create-order'
+  | 'withdraw_from_vault'
 
 interface CommonSlice {
   address?: string

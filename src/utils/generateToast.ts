@@ -70,8 +70,16 @@ export async function generateToast(
       toast.message = 'Created a Limit Order'
       break
 
+    case 'withdraw_from_vault':
     case 'unlock':
       toast.message = 'Started the unlock period of a vault position'
+      mutationKeys.push(
+        `chains/${chainConfig.id}/vaults/##ACCOUNTORWALLET##/deposited`,
+        `chains/${chainConfig.id}/vaults/##ACCOUNTORWALLET##`,
+        `chains/${chainConfig.id}/vaults`,
+        `chains/${chainConfig.id}/vaults/aprs`,
+        `chains/${chainConfig.id}/perps/vault`,
+      )
       break
 
     case 'transaction':

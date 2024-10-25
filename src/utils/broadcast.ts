@@ -96,6 +96,7 @@ function getTransactionTypesByAction() {
   transactionTypes.set('burn', 'burn')
   transactionTypes.set('update_price_feeds', 'oracle')
   transactionTypes.set('unlock', 'unlock')
+  transactionTypes.set('withdraw_from_perp_vault', 'withdraw_from_vault')
   transactionTypes.set('create_trigger_order', 'create-order')
   transactionTypes.set('cancel_trigger_order', 'cancel-order')
 
@@ -113,7 +114,7 @@ function getRules() {
   coinRules.set('repay_from_wallet', 'deposit_from_wallet')
   coinRules.set('deposit_wallet', 'deposit_from_wallet')
   coinRules.set('deposit_contract', 'lend')
-  coinRules.set('deposit_to_perp_vault', 'vault')
+  coinRules.set('deposit_to_perp_vault', 'deposit_into_vault')
   coinRules.set('repay', 'repay')
   coinRules.set('borrow', 'borrow')
   coinRules.set('open_perp_position', 'perps')
@@ -162,7 +163,7 @@ function getTransactionCoinsGrouped(
     if (event.type === 'pool_joined') {
       const vaultTokens = getVaultTokensFromEvent(event)
       if (vaultTokens)
-        vaultTokens.map((coin) => transactionCoins.push({ type: 'vault', coin: coin }))
+        vaultTokens.map((coin) => transactionCoins.push({ type: 'deposit_into_vault', coin: coin }))
 
       // There is no return here, since the pool_joined event can also include coins in the attributes
     }
@@ -431,6 +432,14 @@ function groupTransactionCoins(coins: TransactionCoin[]): GroupedTransactionCoin
     grouped.push({ type: coin.type, coins: [coin] })
     return grouped
   }, [] as GroupedTransactionCoin[])
+
+  // Check for vault transactions and remove lend actions from it
+  const hasVaultTransaction = reducedCoins.find((c) => c.type === 'deposit_into_vault')
+  if (hasVaultTransaction) {
+    const lendIndex = reducedCoins.findIndex((c) => c.type === 'lend')
+    if (lendIndex > -1) reducedCoins.splice(lendIndex, 1)
+  }
+
   return reducedCoins
 }
 
@@ -590,14 +599,14 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
         coins,
       })
       break
-    case 'vault':
-      const vaultCoins = transactionCoin.coins.map((c) => c.coin.toCoin())
+    case 'deposit_into_vault':
+      const depositVaultCoins = transactionCoin.coins.map((c) => c.coin.toCoin())
       toastContents.push({
         text:
           transactionCoin.coins.length === 2
-            ? `Deposited into the ${getVaultNameByCoins(chainConfig, vaultCoins)} vault`
-            : `Deposited into the Perps ${getAssetSymbolByDenom(vaultCoins[0].denom, assets)} vault`,
-        coins: vaultCoins,
+            ? `Deposited into the ${getVaultNameByCoins(chainConfig, depositVaultCoins)} vault`
+            : `Deposited into the Perps ${getAssetSymbolByDenom(depositVaultCoins[0].denom, assets)} vault`,
+        coins: depositVaultCoins,
       })
       break
     case 'perpsOpeningFee':
@@ -688,7 +697,7 @@ function getMutationKeyFromTransactionCoinType(
         `chains/${chainConfig.id}/accounts/##ACCOUNTORWALLET##/staked-astro-lp-rewards`,
       )
       break
-    case 'vault':
+    case 'deposit_into_vault':
       mutationKeys.push(
         `chains/${chainConfig.id}/vaults/##ACCOUNTORWALLET##/deposited`,
         `chains/${chainConfig.id}/vaults/##ACCOUNTORWALLET##`,
