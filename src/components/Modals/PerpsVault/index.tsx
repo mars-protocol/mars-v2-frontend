@@ -134,15 +134,7 @@ function PerpsVaultModal(props: Props) {
     setAmount(BN_ZERO)
     onClose()
     return
-  }, [
-    account,
-    perpsVault,
-    props.modal.type,
-    onClose,
-    amount,
-    amountInDeposits,
-    depositFromWallet,
-  ])
+  }, [account, perpsVault, props.modal.type, onClose, amount, amountInDeposits, depositFromWallet])
 
   useEffect(() => {
     if (!perpsVault?.denom) return

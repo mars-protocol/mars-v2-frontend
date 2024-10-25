@@ -684,6 +684,7 @@ function getMutationKeyFromTransactionCoinType(
       mutationKeys.push(
         `chains/${chainConfig.id}/wallets/##ADDRESS##/balances`,
         `chains/${chainConfig.id}/accounts/##ACCOUNTORWALLET##/staked-astro-lp-rewards`,
+        `chains/${chainConfig.id}/vaults`,
       )
       break
     case 'farm':
@@ -701,7 +702,6 @@ function getMutationKeyFromTransactionCoinType(
       mutationKeys.push(
         `chains/${chainConfig.id}/vaults/##ACCOUNTORWALLET##/deposited`,
         `chains/${chainConfig.id}/vaults/##ACCOUNTORWALLET##`,
-        `chains/${chainConfig.id}/vaults`,
         `chains/${chainConfig.id}/vaults/aprs`,
         `chains/${chainConfig.id}/perps/vault`,
       )
