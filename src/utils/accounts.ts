@@ -241,14 +241,18 @@ export const calculateAccountApy = (
 export function calculateAccountLeverage(
   account: Account,
   assets: Asset[],
-  collateralValue: BigNumber,
+  collateralValue?: BigNumber,
 ) {
   const perpsExposure = getAccountPerpsExposure(account, assets)
   const debts = calculateAccountValue('debts', account, assets)
 
-  const exposureValue = collateralValue?.plus(debts).plus(perpsExposure)
+  const exposureValue = (collateralValue ?? BN_ZERO).plus(debts).plus(perpsExposure)
 
-  return exposureValue?.dividedBy(collateralValue)
+  // If collateralValue is not provided, we use the total deposit value as collateral
+  const totalCollateral =
+    collateralValue ?? account.deposits.reduce((acc, deposit) => acc.plus(deposit.amount), BN_ZERO)
+
+  return exposureValue.dividedBy(totalCollateral)
 }
 
 export function getAmount(denom: string, coins: Coin[]): BigNumber {
