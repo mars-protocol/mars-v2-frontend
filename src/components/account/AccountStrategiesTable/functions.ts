@@ -114,7 +114,9 @@ export function getPerpsVaultAccountStrategiesRow(
       coinsChange: {
         primary: BNCoin.fromDenomAndBigNumber(
           vault.denoms.primary,
-          vault.amounts.primary.minus(previousAmount),
+          vault.status === VaultStatus.UNLOCKING
+            ? BN_ZERO
+            : vault.amounts.primary.minus(previousAmount),
         ),
       },
     }
