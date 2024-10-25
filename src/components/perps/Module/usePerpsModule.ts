@@ -70,13 +70,10 @@ export default function usePerpsModule(
           .toNumber()
   }, [accountNetValue, perpsAsset, previousAmount, limitPrice])
 
-  const maxAmount = useMemo(() => {
-    let maxAmount = computeMaxPerpAmount(perpsAsset.denom, tradeDirection)
-    if (tradeDirection === 'short') maxAmount = maxAmount.plus(previousAmount)
-    if (tradeDirection === 'long') maxAmount = maxAmount.minus(previousAmount)
-
-    return BigNumber.max(maxAmount, BN_ZERO)
-  }, [computeMaxPerpAmount, perpsAsset, previousAmount, tradeDirection])
+  const maxAmount = useMemo(
+    () => BigNumber.max(computeMaxPerpAmount(perpsAsset.denom, tradeDirection), BN_ZERO),
+    [computeMaxPerpAmount, perpsAsset, tradeDirection],
+  )
 
   const [leverage, setLeverage] = useState<number>(0)
 
