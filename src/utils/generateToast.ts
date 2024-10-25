@@ -71,11 +71,19 @@ export async function generateToast(
       break
 
     case 'withdraw_from_vault':
+      toast.message = 'Withdrew funds from a vault'
+      mutationKeys.push(
+        `chains/${chainConfig.id}/vaults/##ACCOUNTORWALLET##/deposited`,
+        `chains/${chainConfig.id}/vaults`,
+        `chains/${chainConfig.id}/vaults/aprs`,
+        `chains/${chainConfig.id}/perps/vault`,
+      )
+      break
+
     case 'unlock':
       toast.message = 'Started the unlock period of a vault position'
       mutationKeys.push(
         `chains/${chainConfig.id}/vaults/##ACCOUNTORWALLET##/deposited`,
-        `chains/${chainConfig.id}/vaults/##ACCOUNTORWALLET##`,
         `chains/${chainConfig.id}/vaults`,
         `chains/${chainConfig.id}/vaults/aprs`,
         `chains/${chainConfig.id}/perps/vault`,
@@ -99,13 +107,17 @@ export async function generateToast(
 
   const uniqueMutationKeys = [...new Set(mutationKeys)]
 
-  uniqueMutationKeys.forEach(async (key) => {
-    const accountToMutate = accountId ?? address
-    let mutationKey = key.replaceAll('##ACCOUNTORWALLET##', accountToMutate)
-    mutationKey = mutationKey.replaceAll('##ADDRESS##', address)
-    await mutate(mutationKey)
-    process.env.NODE_ENV !== 'production' && console.log('🔁 MUTATE: ', mutationKey)
-  })
+  setTimeout(
+    () =>
+      uniqueMutationKeys.forEach(async (key) => {
+        const accountToMutate = accountId ?? address
+        let mutationKey = key.replaceAll('##ACCOUNTORWALLET##', accountToMutate)
+        mutationKey = mutationKey.replaceAll('##ADDRESS##', address)
+        await mutate(mutationKey)
+        process.env.NODE_ENV !== 'production' && console.log('🔁 MUTATE: ', mutationKey)
+      }),
+    2_000,
+  )
 
   return toast
 }

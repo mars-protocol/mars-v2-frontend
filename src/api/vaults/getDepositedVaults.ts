@@ -1,6 +1,5 @@
 import moment from 'moment'
 
-import { cacheFn, unlockPositionsCache } from 'api/cache'
 import { getClient, getCreditManagerQueryClient, getVaultQueryClient } from 'api/cosmwasm-client'
 import getVaults from 'api/vaults/getVaults'
 import { BN_ZERO } from 'constants/math'
@@ -22,15 +21,9 @@ async function getUnlocksAtTimestamp(
 ) {
   try {
     const client = await getClient(getUrl(chainConfig.endpoints.rpc))
-    const vaultExtension = (await cacheFn(
-      () =>
-        client.queryContractSmart(vaultAddress, {
-          vault_extension: { lockup: { unlocking_position: { lockup_id: unlockingId } } },
-        }),
-      unlockPositionsCache,
-      `unlockPositions/${vaultAddress}.id/${unlockingId}`,
-      60,
-    )) as VaultExtensionResponse
+    const vaultExtension = (await client.queryContractSmart(vaultAddress, {
+      vault_extension: { lockup: { unlocking_position: { lockup_id: unlockingId } } },
+    })) as VaultExtensionResponse
 
     return Number(vaultExtension.release_at.at_time) / 1e6
   } catch (ex) {
