@@ -16,7 +16,11 @@ import useSlippage from 'hooks/settings/useSlippage'
 import useVaults from 'hooks/vaults/useVaults'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { calculateAccountLeverage, cloneAccount } from 'utils/accounts'
+import {
+  calculateAccountBalanceValue,
+  calculateAccountLeverage,
+  cloneAccount,
+} from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { getAstroLpCoinsFromShares, getAstroLpSharesFromCoinsValue } from 'utils/astroLps'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
@@ -453,7 +457,8 @@ export function useUpdatedAccount(account?: Account) {
     accountCopy.stakedAstroLps = removeCoins(removedStakedAstroLps, [...accountCopy.stakedAstroLps])
 
     setUpdatedAccount(accountCopy)
-    setLeverage(calculateAccountLeverage(accountCopy, assets).toNumber())
+    const accountBalanceValue = calculateAccountBalanceValue(accountCopy, assets)
+    setLeverage(calculateAccountLeverage(accountCopy, assets, accountBalanceValue).toNumber())
     useStore.setState({ updatedAccount: accountCopy })
 
     return () => useStore.setState({ updatedAccount: undefined })

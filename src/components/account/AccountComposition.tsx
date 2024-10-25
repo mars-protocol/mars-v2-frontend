@@ -8,7 +8,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ArrowRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
-import { BN_ZERO, MAX_AMOUNT_DECIMALS } from 'constants/math'
+import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
@@ -16,16 +16,13 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import {
-  calculateAccountApy,
-  getAccountDebtValue,
-  getAccountTotalValue,
-  getAccountUnrealizedPnlValue,
-} from 'utils/accounts'
+import { getAccountSummaryStats, getAccountUnrealizedPnlValue } from 'utils/accounts'
+import useAssetParams from 'hooks/params/useAssetParams'
 
 interface Props {
   account: Account
 }
+
 interface ItemProps {
   title: string
   current: BigNumber
@@ -45,8 +42,10 @@ export default function AccountComposition(props: Props) {
     account,
     updatedAccount,
   })
+
   const astroLpAprs = useAstroLpAprs()
   const assets = useWhitelistedAssets()
+  console.log('assets', assets)
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
@@ -55,17 +54,64 @@ export default function AccountComposition(props: Props) {
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
   )
+  const assetParams = useAssetParams()
 
-  const debtsBalance = useMemo(() => getAccountDebtValue(account, assets), [account, assets])
-  const totalBalance = useMemo(() => getAccountTotalValue(account, assets), [account, assets])
-  const updatedDebtsBalance = useMemo(
-    () => getAccountDebtValue(updatedAccount ?? account, assets),
-    [updatedAccount, account, assets],
+  const { positionValue, debts, netWorth, collateralValue, apy, leverage } = useMemo(
+    () =>
+      getAccountSummaryStats(
+        account,
+        borrowAssetsData,
+        lendingAssetsData,
+        assets,
+        vaultAprs,
+        astroLpAprs,
+        assetParams.data || [],
+      ),
+    [account, assets, borrowAssetsData, lendingAssetsData, vaultAprs, astroLpAprs, assetParams],
   )
-  const updatedPositionValue = useMemo(
-    () => getAccountTotalValue(updatedAccount ?? account, assets),
-    [updatedAccount, account, assets],
-  )
+
+  const {
+    positionValue: updatedPositionValue,
+    debts: updatedDebts,
+    netWorth: updatedNetWorth,
+    collateralValue: updatedCollateralValue,
+    apy: updatedApy,
+    leverage: updatedLeverage,
+  } = useMemo(() => {
+    if (!updatedAccount) {
+      return {
+        positionValue,
+        debts,
+        netWorth,
+        collateralValue,
+        apy,
+        leverage,
+      }
+    }
+    return getAccountSummaryStats(
+      updatedAccount,
+      borrowAssetsData,
+      lendingAssetsData,
+      assets,
+      vaultAprs,
+      astroLpAprs,
+      assetParams.data || [],
+    )
+  }, [
+    updatedAccount,
+    borrowAssetsData,
+    lendingAssetsData,
+    assets,
+    vaultAprs,
+    astroLpAprs,
+    positionValue,
+    debts,
+    netWorth,
+    collateralValue,
+    apy,
+    leverage,
+    assetParams,
+  ])
 
   const totalUnrealizedPnl = useMemo(
     () => getAccountUnrealizedPnlValue(account, assets),
@@ -77,45 +123,24 @@ export default function AccountComposition(props: Props) {
     [updatedAccount, account, assets],
   )
 
-  const apy = useMemo(
-    () =>
-      calculateAccountApy(
-        account,
-        borrowAssetsData,
-        lendingAssetsData,
-        assets,
-        vaultAprs,
-        astroLpAprs,
-      ),
-    [account, assets, borrowAssetsData, lendingAssetsData, vaultAprs, astroLpAprs],
-  )
-  const updatedApy = useMemo(
-    () =>
-      updatedAccount
-        ? calculateAccountApy(
-            updatedAccount,
-            borrowAssetsData,
-            lendingAssetsData,
-            assets,
-            vaultAprs,
-            astroLpAprs,
-          )
-        : BN_ZERO,
-    [updatedAccount, borrowAssetsData, lendingAssetsData, assets, vaultAprs, astroLpAprs],
-  )
-
   return (
     <div className='flex-wrap w-full p-4 pb-1'>
       <Item
         title='Total Balance'
-        current={totalBalance}
-        change={hasChanged ? updatedPositionValue : totalBalance}
+        current={positionValue.amount}
+        change={hasChanged ? updatedPositionValue.amount : positionValue.amount}
+        className='pb-3'
+      />
+      <Item
+        title='Collateral Power'
+        current={collateralValue.amount}
+        change={hasChanged ? updatedCollateralValue.amount : collateralValue.amount}
         className='pb-3'
       />
       <Item
         title='Total Debt'
-        current={debtsBalance}
-        change={hasChanged ? updatedDebtsBalance : debtsBalance}
+        current={debts.amount}
+        change={hasChanged ? updatedDebts.amount : debts.amount}
         className='pb-3'
         isDecrease
       />
