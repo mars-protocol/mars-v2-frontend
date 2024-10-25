@@ -470,7 +470,7 @@ export function getAccountSummaryStats(
       .plus(calculateAccountValue('stakedAstroLps', account, [asset], true))
 
     const assetParam = assetParams?.find((param) => param.denom === asset.denom)
-    const maxLoanToValue = assetParam ? BN(assetParam.max_loan_to_value) : BN_ZERO
+    const maxLoanToValue = assetParam ? BN(assetParam.liquidation_threshold) : BN_ZERO
 
     return acc.plus(assetValue.multipliedBy(maxLoanToValue))
   }, BN_ZERO)
