@@ -34,6 +34,7 @@ import {
   calculateAccountBalanceValue,
   calculateAccountLeverage,
 } from 'utils/accounts'
+import useAssetParams from 'hooks/params/useAssetParams'
 
 interface Props {
   account: Account
@@ -73,6 +74,7 @@ function AccountDetails(props: Props) {
     LocalStorageKeys.REDUCE_MOTION,
     getDefaultChainSettings(chainConfig).reduceMotion,
   )
+  const assetParams = useAssetParams()
   const updatedAccount = useStore((s) => s.updatedAccount)
   const accountDetailsExpanded = useStore((s) => s.accountDetailsExpanded)
   const { health, healthFactor } = useHealthComputer(account)
@@ -87,19 +89,25 @@ function AccountDetails(props: Props) {
   )
   const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalanceValue)
   const leverage = useMemo(
-    () => calculateAccountLeverage(account, [...whitelistedAssets, ...perpsAssets]),
-    [account, whitelistedAssets, perpsAssets],
+    () =>
+      calculateAccountLeverage(
+        account,
+        [...whitelistedAssets, ...perpsAssets],
+        accountBalanceValue,
+      ),
+    [account, whitelistedAssets, perpsAssets, accountBalanceValue],
   )
   const updatedLeverage = useMemo(() => {
     if (!updatedAccount) return null
-    const updatedLeverage = calculateAccountLeverage(updatedAccount, [
-      ...whitelistedAssets,
-      ...perpsAssets,
-    ])
+    const updatedLeverage = calculateAccountLeverage(
+      updatedAccount,
+      [...whitelistedAssets, ...perpsAssets],
+      accountBalanceValue,
+    )
 
     if (updatedLeverage.eq(leverage)) return null
     return updatedLeverage
-  }, [updatedAccount, leverage, whitelistedAssets, perpsAssets])
+  }, [updatedAccount, leverage, whitelistedAssets, accountBalanceValue, perpsAssets])
 
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
@@ -201,7 +209,7 @@ function AccountDetails(props: Props) {
                 Leverage
               </Text>
               <AccountSummaryLeverage
-                leverage={leverage.toNumber() || 1}
+                leverage={leverage?.toNumber() || 1}
                 updatedLeverage={updatedLeverage?.toNumber() || null}
               />
             </div>
