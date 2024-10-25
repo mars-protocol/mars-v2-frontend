@@ -690,11 +690,11 @@ function getMutationKeyFromTransactionCoinType(
       break
     case 'vault':
       mutationKeys.push(
-        `chains/${chainConfig.id}/perps/vault`,
         `chains/${chainConfig.id}/vaults/##ACCOUNTORWALLET##/deposited`,
-        `chains/${chainConfig.id}/vaults/aprs`,
         `chains/${chainConfig.id}/vaults/##ACCOUNTORWALLET##`,
         `chains/${chainConfig.id}/vaults`,
+        `chains/${chainConfig.id}/vaults/aprs`,
+        `chains/${chainConfig.id}/perps/vault`,
       )
       break
     case 'claim_rewards':
