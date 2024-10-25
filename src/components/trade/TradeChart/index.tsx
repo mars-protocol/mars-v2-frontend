@@ -30,7 +30,7 @@ import {
   ResolutionString,
   widget,
 } from 'utils/charting_library'
-import { magnify } from 'utils/formatters'
+import { formatValue, magnify } from 'utils/formatters'
 import { getTradingViewSettings } from 'utils/theme'
 
 interface Props {
@@ -44,6 +44,17 @@ interface Props {
 }
 
 let chartWidget: IChartingLibraryWidget
+
+function getLimitOrderText(order: PerpPositionRow, buyAsset: Asset) {
+  const prefix = order.tradeDirection === 'long' ? '+' : '-'
+  const amount = formatValue(order.amount.shiftedBy(-buyAsset.decimals).toNumber(), {
+    maxDecimals: buyAsset.decimals,
+    minDecimals: 0,
+    abbreviated: false,
+  })
+
+  return `Limit: ${prefix}${amount} ${buyAsset.symbol}`
+}
 
 export default function TradeChart(props: Props) {
   const chainConfig = useChainConfig()
@@ -95,13 +106,19 @@ export default function TradeChart(props: Props) {
           lock: true,
           disableSelection: true,
           zOrder: 'top',
+          text: 'Entry',
           overrides: {
             linecolor:
               tradeDirection === 'long'
                 ? settings.chartStyle.upColor
                 : settings.chartStyle.downColor,
+            textcolor:
+              tradeDirection === 'long'
+                ? settings.chartStyle.upColor
+                : settings.chartStyle.downColor,
             linestyle: 0,
             linewidth: 1,
+            showLabel: true,
           },
         },
       )
@@ -138,11 +155,18 @@ export default function TradeChart(props: Props) {
             lock: true,
             disableSelection: true,
             zOrder: 'top',
+
+            text: getLimitOrderText(order, props.buyAsset),
             overrides: {
               linecolor:
                 order.tradeDirection === 'long'
                   ? settings.chartStyle.upColor
                   : settings.chartStyle.downColor,
+              textcolor:
+                order.tradeDirection === 'long'
+                  ? settings.chartStyle.upColor
+                  : settings.chartStyle.downColor,
+              showLabel: true,
               linestyle: 2,
               linewidth: 1,
             },
@@ -150,14 +174,7 @@ export default function TradeChart(props: Props) {
         )
       })
     }
-  }, [
-    entryPrice,
-    liquidationPrice,
-    props.buyAsset.decimals,
-    props.limitOrders,
-    theme,
-    tradeDirection,
-  ])
+  }, [entryPrice, liquidationPrice, props.buyAsset, props.limitOrders, theme, tradeDirection])
 
   // TV initialization
   useEffect(() => {
