@@ -19,6 +19,7 @@ import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { getRoute } from 'utils/route'
+import useAssetParams from 'hooks/params/useAssetParams'
 
 interface Props {
   accountId: string
@@ -41,6 +42,7 @@ export default function PortfolioCard(props: Props) {
     LocalStorageKeys.REDUCE_MOTION,
     getDefaultChainSettings(chainConfig).reduceMotion,
   )
+  const assetParams = useAssetParams()
 
   const stats: { title: ReactNode; sub: string }[] = useMemo(() => {
     if (!account || !assets.length || !lendingAssets.length || !borrowAssets.length) {
@@ -50,7 +52,6 @@ export default function PortfolioCard(props: Props) {
         { title: <Loading />, sub: 'APY' },
       ]
     }
-
     const { netWorth, apy, leverage } = getAccountSummaryStats(
       account as Account,
       borrowAssets,
@@ -58,6 +59,7 @@ export default function PortfolioCard(props: Props) {
       assets,
       vaultAprs,
       astroLpAprs,
+      assetParams.data || [],
     )
 
     return [
@@ -74,7 +76,7 @@ export default function PortfolioCard(props: Props) {
         sub: 'APY',
       },
     ]
-  }, [account, assets, borrowAssets, lendingAssets, vaultAprs, astroLpAprs])
+  }, [account, assets, borrowAssets, lendingAssets, vaultAprs, astroLpAprs, assetParams.data])
 
   if (!account) {
     return (

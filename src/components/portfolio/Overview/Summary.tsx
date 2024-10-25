@@ -15,6 +15,7 @@ import useStore from 'store'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 import { mergeBNCoinArrays } from 'utils/helpers'
+import useAssetParams from 'hooks/params/useAssetParams'
 
 export default function PortfolioSummary() {
   const { address: urlAddress } = useParams()
@@ -27,6 +28,7 @@ export default function PortfolioSummary() {
   const { data: vaultAprs } = useVaultAprs()
   const assets = useWhitelistedAssets()
   const astroLpAprs = useAstroLpAprs()
+  const assetParams = useAssetParams()
 
   const allAccounts = useMemo(() => {
     return [...(defaultAccounts || []), ...(hlsAccounts || [])]
@@ -59,14 +61,16 @@ export default function PortfolioSummary() {
       } as Account,
     )
 
-    const { positionValue, debts, netWorth, apy, leverage } = getAccountSummaryStats(
-      combinedAccount,
-      borrowAssets,
-      lendingAssets,
-      assets,
-      vaultAprs,
-      astroLpAprs,
-    )
+    const { positionValue, debts, netWorth, collateralValue, apy, leverage } =
+      getAccountSummaryStats(
+        combinedAccount,
+        borrowAssets,
+        lendingAssets,
+        assets,
+        vaultAprs,
+        astroLpAprs,
+        assetParams.data || [],
+      )
 
     return [
       {
@@ -74,12 +78,16 @@ export default function PortfolioSummary() {
         sub: DEFAULT_PORTFOLIO_STATS[0].sub,
       },
       {
-        title: <DisplayCurrency className='text-xl' coin={debts} />,
+        title: <DisplayCurrency className='text-xl' coin={collateralValue} />,
         sub: DEFAULT_PORTFOLIO_STATS[1].sub,
       },
       {
-        title: <DisplayCurrency className='text-xl' coin={netWorth} />,
+        title: <DisplayCurrency className='text-xl' coin={debts} />,
         sub: DEFAULT_PORTFOLIO_STATS[2].sub,
+      },
+      {
+        title: <DisplayCurrency className='text-xl' coin={netWorth} />,
+        sub: DEFAULT_PORTFOLIO_STATS[3].sub,
       },
       {
         title: (
@@ -106,7 +114,7 @@ export default function PortfolioSummary() {
         sub: 'Combined leverage',
       },
     ]
-  }, [allAccounts, assets, borrowAssets, lendingAssets, vaultAprs, astroLpAprs])
+  }, [allAccounts, assets, borrowAssets, lendingAssets, vaultAprs, astroLpAprs, assetParams])
 
   if (!walletAddress && !urlAddress) return null
 

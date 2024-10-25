@@ -12,6 +12,7 @@ import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
+import useAssetParams from 'hooks/params/useAssetParams'
 
 interface Props {
   account: Account
@@ -27,18 +28,20 @@ function Content(props: Props) {
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const assets = useWhitelistedAssets()
   const astroLpAprs = useAstroLpAprs()
+  const assetParams = useAssetParams()
 
   const stats = useMemo(() => {
     if (!account || !borrowAssets.length || !lendingAssets.length) return DEFAULT_PORTFOLIO_STATS
-
-    const { positionValue, debts, netWorth, apy, leverage } = getAccountSummaryStats(
-      account,
-      borrowAssets,
-      lendingAssets,
-      assets,
-      vaultAprs,
-      astroLpAprs,
-    )
+    const { positionValue, collateralValue, debts, netWorth, apy, leverage } =
+      getAccountSummaryStats(
+        account,
+        borrowAssets,
+        lendingAssets,
+        assets,
+        vaultAprs,
+        astroLpAprs,
+        assetParams.data || [],
+      )
 
     return [
       {
@@ -46,12 +49,16 @@ function Content(props: Props) {
         sub: DEFAULT_PORTFOLIO_STATS[0].sub,
       },
       {
-        title: <DisplayCurrency className='text-xl' coin={debts} />,
+        title: <DisplayCurrency className='text-xl' coin={collateralValue} />,
         sub: DEFAULT_PORTFOLIO_STATS[1].sub,
       },
       {
-        title: <DisplayCurrency className='text-xl' coin={netWorth} />,
+        title: <DisplayCurrency className='text-xl' coin={debts} />,
         sub: DEFAULT_PORTFOLIO_STATS[2].sub,
+      },
+      {
+        title: <DisplayCurrency className='text-xl' coin={netWorth} />,
+        sub: DEFAULT_PORTFOLIO_STATS[3].sub,
       },
       {
         title: (
@@ -65,7 +72,7 @@ function Content(props: Props) {
             }}
           />
         ),
-        sub: DEFAULT_PORTFOLIO_STATS[3].sub,
+        sub: DEFAULT_PORTFOLIO_STATS[4].sub,
       },
       {
         title: (
@@ -75,10 +82,10 @@ function Content(props: Props) {
             options={{ suffix: 'x' }}
           />
         ),
-        sub: props.v1 ? 'Total Leverage' : DEFAULT_PORTFOLIO_STATS[4].sub,
+        sub: props.v1 ? 'Total Leverage' : DEFAULT_PORTFOLIO_STATS[5].sub,
       },
     ]
-  }, [account, assets, borrowAssets, lendingAssets, vaultAprs, props.v1, astroLpAprs])
+  }, [account, assets, borrowAssets, lendingAssets, vaultAprs, props.v1, astroLpAprs, assetParams])
 
   return (
     <Skeleton
