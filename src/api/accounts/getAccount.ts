@@ -1,4 +1,3 @@
-import { cacheFn, positionsCache, vaultPositionResponse } from 'api/cache'
 import { getCreditManagerQueryClient, getPerpsQueryClient } from 'api/cosmwasm-client'
 import getDepositedVaults from 'api/vaults/getDepositedVaults'
 import { Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
@@ -16,19 +15,12 @@ export default async function getAccount(
   const isPerpsEnabled = chainConfig.perps
   const creditManagerQueryClient = await getCreditManagerQueryClient(chainConfig)
 
-  const accountPosition: Positions = await cacheFn(
-    () => creditManagerQueryClient.positions({ accountId }),
-    positionsCache,
-    `${chainConfig.id}/account/${accountId}`,
-  )
+  const accountPosition: Positions = await creditManagerQueryClient.positions({ accountId })
+
   let perpsVaultPosition = null
   if (isPerpsEnabled && address) {
     const perpsQueryClient = await getPerpsQueryClient(chainConfig)
-    perpsVaultPosition = await cacheFn(
-      () => perpsQueryClient.vaultPosition({ accountId, userAddress: address }),
-      vaultPositionResponse,
-      `${chainConfig.id}/perpsVaultPosition/account/${accountId}`,
-    )
+    perpsVaultPosition = await perpsQueryClient.vaultPosition({ accountId, userAddress: address })
   }
 
   const accountKind = await creditManagerQueryClient.accountKind({ accountId: accountId })

@@ -32,6 +32,7 @@ export default function useDepositedVaults(accountId: string) {
       return vaults
     },
     {
+      refreshInterval: 5_000,
       suspense: true,
       revalidateOnFocus: false,
       fallbackData: [],
