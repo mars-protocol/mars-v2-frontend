@@ -1,23 +1,30 @@
-import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
-import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
+import EditDescription from 'components/vaults/community/vaultDetails/common/Overlays/EditDescription'
+import EditPerformanceFee from 'components/vaults/community/vaultDetails/common/Overlays/EditPerformanceFee'
 import PositionInfo from 'components/vaults/community/vaultDetails/common/PositionInfo'
-import { ArrowDownLine } from 'components/common/Icons'
-import useStore from 'store'
 import ProfileVaultCard from 'components/vaults/community/vaultDetails/profileVaultCard/ProfileVaultCard'
-import { vaultProfileData } from 'components/vaults/dummyData'
-import EditDescription from './profileVaultCard/EditDescription'
+import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
+import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
+import useStore from 'store'
 import useToggle from 'hooks/common/useToggle'
+import { ArrowDownLine } from 'components/common/Icons'
 import { useState } from 'react'
+import { vaultProfileData } from 'components/vaults/dummyData'
 
 export default function VaultDetails() {
   // temp solution
   const address = useStore((s) => s.address)
-  const [showEditModal, setShowEditModal] = useToggle()
-  const [description, setDescription] = useState(vaultProfileData.description)
+  const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
+  const [showEditFeeModal, setShowEditFeeModal] = useToggle()
+  const [description, setDescription] = useState<string>(vaultProfileData.description)
 
   const handleUpdateDescription = (newDescription: string) => {
-    setDescription(description)
-    setShowEditModal(false)
+    setDescription(newDescription)
+    setShowEditDescriptionModal(false)
+  }
+
+  const handleUpdateFee = (newFee: string) => {
+    // setDescription(newFee)
+    setShowEditFeeModal(false)
   }
 
   return (
@@ -32,18 +39,24 @@ export default function VaultDetails() {
             tvl={vaultProfileData.tvl}
             accuredPnl={vaultProfileData.accuredPnl}
             wallet={vaultProfileData.wallet}
-            description={vaultProfileData.description}
+            description={description}
             avatarUrl={vaultProfileData.avatarUrl}
             onDelete={() => console.log('Delete clicked')}
-            onEdit={() => setShowEditModal(true)}
+            onEdit={() => setShowEditDescriptionModal(true)}
             address={address}
           />
         </div>
+
         <EditDescription
-          showEditModal={showEditModal}
-          setShowEditModal={setShowEditModal}
+          showEditDescriptionModal={showEditDescriptionModal}
+          setShowEditDescriptionModal={setShowEditDescriptionModal}
           description={description}
           onUpdateDescription={handleUpdateDescription}
+        />
+
+        <EditPerformanceFee
+          showEditFeeModal={showEditFeeModal}
+          setShowEditFeeModal={setShowEditFeeModal}
         />
 
         <div className='md:w-180'>
@@ -56,7 +69,7 @@ export default function VaultDetails() {
                 primaryButton={{
                   text: 'Edit Fee',
                   color: 'secondary',
-                  onClick: () => console.log('Edit Fee clicked'),
+                  onClick: () => setShowEditFeeModal(true),
                   // TODO: conditional disable
                 }}
                 secondaryButton={{
