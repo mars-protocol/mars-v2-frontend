@@ -26,7 +26,7 @@ export default function StrategyAndValue(props: Props) {
 
   return (
     <div className='flex flex-wrap'>
-      <Text size='xs' className='w-full text-white'>
+      <Text size='xs' className='w-full text-white opacity-60'>
         {name}
       </Text>
       <DisplayCurrency

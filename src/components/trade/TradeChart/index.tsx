@@ -45,7 +45,31 @@ interface Props {
 
 let chartWidget: IChartingLibraryWidget
 
-function getLimitOrderText(order: PerpPositionRow, buyAsset: Asset) {
+function getLimitOrderText(
+  order: PerpPositionRow,
+  buyAsset: Asset,
+  currentPosition: 'long' | 'short' | null,
+  positionAmount: BigNumber | null,
+) {
+  let label = 'Limit'
+
+  if (currentPosition) {
+    if (currentPosition === 'long') {
+      label = order.tradeDirection === 'short' ? 'Take Profit' : 'Stop Loss'
+    } else {
+      label = order.tradeDirection === 'long' ? 'Take Profit' : 'Stop Loss'
+    }
+  }
+
+  if (positionAmount && order.amount.abs().eq(positionAmount.abs())) {
+    const isClosing =
+      (currentPosition === 'long' && order.tradeDirection === 'short') ||
+      (currentPosition === 'short' && order.tradeDirection === 'long')
+    if (isClosing) {
+      label = 'Close Position'
+    }
+  }
+
   const prefix = order.tradeDirection === 'long' ? '+' : '-'
   const amount = formatValue(order.amount.shiftedBy(-buyAsset.decimals).toNumber(), {
     maxDecimals: buyAsset.decimals,
@@ -53,7 +77,7 @@ function getLimitOrderText(order: PerpPositionRow, buyAsset: Asset) {
     abbreviated: false,
   })
 
-  return `Limit: ${prefix}${amount} ${buyAsset.symbol}`
+  return `${label}: ${prefix}${amount} ${buyAsset.symbol}`
 }
 
 export default function TradeChart(props: Props) {
@@ -144,10 +168,15 @@ export default function TradeChart(props: Props) {
       )
     }
     if (props.limitOrders) {
+      const currentPosition = props.perpsPosition?.amount.isGreaterThan(0) ? 'long' : 'short'
+      const positionAmount = props.perpsPosition?.amount || null
+
       props.limitOrders.forEach((order) => {
+        const price = order.entryPrice.shiftedBy(oraclePriceDecimalDiff).toNumber()
+
         chart.createShape(
           {
-            price: order.entryPrice.shiftedBy(oraclePriceDecimalDiff).toNumber(),
+            price: price,
             time: moment().unix(),
           },
           {
@@ -155,8 +184,7 @@ export default function TradeChart(props: Props) {
             lock: true,
             disableSelection: true,
             zOrder: 'top',
-
-            text: getLimitOrderText(order, props.buyAsset),
+            text: getLimitOrderText(order, props.buyAsset, currentPosition, positionAmount),
             overrides: {
               linecolor:
                 order.tradeDirection === 'long'
@@ -174,7 +202,15 @@ export default function TradeChart(props: Props) {
         )
       })
     }
-  }, [entryPrice, liquidationPrice, props.buyAsset, props.limitOrders, theme, tradeDirection])
+  }, [
+    entryPrice,
+    liquidationPrice,
+    props.buyAsset,
+    props.limitOrders,
+    props.perpsPosition,
+    theme,
+    tradeDirection,
+  ])
 
   // TV initialization
   useEffect(() => {
