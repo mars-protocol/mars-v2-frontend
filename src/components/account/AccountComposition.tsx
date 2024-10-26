@@ -45,7 +45,6 @@ export default function AccountComposition(props: Props) {
 
   const astroLpAprs = useAstroLpAprs()
   const assets = useWhitelistedAssets()
-  console.log('assets', assets)
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =

@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { ReactNode, useEffect, useMemo, useRef } from 'react'
+import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react'
 import { isMobile } from 'react-device-detect'
 
 import Card from 'components/common/Card'
@@ -19,11 +19,18 @@ import {
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import moment from 'moment'
 import { BNCoin } from 'types/classes/BNCoin'
-import { ChartingLibraryWidgetOptions, ResolutionString, widget } from 'utils/charting_library'
-import { magnify } from 'utils/formatters'
+import {
+  ChartingLibraryWidgetOptions,
+  IChartingLibraryWidget,
+  ResolutionString,
+  widget,
+} from 'utils/charting_library'
+import { formatValue, magnify } from 'utils/formatters'
 import { getTradingViewSettings } from 'utils/theme'
 
 interface Props {
@@ -31,6 +38,46 @@ interface Props {
   sellAsset: Asset
   title?: ReactNode
   isPerps?: boolean
+  perpsPosition?: PerpsPosition
+  liquidationPrice?: number
+  limitOrders?: PerpPositionRow[]
+}
+
+let chartWidget: IChartingLibraryWidget
+
+function getLimitOrderText(
+  order: PerpPositionRow,
+  buyAsset: Asset,
+  currentPosition: 'long' | 'short' | null,
+  positionAmount: BigNumber | null,
+) {
+  let label = 'Limit'
+
+  if (currentPosition) {
+    if (currentPosition === 'long') {
+      label = order.tradeDirection === 'short' ? 'Take Profit' : 'Stop Loss'
+    } else {
+      label = order.tradeDirection === 'long' ? 'Take Profit' : 'Stop Loss'
+    }
+  }
+
+  if (positionAmount && order.amount.abs().isEqualTo(positionAmount.abs())) {
+    const isClosing =
+      (currentPosition === 'long' && order.tradeDirection === 'short') ||
+      (currentPosition === 'short' && order.tradeDirection === 'long')
+    if (isClosing) {
+      label = 'Close Position'
+    }
+  }
+
+  const prefix = order.tradeDirection === 'long' ? '+' : '-'
+  const amount = formatValue(order.amount.shiftedBy(-buyAsset.decimals).toNumber(), {
+    maxDecimals: buyAsset.decimals,
+    minDecimals: 0,
+    abbreviated: false,
+  })
+
+  return `${label}: ${prefix}${amount} ${buyAsset.symbol}`
 }
 
 export default function TradeChart(props: Props) {
@@ -43,6 +90,7 @@ export default function TradeChart(props: Props) {
     LocalStorageKeys.THEME,
     getDefaultChainSettings(chainConfig).theme,
   )
+
   const [ratio, priceBuyAsset, priceSellAsset] = useMemo(() => {
     const priceBuyAsset = props.buyAsset?.price?.amount
     const priceSellAsset = props.sellAsset?.price?.amount
@@ -53,6 +101,107 @@ export default function TradeChart(props: Props) {
 
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
 
+  const [liquidationPrice, entryPrice, tradeDirection] = useMemo(() => {
+    if (!props.isPerps || !props.perpsPosition?.entryPrice) return [null, null, 'long']
+
+    const oraclePriceDecimalDiff = props.buyAsset.decimals - PRICE_ORACLE_DECIMALS
+    const entryPrice = props.perpsPosition.entryPrice.shiftedBy(oraclePriceDecimalDiff)
+    const liquidationPrice = props.liquidationPrice
+    const tradeDirection = props.perpsPosition.amount.isGreaterThan(0) ? 'long' : 'short'
+
+    return [liquidationPrice, entryPrice.toNumber(), tradeDirection]
+  }, [props.buyAsset.decimals, props.isPerps, props.liquidationPrice, props.perpsPosition])
+
+  const updateShapes = useCallback(() => {
+    const chart = chartWidget.activeChart()
+    const settings = getTradingViewSettings(theme)
+    const oraclePriceDecimalDiff = props.buyAsset.decimals - PRICE_ORACLE_DECIMALS
+    const { downColor, upColor } = settings.chartStyle
+
+    const allShapes = chart.getAllShapes()
+    allShapes.forEach((shape) => {
+      if (shape.name === 'horizontal_line') chart.removeEntity(shape.id)
+    })
+
+    if (entryPrice) {
+      chart.createShape(
+        { price: entryPrice, time: moment().unix() },
+        {
+          shape: 'horizontal_line',
+          lock: true,
+          disableSelection: true,
+          zOrder: 'top',
+          text: 'Entry',
+          overrides: {
+            linecolor: tradeDirection === 'long' ? upColor : downColor,
+            textcolor: tradeDirection === 'long' ? upColor : downColor,
+            linestyle: 0,
+            linewidth: 1,
+            showLabel: true,
+          },
+        },
+      )
+    }
+
+    if (liquidationPrice) {
+      chart.createShape(
+        { price: liquidationPrice, time: moment().unix() },
+        {
+          shape: 'horizontal_line',
+          lock: true,
+          disableSelection: true,
+          text: 'Liquidation',
+          zOrder: 'top',
+          overrides: {
+            linecolor: '#fdb021',
+            linestyle: 0,
+            linewidth: 1,
+            textcolor: '#fdb021',
+            showLabel: true,
+          },
+        },
+      )
+    }
+    if (props.limitOrders) {
+      const currentPosition = props.perpsPosition?.amount.isGreaterThan(0) ? 'long' : 'short'
+      const positionAmount = props.perpsPosition?.amount || null
+
+      props.limitOrders.forEach((order) => {
+        const price = order.entryPrice.shiftedBy(oraclePriceDecimalDiff).toNumber()
+
+        chart.createShape(
+          {
+            price: price,
+            time: moment().unix(),
+          },
+          {
+            shape: 'horizontal_line',
+            lock: true,
+            disableSelection: true,
+            zOrder: 'top',
+            text: getLimitOrderText(order, props.buyAsset, currentPosition, positionAmount),
+            overrides: {
+              linecolor: order.tradeDirection === 'long' ? upColor : downColor,
+              textcolor: order.tradeDirection === 'long' ? upColor : downColor,
+              showLabel: true,
+              linestyle: 2,
+              linewidth: 1,
+            },
+          },
+        )
+      })
+    }
+  }, [
+    entryPrice,
+    liquidationPrice,
+    props.buyAsset,
+    props.limitOrders,
+    props.perpsPosition,
+    theme,
+    tradeDirection,
+  ])
+
+  // TV initialization
   useEffect(() => {
     if (
       typeof window === 'undefined' ||
@@ -90,10 +239,9 @@ export default function TradeChart(props: Props) {
       custom_css_url: settings.stylesheet,
     }
 
-    const tvWidget = new widget(widgetOptions)
-
-    tvWidget.onChartReady(() => {
-      const chart = tvWidget.chart()
+    chartWidget = new widget(widgetOptions)
+    chartWidget.onChartReady(() => {
+      const chart = chartWidget.chart()
       chart.getSeries().setChartStyleProperties(1, settings.chartStyle)
     })
 
@@ -108,7 +256,7 @@ export default function TradeChart(props: Props) {
     }
 
     return () => {
-      tvWidget.remove()
+      chartWidget.remove()
     }
   }, [
     chartInterval,
@@ -117,7 +265,22 @@ export default function TradeChart(props: Props) {
     props.buyAsset.symbol,
     props.buyAsset.denom,
     props.buyAsset.pythFeedName,
+    props.buyAsset.decimals,
   ])
+
+  // ChartWidget listeners
+  useEffect(() => {
+    if (!chartWidget || !props.isPerps) return
+    chartWidget.onChartReady(() => {
+      updateShapes()
+      chartWidget
+        .activeChart()
+        .onIntervalChanged()
+        .subscribe(null, () => {
+          updateShapes()
+        })
+    })
+  }, [props.isPerps, updateShapes])
 
   return (
     <Card
