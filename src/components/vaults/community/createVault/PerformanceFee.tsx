@@ -51,7 +51,7 @@ export default function PerformanceFee() {
           <Button
             onClick={(event) => handleFeeClick(fee.value, event)}
             variant='solid'
-            color='tertiary'
+            color='secondary'
             size='sm'
             className={classNames('w-full min-w-0', feeValue.isEqualTo(fee.value) && 'bg-white/20')}
             text={fee.label}

@@ -19,6 +19,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import TextArea from 'components/common/TextArea'
 import useAccountId from 'hooks/accounts/useAccountId'
+import CharacterCount from 'components/common/CharacterCount'
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -146,6 +147,7 @@ export default function CreateVault() {
                 maxLength={240}
                 placeholder='Enter a detailed description...'
                 required
+                footer={<CharacterCount value={description} maxLength={240} size='xs' />}
               />
             </div>
 

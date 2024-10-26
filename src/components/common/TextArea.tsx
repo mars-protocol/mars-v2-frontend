@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import Text from 'components/common/Text'
+import { ReactNode } from 'react'
 
 interface Props {
   value: string
@@ -8,10 +8,11 @@ interface Props {
   onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
   className?: string
   required?: boolean
+  footer?: ReactNode
 }
 
 export default function TextArea(props: Props) {
-  const { value, maxLength, placeholder, onChange, className, required = false } = props
+  const { value, maxLength, placeholder, onChange, className, required = false, footer } = props
 
   return (
     <>
@@ -26,20 +27,7 @@ export default function TextArea(props: Props) {
           className,
         )}
       />
-      {maxLength && (
-        <Text size='xs' className='mt-1 text-white/30 text-right'>
-          <span
-            className={classNames('text-xs mt-1', {
-              'text-white/30': value.length <= 200,
-              'text-warning': value.length > 200 && value.length < maxLength,
-              'text-error': value.length >= maxLength,
-            })}
-          >
-            {value.length}
-          </span>
-          /{maxLength}
-        </Text>
-      )}
+      {footer && <div className='mt-1'>{footer}</div>}
     </>
   )
 }
