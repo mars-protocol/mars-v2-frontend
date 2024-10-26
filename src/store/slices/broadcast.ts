@@ -796,7 +796,7 @@ export default function createBroadcastSlice(
       if (options.autolend)
         triggerActions.push({
           lend: {
-            denom: options.baseDenom,
+            denom: options.keeperFee.denom,
             amount: 'account_balance',
           },
         })
@@ -884,7 +884,7 @@ export default function createBroadcastSlice(
         if (order.autolend)
           triggerActions.push({
             lend: {
-              denom: order.baseDenom,
+              denom: order.keeperFee.denom,
               amount: 'account_balance',
             },
           })
