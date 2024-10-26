@@ -5,6 +5,7 @@ import ProfileVaultCard from 'components/vaults/community/vaultDetails/profileVa
 import VaultAction from 'components/vaults/community/vaultDetails/common/Overlays/VaultAction'
 import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
+import WithdrawFee from 'components/vaults/community/vaultDetails/common/Overlays/WithdrawFee'
 import useStore from 'store'
 import useToggle from 'hooks/common/useToggle'
 import { ArrowDownLine } from 'components/common/Icons'
