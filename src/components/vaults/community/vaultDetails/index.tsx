@@ -4,6 +4,7 @@ import PositionInfo from 'components/vaults/community/vaultDetails/common/Positi
 import ProfileVaultCard from 'components/vaults/community/vaultDetails/profileVaultCard/ProfileVaultCard'
 import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
+import WithdrawFee from 'components/vaults/community/vaultDetails/common/Overlays/WithdrawFee'
 import useStore from 'store'
 import useToggle from 'hooks/common/useToggle'
 import { ArrowDownLine } from 'components/common/Icons'
@@ -15,6 +16,7 @@ export default function VaultDetails() {
   const address = useStore((s) => s.address)
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
   const [showEditFeeModal, setShowEditFeeModal] = useToggle()
+  const [showWithdrawFeeModal, setShowWithdrawFeeModal] = useToggle()
   const [description, setDescription] = useState<string>(vaultProfileData.description)
 
   const handleUpdateDescription = (newDescription: string) => {
@@ -59,6 +61,11 @@ export default function VaultDetails() {
           setShowEditFeeModal={setShowEditFeeModal}
         />
 
+        <WithdrawFee
+          showWithdrawFeeModal={showWithdrawFeeModal}
+          setShowWithdrawFeeModal={setShowWithdrawFeeModal}
+        />
+
         <div className='md:w-180'>
           <div className='relative flex flex-wrap justify-center w-full gap-4'>
             {/* // TODO: update data that can be fetched */}
@@ -74,7 +81,7 @@ export default function VaultDetails() {
                 }}
                 secondaryButton={{
                   text: 'Withdraw',
-                  onClick: () => console.log('Withdraw clicked'),
+                  onClick: () => setShowWithdrawFeeModal(true),
                   rightIcon: <ArrowDownLine />,
                 }}
                 address={address}

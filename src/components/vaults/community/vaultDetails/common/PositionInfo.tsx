@@ -1,7 +1,9 @@
-import { FormattedNumber } from 'components/common/FormattedNumber'
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
+import DisplayCurrency from 'components/common/DisplayCurrency'
 import Text from 'components/common/Text'
+import { BNCoin } from 'types/classes/BNCoin'
+import { BN } from 'utils/helpers'
 
 interface Props {
   value: number
@@ -25,12 +27,11 @@ export default function PositionInfo(props: Props) {
             {isOwner ? 'Performance Fee' : 'My Position'}
           </Text>
           <div className='flex items-baseline gap-2'>
-            <Text size='2xl'>
-              <FormattedNumber
-                amount={value}
-                options={{ minDecimals: 2, maxDecimals: 2, prefix: '$' }}
-              />
-            </Text>
+            <DisplayCurrency
+              coin={BNCoin.fromDenomAndBigNumber('usd', BN(value))}
+              className='text-2xl'
+            />
+
             <Text size='xs' className='text-white/60'>
               {subtitle}
             </Text>
@@ -52,7 +53,7 @@ export default function PositionInfo(props: Props) {
       {isOwner && (
         <div className='bg-black/20 p-2 w-full'>
           <Text size='xs' className='text-white/30 text-center'>
-            Withdrawal fees can be edited when you withdraw.
+            Performance fees can be edited when you withdraw.
           </Text>
         </div>
       )}
