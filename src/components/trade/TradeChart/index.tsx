@@ -61,7 +61,7 @@ function getLimitOrderText(
     }
   }
 
-  if (positionAmount && order.amount.abs().eq(positionAmount.abs())) {
+  if (positionAmount && order.amount.abs().isEqualTo(positionAmount.abs())) {
     const isClosing =
       (currentPosition === 'long' && order.tradeDirection === 'short') ||
       (currentPosition === 'short' && order.tradeDirection === 'long')
@@ -116,6 +116,7 @@ export default function TradeChart(props: Props) {
     const chart = chartWidget.activeChart()
     const settings = getTradingViewSettings(theme)
     const oraclePriceDecimalDiff = props.buyAsset.decimals - PRICE_ORACLE_DECIMALS
+    const { downColor, upColor } = settings.chartStyle
 
     const allShapes = chart.getAllShapes()
     allShapes.forEach((shape) => {
@@ -132,14 +133,8 @@ export default function TradeChart(props: Props) {
           zOrder: 'top',
           text: 'Entry',
           overrides: {
-            linecolor:
-              tradeDirection === 'long'
-                ? settings.chartStyle.upColor
-                : settings.chartStyle.downColor,
-            textcolor:
-              tradeDirection === 'long'
-                ? settings.chartStyle.upColor
-                : settings.chartStyle.downColor,
+            linecolor: tradeDirection === 'long' ? upColor : downColor,
+            textcolor: tradeDirection === 'long' ? upColor : downColor,
             linestyle: 0,
             linewidth: 1,
             showLabel: true,
@@ -186,14 +181,8 @@ export default function TradeChart(props: Props) {
             zOrder: 'top',
             text: getLimitOrderText(order, props.buyAsset, currentPosition, positionAmount),
             overrides: {
-              linecolor:
-                order.tradeDirection === 'long'
-                  ? settings.chartStyle.upColor
-                  : settings.chartStyle.downColor,
-              textcolor:
-                order.tradeDirection === 'long'
-                  ? settings.chartStyle.upColor
-                  : settings.chartStyle.downColor,
+              linecolor: order.tradeDirection === 'long' ? upColor : downColor,
+              textcolor: order.tradeDirection === 'long' ? upColor : downColor,
               showLabel: true,
               linestyle: 2,
               linewidth: 1,
