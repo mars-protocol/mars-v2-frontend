@@ -13,9 +13,8 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { Edit, ExternalLink, TrashBin } from 'components/common/Icons'
+import { ExternalLink, TrashBin } from 'components/common/Icons'
 import { TextLink } from 'components/common/TextLink'
-import EditDescription from './EditDescription'
 
 interface Props {
   vaultName: string
