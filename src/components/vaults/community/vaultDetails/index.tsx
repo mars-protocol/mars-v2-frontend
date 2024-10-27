@@ -2,6 +2,7 @@ import EditDescription from 'components/vaults/community/vaultDetails/common/Ove
 import EditPerformanceFee from 'components/vaults/community/vaultDetails/common/Overlays/EditPerformanceFee'
 import PositionInfo from 'components/vaults/community/vaultDetails/common/PositionInfo'
 import ProfileVaultCard from 'components/vaults/community/vaultDetails/profileVaultCard/ProfileVaultCard'
+import VaultAction from 'components/vaults/community/vaultDetails/common/Overlays/VaultAction'
 import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
 import WithdrawFee from 'components/vaults/community/vaultDetails/common/Overlays/WithdrawFee'
@@ -17,7 +18,9 @@ export default function VaultDetails() {
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
   const [showEditFeeModal, setShowEditFeeModal] = useToggle()
   const [showWithdrawFeeModal, setShowWithdrawFeeModal] = useToggle()
+  const [showActionModal, setShowActionModal] = useToggle()
   const [description, setDescription] = useState<string>(vaultProfileData.description)
+  const [modalType, setModalType] = useState<'deposit' | 'withdraw' | null>(null)
 
   const handleUpdateDescription = (newDescription: string) => {
     setDescription(newDescription)
@@ -25,8 +28,12 @@ export default function VaultDetails() {
   }
 
   const handleUpdateFee = (newFee: string) => {
-    // setDescription(newFee)
     setShowEditFeeModal(false)
+  }
+
+  const handleActionModal = (type: 'deposit' | 'withdraw') => {
+    setModalType(type)
+    setShowActionModal(true)
   }
 
   return (
@@ -66,6 +73,12 @@ export default function VaultDetails() {
           setShowWithdrawFeeModal={setShowWithdrawFeeModal}
         />
 
+        <VaultAction
+          showActionModal={showActionModal}
+          setShowActionModal={setShowActionModal}
+          type={modalType || 'deposit'}
+        />
+
         <div className='md:w-180'>
           <div className='relative flex flex-wrap justify-center w-full gap-4'>
             {/* // TODO: update data that can be fetched */}
@@ -92,12 +105,12 @@ export default function VaultDetails() {
                 subtitle='2% of total vault'
                 primaryButton={{
                   text: 'Deposit',
-                  onClick: () => console.log('Deposit clicked'),
+                  onClick: () => handleActionModal('deposit'),
                 }}
                 secondaryButton={{
                   text: 'Withdraw',
                   color: 'secondary',
-                  onClick: () => console.log('Withdraw clicked'),
+                  onClick: () => handleActionModal('withdraw'),
                   rightIcon: <ArrowDownLine />,
                 }}
                 address={''}
