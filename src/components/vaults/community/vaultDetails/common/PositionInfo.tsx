@@ -26,7 +26,7 @@ export default function PositionInfo(props: Props) {
           <Text size='xs' className='text-white/50'>
             {isOwner ? 'Performance Fee' : 'My Position'}
           </Text>
-          <div className='flex items-baseline gap-2'>
+          <div className='flex flex-col md:flex-row items-baseline md:gap-2'>
             <DisplayCurrency
               coin={BNCoin.fromDenomAndBigNumber('usd', BN(value))}
               className='text-2xl'
