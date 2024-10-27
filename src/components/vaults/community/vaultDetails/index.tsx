@@ -5,7 +5,6 @@ import ProfileVaultCard from 'components/vaults/community/vaultDetails/profileVa
 import VaultAction from 'components/vaults/community/vaultDetails/common/Overlays/VaultAction'
 import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
-import WithdrawFee from 'components/vaults/community/vaultDetails/common/Overlays/WithdrawFee'
 import useStore from 'store'
 import useToggle from 'hooks/common/useToggle'
 import { ArrowDownLine } from 'components/common/Icons'
@@ -80,10 +79,12 @@ export default function VaultDetails() {
         <div className='md:w-180'>
           <div className='relative flex flex-wrap justify-center w-full gap-4'>
             {/* conditional message warning */}
-            <Callout type={CalloutType.WARNING} className='w-full'>
-              The vault does not have enough USDC to service withdrawals and cannot borrow funds due
-              to a low health factor. Please contact the vault owner to resolve.
-            </Callout>
+            {!address && (
+              <Callout type={CalloutType.WARNING} className='w-full'>
+                The vault does not have enough USDC to service withdrawals and cannot borrow funds
+                due to a low health factor. Please contact the vault owner to resolve.
+              </Callout>
+            )}
 
             {/* // TODO: update data that can be fetched */}
             {address ? (
