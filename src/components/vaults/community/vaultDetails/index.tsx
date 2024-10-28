@@ -1,11 +1,10 @@
 import EditDescription from 'components/vaults/community/vaultDetails/common/Overlays/EditDescription'
-import EditPerformanceFee from 'components/vaults/community/vaultDetails/common/Overlays/EditPerformanceFee'
+import FeeAction from 'components/vaults/community/vaultDetails/common/Overlays/FeeAction'
 import PositionInfo from 'components/vaults/community/vaultDetails/common/PositionInfo'
 import ProfileVaultCard from 'components/vaults/community/vaultDetails/profileVaultCard/ProfileVaultCard'
 import VaultAction from 'components/vaults/community/vaultDetails/common/Overlays/VaultAction'
 import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
-import WithdrawFee from 'components/vaults/community/vaultDetails/common/Overlays/WithdrawFee'
 import useStore from 'store'
 import useToggle from 'hooks/common/useToggle'
 import { ArrowDownLine } from 'components/common/Icons'
@@ -16,19 +15,16 @@ export default function VaultDetails() {
   // temp solution
   const address = useStore((s) => s.address)
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
-  const [showEditFeeModal, setShowEditFeeModal] = useToggle()
-  const [showWithdrawFeeModal, setShowWithdrawFeeModal] = useToggle()
+  const [showFeeActionModal, setShowFeeActionModal] = useToggle()
   const [showActionModal, setShowActionModal] = useToggle()
+
   const [description, setDescription] = useState<string>(vaultProfileData.description)
   const [modalType, setModalType] = useState<'deposit' | 'withdraw' | null>(null)
+  const [modalFeeType, setModalFeeType] = useState<'edit' | 'withdraw' | null>(null)
 
   const handleUpdateDescription = (newDescription: string) => {
     setDescription(newDescription)
     setShowEditDescriptionModal(false)
-  }
-
-  const handleUpdateFee = (newFee: string) => {
-    setShowEditFeeModal(false)
   }
 
   const handleActionModal = (type: 'deposit' | 'withdraw') => {
@@ -36,9 +32,13 @@ export default function VaultDetails() {
     setShowActionModal(true)
   }
 
+  const handleFeeActionModal = (type: 'edit' | 'withdraw') => {
+    setModalFeeType(type)
+    setShowFeeActionModal(true)
+  }
+
   return (
-    <div className='h-screen-full md:min-h-[600px] w-screen-full'>
-      {/* <div className='min-h-screen w-screen-full '> */}
+    <div className='min-h-screen md:h-screen-full md:min-h-[600px] w-full'>
       <div className='flex flex-col md:flex-row gap-4 justify-center relative'>
         <div className='md:w-100'>
           {/* TODO: fetch the data */}
@@ -63,14 +63,10 @@ export default function VaultDetails() {
           onUpdateDescription={handleUpdateDescription}
         />
 
-        <EditPerformanceFee
-          showEditFeeModal={showEditFeeModal}
-          setShowEditFeeModal={setShowEditFeeModal}
-        />
-
-        <WithdrawFee
-          showWithdrawFeeModal={showWithdrawFeeModal}
-          setShowWithdrawFeeModal={setShowWithdrawFeeModal}
+        <FeeAction
+          showFeeActionModal={showFeeActionModal}
+          setShowFeeActionModal={setShowFeeActionModal}
+          type={modalFeeType || 'edit'}
         />
 
         <VaultAction
@@ -89,12 +85,12 @@ export default function VaultDetails() {
                 primaryButton={{
                   text: 'Edit Fee',
                   color: 'secondary',
-                  onClick: () => setShowEditFeeModal(true),
+                  onClick: () => handleFeeActionModal('edit'),
                   // TODO: conditional disable
                 }}
                 secondaryButton={{
                   text: 'Withdraw',
-                  onClick: () => setShowWithdrawFeeModal(true),
+                  onClick: () => handleFeeActionModal('withdraw'),
                   rightIcon: <ArrowDownLine />,
                 }}
                 address={address}
