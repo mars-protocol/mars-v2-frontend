@@ -149,3 +149,66 @@ export const vaultProfileData = {
   avatarUrl:
     'https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg',
 }
+
+export const withdrawalsDummyData = [
+  {
+    amount: 49577,
+    initiated: {
+      date: '28 Jun 2024',
+      time: '9:47 PM',
+    },
+    unlockCompletes: {
+      date: '29 Jun 2024',
+      time: '9:47 PM',
+    },
+    status: 'pending',
+  },
+  {
+    amount: 49577,
+    initiated: {
+      date: '28 Jun 2023',
+      time: '9:47 PM',
+    },
+    unlockCompletes: {
+      date: '29 Jun 2023',
+      time: '9:47 PM',
+    },
+    status: 'unlocked',
+  },
+  {
+    amount: 125000,
+    initiated: {
+      date: '27 Jun 2023',
+      time: '2:30 PM',
+    },
+    unlockCompletes: {
+      date: '28 Jun 2023',
+      time: '2:30 PM',
+    },
+    status: 'unlocked',
+  },
+  {
+    amount: 75350,
+    initiated: {
+      date: '26 Jun 2023',
+      time: '11:15 AM',
+    },
+    unlockCompletes: {
+      date: '27 Jun 2023',
+      time: '11:15 AM',
+    },
+    status: 'pending',
+  },
+  {
+    amount: 250000,
+    initiated: {
+      date: '25 Jun 2023',
+      time: '4:20 PM',
+    },
+    unlockCompletes: {
+      date: '26 Jun 2023',
+      time: '4:20 PM',
+    },
+    status: 'unlocked',
+  },
+]
