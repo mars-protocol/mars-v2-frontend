@@ -21,8 +21,6 @@ import useAccountIds from 'hooks/accounts/useAccountIds'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAssets from 'hooks/assets/useAssets'
-import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
@@ -81,8 +79,6 @@ function AccountDetails(props: Props) {
     updatedAccount || account,
   )
   const { data: assets } = useAssets()
-  const whitelistedAssets = useWhitelistedAssets()
-  const perpsAssets = usePerpsEnabledAssets()
   const accountBalanceValue = useMemo(
     () => calculateAccountBalanceValue(updatedAccount ?? account, assets),
     [updatedAccount, account, assets],
@@ -113,19 +109,11 @@ function AccountDetails(props: Props) {
         updatedAccount ?? account,
         borrowAssetsData,
         lendingAssetsData,
-        whitelistedAssets,
+        assets,
         vaultAprs,
         astroLpAprs,
       ),
-    [
-      account,
-      whitelistedAssets,
-      borrowAssetsData,
-      lendingAssetsData,
-      updatedAccount,
-      vaultAprs,
-      astroLpAprs,
-    ],
+    [account, assets, borrowAssetsData, lendingAssetsData, updatedAccount, vaultAprs, astroLpAprs],
   )
   const isFullWidth =
     location.pathname.includes('trade') ||
