@@ -30,7 +30,7 @@ import {
   ResolutionString,
   widget,
 } from 'utils/charting_library'
-import { formatValue, magnify } from 'utils/formatters'
+import { formatValue, getPriceDecimals, magnify } from 'utils/formatters'
 import { getTradingViewSettings } from 'utils/theme'
 
 interface Props {
@@ -309,7 +309,7 @@ export default function TradeChart(props: Props) {
                     prefix: '= ',
                     suffix: ` USD`,
                     abbreviated: false,
-                    maxDecimals: props.buyAsset.decimals,
+                    maxDecimals: getPriceDecimals(props.buyAsset?.price?.amount),
                   }}
                 />
               ) : (
@@ -321,7 +321,7 @@ export default function TradeChart(props: Props) {
                       prefix: '= ',
                       suffix: ` ${props.sellAsset.symbol}`,
                       abbreviated: false,
-                      maxDecimals: props.sellAsset.decimals,
+                      maxDecimals: getPriceDecimals(props.sellAsset.price?.amount),
                     }}
                   />
 

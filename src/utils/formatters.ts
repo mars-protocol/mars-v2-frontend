@@ -49,34 +49,23 @@ export const produceCountdown = (remainingTime: number) => {
   duration.subtract(hours, 'hours')
   const minutes = formatValue(duration.asMinutes(), { minDecimals: 0, maxDecimals: 0 })
 
-  if (days === '0' && hours === '0' && minutes === '0') {
-    duration.subtract(minutes, 'minutes')
-    const seconds = formatValue(duration.asSeconds(), { minDecimals: 0, maxDecimals: 0 })
-    return `${seconds} seconds`
-  }
-
   return `${days}d ${hours}h ${minutes}m`
 }
 
 export const formatValue = (amount: number | string, options?: FormatOptions): string => {
-  const numberOfZeroDecimals: number | null = null
+  let numberOfZeroDecimals: number | null = null
   const minDecimals = options?.minDecimals ?? 2
   const maxDecimals = options?.maxDecimals ?? 2
   let enforcedDecimals = maxDecimals
   const thousandSeparator = options?.thousandSeparator ?? true
 
-  let convertedAmount: string | BigNumber = BN(amount)
-  let returnValue = ''
-
-  if (Math.abs(convertedAmount.toNumber()) > 0 && Math.abs(convertedAmount.toNumber()) < 0.01) {
-    const decimals = getPriceDecimals(convertedAmount)
-    returnValue = convertedAmount.toFormat(decimals, {
-      groupSeparator: thousandSeparator ? ',' : '',
-      decimalSeparator: '.',
-      groupSize: 3,
-    })
-    return options?.suffix ? `${returnValue}${options.suffix}` : returnValue
+  if (typeof amount === 'string') {
+    const decimals = amount.split('.')[1] ?? null
+    if (decimals && Number(decimals) === 0) {
+      numberOfZeroDecimals = decimals.length
+    }
   }
+  let convertedAmount: BigNumber | string = BN(amount).dividedBy(10 ** (options?.decimals ?? 0))
 
   const amountSuffix = options?.abbreviated
     ? convertedAmount.isGreaterThanOrEqualTo(1_000_000_000)
@@ -111,6 +100,8 @@ export const formatValue = (amount: number | string, options?: FormatOptions): s
         if (amountFractions[1].length < minDecimals) {
           convertedAmount = `${amountFractions[0]}.${amountFractions[1].padEnd(minDecimals, '0')}`
         }
+      } else if (minDecimals > 0) {
+        convertedAmount = `${amountFractions[0]}.${'0'.repeat(minDecimals)}`
       }
     } else {
       convertedAmount = amountFractions[0]
@@ -128,6 +119,8 @@ export const formatValue = (amount: number | string, options?: FormatOptions): s
       maximumFractionDigits: enforcedDecimals,
     })
   }
+
+  let returnValue = ''
 
   if (numberOfZeroDecimals) {
     if (numberOfZeroDecimals < enforcedDecimals) {
