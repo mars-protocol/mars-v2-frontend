@@ -31,12 +31,12 @@ export default function EditDescription(props: Props) {
 
   return (
     <Overlay
-      className='absolute top-[25%] md:top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col w-full md:w-140 h-[calc(100dvh-200px)] md:h-118 overflow-hidden'
+      className='absolute top-[25%] md:top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col w-full md:w-140 h-[calc(100dvh-200px)] md:h-118 overflow-hidden !bg-body'
       show={showEditDescriptionModal}
       setShow={setShowEditDescriptionModal}
     >
       <div className='gradient-description absolute h-full w-full opacity-30' />
-      <div className='flex items-center justify-between p-4'>
+      <div className='flex items-center justify-between p-4 gradient-header'>
         <Text size='lg'>Edit Your Description</Text>
         <EscButton onClick={() => setShowEditDescriptionModal(false)} enableKeyPress />
       </div>

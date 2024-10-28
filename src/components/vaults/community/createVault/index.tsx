@@ -88,7 +88,7 @@ export default function CreateVault() {
 
   return (
     <CreateVaultContent>
-      <form className='flex flex-col space-y-6 mb-4'>
+      <form className='flex flex-col space-y-6 flex-grow overflow-y-auto'>
         <div className='flex flex-col md:flex-row gap-8'>
           <div className='flex-1 space-y-8'>
             <VaultInputElement
