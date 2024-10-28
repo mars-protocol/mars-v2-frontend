@@ -46,6 +46,7 @@ export default function EntryPrice(props: Props) {
           coin={BNCoin.fromDenomAndBigNumber('usd', currentPrice ?? 0)}
           options={{
             maxDecimals: getPriceDecimals(currentPrice),
+            minDecimals: getPriceDecimals(currentPrice),
             abbreviated: false,
           }}
           showDetailedPrice
