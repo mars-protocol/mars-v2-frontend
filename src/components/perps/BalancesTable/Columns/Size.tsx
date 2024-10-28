@@ -46,6 +46,7 @@ export default function Size(props: Props) {
           coin={BNCoin.fromDenomAndBigNumber('usd', value)}
           options={{
             maxDecimals: getPriceDecimals(value),
+            minDecimals: 0,
             abbreviated: false,
           }}
         />
