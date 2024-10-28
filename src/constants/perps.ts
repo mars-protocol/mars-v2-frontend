@@ -136,6 +136,17 @@ export const PERPS_ASSETS: AstroportAsset[] = [
     dayVolumeUSD: 0,
   },
   {
+    chainId: 'neutron-1',
+    denom: 'factory/neutron166t9ww3p6flv7c86376fy0r92r88t3492xxj2h/upepe',
+    symbol: 'PEPE',
+    icon: 'https://raw.githubusercontent.com/mars-protocol/mars-v2-frontend/refs/heads/perps/src/components/common/Icons/PEPELogo.svg',
+    description: 'Pepe Coin',
+    decimals: 6,
+    priceUSD: 0,
+    totalLiquidityUSD: 0,
+    dayVolumeUSD: 0,
+  },
+  {
     chainId: 'pion-1',
     denom: 'factory/neutron1ke0vqqzyymlp5esr8gjwuzh94ysnpvj8er5hm7/USDC',
     symbol: 'USDC',
