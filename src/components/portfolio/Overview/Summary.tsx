@@ -8,14 +8,14 @@ import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendi
 import SummarySkeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import useAccounts from 'hooks/accounts/useAccounts'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
+import useAssetParams from 'hooks/params/useAssetParams'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 import { mergeBNCoinArrays } from 'utils/helpers'
-import useAssetParams from 'hooks/params/useAssetParams'
 
 export default function PortfolioSummary() {
   const { address: urlAddress } = useParams()
@@ -26,7 +26,7 @@ export default function PortfolioSummary() {
   const { data: defaultAccounts } = useAccounts('default', urlAddress || walletAddress)
   const { data: hlsAccounts } = useAccounts('high_levered_strategy', urlAddress || walletAddress)
   const { data: vaultAprs } = useVaultAprs()
-  const assets = useWhitelistedAssets()
+  const { data: assets } = useAssets()
   const astroLpAprs = useAstroLpAprs()
   const assetParams = useAssetParams()
 

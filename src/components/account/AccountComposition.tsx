@@ -10,14 +10,14 @@ import Text from 'components/common/Text'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import useAssetParams from 'hooks/params/useAssetParams'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getAccountSummaryStats, getAccountUnrealizedPnlValue } from 'utils/accounts'
-import useAssetParams from 'hooks/params/useAssetParams'
 
 interface Props {
   account: Account
@@ -44,7 +44,7 @@ export default function AccountComposition(props: Props) {
   })
 
   const astroLpAprs = useAstroLpAprs()
-  const assets = useWhitelistedAssets()
+  const { data: assets } = useAssets()
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
