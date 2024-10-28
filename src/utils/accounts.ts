@@ -137,7 +137,6 @@ export const calculateAccountApy = (
   vaultAprs: Apr[],
   astroLpAprs: Apr[],
 ): BigNumber => {
-  const isHls = account.kind === 'high_levered_strategy'
   const depositValue = calculateAccountValue('deposits', account, assets)
   const lendsValue = calculateAccountValue('lends', account, assets)
   const vaultsValue = calculateAccountValue('vaults', account, assets)
@@ -238,21 +237,20 @@ export const calculateAccountApy = (
   return totalInterestValue.dividedBy(totalDenominatorValue).times(100)
 }
 
-export function calculateAccountLeverage(
-  account: Account,
-  assets: Asset[],
-  collateralValue?: BigNumber,
-) {
+export function calculateAccountLeverage(account: Account, assets: Asset[]) {
+  let collateralValue = BN_ZERO
+
+  const depositValue = calculateAccountValue('deposits', account, assets, true)
+  const lendsValue = calculateAccountValue('lends', account, assets, true)
+  const vaultsValue = calculateAccountValue('vaults', account, assets)
+  const stakedAstroLpsValue = calculateAccountValue('stakedAstroLps', account, assets)
+  collateralValue = depositValue.plus(lendsValue).plus(vaultsValue).plus(stakedAstroLpsValue)
   const perpsExposure = getAccountPerpsExposure(account, assets)
   const debts = calculateAccountValue('debts', account, assets)
 
-  const exposureValue = (collateralValue ?? BN_ZERO).plus(debts).plus(perpsExposure)
+  const exposureValue = collateralValue.plus(debts).plus(perpsExposure)
 
-  // If collateralValue is not provided, we use the total deposit value as collateral
-  const totalCollateral =
-    collateralValue ?? account.deposits.reduce((acc, deposit) => acc.plus(deposit.amount), BN_ZERO)
-
-  return exposureValue.dividedBy(totalCollateral)
+  return exposureValue.dividedBy(collateralValue)
 }
 
 export function getAmount(denom: string, coins: Coin[]): BigNumber {
