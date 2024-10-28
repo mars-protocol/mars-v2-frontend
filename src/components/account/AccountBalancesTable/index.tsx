@@ -123,6 +123,7 @@ export default function AccountBalancesTable(props: Props) {
       spacingClassName='p-2'
       hideCard={hideCard}
       type='balances'
+      isBalancesTable
     />
   )
 }

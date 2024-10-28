@@ -14,6 +14,7 @@ interface Props<T> {
   isSelectable?: boolean
   type?: TableType
   onClick?: (id: string) => void
+  isBalancesTable?: boolean
 }
 
 function getBorderColor(
@@ -33,7 +34,8 @@ function getBorderColor(
 }
 
 export default function Row<T>(props: Props<T>) {
-  const { renderExpanded, table, row, type, spacingClassName, isSelectable } = props
+  const { renderExpanded, table, row, type, spacingClassName, isSelectable, isBalancesTable } =
+    props
   const canExpand = !!renderExpanded
   const name = (row.original as any).name ?? ''
   const isWhitelisted =
@@ -82,15 +84,15 @@ export default function Row<T>(props: Props<T>) {
                 type !== 'strategies' &&
                 getBorderColor(type, cell.row.original as any, isWhitelisted),
               cell.column.columnDef.meta?.className,
-              !isWhitelisted && 'opacity-60',
-              !isWhitelisted && 'group-hover/assetRow:opacity-100',
+              !isWhitelisted && isBalancesTable && 'opacity-60',
+              !isWhitelisted && isBalancesTable && 'group-hover/assetRow:opacity-100',
             )}
           >
             {flexRender(cell.column.columnDef.cell, cell.getContext())}
           </td>
         )
       })}
-      {!isWhitelisted && (
+      {!isWhitelisted && isBalancesTable && (
         <td className='absolute inset-0 p-0'>
           <Tooltip
             type='info'
