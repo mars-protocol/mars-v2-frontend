@@ -6,13 +6,13 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import Skeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import useAssetParams from 'hooks/params/useAssetParams'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
-import useAssetParams from 'hooks/params/useAssetParams'
 
 interface Props {
   account: Account
@@ -26,7 +26,7 @@ function Content(props: Props) {
   const data = useBorrowMarketAssetsTableData()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
-  const assets = useWhitelistedAssets()
+  const { data: assets } = useAssets()
   const astroLpAprs = useAstroLpAprs()
   const assetParams = useAssetParams()
 

@@ -10,16 +10,17 @@ import Accordion from 'components/common/Accordion'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useAssets from 'hooks/assets/useAssets'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useAssetParams from 'hooks/params/useAssetParams'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApy, getAccountSummaryStats } from 'utils/accounts'
-import useAssetParams from 'hooks/params/useAssetParams'
 
 interface Props {
   account: Account
@@ -41,6 +42,7 @@ export default function AccountSummary(props: Props) {
   )
   const { data: vaultAprs } = useVaultAprs()
   const astroLpAprs = useAstroLpAprs()
+  const { data: assets } = useAssets()
   const whitelistedAssets = useWhitelistedAssets()
   const perpsAssets = usePerpsEnabledAssets()
   const updatedAccount = useStore((s) => s.updatedAccount)
@@ -63,7 +65,7 @@ export default function AccountSummary(props: Props) {
         updatedAccount ?? account,
         borrowAssetsData,
         lendingAssetsData,
-        [...whitelistedAssets, ...perpsAssets],
+        assets,
         vaultAprs,
         astroLpAprs,
         assetParams.data || [],
@@ -73,8 +75,7 @@ export default function AccountSummary(props: Props) {
       updatedAccount,
       borrowAssetsData,
       lendingAssetsData,
-      whitelistedAssets,
-      perpsAssets,
+      assets,
       vaultAprs,
       astroLpAprs,
       assetParams.data,
@@ -87,7 +88,7 @@ export default function AccountSummary(props: Props) {
       updatedAccount,
       borrowAssetsData,
       lendingAssetsData,
-      [...whitelistedAssets, ...perpsAssets],
+      assets,
       vaultAprs,
       astroLpAprs,
       assetParams.data || [],
@@ -99,8 +100,7 @@ export default function AccountSummary(props: Props) {
     updatedAccount,
     borrowAssetsData,
     lendingAssetsData,
-    whitelistedAssets,
-    perpsAssets,
+    assets,
     vaultAprs,
     astroLpAprs,
     leverage,
@@ -213,7 +213,7 @@ export default function AccountSummary(props: Props) {
       <AccountSummaryHeader
         account={account}
         updatedAccount={updatedAccount}
-        assets={[...whitelistedAssets, ...perpsAssets]}
+        assets={assets}
         leverage={leverage?.toNumber() || 1}
         updatedLeverage={updatedLeverage?.toNumber() || null}
         apr={apr.toNumber()}
