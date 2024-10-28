@@ -10,6 +10,7 @@ import useAssets from 'hooks/assets/useAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useAssetParams from 'hooks/params/useAssetParams'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
@@ -27,6 +28,7 @@ function Content(props: Props) {
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const { data: assets } = useAssets()
+  const { data: perpsVault } = usePerpsVault()
   const astroLpAprs = useAstroLpAprs()
   const assetParams = useAssetParams()
 
@@ -41,6 +43,7 @@ function Content(props: Props) {
         vaultAprs,
         astroLpAprs,
         assetParams.data || [],
+        perpsVault?.apy || 0,
       )
 
     return [

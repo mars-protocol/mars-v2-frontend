@@ -17,6 +17,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAssetParams from 'hooks/params/useAssetParams'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { getRoute } from 'utils/route'
@@ -37,6 +38,7 @@ export default function PortfolioCard(props: Props) {
   const { data: vaultAprs } = useVaultAprs()
   const [searchParams] = useSearchParams()
   const { data: assets } = useAssets()
+  const { data: perpsVault } = usePerpsVault()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
@@ -60,6 +62,7 @@ export default function PortfolioCard(props: Props) {
       vaultAprs,
       astroLpAprs,
       assetParams.data || [],
+      perpsVault?.apy || 0,
     )
 
     return [
@@ -76,7 +79,16 @@ export default function PortfolioCard(props: Props) {
         sub: 'APY',
       },
     ]
-  }, [account, assets, borrowAssets, lendingAssets, vaultAprs, astroLpAprs, assetParams.data])
+  }, [
+    account,
+    assets,
+    lendingAssets,
+    borrowAssets,
+    vaultAprs,
+    astroLpAprs,
+    assetParams.data,
+    perpsVault?.apy,
+  ])
 
   if (!account) {
     return (

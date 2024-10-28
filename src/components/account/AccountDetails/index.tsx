@@ -25,6 +25,7 @@ import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -49,7 +50,6 @@ export default function AccountDetailsController(props: AccountDetailsController
   const { data: _, isLoading } = useAccounts('default', address)
   const { data: accountIds } = useAccountIds(address, false, true)
   const accountId = useAccountId()
-
   const account = useCurrentAccount()
   const focusComponent = useStore((s) => s.focusComponent)
   const isOwnAccount = accountId && accountIds?.includes(accountId)
@@ -67,6 +67,7 @@ function AccountDetails(props: Props) {
   const { account } = props
   const location = useLocation()
   const { data: vaultAprs } = useVaultAprs()
+  const { data: perpsVault } = usePerpsVault()
   const astroLpAprs = useAstroLpAprs()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
@@ -112,8 +113,18 @@ function AccountDetails(props: Props) {
         assets,
         vaultAprs,
         astroLpAprs,
+        perpsVault?.apy || 0,
       ),
-    [account, assets, borrowAssetsData, lendingAssetsData, updatedAccount, vaultAprs, astroLpAprs],
+    [
+      updatedAccount,
+      account,
+      borrowAssetsData,
+      lendingAssetsData,
+      assets,
+      vaultAprs,
+      astroLpAprs,
+      perpsVault?.apy,
+    ],
   )
   const isFullWidth =
     location.pathname.includes('trade') ||
@@ -196,7 +207,7 @@ function AccountDetails(props: Props) {
               <FormattedNumber
                 className={'w-full text-center text-2xs'}
                 amount={apy.toNumber()}
-                options={{ maxDecimals: 2, minDecimals: 2, suffix: '%' }}
+                options={{ maxDecimals: 2, minDecimals: 2, suffix: '%', abbreviated: true }}
                 animate
               />
             </div>
