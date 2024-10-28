@@ -24,7 +24,10 @@ export const produceCountdown = (remainingTime: number) => {
   duration.subtract(hours, 'hours')
   const minutes = formatValue(duration.asMinutes(), { minDecimals: 0, maxDecimals: 0 })
 
-  return `${days}d ${hours}h ${minutes}m`
+  duration.subtract(minutes, 'minutes')
+  const seconds = formatValue(duration.asSeconds(), { minDecimals: 0, maxDecimals: 0 })
+
+  return `${days}d ${hours}h ${minutes}m ${seconds}s`
 }
 
 export const formatValue = (amount: number | string, options?: FormatOptions): string => {
