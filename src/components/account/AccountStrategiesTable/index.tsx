@@ -33,6 +33,7 @@ export default function AccountStrategiesTable(props: Props) {
       spacingClassName='p-2'
       hideCard={hideCard}
       type='strategies'
+      isBalancesTable
     />
   )
 }

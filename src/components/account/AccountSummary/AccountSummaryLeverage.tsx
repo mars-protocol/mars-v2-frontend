@@ -13,7 +13,6 @@ interface Props {
 
 export default function AccountSummaryLeverage(props: Props) {
   const { leverage, updatedLeverage } = props
-
   if (!updatedLeverage) {
     return (
       <FormattedNumber

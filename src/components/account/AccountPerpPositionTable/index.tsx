@@ -32,6 +32,7 @@ export default function AccountPerpPositionTable(props: Props) {
       spacingClassName='p-2'
       hideCard={hideCard}
       type='perps'
+      isBalancesTable
     />
   )
 }
