@@ -5,6 +5,7 @@ import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
+import { getPriceDecimals } from 'utils/formatters'
 
 type Props = {
   denom: string
@@ -26,7 +27,7 @@ export const ExpectedPrice = (props: Props) => {
   return (
     <DisplayCurrency
       coin={BNCoin.fromDenomAndBigNumber('usd', override ? override : price)}
-      options={{ maxDecimals: price.isGreaterThan(10) ? 2 : 6, abbreviated: false }}
+      options={{ maxDecimals: getPriceDecimals(override ? override : price), abbreviated: false }}
       className={className}
     />
   )

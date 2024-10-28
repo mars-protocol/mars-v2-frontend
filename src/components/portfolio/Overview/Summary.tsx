@@ -117,7 +117,16 @@ export default function PortfolioSummary() {
         sub: 'Combined leverage',
       },
     ]
-  }, [allAccounts, assets, borrowAssets, lendingAssets, vaultAprs, astroLpAprs, assetParams])
+  }, [
+    allAccounts,
+    assets,
+    borrowAssets,
+    lendingAssets,
+    vaultAprs,
+    astroLpAprs,
+    assetParams,
+    perpsVault?.apy,
+  ])
 
   if (!walletAddress && !urlAddress) return null
 

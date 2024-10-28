@@ -8,6 +8,7 @@ import useLiquidationPrice from 'hooks/prices/useLiquidationPrice'
 import { BNCoin } from 'types/classes/BNCoin'
 import { LiquidationPriceKind } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
+import { getPriceDecimals } from 'utils/formatters'
 
 export const LIQ_META = {
   accessorKey: 'symbol',
@@ -67,7 +68,10 @@ export default function LiqPrice(props: Props) {
     <DisplayCurrency
       className='text-xs text-right number'
       coin={BNCoin.fromDenomAndBigNumber('usd', BN(liqPrice))}
-      options={{ abbreviated: false, maxDecimals: liqPrice >= 10 ? 2 : 6 }}
+      options={{
+        abbreviated: false,
+        maxDecimals: getPriceDecimals(liqPrice),
+      }}
     />
   )
 }

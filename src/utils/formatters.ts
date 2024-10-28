@@ -6,6 +6,27 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 
+export function getPriceDecimals(price: number | BigNumber) {
+  const priceNum = BN(price).abs()
+  if (priceNum.isZero()) return 2
+  if (priceNum.isGreaterThanOrEqualTo(10)) return 2
+
+  const priceStr = priceNum.toFixed(20)
+  const [, decimals] = priceStr.split('.')
+  if (!decimals) return 2
+
+  let leadingZeros = 0
+  for (const digit of decimals) {
+    if (digit === '0') {
+      leadingZeros++
+    } else {
+      break
+    }
+  }
+
+  return leadingZeros + 2
+}
+
 export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
   const head = text.slice(0, h)
   if (t === 0) return text.length > h + t ? head + '...' : text
@@ -48,6 +69,17 @@ export const formatValue = (amount: number | string, options?: FormatOptions): s
   }
   let convertedAmount: BigNumber | string = BN(amount).dividedBy(10 ** (options?.decimals ?? 0))
 
+  if (Math.abs(convertedAmount.toNumber()) > 0 && Math.abs(convertedAmount.toNumber()) < 0.01) {
+    const decimals = getPriceDecimals(convertedAmount)
+    convertedAmount = convertedAmount.toFormat(decimals, {
+      groupSeparator: thousandSeparator ? ',' : '',
+      decimalSeparator: '.',
+      groupSize: 3,
+      prefix: options?.prefix ?? '',
+    })
+    return convertedAmount
+  }
+
   const amountSuffix = options?.abbreviated
     ? convertedAmount.isGreaterThanOrEqualTo(1_000_000_000)
       ? 'B'
@@ -81,6 +113,8 @@ export const formatValue = (amount: number | string, options?: FormatOptions): s
         if (amountFractions[1].length < minDecimals) {
           convertedAmount = `${amountFractions[0]}.${amountFractions[1].padEnd(minDecimals, '0')}`
         }
+      } else if (minDecimals > 0) {
+        convertedAmount = `${amountFractions[0]}.${'0'.repeat(minDecimals)}`
       }
     } else {
       convertedAmount = amountFractions[0]

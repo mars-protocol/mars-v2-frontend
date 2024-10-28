@@ -3,6 +3,7 @@ import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { BNCoin } from 'types/classes/BNCoin'
+import { getPriceDecimals } from 'utils/formatters'
 
 export const ENTRY_PRICE_META = {
   accessorKey: 'entryPrice',
@@ -34,18 +35,20 @@ export default function EntryPrice(props: Props) {
         <DisplayCurrency
           coin={BNCoin.fromDenomAndBigNumber('usd', entryPrice ?? 0)}
           options={{
-            maxDecimals: entryPrice.isGreaterThanOrEqualTo(10) ? 2 : 6,
+            maxDecimals: getPriceDecimals(entryPrice),
             abbreviated: false,
           }}
+          showDetailedPrice
         />
       }
       sub={
         <DisplayCurrency
           coin={BNCoin.fromDenomAndBigNumber('usd', currentPrice ?? 0)}
           options={{
-            maxDecimals: entryPrice.isGreaterThanOrEqualTo(10) ? 2 : 6,
+            maxDecimals: getPriceDecimals(currentPrice),
             abbreviated: false,
           }}
+          showDetailedPrice
         />
       }
     />
