@@ -11,6 +11,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { ExecuteMsg as AccountNftExecuteMsg } from 'types/generated/mars-account-nft/MarsAccountNft.types'
 import {
   Action,
+  ActionAmount,
   ActionCoin,
   Condition,
   Action as CreditManagerAction,
@@ -418,6 +419,11 @@ export default function createBroadcastSlice(
           actions.push({
             withdraw_from_perp_vault: {},
           })
+          if (checkAutoLendEnabled(options.accountId, get().chainConfig.id)) {
+            actions.push({
+              lend: { denom: vault.denoms.lp, amount: 'account_balance' },
+            })
+          }
         }
       })
       const msg: CreditManagerExecuteMsg = {
@@ -1245,7 +1251,11 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-    withdrawFromPerpsVault: (options: { accountId: string }) => {
+    withdrawFromPerpsVault: (options: {
+      accountId: string
+      isAutoLend: boolean
+      vaultDenom: string
+    }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
@@ -1253,6 +1263,16 @@ export default function createBroadcastSlice(
             {
               withdraw_from_perp_vault: {},
             },
+            ...(options.isAutoLend
+              ? [
+                  {
+                    lend: {
+                      denom: options.vaultDenom,
+                      amount: 'account_balance' as ActionAmount,
+                    },
+                  },
+                ]
+              : []),
           ],
         },
       }
