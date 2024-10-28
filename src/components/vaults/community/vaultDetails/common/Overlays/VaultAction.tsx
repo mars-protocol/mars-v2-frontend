@@ -48,6 +48,7 @@ export default function VaultAction(props: Props) {
             maxText={isDeposit ? 'In Wallet' : 'Available to Withdraw'}
             warningMessages={[]}
           />
+          <Divider className='my-2' />
 
           <div className='space-y-2'>
             <Callout type={CalloutType.INFO}>

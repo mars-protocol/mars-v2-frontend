@@ -1,6 +1,7 @@
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Table from 'components/common/Table'
 import VaultStats from 'components/vaults/community/vaultDetails/common/VaultStats'
+import useUserWithdrawals from 'components/vaults/community/vaultDetails/table/useUserWithdrawals'
 import useQueuedWithdrawals from 'components/vaults/community/vaultDetails/table/useQueuedWithdrawals'
 import classNames from 'classnames'
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
@@ -8,9 +9,25 @@ import { queuedWithdrawDummyData } from 'components/vaults/dummyData'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 import { FormattedNumber } from 'components/common/FormattedNumber'
+import useStore from 'store'
 
 export default function Withdrawals() {
-  const columns = useQueuedWithdrawals({ isLoading: false })
+  const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false })
+  const withdrawalColumns = useUserWithdrawals({ isLoading: false })
+  const address = useStore((s) => s.address)
+
+  if (!address) {
+    return (
+      <Table
+        title='Withdrawals'
+        columns={withdrawalColumns}
+        data={queuedWithdrawDummyData}
+        initialSorting={[]}
+        tableBodyClassName='bg-white/5'
+        spacingClassName='p-3'
+      />
+    )
+  }
 
   const tabs: CardTab[] = [
     {
@@ -92,7 +109,7 @@ export default function Withdrawals() {
         <Table
           title='Queued Summary'
           hideCard
-          columns={columns}
+          columns={queuedWithdrawalcolumns}
           data={queuedWithdrawDummyData}
           initialSorting={[]}
           tableBodyClassName='bg-white/5'
