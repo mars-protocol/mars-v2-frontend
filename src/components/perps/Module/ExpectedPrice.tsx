@@ -29,6 +29,7 @@ export const ExpectedPrice = (props: Props) => {
       coin={BNCoin.fromDenomAndBigNumber('usd', override ? override : price)}
       options={{ maxDecimals: getPriceDecimals(override ? override : price), abbreviated: false }}
       className={className}
+      showDetailedPrice
     />
   )
 }
