@@ -792,14 +792,6 @@ export default function createBroadcastSlice(
           },
         },
       ]
-      triggerActions.push({
-        repay: {
-          coin: {
-            denom: options.keeperFee.denom,
-            amount: 'account_balance',
-          },
-        },
-      })
       if (options.autolend)
         triggerActions.push({
           lend: {
@@ -888,14 +880,6 @@ export default function createBroadcastSlice(
             },
           },
         ]
-        triggerActions.push({
-          repay: {
-            coin: {
-              denom: options.keeperFee.denom,
-              amount: 'account_balance',
-            },
-          },
-        })
         if (order.autolend)
           triggerActions.push({
             lend: {
@@ -956,14 +940,6 @@ export default function createBroadcastSlice(
           },
         },
       ]
-      actions.push({
-        repay: {
-          coin: {
-            denom: options.baseDenom,
-            amount: 'account_balance',
-          },
-        },
-      })
       if (options.autolend)
         actions.push({
           lend: {
@@ -1011,14 +987,6 @@ export default function createBroadcastSlice(
           },
         })) || []),
       ]
-      actions.push({
-        repay: {
-          coin: {
-            denom: options.baseDenom,
-            amount: 'account_balance',
-          },
-        },
-      })
       if (options.autolend)
         actions.push({
           lend: {
