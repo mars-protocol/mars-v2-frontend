@@ -18,6 +18,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAssetParams from 'hooks/params/useAssetParams'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApy, getAccountSummaryStats } from 'utils/accounts'
@@ -46,6 +47,7 @@ export default function AccountSummary(props: Props) {
   const whitelistedAssets = useWhitelistedAssets()
   const perpsAssets = usePerpsEnabledAssets()
   const updatedAccount = useStore((s) => s.updatedAccount)
+  const { data: perpsVault } = usePerpsVault()
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
@@ -69,16 +71,18 @@ export default function AccountSummary(props: Props) {
         vaultAprs,
         astroLpAprs,
         assetParams.data || [],
+        perpsVault?.apy || 0,
       ),
     [
-      account,
       updatedAccount,
+      account,
       borrowAssetsData,
       lendingAssetsData,
       assets,
       vaultAprs,
       astroLpAprs,
       assetParams.data,
+      perpsVault?.apy,
     ],
   )
 
@@ -92,6 +96,7 @@ export default function AccountSummary(props: Props) {
       vaultAprs,
       astroLpAprs,
       assetParams.data || [],
+      perpsVault?.apy || 0,
     )
 
     if (updatedLeverage.eq(leverage)) return null
@@ -103,8 +108,9 @@ export default function AccountSummary(props: Props) {
     assets,
     vaultAprs,
     astroLpAprs,
-    leverage,
     assetParams.data,
+    perpsVault?.apy,
+    leverage,
   ])
 
   const handleToggle = useCallback(
@@ -127,16 +133,18 @@ export default function AccountSummary(props: Props) {
         [...whitelistedAssets, ...perpsAssets],
         vaultAprs,
         astroLpAprs,
+        perpsVault?.apy || 0,
       ),
     [
-      account,
       updatedAccount,
+      account,
       borrowAssetsData,
       lendingAssetsData,
       whitelistedAssets,
       perpsAssets,
       vaultAprs,
       astroLpAprs,
+      perpsVault?.apy,
     ],
   )
 

@@ -14,6 +14,7 @@ import useAssets from 'hooks/assets/useAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useAssetParams from 'hooks/params/useAssetParams'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -46,6 +47,7 @@ export default function AccountComposition(props: Props) {
   const astroLpAprs = useAstroLpAprs()
   const { data: assets } = useAssets()
   const data = useBorrowMarketAssetsTableData()
+  const { data: perpsVault } = usePerpsVault()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
     useLendingMarketAssetsTableData()
@@ -65,8 +67,18 @@ export default function AccountComposition(props: Props) {
         vaultAprs,
         astroLpAprs,
         assetParams.data || [],
+        perpsVault?.apy || 0,
       ),
-    [account, assets, borrowAssetsData, lendingAssetsData, vaultAprs, astroLpAprs, assetParams],
+    [
+      account,
+      borrowAssetsData,
+      lendingAssetsData,
+      assets,
+      vaultAprs,
+      astroLpAprs,
+      assetParams.data,
+      perpsVault?.apy,
+    ],
   )
 
   const {
@@ -95,6 +107,7 @@ export default function AccountComposition(props: Props) {
       vaultAprs,
       astroLpAprs,
       assetParams.data || [],
+      perpsVault?.apy || 0,
     )
   }, [
     updatedAccount,
@@ -103,13 +116,14 @@ export default function AccountComposition(props: Props) {
     assets,
     vaultAprs,
     astroLpAprs,
+    assetParams.data,
+    perpsVault?.apy,
     positionValue,
     debts,
     netWorth,
     collateralValue,
     apy,
     leverage,
-    assetParams,
   ])
 
   const totalUnrealizedPnl = useMemo(

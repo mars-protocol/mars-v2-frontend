@@ -11,6 +11,7 @@ import useAccounts from 'hooks/accounts/useAccounts'
 import useAssets from 'hooks/assets/useAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useAssetParams from 'hooks/params/useAssetParams'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { getAccountSummaryStats } from 'utils/accounts'
@@ -29,6 +30,7 @@ export default function PortfolioSummary() {
   const { data: assets } = useAssets()
   const astroLpAprs = useAstroLpAprs()
   const assetParams = useAssetParams()
+  const { data: perpsVault } = usePerpsVault()
 
   const allAccounts = useMemo(() => {
     return [...(defaultAccounts || []), ...(hlsAccounts || [])]
@@ -70,6 +72,7 @@ export default function PortfolioSummary() {
         vaultAprs,
         astroLpAprs,
         assetParams.data || [],
+        perpsVault?.apy || 0,
       )
 
     return [
