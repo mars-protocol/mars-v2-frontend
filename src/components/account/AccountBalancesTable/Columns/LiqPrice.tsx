@@ -71,6 +71,7 @@ export default function LiqPrice(props: Props) {
       options={{
         abbreviated: false,
         maxDecimals: getPriceDecimals(liqPrice),
+        minDecimals: getPriceDecimals(liqPrice),
       }}
       showDetailedPrice
     />
