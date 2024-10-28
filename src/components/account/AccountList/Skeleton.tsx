@@ -12,11 +12,11 @@ interface Props {
   health: number
   healthFactor: number
   positionBalance: BigNumber | null
-  apr: BigNumber | null
+  apy: BigNumber | null
 }
 
 export default function Skeleton(props: Props) {
-  const { positionBalance, apr, health, healthFactor } = props
+  const { positionBalance, apy, health, healthFactor } = props
   return (
     <div className='flex flex-wrap w-full'>
       {positionBalance ? (
@@ -31,11 +31,17 @@ export default function Skeleton(props: Props) {
       <div className='flex items-center justify-between w-full mt-1'>
         <div className='flex items-center'>
           <ArrowChartLineUp className='w-4 mr-1' />
-          {apr ? (
+          {apy ? (
             <FormattedNumber
               className='text-xs text-white/70'
-              amount={apr.toNumber()}
-              options={{ prefix: 'APR: ', suffix: '%', minDecimals: 2, maxDecimals: 2 }}
+              amount={apy.toNumber()}
+              options={{
+                prefix: 'APY: ',
+                suffix: '%',
+                minDecimals: 2,
+                maxDecimals: 2,
+                abbreviated: true,
+              }}
             />
           ) : (
             <Loading className='h-4 w-18' />
