@@ -482,7 +482,7 @@ export function getAccountSummaryStats(
     vaultAprs,
     astroLpAprs,
   )
-  const leverage = calculateAccountLeverage(account, whitelistedAssets, collateralValue)
+  const leverage = calculateAccountLeverage(account, whitelistedAssets)
 
   return {
     positionValue: BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, totalBalance),
