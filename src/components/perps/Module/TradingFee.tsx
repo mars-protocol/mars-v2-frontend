@@ -2,6 +2,7 @@ import { CircularProgress } from 'components/common/CircularProgress'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import { BNCoin } from 'types/classes/BNCoin'
+import { getPriceDecimals } from 'utils/formatters'
 
 type Props = {
   denom: string
@@ -26,6 +27,7 @@ export default function TradingFee(props: Props) {
   const fee = tradingFeeAndPrice.fee.opening
     .plus(tradingFeeAndPrice.fee.closing)
     .plus(keeperFee?.amount ?? 0)
+
   return (
     <DisplayCurrency
       coin={BNCoin.fromDenomAndBigNumber(
@@ -34,6 +36,11 @@ export default function TradingFee(props: Props) {
       )}
       className={className}
       showSignPrefix={!!showPrefix}
+      showDetailedPrice
+      options={{
+        maxDecimals: getPriceDecimals(fee),
+        abbreviated: false,
+      }}
     />
   )
 }
