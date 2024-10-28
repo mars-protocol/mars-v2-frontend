@@ -11,6 +11,7 @@ import useAccount from 'hooks/accounts/useAccount'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApy, calculateAccountBalanceValue } from 'utils/accounts'
@@ -27,6 +28,7 @@ export default function AccountStats(props: Props) {
   const assets = useWhitelistedAssets()
   const { data: account } = useAccount(accountId)
   const { data: vaultAprs } = useVaultAprs()
+  const { data: perpsVault } = usePerpsVault()
   const astroLpAprs = useAstroLpAprs()
   const positionBalance = useMemo(
     () => (!account ? null : calculateAccountBalanceValue(account, assets)),
@@ -52,8 +54,9 @@ export default function AccountStats(props: Props) {
             assets,
             vaultAprs,
             astroLpAprs,
+            perpsVault?.apy || 0,
           ),
-    [account, assets, borrowAssetsData, lendingAssetsData, vaultAprs, astroLpAprs],
+    [account, borrowAssetsData, lendingAssetsData, assets, vaultAprs, astroLpAprs, perpsVault?.apy],
   )
 
   const deleteAccountHandler = useCallback(() => {
