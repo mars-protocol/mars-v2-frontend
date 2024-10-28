@@ -43,7 +43,7 @@ export default function AccountStats(props: Props) {
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
   )
-  const apr = useMemo(
+  const apy = useMemo(
     () =>
       !account
         ? null
@@ -70,7 +70,7 @@ export default function AccountStats(props: Props) {
         health={health ?? 0}
         healthFactor={healthFactor ?? 0}
         positionBalance={positionBalance}
-        apr={apr}
+        apy={apy}
       />
       {isActive && setShowMenu && (
         <div className='grid grid-flow-row grid-cols-2 gap-4 pt-4'>
