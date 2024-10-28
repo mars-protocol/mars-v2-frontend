@@ -1140,7 +1140,11 @@ interface BroadcastSlice {
     fromLends?: BigNumber
   }) => Promise<boolean>
   requestUnlockPerpsVault: (options: { accountId: string; amount: BigNumber }) => Promise<boolean>
-  withdrawFromPerpsVault: (options: { accountId: string }) => Promise<boolean>
+  withdrawFromPerpsVault: (options: {
+    accountId: string
+    isAutoLend: boolean
+    vaultDenom: string
+  }) => Promise<boolean>
   v1Action: (type: V1ActionType, funds: BNCoin) => Promise<boolean>
 }
 
