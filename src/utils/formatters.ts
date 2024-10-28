@@ -6,25 +6,29 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 
-export function getPriceDecimals(price: number | BigNumber) {
+export function getPriceDecimals(price?: number | BigNumber) {
+  if (!price) return 2
   const priceNum = BN(price).abs()
-  if (priceNum.isZero()) return 2
-  if (priceNum.isGreaterThanOrEqualTo(10)) return 2
 
-  const priceStr = priceNum.toFixed(20)
-  const [, decimals] = priceStr.split('.')
-  if (!decimals) return 2
+  if (priceNum.isZero() || priceNum.isGreaterThanOrEqualTo(10)) return 2
 
-  let leadingZeros = 0
-  for (const digit of decimals) {
-    if (digit === '0') {
-      leadingZeros++
-    } else {
-      break
+  if (priceNum.isLessThan(1)) {
+    const priceStr = priceNum.toFixed(20)
+    const [, decimals] = priceStr.split('.')
+    if (!decimals) return 2
+
+    let leadingZeros = 0
+    for (const digit of decimals) {
+      if (digit === '0') {
+        leadingZeros++
+      } else {
+        break
+      }
     }
+    return leadingZeros + 3
   }
 
-  return leadingZeros + 2
+  return 2
 }
 
 export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
@@ -55,29 +59,23 @@ export const produceCountdown = (remainingTime: number) => {
 }
 
 export const formatValue = (amount: number | string, options?: FormatOptions): string => {
-  let numberOfZeroDecimals: number | null = null
+  const numberOfZeroDecimals: number | null = null
   const minDecimals = options?.minDecimals ?? 2
   const maxDecimals = options?.maxDecimals ?? 2
   let enforcedDecimals = maxDecimals
   const thousandSeparator = options?.thousandSeparator ?? true
 
-  if (typeof amount === 'string') {
-    const decimals = amount.split('.')[1] ?? null
-    if (decimals && Number(decimals) === 0) {
-      numberOfZeroDecimals = decimals.length
-    }
-  }
-  let convertedAmount: BigNumber | string = BN(amount).dividedBy(10 ** (options?.decimals ?? 0))
+  let convertedAmount: string | BigNumber = BN(amount)
+  let returnValue = ''
 
   if (Math.abs(convertedAmount.toNumber()) > 0 && Math.abs(convertedAmount.toNumber()) < 0.01) {
     const decimals = getPriceDecimals(convertedAmount)
-    convertedAmount = convertedAmount.toFormat(decimals, {
+    returnValue = convertedAmount.toFormat(decimals, {
       groupSeparator: thousandSeparator ? ',' : '',
       decimalSeparator: '.',
       groupSize: 3,
-      prefix: options?.prefix ?? '',
     })
-    return convertedAmount
+    return options?.suffix ? `${returnValue}${options.suffix}` : returnValue
   }
 
   const amountSuffix = options?.abbreviated
@@ -113,8 +111,6 @@ export const formatValue = (amount: number | string, options?: FormatOptions): s
         if (amountFractions[1].length < minDecimals) {
           convertedAmount = `${amountFractions[0]}.${amountFractions[1].padEnd(minDecimals, '0')}`
         }
-      } else if (minDecimals > 0) {
-        convertedAmount = `${amountFractions[0]}.${'0'.repeat(minDecimals)}`
       }
     } else {
       convertedAmount = amountFractions[0]
@@ -132,8 +128,6 @@ export const formatValue = (amount: number | string, options?: FormatOptions): s
       maximumFractionDigits: enforcedDecimals,
     })
   }
-
-  let returnValue = ''
 
   if (numberOfZeroDecimals) {
     if (numberOfZeroDecimals < enforcedDecimals) {
