@@ -466,7 +466,6 @@ export function getAccountSummaryStats(
       .plus(calculateAccountValue('lends', account, [asset], true))
       .plus(calculateAccountValue('vaults', account, [asset], true))
       .plus(calculateAccountValue('perps', account, [asset], true))
-      .plus(calculateAccountValue('perpsVault', account, [asset], true))
       .plus(calculateAccountValue('stakedAstroLps', account, [asset], true))
 
     const assetParam = assetParams?.find((param) => param.denom === asset.denom)
