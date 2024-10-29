@@ -1,12 +1,18 @@
 import BigNumber from 'bignumber.js'
+import Button from 'components/common/Button'
 import TVL from 'components/earn/farm/common/Table/Columns/TVL'
-import Info, { INFO_META } from 'components/vaults/community/vaultDetails/table/columns/Info'
-import Timestamp, {
-  TIMESTAMP_META,
-} from 'components/vaults/community/vaultDetails/table/columns/Timestamp'
-import Shares, { SHARES_META } from 'components/vaults/community/vaultDetails/table/columns/Shares'
+import Timestamp from 'components/vaults/community/vaultDetails/table/columns/Timestamp'
 import React, { useMemo } from 'react'
 import { ColumnDef } from '@tanstack/react-table'
+import UnlockTime, { UNLOCK_TIME_META } from 'components/earn/farm/common/Table/Columns/UnlockTime'
+import {
+  VaultWithdraw,
+  WITHDRAW_META,
+} from 'components/earn/farm/vault/Table/Columns/VaultWithdraw'
+import { AccountArrowDown } from 'components/common/Icons'
+import UnlockAmount, {
+  UNLOCK_AMOUNT_META,
+} from 'components/earn/farm/common/Table/Columns/UnlockAmount'
 
 interface Props {
   isLoading: boolean
@@ -18,38 +24,36 @@ export default function useUserWithdrawals(props: Props) {
   // TODO: update once we know data structure
   return useMemo<ColumnDef<any>[]>(
     () => [
-      // {
-      //   ...INFO_META,
-      //   accessorKey: 'status',
-      //   header: 'Status',
-      //   cell: ({ row }) => <Info value={{ status: row.original.status }} isLoading={isLoading} />,
-      // },
       {
-        header: 'Amount',
         id: 'name',
-        accessorKey: 'amount',
+        accessorKey: 'Unlock Amount',
         meta: { className: 'min-w-50' },
+        // TODO: use <UnlockAmount> depedning on the data
+        // cell: ({ row }) => <UnlockAmount vault={} />,
         cell: ({ row }) => <TVL amount={BigNumber(row.original.amount)} denom={'usd'} />,
       },
       {
         header: 'Initiated',
+        meta: { className: 'min-w-20' },
         cell: ({ row }) => <Timestamp value={row.original} isLoading={isLoading} />,
       },
-      // {
-      //   ...SHARES_META,
-      //   cell: ({ row }) => <Shares value={BigNumber(row.original.shares)} isLoading={isLoading} />,
-      // },
       {
-        header: 'Total Position',
-        meta: { className: 'w-30' },
-        cell: ({ row }) => <TVL amount={BigNumber(row.original.totalPosition)} denom={'usd'} />,
+        ...UNLOCK_TIME_META,
+        cell: ({ row }) => <UnlockTime unlocksAt={row.original.unlocksAt} />,
       },
       {
-        ...INFO_META,
-        accessorKey: 'address',
-        header: 'Wallet Address',
-        cell: ({ row }) => (
-          <Info value={{ walletAddress: row.original.walletAddress }} isLoading={isLoading} />
+        ...WITHDRAW_META,
+        // cell: ({ row }: { row: any }) => <VaultWithdraw vault={} />,
+        // temporary showing this button:
+        cell: ({ row }: { row: any }) => (
+          <Button
+            onClick={() => {}}
+            color='tertiary'
+            leftIcon={<AccountArrowDown />}
+            className='ml-auto'
+          >
+            Withdraw
+          </Button>
         ),
       },
     ],
