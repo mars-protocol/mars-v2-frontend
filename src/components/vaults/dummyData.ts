@@ -153,62 +153,20 @@ export const vaultProfileData = {
 export const withdrawalsDummyData = [
   {
     amount: 49577,
-    initiated: {
-      date: '28 Jun 2024',
-      time: '9:47 PM',
-    },
-    unlockCompletes: {
-      date: '29 Jun 2024',
-      time: '9:47 PM',
-    },
-    status: 'pending',
+    unfreeze_date: '9 Oct 2024',
+    unfreeze_time: '03:45',
+    status: 'unlocked',
   },
   {
-    amount: 49577,
-    initiated: {
-      date: '28 Jun 2023',
-      time: '9:47 PM',
-    },
-    unlockCompletes: {
-      date: '29 Jun 2023',
-      time: '9:47 PM',
-    },
+    amount: 4232,
+    unfreeze_date: '13 Sep 2024',
+    unfreeze_time: '13:45',
     status: 'unlocked',
   },
   {
     amount: 125000,
-    initiated: {
-      date: '27 Jun 2023',
-      time: '2:30 PM',
-    },
-    unlockCompletes: {
-      date: '28 Jun 2023',
-      time: '2:30 PM',
-    },
-    status: 'unlocked',
-  },
-  {
-    amount: 75350,
-    initiated: {
-      date: '26 Jun 2023',
-      time: '11:15 AM',
-    },
-    unlockCompletes: {
-      date: '27 Jun 2023',
-      time: '11:15 AM',
-    },
-    status: 'pending',
-  },
-  {
-    amount: 250000,
-    initiated: {
-      date: '25 Jun 2023',
-      time: '4:20 PM',
-    },
-    unlockCompletes: {
-      date: '26 Jun 2023',
-      time: '4:20 PM',
-    },
+    unfreeze_date: '19 Sep 2024',
+    unfreeze_time: '17:15',
     status: 'unlocked',
   },
 ]

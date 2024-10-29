@@ -15,16 +15,9 @@ interface Props {
 
 export default function Timestamp(props: Props) {
   const { value, isLoading } = props
+  // TODO: update values once we know the structure
 
   if (isLoading) return <Loading />
 
-  return (
-    <div className='flex items-center'>
-      <TitleAndSubCell
-        className='ml-2 mr-2 text-left'
-        title={value.unfreeze_date}
-        sub={value.unfreeze_time}
-      />
-    </div>
-  )
+  return <TitleAndSubCell title={value.unfreeze_date} sub={value.unfreeze_time} />
 }
