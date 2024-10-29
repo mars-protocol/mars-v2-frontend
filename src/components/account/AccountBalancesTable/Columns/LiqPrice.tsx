@@ -6,9 +6,9 @@ import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import useLiquidationPrice from 'hooks/prices/useLiquidationPrice'
 import { BNCoin } from 'types/classes/BNCoin'
+import { getPriceDecimals } from 'utils/formatters'
 import { LiquidationPriceKind } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
-import { getPriceDecimals } from 'utils/formatters'
 
 export const LIQ_META = {
   accessorKey: 'symbol',
@@ -28,6 +28,7 @@ interface Props {
 export default function LiqPrice(props: Props) {
   const { denom, type, amount, account, computeLiquidationPrice, isWhitelisted } = props
   const hasDebt = account.debts.length > 0
+  const isPerp = type === 'perp'
 
   const liqPrice = useMemo(() => {
     if (type === 'vault' || amount === 0) return 0
@@ -43,9 +44,10 @@ export default function LiqPrice(props: Props) {
     if (type === 'vault')
       return 'Liquidation prices cannot be calculated for farm positions. But a drop in price of the underlying assets can still cause a liquidation.'
     if (!isWhitelisted) return 'This asset is not collateral and can not be liquidated.'
-    if (!hasDebt) return 'Your position cannot be liquidated as you currently have no debt.'
+    if (!hasDebt && !isPerp)
+      return 'Your position cannot be liquidated as you currently have no debt.'
     return 'The position size is too small to liquidate the account, even if the price goes to $0.00.'
-  }, [isWhitelisted, type, hasDebt])
+  }, [type, isWhitelisted, hasDebt, isPerp])
 
   if (amount === 0)
     return (
