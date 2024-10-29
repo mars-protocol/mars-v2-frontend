@@ -133,6 +133,9 @@ export function beautifyErrorMessage(error: string) {
   if (error.includes('incorrect account sequence'))
     return 'You have a pending transaction. Wait for it to be executed and try again.'
 
+  if (error.includes('Net OI reached'))
+    return 'You can not execute this perp order, since it would exceed the maximum Open Interest for this market.'
+
   if (error === 'Transaction failed: Request rejected') return 'Transaction rejected by user'
 
   return `Transaction failed: ${error}`
