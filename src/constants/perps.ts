@@ -148,7 +148,7 @@ export const PERPS_ASSETS: AstroportAsset[] = [
   },
   {
     chainId: 'pion-1',
-    denom: 'factory/neutron1ke0vqqzyymlp5esr8gjwuzh94ysnpvj8er5hm7/USDC',
+    denom: 'factory/neutron1ke0vqqzyymlp5esr8gjwuzh94ysnpvj8er5hm7/UUSDC',
     symbol: 'USDC',
     icon: 'https://raw.githubusercontent.com/mars-protocol/mars-v2-frontend/refs/heads/main/src/components/common/Icons/MarsUSDCLogo.svg',
     description: 'Mars USDC',
