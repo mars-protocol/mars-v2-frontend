@@ -5,23 +5,25 @@ import useUserWithdrawals from 'components/vaults/community/vaultDetails/table/u
 import useQueuedWithdrawals from 'components/vaults/community/vaultDetails/table/useQueuedWithdrawals'
 import classNames from 'classnames'
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
-import { queuedWithdrawDummyData } from 'components/vaults/dummyData'
+import { queuedWithdrawDummyData, withdrawalsDummyData } from 'components/vaults/dummyData'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import useStore from 'store'
+import { Tooltip } from 'components/common/Tooltip'
+import { ExclamationMarkTriangle, InfoCircle } from 'components/common/Icons'
 
 export default function Withdrawals() {
   const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false })
-  const withdrawalColumns = useUserWithdrawals({ isLoading: false })
+  const userWithdrawalColumns = useUserWithdrawals({ isLoading: false })
   const address = useStore((s) => s.address)
 
   if (!address) {
     return (
       <Table
         title='Withdrawals'
-        columns={withdrawalColumns}
-        data={queuedWithdrawDummyData}
+        columns={userWithdrawalColumns}
+        data={withdrawalsDummyData}
         initialSorting={[]}
         tableBodyClassName='bg-white/5'
         spacingClassName='p-3'
@@ -88,15 +90,27 @@ export default function Withdrawals() {
             {
               description: '% of USDC vs Queued Withdrawal Value',
               value: (
-                <FormattedNumber
-                  amount={200}
-                  options={{
-                    suffix: '%',
-                    minDecimals: 2,
-                    maxDecimals: 2,
-                  }}
-                  animate
-                />
+                <div className='flex gap-2'>
+                  {/* conditional tooltip */}
+                  <Tooltip
+                    content={
+                      'Vault does not have enough USDC to service queued withdrawals. please free up some.  If the 1 day freeze period has ended and a user initiates a withdraw without spot USDC available in the Vault, the Vault will automatically borrow USDC to service the withdraw.'
+                    }
+                    type='warning'
+                    contentClassName='w-60'
+                  >
+                    <ExclamationMarkTriangle className='w-3.5 h-3.5 text-info hover:text-primary' />
+                  </Tooltip>
+                  <FormattedNumber
+                    amount={200}
+                    options={{
+                      suffix: '%',
+                      minDecimals: 2,
+                      maxDecimals: 2,
+                    }}
+                    animate
+                  />
+                </div>
               ),
             },
           ]}

@@ -17,10 +17,11 @@ export const DETAILS_META = {
 
 interface Props {
   isLoading: boolean
+  handleVaultDetails: () => void
 }
 
 export default function Details(props: Props) {
-  const { isLoading } = props
+  const { isLoading, handleVaultDetails } = props
 
   const [showVaultWarning, setShowVaultWarning] = useLocalStorage<boolean>(
     LocalStorageKeys.VAULT_DEPOSIT_WARNING,
@@ -31,8 +32,7 @@ export default function Details(props: Props) {
 
   const handleOnClick = useCallback(() => {
     if (!showVaultWarning) {
-      // TODO
-      // opencommunitymodal
+      handleVaultDetails()
       return
     }
 
@@ -42,7 +42,7 @@ export default function Details(props: Props) {
       positiveButton: {
         text: 'Continue',
         icon: <ArrowRight />,
-        onClick: () => {},
+        onClick: () => handleVaultDetails(),
       },
       negativeButton: {
         text: 'Cancel',
@@ -58,7 +58,7 @@ export default function Details(props: Props) {
       modalClassName: '!bg-info/20',
       titleClassName: 'text-info',
     })
-  }, [close, showAlertDialog, showVaultWarning, setShowVaultWarning])
+  }, [showVaultWarning, showAlertDialog, handleVaultDetails, setShowVaultWarning, close])
 
   if (isLoading) return <Loading />
 
