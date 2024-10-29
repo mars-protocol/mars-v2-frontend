@@ -31,7 +31,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
-import { formatLeverage, magnify } from 'utils/formatters'
+import { formatLeverage, getPriceDecimals, magnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 type Props = {
@@ -378,7 +378,10 @@ function ManageSummary(
             priceOverride ? 'usd' : asset.denom,
             priceOverride ? size.times(priceOverride).shiftedBy(-asset.decimals) : size,
           )}
-          options={{ abbreviated: false }}
+          options={{
+            maxDecimals: getPriceDecimals(priceOverride ?? size),
+            abbreviated: false,
+          }}
         />
       </SummaryLine>
       <SummaryLine label='Leverage' contentClassName='flex gap-1 pt-2'>

@@ -6,6 +6,31 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 
+export function getPriceDecimals(price?: number | BigNumber) {
+  if (!price) return 2
+  const priceNum = BN(price).abs()
+
+  if (priceNum.isZero() || priceNum.isGreaterThanOrEqualTo(10)) return 2
+
+  if (priceNum.isLessThan(1)) {
+    const priceStr = priceNum.toFixed(20)
+    const [, decimals] = priceStr.split('.')
+    if (!decimals) return 2
+
+    let leadingZeros = 0
+    for (const digit of decimals) {
+      if (digit === '0') {
+        leadingZeros++
+      } else {
+        break
+      }
+    }
+    return leadingZeros + 3
+  }
+
+  return 2
+}
+
 export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
   const head = text.slice(0, h)
   if (t === 0) return text.length > h + t ? head + '...' : text
@@ -23,12 +48,6 @@ export const produceCountdown = (remainingTime: number) => {
 
   duration.subtract(hours, 'hours')
   const minutes = formatValue(duration.asMinutes(), { minDecimals: 0, maxDecimals: 0 })
-
-  if (days === '0' && hours === '0' && minutes === '0') {
-    duration.subtract(minutes, 'minutes')
-    const seconds = formatValue(duration.asSeconds(), { minDecimals: 0, maxDecimals: 0 })
-    return `${seconds} seconds`
-  }
 
   return `${days}d ${hours}h ${minutes}m`
 }
@@ -81,6 +100,8 @@ export const formatValue = (amount: number | string, options?: FormatOptions): s
         if (amountFractions[1].length < minDecimals) {
           convertedAmount = `${amountFractions[0]}.${amountFractions[1].padEnd(minDecimals, '0')}`
         }
+      } else if (minDecimals > 0) {
+        convertedAmount = `${amountFractions[0]}.${'0'.repeat(minDecimals)}`
       }
     } else {
       convertedAmount = amountFractions[0]
