@@ -1,15 +1,35 @@
 import { cacheFn, pythPriceCache } from 'api/cache'
 import { pythEndpoints } from 'constants/pyth'
+import { FETCH_TIMEOUT } from 'constants/query'
 import { BNCoin } from 'types/classes/BNCoin'
+import { setApiError } from 'utils/error'
+import { fetchWithTimeout } from 'utils/fetch'
 import { BN } from 'utils/helpers'
 
 export default async function fetchPythPrices(priceFeedIds: string[], assets: Asset[]) {
+  const pricesUrl = new URL(`${pythEndpoints.api}/latest_price_feeds`)
+  const fallbackUrl = new URL(`${pythEndpoints.fallbackApi}/latest_price_feeds`)
+
   try {
-    const pricesUrl = new URL(`${pythEndpoints.api}/latest_price_feeds`)
-    priceFeedIds.forEach((id) => pricesUrl.searchParams.append('ids[]', id))
+    priceFeedIds.forEach((id) => {
+      pricesUrl.searchParams.append('ids[]', id)
+      fallbackUrl.searchParams.append('ids[]', id)
+    })
 
     const pythResponse: PythPriceData[] = await cacheFn(
-      () => fetch(pricesUrl).then((res) => res.json()),
+      async () => {
+        try {
+          return await fetchWithTimeout(pricesUrl.toString(), FETCH_TIMEOUT).then((res) =>
+            res.json(),
+          )
+        } catch (error) {
+          console.warn('Primary Pyth API failed, falling back to fallback API', error)
+
+          return await fetchWithTimeout(fallbackUrl.toString(), FETCH_TIMEOUT).then((res) =>
+            res.json(),
+          )
+        }
+      },
       pythPriceCache,
       `pythPrices/${priceFeedIds.flat().join('-')}`,
       30,
@@ -28,6 +48,7 @@ export default async function fetchPythPrices(priceFeedIds: string[], assets: As
 
     return mappedPriceData
   } catch (ex) {
+    setApiError(pricesUrl.toString(), ex)
     throw ex
   }
 }

@@ -4,7 +4,7 @@ import HealthBar from 'components/account/Health/HealthBar'
 import Card from 'components/common/Card'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import HLSTag from 'components/hls/HLSTag'
+import HlsTag from 'components/hls/HlsTag'
 
 interface Props {
   stats: { title: React.ReactNode; sub: string }[]
@@ -22,7 +22,7 @@ export default function Skeleton(props: Props) {
       <div className='flex items-center justify-between'>
         <Text>
           Credit Account {accountId}
-          {props.isHls && <HLSTag />}
+          {props.isHls && <HlsTag />}
         </Text>
         <Text size='xs' className='text-white/60'>
           {isCurrent && '(current)'}

@@ -12,7 +12,7 @@ import { byDenom } from 'utils/array'
 
 export const NAME_META = {
   id: 'name',
-  header: 'Vault',
+  header: 'Farm',
   accessorKey: 'name',
   meta: { className: 'min-w-50' },
 }

@@ -23,6 +23,7 @@ interface Props {
   onBlur?: () => void
   onFocus?: () => void
   onRef?: (ref: React.RefObject<HTMLInputElement>) => void
+  isUSD?: boolean
 }
 
 export default function NumberInput(props: Props) {
@@ -36,16 +37,18 @@ export default function NumberInput(props: Props) {
 
   useEffect(() => {
     if (props.amount.isZero()) return setFormattedAmount('')
+    if (props.isUSD) return
 
-    setFormattedAmount(
-      formatValue(props.amount.toNumber(), {
-        decimals: props.asset.decimals,
-        minDecimals: 0,
-        maxDecimals: props.maxDecimals,
-        thousandSeparator: false,
-      }),
-    )
-  }, [props.amount, props.asset, props.maxDecimals])
+    if (!props.isUSD)
+      setFormattedAmount(
+        formatValue(props.amount.toNumber(), {
+          decimals: props.asset.decimals,
+          minDecimals: 0,
+          maxDecimals: props.maxDecimals,
+          thousandSeparator: false,
+        }),
+      )
+  }, [props.amount, props.asset, props.isUSD, props.maxDecimals])
 
   useEffect(() => {
     if (!onRef) return
@@ -147,28 +150,21 @@ export default function NumberInput(props: Props) {
   }
 
   return (
-    <div className='relative'>
-      <input
-        ref={inputRef}
-        type='text'
-        value={formattedAmount === '0' ? '0' : formattedAmount}
-        onFocus={onInputFocus}
-        onChange={(e) => onInputChange(e.target.value)}
-        onBlur={props.onBlur}
-        disabled={props.disabled}
-        className={classNames(
-          'w-full hover:cursor-pointer appearance-none border-none bg-transparent text-right outline-none',
-          props.className,
-          props.disabled && 'pointer-events-none',
-        )}
-        style={props.style}
-        placeholder={props.placeholder ?? '0'}
-      />
-      {props.suffix && (
-        <span className='absolute top-1/2 right-4 flex items-center text-white/70 translate-y-[-50%]'>
-          {props.suffix}
-        </span>
+    <input
+      ref={inputRef}
+      type='text'
+      value={formattedAmount === '0' ? '0' : formattedAmount}
+      onFocus={onInputFocus}
+      onChange={(e) => onInputChange(e.target.value)}
+      onBlur={props.onBlur}
+      disabled={props.disabled}
+      className={classNames(
+        'w-full hover:cursor-pointer appearance-none border-none bg-transparent text-right outline-none',
+        props.disabled && 'pointer-events-none',
+        props.className,
       )}
-    </div>
+      style={props.style}
+      placeholder={props.placeholder ?? '0'}
+    />
   )
 }

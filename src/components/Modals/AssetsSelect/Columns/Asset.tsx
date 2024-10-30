@@ -49,6 +49,7 @@ export default function Asset(props: Props) {
               type='apy'
               orientation='rtl'
               suffix
+              hasCampaignApy={asset.campaigns.find((c) => c.type === 'apy') !== undefined}
             />
           ) : (
             <Tooltip

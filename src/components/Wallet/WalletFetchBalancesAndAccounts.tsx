@@ -57,8 +57,8 @@ function Content() {
 
     if (!accountIds || accountIds.length === 0) return
 
-    const currentAccountIsHLS = urlAccountId && !accountIds.includes(urlAccountId)
-    const currentAccount = currentAccountIsHLS || !urlAccountId ? accountIds[0] : urlAccountId
+    const currentAccountIsHls = urlAccountId && !accountIds.includes(urlAccountId)
+    const currentAccount = currentAccountIsHls || !urlAccountId ? accountIds[0] : urlAccountId
 
     navigate(getRoute(page, searchParams, address, isV1 ? undefined : currentAccount), {
       replace: true,

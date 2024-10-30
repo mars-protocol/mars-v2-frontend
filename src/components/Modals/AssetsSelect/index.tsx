@@ -1,10 +1,10 @@
 import { RowSelectionState, SortingState } from '@tanstack/react-table'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import useAssetSelectColumns from 'components/Modals/AssetsSelect/Columns/useAssetSelectColumns'
 import { Callout, CalloutType } from 'components/common/Callout'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
+import useAssetSelectColumns from 'components/Modals/AssetsSelect/Columns/useAssetSelectColumns'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'

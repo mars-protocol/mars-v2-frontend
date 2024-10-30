@@ -5,6 +5,7 @@ import { removeEmptyCoins } from 'utils/accounts'
 import { getAssetSymbolByDenom } from 'utils/assets'
 import { BN } from 'utils/helpers'
 import { getVaultNameByCoins } from 'utils/vaults'
+import { beautifyErrorMessage } from './generateToast'
 
 export function getSingleValueFromBroadcastResult(
   response: BroadcastResult['result'],
@@ -24,9 +25,7 @@ export function getSingleValueFromBroadcastResult(
 export function generateErrorMessage(result: BroadcastResult, errorMessage?: string) {
   const error = result.error ? result.error : result.result?.rawLogs
   if (errorMessage) return errorMessage
-  if (error === 'Transaction failed: Request rejected') return 'Transaction rejected by user'
-  /* TODO: beautify error messages */
-  return `Transaction failed: ${error}`
+  return beautifyErrorMessage(error ?? 'Transaction Simulation failed.')
 }
 
 export async function analizeTransaction(
@@ -35,7 +34,7 @@ export async function analizeTransaction(
   address: string,
 ): Promise<{
   target: string
-  isHLS: boolean
+  isHls: boolean
   transactionType: TransactionType
   txCoinGroups: GroupedTransactionCoin[]
 }> {
@@ -53,14 +52,14 @@ export async function analizeTransaction(
     if (accountKind) {
       target =
         accountKind === 'high_levered_strategy'
-          ? `HLS Account ${accountId}`
+          ? `Hls Account ${accountId}`
           : `Account ${accountId}`
     }
   }
-  const isHLS = accountKind === 'high_levered_strategy'
+  const isHls = accountKind === 'high_levered_strategy'
 
   // Fetch all coins from the BroadcastResult
-  const txCoinGroups = getTransactionCoinsGrouped(result, address, isHLS)
+  const txCoinGroups = getTransactionCoinsGrouped(result, address, isHls)
 
   // If there are no coins involved, try to identify the transaction type, otherwise set it to 'transaction'
   const transactionType = txCoinGroups.length
@@ -69,7 +68,7 @@ export async function analizeTransaction(
 
   return {
     target,
-    isHLS,
+    isHls,
     transactionType,
     txCoinGroups,
   }
@@ -96,6 +95,8 @@ function getTransactionTypesByAction() {
   transactionTypes.set('burn', 'burn')
   transactionTypes.set('update_price_feeds', 'oracle')
   transactionTypes.set('unlock', 'unlock')
+  transactionTypes.set('create_trigger_order', 'create-order')
+  transactionTypes.set('cancel_trigger_order', 'cancel-order')
 
   return transactionTypes
 }
@@ -125,9 +126,8 @@ function getRules() {
   return coinRules
 }
 
-function getTransactionCoinsGrouped(result: BroadcastResult, address: string, isHLS: boolean) {
+function getTransactionCoinsGrouped(result: BroadcastResult, address: string, isHls: boolean) {
   const transactionCoins: TransactionCoin[] = []
-
   // Event types that include coins are wasm, token_swapped and pool_joined
   // This should be streamlined by SC one day
   const eventTypes = ['wasm', 'token_swapped', 'pool_joined']
@@ -175,7 +175,7 @@ function getTransactionCoinsGrouped(result: BroadcastResult, address: string, is
 
       let coinType = coinRules.get(`${action}_${target}`) ?? coinRules.get(action)
 
-      if (isHLS && action === 'callback/deposit')
+      if (isHls && action === 'callback/deposit')
         coinType = 'deposit_from_wallet' as TransactionCoinType
       coins.forEach((eventCoin) => {
         // check for duplicates
@@ -203,14 +203,14 @@ function getTransactionCoinsGrouped(result: BroadcastResult, address: string, is
         })
       }
 
-      if (isHLS) {
+      if (isHls) {
         // If the account is an hls account, check for a deposit_from_wallet event and add the amount of the 'update_coin_balance' event
         // This is because the deposit from wallet is sent to the hls account first and then the result of a potential swap event
         // gets added to the hls account via 'update_coin_balance'.
         // To display those transaction correctly a 'deposit' coin has to be added to transactionCoins that has the sum of the deposit and the swap amount
-        const HLSDeposit = findUpdateCoinBalanceAndAddDeposit(event, transactionCoins)
-        if (HLSDeposit) {
-          transactionCoins.push({ type: 'deposit', coin: HLSDeposit })
+        const HlsDeposit = findUpdateCoinBalanceAndAddDeposit(event, transactionCoins)
+        if (HlsDeposit) {
+          transactionCoins.push({ type: 'deposit', coin: HlsDeposit })
         }
       }
     })
@@ -332,7 +332,7 @@ function findUpdateCoinBalanceAndAddDeposit(
   if (!depositFromWallet) return result
 
   // If a deposit from wallet was found add the update_coin_balance to it
-  // This is needed for HLS accounts, where the deposit_from_wallet and the update_coin_balance combined make up the final hls account deposit
+  // This is needed for Hls accounts, where the deposit_from_wallet and the update_coin_balance combined make up the final hls account deposit
   return result.plus(depositFromWallet.amount)
 }
 
@@ -421,7 +421,7 @@ function groupTransactionCoins(coins: TransactionCoin[]): GroupedTransactionCoin
 
 export function getToastContentsFromGroupedTransactionCoin(
   transactionCoin: GroupedTransactionCoin,
-  isHLS: boolean,
+  isHls: boolean,
   target: string,
   chainConfig: ChainConfig,
   assets: Asset[],
@@ -438,7 +438,7 @@ export function getToastContentsFromGroupedTransactionCoin(
       break
     case 'deposit':
       toastContents.push({
-        text: isHLS ? 'Deposited into HLS account' : 'Deposited',
+        text: isHls ? 'Deposited into Hls account' : 'Deposited',
         coins: removeEmptyCoins(coins),
       })
       break

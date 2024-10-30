@@ -21,7 +21,7 @@ type ActionCoin = import('types/generated/mars-credit-manager/MarsCreditManager.
 type Action = import('types/generated/mars-credit-manager/MarsCreditManager.types').Action
 type BNCoin = import('types/classes/BNCoin').BNCoin
 
-type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp'
+type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp' | 'market' | 'limit'
 type TableType = 'balances' | 'strategies' | 'perps'
 type AccountKind = import('types/generated/mars-credit-manager/MarsCreditManager.types').AccountKind
 
@@ -32,8 +32,8 @@ interface Account {
   lends: BNCoin[]
   vaults: DepositedVault[]
   stakedAstroLps: BNCoin[]
-  perps?: PerpsPosition[]
-  perpsVault?: PerpsVaultPositions | null
+  perps: PerpsPosition[]
+  perpsVault: PerpsVaultPositions | null
   kind: AccountKind
 }
 
@@ -43,8 +43,8 @@ interface AccountChange extends Account {
   lends?: BNCoin[]
   vaults?: DepositedVault[]
   stakedAstroLps?: BNCoin[]
-  perps?: PerpsPosition[]
-  perpsVault?: PerpsVaultPositions
+  perps: PerpsPosition[]
+  perpsVault: PerpsVaultPositions
 }
 
 interface AccountBalanceRow {
@@ -56,6 +56,7 @@ interface AccountBalanceRow {
   type: PositionType
   value: string
   amountChange: BigNumber
+  campaigns: AssetCampaign[]
 }
 
 interface AccountStrategyRow {
@@ -86,9 +87,9 @@ interface AccountIdAndKind {
   kind: AccountKind
 }
 
-interface HLSAccountWithStrategy extends Account {
+interface HlsAccountWithStrategy extends Account {
   leverage: number
-  strategy: HLSStrategy
+  strategy: HlsStrategy
   values: {
     net: BigNumber
     debt: BigNumber
@@ -162,11 +163,11 @@ interface BigNumberCoin {
   amount: BigNumber
 }
 
-interface HLSStrategy extends HLSStrategyNoCap {
+interface HlsStrategy extends HlsStrategyNoCap {
   depositCap: DepositCap
 }
 
-interface HLSStrategyNoCap {
+interface HlsStrategyNoCap {
   maxLTV: number
   maxLeverage: number
   apy: number | null
@@ -176,8 +177,36 @@ interface HLSStrategyNoCap {
   }
 }
 
-interface DepositedHLSStrategy extends HLSStrategy {
+interface DepositedHlsStrategy extends HlsStrategy {
   depositedAmount: BigNumber
+}
+
+interface Vaults {
+  // TODO: update with correct types
+  vaultName: string
+  vaultSub: string
+  apy: number
+  tvl: number
+  fee: number
+  freezePeriod: number
+}
+
+interface HlsFarm {
+  farm: AstroLp
+  borrowAsset: Asset
+  maxLeverage: number
+}
+
+interface DepositedHlsFarm extends HlsFarm {
+  farm: DepositedAstroLp
+  account: Account
+  netValue: BigNumber
+  leverage: number
+}
+
+interface DepositedAstroLpAccounts {
+  account: Account
+  astroLp: DepositedAstroLp
 }
 
 interface StakingApr {
@@ -211,6 +240,7 @@ interface ChainConfig {
   lp?: Asset[]
   stables: string[]
   deprecated?: string[]
+  campaignAssets?: AssetCampaignInfo[]
   defaultTradingPair: TradingPair
   bech32Config: import('@keplr-wallet/types').Bech32Config
   contracts: {
@@ -232,6 +262,7 @@ interface ChainConfig {
   endpoints: {
     rest: string
     rpc: string
+    fallbackRpc: string
     swap: string
     explorer: string
     pools?: string
@@ -242,6 +273,7 @@ interface ChainConfig {
     aprs: {
       vaults: string
       stride: string
+      perpsVault?: string
     }
   }
   dexName: string
@@ -256,7 +288,7 @@ interface ChainConfig {
   perps: boolean
   farm: boolean
   anyAsset: boolean
-  campaignAssets?: AssetCampaignInfo[]
+  slinky: boolean
 }
 
 interface AssetCampaignInfo {
@@ -316,13 +348,14 @@ interface PerpsPosition {
   pnl: PerpsPnL
   currentPrice: BigNumber
   entryPrice: BigNumber
-  closingFeeRate: BigNumber
+  type: PositionType
 }
 
 interface PerpPositionRow extends PerpsPosition {
   asset: Asset
   liquidationPrice: BigNumber
   leverage: number
+  orderId?: string
 }
 
 interface PerpsPnL {
@@ -377,6 +410,7 @@ type Page =
   | 'borrow'
   | 'farm'
   | 'lend'
+  | 'perps-vault'
   | 'portfolio'
   | 'portfolio/{accountId}'
   | 'hls-farm'
@@ -413,7 +447,7 @@ type OsmosisRoutePool = {
   balances: []
   spread_factor: string
   token_out_denom: string
-  taker_fee: string
+  keeper_fee: string
 }
 
 type SwapRouteInfo = {
@@ -916,7 +950,7 @@ interface BroadcastResult {
 
 interface ExecutableTx {
   execute: () => Promise<boolean>
-  estimateFee: () => Promise<StdFee>
+  estimateFee: () => Promise<{ fee: StdFee | undefined; error?: string }>
 }
 
 interface ToastObjectOptions extends HandleResponseProps {
@@ -989,7 +1023,7 @@ interface BroadcastSlice {
     stakedAstroLpRewards?: StakedAstroLpRewards[]
     lend: boolean
   }) => Promise<boolean>
-  closeHlsStakingPosition: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
+  closeHlsPosition: (options: { accountId: string; actions: Action[] }) => Promise<boolean>
   createAccount: (
     accountKind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind,
     isAutoLendEnabled: boolean,
@@ -1009,12 +1043,28 @@ interface BroadcastSlice {
     isPythUpdate?: boolean
   }) => Promise<BroadcastResult>
   lend: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
-  closePerpPosition: (options: { accountId: string; denom: string }) => Promise<boolean>
-  openPerpPosition: (options: { accountId: string; coin: BNCoin }) => Promise<boolean>
-  modifyPerpPosition: (options: {
+  executePerpOrder: (options: {
     accountId: string
     coin: BNCoin
-    changeDirection: boolean
+    reduceOnly?: boolean
+    autolend: boolean
+    baseDenom: string
+  }) => Promise<boolean>
+  createTriggerOrder: (options: {
+    accountId: string
+    coin: BNCoin
+    reduceOnly?: boolean
+    autolend: boolean
+    baseDenom: string
+    tradeDirection: TradeDirection
+    price: BigNumber
+    keeperFee: BNCoin
+  }) => Promise<boolean>
+  cancelTriggerOrder: (options: {
+    accountId: string
+    orderId: string
+    autolend: boolean
+    baseDenom: string
   }) => Promise<boolean>
   reclaim: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
   repay: (options: {
@@ -1048,6 +1098,8 @@ interface BroadcastSlice {
     accountId: string
     astroLps: DepositedAstroLp[]
     amount: string
+    toWallet: boolean
+    rewards: BNCoin[]
   }) => Promise<boolean>
   withdrawFromVaults: (options: {
     accountId: string
@@ -1117,7 +1169,15 @@ interface TransactionEventAttribute {
   value: string
 }
 
-type TransactionType = 'default' | 'oracle' | 'create' | 'burn' | 'unlock' | 'transaction'
+type TransactionType =
+  | 'default'
+  | 'oracle'
+  | 'create'
+  | 'burn'
+  | 'unlock'
+  | 'transaction'
+  | 'cancel-order'
+  | 'create-order'
 
 interface CommonSlice {
   address?: string
@@ -1139,11 +1199,22 @@ interface CommonSlice {
   useMargin: boolean
   useAutoRepay: boolean
   isOracleStale: boolean
-  isHLS: boolean
+  isHls: boolean
   isVaults: boolean
   isV1: boolean
   assets: Asset[]
   hlsBorrowAmount: BigNumber | null
+  errorStore: ErrorStore
+}
+
+interface ErrorStore {
+  apiError: FetchError | null
+  nodeError: FetchError | null
+}
+
+interface FetchError {
+  api: string
+  message: string
 }
 
 interface FocusComponent {
@@ -1166,6 +1237,7 @@ interface ModalSlice {
   lendAndReclaimModal: LendAndReclaimModalConfig | null
   perpsVaultModal: PerpsVaultModal | null
   settingsModal: boolean
+  keeperFeeModal: boolean
   unlockModal: UnlockModal | null
   farmModal: FarmModal | null
   walletAssetsModal: WalletAssetModal | null
@@ -1184,6 +1256,7 @@ interface AlertDialogButton {
 
 interface AlertDialogConfig {
   icon?: JSX.Element
+  header?: JSX.Element
   checkbox?: {
     text: string
     onClick: (isChecked: boolean) => void
@@ -1215,7 +1288,9 @@ interface FarmModal {
   farm: Vault | DepositedVault | AstroLp | DepositedAstroLp
   isCreate?: boolean
   action?: 'deposit' | 'withdraw'
-  type: 'vault' | 'astroLp'
+  type: 'vault' | 'astroLp' | 'high_leverage'
+  account?: Account
+  maxLeverage?: number
 }
 
 interface AddFarmBorrowingsModal {
@@ -1233,32 +1308,42 @@ interface WalletAssetModal {
 }
 
 interface HlsModal {
-  strategy?: HLSStrategy
+  strategy?: HlsStrategy
   vault?: Vault
 }
 
 interface HlsManageModal {
   accountId: string
-  staking: {
-    strategy: HLSStrategy
-    action: HlsStakingManageAction
+  farming?: DepositedHlsFarm
+  staking?: {
+    strategy: HlsStrategy
   }
+  action: HlsStakingManageAction
 }
 
 interface HlsCloseModal {
-  account: HLSAccountWithStrategy
-  staking: {
-    strategy: HLSStrategy
+  account: HlsAccountWithStrategy | Account
+  farming?: DepositedHlsFarm
+  staking?: {
+    strategy: HlsStrategy
   }
 }
 
 interface HlsClosingChanges {
+  widthdraw: BNCoin[] | null
   swap: {
     coinIn: BNCoin
     coinOut: BNCoin
   } | null
   repay: BNCoin | null
   refund: BNCoin[]
+  rewards?: BNCoin[]
+}
+
+interface HlsApyInfo {
+  hlsFarm: HlsFarm
+  borrowRate: number
+  maxApy: number
 }
 
 type HlsStakingManageAction = 'deposit' | 'withdraw' | 'repay' | 'leverage'
@@ -1326,12 +1411,24 @@ interface FarmBorrowingsProps {
   displayCurrency: string
   depositCapReachedCoins: BNCoin[]
   totalValue: BigNumber
-  type: 'vault' | 'astroLp'
+  type: FarmModal['type']
 }
 
-type AvailableOrderType = 'Market' | 'Limit' | 'Stop'
+interface HlsFarmLeverageProps {
+  borrowings: BNCoin[]
+  deposits: BNCoin[]
+  account: Account
+  primaryAsset: Asset
+  secondaryAsset: Asset
+  onChangeBorrowings: (borrowings: BNCoin[]) => void
+  toggleOpen: (index: number) => void
+  displayCurrency: string
+  depositCapReachedCoins: BNCoin[]
+  totalValue: BigNumber
+}
+
 interface OrderTab {
-  type: AvailableOrderType
+  type: import('types/enums').OrderType
   isDisabled: boolean
   tooltipText: string
 }
@@ -1568,5 +1665,50 @@ interface AssetCampaignPoints {
 }
 
 type KeplrMode = 'core' | 'extension' | 'mobile-web' | 'walletconnect'
+type TriggerType = 'less_than' | 'greater_than'
 
 type DatafeedErrorCallback = (reason: string) => void
+
+interface Trigger {
+  price_trigger: {
+    denom: string
+    oracle_price: string
+    trigger_type: TriggerType
+  }
+}
+
+interface ExceutePerpsOrder {
+  execute_perp_order: {
+    denom: string
+    order_size: SignedUint
+    reduce_only?: boolean | null
+  }
+}
+
+interface TriggerCondition {
+  oracle_price: {
+    comparison: Comparison
+    denom: string
+    price: Decimal
+  }
+}
+
+interface OrderTab {
+  type: import('types/enums').OrderType
+  isDisabled: boolean
+  tooltipText?: string
+}
+
+interface CallOut {
+  message: string
+  type: import('components/common/Callout').CalloutType
+}
+
+interface PerpsTradingFee {
+  baseDenom: sring
+  price: BigNumber
+  fee: {
+    opening: BigNumber
+    closing: BigNumber
+  }
+}
