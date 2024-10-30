@@ -1,10 +1,10 @@
 import { RowSelectionState, SortingState } from '@tanstack/react-table'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import useAssetSelectColumns from 'components/Modals/AssetsSelect/Columns/useAssetSelectColumns'
 import { Callout, CalloutType } from 'components/common/Callout'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
+import useAssetSelectColumns from 'components/Modals/AssetsSelect/Columns/useAssetSelectColumns'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'
@@ -21,13 +21,8 @@ interface Props {
   nonCollateralTableAssets?: Asset[]
 }
 
-export default function AssetsSelect({
-  onChangeSelected,
-  selectedDenoms,
-  isBorrow,
-  assets,
-  nonCollateralTableAssets,
-}: Props) {
+export default function AssetsSelect(props: Props) {
+  const { onChangeSelected, isBorrow, assets, nonCollateralTableAssets, selectedDenoms } = props
   const columns = useAssetSelectColumns(isBorrow)
   const markets = useMarkets()
   const whitelistedAssets = useWhitelistedAssets()
@@ -69,15 +64,41 @@ export default function AssetsSelect({
     return { whitelistedData, nonCollateralData }
   }, [assets, nonCollateralTableAssets, whitelistedAssets, balances, createTableData])
 
-  const [whitelistedSelected, setWhitelistedSelected] = useState<RowSelectionState>({})
-  const [nonCollateralSelected, setNonCollateralSelected] = useState<RowSelectionState>({})
+  const [initialSelected, initialNonCollateralSelected] = useMemo(() => {
+    const selectionState = (
+      selectedDenoms: string[],
+      tableData: AssetTableRow[],
+    ): RowSelectionState => {
+      const selectionState = {} as RowSelectionState
+      tableData.forEach((row, index) => {
+        selectionState[index.toString()] = !!selectedDenoms.includes(row.asset.denom)
+      })
+      return selectionState
+    }
+
+    return [
+      selectionState(
+        selectedDenoms,
+        isAssetTableRowArray(tableData) ? tableData : tableData.whitelistedData,
+      ),
+      selectionState(
+        selectedDenoms,
+        isAssetTableRowArray(tableData) ? [] : tableData.nonCollateralData,
+      ),
+    ]
+  }, [selectedDenoms, tableData])
+
+  const [whitelistedSelected, setWhitelistedSelected] = useState<RowSelectionState>(initialSelected)
+  const [nonCollateralSelected, setNonCollateralSelected] = useState<RowSelectionState>(
+    initialNonCollateralSelected,
+  )
 
   useEffect(() => {
     let newSelectedDenoms: string[]
 
     if (Array.isArray(tableData)) {
       newSelectedDenoms = assets
-        .filter((asset, index) =>
+        .filter((asset) =>
           tableData.some((row, idx) => row.asset.denom === asset.denom && whitelistedSelected[idx]),
         )
         .map((asset) => asset.denom)
@@ -145,7 +166,7 @@ export default function AssetsSelect({
           titleComponent={
             <Text
               size='xs'
-              className='p-4 font-semibold bg-black/20 text-white/60 border-b border-white/10'
+              className='p-4 font-semibold border-b bg-black/20 text-white/60 border-white/10'
             >
               Assets that can be used as collateral
             </Text>
@@ -154,7 +175,7 @@ export default function AssetsSelect({
       )}
 
       {nonCollateralTableAssets.length === 0 && assets.length === 0 && (
-        <Callout type={CalloutType.INFO} className='mt-4 mx-4 text-white/60'>
+        <Callout type={CalloutType.INFO} className='mx-4 mt-4 text-white/60'>
           No assets that match your search.
         </Callout>
       )}
@@ -179,7 +200,7 @@ export default function AssetsSelect({
           titleComponent={
             <Text
               size='xs'
-              className='p-4 font-semibold bg-black/20 text-white/60 border-t border-b border-white/10'
+              className='p-4 font-semibold border-t border-b bg-black/20 text-white/60 border-white/10'
             >
               Non whitelisted assets, cannot be used as collateral
             </Text>
@@ -188,4 +209,12 @@ export default function AssetsSelect({
       )}
     </>
   )
+}
+
+function isAssetTableRowArray(
+  tableData:
+    | AssetTableRow[]
+    | { whitelistedData: AssetTableRow[]; nonCollateralData: AssetTableRow[] },
+): tableData is AssetTableRow[] {
+  return !('whitelistedData' in tableData)
 }

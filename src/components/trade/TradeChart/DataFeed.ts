@@ -1,5 +1,6 @@
 import { subscribeOnStream, unsubscribeFromStream } from 'components/trade/TradeChart/streaming'
 import { pythEndpoints } from 'constants/pyth'
+import { FETCH_TIMEOUT } from 'constants/query'
 import {
   HistoryCallback,
   LibrarySymbolInfo,
@@ -11,6 +12,7 @@ import {
   SubscribeBarsCallback,
   SymbolResolveExtension,
 } from 'utils/charting_library'
+import { fetchWithTimeout } from 'utils/fetch'
 
 const lastBarsCache = new Map()
 
@@ -30,10 +32,6 @@ export const datafeed = {
         '720',
         'D',
         '1D',
-        'W',
-        '1W',
-        'M',
-        '1M',
       ] as ResolutionString[],
       supports_marks: true,
       supports_timescale_marks: false,
@@ -47,8 +45,9 @@ export const datafeed = {
     onErrorCallback: DatafeedErrorCallback,
   ) => {
     const { from, to, firstDataRequest } = periodParams
-    fetch(
+    fetchWithTimeout(
       `${pythEndpoints.candles}/history?symbol=${symbolInfo.ticker}&from=${from}&to=${to}&resolution=${resolution}`,
+      FETCH_TIMEOUT,
     ).then((response) => {
       response
         .json()

@@ -3,11 +3,11 @@ import Card from 'components/common/Card'
 
 interface Props {
   account: Account
-  isHls?: boolean
 }
 
 export default function AccountSummaryInModal(props: Props) {
-  const { account, isHls } = props
+  const { account } = props
+  const isHls = account.kind === 'high_levered_strategy'
 
   return (
     <div className='md:h-[546px] max-w-screen-full overflow-y-scroll scrollbar-hide'>
@@ -15,7 +15,7 @@ export default function AccountSummaryInModal(props: Props) {
         className='w-full max-w-screen-full md:w-94'
         contentClassName='scrollbar-hide overflow-y-scroll '
       >
-        <AccountSummary account={account} isHls={isHls} isInModal />
+        <AccountSummary account={account} isInModal />
       </Card>
     </div>
   )

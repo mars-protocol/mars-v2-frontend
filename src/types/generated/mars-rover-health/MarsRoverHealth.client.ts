@@ -13,7 +13,6 @@ import {
   OwnerUpdate,
   QueryMsg,
   ActionKind,
-  AccountKind,
   ConfigResponse,
   OwnerResponse,
   HealthState,
@@ -26,20 +25,16 @@ export interface MarsRoverHealthReadOnlyInterface {
   healthValues: ({
     accountId,
     action,
-    kind,
   }: {
     accountId: string
     action: ActionKind
-    kind: AccountKind
   }) => Promise<HealthValuesResponse>
   healthState: ({
     accountId,
     action,
-    kind,
   }: {
     accountId: string
     action: ActionKind
-    kind: AccountKind
   }) => Promise<HealthState>
   config: () => Promise<ConfigResponse>
 }
@@ -56,34 +51,28 @@ export class MarsRoverHealthQueryClient implements MarsRoverHealthReadOnlyInterf
   healthValues = async ({
     accountId,
     action,
-    kind,
   }: {
     accountId: string
     action: ActionKind
-    kind: AccountKind
   }): Promise<HealthValuesResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       health_values: {
         account_id: accountId,
         action,
-        kind,
       },
     })
   }
   healthState = async ({
     accountId,
     action,
-    kind,
   }: {
     accountId: string
     action: ActionKind
-    kind: AccountKind
   }): Promise<HealthState> => {
     return this.client.queryContractSmart(this.contractAddress, {
       health_state: {
         account_id: accountId,
         action,
-        kind,
       },
     })
   }

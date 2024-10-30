@@ -20,10 +20,11 @@ export type ExecuteMsg =
     }
   | {
       set_asset_incentive: {
-        collateral_denom: string
+        denom: string
         duration: number
         emission_per_second: Uint128
         incentive_denom: string
+        kind: IncentiveKind
         start_time: number
       }
     }
@@ -31,17 +32,19 @@ export type ExecuteMsg =
       balance_change: {
         account_id?: string | null
         denom: string
-        total_amount_scaled_before: Uint128
+        kind: IncentiveKind
+        total_amount: Uint128
         user_addr: Addr
-        user_amount_scaled_before: Uint128
+        user_amount: Uint128
       }
     }
   | {
       claim_rewards: {
         account_id?: string | null
         limit?: number | null
-        start_after_collateral_denom?: string | null
+        start_after_denom?: string | null
         start_after_incentive_denom?: string | null
+        start_after_kind?: IncentiveKind | null
       }
     }
   | {
@@ -72,9 +75,10 @@ export type ExecuteMsg =
       update_owner: OwnerUpdate
     }
   | {
-      migrate: MigrateV1ToV2
+      migrate: MigrateV2ToV2_0_1
     }
 export type Uint128 = string
+export type IncentiveKind = 'red_bank' | 'perp_vault'
 export type Addr = string
 export type ActionAmount =
   | 'account_balance'
@@ -96,14 +100,19 @@ export type OwnerUpdate =
       }
     }
   | 'clear_emergency_owner'
-export type MigrateV1ToV2 =
+export type MigrateV2ToV2_0_1 =
   | {
-      users_indexes_and_rewards: {
+      user_unclaimed_rewards: {
         limit: number
       }
     }
   | {
-      clear_v1_state: {}
+      user_asset_indices: {
+        limit: number
+      }
+    }
+  | {
+      clear_v2_state: {}
     }
 export interface WhitelistEntry {
   denom: string
@@ -127,7 +136,8 @@ export type QueryMsg =
     }
   | {
       active_emissions: {
-        collateral_denom: string
+        denom: string
+        kind: IncentiveKind
       }
     }
   | {
@@ -135,28 +145,32 @@ export type QueryMsg =
     }
   | {
       incentive_state: {
-        collateral_denom: string
+        denom: string
         incentive_denom: string
+        kind: IncentiveKind
       }
     }
   | {
       incentive_states: {
         limit?: number | null
-        start_after_collateral_denom?: string | null
+        start_after_denom?: string | null
         start_after_incentive_denom?: string | null
+        start_after_kind?: IncentiveKind | null
       }
     }
   | {
       emission: {
-        collateral_denom: string
+        denom: string
         incentive_denom: string
+        kind: IncentiveKind
         timestamp: number
       }
     }
   | {
       emissions: {
-        collateral_denom: string
+        denom: string
         incentive_denom: string
+        kind: IncentiveKind
         limit?: number | null
         start_after_timestamp?: number | null
       }
@@ -178,8 +192,9 @@ export type QueryMsg =
       user_unclaimed_rewards: {
         account_id?: string | null
         limit?: number | null
-        start_after_collateral_denom?: string | null
+        start_after_denom?: string | null
         start_after_incentive_denom?: string | null
+        start_after_kind?: IncentiveKind | null
         user: string
       }
     }
@@ -206,9 +221,10 @@ export interface EmissionResponse {
 }
 export type Decimal = string
 export interface IncentiveStateResponse {
-  collateral_denom: string
+  denom: string
   incentive_denom: string
   index: Decimal
+  kind: IncentiveKind
   last_updated: number
 }
 export type ArrayOfIncentiveStateResponse = IncentiveStateResponse[]

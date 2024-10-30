@@ -1,24 +1,29 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 
-import Button from 'components/common/Button'
-import { ArrowRight, Circle, TrashBin, Wallet } from 'components/common/Icons'
-import Loading from 'components/common/Loading'
+import ActionButton from 'components/common/Button/ActionButton'
+import { ArrowRight, Plus } from 'components/common/Icons'
+import { HLS_INFO_ITEMS } from 'components/hls/Staking/Table/Columns/Deposit'
 import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
+import { EMPTY_ACCOUNT_HLS } from 'constants/accounts'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 
-export const DEPOSIT_META = { accessorKey: 'deposit', header: 'Deposit' }
-
 interface Props {
-  isLoading: boolean
-  strategy?: HLSStrategy
-  vault?: Vault
+  hlsFarm: HlsFarm
+}
+
+export const DEPOSIT_META = {
+  accessorKey: 'deposit',
+  enableSorting: false,
+  header: '',
+  meta: { className: 'w-30' },
 }
 
 export default function Deposit(props: Props) {
-  const { strategy, vault } = props
+  const { hlsFarm } = props
+  const borrowAssetsDenoms = useMemo(() => [hlsFarm.borrowAsset.denom], [hlsFarm])
 
   const [showHlsInfo, setShowHlsInfo] = useLocalStorage<boolean>(
     LocalStorageKeys.HLS_INFORMATION,
@@ -27,24 +32,33 @@ export default function Deposit(props: Props) {
 
   const { open: openAlertDialog, close } = useAlertDialog()
 
-  const openHlsModal = useCallback(() => {
-    if (!strategy && !vault) return
-    useStore.setState({ hlsModal: { strategy, vault } })
-  }, [strategy, vault])
+  const openHlsFarmModal = useCallback(() => {
+    useStore.setState({
+      farmModal: {
+        farm: hlsFarm.farm,
+        selectedBorrowDenoms: borrowAssetsDenoms,
+        isCreate: true,
+        account: EMPTY_ACCOUNT_HLS,
+        maxLeverage: hlsFarm.maxLeverage,
+        action: 'deposit',
+        type: 'high_leverage',
+      },
+    })
+  }, [borrowAssetsDenoms, hlsFarm.farm, hlsFarm.maxLeverage])
 
   const handleOnClick = useCallback(() => {
     if (!showHlsInfo) {
-      openHlsModal()
+      openHlsFarmModal()
       return
     }
 
     openAlertDialog({
-      title: 'Understanding HLS Positions',
-      content: <AlertDialogItems items={INFO_ITEMS} />,
+      title: 'Understanding Hls Positions',
+      content: <AlertDialogItems items={HLS_INFO_ITEMS} />,
       positiveButton: {
         text: 'Continue',
         icon: <ArrowRight />,
-        onClick: openHlsModal,
+        onClick: openHlsFarmModal,
       },
       negativeButton: {
         text: 'Cancel',
@@ -58,33 +72,17 @@ export default function Deposit(props: Props) {
         onClick: (isChecked: boolean) => setShowHlsInfo(!isChecked),
       },
     })
-  }, [close, openAlertDialog, openHlsModal, setShowHlsInfo, showHlsInfo])
-
-  if (props.isLoading) return <Loading />
+  }, [close, openAlertDialog, openHlsFarmModal, setShowHlsInfo, showHlsInfo])
 
   return (
     <div className='flex items-center justify-end'>
-      <Button onClick={handleOnClick} color='tertiary' text='Deposit' />
+      <ActionButton
+        onClick={handleOnClick}
+        color='tertiary'
+        text='Deposit'
+        leftIcon={<Plus />}
+        short
+      />
     </div>
   )
 }
-
-const INFO_ITEMS = [
-  {
-    icon: <Circle />,
-    title: 'One account, one position',
-    description:
-      'A minted HLS account can only have a single position tied to it, in order to limit risk.',
-  },
-  {
-    icon: <Wallet />,
-    title: 'Funded from your wallet',
-    description: 'To fund your HLS position, funds will have to come directly from your wallet.',
-  },
-  {
-    icon: <TrashBin />,
-    title: 'Accounts are reusable',
-    description:
-      'If you exited a position from a minted account, this account can be reused for a new position.',
-  },
-]

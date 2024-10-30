@@ -40,7 +40,7 @@ export default function Size(props: Props) {
       title={
         <FormattedNumber
           amount={amount}
-          options={{ maxDecimals: amount < 0.0001 ? props.asset.decimals : 4 }}
+          options={{ maxDecimals: props.asset.decimals }}
           className='text-xs'
         />
       }

@@ -1,12 +1,16 @@
 import { BN_ZERO } from 'constants/math'
+import { BNCoin } from 'types/classes/BNCoin'
+import { Positions } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import {
   AssetParamsBaseForAddr as AssetParams,
   AssetParamsBaseForAddr,
   TotalDepositResponse,
 } from 'types/generated/mars-params/MarsParams.types'
+import { VaultPositionResponse, VaultUnlock } from 'types/generated/mars-perps/MarsPerps.types'
 import { Market as RedBankMarket } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { BN, getLeverageFromLTV } from 'utils/helpers'
 import { convertAprToApy } from 'utils/parsers'
+import { getTokenPrice } from 'utils/tokens'
 
 export function resolveMarketResponse(
   asset: Asset,
@@ -18,8 +22,8 @@ export function resolveMarketResponse(
     return {
       asset,
       apy: {
-        borrow: convertAprToApy(Number(marketResponse.borrow_rate), 365) * 100,
-        deposit: convertAprToApy(Number(marketResponse.liquidity_rate), 365) * 100,
+        borrow: convertAprToApy(Number(marketResponse.borrow_rate) * 100, 365),
+        deposit: convertAprToApy(Number(marketResponse.liquidity_rate) * 100, 365),
       },
       debt: marketResponse.debt ?? BN_ZERO,
       deposits: marketResponse.deposits ?? BN_ZERO,
@@ -29,7 +33,8 @@ export function resolveMarketResponse(
       cap: {
         denom: assetCapResponse.denom,
         used: BN(assetCapResponse.amount),
-        max: asset.isDeprecated ? BN_ZERO : BN(assetParamsResponse.deposit_cap),
+        // add a 0.5% cap buffer for assets, so that farms can still be swapped into on leverage
+        max: asset.isDeprecated ? BN_ZERO : BN(assetParamsResponse.deposit_cap).times(0.95),
       },
       ltv: {
         max: Number(assetParamsResponse.max_loan_to_value),
@@ -56,11 +61,11 @@ export function resolveMarketResponse(
   }
 }
 
-export function resolveHLSStrategies(
+export function resolveHlsStrategies(
   type: 'vault' | 'coin',
   assets: AssetParamsBaseForAddr[],
-): HLSStrategyNoCap[] {
-  const HLSStakingStrategies: HLSStrategyNoCap[] = []
+): HlsStrategyNoCap[] {
+  const HlsStakingStrategies: HlsStrategyNoCap[] = []
 
   assets.forEach((asset) => {
     const correlations = asset.credit_manager.hls?.correlations.filter((correlation) => {
@@ -68,35 +73,32 @@ export function resolveHLSStrategies(
     })
 
     let correlatedDenoms: string[] | undefined
-
     if (type === 'coin') {
       correlatedDenoms = correlations
         ?.map((correlation) => (correlation as { coin: { denom: string } }).coin.denom)
-        .filter((denoms) => !denoms.includes('gamm/pool/'))
+        .filter((denoms) => !denoms.includes('gamm/pool/') && !denoms.includes('/share'))
     } else {
       correlatedDenoms = correlations?.map(
         (correlation) => (correlation as { vault: { addr: string } }).vault.addr,
       )
     }
-
     if (!correlatedDenoms?.length) return
 
     correlatedDenoms.forEach((correlatedDenom) =>
-      HLSStakingStrategies.push({
+      HlsStakingStrategies.push({
         apy: null,
         maxLeverage: getLeverageFromLTV(+asset.credit_manager.hls!.max_loan_to_value),
         maxLTV: +asset.credit_manager.hls!.max_loan_to_value,
         denoms: {
-          deposit: correlatedDenom,
-          borrow: asset.denom,
+          deposit: asset.denom,
+          borrow: correlatedDenom,
         },
       }),
     )
   })
-  return HLSStakingStrategies
+  return HlsStakingStrategies
 }
 
-/* PERPS
 export function resolvePerpsPositions(
   perpPositions: Positions['perps'],
   assets: Asset[],
@@ -106,11 +108,11 @@ export function resolvePerpsPositions(
 
   return perpPositions.map((position) => {
     return {
+      type: 'market',
       denom: position.denom,
       baseDenom: position.base_denom,
       amount: BN(position.size as any), // Amount is negative for SHORT positions
       tradeDirection: BN(position.size as any).isNegative() ? 'short' : 'long',
-      closingFeeRate: BN(position.closing_fee_rate),
       entryPrice: BN(position.entry_exec_price),
       currentPrice: BN(position.current_exec_price),
       pnl: {
@@ -164,7 +166,7 @@ export function resolvePerpsPositions(
 }
 
 export function resolvePerpsVaultPositions(
-  perpsVaultPositions?: Positions['perp_vault'],
+  perpsVaultPositions?: VaultPositionResponse,
 ): PerpsVaultPositions | null {
   if (!perpsVaultPositions) return null
 
@@ -178,7 +180,7 @@ export function resolvePerpsVaultPositions(
       prev[0].push(curr)
       return prev
     },
-    [[] as PerpVaultUnlock[], BN_ZERO],
+    [[] as VaultUnlock[], BN_ZERO],
   )
 
   return {
@@ -196,4 +198,3 @@ export function resolvePerpsVaultPositions(
     unlocked: unlockedAmount.isZero() ? null : unlockedAmount,
   }
 }
-  */

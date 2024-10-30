@@ -14,7 +14,10 @@ export default function AvailableAstroLpsTable() {
     [activeAstroLps],
   )
   const filteredAstroLps = useMemo(
-    () => availableAstroLps.filter((astroLp) => !activeAstroLpsDenoms.includes(astroLp.denoms.lp)),
+    () =>
+      availableAstroLps.filter(
+        (astroLp) => !activeAstroLpsDenoms.includes(astroLp.denoms.lp) && astroLp.ltv.max > 0,
+      ),
     [availableAstroLps, activeAstroLpsDenoms],
   )
 

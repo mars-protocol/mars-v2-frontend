@@ -1,9 +1,12 @@
+import { FETCH_TIMEOUT } from 'constants/query'
+import { fetchWithTimeout } from 'utils/fetch'
 import { convertAprToApy } from 'utils/parsers'
 
 function processApyData(aprOrApy: number, isApr: boolean, isPercent: boolean): number {
   if (!isApr && isPercent) return aprOrApy
-  const apy = isApr ? convertAprToApy(aprOrApy, 365) : aprOrApy
-  return isPercent ? apy : apy * 100
+  const percentApr = isPercent ? aprOrApy : aprOrApy * 100
+  const apy = isApr ? convertAprToApy(percentApr, 365) : percentApr
+  return apy
 }
 
 export default async function getCampaignApys(
@@ -13,7 +16,7 @@ export default async function getCampaignApys(
   const apys = [] as AssetCampaignApy[]
 
   try {
-    await fetch(url.toString()).then(async (res) => {
+    await fetchWithTimeout(url.toString(), FETCH_TIMEOUT).then(async (res) => {
       const data = (await res.json()) as any
       if (Array.isArray(data[apyStructure[0]])) {
         if (apyStructure[0] === denomStructure[0])
@@ -31,9 +34,16 @@ export default async function getCampaignApys(
           })
         })
       } else {
+        const apyData =
+          apyStructure.length === 1 ? data[apyStructure[0]] : data[apyStructure[0]][apyStructure[1]]
+        const denomData =
+          denomStructure.length === 1
+            ? data[denomStructure[0]]
+            : data[denomStructure[0]][denomStructure[1]]
+
         apys.push({
-          apy: processApyData(data[apyStructure[0]][apyStructure[1]], isApr, isPercent),
-          denom: data[denomStructure[0]][denomStructure[1]],
+          apy: processApyData(apyData, isApr, isPercent),
+          denom: denomData,
         })
       }
     })

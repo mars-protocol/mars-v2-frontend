@@ -10,6 +10,7 @@ import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
 import useAssets from 'hooks/assets/useAssets'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStakedAstroLpRewards from 'hooks/incentives/useStakedAstroLpRewards'
 import useStore from 'store'
 import { useSWRConfig } from 'swr'
@@ -25,17 +26,20 @@ interface Props {
     BNCoin: BNCoin,
     astroLp: DepositedAstroLp,
     currentLpRewards: BNCoin[],
+    toWallet?: boolean,
   ) => void
+  type: FarmModal['type']
 }
 
 export default function AstroLpWithdraw(props: Props) {
   const { account, astroLp, simulateUnstakeAstroLp } = props
-
+  const isHls = account.kind === 'high_levered_strategy'
   const { mutate } = useSWRConfig()
   const { data: assets } = useAssets()
   const astroLpAsset = assets.find(byDenom(astroLp.denoms.lp))
   const [withdrawAmount, setWithdrawAmount] = useState(BN_ZERO)
   const withdrawFromAstroLps = useStore((s) => s.withdrawFromAstroLps)
+  const { computeMaxWithdrawAmount } = useHealthComputer(account)
   const chainConfig = useStore((s) => s.chainConfig)
   const isAutoLend = checkAutoLendEnabled(account.id, chainConfig.id)
   const astroLpPosition = useMemo(
@@ -46,7 +50,7 @@ export default function AstroLpWithdraw(props: Props) {
   )
   const primaryAsset = assets.find(byDenom(astroLp.denoms.primary))
   const secondaryAsset = assets.find(byDenom(astroLp.denoms.secondary))
-  const { data: stakedAstroLpRewards } = useStakedAstroLpRewards(astroLp.denoms.lp)
+  const { data: stakedAstroLpRewards } = useStakedAstroLpRewards(astroLp.denoms.lp, account.id)
 
   const currentLpRewards = useMemo(() => {
     if (stakedAstroLpRewards.length === 0) return []
@@ -62,10 +66,17 @@ export default function AstroLpWithdraw(props: Props) {
         BNCoin.fromDenomAndBigNumber(astroLp.denoms.lp, amount),
         astroLp,
         currentLpRewards,
+        isHls,
       )
     },
-    [isAutoLend, astroLp, simulateUnstakeAstroLp, withdrawAmount, currentLpRewards],
+    [withdrawAmount, simulateUnstakeAstroLp, isAutoLend, astroLp, currentLpRewards, isHls],
   )
+
+  const maxAmount = useMemo(() => {
+    if (!isHls) return astroLpPosition.amount
+    // keep a small buffer to avoid HF errors
+    return computeMaxWithdrawAmount(astroLp.denoms.lp).times(0.99).integerValue()
+  }, [astroLp.denoms.lp, astroLpPosition.amount, computeMaxWithdrawAmount, isHls])
 
   const onClick = useCallback(async () => {
     useStore.setState({
@@ -75,12 +86,25 @@ export default function AstroLpWithdraw(props: Props) {
       accountId: account.id,
       astroLps: [props.astroLp],
       amount: withdrawAmount.toString(),
+      toWallet: isHls,
+      rewards: currentLpRewards,
     })
     await mutate(`chains/${chainConfig.id}/accounts/${account.id}`)
     await mutate(`chains/${chainConfig.id}/astroLps/${account.id}/staked-astro-lp-rewards`)
-  }, [account.id, chainConfig.id, mutate, props.astroLp, withdrawAmount, withdrawFromAstroLps])
+  }, [
+    account.id,
+    chainConfig.id,
+    currentLpRewards,
+    isHls,
+    mutate,
+    props.astroLp,
+    withdrawAmount,
+    withdrawFromAstroLps,
+  ])
 
   if (!astroLpAsset) return null
+
+  const withdrawNote = isHls ? 'and withdrawn to your wallet' : 'to your Credit Account'
 
   return (
     <div
@@ -98,7 +122,7 @@ export default function AstroLpWithdraw(props: Props) {
           <TokenInputWithSlider
             amount={withdrawAmount}
             asset={astroLpAsset}
-            max={astroLpPosition.amount}
+            max={maxAmount}
             onChange={onChange}
             maxText='Available'
             warningMessages={[]}
@@ -146,15 +170,14 @@ export default function AstroLpWithdraw(props: Props) {
                 />
               ))}
               <Callout type={CalloutType.INFO} className='mt-4'>
-                Note: when withdrawing any amount of LP shares, all accrued rewards will be
-                automatically claimed to your Credit Account.
+                {`Note: when withdrawing any amount of LP shares, all accrued rewards will be automatically claimed ${withdrawNote}.`}
               </Callout>
             </>
           )}
         </div>
         <Button onClick={onClick} text='Withdraw' disabled={withdrawAmount.isZero()} />
       </Card>
-      <AccountSummaryInModal account={account} isHls={false} />
+      <AccountSummaryInModal account={account} />
     </div>
   )
 }

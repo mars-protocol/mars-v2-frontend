@@ -14,11 +14,18 @@ interface Props {
   isPerps?: boolean
   isLoading: boolean
   vault: Vault | DepositedVault | PerpsVault
+  buttonColor?: 'primary' | 'secondary' | 'tertiary' | 'quaternary'
 }
 
-export const DEPOSIT_META = { accessorKey: 'deposit', enableSorting: false, header: '' }
+export const DEPOSIT_META = {
+  accessorKey: 'deposit',
+  enableSorting: false,
+  header: '',
+  meta: { className: 'w-30' },
+}
 
 export const Deposit = (props: Props) => {
+  const { buttonColor } = props
   const chainConfig = useChainConfig()
   const [showPerpsVaultInformation, setShowPerpsVaultInformation] = useLocalStorage<boolean>(
     chainConfig.id + '/' + LocalStorageKeys.PERPS_VAULT_INFORMATION,
@@ -86,7 +93,7 @@ export const Deposit = (props: Props) => {
     <div className='flex items-center justify-end'>
       <ActionButton
         onClick={enterVaultHandler}
-        color='tertiary'
+        color={buttonColor}
         text='Deposit'
         leftIcon={<Plus />}
         short

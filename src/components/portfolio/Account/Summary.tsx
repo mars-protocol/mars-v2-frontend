@@ -6,13 +6,12 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import Skeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 
 interface Props {
   account: Account
@@ -26,22 +25,19 @@ function Content(props: Props) {
   const data = useBorrowMarketAssetsTableData()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
-  const { data: hlsStrategies } = useHLSStakingAssets()
   const assets = useWhitelistedAssets()
   const astroLpAprs = useAstroLpAprs()
 
   const stats = useMemo(() => {
     if (!account || !borrowAssets.length || !lendingAssets.length) return DEFAULT_PORTFOLIO_STATS
 
-    const { positionValue, debts, netWorth, apr, leverage } = getAccountSummaryStats(
+    const { positionValue, debts, netWorth, apy, leverage } = getAccountSummaryStats(
       account,
       borrowAssets,
       lendingAssets,
-      hlsStrategies,
       assets,
       vaultAprs,
       astroLpAprs,
-      account.kind === 'high_levered_strategy',
     )
 
     return [
@@ -61,10 +57,10 @@ function Content(props: Props) {
         title: (
           <FormattedNumber
             className='text-xl'
-            amount={apr.toNumber()}
+            amount={apy.toNumber()}
             options={{
               suffix: '%',
-              maxDecimals: apr.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
+              maxDecimals: apy.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
               minDecimals: 2,
             }}
           />
@@ -82,16 +78,7 @@ function Content(props: Props) {
         sub: props.v1 ? 'Total Leverage' : DEFAULT_PORTFOLIO_STATS[4].sub,
       },
     ]
-  }, [
-    account,
-    assets,
-    borrowAssets,
-    hlsStrategies,
-    lendingAssets,
-    vaultAprs,
-    props.v1,
-    astroLpAprs,
-  ])
+  }, [account, assets, borrowAssets, lendingAssets, vaultAprs, props.v1, astroLpAprs])
 
   return (
     <Skeleton

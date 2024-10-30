@@ -10,37 +10,48 @@ interface Props {
   amount: BigNumber
   changePercentage?: BigNumber
   isApproximation?: boolean
+  abbreviated?: boolean
+  priceOverride?: BigNumber
 }
 
 export default function AmountAndValue(props: Props) {
-  const amount = demagnify(props.amount.toString(), props.asset)
-  const isZero = amount === 0
-  const isBelowMinAmount = amount < MIN_AMOUNT
-  const displayAmount = isBelowMinAmount ? MIN_AMOUNT : amount
+  const { asset, amount, changePercentage, isApproximation, abbreviated, priceOverride } = props
+  const newAmount = demagnify(amount.toString(), asset)
+  const isZero = newAmount === 0
+  const isBelowMinAmount = newAmount < MIN_AMOUNT
+  const displayAmount = isBelowMinAmount ? MIN_AMOUNT : newAmount
   return (
     <div className='flex flex-col gap-[0.5] text-xs text-right items-end'>
       <FormattedNumber
         amount={isZero ? 0 : displayAmount}
         smallerThanThreshold={!isZero && isBelowMinAmount}
-        options={{ abbreviated: true, maxDecimals: MAX_AMOUNT_DECIMALS }}
+        options={{ abbreviated: abbreviated ?? true, maxDecimals: MAX_AMOUNT_DECIMALS }}
         animate
       />
       <div className='flex'>
-        {props.changePercentage && (
+        {changePercentage && (
           <FormattedNumber
-            amount={props.changePercentage.toNumber()}
+            amount={changePercentage.toNumber()}
             className={classNames(
-              props.changePercentage.isNegative() ? 'text-loss' : 'text-profit',
+              changePercentage.isNegative() ? 'text-loss' : 'text-profit',
               'mx-1',
             )}
             parentheses
-            options={{ suffix: '%', prefix: props.changePercentage.isNegative() ? '' : '+' }}
+            options={{
+              suffix: '%',
+              prefix: changePercentage.isNegative() ? '' : '+',
+              abbreviated: abbreviated ?? true,
+            }}
           />
         )}
         <DisplayCurrency
           className='justify-end text-xs text-white/50'
-          coin={BNCoin.fromDenomAndBigNumber(props.asset.denom, props.amount)}
-          isApproximation={props.isApproximation}
+          coin={BNCoin.fromDenomAndBigNumber(
+            priceOverride ? 'usd' : asset.denom,
+            priceOverride ? amount.times(priceOverride).shiftedBy(-asset.decimals) : amount,
+          )}
+          isApproximation={isApproximation}
+          options={{ abbreviated: abbreviated ?? true }}
         />
       </div>
     </div>

@@ -12,15 +12,15 @@ import { getLeveragedApy } from 'utils/math'
 export const ACTIVE_APY_META = { header: 'APY', accessorKey: 'strategy.apy' }
 
 export const activeApySortingFn = (
-  a: Row<HLSAccountWithStrategy>,
-  b: Row<HLSAccountWithStrategy>,
+  a: Row<HlsAccountWithStrategy>,
+  b: Row<HlsAccountWithStrategy>,
 ): number => {
   // TODO: Properly implement this
   return 0
 }
 
 interface Props {
-  account: HLSAccountWithStrategy
+  account: HlsAccountWithStrategy
 }
 
 export default function ActiveAPY(props: Props) {
