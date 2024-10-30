@@ -11,7 +11,8 @@ export default function CharacterCount(props: Props) {
   const { value, maxLength, size = 'sm' } = props
   return (
     <Text size={size} className='text-white/30'>
-      <span
+      <Text
+        tag='span'
         className={classNames({
           'text-white/30': value.length <= 200,
           'text-warning': value.length > 200 && value.length < maxLength,
@@ -19,7 +20,7 @@ export default function CharacterCount(props: Props) {
         })}
       >
         {value.length}
-      </span>
+      </Text>
       /{maxLength}
     </Text>
   )
