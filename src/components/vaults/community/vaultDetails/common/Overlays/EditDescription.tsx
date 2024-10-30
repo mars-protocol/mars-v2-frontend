@@ -53,7 +53,7 @@ export default function EditDescription(props: Props) {
         footer={
           <div className='flex justify-between items-center p-4'>
             <CharacterCount value={tempDescription} maxLength={240} size='base' />
-            <Button onClick={handleSave} variant='solid' size='md' className='w-32' text='Save' />
+            <Button onClick={handleSave} size='md' className='w-32' text='Save' />
           </div>
         }
       />
