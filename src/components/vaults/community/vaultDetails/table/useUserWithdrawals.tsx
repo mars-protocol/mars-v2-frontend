@@ -43,9 +43,9 @@ export default function useUserWithdrawals(props: Props) {
       },
       {
         ...WITHDRAW_META,
-        // cell: ({ row }: { row: any }) => <VaultWithdraw vault={} />,
+        // cell: ({ row }) => <VaultWithdraw vault={} />,
         // temporary showing this button:
-        cell: ({ row }: { row: any }) => (
+        cell: ({ row }) => (
           <Button
             onClick={() => {}}
             color='tertiary'

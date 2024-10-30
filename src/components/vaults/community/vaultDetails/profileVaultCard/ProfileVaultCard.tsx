@@ -105,6 +105,7 @@ export default function ProfileVaultCard(props: Props) {
               <InfoRow label='Accrued PnL'>
                 <DisplayCurrency
                   coin={BNCoin.fromDenomAndBigNumber('usd', BN(accuredPnl))}
+                  // TODO:conditional classnames for profit/loss
                   className={classNames('text-profit text-sm')}
                 />
               </InfoRow>

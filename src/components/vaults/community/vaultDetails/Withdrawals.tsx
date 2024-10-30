@@ -11,7 +11,7 @@ import { BN } from 'utils/helpers'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import useStore from 'store'
 import { Tooltip } from 'components/common/Tooltip'
-import { ExclamationMarkTriangle, InfoCircle } from 'components/common/Icons'
+import { ExclamationMarkTriangle } from 'components/common/Icons'
 
 export default function Withdrawals() {
   const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false })
@@ -74,7 +74,7 @@ export default function Withdrawals() {
               value: <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber('usd', BN(2000))} />,
             },
             {
-              description: 'Accrued PnL',
+              description: 'Accured PnL',
               value: (
                 <div className='flex items-center gap-2'>
                   <DisplayCurrency
@@ -104,9 +104,9 @@ export default function Withdrawals() {
                   <FormattedNumber
                     amount={200}
                     options={{
-                      suffix: '%',
                       minDecimals: 2,
                       maxDecimals: 2,
+                      suffix: '%',
                     }}
                     animate
                   />
