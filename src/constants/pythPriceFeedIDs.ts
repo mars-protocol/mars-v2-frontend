@@ -62,4 +62,36 @@ export const priceFeedIDs: { symbol: string; priceFeedID: string; feedName?: str
     symbol: 'WSTETH',
     priceFeedID: '0x6df640f3b8963d8f8358f791f352b8364513f6ab1cca5ed3f1f7b5448980e784',
   },
+  {
+    symbol: 'BTC',
+    priceFeedID: 'e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43',
+  },
+  {
+    symbol: 'ETH',
+    priceFeedID: 'ff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace',
+  },
+  {
+    symbol: 'BNB',
+    priceFeedID: '2f95862b045670cd22bee3114c39763a4a08beeb663b145d283c31d7d1101c4f',
+  },
+  {
+    symbol: 'SOL',
+    priceFeedID: 'ef0d8b6fda2ceba41da15d4095d1da392a0d2f8ed0c6c7bc0f4cfac8c280b56d',
+  },
+  {
+    symbol: 'XRP',
+    priceFeedID: 'ec5d399846a9209f3fe5881d70aae9268c94339ff9817e8d18ff19fa05eea1c8',
+  },
+  {
+    symbol: 'DOGE',
+    priceFeedID: 'dcef50dd0a4cd2dcc17e45df1676dcb336a11a61c69df7a0299b0150c672d25c',
+  },
+  {
+    symbol: 'AVAX',
+    priceFeedID: '93da3352f9f1d105fdfe4971cfa80e9dd777bfc5d0f683ebb6e1294b92137bb7',
+  },
+  {
+    symbol: 'TRX',
+    priceFeedID: '67aed5a24fdad045475e7195c98a98aea119c763f272d4523f5bac93a4f33c2b',
+  },
 ]

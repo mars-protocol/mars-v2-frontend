@@ -17,18 +17,18 @@ export default function Background() {
   )
   const { pathname } = useLocation()
   const page = getPage(pathname)
-  const [isHLS, isV1, isVaults] = useMemo(
+  const [isHls, isV1, isVaults] = useMemo(
     () => [page.split('-')[0] === 'hls', page === 'v1', page.split('-')[0] === 'vaults'],
     [page],
   )
 
   useEffect(() => {
-    useStore.setState({ isHLS, isV1, isVaults })
-  }, [isHLS, isV1, isVaults])
+    useStore.setState({ isHls, isV1, isVaults })
+  }, [isHls, isV1, isVaults])
 
   const [primaryOrbClassName, secondaryOrbClassName, tertiaryOrbClassName, bodyClassName] =
     useMemo(() => {
-      if (isHLS) {
+      if (isHls) {
         return ['bg-orb-primary-hls', 'bg-orb-secondary-hls', 'bg-orb-tertiary-hls', 'bg-body-hls']
       }
       if (isV1) {
@@ -48,7 +48,7 @@ export default function Background() {
         ]
       }
       return ['bg-orb-primary', 'bg-orb-secondary', 'bg-orb-tertiary', 'bg-body']
-    }, [isHLS, isV1, isVaults])
+    }, [isHls, isV1, isVaults])
 
   return (
     <div

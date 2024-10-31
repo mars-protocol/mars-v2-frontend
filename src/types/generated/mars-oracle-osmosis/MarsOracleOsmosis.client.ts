@@ -5,17 +5,28 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
+import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { Coin, StdFee } from '@cosmjs/amino'
-import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import {
-  ActionKind,
-  ArrayOfPriceResponse,
-  ArrayOfPriceSourceResponseForString,
-  ConfigResponse,
+  InstantiateMsg,
+  Empty,
+  ExecuteMsg,
   OsmosisPriceSourceForString,
+  Decimal,
+  Downtime,
+  Identifier,
+  TwapKind,
   OwnerUpdate,
+  DowntimeDetector,
+  RedemptionRateForString,
+  Twap,
+  QueryMsg,
+  ActionKind,
+  ConfigResponse,
   PriceResponse,
-  PriceSourceResponseForString
+  PriceSourceResponseForString,
+  ArrayOfPriceSourceResponseForString,
+  ArrayOfPriceResponse,
 } from './MarsOracleOsmosis.types'
 export interface MarsOracleOsmosisReadOnlyInterface {
   contractAddress: string
@@ -88,7 +99,7 @@ export class MarsOracleOsmosisQueryClient implements MarsOracleOsmosisReadOnlyIn
   prices = async ({
     kind,
     limit,
-    startAfter, 
+    startAfter,
   }: {
     kind?: ActionKind
     limit?: number

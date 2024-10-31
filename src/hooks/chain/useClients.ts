@@ -10,6 +10,7 @@ import { MarsOracleOsmosisQueryClient } from 'types/generated/mars-oracle-osmosi
 import { MarsParamsQueryClient } from 'types/generated/mars-params/MarsParams.client'
 import { MarsRedBankQueryClient } from 'types/generated/mars-red-bank/MarsRedBank.client'
 import { getUrl } from 'utils/url'
+import { MarsPerpsQueryClient } from 'types/generated/mars-perps/MarsPerps.client'
 
 export default function useClients() {
   const chainConfig = useChainConfig()
@@ -28,7 +29,7 @@ export default function useClients() {
         params: new MarsParamsQueryClient(client, chainConfig.contracts.params),
         redBank: new MarsRedBankQueryClient(client, chainConfig.contracts.redBank),
         incentives: new MarsIncentivesQueryClient(client, chainConfig.contracts.incentives),
-        /* PERPS perps: new MarsPerpsQueryClient(client, chainConfig.contracts.perps), */
+        perps: new MarsPerpsQueryClient(client, chainConfig.contracts.perps),
         icns: new ICNSQueryClient(client),
       } as ContractClients
     },

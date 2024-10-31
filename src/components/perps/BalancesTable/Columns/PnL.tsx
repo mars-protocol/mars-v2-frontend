@@ -11,9 +11,27 @@ export const PNL_META = { accessorKey: 'pnl.net.amount', header: 'Total PnL', id
 
 type Props = {
   pnl: PerpsPnL
+  type: PerpsPosition['type']
 }
 
 export default function PnL(props: Props) {
+  if (props.type === 'limit')
+    return (
+      <Tooltip
+        content={<PnLTooltipLimitOrder {...props} />}
+        type='info'
+        underline
+        className='ml-auto w-min'
+      >
+        <DisplayCurrency
+          className='inline text-xs'
+          coin={props.pnl.net}
+          isProfitOrLoss
+          showSignPrefix
+          showZero
+        />
+      </Tooltip>
+    )
   return (
     <Tooltip content={<PnLTooltip {...props} />} type='info' underline className='ml-auto w-min'>
       <DisplayCurrency
@@ -24,6 +42,25 @@ export default function PnL(props: Props) {
         showZero
       />
     </Tooltip>
+  )
+}
+
+function PnLTooltipLimitOrder(props: Props) {
+  return (
+    <div className='flex flex-col w-full gap-2 min-w-[280px]'>
+      <div className='flex items-center w-full gap-8 space-between'>
+        <Text className='mr-auto font-bold text-white/60' size='sm'>
+          Keeper Fee
+        </Text>
+        <DisplayCurrency
+          coin={props.pnl.net}
+          className='self-end text-sm font-bold text-end'
+          isProfitOrLoss
+          showSignPrefix
+          showZero
+        />
+      </div>
+    </div>
   )
 }
 
@@ -77,6 +114,7 @@ function PnLRow(props: PnLRowProps) {
         className={classNames('self-end text-sm text-end', props.className)}
         showZero
         showSignPrefix={props.showSignPrefix}
+        options={{ abbreviated: false }}
       />
     </div>
   )

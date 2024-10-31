@@ -16,14 +16,16 @@ export const LEVERAGE_META = {
 
 type Props = {
   liquidationPrice: BigNumber
-  leverage: number
+  leverage: number | null
 }
 
 export default function Leverage(props: Props) {
   return (
     <TitleAndSubCell
       title={'-'}
-      sub={<FormattedNumber amount={props.leverage} options={{ suffix: 'x' }} />}
+      sub={
+        props.leverage ? <FormattedNumber amount={props.leverage} options={{ suffix: 'x' }} /> : ''
+      }
     />
   )
 }

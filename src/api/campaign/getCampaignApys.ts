@@ -1,3 +1,5 @@
+import { FETCH_TIMEOUT } from 'constants/query'
+import { fetchWithTimeout } from 'utils/fetch'
 import { convertAprToApy } from 'utils/parsers'
 
 function processApyData(aprOrApy: number, isApr: boolean, isPercent: boolean): number {
@@ -14,7 +16,7 @@ export default async function getCampaignApys(
   const apys = [] as AssetCampaignApy[]
 
   try {
-    await fetch(url.toString()).then(async (res) => {
+    await fetchWithTimeout(url.toString(), FETCH_TIMEOUT).then(async (res) => {
       const data = (await res.json()) as any
       if (Array.isArray(data[apyStructure[0]])) {
         if (apyStructure[0] === denomStructure[0])

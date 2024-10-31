@@ -1,10 +1,10 @@
 import { useCallback } from 'react'
 
-import { DocURL } from 'types/enums'
-import Modal from 'components/Modals/Modal'
 import { ChevronRight, Compass, HandCoins, Luggage } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import Modal from 'components/Modals/Modal'
 import useStore from 'store'
+import { DocURL } from 'types/enums'
 
 interface TutorialItemProps {
   title: string

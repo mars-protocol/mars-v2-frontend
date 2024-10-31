@@ -36,21 +36,19 @@ export default function NumberInput(props: Props) {
   const [isEditing, setIsEditing] = useState(false)
 
   useEffect(() => {
-    if (props.isUSD || isEditing) return
+    if (props.amount.isZero()) return setFormattedAmount('')
+    if (props.isUSD) return
 
-    const newFormattedAmount = props.amount.isZero()
-      ? ''
-      : formatValue(props.amount.toNumber(), {
+    if (!props.isUSD)
+      setFormattedAmount(
+        formatValue(props.amount.toNumber(), {
           decimals: props.asset.decimals,
           minDecimals: 0,
           maxDecimals: props.maxDecimals,
           thousandSeparator: false,
-        })
-
-    if (formattedAmount !== newFormattedAmount) {
-      setFormattedAmount(newFormattedAmount)
-    }
-  }, [props.amount, props.asset, props.isUSD, props.maxDecimals, formattedAmount, isEditing])
+        }),
+      )
+  }, [props.amount, props.asset, props.isUSD, props.maxDecimals])
 
   useEffect(() => {
     if (!onRef) return
@@ -131,10 +129,10 @@ export default function NumberInput(props: Props) {
     <input
       ref={inputRef}
       type='text'
-      value={formattedAmount}
+      value={formattedAmount === '0' ? '0' : formattedAmount}
       onFocus={onInputFocus}
-      onChange={onInputChange}
-      onBlur={props.onBlur ?? onInputBlur}
+      onChange={(e) => onInputChange(e.target.value)}
+      onBlur={props.onBlur}
       disabled={props.disabled}
       className={classNames(
         'w-full hover:cursor-pointer appearance-none border-none bg-transparent text-right outline-none',

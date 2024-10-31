@@ -8,6 +8,14 @@ import { getValueFromBNCoins } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
 import { getEnterVaultActions, getVaultBaseDepositCoinsAndValue } from 'utils/vaults'
 
+export function getFarmDepositsActions(deposits: BNCoin[]): Action[] {
+  return deposits
+    .filter((deposit) => deposit.amount.gt(0))
+    .map((bnCoin) => ({
+      deposit: bnCoin.toCoin(),
+    }))
+}
+
 export function getFarmDepositsReclaimsAndBorrowingsActions(
   deposits: BNCoin[],
   reclaims: BNCoin[],
@@ -262,8 +270,11 @@ export async function getFarmActions(
   chainConfig: ChainConfig,
   isAutoLend: boolean,
   isAstroLp: boolean,
+  isHighLeverage: boolean,
 ): Promise<Action[]> {
   const lendEnabledAssets = assets.filter((asset) => asset.isAutoLendEnabled)
+
+  const depositActions = isHighLeverage ? getFarmDepositsActions(deposits) : []
 
   const { reclaimActions, borrowActions } = getFarmDepositsReclaimsAndBorrowingsActions(
     deposits,
@@ -300,6 +311,7 @@ export async function getFarmActions(
   const lendActions: Action[] = hasLendActions ? getFarmLendActions(farm, lendEnabledAssets) : []
 
   return [
+    ...depositActions,
     ...reclaimActions,
     ...borrowActions,
     ...swapActions,

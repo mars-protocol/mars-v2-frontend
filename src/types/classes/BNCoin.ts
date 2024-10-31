@@ -72,4 +72,8 @@ export class BNCoin {
   plus(amount: BigNumber) {
     return BNCoin.fromDenomAndBigNumber(this.denom, this.amount.plus(amount))
   }
+
+  negated() {
+    return BNCoin.fromDenomAndBigNumber(this.denom, this.amount.negated())
+  }
 }

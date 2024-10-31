@@ -5,12 +5,12 @@ import { BNCoin } from 'types/classes/BNCoin'
 
 export const DEBT_VAL_META = { header: 'Debt Value', accessorKey: 'values.debt' }
 interface Props {
-  account: HLSAccountWithStrategy
+  account: HlsAccountWithStrategy
 }
 
 export function debtValueSorting(
-  a: Row<HLSAccountWithStrategy>,
-  b: Row<HLSAccountWithStrategy>,
+  a: Row<HlsAccountWithStrategy>,
+  b: Row<HlsAccountWithStrategy>,
 ): number {
   return a.original.values.debt.minus(b.original.values.debt).toNumber()
 }

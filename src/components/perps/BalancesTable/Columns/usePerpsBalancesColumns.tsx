@@ -10,6 +10,7 @@ import Size, { SIZE_META, sizeSortingFn } from 'components/perps/BalancesTable/C
 import TradeDirection, {
   PERP_TYPE_META,
 } from 'components/perps/BalancesTable/Columns/TradeDirection'
+import { Type, TYPE_META } from 'components/perps/BalancesTable/Columns/Type'
 
 export default function usePerpsBalancesColumns() {
   return useMemo<ColumnDef<PerpPositionRow>[]>(() => {
@@ -17,6 +18,10 @@ export default function usePerpsBalancesColumns() {
       {
         ...PERP_NAME_META,
         cell: ({ row }) => <PerpName asset={row.original.asset} />,
+      },
+      {
+        ...TYPE_META,
+        cell: ({ row }) => <Type type={row.original.type} />,
       },
       {
         ...PERP_TYPE_META,
@@ -48,7 +53,7 @@ export default function usePerpsBalancesColumns() {
       },
       {
         ...PNL_META,
-        cell: ({ row }) => <PnL pnl={row.original.pnl} />,
+        cell: ({ row }) => <PnL pnl={row.original.pnl} type={row.original.type} />,
       },
       {
         ...MANAGE_META,

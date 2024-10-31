@@ -19,10 +19,11 @@ export default function createCommonSlice(set: SetState<CommonSlice>, get: GetSt
     useMargin: true,
     useAutoRepay: true,
     isOracleStale: false,
-    isHLS: false,
+    isHls: false,
     isVaults: false,
     isV1: false,
     assets: [],
     hlsBorrowAmount: null,
+    errorStore: { apiError: null, nodeError: null },
   }
 }
