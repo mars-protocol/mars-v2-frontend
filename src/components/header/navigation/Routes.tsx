@@ -56,7 +56,7 @@ export default function Routes() {
 
           <Route path='farm' element={<FarmPage />} />
           <Route path='lend' element={<LendPage />} />
-          <Route path='borrow' element={<BorrowPage />} /> 
+          <Route path='borrow' element={<BorrowPage />} />
           <Route path='portfolio' element={<PortfolioPage />} />
           <Route path='v1' element={<V1Page />} />
 

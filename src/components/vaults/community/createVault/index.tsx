@@ -83,7 +83,7 @@ export default function CreateVault() {
 
   const handleSelectAssets = useCallback(() => {
     setShowMenu(true)
-  }, [])
+  }, [setShowMenu])
 
   return (
     <CreateVaultContent>
