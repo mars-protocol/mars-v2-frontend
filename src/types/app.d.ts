@@ -181,16 +181,6 @@ interface DepositedHlsStrategy extends HlsStrategy {
   depositedAmount: BigNumber
 }
 
-interface Vaults {
-  // TODO: update with correct types
-  vaultName: string
-  vaultSub: string
-  apy: number
-  tvl: number
-  fee: number
-  freezePeriod: number
-}
-
 interface HlsFarm {
   farm: AstroLp
   borrowAsset: Asset
@@ -620,6 +610,16 @@ interface PerpsVault {
   liquidity: BigNumber
   lockup: Lockup
   cap: DepositCap | null
+}
+
+interface Vaults {
+  // TODO: update with correct types
+  vaultName: string
+  vaultSub: string
+  apy: number
+  tvl: number
+  fee: number
+  freezePeriod: number
 }
 
 interface VaultData {
