@@ -6,6 +6,8 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import AccountCreateFirst from 'components/account/AccountCreateFirst'
 import AccountFund from 'components/account/AccountFund/AccountFundFullPage'
 import AccountList from 'components/account/AccountList'
+import AccountMenuTabs from 'components/account/AccountMenuTabs'
+import AccountVaultList from 'components/account/AccountVaultList'
 import Button from 'components/common/Button'
 import { Account, Plus, PlusCircled } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
@@ -46,6 +48,7 @@ export default function AccountMenuContent(props: Props) {
   const [isAutoLendEnabled] = useEnableAutoLendGlobal()
   const chainConfig = useChainConfig()
 
+  const hasVaults = false // TODO: Replace with actual vault availability check
   const hasCreditAccounts = !!accountIds?.length
   const isAccountSelected =
     hasCreditAccounts && accountId && isNumber(accountId) && accountIds.includes(accountId)
@@ -95,6 +98,17 @@ export default function AccountMenuContent(props: Props) {
     }
   }, [hasFundsForTxFee, hasCreditAccounts, setShowMenu, showMenu])
 
+  const accountTabs = [
+    {
+      title: 'Credit Accounts',
+      renderContent: () => <AccountList setShowMenu={setShowMenu} />,
+    },
+    {
+      title: 'Vault Accounts',
+      renderContent: () => <AccountVaultList setShowMenu={setShowMenu} />,
+    },
+  ]
+
   if (!address) return null
 
   return (
@@ -126,7 +140,7 @@ export default function AccountMenuContent(props: Props) {
           )}
         >
           <Text size='lg' className='font-bold'>
-            Credit Accounts
+            {hasVaults ? 'Accounts' : 'Credit Accounts'}
           </Text>
           <Button
             color='secondary'
@@ -138,6 +152,7 @@ export default function AccountMenuContent(props: Props) {
             onClick={performCreateAccount}
           />
         </div>
+
         <div
           className={classNames(
             menuClasses,
@@ -145,7 +160,11 @@ export default function AccountMenuContent(props: Props) {
             'top-[54px] h-[calc(100%-54px)] items-start',
           )}
         >
-          {hasCreditAccounts && <AccountList setShowMenu={setShowMenu} />}
+          {hasVaults ? (
+            <AccountMenuTabs tabs={accountTabs} />
+          ) : (
+            hasCreditAccounts && <AccountList setShowMenu={setShowMenu} />
+          )}
         </div>
       </Overlay>
     </div>
