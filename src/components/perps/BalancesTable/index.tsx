@@ -12,7 +12,8 @@ import { getSearchParamsObject } from 'utils/route'
 export default function PerpsBalancesTable() {
   const activePerpsPositions = usePerpsBalancesData()
   const activeLimitOrders = usePerpsLimitOrderRows()
-  const columns = usePerpsBalancesColumns()
+  const columns = usePerpsBalancesColumns({ isOrderTable: false })
+  const limitOrderColumns = usePerpsBalancesColumns({ isOrderTable: true })
   const [searchParams, setSearchParams] = useSearchParams()
 
   const onClickRow = useCallback(
@@ -47,7 +48,7 @@ export default function PerpsBalancesTable() {
         renderContent: () => (
           <Table
             title='Open Limit Orders'
-            columns={columns}
+            columns={limitOrderColumns}
             data={activeLimitOrders}
             initialSorting={[]}
             onClickRow={onClickRow}
