@@ -53,14 +53,6 @@ function getLimitOrderText(
 ) {
   let label = 'Limit'
 
-  if (currentPosition) {
-    if (currentPosition === 'long') {
-      label = order.tradeDirection === 'short' ? 'Take Profit' : 'Stop Loss'
-    } else {
-      label = order.tradeDirection === 'long' ? 'Take Profit' : 'Stop Loss'
-    }
-  }
-
   if (positionAmount && order.amount.abs().isEqualTo(positionAmount.abs())) {
     const isClosing =
       (currentPosition === 'long' && order.tradeDirection === 'short') ||
