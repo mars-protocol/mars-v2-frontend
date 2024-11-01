@@ -115,7 +115,7 @@ export default function TradeChart(props: Props) {
       const currentShape = chart.getShapeById(shape.id).getProperties()
 
       if (
-        (currentShape.text && currentShape.text.includes('Limit')) ||
+        currentShape.text.includes('Limit') ||
         currentShape.text.includes('Entry') ||
         currentShape.text.includes('Liquidation') ||
         currentShape.text.includes('Close')
