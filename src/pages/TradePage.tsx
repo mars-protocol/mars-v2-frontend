@@ -73,7 +73,7 @@ export default function TradePage() {
 
   return (
     <div className='flex flex-col w-full h-full gap-4'>
-      <div className='md:grid flex flex-wrap w-full md:grid-cols-[auto_346px] gap-4'>
+      <div className='flex flex-wrap w-full gap-4 md:grid md:grid-cols-chart'>
         <TradeChart buyAsset={buyAsset} sellAsset={sellAsset} />
         <TradeModule buyAsset={buyAsset} sellAsset={sellAsset} isAdvanced={isAdvanced} />
         <AccountDetailsCard />

@@ -15,7 +15,7 @@ export const ENTRY_PRICE_META = {
       </Text>
     </div>
   ),
-  meta: { className: 'min-w-30' },
+  meta: { className: 'min-w-40 w-40' },
 }
 
 type Props = {

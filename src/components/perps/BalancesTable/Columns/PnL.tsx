@@ -11,7 +11,7 @@ export const PNL_META = {
   accessorKey: 'pnl.net.amount',
   header: 'Total PnL',
   id: 'pnl',
-  meta: { className: 'min-w-30' },
+  meta: { className: 'min-w-40 w-40' },
 }
 
 type Props = {
