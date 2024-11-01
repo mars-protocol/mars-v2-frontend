@@ -58,7 +58,7 @@ export default function usePerpsBalancesColumns(props: Props) {
             },
           ]),
       {
-        ...ENTRY_PRICE_META,
+        ...ENTRY_PRICE_META(isOrderTable),
         cell: ({ row }) => (
           <EntryPrice
             entryPrice={row.original.entryPrice}
