@@ -1,4 +1,4 @@
-import { ColumnDef } from '@tanstack/react-table'
+import { ColumnDef, Row } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
 import EntryPrice, { ENTRY_PRICE_META } from 'components/perps/BalancesTable/Columns/EntryPrice'
@@ -16,7 +16,13 @@ import { demagnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { checkStopLossAndTakeProfit } from 'utils/perps'
 
-export default function usePerpsBalancesColumns() {
+interface Props {
+  isOrderTable: boolean
+}
+
+export default function usePerpsBalancesColumns(props: Props) {
+  const { isOrderTable } = props
+
   const activeLimitOrders = usePerpsLimitOrderRows()
   const staticColumns = useMemo<ColumnDef<PerpPositionRow>[]>(
     () => [
@@ -39,13 +45,18 @@ export default function usePerpsBalancesColumns() {
         },
         sortingFn: sizeSortingFn,
       },
-      {
-        ...LEVERAGE_META,
-        cell: ({ row }) => {
-          const { liquidationPrice, leverage } = row.original
-          return <Leverage liquidationPrice={liquidationPrice} leverage={leverage} />
-        },
-      },
+
+      ...(isOrderTable
+        ? []
+        : [
+            {
+              ...LEVERAGE_META,
+              cell: ({ row }: { row: Row<PerpPositionRow> }) => {
+                const { liquidationPrice, leverage } = row.original
+                return <Leverage liquidationPrice={liquidationPrice} leverage={leverage} />
+              },
+            },
+          ]),
       {
         ...ENTRY_PRICE_META,
         cell: ({ row }) => (
@@ -56,10 +67,16 @@ export default function usePerpsBalancesColumns() {
           />
         ),
       },
-      {
-        ...PNL_META,
-        cell: ({ row }) => <PnL pnl={row.original.pnl} type={row.original.type} />,
-      },
+      ...(isOrderTable
+        ? []
+        : [
+            {
+              ...PNL_META,
+              cell: ({ row }: { row: Row<PerpPositionRow> }) => (
+                <PnL pnl={row.original.pnl} type={row.original.type} />
+              ),
+            },
+          ]),
       {
         ...MANAGE_META,
         cell: ({ row }) => <Manage perpPosition={row.original} />,
