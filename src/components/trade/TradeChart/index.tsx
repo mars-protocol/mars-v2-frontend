@@ -113,7 +113,7 @@ export default function TradeChart(props: Props) {
     const allShapes = chart.getAllShapes()
     allShapes.forEach((shape) => {
       const currentShape = chart.getShapeById(shape.id).getProperties()
-
+      if (shape.name !== 'horizontal_line') return
       if (
         currentShape.text.includes('Limit') ||
         currentShape.text.includes('Entry') ||
