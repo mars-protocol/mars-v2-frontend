@@ -21,12 +21,12 @@ export function Type({ type, hasStopLoss, hasTakeProfit, showIndicators }: Props
         {type}
       </Text>
       {showIndicators && (hasStopLoss || hasTakeProfit) && (
-        <div className='flex gap-1 mt-1 items-center justify-center'>
+        <div className='flex items-center justify-center gap-1 mt-1'>
           {hasStopLoss && (
-            <span className='bg-white/10 text-white/60 text-xs px-1 rounded'>SL</span>
+            <span className='px-1 text-xs rounded bg-white/10 text-white/60'>SL</span>
           )}
           {hasTakeProfit && (
-            <span className='bg-white/10 text-white/60 text-xs px-1 rounded'>TP</span>
+            <span className='px-1 text-xs rounded bg-white/10 text-white/60'>TP</span>
           )}
         </div>
       )}

@@ -13,7 +13,7 @@ export const LEVERAGE_META = {
       </Text>
     </div>
   ),
-  meta: { className: 'min-w-40' },
+  meta: { className: 'min-w-40 w-40' },
 }
 
 type Props = {

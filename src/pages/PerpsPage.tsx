@@ -13,7 +13,7 @@ export default function PerpsPage() {
   if (!asset) return null
 
   return (
-    <div className='md:grid flex flex-wrap w-full md:grid-cols-[auto_346px] gap-4'>
+    <div className='flex flex-wrap w-full gap-4 md:grid md:grid-cols-chart'>
       <div className='w-full'>
         <PerpsBanner />
         <PerpsChart />
