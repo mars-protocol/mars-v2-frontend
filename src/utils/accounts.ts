@@ -444,12 +444,11 @@ export function getAccountSummaryStats(
   assetParams: AssetParamsBaseForAddr[] | undefined,
   perpsVaultApy: number,
 ) {
-  const debts = calculateAccountValue('debts', account, assets)
-
   const totalValue = getAccountTotalValue(account, assets)
 
   const whitelistedAssets = assets.filter((asset) => asset.isWhitelisted)
 
+  const debts = calculateAccountValue('debts', account, assets)
   const collateralValue = whitelistedAssets.reduce((acc, asset) => {
     const assetValue = calculateAccountValue('deposits', account, [asset], true)
       .plus(calculateAccountValue('lends', account, [asset], true))
