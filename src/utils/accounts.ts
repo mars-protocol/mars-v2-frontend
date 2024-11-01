@@ -444,7 +444,7 @@ export function getAccountSummaryStats(
   assetParams: AssetParamsBaseForAddr[] | undefined,
   perpsVaultApy: number,
 ) {
-  const [debts] = getAccountPositionValues(account, assets)
+  const debts = calculateAccountValue('debts', account, assets)
 
   const totalValue = getAccountTotalValue(account, assets)
 
