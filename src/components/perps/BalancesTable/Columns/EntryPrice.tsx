@@ -5,17 +5,19 @@ import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getPriceDecimals } from 'utils/formatters'
 
-export const ENTRY_PRICE_META = {
-  accessorKey: 'entryPrice',
-  header: () => (
-    <div className='flex flex-col gap-1'>
-      <Text size='xs'>Entry Price</Text>
-      <Text size='xs' className='text-white/40'>
-        Current Price
-      </Text>
-    </div>
-  ),
-  meta: { className: 'min-w-40 w-40' },
+export const ENTRY_PRICE_META = (isOrderTable: boolean) => {
+  return {
+    accessorKey: 'entryPrice',
+    header: () => (
+      <div className='flex flex-col gap-1'>
+        <Text size='xs'>{isOrderTable ? 'Limit Price' : 'Entry Price'}</Text>
+        <Text size='xs' className='text-white/40'>
+          Current Price
+        </Text>
+      </div>
+    ),
+    meta: { className: 'min-w-40 w-40' },
+  }
 }
 
 type Props = {
