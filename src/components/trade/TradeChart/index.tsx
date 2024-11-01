@@ -112,7 +112,15 @@ export default function TradeChart(props: Props) {
 
     const allShapes = chart.getAllShapes()
     allShapes.forEach((shape) => {
-      if (shape.name === 'horizontal_line') chart.removeEntity(shape.id)
+      const currentShape = chart.getShapeById(shape.id).getProperties()
+
+      if (
+        (currentShape.text && currentShape.text.includes('Limit')) ||
+        currentShape.text.includes('Entry') ||
+        currentShape.text.includes('Liquidation') ||
+        currentShape.text.includes('Close')
+      )
+        chart.removeEntity(shape.id)
     })
 
     if (entryPrice) {
