@@ -68,8 +68,7 @@ function getFeeBreakdownLabel(
   const isPnl = key === 'pnl'
   let label = FEE_LABELS[key]
   if (key === 'opening_fee' && !isNewPosition && !isFlipping) label = 'Update Fee'
-  if (key === 'closing_fee' && !isFlipping && limitPrice && !newAmount.isZero())
-    label = 'Update Fee'
+  if (key === 'closing_fee' && !isFlipping && !newAmount.isZero()) label = 'Update Fee'
   if (isPnl && pnlAmount.isPositive()) label = 'Total Profit'
   if (isPnl && pnlAmount.isNegative()) label = 'Total Loss'
   if (isPnl && limitPrice) label = 'Total Fees'
