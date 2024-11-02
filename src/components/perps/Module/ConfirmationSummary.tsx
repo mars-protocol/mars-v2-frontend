@@ -61,13 +61,15 @@ function getFeeBreakdownLabel(
   key: keyof PnlAmounts,
   pnlAmount: BigNumber,
   isNewPosition: boolean,
+  isFlipping: boolean,
   newAmount: BigNumber,
   limitPrice?: BigNumber,
 ): string {
   const isPnl = key === 'pnl'
   let label = FEE_LABELS[key]
-  if (key === 'opening_fee' && !isNewPosition) label = 'Update Fee'
-  if (key === 'closing_fee' && !newAmount.isZero()) label = 'Update Fee'
+  if (key === 'opening_fee' && !isNewPosition && !isFlipping) label = 'Update Fee'
+  if (key === 'closing_fee' && !isFlipping && limitPrice && !newAmount.isZero())
+    label = 'Update Fee'
   if (isPnl && pnlAmount.isPositive()) label = 'Total Profit'
   if (isPnl && pnlAmount.isNegative()) label = 'Total Loss'
   if (isPnl && limitPrice) label = 'Total Fees'
@@ -83,8 +85,8 @@ export default function ConfirmationSummary(props: Props) {
     amount,
     accountId,
   )
-  const [newAmount, tradeDirection, isNewPosition, previousAmount] = useMemo(() => {
-    if (isLoading || !updatePerpsPosition) return [BN_ZERO, 'long', true, BN_ZERO]
+  const [newAmount, tradeDirection, isNewPosition, previousAmount, isFlipping] = useMemo(() => {
+    if (isLoading || !updatePerpsPosition) return [BN_ZERO, 'long', true, BN_ZERO, false]
     const positionSize = updatePerpsPosition?.position?.size || '0'
     const previousAmount = BN(positionSize as string)
     const newAmount = previousAmount.plus(amount)
@@ -92,8 +94,9 @@ export default function ConfirmationSummary(props: Props) {
     const previousTradeDirection = previousAmount.isPositive() ? 'long' : 'short'
     const newDirection = newAmount.isPositive() ? 'long' : 'short'
     const tradeDirection = newAmount.isZero() ? previousTradeDirection : newDirection
+    const isFlipping = previousTradeDirection !== tradeDirection
 
-    return [newAmount, tradeDirection, isNewPosition, previousAmount]
+    return [newAmount, tradeDirection, isNewPosition, previousAmount, isFlipping]
   }, [amount, isLoading, updatePerpsPosition])
 
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount ?? account)
@@ -227,7 +230,14 @@ export default function ConfirmationSummary(props: Props) {
             )
               return null
 
-            const label = getFeeBreakdownLabel(key, pnlAmount, isNewPosition, newAmount, limitPrice)
+            const label = getFeeBreakdownLabel(
+              key,
+              pnlAmount,
+              isNewPosition,
+              isFlipping,
+              newAmount,
+              limitPrice,
+            )
             return (
               <SummaryRow label={label} key={index} className={classNames(isPnl && 'font-bold')}>
                 <DisplayCurrency
