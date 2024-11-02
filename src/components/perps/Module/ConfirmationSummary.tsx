@@ -50,6 +50,30 @@ function getActionLabel(prevAmount: BigNumber, newAmount: BigNumber): string {
   return 'Update existing position'
 }
 
+function getFeeLabel(unrealizedPnL: BigNumber, limitPrice?: BigNumber): string {
+  if (unrealizedPnL.isZero() || limitPrice) return 'Fees'
+  if (unrealizedPnL.isPositive()) return 'Fees + Profit'
+  if (unrealizedPnL.isNegative()) return 'Fees + Loss'
+  return 'Fees'
+}
+
+function getFeeBreakdownLabel(
+  key: keyof PnlAmounts,
+  pnlAmount: BigNumber,
+  isNewPosition: boolean,
+  newAmount: BigNumber,
+  limitPrice?: BigNumber,
+): string {
+  const isPnl = key === 'pnl'
+  let label = FEE_LABELS[key]
+  if (key === 'opening_fee' && !isNewPosition) label = 'Update Fee'
+  if (key === 'closing_fee' && !newAmount.isZero()) label = 'Update Fee'
+  if (isPnl && pnlAmount.isPositive()) label = 'Total Profit'
+  if (isPnl && pnlAmount.isNegative()) label = 'Total Loss'
+  if (isPnl && limitPrice) label = 'Total Fees'
+  return label
+}
+
 export default function ConfirmationSummary(props: Props) {
   const { accountId, asset, leverage, amount, keeperFee, limitPrice } = props
   const { data: account } = useAccount(accountId)
@@ -87,15 +111,22 @@ export default function ConfirmationSummary(props: Props) {
   const totalFeeAndPnLCoin = useMemo(() => {
     let tradingFee = BN_ZERO
     if (!tradingFeeAndPrice && !keeperFee) return zeroCoin
-    if (keeperFee) tradingFee = keeperFee.amount
     if (tradingFeeAndPrice)
       tradingFee = tradingFee
         .plus(tradingFeeAndPrice.fee.closing)
         .plus(tradingFeeAndPrice.fee.opening)
     tradingFee = tradingFee.negated()
-    if (position) tradingFee = BN(position.unrealized_pnl.pnl as any).minus(keeperFee?.amount ?? 0)
+    if (position && limitPrice)
+      tradingFee = BN(position.unrealized_pnl.pnl as any)
+        .minus(position.unrealized_pnl.price_pnl as any)
+        .minus(position.unrealized_pnl.accrued_funding as any)
+    if (position && !limitPrice)
+      tradingFee = BN(position.unrealized_pnl.pnl as any)
+        .minus(tradingFeeAndPrice?.fee.closing ?? BN_ZERO)
+        .minus(tradingFeeAndPrice?.fee.opening ?? BN_ZERO)
+    if (keeperFee) tradingFee = tradingFee.minus(keeperFee.amount)
     return BNCoin.fromDenomAndBigNumber(baseDenom, tradingFee)
-  }, [baseDenom, keeperFee, position, tradingFeeAndPrice, zeroCoin])
+  }, [baseDenom, keeperFee, limitPrice, position, tradingFeeAndPrice, zeroCoin])
 
   const [withdrawCoin, borrowCoin] = useMemo(() => {
     if (!account || totalFeeAndPnLCoin.amount.isPositive()) return [zeroCoin, zeroCoin]
@@ -118,9 +149,7 @@ export default function ConfirmationSummary(props: Props) {
     )
 
   const action = getActionLabel(previousAmount, newAmount)
-  let feeLabel = 'Fees'
-  if (position && BN(position.unrealized_pnl.pnl as any).isPositive()) feeLabel = 'Fees + Profit'
-  if (position && BN(position.unrealized_pnl.pnl as any).isNegative()) feeLabel = 'Fees + Loss'
+  const feeLabel = getFeeLabel(BN((position?.unrealized_pnl.pnl as any) ?? 0), limitPrice)
 
   return (
     <div className='flex flex-wrap w-full gap-4'>
@@ -186,13 +215,19 @@ export default function ConfirmationSummary(props: Props) {
         {position &&
           tradingFeeAndPrice &&
           (Object.keys(position.unrealized_pnl) as Array<keyof PnlAmounts>).map((key, index) => {
-            const pnlAmount = BN(position.unrealized_pnl[key] as any)
             const isPnl = key === 'pnl'
-            let label = FEE_LABELS[key]
-            if (key === 'opening_fee' && !isNewPosition) label = 'Update Fee'
-            if (isPnl && pnlAmount.isPositive()) label = 'Total Profit'
-            if (isPnl && pnlAmount.isNegative()) label = 'Total Loss'
-            if (pnlAmount.isZero()) return null
+            const pnlAmount =
+              isPnl && limitPrice
+                ? totalFeeAndPnLCoin.amount
+                : BN(position.unrealized_pnl[key] as any)
+
+            if (
+              ((key === 'price_pnl' || key === 'accrued_funding') && limitPrice) ||
+              pnlAmount.isZero()
+            )
+              return null
+
+            const label = getFeeBreakdownLabel(key, pnlAmount, isNewPosition, newAmount, limitPrice)
             return (
               <SummaryRow label={label} key={index} className={classNames(isPnl && 'font-bold')}>
                 <DisplayCurrency
@@ -204,7 +239,7 @@ export default function ConfirmationSummary(props: Props) {
                   )}
                   coin={BNCoin.fromDenomAndBigNumber(
                     baseDenom,
-                    isPnl
+                    isPnl && !limitPrice
                       ? pnlAmount.minus(
                           tradingFeeAndPrice.fee.opening.plus(tradingFeeAndPrice.fee.closing),
                         )
