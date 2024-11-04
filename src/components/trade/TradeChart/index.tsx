@@ -219,9 +219,6 @@ export default function TradeChart(props: Props) {
       interval: chartInterval,
       library_path: '/charting_library/',
       locale: 'en',
-      time_scale: {
-        min_bar_spacing: 12,
-      },
       toolbar_bg: settings.backgroundColor,
       disabled_features: isMobile ? disabledFeaturesMobile : disabledFeatures,
       enabled_features: isMobile ? enabledFeaturesMobile : enabledFeatures,
@@ -231,9 +228,6 @@ export default function TradeChart(props: Props) {
       theme: settings.theme,
       overrides: {
         ...settings.overrides,
-        'paneProperties.backgroundType': 'solid',
-        'linetooltrendline.linewidth': 2,
-        'scalesProperties.fontSize': 12,
       },
       loading_screen: settings.loadingScreen,
       custom_css_url: settings.stylesheet,
