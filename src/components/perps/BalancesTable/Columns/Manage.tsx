@@ -141,7 +141,7 @@ export default function Manage(props: Props) {
         : [
             {
               icon: <Edit />,
-              text: 'Edit Position Size',
+              text: 'Edit Position',
               onClick: () => {
                 const params = getSearchParamsObject(searchParams)
                 setSearchParams({
