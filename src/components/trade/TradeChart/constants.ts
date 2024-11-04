@@ -8,10 +8,14 @@ export const disabledFeatures: ChartingLibraryFeatureset[] = [
   'popup_hints',
   'header_symbol_search',
   'symbol_info',
-  'horz_touch_drag_scroll',
-  'vert_touch_drag_scroll',
   'main_series_scale_menu',
   'symbol_info',
+  'header_symbol_search',
+  'header_compare',
+  'symbol_search_hot_key',
+  'symbol_info',
+  'go_to_date',
+  'timeframes_toolbar',
 ]
 
 export const enabledFeatures: ChartingLibraryFeatureset[] = [
@@ -19,6 +23,9 @@ export const enabledFeatures: ChartingLibraryFeatureset[] = [
   'header_settings',
   'use_localstorage_for_settings',
   'chart_zoom',
+  'horz_touch_drag_scroll',
+  'vert_touch_drag_scroll',
+  'control_bar',
 ]
 
 export const disabledFeaturesMobile: ChartingLibraryFeatureset[] = [
@@ -34,6 +41,12 @@ export const disabledFeaturesMobile: ChartingLibraryFeatureset[] = [
   'symbol_info',
   'show_zoom_and_move_buttons_on_touch',
   'vert_touch_drag_scroll',
+  'header_symbol_search',
+  'header_compare',
+  'symbol_search_hot_key',
+  'symbol_info',
+  'go_to_date',
+  'timeframes_toolbar',
 ]
 
 export const enabledFeaturesMobile: ChartingLibraryFeatureset[] = [

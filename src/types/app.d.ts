@@ -1504,6 +1504,8 @@ interface TradingViewSettings {
   overrides: {
     'paneProperties.background': string
     'linetooltrendline.linecolor': string
+    'paneProperties.backgroundType': string
+    'scalesProperties.fontSize': number
   }
   loadingScreen: {
     backgroundColor: string
