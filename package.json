@@ -46,7 +46,7 @@
     "react-spring": "^9.7.4",
     "react-toastify": "^10.0.6",
     "react-use-clipboard": "^1.0.9",
-    "recharts": "^2.13.0",
+    "recharts": "^2.13.3",
     "sharp": "^0.33.5",
     "starknet": "^6.11.0",
     "swr": "^2.2.5",
