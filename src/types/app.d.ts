@@ -1508,6 +1508,39 @@ interface TradingViewSettings {
   }
 }
 
+type ShapePoint = import('utils/charting_library/charting_library').ShapePoint
+type TOverrides = import('utils/charting_library/charting_library').TOverrides
+
+interface TradingViewShapeOptions
+  extends import('utils/charting_library/charting_library').CreateShapeOptions<TOverrides> {
+  shape: TradingViewShapeNames
+}
+
+interface TradingViewMultipointShapeOptions
+  extends import('utils/charting_library/charting_library')
+    .CreateMultipointShapeOptions<TOverrides> {
+  shape: TradingViewShapeNames
+}
+
+interface TradingViewShape {
+  points: ShapePoint | ShapePoint[]
+  shape: TradingViewShapeOptions | TradingViewMultipointShapeOptions
+}
+
+type TradingViewShapeNames =
+  | 'arrow_up'
+  | 'arrow_down'
+  | 'flag'
+  | 'vertical_line'
+  | 'horizontal_line'
+  | 'long_position'
+  | 'short_position'
+  | 'icon'
+  | 'emoji'
+  | 'sticker'
+  | 'anchored_text'
+  | 'anchored_note'
+
 type PnL =
   | 'break_even'
   | {

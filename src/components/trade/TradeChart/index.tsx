@@ -41,6 +41,7 @@ interface Props {
   perpsPosition?: PerpsPosition
   liquidationPrice?: number
   limitOrders?: PerpPositionRow[]
+  onCreateLimitOrder?: (price: number) => void
 }
 
 let chartWidget: IChartingLibraryWidget
@@ -72,6 +73,21 @@ function getLimitOrderText(
   return `${label}: ${prefix}${amount} ${buyAsset.symbol}`
 }
 
+function isAutomaticAddedLine(shapeName: string, shape: any) {
+  if (!shapeName || !shape.text || shapeName !== 'horizontal_line') return false
+
+  return (
+    shape.text.includes('Limit') ||
+    shape.text.includes('Entry') ||
+    shape.text.includes('Liquidation') ||
+    shape.text.includes('Close')
+  )
+}
+
+function getChartName(props: Props) {
+  return `${props.buyAsset.symbol}-${props.sellAsset.symbol}${props.isPerps ? '-perps' : ''}`
+}
+
 export default function TradeChart(props: Props) {
   const chainConfig = useChainConfig()
   const [chartInterval, _] = useLocalStorage<ResolutionString>(
@@ -82,6 +98,14 @@ export default function TradeChart(props: Props) {
     LocalStorageKeys.THEME,
     getDefaultChainSettings(chainConfig).theme,
   )
+
+  const [tvChartStore, setTvChartStore] = useLocalStorage<string>(
+    LocalStorageKeys.TV_CHART_STORE,
+    getDefaultChainSettings(chainConfig).tvChartStore,
+  )
+  const chartName = useMemo(() => getChartName(props), [props])
+
+  const { onCreateLimitOrder, isPerps } = props
 
   const [ratio, priceBuyAsset, priceSellAsset] = useMemo(() => {
     const priceBuyAsset = props.buyAsset?.price?.amount
@@ -104,24 +128,64 @@ export default function TradeChart(props: Props) {
     return [liquidationPrice, entryPrice.toNumber(), tradeDirection]
   }, [props.buyAsset.decimals, props.isPerps, props.liquidationPrice, props.perpsPosition])
 
+  const intitalChartLoad = useCallback(() => {
+    const chart = chartWidget.activeChart()
+    if (!chart) return
+    const chartStore = JSON.parse(localStorage.getItem(LocalStorageKeys.TV_CHART_STORE) ?? '{}')
+    const currentChartStore = chartStore[chartName]
+    if (!currentChartStore) return
+    currentChartStore.forEach((shape: TradingViewShape) => {
+      try {
+        if (Array.isArray(shape.points)) {
+          if (shape.points.length === 0) return
+          chart.createMultipointShape(shape.points, shape.shape)
+        } else {
+          chart.createShape(shape.points, shape.shape)
+        }
+      } catch (e) {
+        const shapeName = shape.shape
+        console.info(`Failed to draw '${shape.shape}', reason:`, e)
+      }
+    })
+    if (!isPerps || !onCreateLimitOrder) return
+    chartWidget.onContextMenu((unixTime, price) => {
+      return [
+        {
+          position: 'top',
+          text: 'Set Limit Order Price',
+          click: () => {
+            onCreateLimitOrder(price)
+          },
+        },
+      ]
+    })
+  }, [chartName, onCreateLimitOrder, isPerps])
+
   const updateShapes = useCallback(() => {
     const chart = chartWidget.activeChart()
     const settings = getTradingViewSettings(theme)
     const oraclePriceDecimalDiff = props.buyAsset.decimals - PRICE_ORACLE_DECIMALS
     const { downColor, upColor } = settings.chartStyle
-
+    const currentShapes = [] as TradingViewShape[]
     const allShapes = chart.getAllShapes()
     allShapes.forEach((shape) => {
       const currentShape = chart.getShapeById(shape.id).getProperties()
-      if (shape.name !== 'horizontal_line') return
-      if (
-        currentShape.text.includes('Limit') ||
-        currentShape.text.includes('Entry') ||
-        currentShape.text.includes('Liquidation') ||
-        currentShape.text.includes('Close')
-      )
+      const currentShapePoints = chart.getShapeById(shape.id).getPoints()
+      if (isAutomaticAddedLine(shape.name, currentShape)) {
         chart.removeEntity(shape.id)
+      } else {
+        currentShapes.push({
+          points: currentShapePoints,
+          shape: { ...currentShape, shape: shape.name as TradingViewShapeNames },
+        })
+      }
     })
+
+    const newTvChartStore = JSON.stringify({
+      ...JSON.parse(tvChartStore),
+      [chartName]: currentShapes,
+    })
+    setTvChartStore(newTvChartStore)
 
     if (entryPrice) {
       chart.createShape(
@@ -192,13 +256,16 @@ export default function TradeChart(props: Props) {
       })
     }
   }, [
+    chartName,
     entryPrice,
     liquidationPrice,
     props.buyAsset,
     props.limitOrders,
-    props.perpsPosition,
+    props.perpsPosition?.amount,
+    setTvChartStore,
     theme,
     tradeDirection,
+    tvChartStore,
   ])
 
   // TV initialization
@@ -237,6 +304,7 @@ export default function TradeChart(props: Props) {
     chartWidget.onChartReady(() => {
       const chart = chartWidget.chart()
       chart.getSeries().setChartStyleProperties(1, settings.chartStyle)
+      intitalChartLoad()
     })
 
     const chartProperties = localStorage.getItem('tradingview.chartproperties')
@@ -260,11 +328,12 @@ export default function TradeChart(props: Props) {
     props.buyAsset.denom,
     props.buyAsset.pythFeedName,
     props.buyAsset.decimals,
+    intitalChartLoad,
   ])
 
   // ChartWidget listeners
   useEffect(() => {
-    if (!chartWidget || !props.isPerps) return
+    if (!chartWidget) return
     chartWidget.onChartReady(() => {
       updateShapes()
       chartWidget
@@ -274,7 +343,7 @@ export default function TradeChart(props: Props) {
           updateShapes()
         })
     })
-  }, [props.isPerps, updateShapes])
+  }, [updateShapes])
 
   return (
     <Card

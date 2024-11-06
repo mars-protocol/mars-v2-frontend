@@ -23,5 +23,6 @@ export const getDefaultChainSettings = (chainConfig: ChainConfig) => {
     rewardsCenterType: RewardsCenterType.Token,
     showSummary: true,
     perpsKeeperFee: BNCoin.fromDenomAndBigNumber('usd', BN_ZERO_ONE).toCoin(),
+    tvChartStore: JSON.stringify({}),
   }
 }
