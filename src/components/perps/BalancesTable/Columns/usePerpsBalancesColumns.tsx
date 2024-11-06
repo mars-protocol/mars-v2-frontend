@@ -82,7 +82,7 @@ export default function usePerpsBalancesColumns(props: Props) {
         cell: ({ row }) => <Manage perpPosition={row.original} />,
       },
     ],
-    [],
+    [isOrderTable],
   )
 
   const typeColumn = useMemo<ColumnDef<PerpPositionRow>>(
