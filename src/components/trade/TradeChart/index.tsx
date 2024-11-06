@@ -41,6 +41,7 @@ interface Props {
   perpsPosition?: PerpsPosition
   liquidationPrice?: number
   limitOrders?: PerpPositionRow[]
+  onCreateLimitOrder?: (price: number) => void
 }
 
 let chartWidget: IChartingLibraryWidget
@@ -320,6 +321,35 @@ export default function TradeChart(props: Props) {
         })
     })
   }, [updateShapes])
+
+  useEffect(() => {
+    if (!chartWidget) return
+
+    let hasAddedMenu = false
+
+    chartWidget.onChartReady(() => {
+      if (props.onCreateLimitOrder && !hasAddedMenu) {
+        hasAddedMenu = true
+        chartWidget.onContextMenu((unixTime, price) => {
+          return [
+            {
+              position: 'top',
+              text: 'Set Limit Order Price',
+              click: () => {
+                console.log('Setting limit price to:', price)
+                props.onCreateLimitOrder?.(price)
+              },
+            },
+          ]
+        })
+      }
+    })
+
+    return () => {
+      hasAddedMenu = false
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chartWidget])
 
   return (
     <Card

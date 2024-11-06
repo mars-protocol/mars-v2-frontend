@@ -30,6 +30,8 @@ import { OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
 import getPerpsPosition from 'utils/getPerpsPosition'
 import { capitalizeFirstLetter } from 'utils/helpers'
+import { usePerpsOrderForm } from 'hooks/perps/usePerpsOrderForm'
+import LimitPriceInput from 'components/common/LimitPriceInput'
 
 export function PerpsModule() {
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
@@ -40,12 +42,19 @@ export function PerpsModule() {
   const { data: allAssets } = useAssets()
   const { simulatePerps } = useUpdatedAccount(account)
   const perpsVaultModal = useStore((s) => s.perpsVaultModal)
-  const [limitPrice, setLimitPrice] = useState<BigNumber>(BN_ZERO)
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const isLimitOrder = selectedOrderType === OrderType.LIMIT
   const [limitPriceInfo, setLimitPriceInfo] = useState<CallOut | undefined>(
     DEFAULT_LIMIT_PRICE_INFO,
   )
+
+  const { limitPrice, setLimitPrice, orderType } = usePerpsOrderForm()
+
+  useEffect(() => {
+    if (orderType === 'limit') {
+      setSelectedOrderType(OrderType.LIMIT)
+    }
+  }, [orderType])
 
   const [isReduceOnly, setIsReduceOnly] = useState(false)
   const [reduceOnlyWarning, setReduceOnlyWarning] = useState<string | null>(null)
@@ -110,7 +119,7 @@ export function PerpsModule() {
   const reset = useCallback(() => {
     setLimitPrice(BN_ZERO)
     updateAmount(BN_ZERO)
-  }, [updateAmount])
+  }, [updateAmount, setLimitPrice])
 
   const onChangeTradeDirection = useCallback(
     (newTradeDirection: TradeDirection) => {
@@ -119,7 +128,7 @@ export function PerpsModule() {
       setLimitPrice(BN_ZERO)
       setIsReduceOnly(false)
     },
-    [updateAmount],
+    [updateAmount, setLimitPrice],
   )
 
   const onChangeOrderType = useCallback(
@@ -129,7 +138,7 @@ export function PerpsModule() {
       setSelectedOrderType(orderType)
       setIsReduceOnly(false)
     },
-    [updateAmount],
+    [updateAmount, setLimitPrice],
   )
 
   const onChangeAmount = useCallback(
@@ -296,13 +305,12 @@ export function PerpsModule() {
 
         {isLimitOrder && USD && (
           <>
-            <AssetAmountInput
+            <LimitPriceInput
               asset={USD}
               label='Limit Price'
               amount={limitPrice}
               setAmount={setLimitPrice}
               disabled={false}
-              isUSD
             />
             {limitPriceInfo && (
               <Callout type={limitPriceInfo.type}>{limitPriceInfo.message}</Callout>
