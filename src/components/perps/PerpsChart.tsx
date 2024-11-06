@@ -6,9 +6,12 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import usePerpsLimitOrderRows from 'hooks/perps/usePerpsLimitOrdersRows'
+import { usePerpsOrderForm } from 'hooks/perps/usePerpsOrderForm'
 import useLiquidationPrice from 'hooks/prices/useLiquidationPrice'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
+import { OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
+import { BN } from 'utils/helpers'
 
 export function PerpsChart() {
   const chainConfig = useChainConfig()
@@ -32,6 +35,18 @@ export function PerpsChart() {
 
   const { liquidationPrice } = useLiquidationPrice(liqPrice)
 
+  const { setLimitPrice, setOrderType, setSelectedOrderType } = usePerpsOrderForm()
+
+  const onCreateLimitOrder = useCallback(
+    (price: number) => {
+      const newLimitPrice = BN(price)
+      setLimitPrice(newLimitPrice, true)
+      setOrderType('limit')
+      setSelectedOrderType(OrderType.LIMIT)
+    },
+    [setLimitPrice, setOrderType, setSelectedOrderType],
+  )
+
   return (
     <div className='order-2 h-full'>
       <TradeChart
@@ -42,6 +57,7 @@ export function PerpsChart() {
         perpsPosition={currentPerpPosition}
         liquidationPrice={liquidationPrice ?? undefined}
         limitOrders={currentLimitOrders}
+        onCreateLimitOrder={onCreateLimitOrder}
       />
     </div>
   )
