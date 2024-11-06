@@ -147,20 +147,18 @@ export default function TradeChart(props: Props) {
         console.info(`Failed to draw '${shape.shape}', reason:`, e)
       }
     })
-    if (!isPerps) return
-    if (onCreateLimitOrder) {
-      chartWidget.onContextMenu((unixTime, price) => {
-        return [
-          {
-            position: 'top',
-            text: 'Set Limit Order Price',
-            click: () => {
-              onCreateLimitOrder(price)
-            },
+    if (!isPerps || !onCreateLimitOrder) return
+    chartWidget.onContextMenu((unixTime, price) => {
+      return [
+        {
+          position: 'top',
+          text: 'Set Limit Order Price',
+          click: () => {
+            onCreateLimitOrder(price)
           },
-        ]
-      })
-    }
+        },
+      ]
+    })
   }, [chartName, onCreateLimitOrder, isPerps])
 
   const updateShapes = useCallback(() => {
