@@ -131,11 +131,17 @@ export default function TradeChart(props: Props) {
     const chartStore = JSON.parse(localStorage.getItem(LocalStorageKeys.TV_CHART_STORE) ?? '{}')
     const currentChartStore = chartStore[chartName]
     if (!currentChartStore) return
-    currentChartStore.forEach((shape: any) => {
-      if (Array.isArray(shape.points)) {
-        chart.createMultipointShape(shape.points, shape.shape)
-      } else {
-        chart.createShape(shape.points, shape.shape)
+    currentChartStore.forEach((shape: TradingViewShape) => {
+      try {
+        if (Array.isArray(shape.points)) {
+          if (shape.points.length === 0) return
+          chart.createMultipointShape(shape.points, shape.shape)
+        } else {
+          chart.createShape(shape.points, shape.shape)
+        }
+      } catch (e) {
+        const shapeName = shape.shape
+        console.info(`Failed to draw '${shape.shape}', reason:`, e)
       }
     })
   }, [chartName])
@@ -145,7 +151,7 @@ export default function TradeChart(props: Props) {
     const settings = getTradingViewSettings(theme)
     const oraclePriceDecimalDiff = props.buyAsset.decimals - PRICE_ORACLE_DECIMALS
     const { downColor, upColor } = settings.chartStyle
-    const currentShapes = [] as any
+    const currentShapes = [] as TradingViewShape[]
     const allShapes = chart.getAllShapes()
     allShapes.forEach((shape) => {
       const currentShape = chart.getShapeById(shape.id).getProperties()
@@ -155,7 +161,7 @@ export default function TradeChart(props: Props) {
       } else {
         currentShapes.push({
           points: currentShapePoints,
-          shape: { ...currentShape, shape: shape.name },
+          shape: { ...currentShape, shape: shape.name as TradingViewShapeNames },
         })
       }
     })
@@ -235,13 +241,16 @@ export default function TradeChart(props: Props) {
       })
     }
   }, [
+    chartName,
     entryPrice,
     liquidationPrice,
     props.buyAsset,
     props.limitOrders,
-    props.perpsPosition,
+    props.perpsPosition?.amount,
+    setTvChartStore,
     theme,
     tradeDirection,
+    tvChartStore,
   ])
 
   // TV initialization
