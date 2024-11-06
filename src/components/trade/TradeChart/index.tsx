@@ -147,7 +147,7 @@ export default function TradeChart(props: Props) {
         console.info(`Failed to draw '${shape.shape}', reason:`, e)
       }
     })
-    if (!isPerps || !onCreateLimitOrder) return
+    if (!isPerps || !onCreateLimitOrder) return
     chartWidget.onContextMenu((unixTime, price) => {
       return [
         {
