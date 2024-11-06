@@ -41,6 +41,7 @@ interface Props {
   perpsPosition?: PerpsPosition
   liquidationPrice?: number
   limitOrders?: PerpPositionRow[]
+  onCreateLimitOrder?: (price: number) => void
 }
 
 let chartWidget: IChartingLibraryWidget
@@ -104,6 +105,8 @@ export default function TradeChart(props: Props) {
   )
   const chartName = useMemo(() => getChartName(props), [props])
 
+  const { onCreateLimitOrder, isPerps } = props
+
   const [ratio, priceBuyAsset, priceSellAsset] = useMemo(() => {
     const priceBuyAsset = props.buyAsset?.price?.amount
     const priceSellAsset = props.sellAsset?.price?.amount
@@ -144,7 +147,19 @@ export default function TradeChart(props: Props) {
         console.info(`Failed to draw '${shape.shape}', reason:`, e)
       }
     })
-  }, [chartName])
+    if (!isPerps || !onCreateLimitOrder) return
+    chartWidget.onContextMenu((unixTime, price) => {
+      return [
+        {
+          position: 'top',
+          text: 'Set Limit Order Price',
+          click: () => {
+            onCreateLimitOrder(price)
+          },
+        },
+      ]
+    })
+  }, [chartName, onCreateLimitOrder, isPerps])
 
   const updateShapes = useCallback(() => {
     const chart = chartWidget.activeChart()
