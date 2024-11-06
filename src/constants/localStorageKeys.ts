@@ -28,4 +28,5 @@ export enum LocalStorageKeys {
   VAULT_PAGE_WARNING = 'vaultPageWarning',
   VAULT_COMMUNITY_INFORMATION = 'vaultCommunityInformation',
   SHOW_SUMMARY = 'showSummary',
+  TV_CHART_STORE = 'tvChartStore',
 }
