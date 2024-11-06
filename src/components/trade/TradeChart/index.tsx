@@ -105,6 +105,8 @@ export default function TradeChart(props: Props) {
   )
   const chartName = useMemo(() => getChartName(props), [props])
 
+  const { onCreateLimitOrder, isPerps } = props
+
   const [ratio, priceBuyAsset, priceSellAsset] = useMemo(() => {
     const priceBuyAsset = props.buyAsset?.price?.amount
     const priceSellAsset = props.sellAsset?.price?.amount
@@ -145,7 +147,21 @@ export default function TradeChart(props: Props) {
         console.info(`Failed to draw '${shape.shape}', reason:`, e)
       }
     })
-  }, [chartName])
+    if (!isPerps) return
+    if (onCreateLimitOrder) {
+      chartWidget.onContextMenu((unixTime, price) => {
+        return [
+          {
+            position: 'top',
+            text: 'Set Limit Order Price',
+            click: () => {
+              onCreateLimitOrder(price)
+            },
+          },
+        ]
+      })
+    }
+  }, [chartName, onCreateLimitOrder, isPerps])
 
   const updateShapes = useCallback(() => {
     const chart = chartWidget.activeChart()
@@ -330,35 +346,6 @@ export default function TradeChart(props: Props) {
         })
     })
   }, [updateShapes])
-
-  useEffect(() => {
-    if (!chartWidget) return
-
-    let hasAddedMenu = false
-
-    chartWidget.onChartReady(() => {
-      if (props.onCreateLimitOrder && !hasAddedMenu) {
-        hasAddedMenu = true
-        chartWidget.onContextMenu((unixTime, price) => {
-          return [
-            {
-              position: 'top',
-              text: 'Set Limit Order Price',
-              click: () => {
-                console.log('Setting limit price to:', price)
-                props.onCreateLimitOrder?.(price)
-              },
-            },
-          ]
-        })
-      }
-    })
-
-    return () => {
-      hasAddedMenu = false
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chartWidget])
 
   return (
     <Card
