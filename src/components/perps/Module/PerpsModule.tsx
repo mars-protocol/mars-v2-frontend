@@ -79,6 +79,10 @@ export function PerpsModule() {
   const [isReduceOnly, setIsReduceOnly] = useState(false)
   const [reduceOnlyWarning, setReduceOnlyWarning] = useState<string | null>(null)
 
+  useEffect(() => {
+    setIsReduceOnly(selectedOrderType === OrderType.STOP)
+  }, [selectedOrderType])
+
   const {
     maxLeverage,
     maxAmount,
@@ -93,12 +97,7 @@ export function PerpsModule() {
     previousAmount,
     previousLeverage,
     previousTradeDirection,
-  } = usePerpsModule(
-    tradeDirection,
-    isLimitOrder ? limitPrice : null,
-    isStopOrder,
-    stopTradeDirection,
-  )
+  } = usePerpsModule(tradeDirection, isLimitOrder ? limitPrice : null)
 
   const USD = allAssets.find(byDenom('usd'))
 
@@ -157,29 +156,18 @@ export function PerpsModule() {
     (orderType: OrderType) => {
       updateAmount(BN_ZERO)
       setLimitPrice(BN_ZERO)
-      setStopPrice(BN_ZERO)
       setSelectedOrderType(orderType)
       setIsReduceOnly(false)
     },
     [updateAmount, setLimitPrice],
   )
 
-  const onChangeStopTradeDirection = useCallback(
-    (newDirection: TradeDirection) => {
-      setStopTradeDirection(newDirection)
-      updateAmount(BN_ZERO)
-      setStopPrice(BN_ZERO)
-      setIsReduceOnly(false)
-    },
-    [updateAmount],
-  )
-
   const onChangeAmount = useCallback(
     (newAmount: BigNumber) => {
       if (isStopOrder) {
-        updateAmount(stopTradeDirection === 'short' ? newAmount.negated() : newAmount)
+        updateAmount(stopTradeDirection === 'long' ? newAmount : newAmount.negated())
       } else {
-        updateAmount(tradeDirection === 'short' ? newAmount.negated() : newAmount)
+        updateAmount(tradeDirection === 'long' ? newAmount : newAmount.negated())
       }
     },
     [isStopOrder, stopTradeDirection, tradeDirection, updateAmount],
@@ -222,12 +210,12 @@ export function PerpsModule() {
     if (!perpsAsset.price) return undefined
 
     if (
-      (stopTradeDirection === 'long' && stopPrice.isLessThanOrEqualTo(perpsAsset.price.amount)) ||
-      (stopTradeDirection === 'short' && stopPrice.isGreaterThanOrEqualTo(perpsAsset.price.amount))
+      (stopPrice.isLessThanOrEqualTo(perpsAsset.price.amount) && stopTradeDirection === 'long') ||
+      (stopPrice.isGreaterThanOrEqualTo(perpsAsset.price.amount) && stopTradeDirection === 'short')
     ) {
-      const aboveOrBelow = stopTradeDirection === 'long' ? 'below' : 'above'
+      const belowOrAbove = stopTradeDirection === 'long' ? 'below' : 'above'
       return {
-        message: `You can not create a ${capitalizeFirstLetter(stopTradeDirection)} Stop order, ${aboveOrBelow} the current ${perpsAsset.symbol} price.`,
+        message: `You can not create a ${capitalizeFirstLetter(stopTradeDirection)} Stop order, ${belowOrAbove} the current ${perpsAsset.symbol} price.`,
         type: CalloutType.WARNING,
       }
     }
@@ -297,6 +285,13 @@ export function PerpsModule() {
     tradingFee,
   ])
 
+  useEffect(() => {
+    if (isStopOrder && currentPerpPosition) {
+      const oppositeDirection = currentPerpPosition.tradeDirection === 'long' ? 'short' : 'long'
+      setStopTradeDirection(oppositeDirection)
+    }
+  }, [isStopOrder, currentPerpPosition, stopTradeDirection])
+
   const isDisabledExecution = useMemo(() => {
     const baseConditions =
       amount.isZero() || amount.isGreaterThan(maxAmount) || warningMessages.isNotEmpty()
@@ -338,22 +333,13 @@ export function PerpsModule() {
 
   const handleClosing = useCallback(() => {
     if (currentPerpPosition) {
-      if (isStopOrder) {
-        updateAmount(
-          stopTradeDirection === 'short'
-            ? currentPerpPosition.amount.negated()
-            : currentPerpPosition.amount.abs(),
-        )
-        setIsReduceOnly(true)
+      if (tradeDirection === 'long') {
+        updateAmount(currentPerpPosition.amount.abs())
       } else {
-        updateAmount(
-          tradeDirection === 'short'
-            ? currentPerpPosition.amount.negated()
-            : currentPerpPosition.amount.abs(),
-        )
+        updateAmount(currentPerpPosition.amount.negated())
       }
     }
-  }, [currentPerpPosition, isStopOrder, stopTradeDirection, tradeDirection, updateAmount])
+  }, [currentPerpPosition, tradeDirection, updateAmount])
 
   const effectiveLeverage = useMemo(() => {
     if (amount.isGreaterThan(maxAmount)) {
@@ -390,17 +376,13 @@ export function PerpsModule() {
           selected={selectedOrderType}
           onChange={onChangeOrderType}
         />
-        {isStopOrder ? (
-          <TradeDirectionSelector
-            direction={stopTradeDirection}
-            onChangeDirection={onChangeStopTradeDirection}
-          />
-        ) : (
+        {!isStopOrder && (
           <TradeDirectionSelector
             direction={tradeDirection}
             onChangeDirection={onChangeTradeDirection}
           />
         )}
+
         {isLimitOrder && USD && (
           <>
             <LimitPriceInput
@@ -472,6 +454,7 @@ export function PerpsModule() {
                 currentLeverage={effectiveLeverage}
                 maxAmount={maxAmount}
                 onChange={onChangeLeverage}
+                // disabled={amount.isGreaterThan(maxAmount)}
               />
             )}
           </div>
@@ -481,7 +464,7 @@ export function PerpsModule() {
             {message}
           </Callout>
         ))}
-        {currentPerpPosition && (isLimitOrder || isStopOrder) && (
+        {currentPerpPosition && isLimitOrder && (
           <>
             <Divider />
             <SwitchWithLabel
@@ -489,11 +472,7 @@ export function PerpsModule() {
               label='Reduce Only'
               value={isReduceOnly}
               onChange={() => setIsReduceOnly(!isReduceOnly)}
-              tooltip={
-                isStopOrder
-                  ? "Use 'Reduce Only' for stop orders to ensure the order only reduces or closes your position."
-                  : "Use 'Reduce Only' for limit orders to decrease your position. It prevents new position creation if the existing one is modified or closed."
-              }
+              tooltip="Use 'Reduce Only' for limit orders to decrease your position. It prevents new position creation if the existing one is modified or closed."
             />
             {reduceOnlyWarning && <Callout type={CalloutType.WARNING}>{reduceOnlyWarning}</Callout>}
           </>
@@ -505,7 +484,7 @@ export function PerpsModule() {
           amount={amount}
           tradeDirection={isStopOrder ? stopTradeDirection : tradeDirection}
           asset={perpsAsset}
-          leverage={effectiveLeverage}
+          leverage={leverage}
           previousAmount={previousAmount}
           previousTradeDirection={previousTradeDirection}
           previousLeverage={previousLeverage}
