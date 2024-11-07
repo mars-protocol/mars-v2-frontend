@@ -100,8 +100,8 @@ export default function Manage(props: Props) {
         ),
         content: (
           <Text>
-            Closing this position will also cancel all related limit orders. Do
-            you want to continue?
+            Closing this position will also cancel all related limit orders. Do you want to
+            continue?
           </Text>
         ),
         positiveButton: {
