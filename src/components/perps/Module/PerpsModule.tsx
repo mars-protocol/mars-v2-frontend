@@ -261,12 +261,6 @@ export function PerpsModule() {
     tradingFee,
   ])
 
-  useEffect(() => {
-    if ((isStopOrder || isLimitOrder) && currentPerpPosition) {
-      setTradeDirection(currentPerpPosition.tradeDirection === 'long' ? 'short' : 'long')
-    }
-  }, [isStopOrder, isLimitOrder, currentPerpPosition])
-
   const isDisabledExecution = useMemo(() => {
     const baseConditions =
       amount.isZero() || amount.isGreaterThan(maxAmount) || warningMessages.isNotEmpty()
