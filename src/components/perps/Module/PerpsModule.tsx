@@ -14,7 +14,11 @@ import KeeperFee from 'components/perps/Module/KeeperFee'
 import { LeverageButtons } from 'components/perps/Module/LeverageButtons'
 import { Or } from 'components/perps/Module/Or'
 import PerpsSummary from 'components/perps/Module/Summary'
-import { DEFAULT_LIMIT_PRICE_INFO, PERPS_ORDER_TYPE_TABS } from 'components/perps/Module/constants'
+import {
+  DEFAULT_LIMIT_PRICE_INFO,
+  DEFAULT_STOP_PRICE_INFO,
+  PERPS_ORDER_TYPE_TABS,
+} from 'components/perps/Module/constants'
 import usePerpsModule from 'components/perps/Module/usePerpsModule'
 import AssetSelectorPerps from 'components/trade/TradeModule/AssetSelector/AssetSelectorPerps'
 import { BN_ZERO } from 'constants/math'
@@ -48,11 +52,25 @@ export function PerpsModule() {
     DEFAULT_LIMIT_PRICE_INFO,
   )
 
+  const [stopPriceInfo, setStopPriceInfo] = useState<CallOut | undefined>(DEFAULT_STOP_PRICE_INFO)
+
+  const isStopOrder = selectedOrderType === OrderType.STOP
+  const [stopPrice, setStopPrice] = useState<BigNumber>(BN_ZERO)
+
+  useEffect(() => {
+    if (!isStopOrder) {
+      setStopPrice(BN_ZERO)
+    }
+  }, [isStopOrder])
+
   const { limitPrice, setLimitPrice, orderType } = usePerpsOrderForm()
 
   useEffect(() => {
     if (orderType === 'limit') {
       setSelectedOrderType(OrderType.LIMIT)
+    }
+    if (orderType === 'stop') {
+      setSelectedOrderType(OrderType.STOP)
     }
   }, [orderType])
 
@@ -179,11 +197,35 @@ export function PerpsModule() {
     return undefined
   }, [limitPrice, perpsAsset, tradeDirection])
 
+  const calculateStopPriceInfo = useCallback(() => {
+    if (!perpsAsset) return DEFAULT_STOP_PRICE_INFO
+    if (stopPrice.isZero()) return DEFAULT_STOP_PRICE_INFO
+    if (!perpsAsset.price) return undefined
+
+    if (
+      (stopPrice.isLessThanOrEqualTo(perpsAsset.price.amount) && tradeDirection === 'long') ||
+      (stopPrice.isGreaterThanOrEqualTo(perpsAsset.price.amount) && tradeDirection === 'short')
+    ) {
+      const belowOrAbove = tradeDirection === 'long' ? 'below' : 'above'
+      return {
+        message: `You can not create a ${capitalizeFirstLetter(tradeDirection)} Stop order, ${belowOrAbove} the current ${perpsAsset.symbol} price.`,
+        type: CalloutType.WARNING,
+      }
+    }
+
+    return undefined
+  }, [stopPrice, perpsAsset, tradeDirection])
+
   const newLimitPriceInfo = useMemo(() => calculateLimitPriceInfo(), [calculateLimitPriceInfo])
+  const newStopPriceInfo = useMemo(() => calculateStopPriceInfo(), [calculateStopPriceInfo])
 
   useEffect(() => {
     setLimitPriceInfo(newLimitPriceInfo)
   }, [newLimitPriceInfo])
+
+  useEffect(() => {
+    setStopPriceInfo(newStopPriceInfo)
+  }, [newStopPriceInfo])
 
   useEffect(() => {
     if (!tradingFee || !perpsVault || perpsVaultModal) return
@@ -219,33 +261,49 @@ export function PerpsModule() {
     tradingFee,
   ])
 
+  useEffect(() => {
+    if ((isStopOrder || isLimitOrder) && currentPerpPosition) {
+      setTradeDirection(currentPerpPosition.tradeDirection === 'long' ? 'short' : 'long')
+    }
+  }, [isStopOrder, isLimitOrder, currentPerpPosition])
+
   const isDisabledExecution = useMemo(() => {
-    if (!isLimitOrder) {
-      return (
-        amount.isGreaterThan(maxAmount) ||
-        amount.isZero() ||
-        warningMessages.isNotEmpty() ||
-        (isReduceOnly && !validateReduceOnlyOrder())
-      )
+    const baseConditions =
+      amount.isZero() || amount.isGreaterThan(maxAmount) || warningMessages.isNotEmpty()
+
+    if (isStopOrder) {
+      if (!currentPerpPosition || stopPrice.isZero()) return true
+
+      const currentPrice = perpsAsset?.price?.amount ?? BN_ZERO
+      if (currentPrice.isZero()) return true
+
+      if (currentPerpPosition.tradeDirection === 'long') {
+        return stopPrice.isGreaterThanOrEqualTo(currentPrice)
+      }
+
+      if (currentPerpPosition.tradeDirection === 'short') {
+        return stopPrice.isLessThanOrEqualTo(currentPrice)
+      }
+
+      return false
     }
 
-    return (
-      !!limitPriceInfo ||
-      limitPrice.isZero() ||
-      amount.isZero() ||
-      amount.isGreaterThan(maxAmount) ||
-      warningMessages.isNotEmpty() ||
-      (isReduceOnly && !validateReduceOnlyOrder())
-    )
+    if (isLimitOrder) {
+      return baseConditions || !!limitPriceInfo || limitPrice.isZero()
+    }
+
+    return baseConditions
   }, [
-    isLimitOrder,
     amount,
     maxAmount,
     warningMessages,
+    isStopOrder,
+    currentPerpPosition,
+    stopPrice,
+    perpsAsset?.price?.amount,
+    isLimitOrder,
     limitPriceInfo,
     limitPrice,
-    isReduceOnly,
-    validateReduceOnlyOrder,
   ])
 
   const isDisabledAmountInput = useMemo(() => {
@@ -318,6 +376,19 @@ export function PerpsModule() {
             <Divider />
           </>
         )}
+        {isStopOrder && USD && (
+          <>
+            <LimitPriceInput
+              asset={USD}
+              amount={stopPrice}
+              setAmount={setStopPrice}
+              disabled={false}
+              label='Stop Price'
+            />
+            {stopPriceInfo && <Callout type={stopPriceInfo.type}>{stopPriceInfo.message}</Callout>}
+            <Divider />
+          </>
+        )}
         <AssetAmountInput
           containerClassName='pb-2'
           label='Amount'
@@ -383,7 +454,7 @@ export function PerpsModule() {
         )}
       </div>
       <div className='flex flex-wrap w-full gap-4 mt-4'>
-        {isLimitOrder && <KeeperFee />}
+        {(isLimitOrder || isStopOrder) && <KeeperFee />}
         <PerpsSummary
           amount={amount}
           tradeDirection={tradeDirection}
@@ -395,9 +466,10 @@ export function PerpsModule() {
           hasActivePosition={hasActivePosition}
           onTxExecuted={() => updateAmount(BN_ZERO)}
           disabled={isDisabledExecution}
-          baseDenom={tradingFee?.baseDenom ?? ''}
-          limitPrice={limitPrice}
           orderType={selectedOrderType}
+          limitPrice={isLimitOrder ? limitPrice : BN_ZERO}
+          stopPrice={isStopOrder ? stopPrice : BN_ZERO}
+          baseDenom={tradingFee?.baseDenom ?? ''}
           isReduceOnly={isReduceOnly}
           validateReduceOnlyOrder={validateReduceOnlyOrder}
         />
