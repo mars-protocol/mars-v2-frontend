@@ -39,6 +39,8 @@ import LimitPriceInput from 'components/common/LimitPriceInput'
 
 export function PerpsModule() {
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
+  const [stopTradeDirection, setStopTradeDirection] = useState<TradeDirection>('long')
+
   const { data: perpsVault } = usePerpsVault()
   const { perpsAsset } = usePerpsAsset()
   const [selectedOrderType, setSelectedOrderType] = useState<OrderType>(OrderType.MARKET)
@@ -112,6 +114,7 @@ export function PerpsModule() {
     const isIncreasingPosition =
       (currentPerpPosition.tradeDirection === 'long' && amount.isGreaterThan(0)) ||
       (currentPerpPosition.tradeDirection === 'short' && amount.isLessThan(0))
+
     const isFlippingPosition =
       (currentPerpPosition.tradeDirection === 'long' && amount.isLessThan(0)) ||
       (currentPerpPosition.tradeDirection === 'short' && amount.isGreaterThan(0))
@@ -161,9 +164,13 @@ export function PerpsModule() {
 
   const onChangeAmount = useCallback(
     (newAmount: BigNumber) => {
-      updateAmount(tradeDirection === 'long' ? newAmount : newAmount.negated())
+      if (isStopOrder) {
+        updateAmount(stopTradeDirection === 'long' ? newAmount : newAmount.negated())
+      } else {
+        updateAmount(tradeDirection === 'long' ? newAmount : newAmount.negated())
+      }
     },
-    [tradeDirection, updateAmount],
+    [isStopOrder, stopTradeDirection, tradeDirection, updateAmount],
   )
 
   const onChangeLeverage = useCallback(
@@ -203,18 +210,18 @@ export function PerpsModule() {
     if (!perpsAsset.price) return undefined
 
     if (
-      (stopPrice.isLessThanOrEqualTo(perpsAsset.price.amount) && tradeDirection === 'long') ||
-      (stopPrice.isGreaterThanOrEqualTo(perpsAsset.price.amount) && tradeDirection === 'short')
+      (stopPrice.isLessThanOrEqualTo(perpsAsset.price.amount) && stopTradeDirection === 'long') ||
+      (stopPrice.isGreaterThanOrEqualTo(perpsAsset.price.amount) && stopTradeDirection === 'short')
     ) {
-      const belowOrAbove = tradeDirection === 'long' ? 'below' : 'above'
+      const belowOrAbove = stopTradeDirection === 'long' ? 'below' : 'above'
       return {
-        message: `You can not create a ${capitalizeFirstLetter(tradeDirection)} Stop order, ${belowOrAbove} the current ${perpsAsset.symbol} price.`,
+        message: `You can not create a ${capitalizeFirstLetter(stopTradeDirection)} Stop order, ${belowOrAbove} the current ${perpsAsset.symbol} price.`,
         type: CalloutType.WARNING,
       }
     }
 
     return undefined
-  }, [stopPrice, perpsAsset, tradeDirection])
+  }, [stopPrice, perpsAsset, stopTradeDirection])
 
   const newLimitPriceInfo = useMemo(() => calculateLimitPriceInfo(), [calculateLimitPriceInfo])
   const newStopPriceInfo = useMemo(() => calculateStopPriceInfo(), [calculateStopPriceInfo])
@@ -229,9 +236,24 @@ export function PerpsModule() {
 
   useEffect(() => {
     if (!tradingFee || !perpsVault || perpsVaultModal) return
-    if (isLimitOrder || isStopOrder) {
+    if (isLimitOrder) {
       return
     }
+
+    if (isStopOrder && currentPerpPosition) {
+      const newPosition = getPerpsPosition(
+        perpsVault.denom,
+        perpsAsset,
+        currentPerpPosition.amount.negated(),
+        stopTradeDirection,
+        tradingFee,
+        currentPerpPosition,
+        stopPrice,
+      )
+      simulatePerps(newPosition, isAutoLendEnabledForCurrentAccount)
+      return
+    }
+
     const newAmount = currentPerpPosition?.amount.plus(amount) ?? amount
     const previousTradeDirection = currentPerpPosition?.amount.isLessThan(0) ? 'short' : 'long'
     const newTradeDirection = newAmount.isLessThan(0) ? 'short' : 'long'
@@ -254,6 +276,8 @@ export function PerpsModule() {
     isLimitOrder,
     isStopOrder,
     limitPrice,
+    stopPrice,
+    stopTradeDirection,
     perpsAsset,
     perpsVault,
     perpsVaultModal,
@@ -261,13 +285,19 @@ export function PerpsModule() {
     tradingFee,
   ])
 
+  useEffect(() => {
+    if (isStopOrder && currentPerpPosition) {
+      const oppositeDirection = currentPerpPosition.tradeDirection === 'long' ? 'short' : 'long'
+      setStopTradeDirection(oppositeDirection)
+    }
+  }, [isStopOrder, currentPerpPosition, stopTradeDirection])
+
   const isDisabledExecution = useMemo(() => {
     const baseConditions =
       amount.isZero() || amount.isGreaterThan(maxAmount) || warningMessages.isNotEmpty()
 
     if (isStopOrder) {
       if (!currentPerpPosition || stopPrice.isZero()) return true
-
       const currentPrice = perpsAsset?.price?.amount ?? BN_ZERO
       if (currentPrice.isZero()) return true
 
@@ -275,11 +305,7 @@ export function PerpsModule() {
         return stopPrice.isGreaterThanOrEqualTo(currentPrice)
       }
 
-      if (currentPerpPosition.tradeDirection === 'short') {
-        return stopPrice.isLessThanOrEqualTo(currentPrice)
-      }
-
-      return false
+      return stopPrice.isLessThanOrEqualTo(currentPrice)
     }
 
     if (isLimitOrder) {
@@ -325,13 +351,6 @@ export function PerpsModule() {
   const isAmountExceedingMax = useMemo(() => {
     return amount.isGreaterThan(maxAmount)
   }, [amount, maxAmount])
-
-  const oppositeTradeDirection = useMemo(() => {
-    if (!currentPerpPosition) return 'long'
-    return currentPerpPosition.tradeDirection === 'long' ? 'short' : 'long'
-  }, [currentPerpPosition])
-
-  const effectiveTradeDirection = isStopOrder ? oppositeTradeDirection : tradeDirection
 
   if (!perpsAsset) return null
 
@@ -403,7 +422,10 @@ export function PerpsModule() {
           disabled={isDisabledAmountInput}
           onClosing={handleClosing}
           showCloseButton={
-            !!currentPerpPosition && currentPerpPosition.tradeDirection !== tradeDirection
+            !!currentPerpPosition &&
+            (isStopOrder
+              ? currentPerpPosition.tradeDirection !== stopTradeDirection
+              : currentPerpPosition.tradeDirection !== tradeDirection)
           }
           isMaxSelected={isMaxSelected}
           capMax={false}
@@ -460,7 +482,7 @@ export function PerpsModule() {
         {(isLimitOrder || isStopOrder) && <KeeperFee />}
         <PerpsSummary
           amount={amount}
-          tradeDirection={tradeDirection}
+          tradeDirection={isStopOrder ? stopTradeDirection : tradeDirection}
           asset={perpsAsset}
           leverage={leverage}
           previousAmount={previousAmount}
