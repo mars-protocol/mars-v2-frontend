@@ -4,7 +4,6 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify, getPriceDecimals } from 'utils/formatters'
 
@@ -33,7 +32,6 @@ type Props = {
 
 export default function Size(props: Props) {
   const { amount, value, asset } = props
-  const adjustedValue = value.shiftedBy(asset.decimals - PRICE_ORACLE_DECIMALS)
 
   return (
     <TitleAndSubCell
@@ -46,9 +44,9 @@ export default function Size(props: Props) {
       }
       sub={
         <DisplayCurrency
-          coin={BNCoin.fromDenomAndBigNumber('usd', adjustedValue)}
+          coin={BNCoin.fromDenomAndBigNumber('usd', value)}
           options={{
-            maxDecimals: getPriceDecimals(adjustedValue),
+            maxDecimals: getPriceDecimals(value),
             minDecimals: 0,
             abbreviated: false,
           }}

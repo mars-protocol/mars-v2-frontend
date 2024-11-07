@@ -47,6 +47,7 @@ type Props = {
   disabled: boolean
   orderType: OrderType
   limitPrice: BigNumber
+  stopPrice: BigNumber
   baseDenom: string
   isReduceOnly: boolean
   validateReduceOnlyOrder: () => boolean
@@ -64,6 +65,7 @@ export default function PerpsSummary(props: Props) {
     previousTradeDirection,
     baseDenom,
     limitPrice,
+    stopPrice,
     isReduceOnly,
     validateReduceOnlyOrder,
   } = props
@@ -77,6 +79,8 @@ export default function PerpsSummary(props: Props) {
   )
   const currentAccount = useCurrentAccount()
   const isLimitOrder = props.orderType === OrderType.LIMIT
+  const isStopOrder = props.orderType === OrderType.STOP
+
   const { data: perpsConfig } = usePerpsConfig()
   const assets = useDepositEnabledAssets()
   const executePerpOrder = useStore((s) => s.executePerpOrder)
@@ -100,13 +104,13 @@ export default function PerpsSummary(props: Props) {
 
   const calculateKeeperFee = useMemo(
     () =>
-      isLimitOrder && feeToken
+      (isLimitOrder || isStopOrder) && feeToken
         ? BNCoin.fromDenomAndBigNumber(
             feeToken.denom,
             magnify(BN(keeperFee.amount).toNumber(), feeToken),
           )
         : undefined,
-    [feeToken, isLimitOrder, keeperFee.amount],
+    [feeToken, isLimitOrder, isStopOrder, keeperFee.amount],
   )
 
   const submitLimitOrder = useSubmitLimitOrder()
@@ -117,15 +121,41 @@ export default function PerpsSummary(props: Props) {
     if (isReduceOnly && !validateReduceOnlyOrder()) return
 
     const orderSize = tradeDirection === 'short' && amount.isPositive() ? amount.negated() : amount
-    let comparison: 'less_than' | 'greater_than'
 
-    if (tradeDirection === 'short') {
-      comparison = 'less_than'
-    } else {
-      comparison = 'greater_than'
+    if (isStopOrder && calculateKeeperFee) {
+      let comparison: 'less_than' | 'greater_than'
+      let stopTradeDirection: 'long' | 'short'
+
+      if (tradeDirection === 'long') {
+        comparison = 'less_than'
+        stopTradeDirection = 'short'
+      } else {
+        comparison = 'greater_than'
+        stopTradeDirection = 'long'
+      }
+
+      await submitLimitOrder({
+        asset,
+        orderSize: orderSize,
+        limitPrice: stopPrice,
+        tradeDirection: stopTradeDirection,
+        baseDenom,
+        keeperFee: calculateKeeperFee,
+        isReduceOnly: true,
+        comparison,
+      })
+      return onTxExecuted()
     }
 
     if (isLimitOrder && calculateKeeperFee) {
+      let comparison: 'less_than' | 'greater_than'
+
+      if (tradeDirection === 'long') {
+        comparison = 'greater_than'
+      } else {
+        comparison = 'less_than'
+      }
+
       await submitLimitOrder({
         asset,
         orderSize,
@@ -147,23 +177,26 @@ export default function PerpsSummary(props: Props) {
       reduceOnly: isReduceOnly,
     }
 
+    console.log('perpOrderParams', perpOrderParams)
     await executePerpOrder(perpOrderParams)
     return onTxExecuted()
   }, [
     currentAccount,
     feeToken,
     isLimitOrder,
+    isStopOrder,
     calculateKeeperFee,
     asset,
     amount,
-    isAutoLendEnabledForCurrentAccount,
-    baseDenom,
-    executePerpOrder,
-    onTxExecuted,
-    limitPrice,
     tradeDirection,
+    stopPrice,
+    limitPrice,
+    baseDenom,
     isReduceOnly,
     validateReduceOnlyOrder,
+    isAutoLendEnabledForCurrentAccount,
+    executePerpOrder,
+    onTxExecuted,
     submitLimitOrder,
   ])
 
@@ -256,6 +289,12 @@ export default function PerpsSummary(props: Props) {
     close,
     setShowSummary,
   ])
+
+  const submitBtnText = useMemo(() => {
+    if (isStopOrder) return 'Create Stop Order'
+    if (isLimitOrder) return 'Create Limit Order'
+  }, [isStopOrder, isLimitOrder])
+
   if (!account) return null
 
   return (
@@ -304,8 +343,8 @@ export default function PerpsSummary(props: Props) {
         disabled={isDisabled}
         className='w-full py-2.5 !text-base'
       >
-        {isLimitOrder ? (
-          'Create Limit Order'
+        {isLimitOrder || isStopOrder ? (
+          submitBtnText
         ) : (
           <>
             <span className='mr-1 capitalize'>{tradeDirection}</span>
