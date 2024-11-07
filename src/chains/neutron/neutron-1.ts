@@ -84,8 +84,8 @@ const Neutron1: ChainConfig = {
     rest: process.env.NEXT_PUBLIC_NEUTRON_REST ?? 'https://rest-kralum.neutron-1.neutron.org',
     swap: 'https://neutron.astroport.fi/swap',
     explorer: 'https://mintscan.io/neutron',
-    dexAssets: 'https://api.astroport.fi/api/tokens?chainId=neutron-1',
-    dexPools: 'https://api.astroport.fi/api/pools?chainId=neutron-1',
+    dexAssets: 'https://neutron-cache-api.onrender.com/neutron-1/tokens',
+    dexPools: 'https://neutron-cache-api.onrender.com/neutron-1/pools',
     gasPrices: '/feemarket/v1/gas_price/untrn',
     aprs: {
       vaults: '',
