@@ -47,6 +47,7 @@ type Props = {
   disabled: boolean
   orderType: OrderType
   limitPrice: BigNumber
+  stopPrice: BigNumber
   baseDenom: string
   isReduceOnly: boolean
   validateReduceOnlyOrder: () => boolean
@@ -64,6 +65,7 @@ export default function PerpsSummary(props: Props) {
     previousTradeDirection,
     baseDenom,
     limitPrice,
+    stopPrice,
     isReduceOnly,
     validateReduceOnlyOrder,
   } = props
@@ -77,6 +79,8 @@ export default function PerpsSummary(props: Props) {
   )
   const currentAccount = useCurrentAccount()
   const isLimitOrder = props.orderType === OrderType.LIMIT
+  const isStopOrder = props.orderType === OrderType.STOP
+
   const { data: perpsConfig } = usePerpsConfig()
   const assets = useDepositEnabledAssets()
   const executePerpOrder = useStore((s) => s.executePerpOrder)
@@ -100,13 +104,13 @@ export default function PerpsSummary(props: Props) {
 
   const calculateKeeperFee = useMemo(
     () =>
-      isLimitOrder && feeToken
+      (isLimitOrder || isStopOrder) && feeToken
         ? BNCoin.fromDenomAndBigNumber(
             feeToken.denom,
             magnify(BN(keeperFee.amount).toNumber(), feeToken),
           )
         : undefined,
-    [feeToken, isLimitOrder, keeperFee.amount],
+    [feeToken, isLimitOrder, isStopOrder, keeperFee.amount],
   )
 
   const submitLimitOrder = useSubmitLimitOrder()
@@ -117,15 +121,38 @@ export default function PerpsSummary(props: Props) {
     if (isReduceOnly && !validateReduceOnlyOrder()) return
 
     const orderSize = tradeDirection === 'short' && amount.isPositive() ? amount.negated() : amount
-    let comparison: 'less_than' | 'greater_than'
 
-    if (tradeDirection === 'short') {
-      comparison = 'less_than'
-    } else {
-      comparison = 'greater_than'
+    if (isStopOrder && calculateKeeperFee) {
+      let comparison: 'less_than' | 'greater_than'
+
+      if (tradeDirection === 'long') {
+        comparison = 'less_than'
+      } else {
+        comparison = 'greater_than'
+      }
+
+      await submitLimitOrder({
+        asset,
+        orderSize: orderSize.abs(),
+        limitPrice: stopPrice,
+        tradeDirection,
+        baseDenom,
+        keeperFee: calculateKeeperFee,
+        isReduceOnly: true,
+        comparison,
+      })
+      return onTxExecuted()
     }
 
     if (isLimitOrder && calculateKeeperFee) {
+      let comparison: 'less_than' | 'greater_than'
+
+      if (tradeDirection === 'long') {
+        comparison = 'greater_than'
+      } else {
+        comparison = 'less_than'
+      }
+
       await submitLimitOrder({
         asset,
         orderSize,
@@ -147,23 +174,26 @@ export default function PerpsSummary(props: Props) {
       reduceOnly: isReduceOnly,
     }
 
+    console.log('perpOrderParams', perpOrderParams)
     await executePerpOrder(perpOrderParams)
     return onTxExecuted()
   }, [
     currentAccount,
     feeToken,
     isLimitOrder,
+    isStopOrder,
     calculateKeeperFee,
     asset,
     amount,
-    isAutoLendEnabledForCurrentAccount,
-    baseDenom,
-    executePerpOrder,
-    onTxExecuted,
-    limitPrice,
     tradeDirection,
+    stopPrice,
+    limitPrice,
+    baseDenom,
     isReduceOnly,
     validateReduceOnlyOrder,
+    isAutoLendEnabledForCurrentAccount,
+    executePerpOrder,
+    onTxExecuted,
     submitLimitOrder,
   ])
 

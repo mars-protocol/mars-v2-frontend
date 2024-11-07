@@ -83,3 +83,31 @@ export const convertTriggerOrderResponseToPerpPosition = (
     leverage: 1,
   }
 }
+
+export const validateStopOrderPrice = (
+  stopPrice: BigNumber,
+  currentPrice: BigNumber,
+  tradeDirection: TradeDirection,
+): { isValid: boolean; errorMessage: string | null } => {
+  if (stopPrice.isZero() || currentPrice.isZero()) {
+    return { isValid: false, errorMessage: null }
+  }
+
+  if (tradeDirection === 'long') {
+    if (stopPrice.isGreaterThanOrEqualTo(currentPrice)) {
+      return {
+        isValid: false,
+        errorMessage: 'Stop price must be below current price for long positions',
+      }
+    }
+  } else {
+    if (stopPrice.isLessThanOrEqualTo(currentPrice)) {
+      return {
+        isValid: false,
+        errorMessage: 'Stop price must be above current price for short positions',
+      }
+    }
+  }
+
+  return { isValid: true, errorMessage: null }
+}

@@ -3,7 +3,12 @@ import { useSearchParams } from 'react-router-dom'
 
 import ActionButton from 'components/common/Button/ActionButton'
 import DropDownButton from 'components/common/Button/DropDownButton'
-import { Check, Cross, Edit } from 'components/common/Icons'
+import {
+  Check,
+  Cross,
+  Edit,
+  //  Shield
+} from 'components/common/Icons'
 import Text from 'components/common/Text'
 import PerpsSlTpModal from 'components/Modals/PerpsSlTpModal'
 import CloseLabel from 'components/perps/BalancesTable/Columns/CloseLabel'
@@ -134,7 +139,7 @@ export default function Manage(props: Props) {
             // Remove SL/TP for the moment
             // {
             //   icon: <Shield />,
-            //   text: 'Add SL/TP',
+            //   text: 'Add Stop Loss',
             //   onClick: openPerpsSlTpModal,
             // },
           ]
@@ -152,7 +157,7 @@ export default function Manage(props: Props) {
             },
             // {
             //   icon: <Shield />,
-            //   text: 'Add SL/TP',
+            //   text: 'Add Stop Loss',
             //   onClick: openPerpsSlTpModal,
             // },
           ]),
