@@ -11,6 +11,7 @@ import TradeDirection, {
   PERP_TYPE_META,
 } from 'components/perps/BalancesTable/Columns/TradeDirection'
 import { Type, TYPE_META } from 'components/perps/BalancesTable/Columns/Type'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import usePerpsLimitOrderRows from 'hooks/perps/usePerpsLimitOrdersRows'
 import { demagnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
@@ -38,9 +39,19 @@ export default function usePerpsBalancesColumns(props: Props) {
         ...SIZE_META,
         cell: ({ row }) => {
           const { asset, amount, type, entryPrice } = row.original
-          const price = type === 'limit' ? entryPrice : BN(asset.price?.amount || 0)
           const demagnifiedAmount = BN(demagnify(amount, asset))
-          const value = demagnifiedAmount.times(price)
+
+          let value
+          if (type === 'limit') {
+            // For limit orders, calculate adjusted value
+            value = demagnifiedAmount
+              .times(entryPrice)
+              .shiftedBy(asset.decimals - PRICE_ORACLE_DECIMALS)
+          } else {
+            // For market orders/positions, use value directly
+            value = demagnifiedAmount.times(BN(asset.price?.amount || 0))
+          }
+
           return <Size amount={row.original.amount} asset={row.original.asset} value={value} />
         },
         sortingFn: sizeSortingFn,

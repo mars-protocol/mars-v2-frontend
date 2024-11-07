@@ -3,7 +3,12 @@ import { useSearchParams } from 'react-router-dom'
 
 import ActionButton from 'components/common/Button/ActionButton'
 import DropDownButton from 'components/common/Button/DropDownButton'
-import { Check, Cross, Edit } from 'components/common/Icons'
+import {
+  Check,
+  Cross,
+  Edit,
+  //  Shield
+} from 'components/common/Icons'
 import Text from 'components/common/Text'
 import PerpsSlTpModal from 'components/Modals/PerpsSlTpModal'
 import CloseLabel from 'components/perps/BalancesTable/Columns/CloseLabel'
@@ -72,14 +77,51 @@ export default function Manage(props: Props) {
     perpPosition,
     limitOrders,
   ])
+
   const isPerpsSlTpModalOpen = useStore((s) => s.addSLTPModal)
 
   const handleCloseClick = useCallback(() => {
     if (!currentAccount) return
+
+    const hasOpenOrders = limitOrders?.some((order) =>
+      order.order.actions.some(
+        (action) =>
+          'execute_perp_order' in action &&
+          action.execute_perp_order.denom === perpPosition.asset.denom,
+      ),
+    )
+
+    if (!showSummary && hasOpenOrders) {
+      openAlertDialog({
+        header: (
+          <div className='flex items-center justify-between w-full'>
+            <Text size='2xl'>Warning</Text>
+          </div>
+        ),
+        content: (
+          <Text>
+            Closing this position will also cancel all related limit orders. Do you want to
+            continue?
+          </Text>
+        ),
+        positiveButton: {
+          text: 'Continue',
+          icon: <Check />,
+          onClick: closePosition,
+        },
+        negativeButton: {
+          text: 'Cancel',
+          onClick: close,
+        },
+      })
+      return
+    }
+
     if (!showSummary) {
       closePosition()
       return
     }
+
     openAlertDialog({
       header: (
         <div className='flex items-center justify-between w-full'>
@@ -116,16 +158,15 @@ export default function Manage(props: Props) {
     closePosition,
     currentAccount,
     openAlertDialog,
-    perpPosition.amount,
-    perpPosition.asset,
-    perpPosition.leverage,
+    perpPosition,
     setShowSummary,
     showSummary,
+    limitOrders,
   ])
 
-  const openPerpsSlTpModal = useCallback(() => {
-    useStore.setState({ addSLTPModal: true })
-  }, [])
+  // const openPerpsSlTpModal = useCallback(() => {
+  //   useStore.setState({ addSLTPModal: true })
+  // }, [])
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [
@@ -134,7 +175,7 @@ export default function Manage(props: Props) {
             // Remove SL/TP for the moment
             // {
             //   icon: <Shield />,
-            //   text: 'Add SL/TP',
+            //   text: 'Add Stop Loss',
             //   onClick: openPerpsSlTpModal,
             // },
           ]
@@ -152,7 +193,7 @@ export default function Manage(props: Props) {
             },
             // {
             //   icon: <Shield />,
-            //   text: 'Add SL/TP',
+            //   text: 'Add Stop Loss',
             //   onClick: openPerpsSlTpModal,
             // },
           ]),
