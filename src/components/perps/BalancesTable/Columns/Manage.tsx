@@ -100,7 +100,7 @@ export default function Manage(props: Props) {
         ),
         content: (
           <Text>
-            Closing this position will also cancel all related stop-loss and take-profit orders. Do
+            Closing this position will also cancel all related limit orders. Do
             you want to continue?
           </Text>
         ),
