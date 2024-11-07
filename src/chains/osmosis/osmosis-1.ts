@@ -115,7 +115,7 @@ const Osmosis1: ChainConfig = {
       process.env.NEXT_PUBLIC_OSMOSIS_REST ?? 'https://lcd-osmosis.blockapsis.com',
       'osmosis/gamm/v1beta1/pools/POOL_ID',
     ),
-    dexAssets: 'https://api.astroport.fi/api/tokens?chainId=osmosis-1',
+    dexAssets: 'https://neutron-cache-api.onrender.com/osmosis-1/tokens',
     gasPrices: 'https://osmosis-api.polkachu.com/osmosis/txfees/v1beta1/cur_eip_base_fee',
     aprs: {
       vaults: 'https://api.marsprotocol.io/v1/vaults/osmosis',
