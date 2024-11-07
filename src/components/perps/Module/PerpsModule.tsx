@@ -229,8 +229,7 @@ export function PerpsModule() {
 
   useEffect(() => {
     if (!tradingFee || !perpsVault || perpsVaultModal) return
-    if (isLimitOrder) {
-      simulatePerps(currentPerpPosition, isAutoLendEnabledForCurrentAccount)
+    if (isLimitOrder || isStopOrder) {
       return
     }
     const newAmount = currentPerpPosition?.amount.plus(amount) ?? amount
@@ -253,6 +252,7 @@ export function PerpsModule() {
     currentPerpPosition,
     isAutoLendEnabledForCurrentAccount,
     isLimitOrder,
+    isStopOrder,
     limitPrice,
     perpsAsset,
     perpsVault,
@@ -326,6 +326,13 @@ export function PerpsModule() {
     return amount.isGreaterThan(maxAmount)
   }, [amount, maxAmount])
 
+  const oppositeTradeDirection = useMemo(() => {
+    if (!currentPerpPosition) return 'long'
+    return currentPerpPosition.tradeDirection === 'long' ? 'short' : 'long'
+  }, [currentPerpPosition])
+
+  const effectiveTradeDirection = isStopOrder ? oppositeTradeDirection : tradeDirection
+
   if (!perpsAsset) return null
 
   return (
@@ -350,10 +357,12 @@ export function PerpsModule() {
           selected={selectedOrderType}
           onChange={onChangeOrderType}
         />
-        <TradeDirectionSelector
-          direction={tradeDirection}
-          onChangeDirection={onChangeTradeDirection}
-        />
+        {!isStopOrder && (
+          <TradeDirectionSelector
+            direction={tradeDirection}
+            onChangeDirection={onChangeTradeDirection}
+          />
+        )}
 
         {isLimitOrder && USD && (
           <>
