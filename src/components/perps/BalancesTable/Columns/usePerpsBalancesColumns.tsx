@@ -11,11 +11,11 @@ import TradeDirection, {
   PERP_TYPE_META,
 } from 'components/perps/BalancesTable/Columns/TradeDirection'
 import { Type, TYPE_META } from 'components/perps/BalancesTable/Columns/Type'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import usePerpsLimitOrderRows from 'hooks/perps/usePerpsLimitOrdersRows'
 import { demagnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { checkStopLossAndTakeProfit } from 'utils/perps'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 
 interface Props {
   isOrderTable: boolean
