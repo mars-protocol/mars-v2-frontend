@@ -124,18 +124,21 @@ export default function PerpsSummary(props: Props) {
 
     if (isStopOrder && calculateKeeperFee) {
       let comparison: 'less_than' | 'greater_than'
+      let stopTradeDirection: 'long' | 'short'
 
       if (tradeDirection === 'long') {
         comparison = 'less_than'
+        stopTradeDirection = 'short'
       } else {
         comparison = 'greater_than'
+        stopTradeDirection = 'long'
       }
 
       await submitLimitOrder({
         asset,
-        orderSize: orderSize.abs(),
+        orderSize: orderSize,
         limitPrice: stopPrice,
-        tradeDirection,
+        tradeDirection: stopTradeDirection,
         baseDenom,
         keeperFee: calculateKeeperFee,
         isReduceOnly: true,
@@ -286,6 +289,12 @@ export default function PerpsSummary(props: Props) {
     close,
     setShowSummary,
   ])
+
+  const submitBtnText = useMemo(() => {
+    if (isStopOrder) return 'Create Stop Order'
+    if (isLimitOrder) return 'Create Limit Order'
+  }, [isStopOrder, isLimitOrder])
+
   if (!account) return null
 
   return (
@@ -334,8 +343,8 @@ export default function PerpsSummary(props: Props) {
         disabled={isDisabled}
         className='w-full py-2.5 !text-base'
       >
-        {isLimitOrder ? (
-          'Create Limit Order'
+        {isLimitOrder || isStopOrder ? (
+          submitBtnText
         ) : (
           <>
             <span className='mr-1 capitalize'>{tradeDirection}</span>
