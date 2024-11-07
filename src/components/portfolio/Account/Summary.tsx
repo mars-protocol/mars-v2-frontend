@@ -88,7 +88,17 @@ function Content(props: Props) {
         sub: props.v1 ? 'Total Leverage' : DEFAULT_PORTFOLIO_STATS[5].sub,
       },
     ]
-  }, [account, assets, borrowAssets, lendingAssets, vaultAprs, props.v1, astroLpAprs, assetParams])
+  }, [
+    account,
+    borrowAssets,
+    lendingAssets,
+    assets,
+    vaultAprs,
+    astroLpAprs,
+    assetParams.data,
+    perpsVault?.apy,
+    props.v1,
+  ])
 
   return (
     <Skeleton

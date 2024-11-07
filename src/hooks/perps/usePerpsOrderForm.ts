@@ -4,7 +4,7 @@ import { OrderType } from 'types/enums'
 
 interface PerpsOrderFormState {
   limitPrice: BigNumber
-  orderType: 'market' | 'limit'
+  orderType: 'market' | 'limit' | 'stop'
   selectedOrderType: OrderType
   setLimitPrice: (price: BigNumber, fromTradingView?: boolean) => void
   setOrderType: (type: 'market' | 'limit') => void

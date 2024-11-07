@@ -57,7 +57,7 @@ export default function PerpsBalancesTable() {
         ),
       },
     ],
-    [columns, activePerpsPositions, onClickRow, activeLimitOrders],
+    [activeLimitOrders, columns, activePerpsPositions, onClickRow, limitOrderColumns],
   )
 
   if (!activePerpsPositions.length && !activeLimitOrders.length) return null
