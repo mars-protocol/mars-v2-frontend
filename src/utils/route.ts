@@ -28,7 +28,7 @@ export function getRoute(
   return url.pathname + url.search
 }
 
-export function getPage(pathname: string): Page {
+export function getPage(pathname: string, chainConfig: ChainConfig): Page {
   const pages: Page[] = [
     'trade',
     'trade-advanced',
@@ -41,6 +41,7 @@ export function getPage(pathname: string): Page {
     'hls-farm',
     'hls-staking',
     'execute',
+    'v1',
   ]
   const segments = pathname.split('/')
 
@@ -54,7 +55,7 @@ export function getPage(pathname: string): Page {
     return page as Page
   }
 
-  return 'perps' as Page
+  return chainConfig.perps ? ('perps' as Page) : ('trade' as Page)
 }
 
 export function getSearchParamsObject(searchParams: URLSearchParams) {

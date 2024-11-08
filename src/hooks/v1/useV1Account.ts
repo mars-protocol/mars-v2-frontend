@@ -30,6 +30,6 @@ export default function useV1Account() {
         kind: 'default' as AccountKind,
       } satisfies Account
     },
-    { suspense: false, revalidateOnFocus: false, enabled },
+    { suspense: true, revalidateOnFocus: false, enabled },
   )
 }

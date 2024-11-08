@@ -6,6 +6,7 @@ import { ArrowRight, ExclamationMarkCircled } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -29,6 +30,7 @@ function AccountDeleteModal(props: Props) {
   const deleteAccount = useStore((s) => s.deleteAccount)
   const { address: urlAddress } = useParams()
   const navigate = useNavigate()
+  const chainChonfig = useChainConfig()
   const { pathname } = useLocation()
   const { address } = useParams()
   const { debts, vaults, id: accountId } = modal || {}
@@ -41,7 +43,7 @@ function AccountDeleteModal(props: Props) {
   const deleteAccountHandler = useCallback(async () => {
     useStore.setState({ accountDeleteModal: null })
     const options = { accountId: modal.id, lends: modal.lends }
-    const path = getPage(pathname)
+    const path = getPage(pathname, chainChonfig)
     const isDeleted = await deleteAccount(options)
     if (isDeleted) {
       if (path.includes('portfolio')) {
@@ -55,13 +57,14 @@ function AccountDeleteModal(props: Props) {
   }, [
     modal.id,
     modal.lends,
-    deleteAccount,
-    navigate,
     pathname,
-    searchParams,
-    address,
-    urlAddress,
+    chainChonfig,
+    deleteAccount,
     closeDeleteAccountModal,
+    navigate,
+    searchParams,
+    urlAddress,
+    address,
   ])
 
   const depositsAndLends = useMemo(

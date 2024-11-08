@@ -16,7 +16,7 @@ import { getPage } from 'utils/route'
 export default function TradePage() {
   const { pathname } = useLocation()
   const chainConfig = useChainConfig()
-  const page = getPage(pathname)
+  const page = getPage(pathname, chainConfig)
   const isAdvanced = useMemo(() => {
     useStore.setState({ assetOverlayState: 'closed' })
     return page === 'trade-advanced'
