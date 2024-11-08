@@ -27,6 +27,7 @@ export default function Price(props: Props) {
         maxDecimals: priceDecimals,
         minDecimals: priceDecimals,
       }}
+      showDetailedPrice
     />
   )
 }
