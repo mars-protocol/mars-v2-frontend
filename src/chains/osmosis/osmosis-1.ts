@@ -119,7 +119,6 @@ const Osmosis1: ChainConfig = {
     gasPrices: 'https://osmosis-api.polkachu.com/osmosis/txfees/v1beta1/cur_eip_base_fee',
     aprs: {
       vaults: 'https://api.marsprotocol.io/v1/vaults/osmosis',
-      stride: 'https://edge.stride.zone/api/stake-stats',
     },
   },
   dexName: 'Osmosis Dex',
