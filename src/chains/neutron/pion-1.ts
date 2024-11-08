@@ -34,7 +34,6 @@ const Pion1: ChainConfig = {
     gasPrices: '/feemarket/v1/gas_price/untrn',
     aprs: {
       vaults: '',
-      stride: 'https://edge.stride.zone/api/stake-stats',
       perpsVault: 'https://testnet-api.marsprotocol.io/v2/perps_vault?chain=neutron',
     },
   },

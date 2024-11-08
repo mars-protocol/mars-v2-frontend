@@ -262,7 +262,6 @@ interface ChainConfig {
     gasPrices?: string
     aprs: {
       vaults: string
-      stride: string
       perpsVault?: string
     }
   }
