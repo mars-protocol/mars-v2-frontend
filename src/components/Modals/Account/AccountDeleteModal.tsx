@@ -1,13 +1,11 @@
 import { useCallback, useMemo } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { useSWRConfig } from 'swr'
 
 import AccountAlertDialog from 'components/Modals/Account/AccountAlertDialog'
 import { ArrowRight, ExclamationMarkCircled } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import AssetBalanceRow from 'components/common/assets/AssetBalanceRow'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -28,9 +26,7 @@ export default function AccountDeleteController() {
 
 function AccountDeleteModal(props: Props) {
   const modal = props.modal
-  const chainConfig = useChainConfig()
   const deleteAccount = useStore((s) => s.deleteAccount)
-  const { mutate } = useSWRConfig()
   const { address: urlAddress } = useParams()
   const navigate = useNavigate()
   const { pathname } = useLocation()

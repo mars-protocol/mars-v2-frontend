@@ -18,7 +18,6 @@ import useMarkets from 'hooks/markets/useMarkets'
 import useSlippage from 'hooks/settings/useSlippage'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
-import { useSWRConfig } from 'swr'
 import { BNCoin } from 'types/classes/BNCoin'
 import { removeEmptyBNCoins } from 'utils/accounts'
 import { byDenom } from 'utils/array'
@@ -29,7 +28,6 @@ import { formatPercent } from 'utils/formatters'
 import { mergeBNCoinArrays } from 'utils/helpers'
 
 export default function FarmBorrowings(props: FarmBorrowingsProps) {
-  const { mutate } = useSWRConfig()
   const assets = useDepositEnabledAssets()
   const { borrowings, onChangeBorrowings, type } = props
   const isAstroLp = type === 'astroLp'
