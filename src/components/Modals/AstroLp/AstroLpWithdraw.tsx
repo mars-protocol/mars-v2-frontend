@@ -13,7 +13,6 @@ import useAssets from 'hooks/assets/useAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStakedAstroLpRewards from 'hooks/incentives/useStakedAstroLpRewards'
 import useStore from 'store'
-import { useSWRConfig } from 'swr'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
@@ -34,7 +33,6 @@ interface Props {
 export default function AstroLpWithdraw(props: Props) {
   const { account, astroLp, simulateUnstakeAstroLp } = props
   const isHls = account.kind === 'high_levered_strategy'
-  const { mutate } = useSWRConfig()
   const { data: assets } = useAssets()
   const astroLpAsset = assets.find(byDenom(astroLp.denoms.lp))
   const [withdrawAmount, setWithdrawAmount] = useState(BN_ZERO)

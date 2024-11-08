@@ -18,8 +18,6 @@ export default function VaultUnlockBanner(props: Props) {
   const [isConfirming, setIsConfirming] = useState(false)
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
   const [slippage] = useSlippage()
-  const { mutate } = useSWRConfig()
-  const chainConfig = useChainConfig()
 
   async function handleWithdraw() {
     if (!accountId) return

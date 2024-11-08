@@ -11,7 +11,6 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useSlippage from 'hooks/settings/useSlippage'
 import { useCallback, useMemo, useState } from 'react'
 import useStore from 'store'
-import { useSWRConfig } from 'swr'
 import { BNCoin } from 'types/classes/BNCoin'
 import { removeEmptyBNCoins } from 'utils/accounts'
 import { byDenom } from 'utils/array'
@@ -36,7 +35,6 @@ export default function HlsFarmingSummary(props: Props) {
   const { data: assets } = useAssets()
   const chainConfig = useChainConfig()
   const [slippage] = useSlippage()
-  const { mutate } = useSWRConfig()
   const depositIntoFarm = useStore((s) => s.depositIntoFarm)
   const updatedAccount = useStore((s) => s.updatedAccount)
   const [isCalculating, setIsCaluclating] = useState(false)
