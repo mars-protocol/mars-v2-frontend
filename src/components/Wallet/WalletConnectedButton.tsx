@@ -87,7 +87,7 @@ export default function WalletConnectedButton() {
       })
     }
 
-    navigate(getRoute(getPage(pathname), new URLSearchParams()))
+    navigate(getRoute(getPage(pathname, chainConfig), new URLSearchParams()))
   }
 
   useEffect(() => {

@@ -4,6 +4,7 @@ import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullP
 import Button from 'components/common/Button'
 import { ArrowDownLine, ArrowUpLine, TrashBin } from 'components/common/Icons'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { calculateAccountBalanceValue } from 'utils/accounts'
@@ -17,6 +18,7 @@ export default function ManageAccount(props: Props) {
   const { account } = props
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const chainConfig = useChainConfig()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
   const assets = useWhitelistedAssets()
@@ -42,7 +44,9 @@ export default function ManageAccount(props: Props) {
             onClick={() => {
               if (!positionBalance) return
               if (positionBalance.isLessThanOrEqualTo(0)) {
-                navigate(getRoute(getPage(pathname), searchParams, address, account.id))
+                navigate(
+                  getRoute(getPage(pathname, chainConfig), searchParams, address, account.id),
+                )
                 useStore.setState({
                   focusComponent: {
                     component: <AccountFundFullPage />,
@@ -63,7 +67,7 @@ export default function ManageAccount(props: Props) {
             text='Withdraw'
             onClick={() => {
               useStore.setState({ fundAndWithdrawModal: 'withdraw' })
-              navigate(getRoute(getPage(pathname), searchParams, address, account.id))
+              navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, account.id))
             }}
             disabled={!positionBalance || positionBalance.isLessThanOrEqualTo(0)}
           />

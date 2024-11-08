@@ -16,7 +16,7 @@ export default function Background() {
     getDefaultChainSettings(chainConfig).reduceMotion,
   )
   const { pathname } = useLocation()
-  const page = getPage(pathname)
+  const page = getPage(pathname, chainConfig)
   const [isHls, isV1] = useMemo(() => [page.split('-')[0] === 'hls', page === 'v1'], [page])
 
   useEffect(() => {
