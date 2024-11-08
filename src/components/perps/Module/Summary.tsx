@@ -31,7 +31,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
-import { formatLeverage, getPriceDecimals, magnify } from 'utils/formatters'
+import { formatLeverage, getPerpsPriceDecimals, magnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 type Props = {
@@ -418,7 +418,7 @@ function ManageSummary(
             priceOverride ? size.times(priceOverride).shiftedBy(-asset.decimals) : size,
           )}
           options={{
-            maxDecimals: getPriceDecimals(priceOverride ?? size),
+            maxDecimals: getPerpsPriceDecimals(priceOverride ?? size),
             abbreviated: false,
           }}
         />

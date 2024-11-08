@@ -5,7 +5,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import { BNCoin } from 'types/classes/BNCoin'
-import { demagnify, getPriceDecimals } from 'utils/formatters'
+import { demagnify, getPerpsPriceDecimals } from 'utils/formatters'
 
 export const SIZE_META = {
   accessorKey: 'size',
@@ -46,7 +46,7 @@ export default function Size(props: Props) {
         <DisplayCurrency
           coin={BNCoin.fromDenomAndBigNumber('usd', value)}
           options={{
-            maxDecimals: getPriceDecimals(value),
+            maxDecimals: getPerpsPriceDecimals(value),
             minDecimals: 0,
             abbreviated: false,
           }}

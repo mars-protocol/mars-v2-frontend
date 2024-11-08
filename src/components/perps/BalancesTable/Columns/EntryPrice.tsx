@@ -3,7 +3,7 @@ import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { BNCoin } from 'types/classes/BNCoin'
-import { getPriceDecimals } from 'utils/formatters'
+import { getPerpsPriceDecimals } from 'utils/formatters'
 
 export const ENTRY_PRICE_META = (isOrderTable: boolean) => {
   return {
@@ -37,7 +37,7 @@ export default function EntryPrice(props: Props) {
         <DisplayCurrency
           coin={BNCoin.fromDenomAndBigNumber('usd', entryPrice ?? 0)}
           options={{
-            maxDecimals: getPriceDecimals(entryPrice),
+            maxDecimals: getPerpsPriceDecimals(entryPrice),
             abbreviated: false,
           }}
           showDetailedPrice
@@ -47,8 +47,8 @@ export default function EntryPrice(props: Props) {
         <DisplayCurrency
           coin={BNCoin.fromDenomAndBigNumber('usd', currentPrice ?? 0)}
           options={{
-            maxDecimals: getPriceDecimals(currentPrice),
-            minDecimals: getPriceDecimals(currentPrice),
+            maxDecimals: getPerpsPriceDecimals(currentPrice),
+            minDecimals: getPerpsPriceDecimals(currentPrice),
             abbreviated: false,
           }}
           showDetailedPrice
