@@ -89,7 +89,6 @@ const Neutron1: ChainConfig = {
     gasPrices: '/feemarket/v1/gas_price/untrn',
     aprs: {
       vaults: '',
-      stride: 'https://edge.stride.zone/api/stake-stats',
     },
   },
   network: NETWORK.MAINNET,
