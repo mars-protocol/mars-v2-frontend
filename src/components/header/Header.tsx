@@ -21,7 +21,7 @@ import { DocURL } from 'types/enums'
 
 const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
   {
-    pages: ['perps', 'trade', 'trade-advanced'],
+    pages: chainConfig.perps ? ['perps', 'trade', 'trade-advanced'] : ['trade', 'trade-advanced'],
     label: 'Trade',
     submenu: [
       ...(chainConfig.perps
