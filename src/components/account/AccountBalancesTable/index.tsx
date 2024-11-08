@@ -14,6 +14,7 @@ import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import { useMemo } from 'react'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 interface Props {
   account: Account
@@ -36,6 +37,7 @@ export default function AccountBalancesTable(props: Props) {
     showLiquidationPrice,
     isUsersAccount,
   } = props
+  const chainConfig = useChainConfig()
   const currentAccount = useCurrentAccount()
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -83,7 +85,9 @@ export default function AccountBalancesTable(props: Props) {
               color='tertiary'
               onClick={() => {
                 if (currentAccount?.id !== account.id) {
-                  navigate(getRoute(getPage(pathname), searchParams, address, account.id))
+                  navigate(
+                    getRoute(getPage(pathname, chainConfig), searchParams, address, account.id),
+                  )
                 }
                 useStore.setState({
                   focusComponent: {

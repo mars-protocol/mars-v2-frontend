@@ -1,14 +1,15 @@
 import classNames from 'classnames'
 import { useEffect } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { isMobile } from 'react-device-detect'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import AccountStats from 'components/account/AccountList/AccountStats'
 import Card from 'components/common/Card'
 import Radio from 'components/common/Radio'
 import Text from 'components/common/Text'
-import useAccountIds from 'hooks/accounts/useAccountIds'
 import useAccountId from 'hooks/accounts/useAccountId'
+import useAccountIds from 'hooks/accounts/useAccountIds'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
 
@@ -26,6 +27,7 @@ export default function AccountList(props: Props) {
   const { setShowMenu } = props
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const chainConfig = useChainConfig()
   const currentAccountId = useAccountId()
   const address = useStore((s) => s.address)
   const { data: accountIds } = useAccountIds(address, true, true)
@@ -57,7 +59,7 @@ export default function AccountList(props: Props) {
                 if (isActive) return
                 if (isMobile) setShowMenu(false)
                 useStore.setState({ accountDeleteModal: null })
-                navigate(getRoute(getPage(pathname), searchParams, address, accountId))
+                navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, accountId))
               }}
               title={
                 <div

@@ -8,6 +8,7 @@ import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useBaseAsset from 'hooks/assets/useBaseAsset'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
@@ -31,6 +32,7 @@ function Content() {
   const isV1 = useStore((s) => s.isV1)
   const { address: urlAddress } = useParams()
   const urlAccountId = useAccountId()
+  const chainConfig = useChainConfig()
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { data: accountIds, isLoading: isLoadingAccounts } = useAccountIds(
@@ -47,7 +49,7 @@ function Content() {
   )
 
   useEffect(() => {
-    const page = getPage(pathname)
+    const page = getPage(pathname, chainConfig)
 
     if (page === 'portfolio' && urlAddress && urlAddress !== address) {
       navigate(getRoute(page, searchParams, urlAddress as string))
@@ -74,6 +76,7 @@ function Content() {
     urlAccountId,
     searchParams,
     isV1,
+    chainConfig,
   ])
 
   if (isLoadingAccounts || isLoadingBalances) return <FetchLoading />

@@ -52,7 +52,7 @@ function Content(props: Props & { account?: Account }) {
   const navigate = useNavigate()
   const address = useStore((s) => s.address)
   const { pathname } = useLocation()
-  const currentPage = getPage(pathname)
+  const currentPage = getPage(pathname, chainConfig)
 
   const menu = useMemo(() => menuTree(chainConfig), [chainConfig, menuTree])
 
@@ -77,9 +77,9 @@ function Content(props: Props & { account?: Account }) {
         window.open(page, '_blank')
         return
       }
-      navigate(getRoute(getPage(page), searchParams, address, currentAccountId))
+      navigate(getRoute(getPage(page, chainConfig), searchParams, address, currentAccountId))
     },
-    [navigate, searchParams, address, currentAccountId],
+    [navigate, chainConfig, searchParams, address, currentAccountId],
   )
 
   return (

@@ -85,7 +85,7 @@ export default function ChainSelect(props: Props) {
         userDomain: undefined,
         balances: [],
       })
-      navigate(getRoute('trade', searchParams))
+      navigate(getRoute(chainConfig.perps ? 'perps' : 'trade', searchParams))
     },
     [setCurrentChainId, setShowMenu, mutate, navigate, searchParams],
   )

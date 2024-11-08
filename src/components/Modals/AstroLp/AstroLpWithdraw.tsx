@@ -10,6 +10,7 @@ import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
 import useAssets from 'hooks/assets/useAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStakedAstroLpRewards from 'hooks/incentives/useStakedAstroLpRewards'
 import useStore from 'store'
@@ -38,7 +39,7 @@ export default function AstroLpWithdraw(props: Props) {
   const [withdrawAmount, setWithdrawAmount] = useState(BN_ZERO)
   const withdrawFromAstroLps = useStore((s) => s.withdrawFromAstroLps)
   const { computeMaxWithdrawAmount } = useHealthComputer(account)
-  const chainConfig = useStore((s) => s.chainConfig)
+  const chainConfig = useChainConfig()
   const isAutoLend = checkAutoLendEnabled(account.id, chainConfig.id)
   const astroLpPosition = useMemo(
     () =>
