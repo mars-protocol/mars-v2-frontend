@@ -6,7 +6,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 
-export function getPriceDecimals(price?: number | BigNumber) {
+function getPriceDecimals(price?: number | BigNumber, additionalDecimals: number = 2) {
   if (!price) return 2
   const priceNum = BN(price).abs()
 
@@ -25,10 +25,18 @@ export function getPriceDecimals(price?: number | BigNumber) {
         break
       }
     }
-    return leadingZeros + 3
+    return leadingZeros + additionalDecimals
   }
 
   return 2
+}
+
+export function getPerpsPriceDecimals(price?: number | BigNumber) {
+  return getPriceDecimals(price, 3)
+}
+
+export function getSpotPriceDecimals(price?: number | BigNumber) {
+  return getPriceDecimals(price, 2)
 }
 
 export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {

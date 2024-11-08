@@ -2,7 +2,7 @@ import { CircularProgress } from 'components/common/CircularProgress'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import { BNCoin } from 'types/classes/BNCoin'
-import { getPriceDecimals } from 'utils/formatters'
+import { getPerpsPriceDecimals } from 'utils/formatters'
 
 type Props = {
   denom: string
@@ -38,7 +38,7 @@ export default function TradingFee(props: Props) {
       showSignPrefix={!!showPrefix}
       showDetailedPrice
       options={{
-        maxDecimals: getPriceDecimals(fee),
+        maxDecimals: getPerpsPriceDecimals(fee),
         abbreviated: false,
       }}
     />
