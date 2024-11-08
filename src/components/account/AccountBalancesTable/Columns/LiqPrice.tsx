@@ -6,7 +6,7 @@ import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import useLiquidationPrice from 'hooks/prices/useLiquidationPrice'
 import { BNCoin } from 'types/classes/BNCoin'
-import { getPriceDecimals } from 'utils/formatters'
+import { getPerpsPriceDecimals } from 'utils/formatters'
 import { LiquidationPriceKind } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
 
@@ -72,8 +72,8 @@ export default function LiqPrice(props: Props) {
       coin={BNCoin.fromDenomAndBigNumber('usd', BN(liqPrice))}
       options={{
         abbreviated: false,
-        maxDecimals: getPriceDecimals(liqPrice),
-        minDecimals: getPriceDecimals(liqPrice),
+        maxDecimals: getPerpsPriceDecimals(liqPrice),
+        minDecimals: getPerpsPriceDecimals(liqPrice),
       }}
       showDetailedPrice
     />
