@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useSWRConfig } from 'swr'
 
 import ModalContentWithSummary from 'components/Modals/ModalContentWithSummary'
 import { Header } from 'components/Modals/PerpsVault/Header'
@@ -41,7 +40,6 @@ function PerpsVaultModal(props: Props) {
   const account = useCurrentAccount()
   const [amount, setAmount] = useState(BN(0))
   const [isConfirming, setIsConfirming] = useState(false)
-  const { mutate } = useSWRConfig()
   const { simulatePerpsVaultDeposit, simulatePerpsVaultUnlock } = useUpdatedAccount(account)
   const { data: perpsVault } = usePerpsVault()
   const asset = useAsset(perpsVault?.denom || '')
