@@ -111,6 +111,24 @@ export default function useHealthComputer(account?: Account) {
     )
   }, [assets, perpsAssets, whitelistedAssets])
 
+  const spotPriceData = useMemo(() => {
+    const assetsWithPrice = assets.filter((asset) => asset.price)
+    const prices = assetsWithPrice.map((asset) => asset.price) as BNCoin[]
+    return prices.reduce(
+      (prev, curr) => {
+        const decimals = assets.find(byDenom(curr.denom))?.decimals || PRICE_ORACLE_DECIMALS
+        const decimalDiffrence = decimals - PRICE_ORACLE_DECIMALS
+
+        prev[curr.denom] = curr.amount
+          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiffrence)
+          .decimalPlaces(18)
+          .toString()
+        return prev
+      },
+      {} as { [key: string]: string },
+    )
+  }, [assets])
+
   const assetsParams = useMemo(
     () =>
       assetParams.reduce(
@@ -240,6 +258,12 @@ export default function useHealthComputer(account?: Account) {
   const computeMaxSwapAmount = useCallback(
     (fromAsset: Asset, toAsset: Asset, kind: SwapKind, isRepayDebt: boolean) => {
       if (!healthComputer) return BN_ZERO
+
+      const swapHealthComputer = {
+        ...healthComputer,
+        oracle_prices: spotPriceData,
+      }
+
       try {
         const swapHealthComputer = {
           ...healthComputer,
@@ -265,7 +289,7 @@ export default function useHealthComputer(account?: Account) {
         return BN_ZERO
       }
     },
-    [healthComputer, slippage, priceData],
+    [healthComputer, priceData, slippage, spotPriceData],
   )
 
   const computeLiquidationPrice = useCallback(
