@@ -110,15 +110,10 @@ export default function SwapForm(props: Props) {
   )
 
   const [maxInputAmount, inputMarginThreshold] = useMemo(() => {
-    const maxAmount = computeMaxSwapAmount(
-      inputAsset.denom,
-      outputAsset.denom,
-      'default',
-      isAutoRepayChecked,
-    )
+    const maxAmount = computeMaxSwapAmount(inputAsset, outputAsset, 'default', isAutoRepayChecked)
     const maxAmountOnMargin = computeMaxSwapAmount(
-      inputAsset.denom,
-      outputAsset.denom,
+      inputAsset,
+      outputAsset,
       'margin',
       isAutoRepayChecked,
     ).integerValue()
@@ -130,8 +125,8 @@ export default function SwapForm(props: Props) {
     return [maxAmount, maxAmount]
   }, [
     computeMaxSwapAmount,
-    inputAsset.denom,
-    outputAsset.denom,
+    inputAsset,
+    outputAsset,
     isMarginChecked,
     inputAssetAmount,
     setInputAssetAmount,

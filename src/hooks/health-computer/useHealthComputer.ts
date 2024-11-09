@@ -238,14 +238,23 @@ export default function useHealthComputer(account?: Account) {
   )
 
   const computeMaxSwapAmount = useCallback(
-    (from: string, to: string, kind: SwapKind, isRepayDebt: boolean) => {
+    (fromAsset: Asset, toAsset: Asset, kind: SwapKind, isRepayDebt: boolean) => {
       if (!healthComputer) return BN_ZERO
       try {
+        const swapHealthComputer = {
+          ...healthComputer,
+          oracle_prices: {
+            ...priceData,
+            [fromAsset.denom]: fromAsset.price?.amount.toString() || '0',
+            [toAsset.denom]: toAsset.price?.amount.toString() || '0',
+          },
+        }
+
         return BN(
           max_swap_estimate_js(
-            healthComputer,
-            from,
-            to,
+            swapHealthComputer,
+            fromAsset.denom,
+            toAsset.denom,
             kind,
             BN(slippage).plus(SWAP_FEE_BUFFER).toString(),
             isRepayDebt,
@@ -256,7 +265,7 @@ export default function useHealthComputer(account?: Account) {
         return BN_ZERO
       }
     },
-    [healthComputer, slippage],
+    [healthComputer, slippage, priceData],
   )
 
   const computeLiquidationPrice = useCallback(
