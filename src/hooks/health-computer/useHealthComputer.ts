@@ -111,23 +111,34 @@ export default function useHealthComputer(account?: Account) {
     )
   }, [assets, perpsAssets, whitelistedAssets])
 
-  const spotPriceData = useMemo(() => {
-    const assetsWithPrice = assets.filter((asset) => asset.price)
-    const prices = assetsWithPrice.map((asset) => asset.price) as BNCoin[]
-    return prices.reduce(
-      (prev, curr) => {
-        const decimals = assets.find(byDenom(curr.denom))?.decimals || PRICE_ORACLE_DECIMALS
-        const decimalDiffrence = decimals - PRICE_ORACLE_DECIMALS
+  const getPriceDataWithAsset = useCallback(
+    (additionalAsset?: Asset) => {
+      const baseAssets = [...whitelistedAssets, ...perpsAssets]
+      const assetsToUse = additionalAsset
+        ? [...baseAssets, additionalAsset].filter(
+            (asset, index, self) => index === self.findIndex((a) => a.denom === asset.denom),
+          )
+        : baseAssets
 
-        prev[curr.denom] = curr.amount
-          .shiftedBy(VALUE_SCALE_FACTOR - decimalDiffrence)
-          .decimalPlaces(18)
-          .toString()
-        return prev
-      },
-      {} as { [key: string]: string },
-    )
-  }, [assets])
+      const assetsWithPrice = assetsToUse.filter((asset) => asset.price)
+      const prices = assetsWithPrice.map((asset) => asset.price) as BNCoin[]
+
+      return prices.reduce(
+        (prev, curr) => {
+          const decimals = assets.find(byDenom(curr.denom))?.decimals || PRICE_ORACLE_DECIMALS
+          const decimalDiffrence = decimals - PRICE_ORACLE_DECIMALS
+
+          prev[curr.denom] = curr.amount
+            .shiftedBy(VALUE_SCALE_FACTOR - decimalDiffrence)
+            .decimalPlaces(18)
+            .toString()
+          return prev
+        },
+        {} as { [key: string]: string },
+      )
+    },
+    [whitelistedAssets, perpsAssets, assets],
+  )
 
   const assetsParams = useMemo(
     () =>
@@ -258,13 +269,14 @@ export default function useHealthComputer(account?: Account) {
   const computeMaxSwapAmount = useCallback(
     (from: string, to: string, kind: SwapKind, isRepayDebt: boolean) => {
       if (!healthComputer) return BN_ZERO
-
-      const swapHealthComputer = {
-        ...healthComputer,
-        oracle_prices: spotPriceData,
-      }
-
       try {
+        const fromAsset = assets.find(byDenom(from))
+        const toAsset = assets.find(byDenom(to))
+
+        const swapHealthComputer = {
+          ...healthComputer,
+          oracle_prices: getPriceDataWithAsset(fromAsset !== toAsset ? fromAsset : undefined),
+        }
         return BN(
           max_swap_estimate_js(
             swapHealthComputer,
@@ -280,7 +292,7 @@ export default function useHealthComputer(account?: Account) {
         return BN_ZERO
       }
     },
-    [healthComputer, slippage, spotPriceData],
+    [healthComputer, slippage, assets, getPriceDataWithAsset],
   )
 
   const computeLiquidationPrice = useCallback(
