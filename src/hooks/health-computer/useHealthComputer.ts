@@ -111,35 +111,6 @@ export default function useHealthComputer(account?: Account) {
     )
   }, [assets, perpsAssets, whitelistedAssets])
 
-  const getPriceDataWithAsset = useCallback(
-    (additionalAsset?: Asset) => {
-      const baseAssets = [...whitelistedAssets, ...perpsAssets]
-      const assetsToUse = additionalAsset
-        ? [...baseAssets, additionalAsset].filter(
-            (asset, index, self) => index === self.findIndex((a) => a.denom === asset.denom),
-          )
-        : baseAssets
-
-      const assetsWithPrice = assetsToUse.filter((asset) => asset.price)
-      const prices = assetsWithPrice.map((asset) => asset.price) as BNCoin[]
-
-      return prices.reduce(
-        (prev, curr) => {
-          const decimals = assets.find(byDenom(curr.denom))?.decimals || PRICE_ORACLE_DECIMALS
-          const decimalDiffrence = decimals - PRICE_ORACLE_DECIMALS
-
-          prev[curr.denom] = curr.amount
-            .shiftedBy(VALUE_SCALE_FACTOR - decimalDiffrence)
-            .decimalPlaces(18)
-            .toString()
-          return prev
-        },
-        {} as { [key: string]: string },
-      )
-    },
-    [whitelistedAssets, perpsAssets, assets],
-  )
-
   const assetsParams = useMemo(
     () =>
       assetParams.reduce(
@@ -270,13 +241,15 @@ export default function useHealthComputer(account?: Account) {
     (from: string, to: string, kind: SwapKind, isRepayDebt: boolean) => {
       if (!healthComputer) return BN_ZERO
       try {
-        const fromAsset = assets.find(byDenom(from))
-        const toAsset = assets.find(byDenom(to))
-
         const swapHealthComputer = {
           ...healthComputer,
-          oracle_prices: getPriceDataWithAsset(fromAsset !== toAsset ? fromAsset : undefined),
+          oracle_prices: {
+            ...priceData,
+            [from]: assets.find(byDenom(from))?.price?.amount.toString() || '0',
+            [to]: assets.find(byDenom(to))?.price?.amount.toString() || '0',
+          },
         }
+
         return BN(
           max_swap_estimate_js(
             swapHealthComputer,
@@ -292,7 +265,7 @@ export default function useHealthComputer(account?: Account) {
         return BN_ZERO
       }
     },
-    [healthComputer, slippage, assets, getPriceDataWithAsset],
+    [healthComputer, slippage, priceData, assets],
   )
 
   const computeLiquidationPrice = useCallback(
