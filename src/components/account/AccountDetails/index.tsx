@@ -20,12 +20,12 @@ import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -50,7 +50,6 @@ export default function AccountDetailsController(props: AccountDetailsController
   const { data: _, isLoading } = useAccounts('default', address)
   const { data: accountIds } = useAccountIds(address, false, true)
   const accountId = useAccountId()
-
   const account = useCurrentAccount()
   const focusComponent = useStore((s) => s.focusComponent)
   const isOwnAccount = accountId && accountIds?.includes(accountId)
@@ -68,6 +67,7 @@ function AccountDetails(props: Props) {
   const { account } = props
   const location = useLocation()
   const { data: vaultAprs } = useVaultAprs()
+  const { data: perpsVault } = usePerpsVault()
   const astroLpAprs = useAstroLpAprs()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
@@ -79,27 +79,20 @@ function AccountDetails(props: Props) {
   const { health: updatedHealth, healthFactor: updatedHealthFactor } = useHealthComputer(
     updatedAccount || account,
   )
-  const whitelistedAssets = useWhitelistedAssets()
-  const perpsAssets = usePerpsEnabledAssets()
+  const { data: assets } = useAssets()
   const accountBalanceValue = useMemo(
-    () => calculateAccountBalanceValue(updatedAccount ?? account, whitelistedAssets),
-    [updatedAccount, account, whitelistedAssets],
+    () => calculateAccountBalanceValue(updatedAccount ?? account, assets),
+    [updatedAccount, account, assets],
   )
   const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalanceValue)
-  const leverage = useMemo(
-    () => calculateAccountLeverage(account, [...whitelistedAssets, ...perpsAssets]),
-    [account, whitelistedAssets, perpsAssets],
-  )
+  const leverage = useMemo(() => calculateAccountLeverage(account, assets), [account, assets])
   const updatedLeverage = useMemo(() => {
     if (!updatedAccount) return null
-    const updatedLeverage = calculateAccountLeverage(updatedAccount, [
-      ...whitelistedAssets,
-      ...perpsAssets,
-    ])
+    const updatedLeverage = calculateAccountLeverage(updatedAccount, assets)
 
     if (updatedLeverage.eq(leverage)) return null
     return updatedLeverage
-  }, [updatedAccount, leverage, whitelistedAssets, perpsAssets])
+  }, [updatedAccount, assets, leverage])
 
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
@@ -117,18 +110,20 @@ function AccountDetails(props: Props) {
         updatedAccount ?? account,
         borrowAssetsData,
         lendingAssetsData,
-        whitelistedAssets,
+        assets,
         vaultAprs,
         astroLpAprs,
+        perpsVault?.apy || 0,
       ),
     [
+      updatedAccount,
       account,
-      whitelistedAssets,
       borrowAssetsData,
       lendingAssetsData,
-      updatedAccount,
+      assets,
       vaultAprs,
       astroLpAprs,
+      perpsVault?.apy,
     ],
   )
   const isFullWidth =
@@ -201,7 +196,7 @@ function AccountDetails(props: Props) {
                 Leverage
               </Text>
               <AccountSummaryLeverage
-                leverage={leverage.toNumber() || 1}
+                leverage={leverage?.toNumber() || 1}
                 updatedLeverage={updatedLeverage?.toNumber() || null}
               />
             </div>
@@ -212,7 +207,7 @@ function AccountDetails(props: Props) {
               <FormattedNumber
                 className={'w-full text-center text-2xs'}
                 amount={apy.toNumber()}
-                options={{ maxDecimals: 2, minDecimals: 2, suffix: '%' }}
+                options={{ maxDecimals: 2, minDecimals: 2, suffix: '%', abbreviated: true }}
                 animate
               />
             </div>

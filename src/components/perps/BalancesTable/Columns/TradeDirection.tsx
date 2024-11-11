@@ -2,7 +2,11 @@ import classNames from 'classnames'
 import { ArrowRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
 
-export const PERP_TYPE_META = { accessorKey: 'tradeDirection', header: 'Side' }
+export const PERP_TYPE_META = {
+  accessorKey: 'tradeDirection',
+  header: 'Side',
+  meta: { className: 'w-30' },
+}
 
 type Props = {
   tradeDirection: TradeDirection

@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import LiqPrice from 'components/account/AccountBalancesTable/Columns/LiqPrice'
 import AmountAndValue from 'components/common/AmountAndValue'
 import AssetImage from 'components/common/assets/AssetImage'
 import { Callout, CalloutType } from 'components/common/Callout'
@@ -12,10 +13,12 @@ import TradingFee from 'components/perps/Module/TradingFee'
 import { BN_ZERO } from 'constants/math'
 import useAccount from 'hooks/accounts/useAccount'
 import useAsset from 'hooks/assets/useAsset'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useMarket from 'hooks/markets/useMarket'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import useUpdatePerpsPosition from 'hooks/perps/useUpdatePerpsPosition'
 import { useMemo } from 'react'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { PnlAmounts } from 'types/generated/mars-perps/MarsPerps.types'
 import { byDenom } from 'utils/array'
@@ -38,25 +41,64 @@ const FEE_LABELS: Record<keyof PnlAmounts, string> = {
   pnl: 'Total PnL',
 }
 
+function getActionLabel(prevAmount: BigNumber, newAmount: BigNumber): string {
+  if (prevAmount.isZero()) return 'Open new position'
+  if (newAmount.isZero()) return 'Close position'
+  if (prevAmount.isPositive() && newAmount.isNegative()) return 'Flip position from long to short'
+  if (prevAmount.isNegative() && newAmount.isPositive()) return 'Flip position from short to long'
+
+  return 'Update existing position'
+}
+
+function getFeeLabel(unrealizedPnL: BigNumber, limitPrice?: BigNumber): string {
+  if (unrealizedPnL.isZero() || limitPrice) return 'Fees'
+  if (unrealizedPnL.isPositive()) return 'Fees + Profit'
+  if (unrealizedPnL.isNegative()) return 'Fees + Loss'
+  return 'Fees'
+}
+
+function getFeeBreakdownLabel(
+  key: keyof PnlAmounts,
+  pnlAmount: BigNumber,
+  isNewPosition: boolean,
+  isFlipping: boolean,
+  newAmount: BigNumber,
+  limitPrice?: BigNumber,
+): string {
+  const isPnl = key === 'pnl'
+  let label = FEE_LABELS[key]
+  if (key === 'opening_fee' && !isNewPosition && !isFlipping) label = 'Update Fee'
+  if (key === 'closing_fee' && !isFlipping && !newAmount.isZero()) label = 'Update Fee'
+  if (isPnl && pnlAmount.isPositive()) label = 'Total Profit'
+  if (isPnl && pnlAmount.isNegative()) label = 'Total Loss'
+  if (isPnl && limitPrice) label = 'Total Fees'
+  return label
+}
+
 export default function ConfirmationSummary(props: Props) {
   const { accountId, asset, leverage, amount, keeperFee, limitPrice } = props
   const { data: account } = useAccount(accountId)
+  const updatedAccount = useStore((s) => s.updatedAccount)
   const { data: updatePerpsPosition, isLoading } = useUpdatePerpsPosition(
     asset.denom,
     amount,
     accountId,
   )
-  const [newAmount, tradeDirection, isNewPosition, previousAmount] = useMemo(() => {
-    if (isLoading || !updatePerpsPosition) return [BN_ZERO, 'long', true, BN_ZERO]
+  const [newAmount, tradeDirection, isNewPosition, previousAmount, isFlipping] = useMemo(() => {
+    if (isLoading || !updatePerpsPosition) return [BN_ZERO, 'long', true, BN_ZERO, false]
     const positionSize = updatePerpsPosition?.position?.size || '0'
     const previousAmount = BN(positionSize as string)
     const newAmount = previousAmount.plus(amount)
     const isNewPosition = previousAmount.isZero()
-    const tradeDirection = newAmount.isPositive() ? 'long' : 'short'
+    const previousTradeDirection = previousAmount.isPositive() ? 'long' : 'short'
+    const newDirection = newAmount.isPositive() ? 'long' : 'short'
+    const tradeDirection = newAmount.isZero() ? previousTradeDirection : newDirection
+    const isFlipping = previousTradeDirection !== tradeDirection
 
-    return [newAmount, tradeDirection, isNewPosition, previousAmount]
+    return [newAmount, tradeDirection, isNewPosition, previousAmount, isFlipping]
   }, [amount, isLoading, updatePerpsPosition])
 
+  const { computeLiquidationPrice } = useHealthComputer(updatedAccount ?? account)
   const { data: tradingFeeAndPrice } = useTradingFeeAndPrice(asset.denom, newAmount)
   const position = useMemo(() => updatePerpsPosition?.position ?? null, [updatePerpsPosition])
 
@@ -71,15 +113,22 @@ export default function ConfirmationSummary(props: Props) {
   const totalFeeAndPnLCoin = useMemo(() => {
     let tradingFee = BN_ZERO
     if (!tradingFeeAndPrice && !keeperFee) return zeroCoin
-    if (keeperFee) tradingFee = keeperFee.amount
     if (tradingFeeAndPrice)
       tradingFee = tradingFee
         .plus(tradingFeeAndPrice.fee.closing)
         .plus(tradingFeeAndPrice.fee.opening)
     tradingFee = tradingFee.negated()
-    if (position) tradingFee = BN(position.unrealised_pnl.pnl as any).minus(keeperFee?.amount ?? 0)
+    if (position && limitPrice)
+      tradingFee = BN(position.unrealized_pnl.pnl as any)
+        .minus(position.unrealized_pnl.price_pnl as any)
+        .minus(position.unrealized_pnl.accrued_funding as any)
+    if (position && !limitPrice)
+      tradingFee = BN(position.unrealized_pnl.pnl as any)
+        .minus(tradingFeeAndPrice?.fee.closing ?? BN_ZERO)
+        .minus(tradingFeeAndPrice?.fee.opening ?? BN_ZERO)
+    if (keeperFee) tradingFee = tradingFee.minus(keeperFee.amount)
     return BNCoin.fromDenomAndBigNumber(baseDenom, tradingFee)
-  }, [baseDenom, keeperFee, position, tradingFeeAndPrice, zeroCoin])
+  }, [baseDenom, keeperFee, limitPrice, position, tradingFeeAndPrice, zeroCoin])
 
   const [withdrawCoin, borrowCoin] = useMemo(() => {
     if (!account || totalFeeAndPnLCoin.amount.isPositive()) return [zeroCoin, zeroCoin]
@@ -101,17 +150,8 @@ export default function ConfirmationSummary(props: Props) {
       </div>
     )
 
-  let action = 'Open new position'
-  if (!isNewPosition) action = 'Update existing position'
-  if (newAmount.isZero()) action = 'Close position'
-  if (previousAmount.isPositive() && newAmount.isNegative())
-    action = 'Flip position from long to short'
-  if (previousAmount.isNegative() && newAmount.isPositive())
-    action = 'Flip position from short to long'
-
-  let feeLabel = 'Fees'
-  if (position && BN(position.unrealised_pnl.pnl as any).isPositive()) feeLabel = 'Fees + Profit'
-  if (position && BN(position.unrealised_pnl.pnl as any).isNegative()) feeLabel = 'Fees + Loss'
+  const action = getActionLabel(previousAmount, newAmount)
+  const feeLabel = getFeeLabel(BN((position?.unrealized_pnl.pnl as any) ?? 0), limitPrice)
 
   return (
     <div className='flex flex-wrap w-full gap-4'>
@@ -131,6 +171,18 @@ export default function ConfirmationSummary(props: Props) {
                 override={limitPrice}
               />
             </SummaryRow>
+            {!limitPrice && (
+              <SummaryRow label='Liquidation Price'>
+                <LiqPrice
+                  denom={asset.denom}
+                  computeLiquidationPrice={computeLiquidationPrice}
+                  type='perp'
+                  amount={newAmount.toNumber()}
+                  account={updatedAccount ?? account}
+                  isWhitelisted={true}
+                />
+              </SummaryRow>
+            )}
           </>
         )}
       </Container>
@@ -164,14 +216,27 @@ export default function ConfirmationSummary(props: Props) {
         )}
         {position &&
           tradingFeeAndPrice &&
-          (Object.keys(position.unrealised_pnl) as Array<keyof PnlAmounts>).map((key, index) => {
-            const pnlAmount = BN(position.unrealised_pnl[key] as any)
+          (Object.keys(position.unrealized_pnl) as Array<keyof PnlAmounts>).map((key, index) => {
             const isPnl = key === 'pnl'
-            let label = FEE_LABELS[key]
-            if (key === 'opening_fee' && !isNewPosition) label = 'Update Fee'
-            if (isPnl && pnlAmount.isPositive()) label = 'Total Profit'
-            if (isPnl && pnlAmount.isNegative()) label = 'Total Loss'
-            if (pnlAmount.isZero()) return null
+            const pnlAmount =
+              isPnl && limitPrice
+                ? totalFeeAndPnLCoin.amount
+                : BN(position.unrealized_pnl[key] as any)
+
+            if (
+              ((key === 'price_pnl' || key === 'accrued_funding') && limitPrice) ||
+              pnlAmount.isZero()
+            )
+              return null
+
+            const label = getFeeBreakdownLabel(
+              key,
+              pnlAmount,
+              isNewPosition,
+              isFlipping,
+              newAmount,
+              limitPrice,
+            )
             return (
               <SummaryRow label={label} key={index} className={classNames(isPnl && 'font-bold')}>
                 <DisplayCurrency
@@ -183,7 +248,7 @@ export default function ConfirmationSummary(props: Props) {
                   )}
                   coin={BNCoin.fromDenomAndBigNumber(
                     baseDenom,
-                    isPnl
+                    isPnl && !limitPrice
                       ? pnlAmount.minus(
                           tradingFeeAndPrice.fee.opening.plus(tradingFeeAndPrice.fee.closing),
                         )

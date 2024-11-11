@@ -10,10 +10,10 @@ import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
 import useAssets from 'hooks/assets/useAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStakedAstroLpRewards from 'hooks/incentives/useStakedAstroLpRewards'
 import useStore from 'store'
-import { useSWRConfig } from 'swr'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
@@ -34,13 +34,12 @@ interface Props {
 export default function AstroLpWithdraw(props: Props) {
   const { account, astroLp, simulateUnstakeAstroLp } = props
   const isHls = account.kind === 'high_levered_strategy'
-  const { mutate } = useSWRConfig()
   const { data: assets } = useAssets()
   const astroLpAsset = assets.find(byDenom(astroLp.denoms.lp))
   const [withdrawAmount, setWithdrawAmount] = useState(BN_ZERO)
   const withdrawFromAstroLps = useStore((s) => s.withdrawFromAstroLps)
   const { computeMaxWithdrawAmount } = useHealthComputer(account)
-  const chainConfig = useStore((s) => s.chainConfig)
+  const chainConfig = useChainConfig()
   const isAutoLend = checkAutoLendEnabled(account.id, chainConfig.id)
   const astroLpPosition = useMemo(
     () =>
@@ -89,18 +88,7 @@ export default function AstroLpWithdraw(props: Props) {
       toWallet: isHls,
       rewards: currentLpRewards,
     })
-    await mutate(`chains/${chainConfig.id}/accounts/${account.id}`)
-    await mutate(`chains/${chainConfig.id}/astroLps/${account.id}/staked-astro-lp-rewards`)
-  }, [
-    account.id,
-    chainConfig.id,
-    currentLpRewards,
-    isHls,
-    mutate,
-    props.astroLp,
-    withdrawAmount,
-    withdrawFromAstroLps,
-  ])
+  }, [account.id, currentLpRewards, isHls, props.astroLp, withdrawAmount, withdrawFromAstroLps])
 
   if (!astroLpAsset) return null
 

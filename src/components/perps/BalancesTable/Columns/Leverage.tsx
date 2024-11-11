@@ -1,6 +1,7 @@
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import { formatValue } from 'utils/formatters'
 
 export const LEVERAGE_META = {
   accessorKey: 'leverage',
@@ -12,6 +13,7 @@ export const LEVERAGE_META = {
       </Text>
     </div>
   ),
+  meta: { className: 'min-w-40 w-40' },
 }
 
 type Props = {
@@ -20,9 +22,13 @@ type Props = {
 }
 
 export default function Leverage(props: Props) {
+  const liqPrice = props.liquidationPrice.isGreaterThan(10)
+    ? formatValue(props.liquidationPrice.toNumber(), { maxDecimals: 2, abbreviated: false })
+    : formatValue(props.liquidationPrice.toNumber(), { maxDecimals: 6, abbreviated: false })
+
   return (
     <TitleAndSubCell
-      title={'-'}
+      title={liqPrice ? `$${liqPrice.toString()}` : '-'}
       sub={
         props.leverage ? <FormattedNumber amount={props.leverage} options={{ suffix: 'x' }} /> : ''
       }

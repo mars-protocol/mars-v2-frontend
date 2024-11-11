@@ -1,5 +1,3 @@
-import BigNumber from 'bignumber.js'
-
 import { CircularProgress } from 'components/common/CircularProgress'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
@@ -7,6 +5,7 @@ import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
+import { getPerpsPriceDecimals } from 'utils/formatters'
 
 type Props = {
   denom: string
@@ -28,8 +27,12 @@ export const ExpectedPrice = (props: Props) => {
   return (
     <DisplayCurrency
       coin={BNCoin.fromDenomAndBigNumber('usd', override ? override : price)}
-      options={{ maxDecimals: price.isGreaterThan(100) ? 2 : 6, abbreviated: false }}
+      options={{
+        maxDecimals: getPerpsPriceDecimals(override ? override : price),
+        abbreviated: false,
+      }}
       className={className}
+      showDetailedPrice
     />
   )
 }

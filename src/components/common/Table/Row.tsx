@@ -14,6 +14,7 @@ interface Props<T> {
   isSelectable?: boolean
   type?: TableType
   onClick?: (id: string) => void
+  isBalancesTable?: boolean
 }
 
 function getBorderColor(
@@ -33,9 +34,12 @@ function getBorderColor(
 }
 
 export default function Row<T>(props: Props<T>) {
-  const { renderExpanded, table, row, type, spacingClassName, isSelectable } = props
+  const { renderExpanded, table, row, type, spacingClassName, isSelectable, isBalancesTable } =
+    props
   const canExpand = !!renderExpanded
-  const isWhitelisted = (row.original as any).isWhitelisted !== false
+  const name = (row.original as any).name ?? ''
+  const isWhitelisted =
+    (row.original as any).isWhitelisted !== false && !name.includes('Perps USDC Vault')
 
   const rowContent = (
     <tr
@@ -80,20 +84,20 @@ export default function Row<T>(props: Props<T>) {
                 type !== 'strategies' &&
                 getBorderColor(type, cell.row.original as any, isWhitelisted),
               cell.column.columnDef.meta?.className,
-              !isWhitelisted && 'opacity-60',
-              !isWhitelisted && 'group-hover/assetRow:opacity-100',
+              !isWhitelisted && isBalancesTable && 'opacity-60',
+              !isWhitelisted && isBalancesTable && 'group-hover/assetRow:opacity-100',
             )}
           >
             {flexRender(cell.column.columnDef.cell, cell.getContext())}
           </td>
         )
       })}
-      {!isWhitelisted && (
-        <td className='p-0 absolute inset-0'>
+      {!isWhitelisted && isBalancesTable && (
+        <td className='absolute inset-0 p-0'>
           <Tooltip
             type='info'
-            content="This asset is not whitelisted and doesn't count as collateral"
-            className='cursor-help absolute inset-0 z-10'
+            content="This asset or strategy is not whitelisted and doesn't count as collateral"
+            className='absolute inset-0 z-10 cursor-help'
           >
             <div className='absolute inset-0' />
           </Tooltip>

@@ -29,11 +29,11 @@ export default function FundingRate() {
   if (!market) return '-'
 
   return (
-    <div className='flex gap-1 items-center'>
+    <div className='flex items-center gap-1'>
       <FormattedNumber
-        className='text-xs inline'
+        className='inline text-sm'
         amount={fundingRate.toNumber()}
-        options={{ minDecimals: 6, maxDecimals: 6, suffix: '%' }}
+        options={{ minDecimals: 2, maxDecimals: 6, suffix: '%' }}
       />
       <Tooltip
         content={
@@ -47,7 +47,7 @@ export default function FundingRate() {
                     setInterval(key as Interval)
                     toggleShow(false)
                   }}
-                  className='w-full text-center px-3 py-1.5 flex gap-2 items-center hover:bg-white/5 text-[10px]'
+                  className='w-full text-center px-3 py-1.5 flex gap-2 items-center hover:bg-white/5 text-xs'
                 >
                   {key}
                 </button>
@@ -64,10 +64,10 @@ export default function FundingRate() {
       >
         <button
           onClick={() => toggleShow()}
-          className='flex gap-1 bg-white/10 rounded-sm items-center text-[10px] px-1.5 py-0.5'
+          className='flex gap-1 bg-white/10 rounded-sm items-center text-xs px-1.5 py-0.5'
         >
           {interval}
-          <ChevronDown className='h-2 w-2' />
+          <ChevronDown className='w-2 h-2' />
         </button>
       </Tooltip>
     </div>

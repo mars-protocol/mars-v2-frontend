@@ -8,6 +8,8 @@ export function getTradingViewSettings(theme: string): TradingViewSettings {
         overrides: {
           'paneProperties.background': '#000000',
           'linetooltrendline.linecolor': 'rgba(255, 255, 255, 0.8)',
+          'paneProperties.backgroundType': 'solid',
+          'scalesProperties.fontSize': 12,
         },
         loadingScreen: {
           backgroundColor: '#000000',
@@ -32,6 +34,8 @@ export function getTradingViewSettings(theme: string): TradingViewSettings {
         overrides: {
           'paneProperties.background': '#FFFFFF',
           'linetooltrendline.linecolor': 'rgba(0, 0, 0, 0.3)',
+          'paneProperties.backgroundType': 'solid',
+          'scalesProperties.fontSize': 12,
         },
         loadingScreen: {
           backgroundColor: '#FFFFFF',
@@ -56,6 +60,8 @@ export function getTradingViewSettings(theme: string): TradingViewSettings {
         overrides: {
           'paneProperties.background': '#220E1D',
           'linetooltrendline.linecolor': 'rgba(255, 255, 255, 0.8)',
+          'paneProperties.backgroundType': 'solid',
+          'scalesProperties.fontSize': 12,
         },
         loadingScreen: {
           backgroundColor: '#220E1D',

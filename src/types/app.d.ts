@@ -262,7 +262,6 @@ interface ChainConfig {
     gasPrices?: string
     aprs: {
       vaults: string
-      stride: string
       perpsVault?: string
     }
   }
@@ -341,11 +340,20 @@ interface PerpsPosition {
   type: PositionType
 }
 
+interface PerpsLimitOrder {
+  denom: string
+  tradeDirection: TradeDirection
+  amount: BigNumber
+  triggerPrice: BigNumber
+}
+
 interface PerpPositionRow extends PerpsPosition {
   asset: Asset
   liquidationPrice: BigNumber
   leverage: number
   orderId?: string
+  hasStopLoss?: boolean
+  hasTakeProfit?: boolean
 }
 
 interface PerpsPnL {
@@ -596,6 +604,7 @@ interface PerpsVault {
   cap: DepositCap | null
 }
 
+interface DepositedPerpsVault extends PerpsVault, DepositedVault {}
 interface VaultValuesAndAmounts {
   amounts: {
     primary: BigNumber
@@ -979,6 +988,29 @@ interface HandleResponseProps {
   message?: string
 }
 
+interface CreateMultipleTriggerOrdersOptions {
+  accountId: string
+  keeperFeeFromLends: BNCoin
+  keeperFeeFromBorrows: BNCoin
+  orders: TriggerOrderOptions[]
+}
+
+interface TriggerOrderOptions {
+  coin: BNCoin
+  reduceOnly?: boolean
+  autolend: boolean
+  baseDenom: string
+  tradeDirection: TradeDirection
+  price: BigNumber
+  keeperFee: BNCoin
+}
+
+interface CreateTriggerOrdersOptions extends TriggerOrderOptions {
+  keeperFeeFromLends: BNCoin
+  keeperFeeFromBorrows: BNCoin
+  accountId: string
+}
+
 interface BroadcastSlice {
   addToStakingStrategy: (options: {
     accountId: string
@@ -1025,16 +1057,16 @@ interface BroadcastSlice {
     autolend: boolean
     baseDenom: string
   }) => Promise<boolean>
-  createTriggerOrder: (options: {
+  closePerpPosition: (options: {
     accountId: string
     coin: BNCoin
     reduceOnly?: boolean
     autolend: boolean
     baseDenom: string
-    tradeDirection: TradeDirection
-    price: BigNumber
-    keeperFee: BNCoin
+    orderIds?: string[]
   }) => Promise<boolean>
+  createTriggerOrder: (options: CreateTriggerOrdersOptions) => Promise<boolean>
+  createMultipleTriggerOrders: (options: CreateMultipleTriggerOrdersOptions) => Promise<boolean>
   cancelTriggerOrder: (options: {
     accountId: string
     orderId: string
@@ -1090,11 +1122,16 @@ interface BroadcastSlice {
   depositIntoPerpsVault: (options: {
     accountId: string
     denom: string
+    fromWallet?: BigNumber
     fromDeposits?: BigNumber
     fromLends?: BigNumber
   }) => Promise<boolean>
   requestUnlockPerpsVault: (options: { accountId: string; amount: BigNumber }) => Promise<boolean>
-  withdrawFromPerpsVault: (options: { accountId: string }) => Promise<boolean>
+  withdrawFromPerpsVault: (options: {
+    accountId: string
+    isAutoLend: boolean
+    vaultDenom: string
+  }) => Promise<boolean>
   v1Action: (type: V1ActionType, funds: BNCoin) => Promise<boolean>
 }
 
@@ -1116,10 +1153,14 @@ type TransactionCoinType =
   | 'withdraw'
   | 'farm'
   | 'provide_liquidity'
-  | 'vault'
+  | 'deposit_into_vault'
   | 'perps'
   | 'perpsPnl'
+  | 'perpsOpeningFee'
+  | 'perpsClosingFee'
   | 'claim_rewards'
+  | 'create-order'
+  | 'cancel-order'
 
 interface TransactionCoin {
   type: TransactionCoinType
@@ -1153,6 +1194,7 @@ type TransactionType =
   | 'transaction'
   | 'cancel-order'
   | 'create-order'
+  | 'withdraw_from_vault'
 
 interface CommonSlice {
   address?: string
@@ -1177,6 +1219,7 @@ interface CommonSlice {
   isHls: boolean
   isV1: boolean
   assets: Asset[]
+  perpsBaseDenom?: string
   hlsBorrowAmount: BigNumber | null
   errorStore: ErrorStore
 }
@@ -1212,6 +1255,7 @@ interface ModalSlice {
   perpsVaultModal: PerpsVaultModal | null
   settingsModal: boolean
   keeperFeeModal: boolean
+  addSLTPModal: boolean
   unlockModal: UnlockModal | null
   farmModal: FarmModal | null
   walletAssetsModal: WalletAssetModal | null
@@ -1445,6 +1489,8 @@ interface TradingViewSettings {
   overrides: {
     'paneProperties.background': string
     'linetooltrendline.linecolor': string
+    'paneProperties.backgroundType': string
+    'scalesProperties.fontSize': number
   }
   loadingScreen: {
     backgroundColor: string
@@ -1461,6 +1507,39 @@ interface TradingViewSettings {
   }
 }
 
+type ShapePoint = import('utils/charting_library/charting_library').ShapePoint
+type TOverrides = import('utils/charting_library/charting_library').TOverrides
+
+interface TradingViewShapeOptions
+  extends import('utils/charting_library/charting_library').CreateShapeOptions<TOverrides> {
+  shape: TradingViewShapeNames
+}
+
+interface TradingViewMultipointShapeOptions
+  extends import('utils/charting_library/charting_library')
+    .CreateMultipointShapeOptions<TOverrides> {
+  shape: TradingViewShapeNames
+}
+
+interface TradingViewShape {
+  points: ShapePoint | ShapePoint[]
+  shape: TradingViewShapeOptions | TradingViewMultipointShapeOptions
+}
+
+type TradingViewShapeNames =
+  | 'arrow_up'
+  | 'arrow_down'
+  | 'flag'
+  | 'vertical_line'
+  | 'horizontal_line'
+  | 'long_position'
+  | 'short_position'
+  | 'icon'
+  | 'emoji'
+  | 'sticker'
+  | 'anchored_text'
+  | 'anchored_note'
+
 type PnL =
   | 'break_even'
   | {
@@ -1469,6 +1548,10 @@ type PnL =
   | {
       loss: Coin
     }
+
+interface AstroportAssetsCached {
+  tokens: AstroportAsset[]
+}
 
 interface AstroportAsset {
   chainId: string
@@ -1483,6 +1566,10 @@ interface AstroportAsset {
 }
 
 type PoolType = 'xyk' | 'concentrated' | 'stable' | 'transmuter' | 'astroport-pair-xyk-sale-tax'
+
+interface AstroportPoolsCached {
+  pools: AstroportPool[]
+}
 
 interface AstroportPool {
   chainId: string
@@ -1654,6 +1741,7 @@ interface ExceutePerpsOrder {
     denom: string
     order_size: SignedUint
     reduce_only?: boolean | null
+    order_type: 'stop_loss' | 'take_profit'
   }
 }
 

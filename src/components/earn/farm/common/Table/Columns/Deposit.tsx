@@ -90,13 +90,14 @@ export const Deposit = (props: Props) => {
   if (props.isLoading) return <Loading />
 
   return (
-    <div className='flex items-center justify-end'>
+    <div className='flex items-center justify-end w-full sm:w-auto'>
       <ActionButton
         onClick={enterVaultHandler}
         color={buttonColor}
         text='Deposit'
         leftIcon={<Plus />}
         short
+        className='w-full'
       />
     </div>
   )

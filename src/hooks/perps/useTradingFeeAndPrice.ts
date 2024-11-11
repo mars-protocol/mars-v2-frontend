@@ -1,21 +1,21 @@
 import BigNumber from 'bignumber.js'
-import useSWR from 'swr'
 
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
 import useDebounce from 'hooks/common/useDebounce'
+import useSWRImmutable from 'swr/immutable'
 import { BN } from 'utils/helpers'
 
 export default function useTradingFeeAndPrice(denom: string, newAmount: BigNumber) {
   const chainConfig = useChainConfig()
   const accountId = useCurrentAccount()?.id
-  const debouncedAmount = useDebounce<BigNumber>(newAmount, 500)
+  const debouncedAmount = useDebounce<BigNumber>(newAmount, 1_000)
   const clients = useClients()
   const enabled = clients && !!accountId
 
-  return useSWR(
+  return useSWRImmutable(
     enabled && `${chainConfig.id}/perps/${denom}/positionFeeAndPrice/${debouncedAmount}`,
     async () => {
       const positionFees = await clients!.perps.positionFees({
@@ -34,10 +34,6 @@ export default function useTradingFeeAndPrice(denom: string, newAmount: BigNumbe
           closing: BN(positionFees.closing_fee),
         },
       }
-    },
-    {
-      revalidateOnFocus: true,
-      refreshInterval: 10_000,
     },
   )
 }

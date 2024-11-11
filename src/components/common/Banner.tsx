@@ -16,7 +16,7 @@ export default function Banner(props: Props) {
   return (
     <div
       className={classNames(
-        'flex justify-between items-center w-full px-8 bg-white/10 mb-4 h-20',
+        'flex flex-col sm:flex-row justify-between items-center w-full p-2 md:px-8 gap-1 mb-4 md:h-20 bg-white/10',
         'relative isolate overflow-hidden rounded-base',
         'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
       )}
@@ -27,9 +27,9 @@ export default function Banner(props: Props) {
           'blur-orb-secondary bg-purple',
         )}
       />
-      <div className='flex gap-4 items-center'>
-        {asset && <AssetImage asset={asset} className='w-10 h-10' />}
-        <div className='space-y-2'>
+      <div className='flex gap-2 md:gap-4 items-center'>
+        {asset && <AssetImage asset={asset} className='w-16 h-16 sm:w-10 sm:h-10' />}
+        <div className='space-y-1 md:space-y-2'>
           <Text size='sm'>{title}</Text>
           <Text size='xs' className='text-white/50'>
             {description}

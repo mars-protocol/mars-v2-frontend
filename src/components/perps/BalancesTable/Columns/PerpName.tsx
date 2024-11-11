@@ -1,7 +1,12 @@
 import AssetImage from 'components/common/assets/AssetImage'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 
-export const PERP_NAME_META = { accessorKey: 'asset.symbol', header: 'Asset', id: 'symbol' }
+export const PERP_NAME_META = {
+  accessorKey: 'asset.symbol',
+  header: 'Asset',
+  id: 'symbol',
+  meta: { className: 'min-w-40' },
+}
 
 type Props = {
   asset: Asset

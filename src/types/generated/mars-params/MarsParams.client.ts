@@ -36,10 +36,12 @@ import {
   AssetParamsBaseForAddr,
   CmSettingsForAddr,
   HlsParamsBaseForAddr,
+  PaginationResponseForAssetParamsBaseForAddr,
+  Metadata,
   ArrayOfPerpParams,
+  PaginationResponseForPerpParams,
   PaginationResponseForTotalDepositResponse,
   TotalDepositResponse,
-  Metadata,
   ArrayOfVaultConfigBaseForAddr,
   VaultConfigBaseForAddr,
   PaginationResponseForVaultConfigBaseForAddr,
@@ -59,6 +61,13 @@ export interface MarsParamsReadOnlyInterface {
     limit?: number
     startAfter?: string
   }) => Promise<ArrayOfAssetParamsBaseForAddr>
+  allAssetParamsV2: ({
+    limit,
+    startAfter,
+  }: {
+    limit?: number
+    startAfter?: string
+  }) => Promise<PaginationResponseForAssetParamsBaseForAddr>
   vaultConfig: ({ address }: { address: string }) => Promise<VaultConfigBaseForAddr>
   allVaultConfigs: ({
     limit,
@@ -82,6 +91,13 @@ export interface MarsParamsReadOnlyInterface {
     limit?: number
     startAfter?: string
   }) => Promise<ArrayOfPerpParams>
+  allPerpParamsV2: ({
+    limit,
+    startAfter,
+  }: {
+    limit?: number
+    startAfter?: string
+  }) => Promise<PaginationResponseForPerpParams>
   totalDeposit: ({ denom }: { denom: string }) => Promise<TotalDepositResponse>
   allTotalDepositsV2: ({
     limit,
@@ -101,11 +117,13 @@ export class MarsParamsQueryClient implements MarsParamsReadOnlyInterface {
     this.config = this.config.bind(this)
     this.assetParams = this.assetParams.bind(this)
     this.allAssetParams = this.allAssetParams.bind(this)
+    this.allAssetParamsV2 = this.allAssetParamsV2.bind(this)
     this.vaultConfig = this.vaultConfig.bind(this)
     this.allVaultConfigs = this.allVaultConfigs.bind(this)
     this.allVaultConfigsV2 = this.allVaultConfigsV2.bind(this)
     this.perpParams = this.perpParams.bind(this)
     this.allPerpParams = this.allPerpParams.bind(this)
+    this.allPerpParamsV2 = this.allPerpParamsV2.bind(this)
     this.totalDeposit = this.totalDeposit.bind(this)
     this.allTotalDepositsV2 = this.allTotalDepositsV2.bind(this)
   }
@@ -135,6 +153,20 @@ export class MarsParamsQueryClient implements MarsParamsReadOnlyInterface {
   }): Promise<ArrayOfAssetParamsBaseForAddr> => {
     return this.client.queryContractSmart(this.contractAddress, {
       all_asset_params: {
+        limit,
+        start_after: startAfter,
+      },
+    })
+  }
+  allAssetParamsV2 = async ({
+    limit,
+    startAfter,
+  }: {
+    limit?: number
+    startAfter?: string
+  }): Promise<PaginationResponseForAssetParamsBaseForAddr> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      all_asset_params_v2: {
         limit,
         start_after: startAfter,
       },
@@ -196,6 +228,20 @@ export class MarsParamsQueryClient implements MarsParamsReadOnlyInterface {
       },
     })
   }
+  allPerpParamsV2 = async ({
+    limit,
+    startAfter,
+  }: {
+    limit?: number
+    startAfter?: string
+  }): Promise<PaginationResponseForPerpParams> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      all_perp_params_v2: {
+        limit,
+        start_after: startAfter,
+      },
+    })
+  }
   totalDeposit = async ({ denom }: { denom: string }): Promise<TotalDepositResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       total_deposit: {
@@ -230,8 +276,10 @@ export interface MarsParamsInterface extends MarsParamsReadOnlyInterface {
   updateConfig: (
     {
       addressProvider,
+      maxPerpParams,
     }: {
       addressProvider?: string
+      maxPerpParams?: number
     },
     fee?: number | StdFee | 'auto',
     memo?: string,
@@ -298,8 +346,10 @@ export class MarsParamsClient extends MarsParamsQueryClient implements MarsParam
   updateConfig = async (
     {
       addressProvider,
+      maxPerpParams,
     }: {
       addressProvider?: string
+      maxPerpParams?: number
     },
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
@@ -311,6 +361,7 @@ export class MarsParamsClient extends MarsParamsQueryClient implements MarsParam
       {
         update_config: {
           address_provider: addressProvider,
+          max_perp_params: maxPerpParams,
         },
       },
       fee,

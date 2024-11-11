@@ -25,4 +25,5 @@ export enum LocalStorageKeys {
   REST_ENDPOINT = 'restEndpoint',
   REWARDS_CENTER_TYPE = 'rewardsCenterType',
   SHOW_SUMMARY = 'showSummary',
+  TV_CHART_STORE = 'tvChartStore',
 }

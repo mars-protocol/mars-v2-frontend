@@ -6,6 +6,7 @@ import Text from 'components/common/Text'
 import TextInput from 'components/common/TextInput'
 import { TextLink } from 'components/common/TextLink'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import { useCallback, useMemo, useState } from 'react'
@@ -13,7 +14,7 @@ import useStore from 'store'
 import { getCurrentChainId } from 'utils/getCurrentChainId'
 
 export default function ErrorNodePage() {
-  const chainConfig = useStore((s) => s.chainConfig)
+  const chainConfig = useChainConfig()
   const [clicked, setClicked] = useState(false)
   const chainId = getCurrentChainId()
   const nodeError = useStore((s) => s.errorStore).nodeError

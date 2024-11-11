@@ -6,9 +6,11 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import Skeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import useAssetParams from 'hooks/params/useAssetParams'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
@@ -25,20 +27,24 @@ function Content(props: Props) {
   const data = useBorrowMarketAssetsTableData()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
-  const assets = useWhitelistedAssets()
+  const { data: assets } = useAssets()
+  const { data: perpsVault } = usePerpsVault()
   const astroLpAprs = useAstroLpAprs()
+  const assetParams = useAssetParams()
 
   const stats = useMemo(() => {
     if (!account || !borrowAssets.length || !lendingAssets.length) return DEFAULT_PORTFOLIO_STATS
-
-    const { positionValue, debts, netWorth, apy, leverage } = getAccountSummaryStats(
-      account,
-      borrowAssets,
-      lendingAssets,
-      assets,
-      vaultAprs,
-      astroLpAprs,
-    )
+    const { positionValue, collateralValue, debts, netWorth, apy, leverage } =
+      getAccountSummaryStats(
+        account,
+        borrowAssets,
+        lendingAssets,
+        assets,
+        vaultAprs,
+        astroLpAprs,
+        assetParams.data || [],
+        perpsVault?.apy || 0,
+      )
 
     return [
       {
@@ -46,12 +52,16 @@ function Content(props: Props) {
         sub: DEFAULT_PORTFOLIO_STATS[0].sub,
       },
       {
-        title: <DisplayCurrency className='text-xl' coin={debts} />,
+        title: <DisplayCurrency className='text-xl' coin={collateralValue} />,
         sub: DEFAULT_PORTFOLIO_STATS[1].sub,
       },
       {
-        title: <DisplayCurrency className='text-xl' coin={netWorth} />,
+        title: <DisplayCurrency className='text-xl' coin={debts} />,
         sub: DEFAULT_PORTFOLIO_STATS[2].sub,
+      },
+      {
+        title: <DisplayCurrency className='text-xl' coin={netWorth} />,
+        sub: DEFAULT_PORTFOLIO_STATS[3].sub,
       },
       {
         title: (
@@ -65,7 +75,7 @@ function Content(props: Props) {
             }}
           />
         ),
-        sub: DEFAULT_PORTFOLIO_STATS[3].sub,
+        sub: DEFAULT_PORTFOLIO_STATS[4].sub,
       },
       {
         title: (
@@ -75,10 +85,20 @@ function Content(props: Props) {
             options={{ suffix: 'x' }}
           />
         ),
-        sub: props.v1 ? 'Total Leverage' : DEFAULT_PORTFOLIO_STATS[4].sub,
+        sub: props.v1 ? 'Total Leverage' : DEFAULT_PORTFOLIO_STATS[5].sub,
       },
     ]
-  }, [account, assets, borrowAssets, lendingAssets, vaultAprs, props.v1, astroLpAprs])
+  }, [
+    account,
+    borrowAssets,
+    lendingAssets,
+    assets,
+    vaultAprs,
+    astroLpAprs,
+    assetParams.data,
+    perpsVault?.apy,
+    props.v1,
+  ])
 
   return (
     <Skeleton

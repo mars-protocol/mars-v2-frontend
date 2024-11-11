@@ -85,7 +85,7 @@ export default function ChainSelect(props: Props) {
         userDomain: undefined,
         balances: [],
       })
-      navigate(getRoute('trade', searchParams))
+      navigate(getRoute(chainConfig.perps ? 'perps' : 'trade', searchParams))
     },
     [setCurrentChainId, setShowMenu, mutate, navigate, searchParams],
   )
@@ -101,7 +101,11 @@ export default function ChainSelect(props: Props) {
         role='button'
         onClick={
           onSelect && chainConfig
-            ? () => onSelect(chainConfig)
+            ? () => {
+                onSelect(chainConfig)
+                mutate(`chains/${chainConfig.id}/accounts/default`)
+                mutate(`chains/${chainConfig.id}/accounts/high_levered_strategy`)
+              }
             : () => {
                 if (chainConfig) {
                   setCurrentChainId(chainConfig.id)

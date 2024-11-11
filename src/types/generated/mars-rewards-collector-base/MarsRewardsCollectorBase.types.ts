@@ -138,7 +138,7 @@ export type Action =
   | {
       execute_perp_order: {
         denom: string
-        order_size: SignedUint
+        order_size: Int128
         reduce_only?: boolean | null
       }
     }
@@ -151,7 +151,6 @@ export type Action =
     }
   | {
       delete_trigger_order: {
-        account_id: string
         trigger_order_id: string
       }
     }
@@ -230,6 +229,7 @@ export type ActionAmount =
   | {
       exact: Uint128
     }
+export type Int128 = string
 export type Condition =
   | {
       oracle_price: {
@@ -291,11 +291,6 @@ export interface UpdateConfig {
 export interface ActionCoin {
   amount: ActionAmount
   denom: string
-}
-export interface SignedUint {
-  abs: Uint128
-  negative: boolean
-  [k: string]: unknown
 }
 export interface VaultBaseForString {
   address: string
