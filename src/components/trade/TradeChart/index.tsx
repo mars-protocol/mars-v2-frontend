@@ -129,36 +129,36 @@ export default function TradeChart(props: Props) {
   }, [props.buyAsset.decimals, props.isPerps, props.liquidationPrice, props.perpsPosition])
 
   const intitalChartLoad = useCallback(() => {
-    const chart = chartWidget.activeChart()
-    if (!chart) return
-    const chartStore = JSON.parse(localStorage.getItem(LocalStorageKeys.TV_CHART_STORE) ?? '{}')
-    const currentChartStore = chartStore[chartName]
-    if (!currentChartStore) return
-    currentChartStore.forEach((shape: TradingViewShape) => {
-      try {
+    try {
+      const chart = chartWidget.activeChart()
+      if (!chart) return
+      const chartStore = JSON.parse(localStorage.getItem(LocalStorageKeys.TV_CHART_STORE) ?? '{}')
+      const currentChartStore = chartStore[chartName]
+      if (!currentChartStore) return
+      currentChartStore.forEach((shape: TradingViewShape) => {
         if (Array.isArray(shape.points)) {
           if (shape.points.length === 0) return
           chart.createMultipointShape(shape.points, shape.shape)
         } else {
           chart.createShape(shape.points, shape.shape)
         }
-      } catch (e) {
-        const shapeName = shape.shape
-        console.info(`Failed to draw '${shape.shape}', reason:`, e)
-      }
-    })
-    if (!isPerps || !onCreateLimitOrder) return
-    chartWidget.onContextMenu((unixTime, price) => {
-      return [
-        {
-          position: 'top',
-          text: 'Set Limit Order Price',
-          click: () => {
-            onCreateLimitOrder(price)
+      })
+      if (!isPerps || !onCreateLimitOrder) return
+      chartWidget.onContextMenu((unixTime, price) => {
+        return [
+          {
+            position: 'top',
+            text: 'Set Limit Order Price',
+            click: () => {
+              onCreateLimitOrder(price)
+            },
           },
-        },
-      ]
-    })
+        ]
+      })
+    } catch (e) {
+      console.info('Error on loading chart', e)
+      return
+    }
   }, [chartName, onCreateLimitOrder, isPerps])
 
   const updateShapes = useCallback(() => {
