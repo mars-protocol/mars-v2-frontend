@@ -18,6 +18,8 @@ import { demagnify, getCoinValue } from 'utils/formatters'
 export default function usePerpsModule(
   tradeDirection: TradeDirection,
   limitPrice: BigNumber | null,
+  isStopOrder?: boolean,
+  stopTradeDirection?: TradeDirection,
 ) {
   const { perpsAsset } = usePerpsAsset()
   const params = usePerpsParams(perpsAsset.denom)
@@ -56,24 +58,41 @@ export default function usePerpsModule(
   )
 
   const previousLeverage = useMemo(() => {
-    return previousAmount.isZero()
-      ? null
-      : getCoinValue(BNCoin.fromDenomAndBigNumber(perpsAsset.denom, previousAmount.abs()), [
-          limitPrice
-            ? {
-                ...perpsAsset,
-                price: BNCoin.fromDenomAndBigNumber(perpsAsset.denom, limitPrice),
-              }
-            : perpsAsset,
-        ])
-          .div(accountNetValue)
-          .toNumber()
-  }, [accountNetValue, perpsAsset, previousAmount, limitPrice])
+    if (previousAmount.isZero()) return 0
 
-  const maxAmount = useMemo(
-    () => BigNumber.max(computeMaxPerpAmount(perpsAsset.denom, tradeDirection), BN_ZERO),
-    [computeMaxPerpAmount, perpsAsset, tradeDirection],
-  )
+    return getCoinValue(BNCoin.fromDenomAndBigNumber(perpsAsset.denom, previousAmount.abs()), [
+      perpsAsset,
+    ])
+      .div(accountNetValue)
+      .toNumber()
+  }, [accountNetValue, perpsAsset, previousAmount])
+
+  const maxAmount = useMemo(() => {
+    const directionToUse = isStopOrder ? stopTradeDirection : tradeDirection
+    const baseMaxAmount = BigNumber.max(
+      computeMaxPerpAmount(perpsAsset.denom, directionToUse ?? tradeDirection),
+      BN_ZERO,
+    )
+
+    if (perpPosition) {
+      const wouldClosePosition =
+        (perpPosition.tradeDirection === 'long' && directionToUse === 'short') ||
+        (perpPosition.tradeDirection === 'short' && directionToUse === 'long')
+
+      if (wouldClosePosition) {
+        return baseMaxAmount.plus(perpPosition.amount.abs())
+      }
+    }
+
+    return baseMaxAmount
+  }, [
+    computeMaxPerpAmount,
+    perpsAsset.denom,
+    tradeDirection,
+    isStopOrder,
+    stopTradeDirection,
+    perpPosition,
+  ])
 
   const [leverage, setLeverage] = useState<number>(0)
 

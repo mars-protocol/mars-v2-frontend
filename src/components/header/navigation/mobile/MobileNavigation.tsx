@@ -104,16 +104,13 @@ function Content(props: Props & { account?: Account }) {
               onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
                 selectPage(event.target.value as Page)
               }
+              defaultValue={currentPage}
             >
               {menu.map((item, index) => {
                 if (item.submenu) {
                   return item.submenu.map((subItem, subIndex) => {
                     return (
-                      <option
-                        key={subIndex}
-                        value={subItem.page}
-                        selected={subItem.page === currentPage}
-                      >
+                      <option key={subIndex} value={subItem.page}>
                         {`${item.label} - ${subItem.label}`}
                       </option>
                     )
@@ -121,11 +118,7 @@ function Content(props: Props & { account?: Account }) {
                 }
 
                 return (
-                  <option
-                    key={index}
-                    value={item.pages[0]}
-                    selected={item.pages.indexOf(currentPage as Page) !== -1}
-                  >
+                  <option key={index} value={item.pages[0]}>
                     {item.label}
                   </option>
                 )
