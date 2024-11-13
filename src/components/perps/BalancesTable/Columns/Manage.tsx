@@ -212,7 +212,7 @@ export default function Manage(props: Props) {
     ],
   )
 
-  if (props.perpPosition.type === 'limit')
+  if (props.perpPosition.type === 'limit' || props.perpPosition.type === 'stop')
     return (
       <div className='flex justify-end'>
         <ActionButton
