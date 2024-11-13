@@ -86,7 +86,7 @@ export function useSubmitLimitOrder() {
             keeperFee,
             tradeDirection,
             price: adjustedLimitPrice,
-            reduceOnly: isReduceOnly,
+            isReduceOnly,
             comparison,
           }
         },

@@ -8,13 +8,13 @@ import { PERP_NAME_META, PerpName } from 'components/perps/BalancesTable/Columns
 import PnL, { PNL_META } from 'components/perps/BalancesTable/Columns/PnL'
 import Size, { SIZE_META, sizeSortingFn } from 'components/perps/BalancesTable/Columns/Size'
 import TradeDirection, {
-  PERP_TYPE_META,
+  TRADE_DIRECTION_META,
 } from 'components/perps/BalancesTable/Columns/TradeDirection'
-import { Status, STATUS_META } from 'components/perps/BalancesTable/Columns/Status'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
-import usePerpsLimitOrderRows from 'hooks/perps/usePerpsLimitOrdersRows'
 import { demagnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import { Status, STATUS_META } from 'components/perps/BalancesTable/Columns/Status'
+import usePerpsLimitOrderRows from 'hooks/perps/usePerpsLimitOrdersRows'
 import { checkStopLossAndTakeProfit } from 'utils/perps'
 
 interface Props {
@@ -32,23 +32,35 @@ export default function usePerpsBalancesColumns(props: Props) {
         cell: ({ row }) => <PerpName asset={row.original.asset} />,
       },
       {
-        ...PERP_TYPE_META,
-        cell: ({ row }) => <TradeDirection tradeDirection={row.original.tradeDirection} />,
+        ...TRADE_DIRECTION_META,
+        id: 'direction',
+        cell: ({ row }) => {
+          const { type, tradeDirection, reduce_only, amount, denom } = row.original
+          return (
+            <TradeDirection
+              tradeDirection={tradeDirection}
+              reduce_only={type !== 'market' && reduce_only}
+              amount={amount}
+              denom={denom}
+              type={type}
+              showPositionEffect={isOrderTable}
+            />
+          )
+        },
       },
       {
         ...SIZE_META,
+        id: 'entryPrice',
         cell: ({ row }) => {
           const { asset, amount, type, entryPrice } = row.original
           const demagnifiedAmount = BN(demagnify(amount, asset))
 
           let value
           if (type === 'limit') {
-            // For limit orders, calculate adjusted value
             value = demagnifiedAmount
               .times(entryPrice)
               .shiftedBy(asset.decimals - PRICE_ORACLE_DECIMALS)
           } else {
-            // For market orders/positions, use value directly
             value = demagnifiedAmount.times(BN(asset.price?.amount || 0))
           }
 
@@ -56,7 +68,6 @@ export default function usePerpsBalancesColumns(props: Props) {
         },
         sortingFn: sizeSortingFn,
       },
-
       ...(isOrderTable
         ? []
         : [

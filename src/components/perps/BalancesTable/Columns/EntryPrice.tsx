@@ -32,7 +32,7 @@ export default function EntryPrice(props: Props) {
   const entryPrice = props.entryPrice.shiftedBy(props.asset.decimals - PRICE_ORACLE_DECIMALS)
   const currentPrice = props.currentPrice.shiftedBy(props.asset.decimals - PRICE_ORACLE_DECIMALS)
 
-  const getTriggerCondition = () => {
+  const getDisplayValue = () => {
     const priceDisplay = (
       <DisplayCurrency
         coin={BNCoin.fromDenomAndBigNumber('usd', entryPrice)}
@@ -43,6 +43,10 @@ export default function EntryPrice(props: Props) {
         showDetailedPrice
       />
     )
+
+    if (props.type === 'market') {
+      return <div className='flex flex-col items-end gap-1'>{priceDisplay}</div>
+    }
 
     if (props.type === 'limit') {
       return (
@@ -71,7 +75,7 @@ export default function EntryPrice(props: Props) {
 
   return (
     <TitleAndSubCell
-      title={getTriggerCondition()}
+      title={getDisplayValue()}
       sub={
         <DisplayCurrency
           coin={BNCoin.fromDenomAndBigNumber('usd', currentPrice)}
