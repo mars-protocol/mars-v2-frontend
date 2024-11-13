@@ -43,11 +43,11 @@ export default function PerpsBalancesTable() {
         ),
       },
       {
-        title: 'Open Limit Orders',
+        title: 'Open Orders',
         notificationCount: activeLimitOrders.length > 0 ? activeLimitOrders.length : undefined,
         renderContent: () => (
           <Table
-            title='Open Limit Orders'
+            title='Open Orders'
             columns={limitOrderColumns}
             data={activeLimitOrders}
             initialSorting={[]}

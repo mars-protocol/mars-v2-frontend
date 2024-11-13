@@ -18,7 +18,7 @@ type Props = {
 export default function TradeDirection(props: Props) {
   const { tradeDirection, className, previousTradeDirection } = props
   return (
-    <div className='inline-flex items-center gap-1'>
+    <div className='inline-flex items-end gap-1'>
       {previousTradeDirection && (
         <>
           <Text
