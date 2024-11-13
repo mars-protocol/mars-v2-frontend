@@ -371,10 +371,10 @@ export function PerpsModule() {
 
   const effectiveLeverage = useMemo(() => {
     if (amount.isGreaterThan(maxAmount)) {
-      return 0
+      return maxLeverage
     }
     return Math.max(leverage, 0)
-  }, [amount, maxAmount, leverage])
+  }, [amount, maxAmount, leverage, maxLeverage])
 
   const isAmountExceedingMax = useMemo(() => {
     return amount.isGreaterThan(maxAmount)
@@ -478,7 +478,7 @@ export function PerpsModule() {
               value={effectiveLeverage}
               onChange={onChangeLeverage}
               type={tradeDirection}
-              disabled={isDisabledAmountInput || amount.isGreaterThan(maxAmount)}
+              disabled={isDisabledAmountInput}
             />
             {maxLeverage > 5 && (
               <LeverageButtons
