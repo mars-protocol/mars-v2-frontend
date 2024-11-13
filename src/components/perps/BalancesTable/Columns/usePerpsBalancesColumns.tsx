@@ -10,7 +10,7 @@ import Size, { SIZE_META, sizeSortingFn } from 'components/perps/BalancesTable/C
 import TradeDirection, {
   PERP_TYPE_META,
 } from 'components/perps/BalancesTable/Columns/TradeDirection'
-import { Type, TYPE_META } from 'components/perps/BalancesTable/Columns/Type'
+import { Status, STATUS_META } from 'components/perps/BalancesTable/Columns/Status'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import usePerpsLimitOrderRows from 'hooks/perps/usePerpsLimitOrdersRows'
 import { demagnify } from 'utils/formatters'
@@ -75,6 +75,8 @@ export default function usePerpsBalancesColumns(props: Props) {
             entryPrice={row.original.entryPrice}
             currentPrice={row.original.currentPrice}
             asset={row.original.asset}
+            type={row.original.type}
+            tradeDirection={row.original.tradeDirection}
           />
         ),
       },
@@ -98,7 +100,7 @@ export default function usePerpsBalancesColumns(props: Props) {
 
   const typeColumn = useMemo<ColumnDef<PerpPositionRow>>(
     () => ({
-      ...TYPE_META,
+      ...STATUS_META,
       cell: ({ row }) => {
         const position = row.original
         const { hasStopLoss, hasTakeProfit } = checkStopLossAndTakeProfit(
@@ -106,7 +108,7 @@ export default function usePerpsBalancesColumns(props: Props) {
           activeLimitOrders,
         )
         return (
-          <Type
+          <Status
             type={position.type}
             hasStopLoss={hasStopLoss}
             hasTakeProfit={hasTakeProfit}

@@ -151,9 +151,9 @@ export default function PerpsSummary(props: Props) {
       let comparison: 'less_than' | 'greater_than'
 
       if (tradeDirection === 'long') {
-        comparison = 'greater_than'
-      } else {
         comparison = 'less_than'
+      } else {
+        comparison = 'greater_than'
       }
 
       await submitLimitOrder({

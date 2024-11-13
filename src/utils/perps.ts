@@ -32,6 +32,19 @@ export const checkStopLossAndTakeProfit = (
   return { hasStopLoss, hasTakeProfit }
 }
 
+export const isStopOrder = (perpOrder: any, perpTrigger: any): PositionType => {
+  const isLong = BN(perpOrder.order_size).isGreaterThanOrEqualTo(0)
+
+  if (isLong) {
+    return perpTrigger.comparison !== 'less_than'
+      ? ('stop' as PositionType)
+      : ('limit' as PositionType)
+  }
+  return perpTrigger.comparison !== 'greater_than'
+    ? ('stop' as PositionType)
+    : ('limit' as PositionType)
+}
+
 export const convertTriggerOrderResponseToPerpPosition = (
   limitOrder: TriggerOrderResponse,
   perpAssets: Asset[],
@@ -61,7 +74,7 @@ export const convertTriggerOrderResponseToPerpPosition = (
     baseDenom: perpsConfig.base_denom,
     tradeDirection,
     amount: amount.abs(),
-    type: 'limit' as PositionType,
+    type: isStopOrder(perpOrder, perpTrigger),
     pnl: {
       net: BNCoin.fromCoin(limitOrder.order.keeper_fee).negated(),
       realized: {

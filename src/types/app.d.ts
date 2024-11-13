@@ -21,7 +21,7 @@ type ActionCoin = import('types/generated/mars-credit-manager/MarsCreditManager.
 type Action = import('types/generated/mars-credit-manager/MarsCreditManager.types').Action
 type BNCoin = import('types/classes/BNCoin').BNCoin
 
-type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp' | 'market' | 'limit'
+type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp' | 'market' | 'limit' | 'stop'
 type TableType = 'balances' | 'strategies' | 'perps'
 type AccountKind = import('types/generated/mars-credit-manager/MarsCreditManager.types').AccountKind
 
