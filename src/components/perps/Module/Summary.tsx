@@ -238,6 +238,7 @@ export default function PerpsSummary(props: Props) {
                   ? tradeDirection
                   : (previousTradeDirection ?? 'long')
               }
+              type={isLimitOrder ? 'limit' : 'stop'}
               className='capitalize !text-sm'
             />
           )}
@@ -378,7 +379,7 @@ function ManageSummary(
   } = props
 
   const size = useMemo(() => previousAmount.plus(amount).abs(), [amount, previousAmount])
-
+  const isLimitOrder = props.orderType === OrderType.LIMIT
   if (amount.isZero()) return null
 
   return (
@@ -402,6 +403,7 @@ function ManageSummary(
             tradeDirection={
               isNewPosition || isDirectionChange ? tradeDirection : previousTradeDirection
             }
+            type={isLimitOrder ? 'limit' : 'stop'}
             previousTradeDirection={isDirectionChange ? previousTradeDirection : undefined}
           />
         </SummaryLine>

@@ -92,7 +92,7 @@ export default function Asset(props: Props) {
         {row.amount.isZero() ? (
           <CloseLabel />
         ) : (
-          <TradeDirection tradeDirection={row.tradeDirection} />
+          <TradeDirection tradeDirection={row.tradeDirection} type={row.type} />
         )}
       </Text>
     </Tooltip>
