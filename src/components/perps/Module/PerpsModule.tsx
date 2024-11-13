@@ -142,7 +142,7 @@ export function PerpsModule() {
     const isOppositeDirection =
       (currentPerpPosition.tradeDirection === 'long' && stopTradeDirection === 'short') ||
       (currentPerpPosition.tradeDirection === 'short' && stopTradeDirection === 'long')
-    console.log('isOppositeDirection', isOppositeDirection)
+
     if (isOppositeDirection) {
       setIsReduceOnly(true)
     }
