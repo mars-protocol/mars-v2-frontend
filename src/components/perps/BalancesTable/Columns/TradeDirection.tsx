@@ -1,6 +1,6 @@
-import Text from 'components/common/Text'
 import classNames from 'classnames'
 import { ArrowRight } from 'components/common/Icons'
+import Text from 'components/common/Text'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
@@ -8,7 +8,7 @@ import { BN } from 'utils/helpers'
 export const TRADE_DIRECTION_META = {
   accessorKey: 'tradeDirection',
   header: 'Direction',
-  meta: { className: 'w-40 text-center' },
+  meta: { className: 'w-40 min-w-40' },
 }
 
 interface Props {
