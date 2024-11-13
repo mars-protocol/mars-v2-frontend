@@ -19,7 +19,7 @@ export function Status({ type, hasStopLoss, hasTakeProfit, showIndicators }: Pro
 
   return (
     <div className='flex flex-col items-end'>
-      <Text size='sm' className='capitalize'>
+      <Text size='xs' className='capitalize'>
         {displayStatus}
       </Text>
       {/* {showIndicators && (hasStopLoss || hasTakeProfit) && (
