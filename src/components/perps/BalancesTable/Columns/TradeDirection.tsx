@@ -1,56 +1,111 @@
+import Text from 'components/common/Text'
 import classNames from 'classnames'
 import { ArrowRight } from 'components/common/Icons'
-import Text from 'components/common/Text'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import { byDenom } from 'utils/array'
+import { BN } from 'utils/helpers'
 
-export const PERP_TYPE_META = {
+export const TRADE_DIRECTION_META = {
   accessorKey: 'tradeDirection',
-  header: 'Side',
-  meta: { className: 'w-30' },
+  header: 'Direction',
+  meta: { className: 'w-40 text-center' },
 }
 
-type Props = {
+interface Props {
   tradeDirection: TradeDirection
-  className?: string
-  directionChange?: boolean
+  reduce_only?: boolean
   previousTradeDirection?: TradeDirection
+  className?: string
+  denom?: string
+  amount?: BigNumber
+  type: PositionType
+  showPositionEffect?: boolean
 }
 
-export default function TradeDirection(props: Props) {
-  const { tradeDirection, className, previousTradeDirection } = props
-  return (
-    <div className='inline-flex items-end gap-1'>
-      {previousTradeDirection && (
-        <>
-          <Text
-            size='xs'
-            tag='div'
-            className={classNames(
-              'capitalize px-2 py-0.5 rounded-sm flex items-center',
-              previousTradeDirection === 'short' && 'text-error bg-error/20',
-              previousTradeDirection === 'long' && 'text-success bg-success/20',
-              className,
-            )}
-          >
-            {previousTradeDirection}
-          </Text>
+function getPositionEffect(
+  currentPosition: PerpsPosition | undefined,
+  orderDirection: TradeDirection,
+  orderAmount: BigNumber,
+  orderType: PositionType,
+  isReduceOnly?: boolean,
+): string {
+  if (!currentPosition) return ''
+  if (orderType === 'market') return ''
 
-          <div className='w-4'>
-            <ArrowRight />
-          </div>
-        </>
-      )}
-      <Text
-        size='xs'
-        tag='div'
-        className={classNames(
-          'capitalize px-2 py-0.5 rounded-sm flex items-center',
-          tradeDirection === 'short' && 'text-error bg-error/20',
-          tradeDirection === 'long' && 'text-success bg-success/20',
-          className,
+  if (currentPosition.tradeDirection === orderDirection) {
+    return 'Increase Position'
+  }
+
+  if (isReduceOnly) return 'Reduce Position'
+
+  if (currentPosition.tradeDirection !== orderDirection) {
+    if (orderAmount.abs().isGreaterThan(currentPosition.amount.abs())) {
+      return 'Flip Position'
+    }
+
+    return 'Reduce Position'
+  }
+
+  return ''
+}
+
+export default function TradeDirection({
+  tradeDirection,
+  reduce_only,
+  previousTradeDirection,
+  className,
+  denom,
+  amount,
+  type,
+  showPositionEffect = false,
+}: Props) {
+  const currentAccount = useCurrentAccount()
+  const currentPosition = currentAccount?.perps.find(byDenom(denom ?? ''))
+
+  const positionEffect = showPositionEffect
+    ? amount && denom
+      ? getPositionEffect(currentPosition, tradeDirection, BN(amount), type, reduce_only)
+      : ''
+    : ''
+
+  return (
+    <div className={classNames('flex flex-col items-end gap-0.5', className)}>
+      <div className='inline-flex items-center justify-center gap-1'>
+        {previousTradeDirection && (
+          <>
+            <Text
+              size='xs'
+              tag='div'
+              className={classNames(
+                'capitalize px-2 py-0.5 rounded-sm flex items-center justify-center',
+                previousTradeDirection === 'short' && 'text-error bg-error/20',
+                previousTradeDirection === 'long' && 'text-success bg-success/20',
+              )}
+            >
+              {previousTradeDirection}
+            </Text>
+            <div className='w-4'>
+              <ArrowRight />
+            </div>
+          </>
         )}
-      >
-        {tradeDirection}
-      </Text>
+        <Text
+          size='xs'
+          tag='div'
+          className={classNames(
+            'capitalize px-2 py-0.5 rounded-sm flex items-center justify-center',
+            tradeDirection === 'short' && 'text-error bg-error/20',
+            tradeDirection === 'long' && 'text-success bg-success/20',
+          )}
+        >
+          {tradeDirection}
+        </Text>
+      </div>
+      {positionEffect && (
+        <Text size='xs' className='text-white/50'>
+          {positionEffect}
+        </Text>
+      )}
     </div>
   )
 }

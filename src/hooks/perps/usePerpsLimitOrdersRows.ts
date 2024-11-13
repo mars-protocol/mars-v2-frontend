@@ -11,7 +11,6 @@ export default function usePerpsLimitOrderRows() {
   const perpAssets = usePerpsEnabledAssets()
   const { data: limitOrders } = usePerpsLimitOrders()
   const { data: perpsConfig } = usePerpsConfig()
-
   const { computeLiquidationPrice } = useHealthComputer(currentAccount)
 
   return useMemo<PerpPositionRow[]>(() => {
