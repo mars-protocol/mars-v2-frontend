@@ -75,6 +75,7 @@ export const convertTriggerOrderResponseToPerpPosition = (
     tradeDirection,
     amount: amount.abs(),
     type: isStopOrder(perpOrder, perpTrigger),
+    reduce_only: perpOrder.reduce_only ?? false,
     pnl: {
       net: BNCoin.fromCoin(limitOrder.order.keeper_fee).negated(),
       realized: {

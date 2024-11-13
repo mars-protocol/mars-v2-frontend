@@ -135,20 +135,6 @@ export function PerpsModule() {
   }, [isReduceOnly, currentPerpPosition, amount])
 
   useEffect(() => {
-    if (!currentPerpPosition || !isStopOrder) {
-      return
-    }
-
-    const isOppositeDirection =
-      (currentPerpPosition.tradeDirection === 'long' && stopTradeDirection === 'short') ||
-      (currentPerpPosition.tradeDirection === 'short' && stopTradeDirection === 'long')
-
-    if (isOppositeDirection) {
-      setIsReduceOnly(true)
-    }
-  }, [currentPerpPosition, isStopOrder, stopTradeDirection])
-
-  useEffect(() => {
     validateReduceOnlyOrder()
   }, [validateReduceOnlyOrder, amount, isReduceOnly])
 
@@ -316,15 +302,14 @@ export function PerpsModule() {
       amount.isZero() || amount.isGreaterThan(maxAmount) || warningMessages.isNotEmpty()
 
     if (isStopOrder) {
-      if (!currentPerpPosition || stopPrice.isZero()) return true
+      if (stopPrice.isZero()) return true
       const currentPrice = perpsAsset?.price?.amount ?? BN_ZERO
       if (currentPrice.isZero()) return true
 
-      if (currentPerpPosition.tradeDirection === 'long') {
-        return stopPrice.isGreaterThanOrEqualTo(currentPrice)
+      if (stopTradeDirection === 'long') {
+        return stopPrice.isLessThanOrEqualTo(currentPrice)
       }
-
-      return stopPrice.isLessThanOrEqualTo(currentPrice)
+      return stopPrice.isGreaterThanOrEqualTo(currentPrice)
     }
 
     if (isLimitOrder) {
@@ -337,8 +322,8 @@ export function PerpsModule() {
     maxAmount,
     warningMessages,
     isStopOrder,
-    currentPerpPosition,
     stopPrice,
+    stopTradeDirection,
     perpsAsset?.price?.amount,
     isLimitOrder,
     limitPriceInfo,
