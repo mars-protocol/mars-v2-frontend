@@ -63,7 +63,7 @@ export default function TradeDirection({
   const currentPosition = currentAccount?.perps.find(byDenom(denom ?? ''))
 
   const positionEffect = showPositionEffect
-    ? amount && denom && type !== 'market'
+    ? amount && denom
       ? getPositionEffect(currentPosition, tradeDirection, BN(amount), type, reduce_only)
       : ''
     : ''
