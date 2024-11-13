@@ -127,12 +127,26 @@ export function PerpsModule() {
       setReduceOnlyWarning(
         'This order violates the Reduce-Only setting. Reduce-Only orders can only decrease your current position size or close it entirely. Please uncheck Reduce-Only or adjust your order size.',
       )
-      return false
+    } else {
+      setReduceOnlyWarning(null)
     }
 
-    setReduceOnlyWarning(null)
     return true
   }, [isReduceOnly, currentPerpPosition, amount])
+
+  useEffect(() => {
+    if (!currentPerpPosition || !isStopOrder) {
+      return
+    }
+
+    const isOppositeDirection =
+      (currentPerpPosition.tradeDirection === 'long' && stopTradeDirection === 'short') ||
+      (currentPerpPosition.tradeDirection === 'short' && stopTradeDirection === 'long')
+    console.log('isOppositeDirection', isOppositeDirection)
+    if (isOppositeDirection) {
+      setIsReduceOnly(true)
+    }
+  }, [currentPerpPosition, isStopOrder, stopTradeDirection])
 
   useEffect(() => {
     validateReduceOnlyOrder()
