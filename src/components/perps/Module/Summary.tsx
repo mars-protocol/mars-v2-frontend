@@ -151,9 +151,9 @@ export default function PerpsSummary(props: Props) {
       let comparison: 'less_than' | 'greater_than'
 
       if (tradeDirection === 'long') {
-        comparison = 'greater_than'
-      } else {
         comparison = 'less_than'
+      } else {
+        comparison = 'greater_than'
       }
 
       await submitLimitOrder({
@@ -423,17 +423,29 @@ function ManageSummary(
         />
       </SummaryLine>
       <SummaryLine label='Leverage' contentClassName='flex gap-1 pt-2'>
-        {previousLeverage && !previousAmount.isZero() && (
-          <>
+        {previousLeverage && !previousAmount.isZero() ? (
+          <div className='flex items-center gap-1'>
             <span>{formatLeverage(previousLeverage)}</span>
             <div className='w-4'>
               <ArrowRight
-                className={classNames(leverage > previousLeverage ? 'text-error' : 'text-success')}
+                className={classNames(
+                  leverage > previousLeverage ? 'text-error' : 'text-success',
+                  'transition-colors duration-200',
+                )}
               />
             </div>
-          </>
+            <span
+              className={classNames(
+                leverage > previousLeverage ? 'text-error' : 'text-success',
+                'transition-colors duration-200',
+              )}
+            >
+              {formatLeverage(leverage)}
+            </span>
+          </div>
+        ) : (
+          <span>{formatLeverage(leverage)}</span>
         )}
-        <span>{formatLeverage(leverage)}</span>
       </SummaryLine>
     </div>
   )

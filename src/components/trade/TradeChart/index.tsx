@@ -52,8 +52,8 @@ function getLimitOrderText(
   currentPosition: 'long' | 'short' | null,
   positionAmount: BigNumber | null,
 ) {
-  let label = 'Limit'
-
+  let label = order.type === 'stop' ? 'Stop' : 'Limit'
+  console.log(order)
   if (positionAmount && order.amount.abs().isEqualTo(positionAmount.abs())) {
     const isClosing =
       (currentPosition === 'long' && order.tradeDirection === 'short') ||
@@ -78,6 +78,7 @@ function isAutomaticAddedLine(shapeName: string, shape: any) {
 
   return (
     shape.text.includes('Limit') ||
+    shape.text.includes('Stop') ||
     shape.text.includes('Entry') ||
     shape.text.includes('Liquidation') ||
     shape.text.includes('Close')

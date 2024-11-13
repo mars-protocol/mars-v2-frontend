@@ -1,9 +1,9 @@
 import Text from 'components/common/Text'
 
-export const TYPE_META = {
+export const STATUS_META = {
   accessorKey: 'type',
-  header: 'Type',
-  id: 'type',
+  header: 'Status',
+  id: 'status',
   meta: { className: 'min-w-20 w-20' },
 }
 
@@ -14,13 +14,15 @@ interface Props {
   showIndicators: boolean
 }
 
-export function Type({ type, hasStopLoss, hasTakeProfit, showIndicators }: Props) {
+export function Status({ type, hasStopLoss, hasTakeProfit, showIndicators }: Props) {
+  const displayStatus = type === 'market' ? 'Open' : type
+
   return (
-    <div className='flex flex-col items-start'>
+    <div className='flex flex-col items-end'>
       <Text size='sm' className='capitalize'>
-        {type}
+        {displayStatus}
       </Text>
-      {showIndicators && (hasStopLoss || hasTakeProfit) && (
+      {/* {showIndicators && (hasStopLoss || hasTakeProfit) && (
         <div className='flex items-center justify-center gap-1 mt-1'>
           {hasStopLoss && (
             <span className='px-1 text-xs rounded bg-white/10 text-white/60'>SL</span>
@@ -29,7 +31,7 @@ export function Type({ type, hasStopLoss, hasTakeProfit, showIndicators }: Props
             <span className='px-1 text-xs rounded bg-white/10 text-white/60'>TP</span>
           )}
         </div>
-      )}
+      )} */}
     </div>
   )
 }

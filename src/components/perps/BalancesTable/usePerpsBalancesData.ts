@@ -10,10 +10,11 @@ import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getAccountNetValue } from 'utils/accounts'
 import { byDenom } from 'utils/array'
-import { demagnify, getCoinValue } from 'utils/formatters'
+import { demagnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import { isStopOrder } from 'utils/perps'
 
 export default function usePerpsBalancesTable() {
   const currentAccount = useCurrentAccount()
@@ -63,6 +64,7 @@ export default function usePerpsBalancesTable() {
         const limitOrderAction = limitOrder.order.actions.find((action) =>
           action.toString().includes('execute_perp_order'),
         ) as ExceutePerpsOrder | undefined
+
         const limitOrderCondition = limitOrder.order.conditions.find((condition) =>
           condition.toString().includes('oracle_price'),
         ) as TriggerCondition | undefined
@@ -73,7 +75,9 @@ export default function usePerpsBalancesTable() {
         const asset = perpAssets.find(byDenom(perpOrder.denom))!
         const amount = BN(perpOrder.order_size)
         const liquidationPrice = computeLiquidationPrice(perpOrder.denom, 'asset')
+
         if (!asset) return
+
         activeLimitOrders.push({
           orderId: limitOrder.order.order_id,
           asset,
@@ -81,7 +85,7 @@ export default function usePerpsBalancesTable() {
           baseDenom: perpsConfig.base_denom,
           tradeDirection: BN(perpOrder.order_size).isGreaterThanOrEqualTo(0) ? 'long' : 'short',
           amount: amount.abs(),
-          type: 'limit',
+          type: isStopOrder(perpOrder, perpTrigger),
           pnl: {
             net: BNCoin.fromCoin(limitOrder.order.keeper_fee).negated(),
             realized: {
