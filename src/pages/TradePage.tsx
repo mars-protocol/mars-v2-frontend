@@ -18,7 +18,6 @@ export default function TradePage() {
   const chainConfig = useChainConfig()
   const page = getPage(pathname, chainConfig)
   const isAdvanced = useMemo(() => {
-    useStore.setState({ assetOverlayState: 'closed' })
     return page === 'trade-advanced'
   }, [page])
 
@@ -70,6 +69,10 @@ export default function TradePage() {
       assets[1],
     [tradingPairAdvanced, tradingPairSimple, assets, isAdvanced],
   )
+
+  useEffect(() => {
+    useStore.setState({ assetOverlayState: 'closed' })
+  }, [])
 
   return (
     <div className='flex flex-col w-full h-full gap-4'>
