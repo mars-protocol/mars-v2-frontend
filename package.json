@@ -1,6 +1,6 @@
 {
   "name": "mars-v2-frontend",
-  "version": "2.7.5",
+  "version": "2.7.6",
   "homepage": "./",
   "private": false,
   "license": "SEE LICENSE IN LICENSE FILE",
@@ -22,7 +22,7 @@
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.32.4",
     "@delphi-labs/shuttle-react": "^3.29.0",
-    "@keplr-wallet/cosmos": "^0.12.155",
+    "@keplr-wallet/cosmos": "^0.12.156",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tanstack/react-table": "^8.20.5",
     "@tippyjs/react": "^4.2.6",
