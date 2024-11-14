@@ -32,20 +32,18 @@ function getPositionEffect(
   if (!currentPosition) return ''
   if (orderType === 'market') return ''
 
-  if (currentPosition.tradeDirection === orderDirection) {
-    return 'Increase Position'
-  }
-
-  if (isReduceOnly) return 'Reduce Position'
+  if (currentPosition.tradeDirection === orderDirection) return 'Increase Position'
 
   if (currentPosition.tradeDirection !== orderDirection) {
-    if (orderAmount.abs().isGreaterThan(currentPosition.amount.abs())) {
-      return 'Flip Position'
-    }
-
+    if (orderAmount.abs().isGreaterThan(currentPosition.amount.abs())) return 'Flip Position'
+    if (orderAmount.abs().isEqualTo(currentPosition.amount.abs())) return 'Close Position'
     return 'Reduce Position'
   }
 
+  if (isReduceOnly) {
+    if (orderAmount.abs().isGreaterThan(currentPosition.amount.abs())) return 'Close Position'
+    return 'Reduce Position'
+  }
   return ''
 }
 
