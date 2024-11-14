@@ -14,6 +14,7 @@ export default function PerpsBalancesTable() {
   const activeLimitOrders = usePerpsLimitOrderRows()
   const columns = usePerpsBalancesColumns({ isOrderTable: false })
   const limitOrderColumns = usePerpsBalancesColumns({ isOrderTable: true })
+
   const [searchParams, setSearchParams] = useSearchParams()
 
   const onClickRow = useCallback(
