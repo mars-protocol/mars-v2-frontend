@@ -6,6 +6,7 @@ import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
 import Divider from 'components/common/Divider'
 import LeverageSlider from 'components/common/LeverageSlider'
+import LimitPriceInput from 'components/common/LimitPriceInput'
 import OrderTypeSelector from 'components/common/OrderTypeSelector'
 import SwitchWithLabel from 'components/common/Switch/SwitchWithLabel'
 import Text from 'components/common/Text'
@@ -26,6 +27,7 @@ import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useAssets from 'hooks/assets/useAssets'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
+import { usePerpsOrderForm } from 'hooks/perps/usePerpsOrderForm'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import useAutoLend from 'hooks/wallet/useAutoLend'
@@ -34,8 +36,6 @@ import { OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
 import getPerpsPosition from 'utils/getPerpsPosition'
 import { capitalizeFirstLetter } from 'utils/helpers'
-import { usePerpsOrderForm } from 'hooks/perps/usePerpsOrderForm'
-import LimitPriceInput from 'components/common/LimitPriceInput'
 
 export function PerpsModule() {
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
@@ -160,8 +160,15 @@ export function PerpsModule() {
       setStopPrice(BN_ZERO)
       setSelectedOrderType(orderType)
       setIsReduceOnly(false)
+      simulatePerps(currentPerpPosition, isAutoLendEnabledForCurrentAccount)
     },
-    [updateAmount, setLimitPrice],
+    [
+      updateAmount,
+      setLimitPrice,
+      simulatePerps,
+      currentPerpPosition,
+      isAutoLendEnabledForCurrentAccount,
+    ],
   )
 
   const onChangeStopTradeDirection = useCallback(
@@ -248,23 +255,7 @@ export function PerpsModule() {
 
   useEffect(() => {
     if (!tradingFee || !perpsVault || perpsVaultModal) return
-    if (isLimitOrder) {
-      return
-    }
-
-    if (isStopOrder && currentPerpPosition) {
-      const newPosition = getPerpsPosition(
-        perpsVault.denom,
-        perpsAsset,
-        currentPerpPosition.amount.negated(),
-        stopTradeDirection,
-        tradingFee,
-        currentPerpPosition,
-        stopPrice,
-      )
-      simulatePerps(newPosition, isAutoLendEnabledForCurrentAccount)
-      return
-    }
+    if (isLimitOrder || isStopOrder) return
 
     const newAmount = currentPerpPosition?.amount.plus(amount) ?? amount
     const previousTradeDirection = currentPerpPosition?.amount.isLessThan(0) ? 'short' : 'long'
