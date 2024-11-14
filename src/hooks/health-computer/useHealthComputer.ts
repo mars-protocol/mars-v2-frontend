@@ -273,7 +273,8 @@ export default function useHealthComputer(account?: Account) {
       if (!healthComputer) return null
 
       try {
-        const asset = perpsAssets.find(byDenom(denom))
+        const supportedAssets = [...whitelistedAssets, ...perpsAssets]
+        const asset = supportedAssets.find(byDenom(denom))
         const assetInAccount = findPositionInAccount(healthComputer, denom)
         if (!asset || !assetInAccount) return 0
 
