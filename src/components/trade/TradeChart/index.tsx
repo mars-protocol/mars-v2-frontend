@@ -168,106 +168,111 @@ export default function TradeChart(props: Props) {
   }, [chartName, onCreateLimitOrder, isPerps])
 
   const updateShapesAndStudies = useCallback(() => {
-    const chart = chartWidget.activeChart()
-    const settings = getTradingViewSettings(theme)
-    const oraclePriceDecimalDiff = props.buyAsset.decimals - PRICE_ORACLE_DECIMALS
-    const { downColor, upColor } = settings.chartStyle
-    const currentShapes = [] as TradingViewShape[]
-    const currentStudies = [] as string[]
-    const allShapes = chart.getAllShapes()
-    const allStudies = chart.getAllStudies()
+    try {
+      const chart = chartWidget.activeChart()
+      const settings = getTradingViewSettings(theme)
+      const oraclePriceDecimalDiff = props.buyAsset.decimals - PRICE_ORACLE_DECIMALS
+      const { downColor, upColor } = settings.chartStyle
+      const currentShapes = [] as TradingViewShape[]
+      const currentStudies = [] as string[]
+      const allShapes = chart.getAllShapes()
+      const allStudies = chart.getAllStudies()
 
-    allShapes.forEach((shape) => {
-      const currentShape = chart.getShapeById(shape.id).getProperties()
-      const currentShapePoints = chart.getShapeById(shape.id).getPoints()
-      if (isAutomaticAddedLine(shape.name, currentShape)) {
-        chart.removeEntity(shape.id)
-      } else {
-        currentShapes.push({
-          points: currentShapePoints,
-          shape: { ...currentShape, shape: shape.name as TradingViewShapeNames },
-        })
-      }
-    })
+      allShapes.forEach((shape) => {
+        const currentShape = chart.getShapeById(shape.id).getProperties()
+        const currentShapePoints = chart.getShapeById(shape.id).getPoints()
+        if (isAutomaticAddedLine(shape.name, currentShape)) {
+          chart.removeEntity(shape.id)
+        } else {
+          currentShapes.push({
+            points: currentShapePoints,
+            shape: { ...currentShape, shape: shape.name as TradingViewShapeNames },
+          })
+        }
+      })
 
-    allStudies.forEach((study) => {
-      currentStudies.push(study.name)
-    })
+      allStudies.forEach((study) => {
+        currentStudies.push(study.name)
+      })
 
-    const newTvChartStore = JSON.stringify({
-      ...JSON.parse(tvChartStore),
-      [chartName]: currentShapes,
-      [`${chartName}-studies`]: currentStudies,
-    })
-    setTvChartStore(newTvChartStore)
+      const newTvChartStore = JSON.stringify({
+        ...JSON.parse(tvChartStore),
+        [chartName]: currentShapes,
+        [`${chartName}-studies`]: currentStudies,
+      })
+      setTvChartStore(newTvChartStore)
 
-    if (entryPrice) {
-      chart.createShape(
-        { price: entryPrice, time: moment().unix() },
-        {
-          shape: 'horizontal_line',
-          lock: true,
-          disableSelection: true,
-          zOrder: 'top',
-          text: 'Entry',
-          overrides: {
-            linecolor: tradeDirection === 'long' ? upColor : downColor,
-            textcolor: tradeDirection === 'long' ? upColor : downColor,
-            linestyle: 0,
-            linewidth: 1,
-            showLabel: true,
-          },
-        },
-      )
-    }
-
-    if (liquidationPrice) {
-      chart.createShape(
-        { price: liquidationPrice, time: moment().unix() },
-        {
-          shape: 'horizontal_line',
-          lock: true,
-          disableSelection: true,
-          text: 'Liquidation',
-          zOrder: 'top',
-          overrides: {
-            linecolor: '#fdb021',
-            linestyle: 0,
-            linewidth: 1,
-            textcolor: '#fdb021',
-            showLabel: true,
-          },
-        },
-      )
-    }
-    if (props.limitOrders) {
-      const currentPosition = props.perpsPosition?.amount.isGreaterThan(0) ? 'long' : 'short'
-      const positionAmount = props.perpsPosition?.amount || null
-
-      props.limitOrders.forEach((order) => {
-        const price = order.entryPrice.shiftedBy(oraclePriceDecimalDiff).toNumber()
-
+      if (entryPrice) {
         chart.createShape(
-          {
-            price: price,
-            time: moment().unix(),
-          },
+          { price: entryPrice, time: moment().unix() },
           {
             shape: 'horizontal_line',
             lock: true,
             disableSelection: true,
             zOrder: 'top',
-            text: getLimitOrderText(order, props.buyAsset, currentPosition, positionAmount),
+            text: 'Entry',
             overrides: {
-              linecolor: order.tradeDirection === 'long' ? upColor : downColor,
-              textcolor: order.tradeDirection === 'long' ? upColor : downColor,
-              showLabel: true,
-              linestyle: 2,
+              linecolor: tradeDirection === 'long' ? upColor : downColor,
+              textcolor: tradeDirection === 'long' ? upColor : downColor,
+              linestyle: 0,
               linewidth: 1,
+              showLabel: true,
             },
           },
         )
-      })
+      }
+
+      if (liquidationPrice) {
+        chart.createShape(
+          { price: liquidationPrice, time: moment().unix() },
+          {
+            shape: 'horizontal_line',
+            lock: true,
+            disableSelection: true,
+            text: 'Liquidation',
+            zOrder: 'top',
+            overrides: {
+              linecolor: '#fdb021',
+              linestyle: 0,
+              linewidth: 1,
+              textcolor: '#fdb021',
+              showLabel: true,
+            },
+          },
+        )
+      }
+      if (props.limitOrders) {
+        const currentPosition = props.perpsPosition?.amount.isGreaterThan(0) ? 'long' : 'short'
+        const positionAmount = props.perpsPosition?.amount || null
+
+        props.limitOrders.forEach((order) => {
+          const price = order.entryPrice.shiftedBy(oraclePriceDecimalDiff).toNumber()
+
+          chart.createShape(
+            {
+              price: price,
+              time: moment().unix(),
+            },
+            {
+              shape: 'horizontal_line',
+              lock: true,
+              disableSelection: true,
+              zOrder: 'top',
+              text: getLimitOrderText(order, props.buyAsset, currentPosition, positionAmount),
+              overrides: {
+                linecolor: order.tradeDirection === 'long' ? upColor : downColor,
+                textcolor: order.tradeDirection === 'long' ? upColor : downColor,
+                showLabel: true,
+                linestyle: 2,
+                linewidth: 1,
+              },
+            },
+          )
+        })
+      }
+    } catch (e) {
+      console.info('Error on updating chart', e)
+      return
     }
   }, [
     chartName,
