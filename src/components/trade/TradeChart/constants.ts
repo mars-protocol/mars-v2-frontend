@@ -17,7 +17,6 @@ export const disabledFeatures: ChartingLibraryFeatureset[] = [
   'go_to_date',
   'timeframes_toolbar',
   'create_volume_indicator_by_default',
-  'use_localstorage_for_settings',
 ]
 
 export const enabledFeatures: ChartingLibraryFeatureset[] = [
@@ -27,6 +26,7 @@ export const enabledFeatures: ChartingLibraryFeatureset[] = [
   'horz_touch_drag_scroll',
   'vert_touch_drag_scroll',
   'control_bar',
+  'use_localstorage_for_settings',
 ]
 
 export const disabledFeaturesMobile: ChartingLibraryFeatureset[] = [
@@ -49,11 +49,11 @@ export const disabledFeaturesMobile: ChartingLibraryFeatureset[] = [
   'go_to_date',
   'timeframes_toolbar',
   'create_volume_indicator_by_default',
-  'use_localstorage_for_settings',
 ]
 
 export const enabledFeaturesMobile: ChartingLibraryFeatureset[] = [
   'horz_touch_drag_scroll',
   'chart_zoom',
   'hide_left_toolbar_by_default',
+  'use_localstorage_for_settings',
 ]
