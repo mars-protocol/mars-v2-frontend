@@ -105,6 +105,7 @@ export default function ChainSelect(props: Props) {
                 onSelect(chainConfig)
                 mutate(`chains/${chainConfig.id}/accounts/default`)
                 mutate(`chains/${chainConfig.id}/accounts/high_levered_strategy`)
+                mutate(`chains/${chainConfig.id}/clients`)
               }
             : () => {
                 if (chainConfig) {
