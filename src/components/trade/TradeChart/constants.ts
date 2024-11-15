@@ -16,6 +16,7 @@ export const disabledFeatures: ChartingLibraryFeatureset[] = [
   'symbol_info',
   'go_to_date',
   'timeframes_toolbar',
+  'create_volume_indicator_by_default',
 ]
 
 export const enabledFeatures: ChartingLibraryFeatureset[] = [
@@ -47,6 +48,7 @@ export const disabledFeaturesMobile: ChartingLibraryFeatureset[] = [
   'symbol_info',
   'go_to_date',
   'timeframes_toolbar',
+  'create_volume_indicator_by_default',
 ]
 
 export const enabledFeaturesMobile: ChartingLibraryFeatureset[] = [
