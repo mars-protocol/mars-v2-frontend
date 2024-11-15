@@ -8,6 +8,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify, getPerpsPriceDecimals } from 'utils/formatters'
 
 export const SIZE_META = {
+  id: 'size',
   accessorKey: 'size',
   header: () => (
     <div className='flex flex-col gap-1'>
