@@ -5,6 +5,7 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import NumberInput from 'components/common/NumberInput'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
+import { formatValue } from 'utils/formatters'
 
 interface Props {
   label?: string
@@ -108,7 +109,7 @@ export default function AssetAmountInput(props: Props) {
               <div className='flex flex-row flex-1 mt-2'>
                 <span className='text-xs font-bold'>{maxButtonLabel ?? 'Max:'}</span>
                 <span className='mx-1 text-xs font-bold text-white text-opacity-60'>
-                  {maxValue}
+                  {formatValue(maxValue, { abbreviated: false })}
                 </span>
                 <div
                   className='hover:cursor-pointer select-none bg-white bg-opacity-20 text-2xs !leading-3 font-bold py-0.5 px-1.5 rounded'
