@@ -77,6 +77,7 @@ export default function ChainSelect(props: Props) {
       setCurrentChainId(chainConfig.id)
       mutate(() => true)
       useStore.setState({
+        assets: [],
         mobileNavExpanded: false,
         chainConfig,
         isV1: false,
