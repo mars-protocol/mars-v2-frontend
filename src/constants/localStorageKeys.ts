@@ -26,4 +26,6 @@ export enum LocalStorageKeys {
   REWARDS_CENTER_TYPE = 'rewardsCenterType',
   SHOW_SUMMARY = 'showSummary',
   TV_CHART_STORE = 'tvChartStore',
+  SHOW_PERPS_VAULT_BANNER = 'showPerpsVaultBanner',
+  FUNDING_RATE_INTERVAL = 'fundingRateInterval',
 }

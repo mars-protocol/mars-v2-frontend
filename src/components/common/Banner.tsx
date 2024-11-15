@@ -1,17 +1,20 @@
 import classNames from 'classnames'
+import AssetImage from 'components/common/assets/AssetImage'
+import Button from 'components/common/Button'
 import Text from 'components/common/Text'
 import React from 'react'
-import AssetImage from 'components/common/assets/AssetImage'
+import { Cross } from './Icons'
 
 interface Props {
   asset?: Asset
   title: React.ReactNode
   description: string
   button: React.ReactNode
+  onClose?: () => void
 }
 
 export default function Banner(props: Props) {
-  const { asset, title, description, button } = props
+  const { asset, title, description, button, onClose } = props
 
   return (
     <div
@@ -27,10 +30,24 @@ export default function Banner(props: Props) {
           'blur-orb-secondary bg-purple',
         )}
       />
-      <div className='flex gap-2 md:gap-4 items-center'>
+      {onClose && (
+        <div className='absolute top-0 right-1'>
+          <Button
+            variant='transparent'
+            color='quaternary'
+            onClick={onClose}
+            leftIcon={<Cross />}
+            className='!p-1.5'
+            iconClassName='w-3 h-3'
+          />
+        </div>
+      )}
+      <div className='flex items-center gap-2 md:gap-4'>
         {asset && <AssetImage asset={asset} className='w-16 h-16 sm:w-10 sm:h-10' />}
         <div className='space-y-1 md:space-y-2'>
-          <Text size='sm'>{title}</Text>
+          <Text size='sm' className={classNames(onClose && 'pr-5')}>
+            {title}
+          </Text>
           <Text size='xs' className='text-white/50'>
             {description}
           </Text>
