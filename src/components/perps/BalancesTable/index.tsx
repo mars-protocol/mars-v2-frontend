@@ -32,6 +32,7 @@ export default function PerpsBalancesTable() {
     () => [
       {
         title: 'Perp Positions',
+        id: 'perp-positions',
         renderContent: () => (
           <Table
             title='Perp Positions'
