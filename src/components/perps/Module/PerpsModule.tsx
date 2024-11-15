@@ -57,15 +57,14 @@ export function PerpsModule() {
   const [stopPriceInfo, setStopPriceInfo] = useState<CallOut | undefined>(DEFAULT_STOP_PRICE_INFO)
 
   const isStopOrder = selectedOrderType === OrderType.STOP
-  const [stopPrice, setStopPrice] = useState<BigNumber>(BN_ZERO)
+
+  const { limitPrice, setLimitPrice, setStopPrice, orderType, stopPrice } = usePerpsOrderForm()
 
   useEffect(() => {
     if (!isStopOrder) {
       setStopPrice(BN_ZERO)
     }
-  }, [isStopOrder])
-
-  const { limitPrice, setLimitPrice, orderType } = usePerpsOrderForm()
+  }, [isStopOrder, setStopPrice])
 
   useEffect(() => {
     if (orderType === 'limit') {
@@ -165,6 +164,7 @@ export function PerpsModule() {
     [
       updateAmount,
       setLimitPrice,
+      setStopPrice,
       simulatePerps,
       currentPerpPosition,
       isAutoLendEnabledForCurrentAccount,
@@ -178,7 +178,7 @@ export function PerpsModule() {
       setStopPrice(BN_ZERO)
       setIsReduceOnly(false)
     },
-    [updateAmount],
+    [updateAmount, setStopPrice],
   )
 
   const onChangeAmount = useCallback(
