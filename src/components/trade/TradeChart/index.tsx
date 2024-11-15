@@ -134,15 +134,20 @@ export default function TradeChart(props: Props) {
       const chart = chartWidget.activeChart()
       if (!chart) return
       const chartStore = JSON.parse(localStorage.getItem(LocalStorageKeys.TV_CHART_STORE) ?? '{}')
-      const currentChartStore = chartStore[chartName]
-      if (!currentChartStore) return
-      currentChartStore.forEach((shape: TradingViewShape) => {
+      const currentChartShapeStore = chartStore[chartName]
+      if (!currentChartShapeStore) return
+      currentChartShapeStore.forEach((shape: TradingViewShape) => {
         if (Array.isArray(shape.points)) {
           if (shape.points.length === 0) return
           chart.createMultipointShape(shape.points, shape.shape)
         } else {
           chart.createShape(shape.points, shape.shape)
         }
+      })
+      const currentChartStudyStore = chartStore[`${chartName}-studies`]
+      if (!currentChartStudyStore) return
+      currentChartStudyStore.forEach((studyName: string) => {
+        chart.createStudy(studyName)
       })
       if (!isPerps || !onCreateLimitOrder) return
       chartWidget.onContextMenu((unixTime, price) => {
@@ -162,13 +167,16 @@ export default function TradeChart(props: Props) {
     }
   }, [chartName, onCreateLimitOrder, isPerps])
 
-  const updateShapes = useCallback(() => {
+  const updateShapesAndStudies = useCallback(() => {
     const chart = chartWidget.activeChart()
     const settings = getTradingViewSettings(theme)
     const oraclePriceDecimalDiff = props.buyAsset.decimals - PRICE_ORACLE_DECIMALS
     const { downColor, upColor } = settings.chartStyle
     const currentShapes = [] as TradingViewShape[]
+    const currentStudies = [] as string[]
     const allShapes = chart.getAllShapes()
+    const allStudies = chart.getAllStudies()
+
     allShapes.forEach((shape) => {
       const currentShape = chart.getShapeById(shape.id).getProperties()
       const currentShapePoints = chart.getShapeById(shape.id).getPoints()
@@ -182,9 +190,14 @@ export default function TradeChart(props: Props) {
       }
     })
 
+    allStudies.forEach((study) => {
+      currentStudies.push(study.name)
+    })
+
     const newTvChartStore = JSON.stringify({
       ...JSON.parse(tvChartStore),
       [chartName]: currentShapes,
+      [`${chartName}-studies`]: currentStudies,
     })
     setTvChartStore(newTvChartStore)
 
@@ -336,15 +349,15 @@ export default function TradeChart(props: Props) {
   useEffect(() => {
     if (!chartWidget) return
     chartWidget.onChartReady(() => {
-      updateShapes()
+      updateShapesAndStudies()
       chartWidget
         .activeChart()
         .onIntervalChanged()
         .subscribe(null, () => {
-          updateShapes()
+          updateShapesAndStudies()
         })
     })
-  }, [updateShapes])
+  }, [updateShapesAndStudies])
 
   return (
     <Card
