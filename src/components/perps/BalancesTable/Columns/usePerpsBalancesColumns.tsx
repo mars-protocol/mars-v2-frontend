@@ -7,14 +7,14 @@ import Manage, { MANAGE_META } from 'components/perps/BalancesTable/Columns/Mana
 import { PERP_NAME_META, PerpName } from 'components/perps/BalancesTable/Columns/PerpName'
 import PnL, { PNL_META } from 'components/perps/BalancesTable/Columns/PnL'
 import Size, { SIZE_META, sizeSortingFn } from 'components/perps/BalancesTable/Columns/Size'
+import { Status, STATUS_META } from 'components/perps/BalancesTable/Columns/Status'
 import TradeDirection, {
   TRADE_DIRECTION_META,
 } from 'components/perps/BalancesTable/Columns/TradeDirection'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import usePerpsLimitOrderRows from 'hooks/perps/usePerpsLimitOrdersRows'
 import { demagnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import { Status, STATUS_META } from 'components/perps/BalancesTable/Columns/Status'
-import usePerpsLimitOrderRows from 'hooks/perps/usePerpsLimitOrdersRows'
 import { checkStopLossAndTakeProfit } from 'utils/perps'
 
 interface Props {
@@ -33,7 +33,6 @@ export default function usePerpsBalancesColumns(props: Props) {
       },
       {
         ...TRADE_DIRECTION_META,
-        id: 'direction',
         cell: ({ row }) => {
           const { type, tradeDirection, reduce_only, amount, denom } = row.original
           return (
@@ -50,7 +49,6 @@ export default function usePerpsBalancesColumns(props: Props) {
       },
       {
         ...SIZE_META,
-        id: 'entryPrice',
         cell: ({ row }) => {
           const { asset, amount, type, entryPrice } = row.original
           const demagnifiedAmount = BN(demagnify(amount, asset))
