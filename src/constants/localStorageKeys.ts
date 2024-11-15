@@ -29,4 +29,6 @@ export enum LocalStorageKeys {
   VAULT_COMMUNITY_INFORMATION = 'vaultCommunityInformation',
   SHOW_SUMMARY = 'showSummary',
   TV_CHART_STORE = 'tvChartStore',
+  SHOW_PERPS_VAULT_BANNER = 'showPerpsVaultBanner',
+  FUNDING_RATE_INTERVAL = 'fundingRateInterval',
 }
