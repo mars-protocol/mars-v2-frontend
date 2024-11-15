@@ -500,7 +500,10 @@ export function PerpsModule() {
           previousTradeDirection={previousTradeDirection}
           previousLeverage={previousLeverage}
           hasActivePosition={hasActivePosition}
-          onTxExecuted={() => updateAmount(BN_ZERO)}
+          onTxExecuted={() => {
+            updateAmount(BN_ZERO)
+            simulatePerps(currentPerpPosition, isAutoLendEnabledForCurrentAccount)
+          }}
           disabled={isDisabledExecution}
           orderType={selectedOrderType}
           limitPrice={isLimitOrder ? limitPrice : BN_ZERO}
