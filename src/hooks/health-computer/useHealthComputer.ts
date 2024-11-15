@@ -10,6 +10,7 @@ import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useSlippage from 'hooks/settings/useSlippage'
 import useVaultConfigs from 'hooks/vaults/useVaultConfigs'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPositionValue } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams.types'
@@ -53,6 +54,7 @@ export default function useHealthComputer(account?: Account) {
   const { data: vaultConfigs } = useVaultConfigs()
   const { data: perpsVault } = usePerpsVault()
   const [slippage] = useSlippage()
+  const storeAssets = useStore((s) => s.assets)
 
   const [healthFactor, setHealthFactor] = useState(0)
   const positions: Positions | null = useMemo(() => {
@@ -203,13 +205,13 @@ export default function useHealthComputer(account?: Account) {
   ])
 
   useEffect(() => {
-    if (!healthComputer) return
+    if (!healthComputer || storeAssets.length === 0) return
     try {
       setHealthFactor(Number(compute_health_js(healthComputer).liquidation_health_factor) || 10)
     } catch (err) {
       console.error('Failed to calculate health: ', err)
     }
-  }, [healthComputer])
+  }, [healthComputer, storeAssets.length])
 
   const computeMaxBorrowAmount = useCallback(
     (denom: string, target: BorrowTarget) => {
