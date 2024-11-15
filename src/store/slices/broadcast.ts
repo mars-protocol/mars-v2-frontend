@@ -1122,7 +1122,10 @@ export default function createBroadcastSlice(
       const pythContract = get().chainConfig.contracts.pyth
 
       return generateExecutionMessage(get().address, pythContract, msg, [
-        { denom: get().assets[0].denom, amount: String(pythAssets.length) },
+        {
+          denom: get().chainConfig.defaultCurrency.coinMinimalDenom,
+          amount: String(pythAssets.length),
+        },
       ])
     },
     v1Action: async (type: V1ActionType, coin: BNCoin) => {
