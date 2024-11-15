@@ -35,16 +35,27 @@ export function PerpsChart() {
 
   const { liquidationPrice } = useLiquidationPrice(liqPrice)
 
-  const { setLimitPrice, setOrderType, setSelectedOrderType } = usePerpsOrderForm()
+  const { setLimitPrice, setOrderType, setSelectedOrderType, setStopPrice } = usePerpsOrderForm()
 
   const onCreateLimitOrder = useCallback(
-    (price: number) => {
-      const newLimitPrice = BN(price)
+    (price: BigNumber) => {
+      const formattedPrice = price.toFixed(18, 1)
+      const newLimitPrice = BN(formattedPrice)
       setLimitPrice(newLimitPrice, true)
       setOrderType('limit')
       setSelectedOrderType(OrderType.LIMIT)
     },
     [setLimitPrice, setOrderType, setSelectedOrderType],
+  )
+
+  const onCreateStopOrder = useCallback(
+    (price: BigNumber) => {
+      const formattedPrice = price.toFixed(18, 1)
+      setStopPrice(BN(formattedPrice), true)
+      setOrderType('stop')
+      setSelectedOrderType(OrderType.STOP)
+    },
+    [setStopPrice, setOrderType, setSelectedOrderType],
   )
 
   return (
@@ -58,6 +69,7 @@ export function PerpsChart() {
         liquidationPrice={liquidationPrice ?? undefined}
         limitOrders={currentLimitOrders}
         onCreateLimitOrder={onCreateLimitOrder}
+        onCreateStopOrder={onCreateStopOrder}
       />
     </div>
   )

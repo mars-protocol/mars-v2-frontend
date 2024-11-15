@@ -49,17 +49,18 @@ export default function usePerpsBalancesColumns(props: Props) {
       },
       {
         ...SIZE_META,
+        id: 'size',
         cell: ({ row }) => {
           const { asset, amount, type, entryPrice } = row.original
           const demagnifiedAmount = BN(demagnify(amount, asset))
 
           let value
-          if (type === 'limit') {
+          if (type === 'market') {
+            value = demagnifiedAmount.times(BN(asset.price?.amount || 0))
+          } else {
             value = demagnifiedAmount
               .times(entryPrice)
               .shiftedBy(asset.decimals - PRICE_ORACLE_DECIMALS)
-          } else {
-            value = demagnifiedAmount.times(BN(asset.price?.amount || 0))
           }
 
           return <Size amount={row.original.amount} asset={row.original.asset} value={value} />
@@ -79,6 +80,7 @@ export default function usePerpsBalancesColumns(props: Props) {
           ]),
       {
         ...ENTRY_PRICE_META(isOrderTable),
+        id: isOrderTable ? 'triggerPrice' : 'entryPrice',
         cell: ({ row }) => (
           <EntryPrice
             entryPrice={row.original.entryPrice}

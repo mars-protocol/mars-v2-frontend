@@ -32,6 +32,7 @@ import {
 } from 'utils/charting_library'
 import { formatValue, getPerpsPriceDecimals, magnify } from 'utils/formatters'
 import { getTradingViewSettings } from 'utils/theme'
+import { BN } from 'utils/helpers'
 
 interface Props {
   buyAsset: Asset
@@ -41,7 +42,8 @@ interface Props {
   perpsPosition?: PerpsPosition
   liquidationPrice?: number
   limitOrders?: PerpPositionRow[]
-  onCreateLimitOrder?: (price: number) => void
+  onCreateLimitOrder?: (price: BigNumber) => void
+  onCreateStopOrder?: (price: BigNumber) => void
 }
 
 let chartWidget: IChartingLibraryWidget
@@ -106,7 +108,7 @@ export default function TradeChart(props: Props) {
   )
   const chartName = useMemo(() => getChartName(props), [props])
 
-  const { onCreateLimitOrder, isPerps } = props
+  const { onCreateLimitOrder, onCreateStopOrder, isPerps } = props
 
   const [ratio, priceBuyAsset, priceSellAsset] = useMemo(() => {
     const priceBuyAsset = props.buyAsset?.price?.amount
@@ -149,14 +151,21 @@ export default function TradeChart(props: Props) {
       currentChartStudyStore.forEach((studyName: string) => {
         chart.createStudy(studyName)
       })
-      if (!isPerps || !onCreateLimitOrder) return
+      if (!isPerps || !onCreateLimitOrder || !onCreateStopOrder) return
       chartWidget.onContextMenu((unixTime, price) => {
         return [
           {
             position: 'top',
             text: 'Set Limit Order Price',
             click: () => {
-              onCreateLimitOrder(price)
+              props.onCreateLimitOrder?.(BN(price))
+            },
+          },
+          {
+            position: 'top',
+            text: 'Set Stop Order Price',
+            click: () => {
+              props.onCreateStopOrder?.(BN(price))
             },
           },
         ]
@@ -165,7 +174,7 @@ export default function TradeChart(props: Props) {
       console.info('Error on loading chart', e)
       return
     }
-  }, [chartName, onCreateLimitOrder, isPerps])
+  }, [chartName, onCreateLimitOrder, onCreateStopOrder, isPerps])
 
   const updateShapesAndStudies = useCallback(() => {
     try {

@@ -103,19 +103,22 @@ export const validateStopOrderPrice = (
   currentPrice: BigNumber,
   tradeDirection: TradeDirection,
 ): { isValid: boolean; errorMessage: string | null } => {
-  if (stopPrice.isZero() || currentPrice.isZero()) {
+  const formattedStopPrice = BN(stopPrice.toFixed(18, 1))
+  const formattedCurrentPrice = BN(currentPrice.toFixed(18, 1))
+
+  if (formattedStopPrice.isZero() || formattedCurrentPrice.isZero()) {
     return { isValid: false, errorMessage: null }
   }
 
   if (tradeDirection === 'long') {
-    if (stopPrice.isLessThanOrEqualTo(currentPrice)) {
+    if (formattedStopPrice.isLessThanOrEqualTo(formattedCurrentPrice)) {
       return {
         isValid: false,
         errorMessage: 'Stop price must be below current price for long positions',
       }
     }
   } else {
-    if (stopPrice.isGreaterThanOrEqualTo(currentPrice)) {
+    if (formattedStopPrice.isGreaterThanOrEqualTo(formattedCurrentPrice)) {
       return {
         isValid: false,
         errorMessage: 'Stop price must be above current price for short positions',
