@@ -15,7 +15,6 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useStore from 'store'
 import { WalletID } from 'types/enums'
-import { setNodeError } from 'utils/error'
 import { isAndroid, isIOS } from 'utils/mobile'
 
 interface Props {
@@ -60,7 +59,6 @@ export default function WalletSelect(props: Props) {
   const { extensionProviders, mobileProviders, mobileConnect } = useShuttle()
   const [qrCodeUrl, setQRCodeUrl] = useState('')
   const [error, setError] = useState(props.error)
-  const errorStore = useStore((s) => s.errorStore)
   const [isLoading, setIsLoading] = useState<string | boolean>(false)
   const recentWallet = useCurrentWallet()
   const handleConnectClick = (extensionProviderId: string) => {
