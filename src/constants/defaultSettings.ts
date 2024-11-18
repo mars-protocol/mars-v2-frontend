@@ -24,5 +24,7 @@ export const getDefaultChainSettings = (chainConfig: ChainConfig) => {
     showSummary: true,
     perpsKeeperFee: BNCoin.fromDenomAndBigNumber('usd', BN_ZERO_ONE).toCoin(),
     tvChartStore: JSON.stringify({}),
+    showPerpsVaultBanner: true,
+    fundingRateInterval: '1H',
   }
 }

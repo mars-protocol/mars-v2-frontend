@@ -21,7 +21,7 @@ type ActionCoin = import('types/generated/mars-credit-manager/MarsCreditManager.
 type Action = import('types/generated/mars-credit-manager/MarsCreditManager.types').Action
 type BNCoin = import('types/classes/BNCoin').BNCoin
 
-type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp' | 'market' | 'limit'
+type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp' | 'market' | 'limit' | 'stop'
 type TableType = 'balances' | 'strategies' | 'perps'
 type AccountKind = import('types/generated/mars-credit-manager/MarsCreditManager.types').AccountKind
 
@@ -338,6 +338,7 @@ interface PerpsPosition {
   currentPrice: BigNumber
   entryPrice: BigNumber
   type: PositionType
+  reduce_only?: boolean
 }
 
 interface PerpsLimitOrder {
@@ -354,6 +355,7 @@ interface PerpPositionRow extends PerpsPosition {
   orderId?: string
   hasStopLoss?: boolean
   hasTakeProfit?: boolean
+  reduce_only?: boolean
 }
 
 interface PerpsPnL {

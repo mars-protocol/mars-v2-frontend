@@ -32,6 +32,19 @@ export const checkStopLossAndTakeProfit = (
   return { hasStopLoss, hasTakeProfit }
 }
 
+export const isStopOrder = (perpOrder: any, perpTrigger: any): PositionType => {
+  const isLong = BN(perpOrder.order_size).isGreaterThanOrEqualTo(0)
+
+  if (isLong) {
+    return perpTrigger.comparison !== 'less_than'
+      ? ('stop' as PositionType)
+      : ('limit' as PositionType)
+  }
+  return perpTrigger.comparison !== 'greater_than'
+    ? ('stop' as PositionType)
+    : ('limit' as PositionType)
+}
+
 export const convertTriggerOrderResponseToPerpPosition = (
   limitOrder: TriggerOrderResponse,
   perpAssets: Asset[],
@@ -61,7 +74,8 @@ export const convertTriggerOrderResponseToPerpPosition = (
     baseDenom: perpsConfig.base_denom,
     tradeDirection,
     amount: amount.abs(),
-    type: 'limit' as PositionType,
+    type: isStopOrder(perpOrder, perpTrigger),
+    reduce_only: perpOrder.reduce_only ?? false,
     pnl: {
       net: BNCoin.fromCoin(limitOrder.order.keeper_fee).negated(),
       realized: {
@@ -89,19 +103,22 @@ export const validateStopOrderPrice = (
   currentPrice: BigNumber,
   tradeDirection: TradeDirection,
 ): { isValid: boolean; errorMessage: string | null } => {
-  if (stopPrice.isZero() || currentPrice.isZero()) {
+  const formattedStopPrice = BN(stopPrice.toFixed(18, 1))
+  const formattedCurrentPrice = BN(currentPrice.toFixed(18, 1))
+
+  if (formattedStopPrice.isZero() || formattedCurrentPrice.isZero()) {
     return { isValid: false, errorMessage: null }
   }
 
   if (tradeDirection === 'long') {
-    if (stopPrice.isLessThanOrEqualTo(currentPrice)) {
+    if (formattedStopPrice.isLessThanOrEqualTo(formattedCurrentPrice)) {
       return {
         isValid: false,
         errorMessage: 'Stop price must be below current price for long positions',
       }
     }
   } else {
-    if (stopPrice.isGreaterThanOrEqualTo(currentPrice)) {
+    if (formattedStopPrice.isGreaterThanOrEqualTo(formattedCurrentPrice)) {
       return {
         isValid: false,
         errorMessage: 'Stop price must be above current price for short positions',

@@ -3,6 +3,7 @@ import { DocURL } from 'types/enums'
 
 import useAssets from 'hooks/assets/useAssets'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
+import { useEffect } from 'react'
 import useStore from 'store'
 import packageInfo from '../../../package.json'
 
@@ -13,9 +14,11 @@ export default function Footer() {
   const storeAssets = useStore((s) => s.assets)
   const perpsBaseDenom = useStore((s) => s.perpsBaseDenom)
 
-  if (storeAssets.length === 0 && !isLoadingAssets) useStore.setState({ assets })
-  if (!perpsBaseDenom && !isLoadingVault && vault)
-    useStore.setState({ perpsBaseDenom: vault.denom })
+  useEffect(() => {
+    if (storeAssets.length === 0 && !isLoadingAssets) useStore.setState({ assets })
+    if (!perpsBaseDenom && !isLoadingVault && vault)
+      useStore.setState({ perpsBaseDenom: vault.denom })
+  }, [assets, isLoadingAssets, isLoadingVault, perpsBaseDenom, storeAssets.length, vault])
 
   const version = `v${packageInfo.version}`
   return (

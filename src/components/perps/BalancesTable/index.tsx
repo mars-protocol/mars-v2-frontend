@@ -14,6 +14,7 @@ export default function PerpsBalancesTable() {
   const activeLimitOrders = usePerpsLimitOrderRows()
   const columns = usePerpsBalancesColumns({ isOrderTable: false })
   const limitOrderColumns = usePerpsBalancesColumns({ isOrderTable: true })
+
   const [searchParams, setSearchParams] = useSearchParams()
 
   const onClickRow = useCallback(
@@ -31,6 +32,7 @@ export default function PerpsBalancesTable() {
     () => [
       {
         title: 'Perp Positions',
+        id: 'perp-positions',
         renderContent: () => (
           <Table
             title='Perp Positions'
@@ -43,11 +45,11 @@ export default function PerpsBalancesTable() {
         ),
       },
       {
-        title: 'Open Limit Orders',
+        title: 'Open Orders',
         notificationCount: activeLimitOrders.length > 0 ? activeLimitOrders.length : undefined,
         renderContent: () => (
           <Table
-            title='Open Limit Orders'
+            title='Open Orders'
             columns={limitOrderColumns}
             data={activeLimitOrders}
             initialSorting={[]}
