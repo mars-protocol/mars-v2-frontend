@@ -10,16 +10,18 @@ import Accordion from 'components/common/Accordion'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import { BN_ZERO } from 'constants/math'
+import useAssets from 'hooks/assets/useAssets'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useAssetParams from 'hooks/params/useAssetParams'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
-import { calculateAccountApy, calculateAccountLeverage } from 'utils/accounts'
+import { calculateAccountApy, getAccountSummaryStats } from 'utils/accounts'
 
 interface Props {
   account: Account
@@ -41,9 +43,11 @@ export default function AccountSummary(props: Props) {
   )
   const { data: vaultAprs } = useVaultAprs()
   const astroLpAprs = useAstroLpAprs()
+  const { data: assets } = useAssets()
   const whitelistedAssets = useWhitelistedAssets()
   const perpsAssets = usePerpsEnabledAssets()
   const updatedAccount = useStore((s) => s.updatedAccount)
+  const { data: perpsVault } = usePerpsVault()
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
@@ -56,21 +60,58 @@ export default function AccountSummary(props: Props) {
   const { health: updatedHealth, healthFactor: updatedHealthFactor } = useHealthComputer(
     updatedAccount || account,
   )
-  const leverage = useMemo(
+  const assetParams = useAssetParams()
+  const { leverage } = useMemo(
     () =>
-      account ? calculateAccountLeverage(account, [...whitelistedAssets, ...perpsAssets]) : BN_ZERO,
-    [account, perpsAssets, whitelistedAssets],
+      getAccountSummaryStats(
+        updatedAccount ?? account,
+        borrowAssetsData,
+        lendingAssetsData,
+        assets,
+        vaultAprs,
+        astroLpAprs,
+        assetParams.data || [],
+        perpsVault?.apy || 0,
+      ),
+    [
+      updatedAccount,
+      account,
+      borrowAssetsData,
+      lendingAssetsData,
+      assets,
+      vaultAprs,
+      astroLpAprs,
+      assetParams.data,
+      perpsVault?.apy,
+    ],
   )
+
   const updatedLeverage = useMemo(() => {
     if (!updatedAccount) return null
-    const updatedLeverage = calculateAccountLeverage(updatedAccount, [
-      ...whitelistedAssets,
-      ...perpsAssets,
-    ])
+    const { leverage: updatedLeverage } = getAccountSummaryStats(
+      updatedAccount,
+      borrowAssetsData,
+      lendingAssetsData,
+      assets,
+      vaultAprs,
+      astroLpAprs,
+      assetParams.data || [],
+      perpsVault?.apy || 0,
+    )
 
     if (updatedLeverage.eq(leverage)) return null
     return updatedLeverage
-  }, [updatedAccount, whitelistedAssets, perpsAssets, leverage])
+  }, [
+    updatedAccount,
+    borrowAssetsData,
+    lendingAssetsData,
+    assets,
+    vaultAprs,
+    astroLpAprs,
+    assetParams.data,
+    perpsVault?.apy,
+    leverage,
+  ])
 
   const handleToggle = useCallback(
     (index: number) => {
@@ -92,16 +133,18 @@ export default function AccountSummary(props: Props) {
         [...whitelistedAssets, ...perpsAssets],
         vaultAprs,
         astroLpAprs,
+        perpsVault?.apy || 0,
       ),
     [
-      account,
       updatedAccount,
+      account,
       borrowAssetsData,
       lendingAssetsData,
       whitelistedAssets,
       perpsAssets,
       vaultAprs,
       astroLpAprs,
+      perpsVault?.apy,
     ],
   )
 
@@ -178,8 +221,8 @@ export default function AccountSummary(props: Props) {
       <AccountSummaryHeader
         account={account}
         updatedAccount={updatedAccount}
-        assets={[...whitelistedAssets, ...perpsAssets]}
-        leverage={leverage.toNumber() || 1}
+        assets={assets}
+        leverage={leverage?.toNumber() || 1}
         updatedLeverage={updatedLeverage?.toNumber() || null}
         apr={apr.toNumber()}
         health={health}

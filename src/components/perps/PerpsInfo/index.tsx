@@ -41,7 +41,7 @@ export function PerpsInfo() {
   if (!market) return null
 
   return (
-    <div className='flex items-center gap-4'>
+    <div className='flex items-center md:gap-4 mb-2 sm:mb-0'>
       {items.map((item, index) => (
         <React.Fragment key={index}>
           {item}

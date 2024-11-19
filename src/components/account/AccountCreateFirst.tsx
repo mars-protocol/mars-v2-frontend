@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 import FullOverlayContent from 'components/common/FullOverlayContent'
 import WalletSelect from 'components/Wallet/WalletSelect'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useStore from 'store'
@@ -13,6 +14,7 @@ export default function AccountCreateFirst() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const address = useStore((s) => s.address)
+  const chainConfig = useChainConfig()
   const createAccount = useStore((s) => s.createAccount)
   const [isCreating, setIsCreating] = useToggle(false)
   const [searchParams] = useSearchParams()
@@ -27,17 +29,27 @@ export default function AccountCreateFirst() {
     const accountId = await createAccount('default', isAutoLendEnabled)
     setIsCreating(false)
     if (accountId) {
-      navigate(getRoute(getPage(pathname), searchParams, address, accountId))
+      navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, accountId))
       useStore.setState({
         focusComponent: {
           component: <AccountFundFullPage />,
           onClose: () => {
-            useStore.setState({ getStartedModal: true })
+            // TODO: update docs to reflect the current state of v2
+            //useStore.setState({ getStartedModal: true })
           },
         },
       })
     }
-  }, [setIsCreating, createAccount, isAutoLendEnabled, navigate, pathname, searchParams, address])
+  }, [
+    setIsCreating,
+    createAccount,
+    isAutoLendEnabled,
+    navigate,
+    pathname,
+    chainConfig,
+    searchParams,
+    address,
+  ])
 
   return (
     <FullOverlayContent

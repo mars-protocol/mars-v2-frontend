@@ -5,8 +5,8 @@ export default async function getDexPools(chainConfig: ChainConfig) {
   const uri = new URL(chainConfig.endpoints.dexPools)
   try {
     const pools = await fetch(uri.toString()).then(async (res) => {
-      const data = (await res.json()) as AstroportPool[]
-      return data
+      const data = (await res.json()) as AstroportPoolsCached
+      return data.pools
     })
     return pools
   } catch (e) {

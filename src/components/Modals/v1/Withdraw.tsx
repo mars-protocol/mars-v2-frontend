@@ -4,7 +4,7 @@ import AssetAmountSelectActionModal from 'components/Modals/AssetAmountSelectAct
 import DetailsHeader from 'components/Modals/LendAndReclaim/DetailsHeader'
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import useBaseAsset from 'hooks/assets/useBasetAsset'
+import useBaseAsset from 'hooks/assets/useBaseAsset'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'

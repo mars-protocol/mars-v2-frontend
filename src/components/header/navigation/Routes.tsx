@@ -44,34 +44,32 @@ export default function Routes() {
         {chainConfig.perps && <Route path='/perps' element={<PerpsPage />} />}
         {chainConfig.hls && <Route path='/hls-staking' element={<HlsStakingPage />} />}
         {chainConfig.hls && <Route path='/hls-farm' element={<HlsFarmPage />} />}
-
         <Route path='/vaults' element={<VaultsOfficialPage />}>
           <Route path='create' element={<CreateVault />} />
         </Route>
         <Route path='/vaults-community' element={<VaultsCommunityPage />} />
+        <Route path='/' element={<TradePage />} />
         <Route path='/wallets/:address'>
           <Route path='' element={<TradePage />} />
           <Route path='execute' element={<ExecuteMessagePage />} />
           <Route path='trade' element={<TradePage />} />
           <Route path='trade-advanced' element={<TradePage />} />
-
           <Route path='farm' element={<FarmPage />} />
           <Route path='lend' element={<LendPage />} />
           <Route path='borrow' element={<BorrowPage />} />
           <Route path='portfolio' element={<PortfolioPage />} />
           <Route path='v1' element={<V1Page />} />
-
           {chainConfig.perps && <Route path='perps' element={<PerpsPage />} />}
           {chainConfig.perps && <Route path='perps-vault' element={<PerpsVaultPage />} />}
           {chainConfig.hls && <Route path='hls-staking' element={<HlsStakingPage />} />}
           {chainConfig.hls && <Route path='hls-farm' element={<HlsFarmPage />} />}
-
           <Route path='vaults-community' element={<VaultsCommunityPage />} />
           <Route path='vaults' element={<VaultsOfficialPage />}>
             <Route path='create' element={<CreateVault />} />
             <Route path=':vaultAddress/mint-account' element={<MintVaultAccount />} />
             <Route path=':vaultAddress/details' element={<VaultDetails />} />
           </Route>
+          <Route path='v1' element={<V1Page />} />
 
           <Route path='portfolio/:accountId'>
             <Route path='' element={<PortfolioAccountPage />} />

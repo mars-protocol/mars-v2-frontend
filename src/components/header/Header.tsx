@@ -4,7 +4,7 @@ import { isMobile } from 'react-device-detect'
 
 import AccountMenu from 'components/account/AccountMenu'
 import EscButton from 'components/common/Button/EscButton'
-import { Coins, CoinsSwap, Logo } from 'components/common/Icons'
+import { ArrowChartLineUp, Coins, CoinsSwap, Logo } from 'components/common/Icons'
 import Settings from 'components/common/Settings'
 import ChainSelect from 'components/header/ChainSelect'
 import DesktopNavigation from 'components/header/navigation/desktop/DesktopNavigation'
@@ -21,9 +21,19 @@ import { DocURL } from 'types/enums'
 
 const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
   {
-    pages: ['trade', 'trade-advanced'],
+    pages: chainConfig.perps ? ['perps', 'trade', 'trade-advanced'] : ['trade', 'trade-advanced'],
     label: 'Trade',
     submenu: [
+      ...(chainConfig.perps
+        ? [
+            {
+              page: 'perps' as Page,
+              label: 'Perps',
+              subtitle: 'Trade perps on leverage',
+              icon: <ArrowChartLineUp className='w-6 h-6' />,
+            },
+          ]
+        : []),
       {
         page: 'trade',
         label: 'Spot',
@@ -38,7 +48,6 @@ const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
       },
     ],
   },
-  ...(chainConfig.perps ? [{ pages: ['perps'] as Page[], label: 'Perps' }] : []),
   {
     pages: chainConfig.farm || chainConfig.perps ? ['lend', 'farm', 'perps-vault'] : ['lend'],
     label: 'Earn',
@@ -105,7 +114,10 @@ export default function Header() {
                 : 'flex flex-1 items-center relative z-50',
             )}
           >
-            <NavLink isHome item={{ pages: ['trade'], label: 'home' }}>
+            <NavLink
+              isHome
+              item={{ pages: chainConfig.perps ? ['perps'] : ['trade'], label: 'home' }}
+            >
               <span className='block w-10 h-10'>
                 <Logo className='text-white' />
               </span>

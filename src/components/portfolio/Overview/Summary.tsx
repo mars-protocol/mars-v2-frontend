@@ -8,8 +8,10 @@ import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendi
 import SummarySkeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import useAccounts from 'hooks/accounts/useAccounts'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
+import useAssetParams from 'hooks/params/useAssetParams'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { getAccountSummaryStats } from 'utils/accounts'
@@ -25,8 +27,10 @@ export default function PortfolioSummary() {
   const { data: defaultAccounts } = useAccounts('default', urlAddress || walletAddress)
   const { data: hlsAccounts } = useAccounts('high_levered_strategy', urlAddress || walletAddress)
   const { data: vaultAprs } = useVaultAprs()
-  const assets = useWhitelistedAssets()
+  const { data: assets } = useAssets()
   const astroLpAprs = useAstroLpAprs()
+  const assetParams = useAssetParams()
+  const { data: perpsVault } = usePerpsVault()
 
   const allAccounts = useMemo(() => {
     return [...(defaultAccounts || []), ...(hlsAccounts || [])]
@@ -59,14 +63,17 @@ export default function PortfolioSummary() {
       } as Account,
     )
 
-    const { positionValue, debts, netWorth, apy, leverage } = getAccountSummaryStats(
-      combinedAccount,
-      borrowAssets,
-      lendingAssets,
-      assets,
-      vaultAprs,
-      astroLpAprs,
-    )
+    const { positionValue, debts, netWorth, collateralValue, apy, leverage } =
+      getAccountSummaryStats(
+        combinedAccount,
+        borrowAssets,
+        lendingAssets,
+        assets,
+        vaultAprs,
+        astroLpAprs,
+        assetParams.data || [],
+        perpsVault?.apy || 0,
+      )
 
     return [
       {
@@ -74,12 +81,16 @@ export default function PortfolioSummary() {
         sub: DEFAULT_PORTFOLIO_STATS[0].sub,
       },
       {
-        title: <DisplayCurrency className='text-xl' coin={debts} />,
+        title: <DisplayCurrency className='text-xl' coin={collateralValue} />,
         sub: DEFAULT_PORTFOLIO_STATS[1].sub,
       },
       {
-        title: <DisplayCurrency className='text-xl' coin={netWorth} />,
+        title: <DisplayCurrency className='text-xl' coin={debts} />,
         sub: DEFAULT_PORTFOLIO_STATS[2].sub,
+      },
+      {
+        title: <DisplayCurrency className='text-xl' coin={netWorth} />,
+        sub: DEFAULT_PORTFOLIO_STATS[3].sub,
       },
       {
         title: (
@@ -106,7 +117,16 @@ export default function PortfolioSummary() {
         sub: 'Combined leverage',
       },
     ]
-  }, [allAccounts, assets, borrowAssets, lendingAssets, vaultAprs, astroLpAprs])
+  }, [
+    allAccounts,
+    assets,
+    borrowAssets,
+    lendingAssets,
+    vaultAprs,
+    astroLpAprs,
+    assetParams,
+    perpsVault?.apy,
+  ])
 
   if (!walletAddress && !urlAddress) return null
 

@@ -5,6 +5,7 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
+import CloseLabel from 'components/perps/BalancesTable/Columns/CloseLabel'
 import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import { demagnify } from 'utils/formatters'
@@ -88,7 +89,11 @@ export default function Asset(props: Props) {
         <span className='pb-[1px] border-b border-white/40 border-dashed group-hover/asset:border-transparent'>
           {row.symbol}
         </span>
-        <TradeDirection tradeDirection={row.tradeDirection} />
+        {row.amount.isZero() ? (
+          <CloseLabel />
+        ) : (
+          <TradeDirection tradeDirection={row.tradeDirection} type={row.type} />
+        )}
       </Text>
     </Tooltip>
   )

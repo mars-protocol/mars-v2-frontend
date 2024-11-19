@@ -24,8 +24,12 @@ export enum LocalStorageKeys {
   RPC_ENDPOINT = 'rpcEndpoint',
   REST_ENDPOINT = 'restEndpoint',
   REWARDS_CENTER_TYPE = 'rewardsCenterType',
+  SHOW_SUMMARY = 'showSummary',
+  TV_CHART_STORE = 'tvChartStore',
+  SHOW_PERPS_VAULT_BANNER = 'showPerpsVaultBanner',
+  FUNDING_RATE_INTERVAL = 'fundingRateInterval',
+  VAULT_COMMUNITY_WARNING = 'vaultCommunityWarning',
   VAULT_DEPOSIT_WARNING = 'vaultDepositWarning',
   VAULT_PAGE_WARNING = 'vaultPageWarning',
   VAULT_COMMUNITY_INFORMATION = 'vaultCommunityInformation',
-  SHOW_SUMMARY = 'showSummary',
 }

@@ -28,21 +28,22 @@ export function getRoute(
   return url.pathname + url.search
 }
 
-export function getPage(pathname: string): Page {
+export function getPage(pathname: string, chainConfig: ChainConfig): Page {
   const pages: Page[] = [
-    'execute',
     'trade',
     'trade-advanced',
     'perps',
     'borrow',
     'farm',
     'lend',
+    'perps-vault',
     'portfolio',
     'hls-farm',
     'hls-staking',
     'vaults',
     'vaults-community',
     'vaults/create',
+    'execute',
     'v1',
   ]
 
@@ -70,7 +71,7 @@ export function getPage(pathname: string): Page {
     return page as Page
   }
 
-  return 'trade' as Page
+  return chainConfig.perps ? ('perps' as Page) : ('trade' as Page)
 }
 
 export function getSearchParamsObject(searchParams: URLSearchParams) {

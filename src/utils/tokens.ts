@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import { BN_ZERO } from 'constants/math'
 
 import { BNCoin } from 'types/classes/BNCoin'
@@ -19,10 +18,10 @@ export function getTokenPrice(denom: string, assets: Asset[], fallback?: BigNumb
   return BN(price)
 }
 
-export function getDebtAmountWithInterest(debt: BigNumber, apr: number) {
-  return debt.times(1 + apr / 365 / 24).integerValue()
-}
-
 export function getDenomsFromBNCoins(coins: BNCoin[]) {
   return coins.map((coin) => coin.denom)
+}
+
+export function getDebtAmountWithInterest(debt: BigNumber, apr: number) {
+  return debt.times(1 + apr / 365 / 24).integerValue()
 }

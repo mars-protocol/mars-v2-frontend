@@ -1,6 +1,4 @@
 import classNames from 'classnames'
-import { useCallback, useEffect, useMemo } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import AccountMenu from 'components/account/AccountMenu'
 import AccountSummary from 'components/account/AccountSummary'
@@ -13,6 +11,9 @@ import RewardsCenter from 'components/header/RewardsCenter'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import useV1Account from 'hooks/v1/useV1Account'
+import { useCallback, useEffect, useMemo } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
 
@@ -21,7 +22,28 @@ interface Props {
 }
 
 export default function MobileNavigation(props: Props) {
-  const { menuTree } = props
+  const isV1 = useStore((s) => s.isV1)
+
+  if (isV1) return <V1Controller {...props} />
+
+  return <Controller {...props} />
+}
+
+function V1Controller(props: Props) {
+  const { data: account } = useV1Account()
+
+  return <Content {...props} account={account} />
+}
+
+function Controller(props: Props) {
+  const currentAccountId = useAccountId()
+  const { data: account } = useAccount(currentAccountId ?? undefined)
+
+  return <Content {...props} account={account} />
+}
+
+function Content(props: Props & { account?: Account }) {
+  const { menuTree, account } = props
   const currentAccountId = useAccountId()
   const mobileNavExpanded = useStore((s) => s.mobileNavExpanded)
   const isV1 = useStore((s) => s.isV1)
@@ -30,8 +52,7 @@ export default function MobileNavigation(props: Props) {
   const navigate = useNavigate()
   const address = useStore((s) => s.address)
   const { pathname } = useLocation()
-  const currentPage = getPage(pathname)
-  const { data: account } = useAccount(isV1 ? address : (currentAccountId ?? undefined))
+  const currentPage = getPage(pathname, chainConfig)
 
   const menu = useMemo(() => menuTree(chainConfig), [chainConfig, menuTree])
 
@@ -56,9 +77,9 @@ export default function MobileNavigation(props: Props) {
         window.open(page, '_blank')
         return
       }
-      navigate(getRoute(getPage(page), searchParams, address, currentAccountId))
+      navigate(getRoute(getPage(page, chainConfig), searchParams, address, currentAccountId))
     },
-    [navigate, searchParams, address, currentAccountId],
+    [navigate, chainConfig, searchParams, address, currentAccountId],
   )
 
   return (
@@ -83,16 +104,13 @@ export default function MobileNavigation(props: Props) {
               onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
                 selectPage(event.target.value as Page)
               }
+              defaultValue={currentPage}
             >
               {menu.map((item, index) => {
                 if (item.submenu) {
                   return item.submenu.map((subItem, subIndex) => {
                     return (
-                      <option
-                        key={subIndex}
-                        value={subItem.page}
-                        selected={subItem.page === currentPage}
-                      >
+                      <option key={subIndex} value={subItem.page}>
                         {`${item.label} - ${subItem.label}`}
                       </option>
                     )
@@ -100,11 +118,7 @@ export default function MobileNavigation(props: Props) {
                 }
 
                 return (
-                  <option
-                    key={index}
-                    value={item.pages[0]}
-                    selected={item.pages.indexOf(currentPage as Page) !== -1}
-                  >
+                  <option key={index} value={item.pages[0]}>
                     {item.label}
                   </option>
                 )

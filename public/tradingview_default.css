@@ -328,11 +328,21 @@ button[class^='button-'][class*='secondary-']:hover {
   background-image: linear-gradient(0deg, var(--tv-background), transparent) !important;
 }
 
-[class^='noWrapWrapper-'] * {
-  pointer-events: none !important;
-  border: none !important;
+[class^='valuesWrapper-'] {
   background: transparent !important;
-  outline: none !important;
+}
+
+[class^='noWrapWrapper-'] * {
+  pointer-events: none !important; 
+  background: transparent !important;
+}
+
+[class^='noWrapWrapper-'] [class^='button-'],
+[class^='noWrapWrapper-'] [class^='removeButton-'],
+[class^='noWrapWrapper-'] [class^='editButton-'] {
+  pointer-events: auto !important;
+  background: var(--tv-background) !important;
+  cursor: pointer !important;
 }
 
 html.theme-dark ::selection {

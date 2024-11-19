@@ -5,7 +5,7 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import NumberInput from 'components/common/NumberInput'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
-import Button from './Button'
+import { formatValue } from 'utils/formatters'
 
 interface Props {
   label?: string
@@ -22,8 +22,9 @@ interface Props {
   onBlur?: () => void
   isUSD?: boolean
   onClosing?: () => void
-  isLimitOrder?: boolean
-  hasActivePosition?: boolean
+  showCloseButton?: boolean
+  isMaxSelected?: boolean
+  capMax?: boolean
 }
 
 export default function AssetAmountInput(props: Props) {
@@ -40,9 +41,10 @@ export default function AssetAmountInput(props: Props) {
     onFocus,
     onBlur,
     isUSD,
-    isLimitOrder,
-    hasActivePosition,
     onClosing,
+    showCloseButton,
+    isMaxSelected,
+    capMax,
   } = props
 
   const handleMaxClick = useCallback(() => {
@@ -65,6 +67,12 @@ export default function AssetAmountInput(props: Props) {
     setAmount(BN_ZERO)
   }, [disabled, setAmount])
 
+  useEffect(() => {
+    if (isMaxSelected && max) {
+      setAmount(max)
+    }
+  }, [isMaxSelected, max, setAmount])
+
   return (
     <div className={containerClassName}>
       <label>
@@ -80,7 +88,7 @@ export default function AssetAmountInput(props: Props) {
             amount={amount}
             className='border-none bg-transparent outline-none flex-1 !text-left'
             maxDecimals={isUSD ? 6 : asset.decimals}
-            max={max}
+            max={capMax ? max : undefined}
             min={min}
             disabled={disabled}
             onChange={setAmount}
@@ -101,7 +109,7 @@ export default function AssetAmountInput(props: Props) {
               <div className='flex flex-row flex-1 mt-2'>
                 <span className='text-xs font-bold'>{maxButtonLabel ?? 'Max:'}</span>
                 <span className='mx-1 text-xs font-bold text-white text-opacity-60'>
-                  {maxValue}
+                  {formatValue(maxValue, { abbreviated: false })}
                 </span>
                 <div
                   className='hover:cursor-pointer select-none bg-white bg-opacity-20 text-2xs !leading-3 font-bold py-0.5 px-1.5 rounded'
@@ -109,7 +117,7 @@ export default function AssetAmountInput(props: Props) {
                 >
                   MAX
                 </div>
-                {isLimitOrder && hasActivePosition && onClosing && (
+                {showCloseButton && onClosing && (
                   <div
                     className='hover:cursor-pointer select-none bg-white bg-opacity-20 text-2xs !leading-3 font-bold py-0.5 px-1.5 rounded ml-2'
                     onClick={onClosing}

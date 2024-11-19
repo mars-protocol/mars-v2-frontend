@@ -1,14 +1,14 @@
 import { Row } from '@tanstack/react-table'
-import { useMemo } from 'react'
 
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import { BNCoin } from 'types/classes/BNCoin'
-import { demagnify } from 'utils/formatters'
+import { demagnify, getPerpsPriceDecimals } from 'utils/formatters'
 
 export const SIZE_META = {
+  id: 'size',
   accessorKey: 'size',
   header: () => (
     <div className='flex flex-col gap-1'>
@@ -18,6 +18,7 @@ export const SIZE_META = {
       </Text>
     </div>
   ),
+  meta: { className: 'min-w-30 w-50' },
 }
 
 export const sizeSortingFn = (a: Row<PerpPositionRow>, b: Row<PerpPositionRow>): number => {
@@ -27,26 +28,29 @@ export const sizeSortingFn = (a: Row<PerpPositionRow>, b: Row<PerpPositionRow>):
 type Props = {
   amount: BigNumber
   asset: Asset
+  value: BigNumber
 }
 
 export default function Size(props: Props) {
-  const amount = useMemo(
-    () => demagnify(props.amount.abs().toString(), props.asset),
-    [props.asset, props.amount],
-  )
+  const { amount, value, asset } = props
 
   return (
     <TitleAndSubCell
       title={
         <FormattedNumber
-          amount={amount}
+          amount={Math.abs(Number(demagnify(amount, asset)))}
           options={{ maxDecimals: props.asset.decimals }}
           className='text-xs'
         />
       }
       sub={
         <DisplayCurrency
-          coin={BNCoin.fromDenomAndBigNumber(props.asset.denom, props.amount.abs())}
+          coin={BNCoin.fromDenomAndBigNumber('usd', value)}
+          options={{
+            maxDecimals: getPerpsPriceDecimals(value),
+            minDecimals: 0,
+            abbreviated: false,
+          }}
         />
       }
     />

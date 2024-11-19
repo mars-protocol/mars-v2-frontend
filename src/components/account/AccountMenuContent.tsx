@@ -22,6 +22,7 @@ import useHasFundsForTxFee from 'hooks/wallet/useHasFundsForTxFee'
 import useStore from 'store'
 import { isNumber } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 interface Props {
   className?: string
@@ -45,6 +46,7 @@ export default function AccountMenuContent(props: Props) {
   const [enableAutoLendGlobal] = useEnableAutoLendGlobal()
   const { enableAutoLendAccountId } = useAutoLend()
   const [isAutoLendEnabled] = useEnableAutoLendGlobal()
+  const chainConfig = useChainConfig()
 
   const hasVaults = false // TODO: Replace with actual vault availability check
   const hasCreditAccounts = !!accountIds?.length
@@ -58,13 +60,14 @@ export default function AccountMenuContent(props: Props) {
     setIsCreating(false)
 
     if (accountId) {
-      navigate(getRoute(getPage(pathname), searchParams, address, accountId))
+      navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, accountId))
       if (enableAutoLendGlobal) enableAutoLendAccountId(accountId)
       useStore.setState({
         focusComponent: {
           component: <AccountFund />,
           onClose: () => {
-            useStore.setState({ getStartedModal: true })
+            // TODO: update docs to reflect the current state of v2
+            //useStore.setState({ getStartedModal: true })
           },
         },
       })
@@ -73,12 +76,13 @@ export default function AccountMenuContent(props: Props) {
     setShowMenu,
     setIsCreating,
     createAccount,
+    isAutoLendEnabled,
     navigate,
     pathname,
+    chainConfig,
     searchParams,
     address,
     enableAutoLendGlobal,
-    isAutoLendEnabled,
     enableAutoLendAccountId,
   ])
 

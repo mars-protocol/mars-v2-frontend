@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import Button from 'components/common/Button'
@@ -19,7 +18,6 @@ import useMarkets from 'hooks/markets/useMarkets'
 import useSlippage from 'hooks/settings/useSlippage'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
-import { useSWRConfig } from 'swr'
 import { BNCoin } from 'types/classes/BNCoin'
 import { removeEmptyBNCoins } from 'utils/accounts'
 import { byDenom } from 'utils/array'
@@ -30,7 +28,6 @@ import { formatPercent } from 'utils/formatters'
 import { mergeBNCoinArrays } from 'utils/helpers'
 
 export default function FarmBorrowings(props: FarmBorrowingsProps) {
-  const { mutate } = useSWRConfig()
   const assets = useDepositEnabledAssets()
   const { borrowings, onChangeBorrowings, type } = props
   const isAstroLp = type === 'astroLp'
@@ -189,8 +186,6 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
       borrowings: props.borrowings,
       kind: 'default' as AccountKind,
     })
-    await mutate(`chains/${chainConfig.id}/accounts/${updatedAccount.id}`)
-    await mutate(`chains/${chainConfig.id}/astroLps/${updatedAccount.id}/staked-astro-lp-rewards`)
   }
 
   return (

@@ -63,7 +63,10 @@ async function fetchSortAndMapAllAssets(
     ? [...assets, ...poolAssets, USD, ...chainConfig.lp]
     : [...assets, ...poolAssets, USD]
 
-  const unsortedAssets = allAssets.map((asset) => {
+  const uniqueAssets = allAssets.filter(
+    (asset, index, self) => index === self.findIndex((t) => t.denom === asset.denom),
+  )
+  const unsortedAssets = uniqueAssets.map((asset) => {
     const currentAssetParams = assetParams.find(byDenom(asset.denom))
     const currentAssetPoolParams = pools.find((pool) => pool.lpAddress === asset.denom)
 
@@ -152,8 +155,6 @@ async function fetchSortAndMapAllAssets(
     return a.symbol.localeCompare(b.symbol)
   })
 
-  // We need to set the assets to the store to use them in the broadcast slice
-  useStore.setState({ assets: sortedAssets })
   if (!chainConfig.anyAsset)
     return sortedAssets.filter((asset) => asset.isWhitelisted || asset.denom === 'usd')
 

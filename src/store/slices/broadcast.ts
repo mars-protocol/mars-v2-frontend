@@ -1,5 +1,4 @@
 import { DEFAULT_GAS_MULTIPLIER, MsgExecuteContract } from '@delphi-labs/shuttle-react'
-import BigNumber from 'bignumber.js'
 import moment from 'moment'
 import { isMobile } from 'react-device-detect'
 import { StoreApi } from 'zustand'
@@ -12,6 +11,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { ExecuteMsg as AccountNftExecuteMsg } from 'types/generated/mars-account-nft/MarsAccountNft.types'
 import {
   Action,
+  ActionAmount,
   ActionCoin,
   Condition,
   Action as CreditManagerAction,
@@ -419,6 +419,11 @@ export default function createBroadcastSlice(
           actions.push({
             withdraw_from_perp_vault: {},
           })
+          if (checkAutoLendEnabled(options.accountId, get().chainConfig.id)) {
+            actions.push({
+              lend: { denom: vault.denoms.lp, amount: 'account_balance' },
+            })
+          }
         }
       })
       const msg: CreditManagerExecuteMsg = {
@@ -777,21 +782,13 @@ export default function createBroadcastSlice(
           toastOptions,
           get().address ?? '',
           get().assets,
+          get().perpsBaseDenom,
         )
         toast.then((t) => set({ toast: t }))
         return
       })
     },
-    createTriggerOrder: async (options: {
-      accountId: string
-      coin: BNCoin
-      reduceOnly?: boolean
-      autolend: boolean
-      baseDenom: string
-      tradeDirection: TradeDirection
-      price: BigNumber
-      keeperFee: BNCoin
-    }) => {
+    createTriggerOrder: async (options: CreateTriggerOrdersOptions) => {
       const triggerActions: Action[] = [
         {
           execute_perp_order: {
@@ -804,7 +801,7 @@ export default function createBroadcastSlice(
       if (options.autolend)
         triggerActions.push({
           lend: {
-            denom: options.baseDenom,
+            denom: options.keeperFee.denom,
             amount: 'account_balance',
           },
         })
@@ -819,15 +816,102 @@ export default function createBroadcastSlice(
         },
       ]
 
-      const actions: Action[] = [
-        {
+      const actions: Action[] = []
+
+      if (!options.keeperFeeFromLends.amount.isZero()) {
+        actions.push({
+          reclaim: options.keeperFeeFromLends.toActionCoin(),
+        })
+      }
+
+      if (!options.keeperFeeFromBorrows.amount.isZero()) {
+        actions.push({
+          borrow: {
+            amount: options.keeperFeeFromBorrows.amount.toString(),
+            denom: options.keeperFeeFromBorrows.denom,
+          },
+        })
+      }
+
+      actions.push({
+        create_trigger_order: {
+          keeper_fee: options.keeperFee.toCoin(),
+          actions: triggerActions,
+          conditions: triggerConditions,
+        },
+      })
+
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions,
+        },
+      }
+
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().handleTransaction({ response })
+
+      return response.then((response) => !!response.result)
+    },
+    createMultipleTriggerOrders: async (options: CreateMultipleTriggerOrdersOptions) => {
+      const actions: Action[] = []
+
+      if (!options.keeperFeeFromLends.amount.isZero()) {
+        actions.push({
+          reclaim: options.keeperFeeFromLends.toActionCoin(),
+        })
+      }
+
+      if (!options.keeperFeeFromBorrows.amount.isZero()) {
+        actions.push({
+          borrow: {
+            amount: options.keeperFeeFromBorrows.amount.toString(),
+            denom: options.keeperFeeFromBorrows.denom,
+          },
+        })
+      }
+
+      options.orders.forEach((order) => {
+        const triggerActions: Action[] = [
+          {
+            execute_perp_order: {
+              denom: order.coin.denom,
+              order_size: order.coin.amount.toString() as any,
+              reduce_only: order.reduceOnly,
+            },
+          },
+        ]
+        if (order.autolend)
+          triggerActions.push({
+            lend: {
+              denom: order.keeperFee.denom,
+              amount: 'account_balance',
+            },
+          })
+
+        const triggerConditions: Condition[] = [
+          {
+            oracle_price: {
+              comparison: order.tradeDirection === 'long' ? 'less_than' : 'greater_than',
+              denom: order.coin.denom,
+              price: order.price.toString(),
+            },
+          },
+        ]
+
+        actions.push({
           create_trigger_order: {
-            keeper_fee: options.keeperFee.toCoin(),
+            keeper_fee: order.keeperFee.toCoin(),
             actions: triggerActions,
             conditions: triggerConditions,
           },
-        },
-      ]
+        })
+      })
 
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
@@ -887,6 +971,53 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
+    closePerpPosition: async (options: {
+      accountId: string
+      coin: BNCoin
+      reduceOnly?: boolean
+      autolend: boolean
+      baseDenom: string
+      orderIds?: string[]
+    }) => {
+      const actions: Action[] = [
+        {
+          execute_perp_order: {
+            denom: options.coin.denom,
+            order_size: options.coin.amount.toString() as any,
+            reduce_only: options.reduceOnly,
+          },
+        },
+        ...(options.orderIds?.map((orderId) => ({
+          delete_trigger_order: {
+            trigger_order_id: orderId,
+          },
+        })) || []),
+      ]
+      if (options.autolend)
+        actions.push({
+          lend: {
+            denom: options.baseDenom,
+            amount: 'account_balance',
+          },
+        })
+
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions,
+        },
+      }
+
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().handleTransaction({ response })
+
+      return response.then((response) => !!response.result)
+    },
     cancelTriggerOrder: async (options: {
       accountId: string
       orderId: string
@@ -896,7 +1027,6 @@ export default function createBroadcastSlice(
       const actions: Action[] = [
         {
           delete_trigger_order: {
-            account_id: options.accountId,
             trigger_order_id: options.orderId,
           },
         },
@@ -992,7 +1122,10 @@ export default function createBroadcastSlice(
       const pythContract = get().chainConfig.contracts.pyth
 
       return generateExecutionMessage(get().address, pythContract, msg, [
-        { denom: get().assets[0].denom, amount: String(pythAssets.length) },
+        {
+          denom: get().chainConfig.defaultCurrency.coinMinimalDenom,
+          amount: String(pythAssets.length),
+        },
       ])
     },
     v1Action: async (type: V1ActionType, coin: BNCoin) => {
@@ -1052,39 +1185,46 @@ export default function createBroadcastSlice(
     depositIntoPerpsVault: async (options: {
       accountId: string
       denom: string
+      fromWallet?: BigNumber
       fromDeposits?: BigNumber
       fromLends?: BigNumber
     }) => {
+      const fromDeposits = options.fromDeposits ?? BN_ZERO
+      const fromLends = options.fromLends ?? BN_ZERO
+      const fromWallet = options.fromWallet ?? BN_ZERO
       const depositCoin = BNCoin.fromDenomAndBigNumber(
         options.denom,
-        (options.fromDeposits || BN_ZERO).plus(options.fromLends || BN_ZERO),
+        fromDeposits.plus(fromLends).plus(fromWallet),
       )
+
+      const actions = [] as Action[]
+      if (fromWallet.isGreaterThan(0))
+        actions.push({
+          deposit: BNCoin.fromDenomAndBigNumber(options.denom, fromWallet).toCoin(),
+        })
+
+      if (fromLends.isGreaterThan(0))
+        actions.push({
+          reclaim: BNCoin.fromDenomAndBigNumber(options.denom, fromLends).toActionCoin(),
+        })
+
+      actions.push({
+        deposit_to_perp_vault: {
+          coin: depositCoin.toActionCoin(),
+        },
+      })
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
-          actions: [
-            ...(options.fromLends
-              ? [
-                  {
-                    reclaim: BNCoin.fromDenomAndBigNumber(
-                      options.denom,
-                      options.fromLends,
-                    ).toActionCoin(),
-                  },
-                ]
-              : []),
-            {
-              deposit_to_perp_vault: {
-                coin: depositCoin.toActionCoin(),
-              },
-            },
-          ],
+          actions,
         },
       }
       const cmContract = get().chainConfig.contracts.creditManager
 
+      const funds = fromWallet.isGreaterThan(0) ? [depositCoin.toCoin()] : []
+
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+        messages: [generateExecutionMessage(get().address, cmContract, msg, funds)],
       })
 
       get().handleTransaction({ response })
@@ -1114,7 +1254,11 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-    withdrawFromPerpsVault: (options: { accountId: string }) => {
+    withdrawFromPerpsVault: (options: {
+      accountId: string
+      isAutoLend: boolean
+      vaultDenom: string
+    }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
@@ -1122,6 +1266,16 @@ export default function createBroadcastSlice(
             {
               withdraw_from_perp_vault: {},
             },
+            ...(options.isAutoLend
+              ? [
+                  {
+                    lend: {
+                      denom: options.vaultDenom,
+                      amount: 'account_balance' as ActionAmount,
+                    },
+                  },
+                ]
+              : []),
           ],
         },
       }

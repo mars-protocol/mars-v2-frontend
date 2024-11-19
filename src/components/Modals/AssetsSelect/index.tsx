@@ -50,6 +50,10 @@ export default function AssetsSelect(props: Props) {
   const markets = useMarkets()
   const whitelistedAssets = useWhitelistedAssets()
   const balances = useStore((s) => s.balances)
+  const filteredWhitelistedAsset = useMemo(
+    () => whitelistedAssets.filter((asset) => !asset.isDeprecated),
+    [whitelistedAssets],
+  )
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: isBorrow ? 'asset.borrowRate' : 'value', desc: !isBorrow },
@@ -78,14 +82,14 @@ export default function AssetsSelect(props: Props) {
       return createTableData(assets)
     }
 
-    const whitelistedTableData = whitelistedAssets.filter((asset) =>
+    const whitelistedTableData = filteredWhitelistedAsset.filter((asset) =>
       balances.some((balance) => balance.denom === asset.denom && balance.amount !== '0'),
     )
     const whitelistedData = createTableData(whitelistedTableData)
     const nonCollateralData = createTableData(nonCollateralTableAssets)
 
     return { whitelistedData, nonCollateralData }
-  }, [assets, nonCollateralTableAssets, whitelistedAssets, balances, createTableData])
+  }, [assets, nonCollateralTableAssets, filteredWhitelistedAsset, balances, createTableData])
 
   const [initialSelected, initialNonCollateralSelected] = useMemo(() => {
     const selectionState = (
@@ -127,7 +131,7 @@ export default function AssetsSelect(props: Props) {
         )
         .map((asset) => asset.denom)
     } else {
-      const whitelistedAssets = assets.filter((asset) =>
+      const filteredWhitelistedAsset = assets.filter((asset) =>
         tableData.whitelistedData.some(
           (row, index) => row.asset.denom === asset.denom && whitelistedSelected[index],
         ),
@@ -139,11 +143,10 @@ export default function AssetsSelect(props: Props) {
           ),
         ) || []
 
-      newSelectedDenoms = [...whitelistedAssets, ...nonCollateralAssets]
+      newSelectedDenoms = [...filteredWhitelistedAsset, ...nonCollateralAssets]
         .sort((a, b) => a.symbol.localeCompare(b.symbol))
         .map((asset) => asset.denom)
     }
-
     if (
       selectedDenoms.length === newSelectedDenoms.length &&
       newSelectedDenoms.every((denom) => selectedDenoms.includes(denom))

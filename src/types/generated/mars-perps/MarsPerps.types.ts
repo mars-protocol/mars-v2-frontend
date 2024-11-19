@@ -12,6 +12,7 @@ export interface InstantiateMsg {
   cooldown_period: number
   deleverage_enabled: boolean
   max_positions: number
+  max_unlocks: number
   protocol_fee_rate: Decimal
   target_vault_collateralization_ratio: Decimal
   vault_withdraw_enabled: boolean
@@ -43,7 +44,7 @@ export type ExecuteMsg =
         account_id: string
         denom: string
         reduce_only?: boolean | null
-        size: SignedUint
+        size: Int128
       }
     }
   | {
@@ -84,12 +85,8 @@ export type OwnerUpdate =
     }
   | 'clear_emergency_owner'
 export type Uint128 = string
+export type Int128 = string
 export type ActionKind = 'default' | 'liquidation'
-export interface SignedUint {
-  abs: Uint128
-  negative: boolean
-  [k: string]: unknown
-}
 export interface PerpParams {
   closing_fee_rate: Decimal
   denom: string
@@ -110,6 +107,7 @@ export interface ConfigUpdates {
   cooldown_period?: number | null
   deleverage_enabled?: boolean | null
   max_positions?: number | null
+  max_unlocks?: number | null
   protocol_fee_rate?: Decimal | null
   target_vault_collateralization_ratio?: Decimal | null
   vault_withdraw_enabled?: boolean | null
@@ -152,7 +150,7 @@ export type QueryMsg =
       position: {
         account_id: string
         denom: string
-        order_size?: SignedUint | null
+        order_size?: Int128 | null
       }
     }
   | {
@@ -184,14 +182,14 @@ export type QueryMsg =
   | {
       opening_fee: {
         denom: string
-        size: SignedUint
+        size: Int128
       }
     }
   | {
       position_fees: {
         account_id: string
         denom: string
-        new_size: SignedUint
+        new_size: Int128
       }
     }
 export interface ConfigForString {
@@ -200,21 +198,18 @@ export interface ConfigForString {
   cooldown_period: number
   deleverage_enabled: boolean
   max_positions: number
+  max_unlocks: number
   protocol_fee_rate: Decimal
   target_vault_collateralization_ratio: Decimal
   vault_withdraw_enabled: boolean
 }
+export type SignedDecimal = string
 export interface MarketResponse {
   current_funding_rate: SignedDecimal
   denom: string
   enabled: boolean
   long_oi: Uint128
   short_oi: Uint128
-}
-export interface SignedDecimal {
-  abs: Decimal
-  negative: boolean
-  [k: string]: unknown
 }
 export interface AccountingResponse {
   accounting: Accounting
@@ -226,26 +221,27 @@ export interface Accounting {
   withdrawal_balance: Balance
 }
 export interface Balance {
-  accrued_funding: SignedUint
-  closing_fee: SignedUint
-  opening_fee: SignedUint
-  price_pnl: SignedUint
-  total: SignedUint
+  accrued_funding: Int128
+  closing_fee: Int128
+  opening_fee: Int128
+  price_pnl: Int128
+  total: Int128
 }
 export interface CashFlow {
-  accrued_funding: SignedUint
-  closing_fee: SignedUint
-  opening_fee: SignedUint
-  price_pnl: SignedUint
+  accrued_funding: Int128
+  closing_fee: Int128
+  opening_fee: Int128
+  price_pnl: Int128
   protocol_fee: Uint128
 }
 export interface PnlAmounts {
-  accrued_funding: SignedUint
-  closing_fee: SignedUint
-  opening_fee: SignedUint
-  pnl: SignedUint
-  price_pnl: SignedUint
+  accrued_funding: Int128
+  closing_fee: Int128
+  opening_fee: Int128
+  pnl: Int128
+  price_pnl: Int128
 }
+export type Int256 = string
 export type Uint256 = string
 export interface MarketStateResponse {
   cash_flow: CashFlow
@@ -255,9 +251,9 @@ export interface MarketStateResponse {
   last_updated: number
   long_oi: Uint128
   short_oi: Uint128
-  total_abs_multiplied_positions: SignedUint
-  total_entry_cost: SignedUint
-  total_entry_funding: SignedUint
+  total_abs_multiplied_positions: Int256
+  total_entry_cost: Int128
+  total_entry_funding: Int128
   total_squared_positions: Uint256
 }
 export interface Funding {
@@ -300,9 +296,9 @@ export interface PerpPosition {
   denom: string
   entry_exec_price: Decimal
   entry_price: Decimal
-  realised_pnl: PnlAmounts
-  size: SignedUint
-  unrealised_pnl: PnlAmounts
+  realized_pnl: PnlAmounts
+  size: Int128
+  unrealized_pnl: PnlAmounts
 }
 export interface PositionFeesResponse {
   base_denom: string
@@ -319,7 +315,7 @@ export interface PositionsByAccountResponse {
 export interface VaultResponse {
   collateralization_ratio?: Decimal | null
   share_price?: Decimal | null
-  total_balance: SignedUint
+  total_balance: Int128
   total_debt: Uint128
   total_liquidity: Uint128
   total_shares: Uint128

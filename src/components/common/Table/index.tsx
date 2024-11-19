@@ -36,6 +36,7 @@ interface Props<T> {
   onSortingChange?: OnChangeFn<SortingState>
   disableSortingRow?: boolean
   titleComponent?: ReactElement
+  isBalancesTable?: boolean
 }
 
 export default function Table<T>(props: Props<T>) {
@@ -151,6 +152,7 @@ export default function Table<T>(props: Props<T>) {
                   isSelectable={!!props.setRowSelection}
                   type={props.type}
                   onClick={props.onClickRow}
+                  isBalancesTable={props.isBalancesTable}
                 />
               ))}
             </tbody>

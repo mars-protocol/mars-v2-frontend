@@ -34,13 +34,12 @@ export default function usePerpsVault() {
       }
 
       const timeframe = moment.duration(perpsVault.cooldown_period, 'seconds').humanize().split(' ')
-
       return {
         name: 'Perps USDC Vault',
         provider: 'MARS',
         denom: perpsVault.base_denom,
         apy: perpVaultApy,
-        collateralizationRatio: 1.1,
+        collateralizationRatio: Number(vaultState.collateralization_ratio ?? 0),
         liquidity: BN(vaultState.total_liquidity),
         lockup: {
           duration: +timeframe[0],

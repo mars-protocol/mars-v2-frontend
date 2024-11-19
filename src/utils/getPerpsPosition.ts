@@ -1,6 +1,5 @@
-import BigNumber from 'bignumber.js'
-
 import { BN_ZERO } from 'constants/math'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { BNCoin } from 'types/classes/BNCoin'
 
 export default function getPerpsPosition(
@@ -21,10 +20,15 @@ export default function getPerpsPosition(
     }
   }
 
+  const currentPrice = asset.price?.amount ?? BN_ZERO
+  const currentLimitPrice = limitPrice ?? BN_ZERO
+  const priceToUse = !limitPrice?.isZero() ? currentLimitPrice : currentPrice
+  const priceOracleDecimalsDiff = asset.decimals - PRICE_ORACLE_DECIMALS
+
   return {
     amount,
-    entryPrice: asset.price?.amount ?? BN_ZERO,
-    currentPrice: asset.price?.amount ?? BN_ZERO,
+    entryPrice: priceToUse.shiftedBy(-priceOracleDecimalsDiff),
+    currentPrice: currentPrice.shiftedBy(-priceOracleDecimalsDiff),
     baseDenom,
     denom: asset.denom,
     tradeDirection,

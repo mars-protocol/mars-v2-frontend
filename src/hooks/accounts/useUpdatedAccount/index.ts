@@ -300,9 +300,18 @@ export function useUpdatedAccount(account?: Account) {
     [account, assets, availableAstroLps],
   )
 
+  const resetPerpPosition = useCallback(() => {
+    addDeposits([])
+    removeLends([])
+    removeDeposits([])
+    addDebts([])
+    return setUpdatedPerpPosition(undefined)
+  }, [])
+
   const simulatePerps = useCallback(
-    (position: PerpsPosition, isLendAction: boolean) => {
+    (position?: PerpsPosition, isLendAction?: boolean) => {
       if (!account || !account.perps) return
+      if (!position) return resetPerpPosition()
 
       const currentPerpPosition = account.perps.find((perp) => perp.denom === position.denom)
 
@@ -310,11 +319,7 @@ export function useUpdatedAccount(account?: Account) {
         (currentPerpPosition && currentPerpPosition.amount.isEqualTo(position.amount)) ||
         (!currentPerpPosition && position.amount.isEqualTo(0))
       ) {
-        addDeposits([])
-        removeLends([])
-        removeDeposits([])
-        addDebts([])
-        return setUpdatedPerpPosition(undefined)
+        return resetPerpPosition()
       }
 
       const unrealizedPnL = position.pnl.unrealized.net
@@ -390,14 +395,19 @@ export function useUpdatedAccount(account?: Account) {
       }
       setUpdatedPerpPosition(updatedPostion)
     },
-    [account, setUpdatedPerpPosition],
+    [account, resetPerpPosition],
   )
 
   const simulatePerpsVaultDeposit = useCallback(
-    (coin: BNCoin) => {
+    (coin: BNCoin, depositFromWallet: boolean) => {
       const { deposit, lend } = getDepositAndLendCoinsToSpend(coin, account)
-      removeDeposits([deposit])
-      removeLends([lend])
+      if (depositFromWallet) {
+        removeDeposits([])
+        removeLends([])
+      } else {
+        removeDeposits([deposit])
+        removeLends([lend])
+      }
       addPerpsVaultAmount(coin.amount)
     },
     [account],

@@ -11,7 +11,6 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useSlippage from 'hooks/settings/useSlippage'
 import { useCallback, useMemo, useState } from 'react'
 import useStore from 'store'
-import { useSWRConfig } from 'swr'
 import { BNCoin } from 'types/classes/BNCoin'
 import { removeEmptyBNCoins } from 'utils/accounts'
 import { byDenom } from 'utils/array'
@@ -36,7 +35,6 @@ export default function HlsFarmingSummary(props: Props) {
   const { data: assets } = useAssets()
   const chainConfig = useChainConfig()
   const [slippage] = useSlippage()
-  const { mutate } = useSWRConfig()
   const depositIntoFarm = useStore((s) => s.depositIntoFarm)
   const updatedAccount = useStore((s) => s.updatedAccount)
   const [isCalculating, setIsCaluclating] = useState(false)
@@ -74,8 +72,6 @@ export default function HlsFarmingSummary(props: Props) {
       borrowings: borrowings,
       kind: 'high_levered_strategy' as AccountKind,
     })
-    await mutate(`chains/${chainConfig.id}/accounts/${account.id}`)
-    await mutate(`chains/${chainConfig.id}/astroLps/${account.id}/staked-astro-lp-rewards`)
   }, [
     astroLp,
     deposits,
@@ -86,7 +82,6 @@ export default function HlsFarmingSummary(props: Props) {
     depositIntoFarm,
     account.id,
     borrowings,
-    mutate,
   ])
 
   const newTotalValue = useMemo(() => {
