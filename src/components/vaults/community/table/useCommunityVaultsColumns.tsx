@@ -1,17 +1,18 @@
-import React, { useCallback, useMemo } from 'react'
-import Apr, { APR_META } from 'components/vaults/common/table/columns/Apr'
-import Details, { DETAILS_META } from 'components/vaults/community/table/column/Details'
-import Fee, { FEE_META } from 'components/vaults/common/table/columns/Fee'
-import Name, { NAME_META } from 'components/vaults/common/table/columns/Name'
+import { ColumnDef } from '@tanstack/react-table'
+import BigNumber from 'bignumber.js'
 import TVL, { TVL_META } from 'components/earn/farm/common/Table/Columns/TVL'
+import Apr, { APR_META } from 'components/vaults/common/table/columns/Apr'
+import Fee, { FEE_META } from 'components/vaults/common/table/columns/Fee'
 import FreezePeriod, {
   FREEZE_PERIOD_META,
 } from 'components/vaults/common/table/columns/FreezePeriod'
+import Name, { NAME_META } from 'components/vaults/common/table/columns/Name'
+import Details, { DETAILS_META } from 'components/vaults/community/table/column/Details'
 import VaultDetails from 'components/vaults/community/vaultDetails/index'
-import { ColumnDef } from '@tanstack/react-table'
-import BigNumber from 'bignumber.js'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import useAccountId from 'hooks/accounts/useAccountId'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import { useCallback, useMemo } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
 
@@ -26,6 +27,7 @@ export default function useCommunityVaultsColumns(props: Props) {
   const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
+  const chainConfig = useChainConfig()
 
   const navigate = useNavigate()
   const handleVaultDetails = useCallback(() => {
@@ -34,18 +36,23 @@ export default function useCommunityVaultsColumns(props: Props) {
 
     if (accountId)
       navigate(
-        getRoute(getPage(`vaults/${tempVaultAddress}/details`), searchParams, address, accountId),
+        getRoute(
+          getPage(`vaults/${tempVaultAddress}/details`, chainConfig),
+          searchParams,
+          address,
+          accountId,
+        ),
       )
 
     useStore.setState({
       focusComponent: {
         component: <VaultDetails />,
         onClose: () => {
-          navigate(getRoute(getPage(pathname), searchParams, address))
+          navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
         },
       },
     })
-  }, [navigate, pathname, searchParams, address, accountId])
+  }, [accountId, navigate, chainConfig, searchParams, address, pathname])
 
   return useMemo<ColumnDef<VaultData>[]>(
     () => [
