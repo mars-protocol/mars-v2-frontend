@@ -19,6 +19,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import TextArea from 'components/common/TextArea'
 import useAccountId from 'hooks/accounts/useAccountId'
+import CharacterCount from 'components/common/CharacterCount'
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -87,7 +88,7 @@ export default function CreateVault() {
 
   return (
     <CreateVaultContent>
-      <form className='flex flex-col space-y-6 mb-4'>
+      <form className='flex flex-col space-y-6 flex-grow overflow-y-auto'>
         <div className='flex flex-col md:flex-row gap-8'>
           <div className='flex-1 space-y-8'>
             <VaultInputElement
@@ -138,7 +139,7 @@ export default function CreateVault() {
             <div>
               <label className='text-xs flex items-center'>
                 Description
-                <span className='text-error ml-1'>*</span>
+                <span className='text-primary ml-1'>*</span>
               </label>
               <TextArea
                 value={description}
@@ -146,6 +147,7 @@ export default function CreateVault() {
                 maxLength={240}
                 placeholder='Enter a detailed description...'
                 required
+                footer={<CharacterCount value={description} maxLength={240} size='xs' />}
               />
             </div>
 
@@ -202,8 +204,6 @@ export default function CreateVault() {
           </div>
           <Button
             onClick={handleCreate}
-            variant='solid'
-            color='primary'
             size='md'
             rightIcon={<ArrowRight />}
             className='w-full md:w-auto'

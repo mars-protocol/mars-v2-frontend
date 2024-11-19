@@ -42,7 +42,6 @@ export default function PerformanceFee() {
         min={BN_ZERO}
         max={BN(50)}
         maxLength={2}
-        suffix='%'
         placeholder='Enter fee'
         className='px-4 py-3 rounded-sm bg-white/5 !border-solid border border-white/10 focus:border-white/20 focus:bg-white/10 !text-left'
       />
@@ -50,9 +49,7 @@ export default function PerformanceFee() {
         {fees.map((fee, index) => (
           <Button
             onClick={(event) => handleFeeClick(fee.value, event)}
-            variant='solid'
-            color='tertiary'
-            size='sm'
+            color='secondary'
             className={classNames('w-full min-w-0', feeValue.isEqualTo(fee.value) && 'bg-white/20')}
             text={fee.label}
             key={index}

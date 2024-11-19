@@ -18,7 +18,6 @@ interface Props {
   style?: {}
   disabled?: boolean
   placeholder?: string
-  suffix?: string | JSX.Element
   onChange: (amount: BigNumber) => void
   onBlur?: () => void
   onFocus?: () => void

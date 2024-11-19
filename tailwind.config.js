@@ -62,6 +62,7 @@ module.exports = {
     'gradient-droplets',
     'gradient-stride',
     'gradient-lido',
+    'gradient-description',
     'gradient-milkyway',
     'droplets',
     'stride',
@@ -518,6 +519,10 @@ module.exports = {
         '.gradient-lido': {
           background:
             'linear-gradient(rgb(101, 98, 255) 11.28%, rgb(0, 163, 255) 61.02%, rgb(99, 214, 210) 100%)',
+        },
+        '.gradient-description': {
+          background:
+            'linear-gradient(45deg, rgba(60, 90, 180, 0.3), rgba(60, 90, 180, 0.3), rgba(200, 0, 130, 0.3))',
         },
         '.gradient-milkyway': {
           background: 'linear-gradient(90deg, #FEf7F1 0%, #FDE2FB 50%, #FDE4FC 100%)',

@@ -1,18 +1,19 @@
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
 
-export const APR_META = {
-  accessorKey: 'apr',
-  header: 'APR',
-  meta: { className: 'w-25' },
+export const SHARES_META = {
+  id: 'shares',
+  header: 'Shares',
+  meta: { className: 'min-w-20' },
 }
 
 interface Props {
-  value: string
-  isLoading?: boolean
+  // TODO: update once we know data structure
+  value: any
+  isLoading: boolean
 }
 
-export default function Apr(props: Props) {
+export default function Shares(props: Props) {
   const { value, isLoading } = props
 
   if (isLoading) return <Loading />
@@ -20,7 +21,7 @@ export default function Apr(props: Props) {
   return (
     <FormattedNumber
       amount={parseFloat(value)}
-      options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
+      options={{ minDecimals: 0, maxDecimals: 0 }}
       className='text-xs'
       animate
     />

@@ -18,6 +18,7 @@ import VaultsCommunityPage from 'pages/VaultsCommunityPage'
 import VaultsOfficialPage from 'pages/VaultsOfficialPage'
 import CreateVault from 'components/vaults/community/createVault/index'
 import MintVaultAccount from 'components/vaults/community/createVault/MintVaultAccount'
+import VaultDetails from 'components/vaults/community/vaultDetails/index'
 
 export default function Routes() {
   const chainConfig = useChainConfig()
@@ -69,6 +70,7 @@ export default function Routes() {
           <Route path='vaults' element={<VaultsOfficialPage />}>
             <Route path='create' element={<CreateVault />} />
             <Route path=':vaultAddress/mint-account' element={<MintVaultAccount />} />
+            <Route path=':vaultAddress/details' element={<VaultDetails />} />
           </Route>
 
           <Route path='portfolio/:accountId'>
