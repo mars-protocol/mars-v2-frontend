@@ -1,25 +1,26 @@
-import AssetSelectContent from 'components/vaults/community/createVault/AssetSelectContent'
 import Button from 'components/common/Button'
-import CreateVaultContent from 'components/vaults/community/createVault/CreateVaultContent'
-import MintVaultAccount from 'components/vaults/community/createVault/MintVaultAccount'
+import CharacterCount from 'components/common/CharacterCount'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import VaultInputElement from 'components/vaults/community/createVault/VaultInputElement'
-import PerformanceFee from 'components/vaults/community/createVault/PerformanceFee'
-import HlsSwitch from 'components/vaults/community/createVault/HLSSwitch'
+import { ArrowRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import TextArea from 'components/common/TextArea'
+import { TextLink } from 'components/common/TextLink'
+import AssetSelectContent from 'components/vaults/community/createVault/AssetSelectContent'
+import CreateVaultContent from 'components/vaults/community/createVault/CreateVaultContent'
+import HlsSwitch from 'components/vaults/community/createVault/HLSSwitch'
+import MintVaultAccount from 'components/vaults/community/createVault/MintVaultAccount'
+import PerformanceFee from 'components/vaults/community/createVault/PerformanceFee'
+import VaultInputElement from 'components/vaults/community/createVault/VaultInputElement'
+import useAccountId from 'hooks/accounts/useAccountId'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
-import useStore from 'store'
 import React, { useCallback, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { ArrowRight } from 'components/common/Icons'
-import { getPage, getRoute } from 'utils/route'
-import { TextLink } from 'components/common/TextLink'
-import { BN } from 'utils/helpers'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
-import TextArea from 'components/common/TextArea'
-import useAccountId from 'hooks/accounts/useAccountId'
-import CharacterCount from 'components/common/CharacterCount'
+import { BN } from 'utils/helpers'
+import { getPage, getRoute } from 'utils/route'
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -42,6 +43,7 @@ export default function CreateVault() {
   const accountId = useAccountId()
   const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
+  const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
 
   const navigate = useNavigate()
@@ -57,7 +59,7 @@ export default function CreateVault() {
     if (accountId)
       navigate(
         getRoute(
-          getPage(`vaults/${tempVaultAddress}/mint-account`),
+          getPage(`vaults/${tempVaultAddress}/mint-account`, chainConfig),
           searchParams,
           address,
           accountId,
@@ -68,11 +70,11 @@ export default function CreateVault() {
       focusComponent: {
         component: <MintVaultAccount />,
         onClose: () => {
-          navigate(getRoute(getPage(pathname), searchParams, address))
+          navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
         },
       },
     })
-  }, [navigate, pathname, searchParams, address, accountId])
+  }, [accountId, navigate, chainConfig, searchParams, address, pathname])
 
   const handleWithdrawFreezePeriod = useCallback((value: string) => {
     setWithdrawFreezePeriod(value)
@@ -88,8 +90,8 @@ export default function CreateVault() {
 
   return (
     <CreateVaultContent>
-      <form className='flex flex-col space-y-6 flex-grow overflow-y-auto'>
-        <div className='flex flex-col md:flex-row gap-8'>
+      <form className='flex flex-col flex-grow space-y-6 overflow-y-auto'>
+        <div className='flex flex-col gap-8 md:flex-row'>
           <div className='flex-1 space-y-8'>
             <VaultInputElement
               type='text'
@@ -137,9 +139,9 @@ export default function CreateVault() {
             />
 
             <div>
-              <label className='text-xs flex items-center'>
+              <label className='flex items-center text-xs'>
                 Description
-                <span className='text-primary ml-1'>*</span>
+                <span className='ml-1 text-primary'>*</span>
               </label>
               <TextArea
                 value={description}
@@ -184,7 +186,7 @@ export default function CreateVault() {
 
         <div className='border border-white/5' />
 
-        <div className='flex flex-wrap justify-between items-center px-4 md:px-0 gap-2'>
+        <div className='flex flex-wrap items-center justify-between gap-2 px-4 md:px-0'>
           <div className='space-y-2'>
             {/* TODO: fetch from contract */}
             <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber('usd', BN(10))} />

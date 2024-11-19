@@ -1,16 +1,17 @@
+import classNames from 'classnames'
 import AccountVaultStats from 'components/account/AccountVaultList/AccountVaultStats'
 import Card from 'components/common/Card'
 import Radio from 'components/common/Radio'
 import Text from 'components/common/Text'
 import VaultDetails from 'components/vaults/community/vaultDetails'
-import useAccountIds from 'hooks/accounts/useAccountIds'
 import useAccountId from 'hooks/accounts/useAccountId'
-import useStore from 'store'
-import classNames from 'classnames'
-import { getPage, getRoute } from 'utils/route'
+import useAccountIds from 'hooks/accounts/useAccountIds'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { useCallback } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
 import { isMobile } from 'react-device-detect'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import useStore from 'store'
+import { getPage, getRoute } from 'utils/route'
 
 interface Props {
   setShowMenu: (show: boolean) => void
@@ -29,6 +30,7 @@ export default function AccountVaultList(props: Props) {
   const currentAccountId = useAccountId()
   const address = useStore((s) => s.address)
   const [searchParams] = useSearchParams()
+  const chainConfig = useChainConfig()
   const { data: accountIds } = useAccountIds(address, true, true)
 
   const handleCardClick = useCallback(
@@ -39,7 +41,12 @@ export default function AccountVaultList(props: Props) {
       const tempVaultAddress = 'tempvaultaddress'
 
       navigate(
-        getRoute(getPage(`vaults/${tempVaultAddress}/details`), searchParams, address, accountId),
+        getRoute(
+          getPage(`vaults/${tempVaultAddress}/details`, chainConfig),
+          searchParams,
+          address,
+          accountId,
+        ),
       )
 
       useStore.setState({
@@ -48,7 +55,7 @@ export default function AccountVaultList(props: Props) {
         },
       })
     },
-    [navigate, searchParams, setShowMenu, address],
+    [setShowMenu, navigate, chainConfig, searchParams, address],
   )
 
   if (!accountIds || !accountIds.length) return null
