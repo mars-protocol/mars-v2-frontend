@@ -1,17 +1,18 @@
 import Button from 'components/common/Button'
-import CreateVault from 'components/vaults/community/createVault/index'
+import { Account, ArrowRight, HandCoins, Plus, PlusSquared, Wallet } from 'components/common/Icons'
 import Intro from 'components/common/Intro'
+import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
+import CreateVault from 'components/vaults/community/createVault/index'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useAccountId from 'hooks/accounts/useAccountId'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useStore from 'store'
-import { Account, ArrowRight, HandCoins, Plus, PlusSquared, Wallet } from 'components/common/Icons'
-import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
-import { DocURL } from 'types/enums'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { useCallback } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import useStore from 'store'
+import { DocURL } from 'types/enums'
 import { getPage, getRoute } from 'utils/route'
-import useAccountId from 'hooks/accounts/useAccountId'
 
 export default function VaultsCommunityIntro() {
   const [showVaultInformation, setShowVaultInformation] = useLocalStorage<boolean>(
@@ -24,19 +25,21 @@ export default function VaultsCommunityIntro() {
   const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
+  const chainConfig = useChainConfig()
 
   const openCreateVaultOverlay = useCallback(() => {
-    if (accountId) navigate(getRoute(getPage('vaults/create'), searchParams, address, accountId))
+    if (accountId)
+      navigate(getRoute(getPage('vaults/create', chainConfig), searchParams, address, accountId))
 
     useStore.setState({
       focusComponent: {
         component: <CreateVault />,
         onClose: () => {
-          navigate(getRoute(getPage(pathname), searchParams, address))
+          navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
         },
       },
     })
-  }, [address, navigate, pathname, searchParams, accountId])
+  }, [accountId, navigate, chainConfig, searchParams, address, pathname])
 
   const handleOnClick = useCallback(() => {
     if (!showVaultInformation) {
