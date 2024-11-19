@@ -1306,7 +1306,7 @@ interface AlertDialogConfig {
   content: JSX.Element | string
   negativeButton?: AlertDialogButton
   positiveButton?: AlertDialogButton
-  title: string
+  title?: string
   modalClassName?: string
   titleClassName?: string
 }
