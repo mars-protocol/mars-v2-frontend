@@ -8,7 +8,7 @@ export const LimitPriceSection = ({
   setLimitPrice,
   limitPriceInfo,
 }: {
-  USD: any
+  USD?: Asset
   limitPrice: BigNumber
   setLimitPrice: (price: BigNumber) => void
   limitPriceInfo: CallOut | undefined
@@ -36,7 +36,7 @@ export const StopPriceSection = ({
   setStopPrice,
   stopPriceInfo,
 }: {
-  USD: any
+  USD?: Asset
   stopPrice: BigNumber
   setStopPrice: (price: BigNumber) => void
   stopPriceInfo: CallOut | undefined

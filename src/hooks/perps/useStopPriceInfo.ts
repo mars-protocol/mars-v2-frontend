@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { BigNumber } from 'bignumber.js'
 import { DEFAULT_STOP_PRICE_INFO } from 'components/perps/Module/constants'
 import { capitalizeFirstLetter } from 'utils/helpers'
@@ -9,9 +9,7 @@ export const useStopPriceInfo = (
   perpsAsset: Asset | undefined,
   stopTradeDirection: TradeDirection,
 ) => {
-  const [stopPriceInfo, setStopPriceInfo] = useState<CallOut | undefined>(DEFAULT_STOP_PRICE_INFO)
-
-  const calculateStopPriceInfo = useCallback(() => {
+  return useMemo(() => {
     if (!perpsAsset) return DEFAULT_STOP_PRICE_INFO
     if (stopPrice.isZero()) return DEFAULT_STOP_PRICE_INFO
     if (!perpsAsset.price) return undefined
@@ -30,12 +28,4 @@ export const useStopPriceInfo = (
 
     return undefined
   }, [stopPrice, perpsAsset, stopTradeDirection])
-
-  const newStopPriceInfo = useMemo(() => calculateStopPriceInfo(), [calculateStopPriceInfo])
-
-  useEffect(() => {
-    setStopPriceInfo(newStopPriceInfo)
-  }, [newStopPriceInfo])
-
-  return stopPriceInfo
 }

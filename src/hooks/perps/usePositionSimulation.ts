@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useMemo } from 'react'
 import getPerpsPosition from 'utils/getPerpsPosition'
 
 export const usePositionSimulation = ({
@@ -11,7 +11,6 @@ export const usePositionSimulation = ({
   amount,
   perpsAsset,
   limitPrice,
-  isAutoLendEnabledForCurrentAccount,
   simulatePerps,
 }: {
   tradingFee?: {
@@ -29,9 +28,9 @@ export const usePositionSimulation = ({
   perpsAsset: Asset
   limitPrice: BigNumber
   isAutoLendEnabledForCurrentAccount: boolean
-  simulatePerps: () => void
+  simulatePerps: (newPosition: PerpsPosition) => void
 }) => {
-  useEffect(() => {
+  useMemo(() => {
     if (!tradingFee || !perpsVault || perpsVaultModal) return
     if (isLimitOrder || isStopOrder) return
 
@@ -49,11 +48,10 @@ export const usePositionSimulation = ({
       currentPerpPosition,
       limitPrice,
     )
-    simulatePerps()
+    simulatePerps(newPosition)
   }, [
     amount,
     currentPerpPosition,
-    isAutoLendEnabledForCurrentAccount,
     isLimitOrder,
     isStopOrder,
     limitPrice,

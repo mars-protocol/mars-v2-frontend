@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { BigNumber } from 'bignumber.js'
 import { DEFAULT_LIMIT_PRICE_INFO } from 'components/perps/Module/constants'
 import { capitalizeFirstLetter } from 'utils/helpers'
@@ -9,11 +9,7 @@ export const useLimitPriceInfo = (
   perpsAsset: Asset | undefined,
   tradeDirection: TradeDirection,
 ) => {
-  const [limitPriceInfo, setLimitPriceInfo] = useState<CallOut | undefined>(
-    DEFAULT_LIMIT_PRICE_INFO,
-  )
-
-  const calculateLimitPriceInfo = useCallback(() => {
+  return useMemo(() => {
     if (!perpsAsset) return DEFAULT_LIMIT_PRICE_INFO
     if (limitPrice.isZero()) return DEFAULT_LIMIT_PRICE_INFO
     if (!perpsAsset.price) return undefined
@@ -31,12 +27,4 @@ export const useLimitPriceInfo = (
 
     return undefined
   }, [limitPrice, perpsAsset, tradeDirection])
-
-  const newLimitPriceInfo = useMemo(() => calculateLimitPriceInfo(), [calculateLimitPriceInfo])
-
-  useEffect(() => {
-    setLimitPriceInfo(newLimitPriceInfo)
-  }, [newLimitPriceInfo])
-
-  return limitPriceInfo
 }

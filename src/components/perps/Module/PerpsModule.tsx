@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import AssetAmountInput from 'components/common/AssetAmountInput'
 import { Callout, CalloutType } from 'components/common/Callout'
@@ -26,13 +26,11 @@ import { OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 
-import WarningMessages from 'components/common/WarningMessages'
 import { ReduceOnlySwitch } from './ReduceOnlySwitch'
 import { useReduceOnlyOrder } from 'hooks/perps/useReduceOnlyOrder'
 import { useLimitPriceInfo } from 'hooks/perps/useLimitPriceInfo'
 import { useStopPriceInfo } from 'hooks/perps/useStopPriceInfo'
 import { useEffectiveLeverage } from 'hooks/perps/useEffectiveLeverage'
-import { useIsAmountExceedingMax } from 'hooks/perps/useIsAmountExceedingMax'
 import { useHandleClosing } from 'hooks/perps/useHandleClosing'
 import { useExecutionState } from 'hooks/perps/useExecutionState'
 import { LimitPriceSection, StopPriceSection } from './PriceInputs'
@@ -89,8 +87,9 @@ export function PerpsModule() {
 
   // Utility hooks
   const effectiveLeverage = useEffectiveLeverage(amount, maxAmount, leverage, maxLeverage)
-  const isAmountExceedingMax = useIsAmountExceedingMax(amount, maxAmount)
-  const { longOpenInterestLeft, shortOpenInterestLeft } = useOpenInterestLeft()
+  const isAmountExceedingMax = useMemo(() => {
+    return amount.isGreaterThan(maxAmount)
+  }, [amount, maxAmount])
 
   // Derived data
   const USD = allAssets.find(byDenom('usd'))
@@ -281,7 +280,11 @@ export function PerpsModule() {
             maxAmount={maxAmount}
           />
         )}
-        {warningMessages.value.length > 0 && <WarningMessages messages={warningMessages.value} />}
+        {warningMessages.value.map((message) => (
+          <Callout key={message} type={CalloutType.WARNING}>
+            {message}
+          </Callout>
+        ))}
         {currentPerpPosition && (isLimitOrder || isStopOrder) && (
           <ReduceOnlySwitch
             isReduceOnly={isReduceOnly}

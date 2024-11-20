@@ -25,8 +25,8 @@ export const ReduceOnlySwitch = ({
         onChange={() => setIsReduceOnly(!isReduceOnly)}
         tooltip={
           isStopOrder
-            ? "Use 'Reduce Only' for stop orders to ensure the order only reduces or closes your position."
-            : "Use 'Reduce Only' for limit orders to decrease your position. It prevents new position creation if the existing one is modified or closed."
+            ? 'Use "Reduce Only" for stop orders to ensure the order only reduces or closes your position.'
+            : 'Use "Reduce Only" for limit orders to decrease your position. It prevents new position creation if the existing one is modified or closed.'
         }
       />
       {reduceOnlyWarning && <Callout type={CalloutType.WARNING}>{reduceOnlyWarning}</Callout>}

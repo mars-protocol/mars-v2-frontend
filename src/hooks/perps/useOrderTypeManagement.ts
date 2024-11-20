@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { OrderType } from 'types/enums'
 import { BN_ZERO } from 'constants/math'
 import { BigNumber } from 'bignumber.js'
@@ -9,29 +9,24 @@ export const useOrderTypeManagement = (
   setStopPrice: (price: BigNumber) => void,
 ) => {
   const [selectedOrderType, setSelectedOrderType] = useState<OrderType>(OrderType.MARKET)
-  const isLimitOrder = selectedOrderType === OrderType.LIMIT
-  const isStopOrder = selectedOrderType === OrderType.STOP
 
-  useEffect(() => {
-    if (!isStopOrder) {
-      setStopPrice(BN_ZERO)
-    }
-  }, [isStopOrder, setStopPrice])
-
-  useEffect(() => {
-    if (!isLimitOrder) {
-      setLimitPrice(BN_ZERO)
-    }
-  }, [isLimitOrder, setLimitPrice])
-
-  useEffect(() => {
+  useMemo(() => {
     if (orderType === 'limit') {
       setSelectedOrderType(OrderType.LIMIT)
-    }
-    if (orderType === 'stop') {
+    } else if (orderType === 'stop') {
       setSelectedOrderType(OrderType.STOP)
     }
-  }, [orderType])
+
+    if (selectedOrderType !== OrderType.STOP) {
+      setStopPrice(BN_ZERO)
+    }
+    if (selectedOrderType !== OrderType.LIMIT) {
+      setLimitPrice(BN_ZERO)
+    }
+  }, [orderType, selectedOrderType, setLimitPrice, setStopPrice])
+
+  const isLimitOrder = selectedOrderType === OrderType.LIMIT
+  const isStopOrder = selectedOrderType === OrderType.STOP
 
   return {
     selectedOrderType,
