@@ -30,7 +30,6 @@ import { ReduceOnlySwitch } from './ReduceOnlySwitch'
 import { useReduceOnlyOrder } from 'hooks/perps/useReduceOnlyOrder'
 import { useLimitPriceInfo } from 'hooks/perps/useLimitPriceInfo'
 import { useStopPriceInfo } from 'hooks/perps/useStopPriceInfo'
-import { useEffectiveLeverage } from 'hooks/perps/useEffectiveLeverage'
 import { useHandleClosing } from 'hooks/perps/useHandleClosing'
 import { useExecutionState } from 'hooks/perps/useExecutionState'
 import { LimitPriceSection, StopPriceSection } from './PriceInputs'
@@ -84,12 +83,6 @@ export function PerpsModule() {
   // Custom price info hooks
   const limitPriceInfo = useLimitPriceInfo(limitPrice, perpsAsset, tradeDirection)
   const stopPriceInfo = useStopPriceInfo(stopPrice, perpsAsset, stopTradeDirection)
-
-  // Utility hooks
-  const effectiveLeverage = useEffectiveLeverage(amount, maxAmount, leverage, maxLeverage)
-  const isAmountExceedingMax = useMemo(() => {
-    return amount.isGreaterThan(maxAmount)
-  }, [amount, maxAmount])
 
   // Derived data
   const USD = allAssets.find(byDenom('usd'))
@@ -163,6 +156,13 @@ export function PerpsModule() {
     isAutoLendEnabledForCurrentAccount,
     simulatePerps,
   })
+
+  const effectiveLeverage = useMemo(() => {
+    if (amount.isGreaterThan(maxAmount) && leverage >= maxLeverage) {
+      return maxLeverage
+    }
+    return Math.max(leverage, 0)
+  }, [amount, maxAmount, leverage, maxLeverage])
 
   useEffect(() => {
     if (!isStopOrder) {
@@ -249,7 +249,7 @@ export function PerpsModule() {
           isMaxSelected={isMaxSelected}
           capMax={false}
         />
-        {isAmountExceedingMax && (
+        {amount.isGreaterThan(maxAmount) && (
           <Callout type={CalloutType.WARNING}>
             The entered amount exceeds the maximum allowed.
           </Callout>
