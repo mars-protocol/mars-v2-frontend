@@ -43,11 +43,13 @@ export function PerpsInfo() {
   if (!market) return null
 
   return (
-    <div className='flex items-center md:gap-4 mb-2 sm:mb-0'>
+    <div className='flex flex-wrap items-center gap-2 md:gap-4 mb-2 sm:mb-0'>
       {items.map((item, index) => (
         <React.Fragment key={index}>
           {item}
-          {index !== items.length - 1 && <Divider orientation='vertical' className='h-9' />}
+          {index !== items.length - 1 && (
+            <Divider orientation='vertical' className='hidden md:block h-9' />
+          )}
         </React.Fragment>
       ))}
     </div>

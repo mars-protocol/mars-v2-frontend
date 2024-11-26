@@ -13,9 +13,13 @@ export default function Skew() {
 
   return (
     <div className='flex items-center gap-1'>
-      <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(perpsMarket.asset.denom, totalOI)} />
-      <span>/</span>
+      <DisplayCurrency
+        className='text-sm hidden md:inline'
+        coin={BNCoin.fromDenomAndBigNumber(perpsMarket.asset.denom, totalOI)}
+      />
+      <span className='text-sm hidden md:inline'>/</span>
       <FormattedNumber
+        className='text-sm'
         amount={openInterest.skewPercentage.toNumber()}
         options={{
           suffix: '%',
