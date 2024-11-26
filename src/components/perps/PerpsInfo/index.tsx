@@ -6,6 +6,7 @@ import Text from 'components/common/Text'
 import FundingRate from 'components/perps/PerpsInfo/FundingRate'
 import usePerpsMarket from 'hooks/perps/usePerpsMarket'
 import { BNCoin } from 'types/classes/BNCoin'
+import Skew from './Skew'
 
 export function PerpsInfo() {
   const market = usePerpsMarket()
@@ -34,6 +35,7 @@ export function PerpsInfo() {
           />
         }
       />,
+      <InfoItem key='skew' label='Skew' item={<Skew />} />,
       <InfoItem key='fundingRate' label='Funding rate' item={<FundingRate />} />,
     ]
   }, [market])

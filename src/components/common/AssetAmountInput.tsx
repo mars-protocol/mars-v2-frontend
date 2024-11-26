@@ -59,10 +59,6 @@ export default function AssetAmountInput(props: Props) {
   }, [asset.decimals, max])
 
   useEffect(() => {
-    asset.decimals = isUSD ? 0 : asset.decimals
-  }, [asset, isUSD])
-
-  useEffect(() => {
     if (!disabled) return
     setAmount(BN_ZERO)
   }, [disabled, setAmount])
@@ -87,7 +83,7 @@ export default function AssetAmountInput(props: Props) {
             asset={asset}
             amount={amount}
             className='border-none bg-transparent outline-none flex-1 !text-left'
-            maxDecimals={isUSD ? 6 : asset.decimals}
+            maxDecimals={isUSD ? 3 : asset.decimals} // Set maxDecimals to 3 for USD
             max={capMax ? max : undefined}
             min={min}
             disabled={disabled}
