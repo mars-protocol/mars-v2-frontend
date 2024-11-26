@@ -8,12 +8,10 @@ import { Callout, CalloutType } from 'components/common/Callout'
 import Text from 'components/common/Text'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import { BN_ZERO_ONE } from 'constants/math'
 import useAsset from 'hooks/assets/useAsset'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
-import { magnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 export default function KeeperFeeModal() {
@@ -24,7 +22,6 @@ export default function KeeperFeeModal() {
   )
   const [amount, setAmount] = useState(BN(keeperFee.amount))
   const USD = useAsset('usd')
-
   const onClose = useCallback(() => {
     useStore.setState({ keeperFeeModal: false })
   }, [])
@@ -34,14 +31,19 @@ export default function KeeperFeeModal() {
   }, [keeperFee])
 
   const handleActionClick = () => {
-    setKeeperFee({ denom: keeperFee.denom, amount: amount.toString() })
+    if (!USD) return
+
+    setKeeperFee({
+      denom: keeperFee.denom,
+      amount: amount.toString(),
+    })
     onClose()
   }
 
   const onUpdateAmount = useCallback(
-    (amount: BigNumber) => {
+    (newAmount: BigNumber) => {
       if (!USD) return
-      setAmount(magnify(amount.toString(), USD))
+      setAmount(newAmount)
     },
     [USD],
   )
@@ -71,9 +73,9 @@ export default function KeeperFeeModal() {
           asset={USD}
           isUSD
         />
-        {amount.isLessThan(BN_ZERO_ONE) && (
+        {amount.isLessThan(100) && (
           <Callout type={CalloutType.WARNING}>
-            You can not set the Keeper Fee to less than $0.10 as it is the minimum amount for the
+            You can not set the Keeper Fee to less than $1.00 as it is the minimum amount for the
             Keeper Fee.
           </Callout>
         )}
@@ -84,7 +86,7 @@ export default function KeeperFeeModal() {
         </Text>
         <Button
           onClick={handleActionClick}
-          disabled={amount.isLessThan(BN_ZERO_ONE)}
+          disabled={amount.isLessThan(100)}
           className='w-full !text-base'
           color='tertiary'
           text='Done'

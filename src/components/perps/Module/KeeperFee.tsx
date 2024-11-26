@@ -7,6 +7,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { BN } from 'utils/helpers'
 
 export default function KeeperFee() {
   const chainConfig = useChainConfig()
@@ -22,7 +23,10 @@ export default function KeeperFee() {
         <Text size='xs' className='flex flex-grow font-bold'>
           Keeper Fee
         </Text>
-        <DisplayCurrency coin={BNCoin.fromCoin(keeperFee)} className='flex text-xs text-white/40' />
+        <DisplayCurrency
+          coin={BNCoin.fromDenomAndBigNumber(keeperFee.denom, BN(keeperFee.amount).div(100))}
+          className='flex text-xs text-white/40'
+        />
         <Button
           text='Edit'
           className='!py-0 !pr-0 ml-2 text-xs border-l border-white/20 !text-martian-red hover:!text-mars !min-h-0'
