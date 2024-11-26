@@ -340,6 +340,7 @@ interface PerpsPosition {
   currentPrice: BigNumber
   entryPrice: BigNumber
   type: PositionType
+  reduce_only?: boolean
 }
 
 interface PerpsLimitOrder {
@@ -356,6 +357,7 @@ interface PerpPositionRow extends PerpsPosition {
   orderId?: string
   hasStopLoss?: boolean
   hasTakeProfit?: boolean
+  reduce_only?: boolean
 }
 
 interface PerpsPnL {
