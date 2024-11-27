@@ -6,7 +6,7 @@ import Text from 'components/common/Text'
 import FundingRate from 'components/perps/PerpsInfo/FundingRate'
 import usePerpsMarket from 'hooks/perps/usePerpsMarket'
 import { BNCoin } from 'types/classes/BNCoin'
-import Skew from './Skew'
+import Skew from 'components/perps/PerpsInfo/Skew'
 
 export function PerpsInfo() {
   const market = usePerpsMarket()
