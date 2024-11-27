@@ -128,3 +128,8 @@ export const validateStopOrderPrice = (
 
   return { isValid: true, errorMessage: null }
 }
+
+export const FALLBACK_MIN_KEEPER_FEE = {
+  denom: 'uusdc',
+  amount: '100000',
+}

@@ -245,6 +245,10 @@ interface ChainConfig {
     perps: string
     pyth: string
   }
+  defaultKeeperFee: {
+    denom: string
+    amount: string
+  }
   defaultCurrency: {
     coinDenom: string
     coinMinimalDenom: string

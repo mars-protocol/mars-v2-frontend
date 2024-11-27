@@ -3,6 +3,7 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import Text from 'components/common/Text'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
@@ -24,7 +25,10 @@ export default function KeeperFee() {
           Keeper Fee
         </Text>
         <DisplayCurrency
-          coin={BNCoin.fromDenomAndBigNumber(keeperFee.denom, BN(keeperFee.amount).div(100))}
+          coin={BNCoin.fromDenomAndBigNumber(
+            keeperFee.denom,
+            BN(keeperFee.amount).shiftedBy(-2 - PRICE_ORACLE_DECIMALS),
+          )}
           className='flex text-xs text-white/40'
         />
         <Button

@@ -13,6 +13,8 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
+import useMinKeeperFee from 'hooks/perps/useMinKeeperFee'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 
 export default function KeeperFeeModal() {
   const chainConfig = useChainConfig()
@@ -20,14 +22,18 @@ export default function KeeperFeeModal() {
     LocalStorageKeys.PERPS_KEEPER_FEE,
     getDefaultChainSettings(chainConfig).perpsKeeperFee,
   )
-  const [amount, setAmount] = useState(BN(keeperFee.amount))
+  const [amount, setAmount] = useState(BN(keeperFee.amount).shiftedBy(-PRICE_ORACLE_DECIMALS))
   const USD = useAsset('usd')
   const onClose = useCallback(() => {
     useStore.setState({ keeperFeeModal: false })
   }, [])
+  const { data: minKeeperFee } = useMinKeeperFee()
 
+  const isLessThanMin = amount.isLessThan(
+    minKeeperFee?.amount.shiftedBy(-PRICE_ORACLE_DECIMALS) ?? 10,
+  )
   useEffect(() => {
-    setAmount(BN(keeperFee.amount))
+    setAmount(BN(keeperFee.amount).shiftedBy(-PRICE_ORACLE_DECIMALS))
   }, [keeperFee])
 
   const handleActionClick = () => {
@@ -35,7 +41,7 @@ export default function KeeperFeeModal() {
 
     setKeeperFee({
       denom: keeperFee.denom,
-      amount: amount.toString(),
+      amount: amount.shiftedBy(PRICE_ORACLE_DECIMALS).toString(),
     })
     onClose()
   }
@@ -73,10 +79,11 @@ export default function KeeperFeeModal() {
           asset={USD}
           isUSD
         />
-        {amount.isLessThan(100) && (
+        {isLessThanMin && (
           <Callout type={CalloutType.WARNING}>
-            You can not set the Keeper Fee to less than $1.00 as it is the minimum amount for the
-            Keeper Fee.
+            You can not set the Keeper Fee to less than $
+            {minKeeperFee?.amount.shiftedBy(-PRICE_ORACLE_DECIMALS).toString()} as it is the minimum
+            amount for the Keeper Fee.
           </Callout>
         )}
         <Text size='sm' className='text-white/60'>
@@ -86,7 +93,7 @@ export default function KeeperFeeModal() {
         </Text>
         <Button
           onClick={handleActionClick}
-          disabled={amount.isLessThan(100)}
+          disabled={isLessThanMin}
           className='w-full !text-base'
           color='tertiary'
           text='Done'
