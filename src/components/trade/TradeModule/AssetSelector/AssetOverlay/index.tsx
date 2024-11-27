@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 
 import EscButton from 'components/common/Button/EscButton'
+import { CircularProgress } from 'components/common/CircularProgress'
 import Divider from 'components/common/Divider'
 import Overlay from 'components/common/Overlay'
 import SearchBar from 'components/common/SearchBar'
@@ -12,7 +13,6 @@ import PairsList from 'components/trade/TradeModule/AssetSelector/PairsList'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useFilteredAssets from 'hooks/assets/useFilteredAssets'
-import { CircularProgress } from 'components/common/CircularProgress'
 
 interface Props {
   state: OverlayState
@@ -92,9 +92,9 @@ export default function AssetOverlay(props: Props) {
   )
 
   const [activePerpsPositions, availablePerpsMarkets] = useMemo(() => {
-    if (!account) return [[], []]
+    if (!account) return [[], assets]
     const activePerpsPositions = assets.filter((assets) =>
-      account?.perps?.find((perp) => perp.denom === assets.denom),
+      account.perps?.find((perp) => perp.denom === assets.denom),
     )
     const availablePerpsMarkets = assets.filter(
       (assets) => !activePerpsPositions.find((perp) => perp.denom === assets.denom),
