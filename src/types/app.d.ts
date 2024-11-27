@@ -1230,6 +1230,7 @@ interface CommonSlice {
   perpsBaseDenom?: string
   hlsBorrowAmount: BigNumber | null
   errorStore: ErrorStore
+  creditManagerConfig: ConfigResponse | null
 }
 
 interface ErrorStore {

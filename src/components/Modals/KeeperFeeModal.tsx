@@ -13,7 +13,6 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
-import useMinKeeperFee from 'hooks/perps/useMinKeeperFee'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 
 export default function KeeperFeeModal() {
@@ -27,11 +26,10 @@ export default function KeeperFeeModal() {
   const onClose = useCallback(() => {
     useStore.setState({ keeperFeeModal: false })
   }, [])
-  const { data: minKeeperFee } = useMinKeeperFee()
 
-  const isLessThanMin = amount.isLessThan(
-    minKeeperFee?.amount.shiftedBy(-PRICE_ORACLE_DECIMALS) ?? 10,
-  )
+  const minKeeperFee = BN(useStore((s) => s.creditManagerConfig?.keeper_fee_config.min_fee.amount))
+  const isLessThanMin = amount.isLessThan(minKeeperFee?.shiftedBy(-PRICE_ORACLE_DECIMALS) ?? 10)
+
   useEffect(() => {
     setAmount(BN(keeperFee.amount).shiftedBy(-PRICE_ORACLE_DECIMALS))
   }, [keeperFee])
@@ -82,8 +80,8 @@ export default function KeeperFeeModal() {
         {isLessThanMin && (
           <Callout type={CalloutType.WARNING}>
             You can not set the Keeper Fee to less than $
-            {minKeeperFee?.amount.shiftedBy(-PRICE_ORACLE_DECIMALS).toString()} as it is the minimum
-            amount for the Keeper Fee.
+            {minKeeperFee?.shiftedBy(-PRICE_ORACLE_DECIMALS).toString()} as it is the minimum amount
+            for the Keeper Fee.
           </Callout>
         )}
         <Text size='sm' className='text-white/60'>
