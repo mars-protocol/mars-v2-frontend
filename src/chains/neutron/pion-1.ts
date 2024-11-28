@@ -35,10 +35,6 @@ const Pion1: ChainConfig = {
   vaults: [],
   dexName: 'Astroport',
   explorerName: 'Mintscan',
-  defaultKeeperFee: {
-    denom: 'factory/neutron1ke0vqqzyymlp5esr8gjwuzh94ysnpvj8er5hm7/UUSDC',
-    amount: '100000',
-  },
   bech32Config: Bech32Address.defaultBech32Config('neutron'),
   defaultCurrency: {
     coinDenom: 'NTRN',

@@ -6,22 +6,21 @@ import AssetAmountInput from 'components/common/AssetAmountInput'
 import Button from 'components/common/Button'
 import { Callout, CalloutType } from 'components/common/Callout'
 import Text from 'components/common/Text'
-import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAsset from 'hooks/assets/useAsset'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 
 export default function KeeperFeeModal() {
-  const chainConfig = useChainConfig()
+  const creditManagerConfig = useStore((s) => s.creditManagerConfig)
   const [keeperFee, setKeeperFee] = useLocalStorage(
     LocalStorageKeys.PERPS_KEEPER_FEE,
-    getDefaultChainSettings(chainConfig).perpsKeeperFee,
+    creditManagerConfig?.keeper_fee_config?.min_fee,
   )
 
+  console.log('keeperFee', keeperFee)
   const [amount, setAmount] = useState(BN(keeperFee.amount).shiftedBy(2 - PRICE_ORACLE_DECIMALS))
   const USD = useAsset('usd')
   const onClose = useCallback(() => {

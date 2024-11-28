@@ -1,23 +1,22 @@
 import Button from 'components/common/Button'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Text from 'components/common/Text'
-import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
 export default function KeeperFee() {
-  const chainConfig = useChainConfig()
+  const creditManagerConfig = useStore((s) => s.creditManagerConfig)
+
   const [keeperFee] = useLocalStorage(
     LocalStorageKeys.PERPS_KEEPER_FEE,
-    getDefaultChainSettings(chainConfig).perpsKeeperFee,
+    creditManagerConfig?.keeper_fee_config?.min_fee,
   )
 
-  if (!keeperFee) return
+  if (!keeperFee) return null
+
   return (
     <div className='flex flex-col w-full border rounded bg-white/5 border-white/20'>
       <div className='flex gap-1 px-3 py-4 align-center'>

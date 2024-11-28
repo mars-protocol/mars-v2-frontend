@@ -1,7 +1,6 @@
 import { ORACLE_DENOM } from 'constants/oracle'
 import { RewardsCenterType } from 'types/enums'
 import { ResolutionString } from 'utils/charting_library'
-import { FALLBACK_MIN_KEEPER_FEE } from 'utils/perps'
 
 export const getDefaultChainSettings = (chainConfig: ChainConfig) => {
   return {
@@ -21,7 +20,6 @@ export const getDefaultChainSettings = (chainConfig: ChainConfig) => {
     theme: 'default',
     rewardsCenterType: RewardsCenterType.Token,
     showSummary: true,
-    perpsKeeperFee: chainConfig.defaultKeeperFee ?? FALLBACK_MIN_KEEPER_FEE,
     tvChartStore: JSON.stringify({}),
     showPerpsVaultBanner: true,
     fundingRateInterval: '1H',
