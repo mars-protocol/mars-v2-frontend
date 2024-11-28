@@ -12,6 +12,7 @@ import useAccountIds from 'hooks/accounts/useAccountIds'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { getRoute } from 'utils/route'
+import PerpsVaultSection from 'components/perps/VaultSection'
 
 export default function PortfolioAccountPage() {
   const chainConfig = useChainConfig()
@@ -36,6 +37,7 @@ export default function PortfolioAccountPage() {
       <Balances account={account} isUsersAccount={isUsersAccount} />
       {chainConfig.farm && <Strategies account={account} />}
       {chainConfig.perps && <PerpPositions account={account} />}
+      {chainConfig.perps && <PerpsVaultSection accountId={accountId} />}
       <ShareBar text={`Have a look at Credit Account ${accountId} on @mars_protocol!`} />
     </div>
   )

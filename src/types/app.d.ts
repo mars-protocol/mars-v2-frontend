@@ -59,6 +59,32 @@ interface AccountBalanceRow {
   campaigns: AssetCampaign[]
 }
 
+interface PerpsVaultRow {
+  type: 'perp'
+  status: VaultStatus
+  name: string
+  asset: Asset
+  values: {
+    primary: BigNumber
+    secondary: BigNumber
+    unlocked: BigNumber
+    unlocking: BigNumber
+  }
+  denoms: {
+    primary: string
+    secondary: string
+    lp: string
+    vault: string
+  }
+  amounts: {
+    primary: BigNumber
+    secondary: BigNumber
+    locked: BigNumber
+    unlocked: BigNumber
+    unlocking: BigNumber
+  }
+}
+
 interface AccountStrategyRow {
   apy?: number | null
   name: string
