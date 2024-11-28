@@ -83,7 +83,7 @@ export default function AssetAmountInput(props: Props) {
             asset={asset}
             amount={amount}
             className='border-none bg-transparent outline-none flex-1 !text-left'
-            maxDecimals={isUSD ? 3 : asset.decimals}
+            maxDecimals={isUSD ? 6 : asset.decimals}
             max={capMax ? max : undefined}
             min={min}
             disabled={disabled}

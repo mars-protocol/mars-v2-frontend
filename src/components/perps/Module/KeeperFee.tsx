@@ -12,7 +12,7 @@ import { BN } from 'utils/helpers'
 
 export default function KeeperFee() {
   const chainConfig = useChainConfig()
-  const [keeperFee] = useLocalStorage<Coin>(
+  const [keeperFee] = useLocalStorage(
     LocalStorageKeys.PERPS_KEEPER_FEE,
     getDefaultChainSettings(chainConfig).perpsKeeperFee,
   )
@@ -25,10 +25,7 @@ export default function KeeperFee() {
           Keeper Fee
         </Text>
         <DisplayCurrency
-          coin={BNCoin.fromDenomAndBigNumber(
-            keeperFee.denom,
-            BN(keeperFee.amount).shiftedBy(-2 - PRICE_ORACLE_DECIMALS),
-          )}
+          coin={BNCoin.fromDenomAndBigNumber(keeperFee.denom, BN(keeperFee.amount))}
           className='flex text-xs text-white/40'
         />
         <Button

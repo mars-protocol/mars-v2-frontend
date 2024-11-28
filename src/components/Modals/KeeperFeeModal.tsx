@@ -21,17 +21,18 @@ export default function KeeperFeeModal() {
     LocalStorageKeys.PERPS_KEEPER_FEE,
     getDefaultChainSettings(chainConfig).perpsKeeperFee,
   )
-  const [amount, setAmount] = useState(BN(keeperFee.amount).shiftedBy(-PRICE_ORACLE_DECIMALS))
+
+  const [amount, setAmount] = useState(BN(keeperFee.amount).shiftedBy(2 - PRICE_ORACLE_DECIMALS))
   const USD = useAsset('usd')
   const onClose = useCallback(() => {
     useStore.setState({ keeperFeeModal: false })
   }, [])
 
   const minKeeperFee = BN(useStore((s) => s.creditManagerConfig?.keeper_fee_config.min_fee.amount))
-  const isLessThanMin = amount.isLessThan(minKeeperFee?.shiftedBy(-PRICE_ORACLE_DECIMALS) ?? 10)
+  const isLessThanMin = amount.isLessThan(minKeeperFee?.shiftedBy(2 - PRICE_ORACLE_DECIMALS))
 
   useEffect(() => {
-    setAmount(BN(keeperFee.amount).shiftedBy(-PRICE_ORACLE_DECIMALS))
+    setAmount(BN(keeperFee.amount).shiftedBy(2 - PRICE_ORACLE_DECIMALS))
   }, [keeperFee])
 
   const handleActionClick = () => {
@@ -39,7 +40,7 @@ export default function KeeperFeeModal() {
 
     setKeeperFee({
       denom: keeperFee.denom,
-      amount: amount.shiftedBy(PRICE_ORACLE_DECIMALS).toString(),
+      amount: amount.shiftedBy(PRICE_ORACLE_DECIMALS - 2).toString(),
     })
     onClose()
   }
