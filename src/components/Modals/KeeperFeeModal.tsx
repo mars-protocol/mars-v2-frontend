@@ -1,6 +1,5 @@
 import classNames from 'classnames'
-import { useCallback, useEffect, useState } from 'react'
-
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Modal from 'components/Modals/Modal'
 import AssetAmountInput from 'components/common/AssetAmountInput'
 import Button from 'components/common/Button'
@@ -8,39 +7,64 @@ import { Callout, CalloutType } from 'components/common/Callout'
 import Text from 'components/common/Text'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAsset from 'hooks/assets/useAsset'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 
 export default function KeeperFeeModal() {
+  const chainConfig = useChainConfig()
   const creditManagerConfig = useStore((s) => s.creditManagerConfig)
-  const [keeperFee, setKeeperFee] = useLocalStorage(
-    LocalStorageKeys.PERPS_KEEPER_FEE,
-    creditManagerConfig?.keeper_fee_config?.min_fee,
+  const USD = useAsset('usd')
+  const modal = useStore((s) => s.keeperFeeModal)
+
+  const defaultKeeperFee = JSON.stringify(
+    creditManagerConfig?.keeper_fee_config?.min_fee ?? {
+      denom: '',
+      amount: '0',
+    },
   )
 
-  console.log('keeperFee', keeperFee)
-  const [amount, setAmount] = useState(BN(keeperFee.amount).shiftedBy(2 - PRICE_ORACLE_DECIMALS))
-  const USD = useAsset('usd')
+  const [keeperFee, setKeeperFee] = useLocalStorage(
+    LocalStorageKeys.PERPS_KEEPER_FEE,
+    defaultKeeperFee,
+  )
+
+  const parsedKeeperFee = useMemo(() => {
+    try {
+      return typeof keeperFee === 'string' ? JSON.parse(keeperFee) : keeperFee
+    } catch {
+      return { denom: '', amount: '0' }
+    }
+  }, [keeperFee])
+
+  const [amount, setAmount] = useState(() => {
+    return BN(parsedKeeperFee?.amount ?? '0').shiftedBy(2 - PRICE_ORACLE_DECIMALS)
+  })
+
   const onClose = useCallback(() => {
     useStore.setState({ keeperFeeModal: false })
   }, [])
 
-  const minKeeperFee = BN(useStore((s) => s.creditManagerConfig?.keeper_fee_config.min_fee.amount))
+  const minKeeperFee = BN(creditManagerConfig?.keeper_fee_config?.min_fee?.amount ?? '0')
   const isLessThanMin = amount.isLessThan(minKeeperFee?.shiftedBy(2 - PRICE_ORACLE_DECIMALS))
 
   useEffect(() => {
-    setAmount(BN(keeperFee.amount).shiftedBy(2 - PRICE_ORACLE_DECIMALS))
-  }, [keeperFee])
+    if (parsedKeeperFee?.amount) {
+      setAmount(BN(parsedKeeperFee.amount).shiftedBy(2 - PRICE_ORACLE_DECIMALS))
+    }
+  }, [parsedKeeperFee])
 
   const handleActionClick = () => {
-    if (!USD) return
+    if (!USD || !parsedKeeperFee.denom) return
 
-    setKeeperFee({
-      denom: keeperFee.denom,
-      amount: amount.shiftedBy(PRICE_ORACLE_DECIMALS - 2).toString(),
-    })
+    setKeeperFee(
+      JSON.stringify({
+        denom: parsedKeeperFee.denom,
+        amount: amount.shiftedBy(PRICE_ORACLE_DECIMALS - 2).toString(),
+      }),
+    )
     onClose()
   }
 
@@ -52,9 +76,7 @@ export default function KeeperFeeModal() {
     [USD],
   )
 
-  const modal = useStore((s) => s.keeperFeeModal)
-
-  if (!modal || !USD) return
+  if (!modal || !USD || !chainConfig.perps) return null
 
   return (
     <Modal
