@@ -93,14 +93,8 @@ const Osmosis1: ChainConfig = {
   },
   bech32Config: Bech32Address.defaultBech32Config('osmo'),
   contracts: {
-    redBank: '',
-    accountNft: '',
-    oracle: '',
-    incentives: '',
-    params: '',
     creditManager: 'osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf',
     pyth: 'osmo13ge29x4e2s63a8ytz2px8gurtyznmue4a69n5275692v3qn3ks8q7cwck7',
-    perps: '',
   },
   defaultCurrency: {
     coinDenom: 'OSMO',

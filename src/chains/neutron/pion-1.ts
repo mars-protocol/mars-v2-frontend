@@ -13,13 +13,7 @@ const Pion1: ChainConfig = {
     sell: 'factory/neutron1ke0vqqzyymlp5esr8gjwuzh94ysnpvj8er5hm7/UUSDC',
   },
   contracts: {
-    redBank: '',
-    incentives: '',
-    oracle: '',
-    params: '',
     creditManager: 'neutron1zkxezh5e6jvg0h3kj50hz5d0yrgagkp0c3gcdr6stulw7fye9xlqygj2gz',
-    accountNft: '',
-    perps: '',
     pyth: 'neutron15ldst8t80982akgr8w8ekcytejzkmfpgdkeq4xgtge48qs7435jqp87u3t',
   },
   endpoints: {

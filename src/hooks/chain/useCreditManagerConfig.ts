@@ -1,5 +1,5 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import useSWR from 'swr'
+import useSWRImmutable from 'swr/immutable'
 import { getUrl } from 'utils/url'
 import useStore from 'store'
 import { getCurrentChainId } from 'utils/getCurrentChainId'
@@ -9,7 +9,7 @@ export default function useCreditManagerConfig() {
   const chainId = getCurrentChainId()
   const baseConfig = chains[chainId]
 
-  return useSWR(
+  return useSWRImmutable(
     baseConfig.contracts.creditManager && `chains/${chainId}/creditManager/config`,
     async () => {
       const client = await CosmWasmClient.connect(getUrl(baseConfig.endpoints.rpc))
