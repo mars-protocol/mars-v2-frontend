@@ -64,6 +64,7 @@ interface PerpsVaultRow {
   status: VaultStatus
   name: string
   asset: Asset
+  unlocksAt: number
   values: {
     primary: BigNumber
     secondary: BigNumber
