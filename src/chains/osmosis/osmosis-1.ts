@@ -87,10 +87,6 @@ const Osmosis1: ChainConfig = {
     buy: 'uosmo',
     sell: 'ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4',
   },
-  defaultKeeperFee: {
-    denom: 'ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4',
-    amount: '100000',
-  },
   bech32Config: Bech32Address.defaultBech32Config('osmo'),
   contracts: {
     creditManager: 'osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf',
