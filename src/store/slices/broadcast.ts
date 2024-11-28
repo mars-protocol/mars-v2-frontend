@@ -244,6 +244,7 @@ export default function createBroadcastSlice(
       const cmContract = get().chainConfig.contracts.creditManager
       const nftContract = get().chainConfig.contracts.accountNft
 
+      if (!nftContract) return false
       const response = get().executeMsg({
         messages: [
           generateExecutionMessage(get().address, cmContract, refundMessage, []),
@@ -329,6 +330,7 @@ export default function createBroadcastSlice(
         ? get().chainConfig.contracts.incentives
         : get().chainConfig.contracts.creditManager
 
+      if (!contract) return false
       const response = get().executeMsg({
         messages: [
           generateExecutionMessage(
@@ -1173,6 +1175,7 @@ export default function createBroadcastSlice(
 
       const redBankContract = get().chainConfig.contracts.redBank
 
+      if (!redBankContract) return false
       const response = get().executeMsg({
         messages: [generateExecutionMessage(get().address, redBankContract, msg, sortFunds(funds))],
       })
