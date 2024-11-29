@@ -34,7 +34,7 @@ export default function PortfolioAccountPage() {
       <Summary account={account} />
       {isUsersAccount && <ManageAccount account={account} />}
       <Balances account={account} isUsersAccount={isUsersAccount} />
-      {chainConfig.farm && <Strategies account={account} />}
+      {(chainConfig.farm || chainConfig.perps) && <Strategies account={account} />}
       {chainConfig.perps && <PerpPositions account={account} />}
       <ShareBar text={`Have a look at Credit Account ${accountId} on @mars_protocol!`} />
     </div>

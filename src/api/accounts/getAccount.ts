@@ -18,9 +18,13 @@ export default async function getAccount(
   const accountPosition: Positions = await creditManagerQueryClient.positions({ accountId })
 
   let perpsVaultPosition = null
+
   if (isPerpsEnabled && address) {
     const perpsQueryClient = await getPerpsQueryClient(chainConfig)
-    perpsVaultPosition = await perpsQueryClient.vaultPosition({ accountId, userAddress: address })
+    perpsVaultPosition = await perpsQueryClient.vaultPosition({
+      accountId,
+      userAddress: chainConfig.contracts.creditManager,
+    })
   }
 
   const accountKind = await creditManagerQueryClient.accountKind({ accountId: accountId })
