@@ -57,7 +57,7 @@ const getParamsQueryClient = async (chainConfig: ChainConfig) => {
     const rpc = getUrl(chainConfig.endpoints.rpc)
     const key = rpc + contract
 
-    if (!_paramsQueryClient.get(key)) {
+    if (!_paramsQueryClient.get(key) && contract) {
       const client = await getClient(rpc)
       _paramsQueryClient.set(key, new MarsParamsQueryClient(client, contract))
     }
@@ -75,7 +75,7 @@ const getOracleQueryClientOsmosis = async (chainConfig: ChainConfig) => {
     const rpc = getUrl(chainConfig.endpoints.rpc)
     const key = rpc + contract
 
-    if (!_oracleQueryClient.get(key)) {
+    if (!_oracleQueryClient.get(key) && contract) {
       const client = await getClient(rpc)
       _oracleQueryClient.set(key, new MarsOracleOsmosisQueryClient(client, contract))
     }
@@ -93,7 +93,7 @@ const getOracleQueryClientNeutron = async (chainConfig: ChainConfig) => {
     const rpc = getUrl(chainConfig.endpoints.rpc)
     const key = rpc + contract
 
-    if (!_oracleQueryClient.get(key)) {
+    if (!_oracleQueryClient.get(key) && contract) {
       const client = await getClient(rpc)
       _oracleQueryClient.set(key, new MarsOracleWasmQueryClient(client, contract))
     }
@@ -120,7 +120,7 @@ const getIncentivesQueryClient = async (chainConfig: ChainConfig) => {
     const contract = chainConfig.contracts.incentives
     const rpc = getUrl(chainConfig.endpoints.rpc)
     const key = rpc + contract
-    if (!_incentivesQueryClient.get(key)) {
+    if (!_incentivesQueryClient.get(key) && contract) {
       const client = await getClient(rpc)
       _incentivesQueryClient.set(key, new MarsIncentivesQueryClient(client, contract))
     }
@@ -137,7 +137,7 @@ const getPerpsQueryClient = async (chainConfig: ChainConfig) => {
     const contract = chainConfig.contracts.perps
     const rpc = getUrl(chainConfig.endpoints.rpc)
     const key = rpc + contract
-    if (!_perpsClient.get(key)) {
+    if (!_perpsClient.get(key) && contract) {
       const client = await getClient(rpc)
       _perpsClient.set(key, new MarsPerpsQueryClient(client, contract))
     }
@@ -155,7 +155,7 @@ const getRedBankQueryClient = async (chainConfig: ChainConfig) => {
     const rpc = getUrl(chainConfig.endpoints.rpc)
     const key = rpc + contract
 
-    if (!_redBankQueryClient.get(key)) {
+    if (!_redBankQueryClient.get(key) && contract) {
       const client = await getClient(rpc)
       _redBankQueryClient.set(key, new MarsRedBankQueryClient(client, contract))
     }

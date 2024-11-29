@@ -59,10 +59,6 @@ export default function AssetAmountInput(props: Props) {
   }, [asset.decimals, max])
 
   useEffect(() => {
-    asset.decimals = isUSD ? 0 : asset.decimals
-  }, [asset, isUSD])
-
-  useEffect(() => {
     if (!disabled) return
     setAmount(BN_ZERO)
   }, [disabled, setAmount])

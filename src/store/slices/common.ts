@@ -22,5 +22,6 @@ export default function createCommonSlice(set: SetState<CommonSlice>, get: GetSt
     assets: [],
     hlsBorrowAmount: null,
     errorStore: { apiError: null, nodeError: null },
+    creditManagerConfig: null,
   }
 }
