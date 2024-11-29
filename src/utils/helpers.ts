@@ -47,6 +47,35 @@ export function mergeBNCoinArrays(array1: BNCoin[], array2: BNCoin[]) {
   return merged
 }
 
+export function mergePerpsVaults(perpVaults: (PerpsVaultPositions | null)[]) {
+  const merged: PerpsVaultPositions = {
+    active: {
+      amount: BN_ZERO,
+      shares: BN_ZERO,
+    },
+    denom: '',
+    unlocked: BN_ZERO,
+    unlocking: [] as PerpsVaultUnlockingPosition[],
+  }
+
+  perpVaults.forEach((vault) => {
+    if (!vault || !merged) return
+    if (merged.active && vault.active) {
+      merged.active.amount = merged.active.amount.plus(vault.active.amount)
+      merged.active.shares = merged.active.shares.plus(vault.active.shares)
+    }
+    if (merged.unlocked && vault.unlocked) {
+      merged.unlocked = merged.unlocked.plus(vault.unlocked)
+    }
+    vault.unlocking.forEach((unlocking) => {
+      merged.unlocking.push(unlocking)
+    })
+    merged.denom = vault.denom
+  })
+
+  return merged
+}
+
 export function getValueFromBNCoins(coins: BNCoin[], assets: Asset[]): BigNumber {
   let totalValue = BN_ZERO
 
