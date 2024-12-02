@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 import AssetImage from 'components/common/assets/AssetImage'
 import Button from 'components/common/Button'
+import { Cross } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import React from 'react'
-import { Cross } from './Icons'
 
 interface Props {
   asset?: Asset
