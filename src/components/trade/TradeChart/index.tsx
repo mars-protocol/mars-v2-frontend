@@ -158,14 +158,14 @@ export default function TradeChart(props: Props) {
             position: 'top',
             text: 'Set Limit Order Price',
             click: () => {
-              props.onCreateLimitOrder?.(BN(price))
+              onCreateLimitOrder?.(BN(price))
             },
           },
           {
             position: 'top',
             text: 'Set Stop Order Price',
             click: () => {
-              props.onCreateStopOrder?.(BN(price))
+              onCreateStopOrder?.(BN(price))
             },
           },
         ]

@@ -300,7 +300,7 @@ export default function useHealthComputer(account?: Account) {
         return null
       }
     },
-    [healthComputer, perpsAssets],
+    [healthComputer, perpsAssets, whitelistedAssets],
   )
 
   const computeMaxPerpAmount = useCallback(

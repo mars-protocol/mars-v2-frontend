@@ -216,6 +216,8 @@ interface PerpsMarket {
   openInterest: {
     long: BigNumber
     short: BigNumber
+    total: BigNumber
+    skewPercentage: BigNumber
   }
 }
 
@@ -234,13 +236,13 @@ interface ChainConfig {
   defaultTradingPair: TradingPair
   bech32Config: import('@keplr-wallet/types').Bech32Config
   contracts: {
-    redBank: string
-    incentives: string
-    oracle: string
-    params: string
+    redBank?: string
+    incentives?: string
+    oracle?: string
+    params?: string
+    accountNft?: string
+    perps?: string
     creditManager: string
-    accountNft: string
-    perps: string
     pyth: string
   }
   defaultCurrency: {
@@ -1224,6 +1226,7 @@ interface CommonSlice {
   perpsBaseDenom?: string
   hlsBorrowAmount: BigNumber | null
   errorStore: ErrorStore
+  creditManagerConfig: ConfigResponse | null
 }
 
 interface ErrorStore {

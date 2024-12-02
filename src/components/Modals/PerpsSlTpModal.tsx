@@ -5,13 +5,11 @@ import { Callout, CalloutType } from 'components/common/Callout'
 import Divider from 'components/common/Divider'
 import { TrashBin } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAssets from 'hooks/assets/useAssets'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import usePerpsConfig from 'hooks/perps/usePerpsConfig'
@@ -56,11 +54,11 @@ export default function PerpsSlTpModal() {
     return takeProfitPrice.minus(currentPrice).dividedBy(currentPrice).multipliedBy(100)
   }, [currentPrice, takeProfitPrice])
 
-  const chainConfig = useChainConfig()
+  const creditManagerConfig = useStore((s) => s.creditManagerConfig)
 
   const [keeperFee, _] = useLocalStorage(
     LocalStorageKeys.PERPS_KEEPER_FEE,
-    getDefaultChainSettings(chainConfig).perpsKeeperFee,
+    creditManagerConfig?.keeper_fee_config?.min_fee,
   )
 
   const feeToken = useMemo(

@@ -12,7 +12,7 @@ interface Props {
 function Content(props: Props) {
   const { account } = props
 
-  if (account.vaults.length === 0 && account.stakedAstroLps.length === 0) {
+  if (account.vaults.length === 0 && account.stakedAstroLps.length === 0 && !account.perpsVault) {
     return null
   }
 

@@ -73,10 +73,12 @@ export default function PerpsSummary(props: Props) {
   const updatedAccount = useStore((s) => s.updatedAccount)
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const chainConfig = useChainConfig()
+  const creditManagerConfig = useStore((s) => s.creditManagerConfig)
   const [keeperFee, _] = useLocalStorage(
     LocalStorageKeys.PERPS_KEEPER_FEE,
-    getDefaultChainSettings(chainConfig).perpsKeeperFee,
+    creditManagerConfig?.keeper_fee_config?.min_fee,
   )
+
   const currentAccount = useCurrentAccount()
   const isLimitOrder = props.orderType === OrderType.LIMIT
   const isStopOrder = props.orderType === OrderType.STOP
