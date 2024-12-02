@@ -1,54 +1,82 @@
 import classNames from 'classnames'
-import { useCallback, useEffect, useState } from 'react'
-
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Modal from 'components/Modals/Modal'
 import AssetAmountInput from 'components/common/AssetAmountInput'
 import Button from 'components/common/Button'
 import { Callout, CalloutType } from 'components/common/Callout'
 import Text from 'components/common/Text'
-import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import { BN_ZERO_ONE } from 'constants/math'
 import useAsset from 'hooks/assets/useAsset'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
-import { magnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 
 export default function KeeperFeeModal() {
   const chainConfig = useChainConfig()
+  const creditManagerConfig = useStore((s) => s.creditManagerConfig)
+  const USD = useAsset('usd')
+  const modal = useStore((s) => s.keeperFeeModal)
+
+  const defaultKeeperFee = JSON.stringify(
+    creditManagerConfig?.keeper_fee_config?.min_fee ?? {
+      denom: '',
+      amount: '0',
+    },
+  )
+
   const [keeperFee, setKeeperFee] = useLocalStorage(
     LocalStorageKeys.PERPS_KEEPER_FEE,
-    getDefaultChainSettings(chainConfig).perpsKeeperFee,
+    defaultKeeperFee,
   )
-  const [amount, setAmount] = useState(BN(keeperFee.amount))
-  const USD = useAsset('usd')
+
+  const parsedKeeperFee = useMemo(() => {
+    try {
+      return typeof keeperFee === 'string' ? JSON.parse(keeperFee) : keeperFee
+    } catch {
+      return { denom: '', amount: '0' }
+    }
+  }, [keeperFee])
+
+  const [amount, setAmount] = useState(() => {
+    return BN(parsedKeeperFee?.amount ?? '0').shiftedBy(2 - PRICE_ORACLE_DECIMALS)
+  })
 
   const onClose = useCallback(() => {
     useStore.setState({ keeperFeeModal: false })
   }, [])
 
+  const minKeeperFee = BN(creditManagerConfig?.keeper_fee_config?.min_fee?.amount ?? '0')
+  const isLessThanMin = amount.isLessThan(minKeeperFee?.shiftedBy(2 - PRICE_ORACLE_DECIMALS))
+
   useEffect(() => {
-    setAmount(BN(keeperFee.amount))
-  }, [keeperFee])
+    if (parsedKeeperFee?.amount) {
+      setAmount(BN(parsedKeeperFee.amount).shiftedBy(2 - PRICE_ORACLE_DECIMALS))
+    }
+  }, [parsedKeeperFee])
 
   const handleActionClick = () => {
-    setKeeperFee({ denom: keeperFee.denom, amount: amount.toString() })
+    if (!USD || !parsedKeeperFee.denom) return
+
+    setKeeperFee(
+      JSON.stringify({
+        denom: parsedKeeperFee.denom,
+        amount: amount.shiftedBy(PRICE_ORACLE_DECIMALS - 2).toString(),
+      }),
+    )
     onClose()
   }
 
   const onUpdateAmount = useCallback(
-    (amount: BigNumber) => {
+    (newAmount: BigNumber) => {
       if (!USD) return
-      setAmount(magnify(amount.toString(), USD))
+      setAmount(newAmount)
     },
     [USD],
   )
 
-  const modal = useStore((s) => s.keeperFeeModal)
-
-  if (!modal || !USD) return
+  if (!modal || !USD || !chainConfig.perps) return null
 
   return (
     <Modal
@@ -71,10 +99,11 @@ export default function KeeperFeeModal() {
           asset={USD}
           isUSD
         />
-        {amount.isLessThan(BN_ZERO_ONE) && (
+        {isLessThanMin && (
           <Callout type={CalloutType.WARNING}>
-            You can not set the Keeper Fee to less than $0.10 as it is the minimum amount for the
-            Keeper Fee.
+            You can not set the Keeper Fee to less than $
+            {minKeeperFee?.shiftedBy(-PRICE_ORACLE_DECIMALS).toString()} as it is the minimum amount
+            for the Keeper Fee.
           </Callout>
         )}
         <Text size='sm' className='text-white/60'>
@@ -84,7 +113,7 @@ export default function KeeperFeeModal() {
         </Text>
         <Button
           onClick={handleActionClick}
-          disabled={amount.isLessThan(BN_ZERO_ONE)}
+          disabled={isLessThanMin}
           className='w-full !text-base'
           color='tertiary'
           text='Done'

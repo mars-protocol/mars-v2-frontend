@@ -8,6 +8,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { demagnify, getPerpsPriceDecimals } from 'utils/formatters'
 
 export const SIZE_META = {
+  id: 'size',
   accessorKey: 'size',
   header: () => (
     <div className='flex flex-col gap-1'>
@@ -37,7 +38,7 @@ export default function Size(props: Props) {
     <TitleAndSubCell
       title={
         <FormattedNumber
-          amount={Math.abs(Number(demagnify(amount, asset).toFixed(2)))}
+          amount={Math.abs(Number(demagnify(amount, asset)))}
           options={{ maxDecimals: props.asset.decimals }}
           className='text-xs'
         />

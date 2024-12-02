@@ -16,7 +16,7 @@ import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
-import { mergeBNCoinArrays } from 'utils/helpers'
+import { mergeBNCoinArrays, mergePerpsVaults } from 'utils/helpers'
 
 export default function PortfolioSummary() {
   const { address: urlAddress } = useParams()
@@ -48,6 +48,7 @@ export default function PortfolioSummary() {
           combinedAccount.stakedAstroLps,
           account.stakedAstroLps,
         )
+
         return combinedAccount
       },
       {
@@ -62,6 +63,8 @@ export default function PortfolioSummary() {
         kind: 'default' as AccountKind,
       } as Account,
     )
+    const combinedPerpsVaults = mergePerpsVaults(allAccounts.map((account) => account.perpsVault))
+    combinedAccount.perpsVault = combinedPerpsVaults.denom !== '' ? combinedPerpsVaults : null
 
     const { positionValue, debts, netWorth, collateralValue, apy, leverage } =
       getAccountSummaryStats(

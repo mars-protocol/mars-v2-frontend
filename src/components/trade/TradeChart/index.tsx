@@ -32,6 +32,7 @@ import {
 } from 'utils/charting_library'
 import { formatValue, getPerpsPriceDecimals, magnify } from 'utils/formatters'
 import { getTradingViewSettings } from 'utils/theme'
+import { BN } from 'utils/helpers'
 
 interface Props {
   buyAsset: Asset
@@ -41,7 +42,8 @@ interface Props {
   perpsPosition?: PerpsPosition
   liquidationPrice?: number
   limitOrders?: PerpPositionRow[]
-  onCreateLimitOrder?: (price: number) => void
+  onCreateLimitOrder?: (price: BigNumber) => void
+  onCreateStopOrder?: (price: BigNumber) => void
 }
 
 let chartWidget: IChartingLibraryWidget
@@ -52,8 +54,8 @@ function getLimitOrderText(
   currentPosition: 'long' | 'short' | null,
   positionAmount: BigNumber | null,
 ) {
-  let label = 'Limit'
-
+  let label = order.type === 'stop' ? 'Stop' : 'Limit'
+  console.log(order)
   if (positionAmount && order.amount.abs().isEqualTo(positionAmount.abs())) {
     const isClosing =
       (currentPosition === 'long' && order.tradeDirection === 'short') ||
@@ -78,6 +80,7 @@ function isAutomaticAddedLine(shapeName: string, shape: any) {
 
   return (
     shape.text.includes('Limit') ||
+    shape.text.includes('Stop') ||
     shape.text.includes('Entry') ||
     shape.text.includes('Liquidation') ||
     shape.text.includes('Close')
@@ -105,7 +108,7 @@ export default function TradeChart(props: Props) {
   )
   const chartName = useMemo(() => getChartName(props), [props])
 
-  const { onCreateLimitOrder, isPerps } = props
+  const { onCreateLimitOrder, onCreateStopOrder, isPerps } = props
 
   const [ratio, priceBuyAsset, priceSellAsset] = useMemo(() => {
     const priceBuyAsset = props.buyAsset?.price?.amount
@@ -133,9 +136,9 @@ export default function TradeChart(props: Props) {
       const chart = chartWidget.activeChart()
       if (!chart) return
       const chartStore = JSON.parse(localStorage.getItem(LocalStorageKeys.TV_CHART_STORE) ?? '{}')
-      const currentChartStore = chartStore[chartName]
-      if (!currentChartStore) return
-      currentChartStore.forEach((shape: TradingViewShape) => {
+      const currentChartShapeStore = chartStore[chartName]
+      if (!currentChartShapeStore) return
+      currentChartShapeStore.forEach((shape: TradingViewShape) => {
         if (Array.isArray(shape.points)) {
           if (shape.points.length === 0) return
           chart.createMultipointShape(shape.points, shape.shape)
@@ -143,14 +146,26 @@ export default function TradeChart(props: Props) {
           chart.createShape(shape.points, shape.shape)
         }
       })
-      if (!isPerps || !onCreateLimitOrder) return
+      const currentChartStudyStore = chartStore[`${chartName}-studies`]
+      if (!currentChartStudyStore) return
+      currentChartStudyStore.forEach((studyName: string) => {
+        chart.createStudy(studyName)
+      })
+      if (!isPerps || !onCreateLimitOrder || !onCreateStopOrder) return
       chartWidget.onContextMenu((unixTime, price) => {
         return [
           {
             position: 'top',
             text: 'Set Limit Order Price',
             click: () => {
-              onCreateLimitOrder(price)
+              onCreateLimitOrder?.(BN(price))
+            },
+          },
+          {
+            position: 'top',
+            text: 'Set Stop Order Price',
+            click: () => {
+              onCreateStopOrder?.(BN(price))
             },
           },
         ]
@@ -159,101 +174,114 @@ export default function TradeChart(props: Props) {
       console.info('Error on loading chart', e)
       return
     }
-  }, [chartName, onCreateLimitOrder, isPerps])
+  }, [chartName, onCreateLimitOrder, onCreateStopOrder, isPerps])
 
-  const updateShapes = useCallback(() => {
-    const chart = chartWidget.activeChart()
-    const settings = getTradingViewSettings(theme)
-    const oraclePriceDecimalDiff = props.buyAsset.decimals - PRICE_ORACLE_DECIMALS
-    const { downColor, upColor } = settings.chartStyle
-    const currentShapes = [] as TradingViewShape[]
-    const allShapes = chart.getAllShapes()
-    allShapes.forEach((shape) => {
-      const currentShape = chart.getShapeById(shape.id).getProperties()
-      const currentShapePoints = chart.getShapeById(shape.id).getPoints()
-      if (isAutomaticAddedLine(shape.name, currentShape)) {
-        chart.removeEntity(shape.id)
-      } else {
-        currentShapes.push({
-          points: currentShapePoints,
-          shape: { ...currentShape, shape: shape.name as TradingViewShapeNames },
-        })
-      }
-    })
+  const updateShapesAndStudies = useCallback(() => {
+    try {
+      const chart = chartWidget.activeChart()
+      const settings = getTradingViewSettings(theme)
+      const oraclePriceDecimalDiff = props.buyAsset.decimals - PRICE_ORACLE_DECIMALS
+      const { downColor, upColor } = settings.chartStyle
+      const currentShapes = [] as TradingViewShape[]
+      const currentStudies = [] as string[]
+      const allShapes = chart.getAllShapes()
+      const allStudies = chart.getAllStudies()
 
-    const newTvChartStore = JSON.stringify({
-      ...JSON.parse(tvChartStore),
-      [chartName]: currentShapes,
-    })
-    setTvChartStore(newTvChartStore)
+      allShapes.forEach((shape) => {
+        const currentShape = chart.getShapeById(shape.id).getProperties()
+        const currentShapePoints = chart.getShapeById(shape.id).getPoints()
+        if (isAutomaticAddedLine(shape.name, currentShape)) {
+          chart.removeEntity(shape.id)
+        } else {
+          currentShapes.push({
+            points: currentShapePoints,
+            shape: { ...currentShape, shape: shape.name as TradingViewShapeNames },
+          })
+        }
+      })
 
-    if (entryPrice) {
-      chart.createShape(
-        { price: entryPrice, time: moment().unix() },
-        {
-          shape: 'horizontal_line',
-          lock: true,
-          disableSelection: true,
-          zOrder: 'top',
-          text: 'Entry',
-          overrides: {
-            linecolor: tradeDirection === 'long' ? upColor : downColor,
-            textcolor: tradeDirection === 'long' ? upColor : downColor,
-            linestyle: 0,
-            linewidth: 1,
-            showLabel: true,
-          },
-        },
-      )
-    }
+      allStudies.forEach((study) => {
+        currentStudies.push(study.name)
+      })
 
-    if (liquidationPrice) {
-      chart.createShape(
-        { price: liquidationPrice, time: moment().unix() },
-        {
-          shape: 'horizontal_line',
-          lock: true,
-          disableSelection: true,
-          text: 'Liquidation',
-          zOrder: 'top',
-          overrides: {
-            linecolor: '#fdb021',
-            linestyle: 0,
-            linewidth: 1,
-            textcolor: '#fdb021',
-            showLabel: true,
-          },
-        },
-      )
-    }
-    if (props.limitOrders) {
-      const currentPosition = props.perpsPosition?.amount.isGreaterThan(0) ? 'long' : 'short'
-      const positionAmount = props.perpsPosition?.amount || null
+      const newTvChartStore = JSON.stringify({
+        ...JSON.parse(tvChartStore),
+        [chartName]: currentShapes,
+        [`${chartName}-studies`]: currentStudies,
+      })
+      setTvChartStore(newTvChartStore)
 
-      props.limitOrders.forEach((order) => {
-        const price = order.entryPrice.shiftedBy(oraclePriceDecimalDiff).toNumber()
-
+      if (entryPrice) {
         chart.createShape(
-          {
-            price: price,
-            time: moment().unix(),
-          },
+          { price: entryPrice, time: moment().unix() },
           {
             shape: 'horizontal_line',
             lock: true,
             disableSelection: true,
             zOrder: 'top',
-            text: getLimitOrderText(order, props.buyAsset, currentPosition, positionAmount),
+            text: 'Entry',
             overrides: {
-              linecolor: order.tradeDirection === 'long' ? upColor : downColor,
-              textcolor: order.tradeDirection === 'long' ? upColor : downColor,
-              showLabel: true,
-              linestyle: 2,
+              linecolor: tradeDirection === 'long' ? upColor : downColor,
+              textcolor: tradeDirection === 'long' ? upColor : downColor,
+              linestyle: 0,
               linewidth: 1,
+              showLabel: true,
             },
           },
         )
-      })
+      }
+
+      if (liquidationPrice) {
+        chart.createShape(
+          { price: liquidationPrice, time: moment().unix() },
+          {
+            shape: 'horizontal_line',
+            lock: true,
+            disableSelection: true,
+            text: 'Liquidation',
+            zOrder: 'top',
+            overrides: {
+              linecolor: '#fdb021',
+              linestyle: 0,
+              linewidth: 1,
+              textcolor: '#fdb021',
+              showLabel: true,
+            },
+          },
+        )
+      }
+      if (props.limitOrders) {
+        const currentPosition = props.perpsPosition?.amount.isGreaterThan(0) ? 'long' : 'short'
+        const positionAmount = props.perpsPosition?.amount || null
+
+        props.limitOrders.forEach((order) => {
+          const price = order.entryPrice.shiftedBy(oraclePriceDecimalDiff).toNumber()
+
+          chart.createShape(
+            {
+              price: price,
+              time: moment().unix(),
+            },
+            {
+              shape: 'horizontal_line',
+              lock: true,
+              disableSelection: true,
+              zOrder: 'top',
+              text: getLimitOrderText(order, props.buyAsset, currentPosition, positionAmount),
+              overrides: {
+                linecolor: order.tradeDirection === 'long' ? upColor : downColor,
+                textcolor: order.tradeDirection === 'long' ? upColor : downColor,
+                showLabel: true,
+                linestyle: 2,
+                linewidth: 1,
+              },
+            },
+          )
+        })
+      }
+    } catch (e) {
+      console.info('Error on updating chart', e)
+      return
     }
   }, [
     chartName,
@@ -335,15 +363,15 @@ export default function TradeChart(props: Props) {
   useEffect(() => {
     if (!chartWidget) return
     chartWidget.onChartReady(() => {
-      updateShapes()
+      updateShapesAndStudies()
       chartWidget
         .activeChart()
         .onIntervalChanged()
         .subscribe(null, () => {
-          updateShapes()
+          updateShapesAndStudies()
         })
     })
-  }, [updateShapes])
+  }, [updateShapesAndStudies])
 
   return (
     <Card

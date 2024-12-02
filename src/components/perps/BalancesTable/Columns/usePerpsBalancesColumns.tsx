@@ -7,10 +7,10 @@ import Manage, { MANAGE_META } from 'components/perps/BalancesTable/Columns/Mana
 import { PERP_NAME_META, PerpName } from 'components/perps/BalancesTable/Columns/PerpName'
 import PnL, { PNL_META } from 'components/perps/BalancesTable/Columns/PnL'
 import Size, { SIZE_META, sizeSortingFn } from 'components/perps/BalancesTable/Columns/Size'
+import { Status, STATUS_META } from 'components/perps/BalancesTable/Columns/Status'
 import TradeDirection, {
-  PERP_TYPE_META,
+  TRADE_DIRECTION_META,
 } from 'components/perps/BalancesTable/Columns/TradeDirection'
-import { Type, TYPE_META } from 'components/perps/BalancesTable/Columns/Type'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import usePerpsLimitOrderRows from 'hooks/perps/usePerpsLimitOrdersRows'
 import { demagnify } from 'utils/formatters'
@@ -32,31 +32,41 @@ export default function usePerpsBalancesColumns(props: Props) {
         cell: ({ row }) => <PerpName asset={row.original.asset} />,
       },
       {
-        ...PERP_TYPE_META,
-        cell: ({ row }) => <TradeDirection tradeDirection={row.original.tradeDirection} />,
+        ...TRADE_DIRECTION_META,
+        cell: ({ row }) => {
+          const { type, tradeDirection, reduce_only, amount, denom } = row.original
+          return (
+            <TradeDirection
+              tradeDirection={tradeDirection}
+              reduce_only={type !== 'market' && reduce_only}
+              amount={amount}
+              denom={denom}
+              type={type}
+              showPositionEffect={isOrderTable}
+            />
+          )
+        },
       },
       {
         ...SIZE_META,
+        id: 'size',
         cell: ({ row }) => {
           const { asset, amount, type, entryPrice } = row.original
           const demagnifiedAmount = BN(demagnify(amount, asset))
 
           let value
-          if (type === 'limit') {
-            // For limit orders, calculate adjusted value
+          if (type === 'market') {
+            value = demagnifiedAmount.times(BN(asset.price?.amount || 0))
+          } else {
             value = demagnifiedAmount
               .times(entryPrice)
               .shiftedBy(asset.decimals - PRICE_ORACLE_DECIMALS)
-          } else {
-            // For market orders/positions, use value directly
-            value = demagnifiedAmount.times(BN(asset.price?.amount || 0))
           }
 
           return <Size amount={row.original.amount} asset={row.original.asset} value={value} />
         },
         sortingFn: sizeSortingFn,
       },
-
       ...(isOrderTable
         ? []
         : [
@@ -70,11 +80,14 @@ export default function usePerpsBalancesColumns(props: Props) {
           ]),
       {
         ...ENTRY_PRICE_META(isOrderTable),
+        id: isOrderTable ? 'triggerPrice' : 'entryPrice',
         cell: ({ row }) => (
           <EntryPrice
             entryPrice={row.original.entryPrice}
             currentPrice={row.original.currentPrice}
             asset={row.original.asset}
+            type={row.original.type}
+            tradeDirection={row.original.tradeDirection}
           />
         ),
       },
@@ -98,7 +111,7 @@ export default function usePerpsBalancesColumns(props: Props) {
 
   const typeColumn = useMemo<ColumnDef<PerpPositionRow>>(
     () => ({
-      ...TYPE_META,
+      ...STATUS_META,
       cell: ({ row }) => {
         const position = row.original
         const { hasStopLoss, hasTakeProfit } = checkStopLossAndTakeProfit(
@@ -106,7 +119,7 @@ export default function usePerpsBalancesColumns(props: Props) {
           activeLimitOrders,
         )
         return (
-          <Type
+          <Status
             type={position.type}
             hasStopLoss={hasStopLoss}
             hasTakeProfit={hasTakeProfit}

@@ -4,6 +4,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import classNames from 'classnames'
 import { BN_ZERO } from 'constants/math'
+import { getPerpsPriceDecimals } from 'utils/formatters'
 
 interface Props {
   label?: string
@@ -48,7 +49,7 @@ export default function LimitPriceInput(props: Props) {
             asset={{ ...asset, decimals: 0 }}
             amount={inputValue}
             className='border-none bg-transparent outline-none flex-1 !text-left'
-            maxDecimals={6}
+            maxDecimals={18}
             disabled={disabled}
             onChange={handleChange}
             onFocus={onFocus}

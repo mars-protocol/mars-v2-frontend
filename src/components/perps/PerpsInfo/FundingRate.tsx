@@ -1,10 +1,14 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ChevronDown } from 'components/common/Icons'
 import { Tooltip } from 'components/common/Tooltip'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePerpsMarket from 'hooks/perps/usePerpsMarket'
 
 type Interval = '1H' | '1D' | '1W' | '1M' | '1Y'
@@ -19,7 +23,11 @@ enum Intervals {
 
 export default function FundingRate() {
   const market = usePerpsMarket()
-  const [interval, setInterval] = useState<Interval>('1H')
+  const chainConfig = useChainConfig()
+  const [interval, setInterval] = useLocalStorage<Interval>(
+    LocalStorageKeys.FUNDING_RATE_INTERVAL,
+    getDefaultChainSettings(chainConfig).fundingRateInterval as Interval,
+  )
   const [show, toggleShow] = useToggle(false)
 
   const fundingRate = useMemo(() => {

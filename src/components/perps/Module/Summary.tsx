@@ -73,10 +73,12 @@ export default function PerpsSummary(props: Props) {
   const updatedAccount = useStore((s) => s.updatedAccount)
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const chainConfig = useChainConfig()
+  const creditManagerConfig = useStore((s) => s.creditManagerConfig)
   const [keeperFee, _] = useLocalStorage(
     LocalStorageKeys.PERPS_KEEPER_FEE,
-    getDefaultChainSettings(chainConfig).perpsKeeperFee,
+    creditManagerConfig?.keeper_fee_config?.min_fee,
   )
+
   const currentAccount = useCurrentAccount()
   const isLimitOrder = props.orderType === OrderType.LIMIT
   const isStopOrder = props.orderType === OrderType.STOP
@@ -151,9 +153,9 @@ export default function PerpsSummary(props: Props) {
       let comparison: 'less_than' | 'greater_than'
 
       if (tradeDirection === 'long') {
-        comparison = 'greater_than'
-      } else {
         comparison = 'less_than'
+      } else {
+        comparison = 'greater_than'
       }
 
       await submitLimitOrder({
@@ -238,6 +240,7 @@ export default function PerpsSummary(props: Props) {
                   ? tradeDirection
                   : (previousTradeDirection ?? 'long')
               }
+              type={isLimitOrder ? 'limit' : 'stop'}
               className='capitalize !text-sm'
             />
           )}
@@ -378,7 +381,7 @@ function ManageSummary(
   } = props
 
   const size = useMemo(() => previousAmount.plus(amount).abs(), [amount, previousAmount])
-
+  const isLimitOrder = props.orderType === OrderType.LIMIT
   if (amount.isZero()) return null
 
   return (
@@ -402,6 +405,7 @@ function ManageSummary(
             tradeDirection={
               isNewPosition || isDirectionChange ? tradeDirection : previousTradeDirection
             }
+            type={isLimitOrder ? 'limit' : 'stop'}
             previousTradeDirection={isDirectionChange ? previousTradeDirection : undefined}
           />
         </SummaryLine>
@@ -423,17 +427,29 @@ function ManageSummary(
         />
       </SummaryLine>
       <SummaryLine label='Leverage' contentClassName='flex gap-1 pt-2'>
-        {previousLeverage && !previousAmount.isZero() && (
-          <>
+        {previousLeverage && !previousAmount.isZero() ? (
+          <div className='flex items-center gap-1'>
             <span>{formatLeverage(previousLeverage)}</span>
             <div className='w-4'>
               <ArrowRight
-                className={classNames(leverage > previousLeverage ? 'text-error' : 'text-success')}
+                className={classNames(
+                  leverage > previousLeverage ? 'text-error' : 'text-success',
+                  'transition-colors duration-200',
+                )}
               />
             </div>
-          </>
+            <span
+              className={classNames(
+                leverage > previousLeverage ? 'text-error' : 'text-success',
+                'transition-colors duration-200',
+              )}
+            >
+              {formatLeverage(leverage)}
+            </span>
+          </div>
+        ) : (
+          <span>{formatLeverage(leverage)}</span>
         )}
-        <span>{formatLeverage(leverage)}</span>
       </SummaryLine>
     </div>
   )

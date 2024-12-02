@@ -100,6 +100,7 @@ export default function Toaster() {
       closeOnClick: false,
       hideProgressBar: true,
       autoClose: false,
+      position: 'bottom-right',
     })
   }
 

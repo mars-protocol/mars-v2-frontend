@@ -21,7 +21,7 @@ type ActionCoin = import('types/generated/mars-credit-manager/MarsCreditManager.
 type Action = import('types/generated/mars-credit-manager/MarsCreditManager.types').Action
 type BNCoin = import('types/classes/BNCoin').BNCoin
 
-type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp' | 'market' | 'limit'
+type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp' | 'market' | 'limit' | 'stop'
 type TableType = 'balances' | 'strategies' | 'perps'
 type AccountKind = import('types/generated/mars-credit-manager/MarsCreditManager.types').AccountKind
 
@@ -216,6 +216,8 @@ interface PerpsMarket {
   openInterest: {
     long: BigNumber
     short: BigNumber
+    total: BigNumber
+    skewPercentage: BigNumber
   }
 }
 
@@ -234,13 +236,13 @@ interface ChainConfig {
   defaultTradingPair: TradingPair
   bech32Config: import('@keplr-wallet/types').Bech32Config
   contracts: {
-    redBank: string
-    incentives: string
-    oracle: string
-    params: string
+    redBank?: string
+    incentives?: string
+    oracle?: string
+    params?: string
+    accountNft?: string
+    perps?: string
     creditManager: string
-    accountNft: string
-    perps: string
     pyth: string
   }
   defaultCurrency: {
@@ -338,6 +340,7 @@ interface PerpsPosition {
   currentPrice: BigNumber
   entryPrice: BigNumber
   type: PositionType
+  reduce_only?: boolean
 }
 
 interface PerpsLimitOrder {
@@ -354,6 +357,7 @@ interface PerpPositionRow extends PerpsPosition {
   orderId?: string
   hasStopLoss?: boolean
   hasTakeProfit?: boolean
+  reduce_only?: boolean
 }
 
 interface PerpsPnL {
@@ -1222,6 +1226,7 @@ interface CommonSlice {
   perpsBaseDenom?: string
   hlsBorrowAmount: BigNumber | null
   errorStore: ErrorStore
+  creditManagerConfig: ConfigResponse | null
 }
 
 interface ErrorStore {
