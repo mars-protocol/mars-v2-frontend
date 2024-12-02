@@ -22,7 +22,7 @@ import {
 } from 'components/perps/Module/constants'
 import usePerpsModule from 'components/perps/Module/usePerpsModule'
 import AssetSelectorPerps from 'components/trade/TradeModule/AssetSelector/AssetSelectorPerps'
-import { BN_ZERO } from 'constants/math'
+import { BN_ONE, BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useAssets from 'hooks/assets/useAssets'
@@ -35,7 +35,11 @@ import useStore from 'store'
 import { OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
 import getPerpsPosition from 'utils/getPerpsPosition'
-import { capitalizeFirstLetter } from 'utils/helpers'
+import { BN, capitalizeFirstLetter } from 'utils/helpers'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import { usePerpsParams } from 'hooks/perps/usePerpsParams'
+import usePerpsMarketState from 'hooks/perps/usePerpsMarketState'
 
 export function PerpsModule() {
   const [tradeDirection, setTradeDirection] = useState<TradeDirection>('long')
@@ -52,6 +56,28 @@ export function PerpsModule() {
   const isLimitOrder = selectedOrderType === OrderType.LIMIT
   const [limitPriceInfo, setLimitPriceInfo] = useState<CallOut | undefined>(
     DEFAULT_LIMIT_PRICE_INFO,
+  )
+
+  const perpsMarket = usePerpsMarketState()
+  const params = usePerpsParams(perpsAsset?.denom)
+
+  const calculateOpenInterestLeft = (
+    oiValue: BigNumber | string | undefined,
+    maxOi: BigNumber | string | undefined,
+  ) => {
+    const oiUsd = BN(oiValue ?? '0').shiftedBy(-PRICE_ORACLE_DECIMALS)
+    const maxOiUsd = BN(maxOi ?? '0').shiftedBy(-PRICE_ORACLE_DECIMALS)
+    return maxOiUsd.minus(oiUsd).div(perpsAsset?.price?.amount ?? BN_ONE)
+  }
+
+  const long_open_interest_left = calculateOpenInterestLeft(
+    perpsMarket?.long_oi_value,
+    params?.maxOpenInterestLong,
+  )
+
+  const short_open_interest_left = calculateOpenInterestLeft(
+    perpsMarket?.short_oi_value,
+    params?.maxOpenInterestShort,
   )
 
   const [stopPriceInfo, setStopPriceInfo] = useState<CallOut | undefined>(DEFAULT_STOP_PRICE_INFO)
@@ -442,6 +468,22 @@ export function PerpsModule() {
           <Callout type={CalloutType.WARNING}>
             The entered amount exceeds the maximum allowed.
           </Callout>
+        )}
+        {perpsMarket && params && perpsAsset && perpsAsset.price && (
+          <div className='flex items-center gap-1 pb-2 text-xs text-white/60'>
+            <span>Open Interest left ({isStopOrder ? stopTradeDirection : tradeDirection}):</span>
+            <FormattedNumber
+              amount={
+                tradeDirection === 'short' || stopTradeDirection === 'short'
+                  ? short_open_interest_left.toNumber()
+                  : long_open_interest_left.toNumber()
+              }
+              options={{
+                suffix: ` ${perpsAsset.symbol}`,
+                abbreviated: true,
+              }}
+            />
+          </div>
         )}
         {!maxAmount.isZero() && !currentPerpPosition && (
           <div className='w-full'>

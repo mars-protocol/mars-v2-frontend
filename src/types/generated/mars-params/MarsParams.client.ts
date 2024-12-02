@@ -52,6 +52,7 @@ import {
 export interface MarsParamsReadOnlyInterface {
   contractAddress: string
   owner: () => Promise<OwnerResponse>
+  riskManager: () => Promise<OwnerResponse>
   config: () => Promise<ConfigResponse>
   assetParams: ({ denom }: { denom: string }) => Promise<NullableAssetParamsBaseForAddr>
   allAssetParams: ({
@@ -114,6 +115,7 @@ export class MarsParamsQueryClient implements MarsParamsReadOnlyInterface {
     this.client = client
     this.contractAddress = contractAddress
     this.owner = this.owner.bind(this)
+    this.riskManager = this.riskManager.bind(this)
     this.config = this.config.bind(this)
     this.assetParams = this.assetParams.bind(this)
     this.allAssetParams = this.allAssetParams.bind(this)
@@ -130,6 +132,11 @@ export class MarsParamsQueryClient implements MarsParamsReadOnlyInterface {
   owner = async (): Promise<OwnerResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       owner: {},
+    })
+  }
+  riskManager = async (): Promise<OwnerResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      risk_manager: {},
     })
   }
   config = async (): Promise<ConfigResponse> => {
@@ -273,6 +280,17 @@ export interface MarsParamsInterface extends MarsParamsReadOnlyInterface {
     memo?: string,
     _funds?: Coin[],
   ) => Promise<ExecuteResult>
+  updateRiskManager: (
+    ownerUpdate: OwnerUpdate,
+    fee?: number | StdFee | 'auto',
+    memo?: string,
+    _funds?: Coin[],
+  ) => Promise<ExecuteResult>
+  resetRiskManager: (
+    fee?: number | StdFee | 'auto',
+    memo?: string,
+    _funds?: Coin[],
+  ) => Promise<ExecuteResult>
   updateConfig: (
     {
       addressProvider,
@@ -320,6 +338,8 @@ export class MarsParamsClient extends MarsParamsQueryClient implements MarsParam
     this.sender = sender
     this.contractAddress = contractAddress
     this.updateOwner = this.updateOwner.bind(this)
+    this.updateRiskManager = this.updateRiskManager.bind(this)
+    this.resetRiskManager = this.resetRiskManager.bind(this)
     this.updateConfig = this.updateConfig.bind(this)
     this.updateAssetParams = this.updateAssetParams.bind(this)
     this.updateVaultConfig = this.updateVaultConfig.bind(this)
@@ -337,6 +357,39 @@ export class MarsParamsClient extends MarsParamsQueryClient implements MarsParam
       this.contractAddress,
       {
         update_owner: ownerUpdate,
+      },
+      fee,
+      memo,
+      _funds,
+    )
+  }
+  updateRiskManager = async (
+    ownerUpdate: OwnerUpdate,
+    fee: number | StdFee | 'auto' = 'auto',
+    memo?: string,
+    _funds?: Coin[],
+  ): Promise<ExecuteResult> => {
+    return await this.client.execute(
+      this.sender,
+      this.contractAddress,
+      {
+        update_risk_manager: ownerUpdate,
+      },
+      fee,
+      memo,
+      _funds,
+    )
+  }
+  resetRiskManager = async (
+    fee: number | StdFee | 'auto' = 'auto',
+    memo?: string,
+    _funds?: Coin[],
+  ): Promise<ExecuteResult> => {
+    return await this.client.execute(
+      this.sender,
+      this.contractAddress,
+      {
+        reset_risk_manager: {},
       },
       fee,
       memo,
