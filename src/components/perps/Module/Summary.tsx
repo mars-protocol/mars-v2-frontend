@@ -317,6 +317,7 @@ export default function PerpsSummary(props: Props) {
             denom={asset.denom}
             newAmount={newAmount}
             override={isLimitOrder ? limitPrice : undefined}
+            tradeDirection={tradeDirection}
           />
         </SummaryLine>
         {!isLimitOrder && (

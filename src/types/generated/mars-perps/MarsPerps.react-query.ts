@@ -376,6 +376,7 @@ export interface MarsPerpsPositionQuery<TData>
     accountId: string
     denom: string
     orderSize?: Int128
+    reduceOnly?: boolean
   }
 }
 export function useMarsPerpsPositionQuery<TData = PositionResponse>({
@@ -391,6 +392,7 @@ export function useMarsPerpsPositionQuery<TData = PositionResponse>({
             accountId: args.accountId,
             denom: args.denom,
             orderSize: args.orderSize,
+            reduceOnly: args.reduceOnly,
           })
         : Promise.reject(new Error('Invalid client')),
     {

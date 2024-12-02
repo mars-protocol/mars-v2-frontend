@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react'
-
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
 import Text from 'components/common/Text'
@@ -7,6 +6,8 @@ import FundingRate from 'components/perps/PerpsInfo/FundingRate'
 import usePerpsMarket from 'hooks/perps/usePerpsMarket'
 import { BNCoin } from 'types/classes/BNCoin'
 import Skew from 'components/perps/PerpsInfo/Skew'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { getPerpsPriceDecimals } from 'utils/formatters'
 
 export function PerpsInfo() {
   const market = usePerpsMarket()
@@ -37,6 +38,26 @@ export function PerpsInfo() {
       />,
       <InfoItem key='skew' label='Skew' item={<Skew />} />,
       <InfoItem key='fundingRate' label='Funding rate' item={<FundingRate />} />,
+      <InfoItem
+        key='price'
+        label='Price'
+        className='md:hidden'
+        item={
+          <div className='flex items-center gap-1 text-sm'>
+            <Text size='sm'>1 {market.asset.symbol}</Text>
+            <FormattedNumber
+              className='text-sm'
+              amount={Number(market.asset.price?.amount.toPrecision(6) ?? 0)}
+              options={{
+                prefix: '= ',
+                suffix: ` USD`,
+                abbreviated: false,
+                maxDecimals: getPerpsPriceDecimals(market.asset.price?.amount),
+              }}
+            />
+          </div>
+        }
+      />,
     ]
   }, [market])
 
@@ -59,11 +80,12 @@ export function PerpsInfo() {
 interface InfoItemProps {
   item: React.ReactNode
   label: string
+  className?: string
 }
 
 function InfoItem(props: InfoItemProps) {
   return (
-    <div className='flex flex-col gap-1 min-w-30'>
+    <div className={`flex flex-col gap-1 min-w-30 ${props.className || ''}`}>
       <Text size='xs' className='text-white/40'>
         {props.label}
       </Text>

@@ -223,7 +223,12 @@ export function getSwapAction(
   denomOut: string,
   amount: BigNumber,
   slippage: number,
-) {
+): Action {
+  const minReceive = amount
+    .times(1 - slippage)
+    .integerValue()
+    .toString()
+
   return {
     swap_exact_in: {
       coin_in: {
@@ -233,7 +238,7 @@ export function getSwapAction(
         },
       },
       denom_out: denomOut,
-      slippage: slippage.toString(),
+      min_receive: minReceive,
     },
   }
 }

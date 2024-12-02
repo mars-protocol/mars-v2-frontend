@@ -78,6 +78,7 @@ interface AccountStrategyRow {
 interface AccountPerpRow extends PerpsPosition {
   amount: BigNumber
   symbol: string
+  asset: Asset
   value: string
   amountChange: BigNumber
 }

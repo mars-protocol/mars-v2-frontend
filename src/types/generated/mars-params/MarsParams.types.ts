@@ -9,10 +9,17 @@ export interface InstantiateMsg {
   address_provider: string
   max_perp_params: number
   owner: string
+  risk_manager?: string | null
 }
 export type ExecuteMsg =
   | {
       update_owner: OwnerUpdate
+    }
+  | {
+      update_risk_manager: OwnerUpdate
+    }
+  | {
+      reset_risk_manager: []
     }
   | {
       update_config: {
@@ -178,6 +185,9 @@ export interface PerpParams {
 export type QueryMsg =
   | {
       owner: {}
+    }
+  | {
+      risk_manager: {}
     }
   | {
       config: {}

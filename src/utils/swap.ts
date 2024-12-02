@@ -21,7 +21,12 @@ export function getSwapExactInAction(
     route: routeInfo?.route,
   }
   return isOsmosis
-    ? { swap_exact_in: { ...baseSwapExactInObject, slippage: slippage.toString() } }
+    ? {
+        swap_exact_in: {
+          ...baseSwapExactInObject,
+          min_receive: getMinAmountOutFromRouteInfo(routeInfo, slippage).integerValue().toString(),
+        },
+      }
     : {
         swap_exact_in: {
           ...baseSwapExactInObject,
