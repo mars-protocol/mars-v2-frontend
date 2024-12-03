@@ -22,7 +22,17 @@ interface Props {
 }
 
 function AlertDialog(props: Props) {
-  const { title, icon, content, negativeButton, positiveButton, checkbox, header, titleClassName, modalClassName } = props.config
+  const {
+    title,
+    icon,
+    content,
+    negativeButton,
+    positiveButton,
+    checkbox,
+    header,
+    titleClassName,
+    modalClassName,
+  } = props.config
 
   const [toggle, handleToggle] = useToggle()
 
@@ -51,8 +61,8 @@ function AlertDialog(props: Props) {
               </div>
             )}
             <Text size='2xl' className={titleClassName}>
-            {title ?? ''}
-          </Text>
+              {title ?? ''}
+            </Text>
           </div>
         )
       }
