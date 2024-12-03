@@ -31,8 +31,8 @@ import {
   widget,
 } from 'utils/charting_library'
 import { formatValue, getPerpsPriceDecimals, magnify } from 'utils/formatters'
-import { BN } from 'utils/helpers'
 import { getTradingViewSettings } from 'utils/theme'
+import { BN } from 'utils/helpers'
 
 interface Props {
   buyAsset: Asset
@@ -158,14 +158,14 @@ export default function TradeChart(props: Props) {
             position: 'top',
             text: 'Set Limit Order Price',
             click: () => {
-              props.onCreateLimitOrder?.(BN(price))
+              onCreateLimitOrder?.(BN(price))
             },
           },
           {
             position: 'top',
             text: 'Set Stop Order Price',
             click: () => {
-              props.onCreateStopOrder?.(BN(price))
+              onCreateStopOrder?.(BN(price))
             },
           },
         ]
@@ -174,7 +174,7 @@ export default function TradeChart(props: Props) {
       console.info('Error on loading chart', e)
       return
     }
-  }, [chartName, isPerps, onCreateLimitOrder, onCreateStopOrder, props])
+  }, [chartName, onCreateLimitOrder, onCreateStopOrder, isPerps])
 
   const updateShapesAndStudies = useCallback(() => {
     try {
