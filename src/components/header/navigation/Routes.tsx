@@ -45,10 +45,14 @@ export default function Routes() {
         {chainConfig.hls && <Route path='/hls-staking' element={<HlsStakingPage />} />}
         {chainConfig.hls && <Route path='/hls-farm' element={<HlsFarmPage />} />}
 
-        <Route path='/vaults' element={<VaultsOfficialPage />}>
-          <Route path='create' element={<CreateVault />} />
-        </Route>
-        <Route path='/vaults-community' element={<VaultsCommunityPage />} />
+        {chainConfig.managedVaults && (
+          <Route path='/vaults' element={<VaultsOfficialPage />}>
+            <Route path='create' element={<CreateVault />} />
+          </Route>
+        )}
+        {chainConfig.managedVaults && (
+          <Route path='/vaults-community' element={<VaultsCommunityPage />} />
+        )}
 
         <Route path='/wallets/:address'>
           <Route path='' element={<TradePage />} />
@@ -66,12 +70,16 @@ export default function Routes() {
           {chainConfig.hls && <Route path='hls-staking' element={<HlsStakingPage />} />}
           {chainConfig.hls && <Route path='hls-farm' element={<HlsFarmPage />} />}
 
-          <Route path='vaults-community' element={<VaultsCommunityPage />} />
-          <Route path='vaults' element={<VaultsOfficialPage />}>
-            <Route path='create' element={<CreateVault />} />
-            <Route path=':vaultAddress/mint-account' element={<MintVaultAccount />} />
-            <Route path=':vaultAddress/details' element={<VaultDetails />} />
-          </Route>
+          {chainConfig.managedVaults && (
+            <Route path='vaults-community' element={<VaultsCommunityPage />} />
+          )}
+          {chainConfig.managedVaults && (
+            <Route path='vaults' element={<VaultsOfficialPage />}>
+              <Route path='create' element={<CreateVault />} />
+              <Route path=':vaultAddress/mint-account' element={<MintVaultAccount />} />
+              <Route path=':vaultAddress/details' element={<VaultDetails />} />
+            </Route>
+          )}
 
           <Route path='portfolio/:accountId'>
             <Route path='' element={<PortfolioAccountPage />} />

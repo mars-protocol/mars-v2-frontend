@@ -280,6 +280,7 @@ interface ChainConfig {
   farm: boolean
   anyAsset: boolean
   slinky: boolean
+  managedVaults: boolean
 }
 
 interface AssetCampaignInfo {

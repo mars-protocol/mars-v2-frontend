@@ -109,6 +109,7 @@ const Neutron1: ChainConfig = {
   farm: true,
   anyAsset: true,
   slinky: false,
+  managedVaults: true,
 }
 
 export default Neutron1

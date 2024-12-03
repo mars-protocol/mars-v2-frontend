@@ -55,6 +55,7 @@ const Pion1: ChainConfig = {
   farm: true,
   anyAsset: true,
   slinky: true,
+  managedVaults: true,
 }
 
 export default Pion1
