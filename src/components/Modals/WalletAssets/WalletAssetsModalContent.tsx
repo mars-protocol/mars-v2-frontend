@@ -40,9 +40,10 @@ export default function WalletAssetsModalContent(props: Props) {
   const filteredAssets: Asset[] = useMemo(() => {
     return assetsInWallet.filter(
       (asset) =>
-        asset.name.toLowerCase().includes(searchString.toLowerCase()) ||
-        asset.denom.toLowerCase().includes(searchString.toLowerCase()) ||
-        asset.symbol.toLowerCase().includes(searchString.toLowerCase()),
+        (asset.name.toLowerCase().includes(searchString.toLowerCase()) ||
+          asset.denom.toLowerCase().includes(searchString.toLowerCase()) ||
+          asset.symbol.toLowerCase().includes(searchString.toLowerCase())) &&
+        !asset.isDeprecated,
     )
   }, [assetsInWallet, searchString])
 

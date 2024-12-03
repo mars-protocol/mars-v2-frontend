@@ -237,12 +237,12 @@ interface ChainConfig {
   defaultTradingPair: TradingPair
   bech32Config: import('@keplr-wallet/types').Bech32Config
   contracts: {
-    redBank?: string
-    incentives?: string
-    oracle?: string
-    params?: string
-    accountNft?: string
-    perps?: string
+    redBank: string
+    incentives: string
+    oracle: string
+    params: string
+    accountNft: string
+    perps: string
     creditManager: string
     pyth: string
   }
