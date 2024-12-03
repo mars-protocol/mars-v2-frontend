@@ -132,21 +132,6 @@ export default function TradeChart(props: Props) {
   }, [props.buyAsset.decimals, props.isPerps, props.liquidationPrice, props.perpsPosition])
 
   const intitalChartLoad = useCallback(() => {
-    const chart = chartWidget.activeChart()
-    if (!chart) return
-    const chartStore = JSON.parse(localStorage.getItem(LocalStorageKeys.TV_CHART_STORE) ?? '{}')
-    const currentChartStore = chartStore[chartName]
-    if (!currentChartStore) return
-    currentChartStore.forEach((shape: any) => {
-      if (Array.isArray(shape.points)) {
-        chart.createMultipointShape(shape.points, shape.shape)
-      } else {
-        chart.createShape(shape.points, shape.shape)
-      }
-    })
-  }, [chartName])
-
-  const intitalChartLoad = useCallback(() => {
     try {
       const chart = chartWidget.activeChart()
       if (!chart) return
@@ -173,14 +158,14 @@ export default function TradeChart(props: Props) {
             position: 'top',
             text: 'Set Limit Order Price',
             click: () => {
-              onCreateLimitOrder?.(BN(price))
+              props.onCreateLimitOrder?.(BN(price))
             },
           },
           {
             position: 'top',
             text: 'Set Stop Order Price',
             click: () => {
-              onCreateStopOrder?.(BN(price))
+              props.onCreateStopOrder?.(BN(price))
             },
           },
         ]

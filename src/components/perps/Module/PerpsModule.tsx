@@ -181,16 +181,6 @@ export function PerpsModule() {
     [updateAmount, setStopPrice],
   )
 
-  const onChangeStopTradeDirection = useCallback(
-    (newDirection: TradeDirection) => {
-      setStopTradeDirection(newDirection)
-      updateAmount(BN_ZERO)
-      setStopPrice(BN_ZERO)
-      setIsReduceOnly(false)
-    },
-    [updateAmount],
-  )
-
   const onChangeAmount = useCallback(
     (newAmount: BigNumber) => {
       if (isStopOrder) {
