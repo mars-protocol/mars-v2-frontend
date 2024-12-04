@@ -38,7 +38,7 @@ export default function useCreditManagerConfig() {
       }
     },
     {
-      suspense: true,
+      suspense: false,
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
       revalidateIfStale: false,

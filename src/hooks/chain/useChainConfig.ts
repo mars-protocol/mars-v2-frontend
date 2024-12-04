@@ -5,30 +5,19 @@ import useCreditManagerConfig from 'hooks/chain/useCreditManagerConfig'
 
 export default function useChainConfig(): ChainConfig {
   const chainId = getCurrentChainId()
-  const baseConfig = chains[chainId]
-  const { data: creditManagerConfig, error } = useCreditManagerConfig()
+  useCreditManagerConfig()
 
   const rpcEndpoint =
-    localStorage.getItem(`${chainId}/${LocalStorageKeys.RPC_ENDPOINT}`) ?? baseConfig.endpoints.rpc
+    localStorage.getItem(`${chainId}/${LocalStorageKeys.RPC_ENDPOINT}`) ??
+    chains[chainId].endpoints.rpc
   const restEndpoint =
     localStorage.getItem(`${chainId}/${LocalStorageKeys.REST_ENDPOINT}`) ??
-    baseConfig.endpoints.rest
-
-  if (error || !creditManagerConfig) {
-    return {
-      ...baseConfig,
-      endpoints: {
-        ...baseConfig.endpoints,
-        rpc: rpcEndpoint,
-        rest: restEndpoint,
-      },
-    }
-  }
+    chains[chainId].endpoints.rest
 
   return {
-    ...baseConfig,
+    ...chains[chainId],
     endpoints: {
-      ...baseConfig.endpoints,
+      ...chains[chainId].endpoints,
       rpc: rpcEndpoint,
       rest: restEndpoint,
     },
