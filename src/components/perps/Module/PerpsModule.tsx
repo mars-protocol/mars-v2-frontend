@@ -1,18 +1,25 @@
-import classNames from 'classnames'
 import { useEffect, useMemo, useState } from 'react'
+import classNames from 'classnames'
 
 import AssetAmountInput from 'components/common/AssetAmountInput'
 import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
+import { FormattedNumber } from 'components/common/FormattedNumber'
 import OrderTypeSelector from 'components/common/OrderTypeSelector'
+import { PERPS_ORDER_TYPE_TABS } from 'components/perps/Module/constants'
 import KeeperFee from 'components/perps/Module/KeeperFee'
 import { LeverageSection } from 'components/perps/Module/LeverageSection'
 import PerpsSummary from 'components/perps/Module/Summary'
-import { PERPS_ORDER_TYPE_TABS } from 'components/perps/Module/constants'
-import usePerpsModule from 'components/perps/Module/usePerpsModule'
 import PerpsTradeDirectionSelector from 'components/perps/Module/PerpsTradeDirectionSelector'
+import { LimitPriceSection, StopPriceSection } from './PriceInputs'
+import { ReduceOnlySwitch } from './ReduceOnlySwitch'
 import AssetSelectorPerps from 'components/trade/TradeModule/AssetSelector/AssetSelectorPerps'
-import { BN_ONE, BN_ZERO } from 'constants/math'
+
+import { BN_ZERO } from 'constants/math'
+import useStore from 'store'
+import { OrderType } from 'types/enums'
+import { byDenom } from 'utils/array'
+
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useAssets from 'hooks/assets/useAssets'
@@ -21,18 +28,12 @@ import { usePerpsOrderForm } from 'hooks/perps/usePerpsOrderForm'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import useAutoLend from 'hooks/wallet/useAutoLend'
-import useStore from 'store'
-import { OrderType } from 'types/enums'
-import { byDenom } from 'utils/array'
-import { FormattedNumber } from 'components/common/FormattedNumber'
-
-import { ReduceOnlySwitch } from './ReduceOnlySwitch'
+import usePerpsModule from 'components/perps/Module/usePerpsModule'
 import { useReduceOnlyOrder } from 'hooks/perps/useReduceOnlyOrder'
 import { useLimitPriceInfo } from 'hooks/perps/useLimitPriceInfo'
 import { useStopPriceInfo } from 'hooks/perps/useStopPriceInfo'
 import { useHandleClosing } from 'hooks/perps/useHandleClosing'
 import { useExecutionState } from 'hooks/perps/useExecutionState'
-import { LimitPriceSection, StopPriceSection } from './PriceInputs'
 import { usePositionSimulation } from 'hooks/perps/usePositionSimulation'
 import { usePerpsCallbacks } from 'hooks/perps/usePerpsCallbacks'
 import { useOpenInterestLeft } from 'hooks/perps/useOpenInterestLeft'
@@ -83,6 +84,9 @@ export function PerpsModule() {
   // Custom price info hooks
   const limitPriceInfo = useLimitPriceInfo(limitPrice, perpsAsset, tradeDirection)
   const stopPriceInfo = useStopPriceInfo(stopPrice, perpsAsset, stopTradeDirection)
+
+  //OI calc
+  const { longOpenInterestLeft, shortOpenInterestLeft } = useOpenInterestLeft()
 
   // Derived data
   const USD = allAssets.find(byDenom('usd'))
