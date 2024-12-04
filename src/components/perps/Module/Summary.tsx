@@ -106,13 +106,13 @@ export default function PerpsSummary(props: Props) {
 
   const calculateKeeperFee = useMemo(
     () =>
-      (isLimitOrder || isStopOrder) && feeToken
+      (isLimitOrder || isStopOrder) && feeToken && keeperFee?.amount
         ? BNCoin.fromDenomAndBigNumber(
             feeToken.denom,
             magnify(BN(keeperFee.amount).toNumber(), feeToken),
           )
         : undefined,
-    [feeToken, isLimitOrder, isStopOrder, keeperFee.amount],
+    [feeToken, isLimitOrder, isStopOrder, keeperFee?.amount],
   )
 
   const submitLimitOrder = useSubmitLimitOrder()
