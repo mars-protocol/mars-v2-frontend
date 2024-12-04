@@ -32,49 +32,91 @@ const options = [
 ]
 
 export default function CreateVault() {
-  const [withdrawFreezePeriod, setWithdrawFreezePeriod] = useState<string>('24')
-  const [description, setDescription] = useState<string>('')
-
   const assets = useWhitelistedAssets()
+  const [withdrawFreezePeriod, setWithdrawFreezePeriod] = useState<string>('24')
   const [selectedAsset, setSelectedAsset] = useState<Asset>(assets[0])
-
   const [enableHlsVault, setEnableHlsVault] = useState<boolean>(false)
+  const [isTxPending, setIsTxPending] = useState<boolean>(false)
+  const [description, setDescription] = useState<string>('')
+  const [vaultTitle, setVaultTitle] = useState<string>('')
+  const [performanceFee, setPerformanceFee] = useState<BigNumber>(BN(1))
+
   const [showMenu, setShowMenu] = useToggle()
-  const accountId = useAccountId()
-  const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
+  const { pathname } = useLocation()
+  const accountId = useAccountId()
   const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
 
+  const createManagedVault = useStore((s) => s.createManagedVault)
+
   const navigate = useNavigate()
 
-  const handleCreate = useCallback(() => {
+  const handleCreate = useCallback(async () => {
     // TODO: Implement create vault logic
     //  await for the response. once I have the response with the vault address, proceed to next page
     // if user filled out the vault details, store them
 
-    // temp vault address
-    const tempVaultAddress = 'tempvaultaddress'
+    try {
+      setIsTxPending(true)
 
-    if (accountId)
-      navigate(
-        getRoute(
-          getPage(`vaults/${tempVaultAddress}/mint-account`, chainConfig),
-          searchParams,
-          address,
-          accountId,
-        ),
-      )
-
-    useStore.setState({
-      focusComponent: {
-        component: <MintVaultAccount />,
-        onClose: () => {
-          navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
+      const vaultParams = {
+        title: vaultTitle || 'Test Vault',
+        description: description || 'Test vault description',
+        baseToken: selectedAsset.denom,
+        withdrawFreezePeriod: Number(withdrawFreezePeriod) * 3600,
+        enableHls: enableHlsVault,
+        performanceFee: {
+          fee_rate: performanceFee.dividedBy(100).toString(),
+          withdrawal_interval: 24 * 3600,
         },
-      },
-    })
-  }, [accountId, navigate, chainConfig, searchParams, address, pathname])
+        tokenSubdenom: `vault_${selectedAsset.symbol.toLowerCase()}`,
+      }
+
+      console.log(vaultParams, 'vaultParams-=======')
+      const result = await createManagedVault(vaultParams)
+
+      if (!result || !result.address) {
+        throw new Error('Failed to create vault')
+      }
+
+      if (accountId)
+        navigate(
+          getRoute(
+            getPage(`vaults/${result.address}/mint-account`, chainConfig),
+            searchParams,
+            address,
+            accountId,
+          ),
+        )
+
+      useStore.setState({
+        focusComponent: {
+          component: <MintVaultAccount vaultAddress={result.address} />,
+          onClose: () => {
+            navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
+          },
+        },
+      })
+    } catch (error) {
+      console.error('Failed to create vault:', error)
+    } finally {
+      setIsTxPending(false)
+    }
+  }, [
+    accountId,
+    address,
+    chainConfig,
+    createManagedVault,
+    description,
+    enableHlsVault,
+    navigate,
+    pathname,
+    searchParams,
+    selectedAsset.denom,
+    selectedAsset.symbol,
+    withdrawFreezePeriod,
+  ])
 
   const handleWithdrawFreezePeriod = useCallback((value: string) => {
     setWithdrawFreezePeriod(value)
@@ -95,15 +137,14 @@ export default function CreateVault() {
           <div className='flex-1 space-y-8'>
             <VaultInputElement
               type='text'
-              // TODO: add value and onChange
-              value={''}
-              onChange={() => {}}
+              value={vaultTitle}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setVaultTitle(e.target.value)}
               label='Vault title'
               placeholder='Enter vault title'
               required
             />
 
-            <PerformanceFee />
+            <PerformanceFee value={performanceFee} onChange={setPerformanceFee} />
 
             <HlsSwitch onChange={handleHlsSwitch} name='enableHlsVault' value={enableHlsVault} />
 
@@ -210,8 +251,8 @@ export default function CreateVault() {
             rightIcon={<ArrowRight />}
             className='w-full md:w-auto'
             text='Create Vault Account (1/2)'
-            // TODO: disable if form is not filled
-            // disabled={}
+            disabled={isTxPending}
+            showProgressIndicator={isTxPending}
           />
         </div>
       </form>

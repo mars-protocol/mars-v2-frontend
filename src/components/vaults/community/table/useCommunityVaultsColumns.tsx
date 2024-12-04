@@ -24,10 +24,10 @@ export default function useCommunityVaultsColumns(props: Props) {
   const { isLoading } = props
 
   const accountId = useAccountId()
+  const chainConfig = useChainConfig()
+  const address = useStore((s) => s.address)
   const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
-  const address = useStore((s) => s.address)
-  const chainConfig = useChainConfig()
 
   const navigate = useNavigate()
   const handleVaultDetails = useCallback(() => {

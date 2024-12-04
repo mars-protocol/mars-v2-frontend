@@ -36,11 +36,11 @@ export default function Routes() {
         <Route path='/trade-advanced' element={<TradePage />} />
         <Route path='/farm' element={<FarmPage />} />
         <Route path='/lend' element={<LendPage />} />
-        {chainConfig.perps && <Route path='/perps-vault' element={<PerpsVaultPage />} />}
         <Route path='/borrow' element={<BorrowPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
         <Route path='/v1' element={<V1Page />} />
 
+        {chainConfig.perps && <Route path='/perps-vault' element={<PerpsVaultPage />} />}
         {chainConfig.perps && <Route path='/perps' element={<PerpsPage />} />}
         {chainConfig.hls && <Route path='/hls-staking' element={<HlsStakingPage />} />}
         {chainConfig.hls && <Route path='/hls-farm' element={<HlsFarmPage />} />}
@@ -61,11 +61,11 @@ export default function Routes() {
           <Route path='trade-advanced' element={<TradePage />} />
           <Route path='farm' element={<FarmPage />} />
           <Route path='lend' element={<LendPage />} />
-          {chainConfig.perps && <Route path='perps-vault' element={<PerpsVaultPage />} />}
           <Route path='borrow' element={<BorrowPage />} />
           <Route path='portfolio' element={<PortfolioPage />} />
           <Route path='v1' element={<V1Page />} />
 
+          {chainConfig.perps && <Route path='perps-vault' element={<PerpsVaultPage />} />}
           {chainConfig.perps && <Route path='perps' element={<PerpsPage />} />}
           {chainConfig.hls && <Route path='hls-staking' element={<HlsStakingPage />} />}
           {chainConfig.hls && <Route path='hls-farm' element={<HlsFarmPage />} />}

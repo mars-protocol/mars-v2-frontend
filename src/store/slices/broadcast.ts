@@ -1291,5 +1291,22 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
+    createManagedVault: async (params: VaultParams) => {
+      try {
+        const mockVaultAddress = `vault${Date.now()}`
+
+        const vaultDetails = {
+          address: mockVaultAddress,
+          ...params,
+        }
+
+        console.log('Creating managed vault:', vaultDetails)
+
+        return { address: mockVaultAddress }
+      } catch (error) {
+        console.error('Error creating vault:', error)
+        throw error
+      }
+    },
   }
 }

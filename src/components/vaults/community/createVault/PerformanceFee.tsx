@@ -3,7 +3,6 @@ import classNames from 'classnames'
 import NumberInput from 'components/common/NumberInput'
 import Text from 'components/common/Text'
 import { Callout, CalloutType } from 'components/common/Callout'
-import { useState } from 'react'
 import { TextLink } from 'components/common/TextLink'
 import { ExternalLink } from 'components/common/Icons'
 import { BN } from 'utils/helpers'
@@ -18,15 +17,20 @@ const fees = [
   { label: '20%', value: BN(20) },
 ]
 
-export default function PerformanceFee() {
-  const [feeValue, setFeeValue] = useState<BigNumber>(BN(1))
+interface Props {
+  value: BigNumber
+  onChange: (fee: BigNumber) => void
+}
+
+export default function PerformanceFee(props: Props) {
+  const { value, onChange } = props
 
   const handleFeeClick = (
     fee: BigNumber,
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault()
-    setFeeValue(fee)
+    onChange(fee)
   }
 
   return (
@@ -35,8 +39,8 @@ export default function PerformanceFee() {
         Specify your performance fee
       </Text>
       <NumberInput
-        amount={feeValue}
-        onChange={(value) => setFeeValue(value)}
+        amount={value}
+        onChange={onChange}
         asset={{ decimals: 0, symbol: '%' }}
         maxDecimals={0}
         min={BN_ZERO}
@@ -50,7 +54,7 @@ export default function PerformanceFee() {
           <Button
             onClick={(event) => handleFeeClick(fee.value, event)}
             color='secondary'
-            className={classNames('w-full min-w-0', feeValue.isEqualTo(fee.value) && 'bg-white/20')}
+            className={classNames('w-full min-w-0', value.isEqualTo(fee.value) && 'bg-white/20')}
             text={fee.label}
             key={index}
           />

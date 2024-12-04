@@ -1164,6 +1164,7 @@ interface BroadcastSlice {
     vaultDenom: string
   }) => Promise<boolean>
   v1Action: (type: V1ActionType, funds: BNCoin) => Promise<boolean>
+  createManagedVault: (params: VaultParams) => Promise<{ address: string } | null>
 }
 
 type V1ActionType = 'withdraw' | 'deposit' | 'borrow' | 'repay'
@@ -1806,4 +1807,12 @@ interface PerpsTradingFee {
     opening: BigNumber
     closing: BigNumber
   }
+}
+interface VaultParams {
+  title: string
+  description: string
+  baseToken: string
+  withdrawFreezePeriod: number
+  enableHls: boolean
+  performanceFee: PerformanceFeeConfig
 }
