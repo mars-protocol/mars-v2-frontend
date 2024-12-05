@@ -93,7 +93,7 @@ export const PERPS_ASSETS: AstroportAsset[] = [
   },
   {
     chainId: 'neutron-1',
-    denom: 'ffactory/neutron166t9ww3p6flv7c86376fy0r92r88t3492xxj2h/utrx',
+    denom: 'factory/neutron166t9ww3p6flv7c86376fy0r92r88t3492xxj2h/utrx',
     symbol: 'TRX',
     icon: 'https://raw.githubusercontent.com/mars-protocol/mars-v2-frontend/refs/heads/main/src/components/common/Icons/TRXLogo.svg',
     description: 'Tron',
