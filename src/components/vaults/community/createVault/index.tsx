@@ -47,10 +47,12 @@ export default function CreateVault() {
   const accountId = useAccountId()
   const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
-
+  const navigate = useNavigate()
   const createManagedVault = useStore((s) => s.createManagedVault)
 
-  const navigate = useNavigate()
+  const isFormValid = () => {
+    return vaultTitle.trim() !== '' && description.trim() !== '' && selectedAsset !== null
+  }
 
   const handleCreate = useCallback(async () => {
     try {
@@ -252,7 +254,7 @@ export default function CreateVault() {
             rightIcon={<ArrowRight />}
             className='w-full md:w-70'
             text='Mint Vault Address (1/2)'
-            disabled={isTxPending}
+            disabled={isTxPending || !isFormValid()}
             showProgressIndicator={isTxPending}
           />
         </div>
