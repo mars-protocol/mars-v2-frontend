@@ -31,8 +31,8 @@ import {
   widget,
 } from 'utils/charting_library'
 import { formatValue, getPerpsPriceDecimals, magnify } from 'utils/formatters'
-import { getTradingViewSettings } from 'utils/theme'
 import { BN } from 'utils/helpers'
+import { getTradingViewSettings } from 'utils/theme'
 
 interface Props {
   buyAsset: Asset
@@ -55,7 +55,6 @@ function getLimitOrderText(
   positionAmount: BigNumber | null,
 ) {
   let label = order.type === 'stop' ? 'Stop' : 'Limit'
-  console.log(order)
   if (positionAmount && order.amount.abs().isEqualTo(positionAmount.abs())) {
     const isClosing =
       (currentPosition === 'long' && order.tradeDirection === 'short') ||
