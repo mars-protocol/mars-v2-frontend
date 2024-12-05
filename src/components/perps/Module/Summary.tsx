@@ -74,9 +74,10 @@ export default function PerpsSummary(props: Props) {
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const chainConfig = useChainConfig()
   const creditManagerConfig = useStore((s) => s.creditManagerConfig)
-  const [keeperFee, _] = useLocalStorage(
-    LocalStorageKeys.PERPS_KEEPER_FEE,
-    creditManagerConfig?.keeper_fee_config?.min_fee,
+  const [keeperFee] = useLocalStorage(
+    `${chainConfig.id}/${LocalStorageKeys.PERPS_KEEPER_FEE}`,
+    creditManagerConfig?.keeper_fee_config?.min_fee ??
+      getDefaultChainSettings(chainConfig).keeperFee,
   )
 
   const currentAccount = useCurrentAccount()
@@ -87,7 +88,7 @@ export default function PerpsSummary(props: Props) {
   const assets = useDepositEnabledAssets()
   const executePerpOrder = useStore((s) => s.executePerpOrder)
   const [showSummary, setShowSummary] = useLocalStorage<boolean>(
-    LocalStorageKeys.SHOW_SUMMARY,
+    `${chainConfig.id}/${LocalStorageKeys.SHOW_SUMMARY}`,
     getDefaultChainSettings(chainConfig).showSummary,
   )
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount ?? account)
