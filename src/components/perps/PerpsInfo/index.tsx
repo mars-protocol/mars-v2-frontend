@@ -6,6 +6,7 @@ import Text from 'components/common/Text'
 import FundingRate from 'components/perps/PerpsInfo/FundingRate'
 import usePerpsMarket from 'hooks/perps/usePerpsMarket'
 import { BNCoin } from 'types/classes/BNCoin'
+import Skew from 'components/perps/PerpsInfo/Skew'
 
 export function PerpsInfo() {
   const market = usePerpsMarket()
@@ -34,6 +35,7 @@ export function PerpsInfo() {
           />
         }
       />,
+      <InfoItem key='skew' label='Skew' item={<Skew />} />,
       <InfoItem key='fundingRate' label='Funding rate' item={<FundingRate />} />,
     ]
   }, [market])
@@ -41,11 +43,13 @@ export function PerpsInfo() {
   if (!market) return null
 
   return (
-    <div className='flex items-center gap-4'>
+    <div className='flex flex-wrap items-center gap-2 md:gap-4 mb-2 sm:mb-0'>
       {items.map((item, index) => (
         <React.Fragment key={index}>
           {item}
-          {index !== items.length - 1 && <Divider orientation='vertical' className='h-9' />}
+          {index !== items.length - 1 && (
+            <Divider orientation='vertical' className='hidden md:block h-9' />
+          )}
         </React.Fragment>
       ))}
     </div>

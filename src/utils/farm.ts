@@ -8,6 +8,14 @@ import { getValueFromBNCoins } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
 import { getEnterVaultActions, getVaultBaseDepositCoinsAndValue } from 'utils/vaults'
 
+export function getFarmDepositsActions(deposits: BNCoin[]): Action[] {
+  return deposits
+    .filter((deposit) => deposit.amount.gt(0))
+    .map((bnCoin) => ({
+      deposit: bnCoin.toCoin(),
+    }))
+}
+
 export function getFarmDepositsReclaimsAndBorrowingsActions(
   deposits: BNCoin[],
   reclaims: BNCoin[],
@@ -118,24 +126,41 @@ export async function getFarmSwapActionsAndOutputCoins(
     secondary: BNCoin.fromDenomAndBigNumber(farm.denoms.secondary, BN_ZERO),
   }
 
-  const [primaryCoins, secondaryCoins, otherCoins] = coins.reduce(
-    (prev, bnCoin) => {
-      switch (bnCoin.denom) {
-        case farm.denoms.primary:
-          prev[0].push(bnCoin)
-          break
-        case farm.denoms.secondary:
-          prev[1].push(bnCoin)
-          break
-        default:
-          prev[2].push(bnCoin)
-      }
-      return prev
-    },
-    [[], [], []] as [BNCoin[], BNCoin[], BNCoin[]],
-  )
+  const [primaryCoins, secondaryCoins, otherCoins] = reduceFarmCoins(coins, farm)
 
-  if (isAstroLp && otherCoins.length === 0) return { swapActions: [], swapCoins }
+  // Astroport only logic:
+  if (isAstroLp) {
+    // don't swap anything if there is no other coins than pool coins
+    if (otherCoins.length === 0) return { swapActions: [], swapCoins }
+
+    // if one of the coins arrays is empty, swap to its denom only
+    if (
+      (primaryCoins.length === 0 && secondaryCoins.length !== 0) ||
+      (primaryCoins.length !== 0 && secondaryCoins.length === 0)
+    ) {
+      for (const bnCoin of otherCoins) {
+        const swapTo = primaryCoins.length === 0 ? 'primary' : 'secondary'
+        const astroSwapUrl = `${chainConfig.endpoints.routes}?start=${bnCoin.denom}&end=${farm.denoms[swapTo]}&amount=${bnCoin.amount}&chainId=${chainConfig.id}&limit=1`
+        const astroRouteInfo = await getRouteInfo(astroSwapUrl, farm.denoms[swapTo], assets, false)
+        if (astroRouteInfo) {
+          swapCoins[swapTo].amount = swapCoins[swapTo].amount.plus(
+            astroRouteInfo.amountOut.times(1 - slippage),
+          )
+
+          swapActions.push(
+            getSwapExactInAction(
+              BNCoin.fromDenomAndBigNumber(bnCoin.denom, bnCoin.amount).toActionCoin(),
+              farm.denoms[swapTo],
+              astroRouteInfo,
+              slippage,
+              false,
+            ),
+          )
+        }
+      }
+      return { swapActions, swapCoins }
+    }
+  }
 
   primaryCoins.forEach((bnCoin) => {
     let value = getCoinValue(bnCoin, assets)
@@ -232,7 +257,6 @@ export async function getFarmSwapActionsAndOutputCoins(
       }
     }
   }
-
   return { swapActions, swapCoins }
 }
 
@@ -246,8 +270,11 @@ export async function getFarmActions(
   chainConfig: ChainConfig,
   isAutoLend: boolean,
   isAstroLp: boolean,
+  isHighLeverage: boolean,
 ): Promise<Action[]> {
   const lendEnabledAssets = assets.filter((asset) => asset.isAutoLendEnabled)
+
+  const depositActions = isHighLeverage ? getFarmDepositsActions(deposits) : []
 
   const { reclaimActions, borrowActions } = getFarmDepositsReclaimsAndBorrowingsActions(
     deposits,
@@ -284,10 +311,26 @@ export async function getFarmActions(
   const lendActions: Action[] = hasLendActions ? getFarmLendActions(farm, lendEnabledAssets) : []
 
   return [
+    ...depositActions,
     ...reclaimActions,
     ...borrowActions,
     ...swapActions,
     ...provideLiquidityActions,
     ...lendActions,
   ]
+}
+
+function reduceFarmCoins(coins: BNCoin[], farm: Vault | AstroLp): [BNCoin[], BNCoin[], BNCoin[]] {
+  const primaryCoins = [] as BNCoin[]
+  const secondaryCoins = [] as BNCoin[]
+  const otherCoins = [] as BNCoin[]
+
+  coins.forEach((coin) => {
+    if (coin.amount.isZero()) return
+    if (coin.denom === farm.denoms.primary) primaryCoins.push(coin)
+    else if (coin.denom === farm.denoms.secondary) secondaryCoins.push(coin)
+    else otherCoins.push(coin)
+  })
+
+  return [primaryCoins, secondaryCoins, otherCoins]
 }

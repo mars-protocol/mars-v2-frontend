@@ -21,7 +21,7 @@ import { byDenom } from 'utils/array'
 import { getAstroLpCoinsFromShares, getAstroLpSharesFromCoinsValue } from 'utils/astroLps'
 import { SWAP_FEE_BUFFER } from 'utils/constants'
 import { getCoinAmount, getCoinValue } from 'utils/formatters'
-import { getValueFromBNCoins, mergeBNCoinArrays } from 'utils/helpers'
+import { getValueFromBNCoins, mergeBNCoinArrays, mergeBNCoins } from 'utils/helpers'
 
 export function useUpdatedAccount(account?: Account) {
   const { data: availableVaults } = useVaults(false)
@@ -152,13 +152,20 @@ export function useUpdatedAccount(account?: Account) {
   )
 
   const simulateUnstakeAstroLp = useCallback(
-    (isLendAction: boolean, shares: BNCoin, astroLp: AstroLp, rewards?: BNCoin[]) => {
+    (
+      isLendAction: boolean,
+      shares: BNCoin,
+      astroLp: AstroLp,
+      rewards?: BNCoin[],
+      toWallet?: boolean,
+    ) => {
       if (!account) return
       addDeposits([])
       addLends([])
 
       const shareCoins = getAstroLpCoinsFromShares(shares, astroLp, assets)
       removeStakedAstroLps([shares])
+      if (toWallet) return
       if (isLendAction) {
         addLends(mergeBNCoinArrays(shareCoins, rewards ?? []))
         return
@@ -293,63 +300,114 @@ export function useUpdatedAccount(account?: Account) {
     [account, assets, availableAstroLps],
   )
 
+  const resetPerpPosition = useCallback(() => {
+    addDeposits([])
+    removeLends([])
+    removeDeposits([])
+    addDebts([])
+    return setUpdatedPerpPosition(undefined)
+  }, [])
+
   const simulatePerps = useCallback(
-    (position: PerpsPosition) => {
+    (position?: PerpsPosition, isLendAction?: boolean) => {
       if (!account || !account.perps) return
+      if (!position) return resetPerpPosition()
 
       const currentPerpPosition = account.perps.find((perp) => perp.denom === position.denom)
 
-      if (currentPerpPosition && currentPerpPosition.amount.isEqualTo(position.amount)) {
-        addDeposits([])
-        removeDeposits([])
-        addDebts([])
-        return setUpdatedPerpPosition(undefined)
+      if (
+        (currentPerpPosition && currentPerpPosition.amount.isEqualTo(position.amount)) ||
+        (!currentPerpPosition && position.amount.isEqualTo(0))
+      ) {
+        return resetPerpPosition()
       }
 
-      if (!currentPerpPosition && position.amount.isEqualTo(0)) {
-        addDeposits([])
-        removeDeposits([])
-        addDebts([])
-        return setUpdatedPerpPosition(undefined)
-      }
+      const unrealizedPnL = position.pnl.unrealized.net
 
-      if (currentPerpPosition) {
-        const unrealizedPnL = currentPerpPosition.pnl.unrealized.net
+      if (unrealizedPnL.amount.isGreaterThan(0) && isLendAction) addLends([unrealizedPnL])
+      if (unrealizedPnL.amount.isGreaterThan(0) && !isLendAction) addDeposits([unrealizedPnL])
 
-        if (unrealizedPnL.amount.isGreaterThan(0)) {
-          addDeposits([unrealizedPnL])
+      if (unrealizedPnL.amount.isLessThan(0)) {
+        const currentDepositAmount = account.deposits.find(byDenom(position.baseDenom))?.amount
+        const currentLendAmount = account.lends.find(byDenom(position.baseDenom))?.amount
+        let debtAmount = unrealizedPnL.amount.integerValue().abs()
+
+        if (currentLendAmount && currentLendAmount.isGreaterThan(debtAmount)) {
+          removeLends([BNCoin.fromDenomAndBigNumber(position.baseDenom, debtAmount)])
+          debtAmount = BN_ZERO
         }
 
-        if (unrealizedPnL.amount.isLessThan(0)) {
-          const currentDepositAmount = account.deposits.find(byDenom(position.baseDenom))?.amount
-          const debtAmount = unrealizedPnL.amount.integerValue().abs()
-
-          if (currentDepositAmount && currentDepositAmount.isGreaterThanOrEqualTo(debtAmount)) {
-            removeDeposits([BNCoin.fromDenomAndBigNumber(position.baseDenom, debtAmount)])
-          } else if (currentDepositAmount && currentDepositAmount.isLessThan(debtAmount)) {
-            removeDeposits([BNCoin.fromDenomAndBigNumber(position.baseDenom, currentDepositAmount)])
-            addDebts([
-              BNCoin.fromDenomAndBigNumber(
-                position.baseDenom,
-                debtAmount.minus(currentDepositAmount),
-              ),
-            ])
-          } else {
-            addDebts([BNCoin.fromDenomAndBigNumber(position.baseDenom, debtAmount)])
-          }
+        if (currentLendAmount && currentLendAmount.isLessThan(debtAmount)) {
+          removeLends([BNCoin.fromDenomAndBigNumber(position.baseDenom, currentLendAmount)])
+          debtAmount = debtAmount.minus(currentLendAmount)
         }
+
+        if (currentDepositAmount && currentDepositAmount.isGreaterThanOrEqualTo(debtAmount)) {
+          removeDeposits([BNCoin.fromDenomAndBigNumber(position.baseDenom, debtAmount)])
+          debtAmount = BN_ZERO
+        }
+
+        if (currentDepositAmount && currentDepositAmount.isLessThan(debtAmount)) {
+          removeDeposits([BNCoin.fromDenomAndBigNumber(position.baseDenom, currentDepositAmount)])
+          debtAmount = debtAmount.minus(currentDepositAmount)
+        }
+
+        if (debtAmount.isGreaterThan(0))
+          addDebts([BNCoin.fromDenomAndBigNumber(position.baseDenom, debtAmount)])
       }
 
-      setUpdatedPerpPosition(position)
+      const currentPositionUnrealizedPnl = position.pnl.unrealized
+
+      const feeZeroCoin = BNCoin.fromDenomAndBigNumber(
+        currentPositionUnrealizedPnl.fees.denom,
+        BN_ZERO,
+      )
+      const fundingZeroCoin = BNCoin.fromDenomAndBigNumber(
+        currentPositionUnrealizedPnl.funding.denom,
+        BN_ZERO,
+      )
+      const netZeroCoin = BNCoin.fromDenomAndBigNumber(
+        currentPositionUnrealizedPnl.net.denom,
+        BN_ZERO,
+      )
+      const priceZeroCoin = BNCoin.fromDenomAndBigNumber(
+        currentPositionUnrealizedPnl.price.denom,
+        BN_ZERO,
+      )
+      const updatedPostion = {
+        ...position,
+        pnl: {
+          ...position.pnl,
+          net: mergeBNCoins(position.pnl.realized.net, position.pnl.unrealized.net),
+          realized: {
+            fees: mergeBNCoins(position.pnl.realized.fees, position.pnl.unrealized.fees),
+            funding: mergeBNCoins(position.pnl.realized.funding, position.pnl.unrealized.funding),
+            net: mergeBNCoins(position.pnl.realized.net, position.pnl.unrealized.net),
+            price: mergeBNCoins(position.pnl.realized.price, position.pnl.unrealized.price),
+          },
+          unrealized: {
+            fees: feeZeroCoin,
+            funding: fundingZeroCoin,
+            net: netZeroCoin,
+            price: priceZeroCoin,
+          },
+        },
+      }
+      setUpdatedPerpPosition(updatedPostion)
     },
-    [account, setUpdatedPerpPosition],
+    [account, resetPerpPosition],
   )
 
   const simulatePerpsVaultDeposit = useCallback(
-    (coin: BNCoin) => {
+    (coin: BNCoin, depositFromWallet: boolean) => {
       const { deposit, lend } = getDepositAndLendCoinsToSpend(coin, account)
-      removeDeposits([deposit])
-      removeLends([lend])
+      if (depositFromWallet) {
+        removeDeposits([])
+        removeLends([])
+      } else {
+        removeDeposits([deposit])
+        removeLends([lend])
+      }
       addPerpsVaultAmount(coin.amount)
     },
     [account],

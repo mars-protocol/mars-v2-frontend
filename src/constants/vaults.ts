@@ -1,7 +1,5 @@
 import { BN_ZERO } from 'constants/math'
 
-export const VAULT_DEPOSIT_BUFFER = 0.999
-
 export const TESTNET_VAULTS_META_DATA: VaultMetaData[] = [
   {
     address: 'osmo1m45ap4rq4m2mfjkcqu9ks9mxmyx2hvx0cdca9sjmrg46q7lghzqqhxxup5',

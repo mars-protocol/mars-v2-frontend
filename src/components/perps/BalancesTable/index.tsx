@@ -1,15 +1,20 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-import { SearchParams } from 'types/enums'
+import { CardWithTabs } from 'components/common/Card/CardWithTabs'
 import Table from 'components/common/Table'
 import usePerpsBalancesColumns from 'components/perps/BalancesTable/Columns/usePerpsBalancesColumns'
 import usePerpsBalancesData from 'components/perps/BalancesTable/usePerpsBalancesData'
+import usePerpsLimitOrderRows from 'hooks/perps/usePerpsLimitOrdersRows'
+import { SearchParams } from 'types/enums'
 import { getSearchParamsObject } from 'utils/route'
 
 export default function PerpsBalancesTable() {
-  const data = usePerpsBalancesData()
-  const columns = usePerpsBalancesColumns()
+  const activePerpsPositions = usePerpsBalancesData()
+  const activeLimitOrders = usePerpsLimitOrderRows()
+  const columns = usePerpsBalancesColumns({ isOrderTable: false })
+  const limitOrderColumns = usePerpsBalancesColumns({ isOrderTable: true })
+
   const [searchParams, setSearchParams] = useSearchParams()
 
   const onClickRow = useCallback(
@@ -23,14 +28,40 @@ export default function PerpsBalancesTable() {
     [searchParams, setSearchParams],
   )
 
-  if (!data.length) return null
-  return (
-    <Table
-      title='Perp Positions'
-      columns={columns}
-      data={data}
-      initialSorting={[]}
-      onClickRow={onClickRow}
-    />
+  const tabs: CardTab[] = useMemo(
+    () => [
+      {
+        title: 'Perp Positions',
+        id: 'perp-positions',
+        renderContent: () => (
+          <Table
+            title='Perp Positions'
+            columns={columns}
+            data={activePerpsPositions}
+            initialSorting={[]}
+            onClickRow={onClickRow}
+            hideCard
+          />
+        ),
+      },
+      {
+        title: 'Open Orders',
+        notificationCount: activeLimitOrders.length > 0 ? activeLimitOrders.length : undefined,
+        renderContent: () => (
+          <Table
+            title='Open Orders'
+            columns={limitOrderColumns}
+            data={activeLimitOrders}
+            initialSorting={[]}
+            onClickRow={onClickRow}
+            hideCard
+          />
+        ),
+      },
+    ],
+    [activeLimitOrders, columns, activePerpsPositions, onClickRow, limitOrderColumns],
   )
+
+  if (!activePerpsPositions.length && !activeLimitOrders.length) return null
+  return <CardWithTabs tabs={tabs} />
 }

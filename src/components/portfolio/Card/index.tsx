@@ -11,15 +11,16 @@ import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
+import useAssets from 'hooks/assets/useAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useAssetParams from 'hooks/params/useAssetParams'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { getRoute } from 'utils/route'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 
 interface Props {
   accountId: string
@@ -34,55 +35,60 @@ export default function PortfolioCard(props: Props) {
   const currentAccountId = useAccountId()
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const data = useBorrowMarketAssetsTableData()
-  const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
   const [searchParams] = useSearchParams()
-  const assets = useWhitelistedAssets()
+  const { data: assets } = useAssets()
+  const { data: perpsVault } = usePerpsVault()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     getDefaultChainSettings(chainConfig).reduceMotion,
   )
-
-  const { netWorth, apr, leverage } = getAccountSummaryStats(
-    account as Account,
-    borrowAssets,
-    lendingAssets,
-    hlsStrategies,
-    assets,
-    vaultAprs,
-    astroLpAprs,
-  )
+  const assetParams = useAssetParams()
 
   const stats: { title: ReactNode; sub: string }[] = useMemo(() => {
-    const isLoaded = account && assets.length && apr !== null
+    if (!account || !assets.length || !lendingAssets.length || !borrowAssets.length) {
+      return [
+        { title: <Loading />, sub: 'Net worth' },
+        { title: <Loading />, sub: 'Leverage' },
+        { title: <Loading />, sub: 'APY' },
+      ]
+    }
+    const { netWorth, apy, leverage } = getAccountSummaryStats(
+      account as Account,
+      borrowAssets,
+      lendingAssets,
+      assets,
+      vaultAprs,
+      astroLpAprs,
+      assetParams.data || [],
+      perpsVault?.apy || 0,
+    )
+
     return [
       {
-        title: isLoaded ? (
-          <FormattedNumber amount={netWorth.amount.toNumber()} options={{ prefix: '$' }} />
-        ) : (
-          <Loading />
-        ),
+        title: <FormattedNumber amount={netWorth.amount.toNumber()} options={{ prefix: '$' }} />,
         sub: 'Net worth',
       },
       {
-        title: isLoaded ? (
-          <FormattedNumber amount={leverage.toNumber() || 1} options={{ suffix: 'x' }} />
-        ) : (
-          <Loading />
-        ),
+        title: <FormattedNumber amount={leverage.toNumber() || 1} options={{ suffix: 'x' }} />,
         sub: 'Leverage',
       },
       {
-        title: isLoaded ? (
-          <FormattedNumber amount={apr.toNumber()} options={{ suffix: '%' }} />
-        ) : (
-          <Loading />
-        ),
-        sub: 'APR',
+        title: <FormattedNumber amount={apy.toNumber()} options={{ suffix: '%' }} />,
+        sub: 'APY',
       },
     ]
-  }, [account, assets, apr, leverage, netWorth])
+  }, [
+    account,
+    assets,
+    lendingAssets,
+    borrowAssets,
+    vaultAprs,
+    astroLpAprs,
+    assetParams.data,
+    perpsVault?.apy,
+  ])
 
   if (!account) {
     return (

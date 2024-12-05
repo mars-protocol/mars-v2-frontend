@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import { useCallback, useMemo, useState } from 'react'
 
 import Button from 'components/common/Button'
@@ -45,12 +44,15 @@ export default function WithdrawFromAccount(props: Props) {
 
   const reclaimAmount = isReclaimingMaxAmount ? amount : amount.minus(accountDeposit)
   const isDeprecatedAsset = currentAsset.isDeprecated
-  const maxWithdrawAmount = isDeprecatedAsset
-    ? (balances.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO)
-    : computeMaxWithdrawAmount(currentAsset.denom)
-  const maxWithdrawWithBorrowAmount = isDeprecatedAsset
-    ? maxWithdrawAmount
-    : computeMaxBorrowAmount(currentAsset.denom, 'wallet').plus(maxWithdrawAmount)
+  const isBorrowEnabledAsset = currentAsset.isBorrowEnabled
+  const maxWithdrawAmount =
+    isDeprecatedAsset || !isBorrowEnabledAsset
+      ? (balances.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO)
+      : computeMaxWithdrawAmount(currentAsset.denom)
+  const maxWithdrawWithBorrowAmount =
+    isDeprecatedAsset || !isBorrowEnabledAsset
+      ? maxWithdrawAmount
+      : computeMaxBorrowAmount(currentAsset.denom, 'wallet').plus(maxWithdrawAmount)
 
   const [debtAmount, max] = useMemo(() => {
     const isWithinBalance = amount.isLessThan(maxWithdrawAmount)
@@ -131,7 +133,7 @@ export default function WithdrawFromAccount(props: Props) {
           warningMessages={[]}
         />
         <Divider className='my-6' />
-        {!isDeprecatedAsset && (
+        {!isDeprecatedAsset && isBorrowEnabledAsset && (
           <div className='flex flex-wrap w-full'>
             <div className='flex flex-wrap flex-1'>
               <Text className='w-full mb-1'>Withdraw with borrowing</Text>

@@ -17,7 +17,9 @@ export default function UnlockAmount(props: Props) {
 
   if (!primaryAsset) return null
 
-  if (primaryAsset && secondaryAsset) {
+  const hasSecondary = props.vault.denoms.secondary !== ''
+
+  if (primaryAsset && secondaryAsset && hasSecondary) {
     const unlockAmounts = getVaultAccountStrategiesRow(props.vault, assets)
     const primaryUnlockAmount = unlockAmounts?.coins?.primary?.amount ?? BN_ZERO
     const secondaryUnlockAmount = unlockAmounts?.coins?.secondary?.amount ?? BN_ZERO

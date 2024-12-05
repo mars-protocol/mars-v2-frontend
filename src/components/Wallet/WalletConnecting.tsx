@@ -10,6 +10,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useStore from 'store'
+import { setNodeError } from 'utils/error'
 
 interface Props {
   providerId?: string
@@ -89,6 +90,7 @@ export default function WalletConnecting(props: Props) {
         } catch (error) {
           setIsConnecting(false)
           if (error instanceof Error) {
+            if (error.message === 'Failed to fetch') setNodeError(chainConfig.endpoints.rpc, error)
             useStore.setState({
               client: undefined,
               address: undefined,
@@ -181,6 +183,7 @@ export default function WalletConnecting(props: Props) {
         } catch (error) {
           setIsConnecting(false)
           if (error instanceof Error) {
+            if (error.message === 'Failed to fetch') setNodeError(chainConfig.endpoints.rpc, error)
             useStore.setState({
               client: undefined,
               address: undefined,

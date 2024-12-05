@@ -11,7 +11,7 @@ export function SubHeader() {
   if (!perpsVault) return null
 
   return (
-    <div className='flex gap-6 items-stretch px-6 py-4'>
+    <div className='flex items-stretch gap-6 px-6 py-4'>
       <TitleAndSubCell
         title={
           <FormattedNumber
@@ -22,9 +22,12 @@ export function SubHeader() {
         sub='TVL'
       />
       <Divider orientation='vertical' />
-      <TitleAndSubCell title={formatPercent(110)} sub='Collateralization Ratio' />
+      <TitleAndSubCell
+        title={formatPercent(perpsVault.collateralizationRatio * 100)}
+        sub='Collateralization Ratio'
+      />
       <Divider orientation='vertical' />
-      <TitleAndSubCell title='-' sub='Deposit APY' />
+      <TitleAndSubCell title={formatPercent(perpsVault?.apy ?? 0)} sub='Deposit APY' />
     </div>
   )
 }

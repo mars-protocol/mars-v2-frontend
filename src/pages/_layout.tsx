@@ -12,6 +12,7 @@ import Footer from 'components/common/Footer'
 import PageMetadata from 'components/common/PageMetadata'
 import Text from 'components/common/Text'
 import Toaster from 'components/common/Toaster'
+import ErrorBoundary from 'components/error/ErrorBoundary'
 import Header from 'components/header/Header'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -55,6 +56,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
   const focusComponent = useStore((s) => s.focusComponent)
   const mobileNavExpanded = useStore((s) => s.mobileNavExpanded)
+  const errorStore = useStore((s) => s.errorStore)
   const address = useStore((s) => s.address)
   const [currentChainId, setCurrentChainId] = useCurrentChainId()
   const chainConfig = useChainConfig()
@@ -66,7 +68,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const isFullWidth =
     location.pathname.includes('trade') ||
     location.pathname === '/' ||
-    location.pathname.includes('perps')
+    (location.pathname.includes('perps') && !location.pathname.includes('perps-vault'))
   const accountId = useAccountId()
 
   useEffect(() => {
@@ -84,7 +86,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }, [chainConfig.id, currentChainId, setCurrentChainId])
 
   return (
-    <>
+    <ErrorBoundary errorStore={errorStore}>
       <SWRConfig value={{ use: [debugSWR] }}>
         <Suspense
           fallback={
@@ -131,6 +133,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <Toaster />
         </Suspense>
       </SWRConfig>
-    </>
+    </ErrorBoundary>
   )
 }

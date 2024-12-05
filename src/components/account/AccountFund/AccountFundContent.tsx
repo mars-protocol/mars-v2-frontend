@@ -3,7 +3,10 @@ import WalletBridges from 'components/Wallet/WalletBridges'
 import DepositCapMessage from 'components/common/DepositCapMessage'
 import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
 import Text from 'components/common/Text'
-import useBaseAsset from 'hooks/assets/useBasetAsset'
+import { BN_ZERO } from 'constants/math'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
+import useBaseAsset from 'hooks/assets/useBaseAsset'
+import useMarkets from 'hooks/markets/useMarkets'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
@@ -94,7 +97,7 @@ export default function AccountFundContent(props: Props) {
 
         const { pathname } = window.location
         const searchParams = new URLSearchParams(window.location.search)
-        navigate(getRoute(getPage(pathname), searchParams, props.address, accountId))
+        navigate(getRoute(getPage(pathname, chainConfig), searchParams, props.address, accountId))
 
         if (props.isFullPage) {
           useStore.setState((state) => ({

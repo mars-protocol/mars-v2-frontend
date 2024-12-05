@@ -1,26 +1,27 @@
-import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
+import useAccountPerpData from 'components/account/AccountPerpPositionTable/useAccountPerpData'
 import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ArrowRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
-import { BN_ZERO, MAX_AMOUNT_DECIMALS } from 'constants/math'
+import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
-import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useAssetParams from 'hooks/params/useAssetParams'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { calculateAccountApr, getAccountPositionValues } from 'utils/accounts'
+import { getAccountSummaryStats, getAccountUnrealizedPnlValue } from 'utils/accounts'
 
 interface Props {
   account: Account
-  isHls?: boolean
 }
 
 interface ItemProps {
@@ -33,14 +34,20 @@ interface ItemProps {
 }
 
 export default function AccountComposition(props: Props) {
+  const chainConfig = useChainConfig()
   const updatedAccount = useStore((s) => s.updatedAccount)
   const { account } = props
   const hasChanged = !!updatedAccount
-  const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
+  const accountPerpData = useAccountPerpData({
+    account,
+    updatedAccount,
+  })
+
   const astroLpAprs = useAstroLpAprs()
-  const assets = useWhitelistedAssets()
+  const { data: assets } = useAssets()
   const data = useBorrowMarketAssetsTableData()
+  const { data: perpsVault } = usePerpsVault()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
     useLendingMarketAssetsTableData()
@@ -48,118 +55,120 @@ export default function AccountComposition(props: Props) {
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
   )
+  const assetParams = useAssetParams()
 
-  const [
-    depositsBalance,
-    lendsBalance,
-    debtsBalance,
-    vaultsBalance,
-    perps,
-    perpsVault,
-    stakedAstroLps,
-  ] = useMemo(() => getAccountPositionValues(account, assets), [account, assets])
-  const totalBalance = useMemo(
+  const { positionValue, debts, netWorth, collateralValue, apy, leverage } = useMemo(
     () =>
-      depositsBalance
-        .plus(lendsBalance)
-        .plus(vaultsBalance)
-        .plus(perps)
-        .plus(perpsVault)
-        .plus(stakedAstroLps),
-    [depositsBalance, lendsBalance, perps, perpsVault, vaultsBalance, stakedAstroLps],
-  )
-
-  const [updatedPositionValue, updatedDebtsBalance] = useMemo(() => {
-    const [
-      updatedDepositsBalance,
-      updatedLendsBalance,
-      updatedDebtsBalance,
-      updatedVaultsBalance,
-      updatedPerpsBalance,
-      updatedPerpsVaultBalance,
-      updatedStakedAstroLps,
-    ] = updatedAccount
-      ? getAccountPositionValues(updatedAccount, assets)
-      : [BN_ZERO, BN_ZERO, BN_ZERO, BN_ZERO, BN_ZERO, BN_ZERO, BN_ZERO]
-
-    const updatedPositionValue = updatedDepositsBalance
-      .plus(updatedLendsBalance)
-      .plus(updatedVaultsBalance)
-      .plus(updatedPerpsBalance)
-      .plus(updatedPerpsVaultBalance)
-      .plus(updatedStakedAstroLps)
-
-    return [updatedPositionValue, updatedDebtsBalance]
-  }, [updatedAccount, assets])
-
-  const apr = useMemo(
-    () =>
-      calculateAccountApr(
+      getAccountSummaryStats(
         account,
         borrowAssetsData,
         lendingAssetsData,
-        hlsStrategies,
         assets,
         vaultAprs,
         astroLpAprs,
-        props.isHls,
+        assetParams.data || [],
+        perpsVault?.apy || 0,
       ),
     [
       account,
-      assets,
       borrowAssetsData,
-      hlsStrategies,
       lendingAssetsData,
-      props.isHls,
+      assets,
       vaultAprs,
       astroLpAprs,
+      assetParams.data,
+      perpsVault?.apy,
     ],
   )
-  const updatedApr = useMemo(
-    () =>
-      updatedAccount
-        ? calculateAccountApr(
-            updatedAccount,
-            borrowAssetsData,
-            lendingAssetsData,
-            hlsStrategies,
-            assets,
-            vaultAprs,
-            astroLpAprs,
-            props.isHls,
-          )
-        : BN_ZERO,
-    [
+
+  const {
+    positionValue: updatedPositionValue,
+    debts: updatedDebts,
+    netWorth: updatedNetWorth,
+    collateralValue: updatedCollateralValue,
+    apy: updatedApy,
+    leverage: updatedLeverage,
+  } = useMemo(() => {
+    if (!updatedAccount) {
+      return {
+        positionValue,
+        debts,
+        netWorth,
+        collateralValue,
+        apy,
+        leverage,
+      }
+    }
+    return getAccountSummaryStats(
       updatedAccount,
       borrowAssetsData,
       lendingAssetsData,
-      hlsStrategies,
       assets,
       vaultAprs,
       astroLpAprs,
-      props.isHls,
-    ],
+      assetParams.data || [],
+      perpsVault?.apy || 0,
+    )
+  }, [
+    updatedAccount,
+    borrowAssetsData,
+    lendingAssetsData,
+    assets,
+    vaultAprs,
+    astroLpAprs,
+    assetParams.data,
+    perpsVault?.apy,
+    positionValue,
+    debts,
+    netWorth,
+    collateralValue,
+    apy,
+    leverage,
+  ])
+
+  const totalUnrealizedPnl = useMemo(
+    () => getAccountUnrealizedPnlValue(account, assets),
+    [account, assets],
+  )
+
+  const updatedUnrealizedPnl = useMemo(
+    () => getAccountUnrealizedPnlValue(updatedAccount ?? account, assets),
+    [updatedAccount, account, assets],
   )
 
   return (
     <div className='flex-wrap w-full p-4 pb-1'>
       <Item
         title='Total Balance'
-        current={totalBalance}
-        change={hasChanged ? updatedPositionValue : totalBalance}
+        current={positionValue.amount}
+        change={hasChanged ? updatedPositionValue.amount : positionValue.amount}
+        className='pb-3'
+      />
+      <Item
+        title='Collateral Power'
+        current={collateralValue.amount}
+        change={hasChanged ? updatedCollateralValue.amount : collateralValue.amount}
         className='pb-3'
       />
       <Item
         title='Total Debt'
-        current={debtsBalance}
-        change={hasChanged ? updatedDebtsBalance : debtsBalance}
+        current={debts.amount}
+        change={hasChanged ? updatedDebts.amount : debts.amount}
         className='pb-3'
         isDecrease
       />
+      {chainConfig.perps && accountPerpData.length !== 0 && (
+        <Item
+          title='Unrealized PnL'
+          current={totalUnrealizedPnl}
+          change={hasChanged ? updatedUnrealizedPnl : totalUnrealizedPnl}
+          className='pb-3'
+        />
+      )}
       <Item
-        title='APR'
-        current={apr}
-        change={hasChanged ? updatedApr : apr}
+        title='APY'
+        current={apy}
+        change={hasChanged ? updatedApy : apy}
         className='pb-3'
         isPercentage
       />
@@ -168,8 +177,8 @@ export default function AccountComposition(props: Props) {
 }
 
 function Item(props: ItemProps) {
-  const { current, change } = props
-  const increase = props.isDecrease ? current.isGreaterThan(change) : current.isLessThan(change)
+  const { current, change, title } = props
+  const decrease = props.isDecrease ? change.isGreaterThan(current) : change.isLessThan(current)
 
   return (
     <div className={classNames('flex w-full flex-nowrap', props.className)}>
@@ -196,11 +205,14 @@ function Item(props: ItemProps) {
             coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, current)}
             className='text-sm'
             options={{ abbreviated: false }}
+            {...(title === 'Unrealized PnL' && {
+              showSignPrefix: true,
+            })}
           />
         )}
         {current.toFixed(2) !== change.toFixed(2) && (
           <>
-            <span className={classNames('w-3', increase ? 'text-profit' : 'text-loss')}>
+            <span className={classNames('w-3', decrease ? 'text-loss' : 'text-profit')}>
               <ArrowRight />
             </span>
             {props.isPercentage ? (
@@ -211,14 +223,17 @@ function Item(props: ItemProps) {
                   minDecimals: 2,
                   maxDecimals: change.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
                 }}
-                className={classNames('text-sm', increase ? 'text-profit' : 'text-loss')}
+                className={classNames('text-sm', decrease ? 'text-loss' : 'text-profit')}
                 animate
               />
             ) : (
               <DisplayCurrency
                 coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, change)}
-                className={classNames('text-sm', increase ? 'text-profit' : 'text-loss')}
+                className={classNames('text-sm', decrease ? 'text-loss' : 'text-profit')}
                 options={{ abbreviated: false }}
+                {...(title === 'Unrealized PnL' && {
+                  showSignPrefix: true,
+                })}
               />
             )}
           </>

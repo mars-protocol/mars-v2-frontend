@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 
 import DoubleLogo from 'components/common/DoubleLogo'
 import Text from 'components/common/Text'
+import HlsTag from 'components/hls/HlsTag'
 import AstroLpWithdraw from 'components/Modals/AstroLp/AstroLpWithdraw'
 import FarmModalContent from 'components/Modals/Farm/FarmModalContent'
 import FarmModalContentHeader from 'components/Modals/Farm/FarmModalContentHeader'
@@ -14,9 +15,12 @@ export default function AstroLpModalController() {
   const currentAccount = useCurrentAccount()
   const modal = useStore((s) => s.farmModal)
 
-  if (!modal || !currentAccount || modal.type !== 'astroLp') return null
+  if (!modal || modal.type === 'vault') return null
 
-  return <AstroLpModal currentAccount={currentAccount} modal={modal} />
+  const account = modal.type == 'high_leverage' ? modal.account : currentAccount
+
+  if (!account) return null
+  return <AstroLpModal currentAccount={account} modal={modal} />
 }
 
 interface Props {
@@ -26,27 +30,34 @@ interface Props {
 
 function AstroLpModal(props: Props) {
   const {
-    modal: { farm, action },
+    modal: { farm, action, type, isCreate },
     currentAccount,
   } = props
+  const isHls = currentAccount.kind === 'high_levered_strategy'
   const astroLp = farm as AstroLp
   const onClose = useCallback(() => {
     useStore.setState({ farmModal: null })
   }, [])
 
-  const { addedDebts, removedDeposits, removedLends, simulateAstroLpDeposit } =
-    useUpdatedAccount(currentAccount)
+  const {
+    addedDebts,
+    removedDeposits,
+    removedLends,
+    simulateAstroLpDeposit,
+    simulateUnstakeAstroLp,
+  } = useUpdatedAccount(currentAccount)
 
   return (
     <Modal
       onClose={onClose}
       header={
-        <span className='flex items-center py-1 pr-4'>
+        <span className='flex items-center gap-3 py-1 pr-4'>
           <DoubleLogo
             primaryDenom={astroLp.denoms.primary}
             secondaryDenom={astroLp.denoms.secondary}
           />
-          <Text className='pl-3 pr-2'>{astroLp.name}</Text>
+          <Text>{astroLp.name}</Text>
+          {isHls && <HlsTag />}
         </span>
       }
       headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
@@ -62,9 +73,16 @@ function AstroLpModal(props: Props) {
           removedDeposits={removedDeposits}
           removedLends={removedLends}
           simulateAstroLpDeposit={simulateAstroLpDeposit}
+          type={type}
+          isDeposited={!isCreate}
         />
       ) : (
-        <AstroLpWithdraw account={currentAccount} astroLp={astroLp as DepositedAstroLp} />
+        <AstroLpWithdraw
+          account={currentAccount}
+          simulateUnstakeAstroLp={simulateUnstakeAstroLp}
+          astroLp={astroLp as DepositedAstroLp}
+          type={type}
+        />
       )}
     </Modal>
   )

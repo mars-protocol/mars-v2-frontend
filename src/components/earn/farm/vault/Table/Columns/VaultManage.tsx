@@ -8,7 +8,12 @@ import useSlippage from 'hooks/settings/useSlippage'
 import useStore from 'store'
 import { VaultStatus } from 'types/enums'
 
-export const MANAGE_META = { accessorKey: 'details', enableSorting: false, header: '' }
+export const MANAGE_META = {
+  accessorKey: 'details',
+  enableSorting: false,
+  header: '',
+  meta: { className: 'w-30' },
+}
 
 interface Props {
   vault: DepositedVault

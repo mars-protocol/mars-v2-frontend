@@ -87,6 +87,7 @@ export default function Option(props: Props) {
           type='apy'
           orientation='rtl'
           suffix
+          hasCampaignApy={asset.campaigns.find((c) => c.type === 'apy') !== undefined}
         />
         <DisplayCurrency
           className='col-span-2 text-sm text-right text-white/50'

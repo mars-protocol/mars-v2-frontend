@@ -18,6 +18,8 @@ interface Props {
   amount?: BigNumber
   noDot?: boolean
   campaign: AssetCampaign
+  account?: Account
+  hasDebt?: boolean
 }
 
 interface CopyProps extends Props {
@@ -26,18 +28,28 @@ interface CopyProps extends Props {
 
 export default function AssetCampaignCopyController(props: Props) {
   const { asset, withLogo, campaign } = props
+  const currentAccount = useCurrentAccount()
   const isV1 = useStore((s) => s.isV1)
   if (!asset.campaigns || asset.campaigns.length === 0) return null
   if (!campaign.enabledOnV1 && isV1 && !withLogo) return null
 
-  return <AssetCampaignCopy isV1={isV1} {...props} />
+  return <AssetCampaignCopy isV1={isV1} {...props} account={props.account ?? currentAccount} />
 }
 
 function AssetCampaignCopy(props: CopyProps) {
-  const { asset, className, amount, withLogo, size, textClassName, noDot, isV1, campaign } = props
+  const {
+    asset,
+    className,
+    amount,
+    withLogo,
+    size,
+    textClassName,
+    noDot,
+    isV1,
+    campaign,
+    account,
+  } = props
   const { data: assets } = useAssets()
-
-  const account = useCurrentAccount()
   const incentiveCopy = useMemo(() => {
     if (!campaign) return ''
     if (!campaign.enabledOnV1 && isV1) return campaign.v1Tooltip
@@ -46,7 +58,7 @@ function AssetCampaignCopy(props: CopyProps) {
 
     const tokenValue = getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, amount), assets)
     const detailedCopy = campaign.detailedIncentiveCopy
-    const hasDebt = account?.debts && account.debts.length > 0
+    const hasDebt = props.hasDebt || (account?.debts && account.debts.length > 0)
     const activeCollateralMultiplier = campaign?.collateralMultiplier ?? campaign.baseMultiplier
     const multiplier = hasDebt ? activeCollateralMultiplier : campaign.baseMultiplier
 
@@ -65,7 +77,7 @@ function AssetCampaignCopy(props: CopyProps) {
       '##POINTS##',
       formatValue(campaignPoints, { maxDecimals: 0, minDecimals: 0, abbreviated: false }),
     )
-  }, [account?.debts, amount, campaign, asset.denom, assets, isV1])
+  }, [campaign, isV1, amount, asset.denom, assets, props.hasDebt, account?.debts])
 
   const iconClasses = useMemo(() => {
     if (size === 'xs') return 'w-4 h-4'

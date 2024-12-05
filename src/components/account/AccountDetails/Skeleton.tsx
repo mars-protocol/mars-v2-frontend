@@ -37,7 +37,7 @@ export default function Skeleton(props: Props) {
         </div>
         <div className='flex flex-wrap justify-center w-full py-4 border-t border-white/20'>
           <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
-            APR
+            APY
           </Text>
           <Loading className='w-10 h-3 mt-1' />
         </div>

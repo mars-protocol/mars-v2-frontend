@@ -11,7 +11,7 @@ import { BN_ONE, BN_ZERO, MAX_AMOUNT_DECIMALS, MIN_AMOUNT } from 'constants/math
 import useFavoriteAssets from 'hooks/localStorage/useFavoriteAssets'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { demagnify, formatAmountToPrecision } from 'utils/formatters'
+import { demagnify, formatAmountToPrecision, getPerpsPriceDecimals } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 interface Props {
@@ -130,6 +130,9 @@ export default function AssetSelectorItem(props: Props) {
               amount: BN_ONE.shiftedBy(asset.decimals).toString(),
             })
           }
+          options={{
+            maxDecimals: asset.price ? getPerpsPriceDecimals(asset.price.amount) : undefined,
+          }}
           showDetailedPrice
         />
       </button>

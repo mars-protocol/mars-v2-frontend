@@ -62,9 +62,11 @@ module.exports = {
     'gradient-droplets',
     'gradient-stride',
     'gradient-lido',
+    'gradient-milkyway',
     'droplets',
     'stride',
     'lido',
+    'milkyway',
   ],
   theme: {
     extend: {
@@ -187,6 +189,9 @@ module.exports = {
         semibold: 500,
         bold: 600,
       },
+      gridTemplateColumns: {
+        chart: 'minmax(100px, 100%) 346px',
+      },
       height: {
         4.5: '18px',
         9: '36px',
@@ -297,15 +302,22 @@ module.exports = {
         'screen/10': '10dvw',
       },
       minWidth: {
+        13: '52px',
         15: '60px',
         16: '64px',
-        20: '80px',
-        28: '112px',
+        18: '72px',
+        25: '100px',
+        29: '116px',
         30: '120px',
+        35: '140px',
         35.5: '142px',
         37: '148px',
         40: '160px',
         50: '200px',
+        60: '240px',
+        90: '360px',
+        20: '80px',
+        28: '112px',
         92.5: '370px',
         94: '376px',
       },
@@ -505,6 +517,9 @@ module.exports = {
           background:
             'linear-gradient(rgb(101, 98, 255) 11.28%, rgb(0, 163, 255) 61.02%, rgb(99, 214, 210) 100%)',
         },
+        '.gradient-milkyway': {
+          background: 'linear-gradient(90deg, #FEf7F1 0%, #FDE2FB 50%, #FDE4FC 100%)',
+        },
         '.number': {
           whiteSpace: 'nowrap',
           fontFeatureSettings: '"tnum" on',
@@ -603,6 +618,12 @@ module.exports = {
         '.lido': {
           background:
             'linear-gradient(90deg, rgb(101, 98, 255) 11.28%, rgb(0, 163, 255) 61.02%, rgb(99, 214, 210) 100%)',
+          '-webkit-background-clip': 'text',
+          '-webkit-text-fill-color': 'transparent',
+          fontWeight: 600,
+        },
+        '.milkyway': {
+          background: 'linear-gradient(90deg, #FEf7F1 0%, #FDE2FB 50%, #FDE4FC 100%)',
           '-webkit-background-clip': 'text',
           '-webkit-text-fill-color': 'transparent',
           fontWeight: 600,

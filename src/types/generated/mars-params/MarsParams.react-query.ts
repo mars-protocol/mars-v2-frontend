@@ -9,17 +9,19 @@ import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tan
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
 import {
-  Decimal,
   InstantiateMsg,
   ExecuteMsg,
   OwnerUpdate,
   AssetParamsUpdate,
+  Decimal,
   HlsAssetTypeForString,
   Uint128,
   VaultConfigUpdate,
+  PerpParamsUpdate,
   EmergencyUpdate,
   CmEmergencyUpdate,
   RedBankEmergencyUpdate,
+  PerpsEmergencyUpdate,
   AssetParamsBaseForString,
   CmSettingsForString,
   HlsParamsBaseForString,
@@ -27,6 +29,7 @@ import {
   RedBankSettings,
   VaultConfigBaseForString,
   Coin,
+  PerpParams,
   QueryMsg,
   HlsAssetTypeForAddr,
   Addr,
@@ -34,9 +37,12 @@ import {
   AssetParamsBaseForAddr,
   CmSettingsForAddr,
   HlsParamsBaseForAddr,
+  PaginationResponseForAssetParamsBaseForAddr,
+  Metadata,
+  ArrayOfPerpParams,
+  PaginationResponseForPerpParams,
   PaginationResponseForTotalDepositResponse,
   TotalDepositResponse,
-  Metadata,
   ArrayOfVaultConfigBaseForAddr,
   VaultConfigBaseForAddr,
   PaginationResponseForVaultConfigBaseForAddr,
@@ -90,6 +96,14 @@ export const marsParamsQueryKeys = {
         args,
       },
     ] as const,
+  allAssetParamsV2: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
+    [
+      {
+        ...marsParamsQueryKeys.address(contractAddress)[0],
+        method: 'all_asset_params_v2',
+        args,
+      },
+    ] as const,
   vaultConfig: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
     [
       {
@@ -114,11 +128,27 @@ export const marsParamsQueryKeys = {
         args,
       },
     ] as const,
-  targetHealthFactor: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
+  perpParams: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
     [
       {
         ...marsParamsQueryKeys.address(contractAddress)[0],
-        method: 'target_health_factor',
+        method: 'perp_params',
+        args,
+      },
+    ] as const,
+  allPerpParams: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
+    [
+      {
+        ...marsParamsQueryKeys.address(contractAddress)[0],
+        method: 'all_perp_params',
+        args,
+      },
+    ] as const,
+  allPerpParamsV2: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
+    [
+      {
+        ...marsParamsQueryKeys.address(contractAddress)[0],
+        method: 'all_perp_params_v2',
         args,
       },
     ] as const,
@@ -198,15 +228,78 @@ export function useMarsParamsTotalDepositQuery<TData = TotalDepositResponse>({
     },
   )
 }
-export interface MarsParamsTargetHealthFactorQuery<TData>
-  extends MarsParamsReactQuery<Decimal, TData> {}
-export function useMarsParamsTargetHealthFactorQuery<TData = Decimal>({
+export interface MarsParamsAllPerpParamsV2Query<TData>
+  extends MarsParamsReactQuery<PaginationResponseForPerpParams, TData> {
+  args: {
+    limit?: number
+    startAfter?: string
+  }
+}
+export function useMarsParamsAllPerpParamsV2Query<TData = PaginationResponseForPerpParams>({
   client,
+  args,
   options,
-}: MarsParamsTargetHealthFactorQuery<TData>) {
-  return useQuery<Decimal, Error, TData>(
-    marsParamsQueryKeys.targetHealthFactor(client?.contractAddress),
-    () => (client ? client.targetHealthFactor() : Promise.reject(new Error('Invalid client'))),
+}: MarsParamsAllPerpParamsV2Query<TData>) {
+  return useQuery<PaginationResponseForPerpParams, Error, TData>(
+    marsParamsQueryKeys.allPerpParamsV2(client?.contractAddress, args),
+    () =>
+      client
+        ? client.allPerpParamsV2({
+            limit: args.limit,
+            startAfter: args.startAfter,
+          })
+        : Promise.reject(new Error('Invalid client')),
+    {
+      ...options,
+      enabled: !!client && (options?.enabled != undefined ? options.enabled : true),
+    },
+  )
+}
+export interface MarsParamsAllPerpParamsQuery<TData>
+  extends MarsParamsReactQuery<ArrayOfPerpParams, TData> {
+  args: {
+    limit?: number
+    startAfter?: string
+  }
+}
+export function useMarsParamsAllPerpParamsQuery<TData = ArrayOfPerpParams>({
+  client,
+  args,
+  options,
+}: MarsParamsAllPerpParamsQuery<TData>) {
+  return useQuery<ArrayOfPerpParams, Error, TData>(
+    marsParamsQueryKeys.allPerpParams(client?.contractAddress, args),
+    () =>
+      client
+        ? client.allPerpParams({
+            limit: args.limit,
+            startAfter: args.startAfter,
+          })
+        : Promise.reject(new Error('Invalid client')),
+    {
+      ...options,
+      enabled: !!client && (options?.enabled != undefined ? options.enabled : true),
+    },
+  )
+}
+export interface MarsParamsPerpParamsQuery<TData> extends MarsParamsReactQuery<PerpParams, TData> {
+  args: {
+    denom: string
+  }
+}
+export function useMarsParamsPerpParamsQuery<TData = PerpParams>({
+  client,
+  args,
+  options,
+}: MarsParamsPerpParamsQuery<TData>) {
+  return useQuery<PerpParams, Error, TData>(
+    marsParamsQueryKeys.perpParams(client?.contractAddress, args),
+    () =>
+      client
+        ? client.perpParams({
+            denom: args.denom,
+          })
+        : Promise.reject(new Error('Invalid client')),
     {
       ...options,
       enabled: !!client && (options?.enabled != undefined ? options.enabled : true),
@@ -282,6 +375,31 @@ export function useMarsParamsVaultConfigQuery<TData = VaultConfigBaseForAddr>({
       client
         ? client.vaultConfig({
             address: args.address,
+          })
+        : Promise.reject(new Error('Invalid client')),
+    {
+      ...options,
+      enabled: !!client && (options?.enabled != undefined ? options.enabled : true),
+    },
+  )
+}
+export interface MarsParamsAllAssetParamsV2Query<TData>
+  extends MarsParamsReactQuery<PaginationResponseForAssetParamsBaseForAddr, TData> {
+  args: {
+    limit?: number
+    startAfter?: string
+  }
+}
+export function useMarsParamsAllAssetParamsV2Query<
+  TData = PaginationResponseForAssetParamsBaseForAddr,
+>({ client, args, options }: MarsParamsAllAssetParamsV2Query<TData>) {
+  return useQuery<PaginationResponseForAssetParamsBaseForAddr, Error, TData>(
+    marsParamsQueryKeys.allAssetParamsV2(client?.contractAddress, args),
+    () =>
+      client
+        ? client.allAssetParamsV2({
+            limit: args.limit,
+            startAfter: args.startAfter,
           })
         : Promise.reject(new Error('Invalid client')),
     {
@@ -391,6 +509,27 @@ export function useMarsParamsEmergencyUpdateMutation(
     options,
   )
 }
+export interface MarsParamsUpdatePerpParamsMutation {
+  client: MarsParamsClient
+  msg: PerpParamsUpdate
+  args?: {
+    fee?: number | StdFee | 'auto'
+    memo?: string
+    funds?: Coin[]
+  }
+}
+export function useMarsParamsUpdatePerpParamsMutation(
+  options?: Omit<
+    UseMutationOptions<ExecuteResult, Error, MarsParamsUpdatePerpParamsMutation>,
+    'mutationFn'
+  >,
+) {
+  return useMutation<ExecuteResult, Error, MarsParamsUpdatePerpParamsMutation>(
+    ({ client, msg, args: { fee, memo, funds } = {} }) =>
+      client.updatePerpParams(msg, fee, memo, funds),
+    options,
+  )
+}
 export interface MarsParamsUpdateVaultConfigMutation {
   client: MarsParamsClient
   msg: VaultConfigUpdate
@@ -433,30 +572,11 @@ export function useMarsParamsUpdateAssetParamsMutation(
     options,
   )
 }
-export interface MarsParamsUpdateTargetHealthFactorMutation {
-  client: MarsParamsClient
-  args?: {
-    fee?: number | StdFee | 'auto'
-    memo?: string
-    funds?: Coin[]
-  }
-}
-export function useMarsParamsUpdateTargetHealthFactorMutation(
-  options?: Omit<
-    UseMutationOptions<ExecuteResult, Error, MarsParamsUpdateTargetHealthFactorMutation>,
-    'mutationFn'
-  >,
-) {
-  return useMutation<ExecuteResult, Error, MarsParamsUpdateTargetHealthFactorMutation>(
-    ({ client, msg, args: { fee, memo, funds } = {} }) =>
-      client.updateTargetHealthFactor(msg, fee, memo, funds),
-    options,
-  )
-}
 export interface MarsParamsUpdateConfigMutation {
   client: MarsParamsClient
   msg: {
     addressProvider?: string
+    maxPerpParams?: number
   }
   args?: {
     fee?: number | StdFee | 'auto'

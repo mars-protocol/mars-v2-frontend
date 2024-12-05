@@ -9,13 +9,12 @@ export function isNumber(value: unknown) {
   return typeof value === 'number'
 }
 
-export const convertAprToApy = (apr: number, numberOfCompoundingPeriods: number): number => {
-  return ((1 + apr / 100 / numberOfCompoundingPeriods) ** numberOfCompoundingPeriods - 1) * 100
+export const convertAprToApy = (apr: number, compoundFrequency: number): number => {
+  return ((1 + (apr * 0.01) / compoundFrequency) ** compoundFrequency - 1) * 100
 }
 
-export const convertApyToApr = (apy: number, numberOfCompoundingPeriods: number): number => {
-  const periodicRate = (1 + apy / 100) ** (1 / numberOfCompoundingPeriods) - 1
-  return periodicRate * numberOfCompoundingPeriods * 100
+export const convertApyToApr = (apy: number, compoundFrequency: number): number => {
+  return (((apy / 100 + 1) ** (1 / compoundFrequency) - 1) * compoundFrequency) / 0.01
 }
 
 export const combineBNCoins = (coins: BNCoin[]): BNCoin[] => {

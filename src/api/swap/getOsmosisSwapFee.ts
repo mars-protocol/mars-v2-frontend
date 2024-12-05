@@ -1,5 +1,7 @@
 import { BN_ZERO } from 'constants/math'
+import { FETCH_TIMEOUT } from 'constants/query'
 import { STANDARD_SWAP_FEE } from 'utils/constants'
+import { fetchWithTimeout } from 'utils/fetch'
 
 export default async function getOsmosisSwapFee(
   chainConfig: ChainConfig,
@@ -8,7 +10,9 @@ export default async function getOsmosisSwapFee(
   const uri = chainConfig.endpoints.pools
   if (!uri) return STANDARD_SWAP_FEE
 
-  const promises = poolIds.map((poolId) => fetch(uri.replace('POOL_ID', poolId)))
+  const promises = poolIds.map((poolId) =>
+    fetchWithTimeout(uri.replace('POOL_ID', poolId), FETCH_TIMEOUT),
+  )
 
   const responses = await Promise.all(promises)
 

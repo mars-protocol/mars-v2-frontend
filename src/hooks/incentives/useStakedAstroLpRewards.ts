@@ -15,17 +15,19 @@ function isPaginatedResponse(
   return (<PaginationResponseForStakedLpPositionResponse>rewards).data !== undefined
 }
 
-export default function useStakedAstroLpRewards(lpDenom?: string) {
-  const accountId = useAccountId()
+export default function useStakedAstroLpRewards(lpDenom?: string, accountId?: string) {
+  const currentAccountId = useAccountId()
   const chainConfig = useChainConfig()
   const clients = useClients()
 
-  const enabled = !!clients && !!accountId && !chainConfig.isOsmosis
-  const key = lpDenom
-    ? `chains/${chainConfig.id}/accounts/${accountId}/staked-astro-lp-rewards/${lpDenom}`
-    : `chains/${chainConfig.id}/accounts/${accountId}/staked-astro-lp-rewards`
+  const usedAccountId = accountId || currentAccountId
 
-  return useSWR(enabled && key, () => getStakedAstroLpRewards(clients!, accountId!, lpDenom), {
+  const enabled = !!clients && !!usedAccountId && !chainConfig.isOsmosis
+  const key = lpDenom
+    ? `chains/${chainConfig.id}/accounts/${usedAccountId}/staked-astro-lp-rewards/${lpDenom}`
+    : `chains/${chainConfig.id}/accounts/${usedAccountId}/staked-astro-lp-rewards`
+
+  return useSWR(enabled && key, () => getStakedAstroLpRewards(clients!, usedAccountId!, lpDenom), {
     fallbackData: [] as StakedAstroLpRewards[],
     isPaused: () => !enabled,
     revalidateOnFocus: false,

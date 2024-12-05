@@ -61,3 +61,9 @@ export enum RewardsCenterType {
   Token = 'token',
   Position = 'position',
 }
+
+export enum OrderType {
+  LIMIT = 'Limit',
+  MARKET = 'Market',
+  STOP = 'Stop',
+}

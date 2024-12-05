@@ -10,8 +10,11 @@ import Table from 'components/common/Table'
 import Text from 'components/common/Text'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import { useMemo } from 'react'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 interface Props {
   account: Account
@@ -34,22 +37,37 @@ export default function AccountBalancesTable(props: Props) {
     showLiquidationPrice,
     isUsersAccount,
   } = props
+  const chainConfig = useChainConfig()
   const currentAccount = useCurrentAccount()
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const address = useStore((s) => s.address)
   const updatedAccount = useStore((s) => s.updatedAccount)
   const isHls = account.kind === 'high_levered_strategy'
+  const whitelistedAssets = useWhitelistedAssets()
   const accountBalanceData = useAccountBalanceData({
     account,
     updatedAccount,
     lendingData,
     borrowingData,
-    isHls,
   })
+
+  const enhancedAccountBalanceData = useMemo(() => {
+    return accountBalanceData.map((row) => ({
+      ...row,
+      isWhitelisted: whitelistedAssets.some((asset) => asset.denom === row.denom),
+    }))
+  }, [accountBalanceData, whitelistedAssets])
+
+  const sortedAccountBalanceData = enhancedAccountBalanceData.sort((a, b) => {
+    if (a.isWhitelisted && !b.isWhitelisted) return -1
+    if (!a.isWhitelisted && b.isWhitelisted) return 1
+    return 0
+  })
+
   const columns = useAccountBalancesColumns(account, showLiquidationPrice)
 
-  if (accountBalanceData.length === 0) {
+  if (sortedAccountBalanceData.length === 0) {
     return (
       <ConditionalWrapper
         condition={!hideCard}
@@ -67,13 +85,16 @@ export default function AccountBalancesTable(props: Props) {
               color='tertiary'
               onClick={() => {
                 if (currentAccount?.id !== account.id) {
-                  navigate(getRoute(getPage(pathname), searchParams, address, account.id))
+                  navigate(
+                    getRoute(getPage(pathname, chainConfig), searchParams, address, account.id),
+                  )
                 }
                 useStore.setState({
                   focusComponent: {
                     component: <AccountFundFullPage />,
                     onClose: () => {
-                      useStore.setState({ getStartedModal: true })
+                      // TODO: update docs to reflect the current state of v2
+                      //useStore.setState({ getStartedModal: true })
                     },
                   },
                 })
@@ -100,12 +121,13 @@ export default function AccountBalancesTable(props: Props) {
         </Text>
       }
       columns={columns}
-      data={accountBalanceData}
+      data={sortedAccountBalanceData}
       tableBodyClassName={classNames(tableBodyClassName, 'text-white/60')}
       initialSorting={[]}
       spacingClassName='p-2'
       hideCard={hideCard}
       type='balances'
+      isBalancesTable
     />
   )
 }

@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import Button from 'components/common/Button'
@@ -19,8 +18,8 @@ import useMarkets from 'hooks/markets/useMarkets'
 import useSlippage from 'hooks/settings/useSlippage'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
-import { useSWRConfig } from 'swr'
 import { BNCoin } from 'types/classes/BNCoin'
+import { removeEmptyBNCoins } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { findCoinByDenom } from 'utils/assets'
 import { HF_THRESHOLD } from 'utils/constants'
@@ -29,7 +28,6 @@ import { formatPercent } from 'utils/formatters'
 import { mergeBNCoinArrays } from 'utils/helpers'
 
 export default function FarmBorrowings(props: FarmBorrowingsProps) {
-  const { mutate } = useSWRConfig()
   const assets = useDepositEnabledAssets()
   const { borrowings, onChangeBorrowings, type } = props
   const isAstroLp = type === 'astroLp'
@@ -77,7 +75,7 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
     const borrowPowerLeft = props.borrowings.reduce((capLeft, borrowing) => {
       const maxAmount = maxBorrowAmountsRaw.find((amount) => amount.denom === borrowing.denom)
 
-      if (!maxAmount) return capLeft
+      if (!maxAmount || maxAmount.amount.isZero()) return capLeft
       capLeft -= borrowing.amount.dividedBy(maxAmount.amount).toNumber()
       return capLeft
     }, 1)
@@ -174,6 +172,7 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
       chainConfig,
       isAutoLend,
       isAstroLp,
+      false,
     )
 
     useStore.setState({ farmModal: null })
@@ -181,12 +180,12 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
     await depositIntoFarm({
       accountId: updatedAccount.id,
       actions,
-      deposits: isAstroLp ? mergeBNCoinArrays(props.deposits, props.reclaims) : props.deposits,
+      deposits: isAstroLp
+        ? mergeBNCoinArrays(props.deposits, props.reclaims)
+        : removeEmptyBNCoins(props.deposits),
       borrowings: props.borrowings,
       kind: 'default' as AccountKind,
     })
-    await mutate(`chains/${chainConfig.id}/accounts/${updatedAccount.id}`)
-    await mutate(`chains/${chainConfig.id}/astroLps/${updatedAccount.id}/staked-astro-lp-rewards`)
   }
 
   return (

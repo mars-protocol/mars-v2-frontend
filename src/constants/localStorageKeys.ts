@@ -19,8 +19,13 @@ export enum LocalStorageKeys {
   UPDATE_ORACLE = 'updateOracle',
   CHART_INTERVAL = 'tradingview.chart.lastUsedTimeBasedResolution',
   PERPS_VAULT_INFORMATION = 'perpsVaultInformation',
+  PERPS_KEEPER_FEE = 'perpsKeeperFee',
   THEME = 'theme',
   RPC_ENDPOINT = 'rpcEndpoint',
   REST_ENDPOINT = 'restEndpoint',
   REWARDS_CENTER_TYPE = 'rewardsCenterType',
+  SHOW_SUMMARY = 'showSummary',
+  TV_CHART_STORE = 'tvChartStore',
+  SHOW_PERPS_VAULT_BANNER = 'showPerpsVaultBanner',
+  FUNDING_RATE_INTERVAL = 'fundingRateInterval',
 }

@@ -13,7 +13,7 @@ interface Props {
 }
 
 export default function Action(props: Props) {
-  const hasDebt = !props.data.accountDebtAmount?.isZero() ?? false
+  const hasDebt = !props.data.accountDebtAmount?.isZero()
   const isDeprecatedAsset = props.data.asset.isDeprecated
   if (isDeprecatedAsset && hasDebt) return <RepayButton data={props.data} />
   if (hasDebt) return <Manage data={props.data} />

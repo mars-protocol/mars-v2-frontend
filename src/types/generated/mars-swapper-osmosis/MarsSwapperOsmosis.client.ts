@@ -5,21 +5,29 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
+import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
-import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import {
+  InstantiateMsg,
+  ExecuteMsg,
+  OwnerUpdate,
+  OsmosisRoute,
+  Uint128,
+  SwapperRoute,
   Addr,
-  ArrayOfRouteResponseForEmpty,
+  SwapAmountInRoute,
   Coin,
+  AstroRoute,
+  AstroSwap,
+  OsmoRoute,
+  OsmoSwap,
+  OsmosisConfig,
+  QueryMsg,
   Empty,
   EstimateExactInSwapResponse,
-  OsmosisConfig,
-  OsmosisRoute,
   OwnerResponse,
-  OwnerUpdate,
   RouteResponseForEmpty,
-  SwapperRoute,
-  Uint128
+  ArrayOfRouteResponseForEmpty,
 } from './MarsSwapperOsmosis.types'
 export interface MarsSwapperOsmosisReadOnlyInterface {
   contractAddress: string
@@ -145,13 +153,11 @@ export interface MarsSwapperOsmosisInterface extends MarsSwapperOsmosisReadOnlyI
       coinIn,
       denomOut,
       minReceive,
-      slippage,
       route,
     }: {
       coinIn: Coin
       denomOut: string
-      minReceive?: Uint128
-      slippage?: Decimal
+      minReceive: Uint128
       route?: SwapperRoute
     },
     fee?: number | StdFee | 'auto',
@@ -252,13 +258,11 @@ export class MarsSwapperOsmosisClient
       coinIn,
       denomOut,
       minReceive,
-      slippage,
       route,
     }: {
       coinIn: Coin
       denomOut: string
-      minReceive?: Uint128
-      slippage?: Decimal
+      minReceive: Uint128
       route?: SwapperRoute
     },
     fee: number | StdFee | 'auto' = 'auto',
@@ -273,7 +277,6 @@ export class MarsSwapperOsmosisClient
           coin_in: coinIn,
           denom_out: denomOut,
           min_receive: minReceive,
-          slippage,
           route,
         },
       },

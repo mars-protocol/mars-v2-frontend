@@ -1,7 +1,6 @@
 import classNames from 'classnames'
 import React, { ReactNode } from 'react'
 import { Slide, ToastContainer, toast as toastify } from 'react-toastify'
-import { mutate } from 'swr'
 
 import { CheckMark } from 'components/common/CheckMark'
 import { CircularProgress } from 'components/common/CircularProgress'
@@ -34,10 +33,12 @@ export function generateToastContent(content: ToastSuccess['content'], assets: A
     <React.Fragment key={index}>
       {item.text && (
         <div className='flex flex-wrap w-full mb-1'>
-          <Text size='sm' className='w-full mb-1 text-white'>
-            {item.text}
-          </Text>
-          {item.coins.length > 0 && (
+          {(!item.coins || item.coins.length > 0) && (
+            <Text size='sm' className='w-full mb-1 text-white'>
+              {item.text}
+            </Text>
+          )}
+          {item.coins.length > 0 && Number(item.coins[0].amount ?? 0) !== 0 && (
             <ul className='flex flex-wrap w-full gap-1 p-1 pl-4 list-disc'>
               {item.coins.map((coin, index) => {
                 let prefix = ''
@@ -99,6 +100,7 @@ export default function Toaster() {
       closeOnClick: false,
       hideProgressBar: true,
       autoClose: false,
+      position: 'bottom-right',
     })
   }
 
@@ -210,7 +212,6 @@ export default function Toaster() {
     }
 
     useStore.setState({ toast: null })
-    mutate(() => true)
   }
 
   if (toast) {

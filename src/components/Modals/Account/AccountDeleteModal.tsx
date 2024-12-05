@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { useSWRConfig } from 'swr'
 
 import AccountAlertDialog from 'components/Modals/Account/AccountAlertDialog'
 import { ArrowRight, ExclamationMarkCircled } from 'components/common/Icons'
@@ -28,11 +27,10 @@ export default function AccountDeleteController() {
 
 function AccountDeleteModal(props: Props) {
   const modal = props.modal
-  const chainConfig = useChainConfig()
   const deleteAccount = useStore((s) => s.deleteAccount)
-  const { mutate } = useSWRConfig()
   const { address: urlAddress } = useParams()
   const navigate = useNavigate()
+  const chainChonfig = useChainConfig()
   const { pathname } = useLocation()
   const { address } = useParams()
   const { debts, vaults, id: accountId } = modal || {}
@@ -45,10 +43,9 @@ function AccountDeleteModal(props: Props) {
   const deleteAccountHandler = useCallback(async () => {
     useStore.setState({ accountDeleteModal: null })
     const options = { accountId: modal.id, lends: modal.lends }
-    const path = getPage(pathname)
+    const path = getPage(pathname, chainChonfig)
     const isDeleted = await deleteAccount(options)
     if (isDeleted) {
-      mutate(`chains/${chainConfig.id}/wallets/${urlAddress}/account-ids`)
       if (path.includes('portfolio')) {
         // If the current page is the portfolio accounts detail page. Reroute the user to the portfolio overview page.
         navigate(getRoute('portfolio', searchParams, urlAddress))
@@ -60,15 +57,14 @@ function AccountDeleteModal(props: Props) {
   }, [
     modal.id,
     modal.lends,
-    deleteAccount,
-    navigate,
     pathname,
-    searchParams,
-    address,
-    urlAddress,
-    chainConfig.id,
-    mutate,
+    chainChonfig,
+    deleteAccount,
     closeDeleteAccountModal,
+    navigate,
+    searchParams,
+    urlAddress,
+    address,
   ])
 
   const depositsAndLends = useMemo(

@@ -1,89 +1,51 @@
-import BigNumber from 'bignumber.js'
-
 import { BN_ZERO } from 'constants/math'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { BNCoin } from 'types/classes/BNCoin'
-import { BN } from 'utils/helpers'
 
 export default function getPerpsPosition(
   baseDenom: string,
   asset: Asset,
   amount: BigNumber,
   tradeDirection: TradeDirection,
-  perpsParams: PerpsParams,
-  tradingFee: any,
+  tradingFee: PerpsTradingFee,
   currentPerpPosition?: PerpsPosition,
+  limitPrice?: BigNumber,
 ): PerpsPosition {
-  // TODO: Ensure that the position is updated correctly
-
-  const currentPrice = currentPerpPosition ? currentPerpPosition.currentPrice : tradingFee.price
-  const unrealizedPricePnL = currentPrice.minus(tradingFee.price).times(amount)
-  const unrealizedFeePnL = tradingFee.fee.opening.plus(tradingFee.fee.closing).times(-1)
-
-  const basePosition = {
-    amount,
-    closingFeeRate: BN(perpsParams.closingFeeRate),
-    entryPrice: tradingFee.price,
-    currentPrice,
-    baseDenom,
-    denom: asset.denom,
-    tradeDirection,
-    pnl: {
-      unrealized: {
-        net: BNCoin.fromDenomAndBigNumber(baseDenom, unrealizedPricePnL.plus(unrealizedFeePnL)),
-        price: BNCoin.fromDenomAndBigNumber(baseDenom, unrealizedPricePnL),
-        funding: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
-        fees: BNCoin.fromDenomAndBigNumber(baseDenom, unrealizedFeePnL),
-      },
-    },
-  }
-
-  if (!currentPerpPosition) {
+  if (currentPerpPosition) {
     return {
-      ...basePosition,
-      pnl: {
-        ...basePosition.pnl,
-        net: BNCoin.fromDenomAndBigNumber(baseDenom, unrealizedPricePnL.plus(unrealizedFeePnL)),
-        realized: {
-          net: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
-          price: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
-          funding: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
-          fees: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
-        },
-      },
+      ...currentPerpPosition,
+      amount,
+      tradeDirection,
+      type: 'market',
     }
   }
 
-  const netRealizedPnL = currentPerpPosition.pnl.realized.net.amount.plus(
-    currentPerpPosition.pnl.unrealized.net.amount,
-  )
+  const currentPrice = asset.price?.amount ?? BN_ZERO
+  const currentLimitPrice = limitPrice ?? BN_ZERO
+  const priceToUse = !limitPrice?.isZero() ? currentLimitPrice : currentPrice
+  const priceOracleDecimalsDiff = asset.decimals - PRICE_ORACLE_DECIMALS
+
   return {
-    ...basePosition,
+    amount,
+    entryPrice: priceToUse.shiftedBy(-priceOracleDecimalsDiff),
+    currentPrice: currentPrice.shiftedBy(-priceOracleDecimalsDiff),
+    baseDenom,
+    denom: asset.denom,
+    tradeDirection,
+    type: 'market',
     pnl: {
-      ...basePosition.pnl,
-      net: BNCoin.fromDenomAndBigNumber(
-        baseDenom,
-        unrealizedPricePnL.plus(unrealizedFeePnL).plus(netRealizedPnL),
-      ),
+      net: BNCoin.fromDenomAndBigNumber(baseDenom, tradingFee.fee.opening.negated()),
+      unrealized: {
+        net: BNCoin.fromDenomAndBigNumber(baseDenom, tradingFee.fee.opening.negated()),
+        price: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
+        funding: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
+        fees: BNCoin.fromDenomAndBigNumber(baseDenom, tradingFee.fee.opening.negated()),
+      },
       realized: {
-        net: BNCoin.fromDenomAndBigNumber(baseDenom, netRealizedPnL),
-        price: BNCoin.fromDenomAndBigNumber(
-          baseDenom,
-          currentPerpPosition.pnl.realized.price.amount.plus(
-            currentPerpPosition.pnl.unrealized.price.amount,
-          ),
-        ),
-        funding: BNCoin.fromDenomAndBigNumber(
-          baseDenom,
-          currentPerpPosition.pnl.realized.funding.amount.plus(
-            currentPerpPosition.pnl.unrealized.funding.amount,
-          ),
-        ),
-        fees: BNCoin.fromDenomAndBigNumber(
-          baseDenom,
-          currentPerpPosition.pnl.realized.fees.amount.plus(
-            currentPerpPosition.pnl.unrealized.fees.amount,
-          ),
-        ),
+        net: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
+        price: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
+        funding: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
+        fees: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
       },
     },
   }

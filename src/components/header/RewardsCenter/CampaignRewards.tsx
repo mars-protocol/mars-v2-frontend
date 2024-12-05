@@ -20,6 +20,7 @@ export default function CampaignRewards(props: Props) {
   const pointCampaigns = useAssetCampaigns('points_with_multiplier')
   const assets = useWhitelistedAssets()
   const isV1 = useStore((s) => s.isV1)
+  const isHls = useStore((s) => s.isHls)
 
   if (!pointCampaigns || !account) return null
 
@@ -48,9 +49,11 @@ export default function CampaignRewards(props: Props) {
             <InfoCircle className='w-3 h-3 ml-1 text-white/60 group-hover/campaign-points:text-white' />
           </>
         </Tooltip>
-        <Text size='xs' className='w-full text-center text-white/60'>
-          {`${dailyPoints} ${campaign.name} / daily with this Account`}
-        </Text>
+        {!isHls && (
+          <Text size='xs' className='w-full text-center text-white/60'>
+            {`${dailyPoints} ${campaign.name} / daily with this Account`}
+          </Text>
+        )}
       </div>
     )
   })

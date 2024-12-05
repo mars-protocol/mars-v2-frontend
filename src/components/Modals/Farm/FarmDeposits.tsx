@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import { useCallback, useMemo, useState } from 'react'
 
 import Button from 'components/common/Button'
@@ -16,6 +15,7 @@ import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { accumulateAmounts } from 'utils/accounts'
@@ -33,17 +33,34 @@ interface Props {
   onChangeIsCustomRatio: (isCustomRatio: boolean) => void
   toggleOpen: (index: number) => void
   depositCapReachedCoins: BNCoin[]
+  type: FarmModal['type']
 }
 
 export default function FarmDeposits(props: Props) {
-  const { deposits, primaryAsset, secondaryAsset, account, onChangeDeposits } = props
-  const [availablePrimaryAmount, availableSecondaryAmount] = useMemo(
-    () => [
-      accumulateAmounts(primaryAsset.denom, [...account.deposits, ...account.lends]),
-      accumulateAmounts(secondaryAsset.denom, [...account.deposits, ...account.lends]),
-    ],
-    [account.deposits, account.lends, primaryAsset.denom, secondaryAsset.denom],
-  )
+  const { deposits, primaryAsset, secondaryAsset, account, onChangeDeposits, type } = props
+  const address = useStore((s) => s.address)
+  const { data: walletBalances } = useWalletBalances(address)
+  const [availablePrimaryAmount, availableSecondaryAmount] = useMemo(() => {
+    if (type === 'high_leverage') {
+      return [
+        BN(walletBalances.find(byDenom(primaryAsset.denom))?.amount ?? 0),
+        BN(walletBalances.find(byDenom(secondaryAsset.denom))?.amount ?? 0),
+      ]
+    } else {
+      return [
+        accumulateAmounts(primaryAsset.denom, [...account.deposits, ...account.lends]),
+        accumulateAmounts(secondaryAsset.denom, [...account.deposits, ...account.lends]),
+      ]
+    }
+  }, [
+    account.deposits,
+    account.lends,
+    primaryAsset.denom,
+    secondaryAsset.denom,
+    type,
+    walletBalances,
+  ])
+
   const assets = useDepositEnabledAssets()
   const primaryPrice = useMemo(() => primaryAsset.price?.amount ?? BN_ZERO, [primaryAsset])
   const secondaryPrice = useMemo(() => secondaryAsset.price?.amount ?? BN_ZERO, [secondaryAsset])
@@ -74,7 +91,7 @@ export default function FarmDeposits(props: Props) {
   }, [primaryValue, totalValue])
 
   const secondaryValuePercentage = useMemo(
-    () => new BigNumber(100).minus(primaryValuePercentage).integerValue(2).toNumber() ?? 50,
+    () => BN(100).minus(primaryValuePercentage).integerValue(2).toNumber() ?? 50,
     [primaryValuePercentage],
   )
 

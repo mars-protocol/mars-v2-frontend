@@ -5,8 +5,8 @@ import { formatPercent } from 'utils/formatters'
 
 export const BORROW_RATE_META = {
   id: 'asset.borrowRate',
-  header: 'BorrowRate',
-  accessorKey: 'asset.borrowRate',
+  header: 'Borrow Rate',
+  accessorKey: 'market.apy.borrow',
 }
 
 interface Props {
@@ -15,11 +15,11 @@ interface Props {
 
 export default function BorrowRate(props: Props) {
   const { row } = props
-  const asset = row.original.asset as BorrowAsset
+  const borrowRate = row.original.market?.apy.borrow ?? 0
 
   return (
     <Text size='sm' className='mb-0.5 text-white'>
-      {formatPercent(asset.borrowRate ?? 0)}
+      {formatPercent(borrowRate)}
     </Text>
   )
 }

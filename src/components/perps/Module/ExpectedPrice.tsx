@@ -1,28 +1,38 @@
-import BigNumber from 'bignumber.js'
-
 import { CircularProgress } from 'components/common/CircularProgress'
 import DisplayCurrency from 'components/common/DisplayCurrency'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
+import { getPerpsPriceDecimals } from 'utils/formatters'
 
 type Props = {
   denom: string
   newAmount: BigNumber
-  previousAmount: BigNumber
+  className?: string
+  override?: BigNumber
 }
 
 export const ExpectedPrice = (props: Props) => {
-  const { data: tradingFeeAndPrice, isLoading } = useTradingFeeAndPrice(
-    props.denom,
-    props.newAmount,
-    props.previousAmount,
-  )
-
+  const { denom, newAmount, className, override } = props
+  const perpsAssets = usePerpsEnabledAssets()
+  const { data: tradingFeeAndPrice, isLoading } = useTradingFeeAndPrice(denom, newAmount)
+  const perpsAsset = perpsAssets.find(byDenom(denom))
   if (isLoading) return <CircularProgress className='h-full' size={12} />
+  if (!tradingFeeAndPrice?.price || !perpsAsset) return '-'
 
-  if (tradingFeeAndPrice?.price) {
-    return <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber('usd', tradingFeeAndPrice.price)} />
-  }
+  const price = tradingFeeAndPrice.price.shiftedBy(perpsAsset.decimals - PRICE_ORACLE_DECIMALS)
 
-  return '-'
+  return (
+    <DisplayCurrency
+      coin={BNCoin.fromDenomAndBigNumber('usd', override ? override : price)}
+      options={{
+        maxDecimals: getPerpsPriceDecimals(override ? override : price),
+        abbreviated: false,
+      }}
+      className={className}
+      showDetailedPrice
+    />
+  )
 }

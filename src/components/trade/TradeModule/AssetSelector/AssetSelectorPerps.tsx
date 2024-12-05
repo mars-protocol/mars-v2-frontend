@@ -12,6 +12,7 @@ import useStore from 'store'
 interface Props {
   asset: Asset
   hasActivePosition: boolean
+  onAssetSelect: (newAsset: Asset) => void
 }
 
 export default function AssetSelectorPerps(props: Props) {
@@ -32,8 +33,9 @@ export default function AssetSelectorPerps(props: Props) {
         hasPosition = true
       }
       updatePerpsAsset(asset.denom, hasPosition)
+      props.onAssetSelect(asset)
     },
-    [currentAccount, updatePerpsAsset],
+    [currentAccount, props, updatePerpsAsset],
   )
 
   const handleChangeState = useCallback(() => {

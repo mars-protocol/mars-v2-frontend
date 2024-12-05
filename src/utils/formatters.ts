@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import moment from 'moment'
 
 import { BN_ZERO } from 'constants/math'
@@ -6,6 +5,39 @@ import { ORACLE_DENOM } from 'constants/oracle'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
+
+function getPriceDecimals(price?: number | BigNumber, additionalDecimals: number = 2) {
+  if (!price) return 2
+  const priceNum = BN(price).abs()
+
+  if (priceNum.isZero() || priceNum.isGreaterThanOrEqualTo(10)) return 2
+
+  if (priceNum.isLessThan(1)) {
+    const priceStr = priceNum.toFixed(20)
+    const [, decimals] = priceStr.split('.')
+    if (!decimals) return 2
+
+    let leadingZeros = 0
+    for (const digit of decimals) {
+      if (digit === '0') {
+        leadingZeros++
+      } else {
+        break
+      }
+    }
+    return leadingZeros + additionalDecimals
+  }
+
+  return 2
+}
+
+export function getPerpsPriceDecimals(price?: number | BigNumber) {
+  return getPriceDecimals(price, 3)
+}
+
+export function getSpotPriceDecimals(price?: number | BigNumber) {
+  return getPriceDecimals(price, 2)
+}
 
 export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
   const head = text.slice(0, h)
@@ -76,6 +108,8 @@ export const formatValue = (amount: number | string, options?: FormatOptions): s
         if (amountFractions[1].length < minDecimals) {
           convertedAmount = `${amountFractions[0]}.${amountFractions[1].padEnd(minDecimals, '0')}`
         }
+      } else if (minDecimals > 0) {
+        convertedAmount = `${amountFractions[0]}.${'0'.repeat(minDecimals)}`
       }
     } else {
       convertedAmount = amountFractions[0]
@@ -185,7 +219,7 @@ function getAssetAndCoinPrice(coin: BNCoin, assets: Asset[]) {
   return { asset, coinPrice }
 }
 
-function getAdjustedCoinProce(asset: Asset, coinPrice: BNCoin) {
+function getAdjustedCoinPrice(asset: Asset, coinPrice: BNCoin) {
   const decimals = asset.denom === ORACLE_DENOM ? 0 : asset.decimals * -1
   return coinPrice.amount.shiftedBy(decimals)
 }
@@ -193,13 +227,14 @@ function getAdjustedCoinProce(asset: Asset, coinPrice: BNCoin) {
 export function getCoinValueWithoutFallback(coin: BNCoin, assets: Asset[]) {
   const { asset, coinPrice } = getAssetAndCoinPrice(coin, assets)
   if (!coinPrice || !asset) return
-  return getAdjustedCoinProce(asset, coinPrice).multipliedBy(coin.amount)
+  return getAdjustedCoinPrice(asset, coinPrice).multipliedBy(coin.amount)
 }
 
-export function getCoinValue(coin: BNCoin, assets: Asset[]) {
+export function getCoinValue(coin: BNCoin, assets: Asset[], whitelistedOnly?: boolean) {
   const { asset, coinPrice } = getAssetAndCoinPrice(coin, assets)
   if (!coinPrice || !asset) return BN_ZERO
-  return getAdjustedCoinProce(asset, coinPrice).multipliedBy(coin.amount)
+  if (!asset.isWhitelisted && whitelistedOnly) return BN_ZERO
+  return getAdjustedCoinPrice(asset, coinPrice).multipliedBy(coin.amount)
 }
 
 export function getCoinAmount(denom: string, value: BigNumber, assets: Asset[]) {

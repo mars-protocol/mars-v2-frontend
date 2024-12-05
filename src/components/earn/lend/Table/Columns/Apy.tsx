@@ -12,6 +12,7 @@ interface Props {
   apy: number
   borrowEnabled: boolean
   isLoading: boolean
+  hasCampaignApy?: boolean
 }
 export default function Apr(props: Props) {
   if (props.isLoading) return <Loading />
@@ -23,6 +24,7 @@ export default function Apr(props: Props) {
       className='justify-end text-xs'
       type='apy'
       orientation='ltr'
+      hasCampaignApy={props.hasCampaignApy}
     />
   )
 }

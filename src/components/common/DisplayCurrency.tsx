@@ -78,7 +78,7 @@ export default function DisplayCurrency(props: Props) {
   const prefix = useMemo(() => {
     let positiveOrNegativePrefix = ''
     if (amount && amount > 0 && showSignPrefix) positiveOrNegativePrefix = '+'
-    if (amount && amount > 0 && showSignPrefix) positiveOrNegativePrefix = '-'
+    if (amount && amount < 0 && showSignPrefix) positiveOrNegativePrefix = '-'
     const approximationPrefix = isApproximation ? '~ ' : ''
     const smallerThanPrefix = isLessThanACent && !showDetailedPrice && !showZero ? '< ' : ''
 
@@ -104,7 +104,6 @@ export default function DisplayCurrency(props: Props) {
         </Tooltip>
       </Text>
     )
-
   return (
     <FormattedNumber
       className={classNames(

@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react'
 
-import AssetsSelect from 'components/Modals/AssetsSelect'
 import SearchBar from 'components/common/SearchBar'
+import AssetsSelect from 'components/Modals/AssetsSelect'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { handleUnknownAsset } from 'utils/assets'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import { useSelectedDenoms } from 'hooks/assets/useSelectedDenoms'
 import { useWeb3WalletConnection } from 'hooks/wallet/useWeb3WalletConnections'
 
@@ -53,7 +53,8 @@ export default function WalletAssetsModalContent(props: Props) {
         asset.name.toLowerCase().includes(searchString.toLowerCase()) ||
         asset.denom.toLowerCase().includes(searchString.toLowerCase()) ||
         asset.symbol.toLowerCase().includes(searchString.toLowerCase()) ||
-        asset?.chainName?.toLowerCase().includes(searchString.toLowerCase()),
+        (asset?.chainName?.toLowerCase().includes(searchString.toLowerCase()) &&
+          !asset.isDeprecated),
     )
   }, [assetsInWallet, searchString])
 

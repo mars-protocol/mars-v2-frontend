@@ -11,10 +11,10 @@ import useAccount from 'hooks/accounts/useAccount'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
-import { calculateAccountApr, calculateAccountBalanceValue } from 'utils/accounts'
+import { calculateAccountApy, calculateAccountBalanceValue } from 'utils/accounts'
 import { mergeBNCoinArrays } from 'utils/helpers'
 
 interface Props {
@@ -27,8 +27,8 @@ export default function AccountStats(props: Props) {
   const { accountId, isActive, setShowMenu } = props
   const assets = useWhitelistedAssets()
   const { data: account } = useAccount(accountId)
-  const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
+  const { data: perpsVault } = usePerpsVault()
   const astroLpAprs = useAstroLpAprs()
   const positionBalance = useMemo(
     () => (!account ? null : calculateAccountBalanceValue(account, assets)),
@@ -43,21 +43,20 @@ export default function AccountStats(props: Props) {
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
   )
-  const apr = useMemo(
+  const apy = useMemo(
     () =>
       !account
         ? null
-        : calculateAccountApr(
+        : calculateAccountApy(
             account,
             borrowAssetsData,
             lendingAssetsData,
-            hlsStrategies,
             assets,
             vaultAprs,
             astroLpAprs,
-            account.kind === 'high_levered_strategy',
+            perpsVault?.apy || 0,
           ),
-    [account, assets, borrowAssetsData, hlsStrategies, lendingAssetsData, vaultAprs, astroLpAprs],
+    [account, borrowAssetsData, lendingAssetsData, assets, vaultAprs, astroLpAprs, perpsVault?.apy],
   )
 
   const deleteAccountHandler = useCallback(() => {
@@ -71,7 +70,7 @@ export default function AccountStats(props: Props) {
         health={health ?? 0}
         healthFactor={healthFactor ?? 0}
         positionBalance={positionBalance}
-        apr={apr}
+        apy={apy}
       />
       {isActive && setShowMenu && (
         <div className='grid grid-flow-row grid-cols-2 gap-4 pt-4'>
@@ -89,7 +88,8 @@ export default function AccountStats(props: Props) {
                   focusComponent: {
                     component: <AccountFundFullPage />,
                     onClose: () => {
-                      useStore.setState({ getStartedModal: true })
+                      // TODO: update docs to reflect the current state of v2
+                      //useStore.setState({ getStartedModal: true })
                     },
                   },
                 })
