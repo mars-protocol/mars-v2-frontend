@@ -1,15 +1,14 @@
+import classNames from 'classnames'
 import { CircularProgress } from 'components/common/CircularProgress'
 import DisplayCurrency from 'components/common/DisplayCurrency'
+import { Tooltip } from 'components/common/Tooltip'
+import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getPerpsPriceDecimals } from 'utils/formatters'
-import classNames from 'classnames'
-import { Tooltip } from 'components/common/Tooltip'
-import { BN } from 'utils/helpers'
-import { BN_ZERO } from 'constants/math'
 
 type Props = {
   denom: string
@@ -51,8 +50,12 @@ export const ExpectedPrice = (props: Props) => {
         className={className}
         showDetailedPrice
       />
-      <Tooltip content='Price difference from current market price' type='info'>
-        <span className={classNames('text-sm', diffColor)}>
+      <Tooltip
+        content='Price difference from current market price'
+        type='info'
+        className='flex items-center'
+      >
+        <span className={classNames(className, diffColor)}>
           ({isPositiveDiff ? '+' : ''}
           {priceDiff.toFixed(2)}%)
         </span>
