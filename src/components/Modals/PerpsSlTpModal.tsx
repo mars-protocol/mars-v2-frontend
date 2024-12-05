@@ -5,11 +5,13 @@ import { Callout, CalloutType } from 'components/common/Callout'
 import Divider from 'components/common/Divider'
 import { TrashBin } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAssets from 'hooks/assets/useAssets'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import usePerpsConfig from 'hooks/perps/usePerpsConfig'
@@ -40,6 +42,7 @@ export default function PerpsSlTpModal() {
   const { perpsAsset } = usePerpsAsset()
   const { data: perpsConfig } = usePerpsConfig()
   const assets = useDepositEnabledAssets()
+  const chainConfig = useChainConfig()
   const currentPrice = usePrice(perpsAsset?.denom)
 
   const assetName = useMemo(() => perpsAsset?.symbol || 'the asset', [perpsAsset])
@@ -56,9 +59,10 @@ export default function PerpsSlTpModal() {
 
   const creditManagerConfig = useStore((s) => s.creditManagerConfig)
 
-  const [keeperFee, _] = useLocalStorage(
-    LocalStorageKeys.PERPS_KEEPER_FEE,
-    creditManagerConfig?.keeper_fee_config?.min_fee,
+  const [keeperFee, setKeeperFee] = useLocalStorage(
+    `${chainConfig.id}/${LocalStorageKeys.PERPS_KEEPER_FEE}`,
+    creditManagerConfig?.keeper_fee_config?.min_fee ??
+      getDefaultChainSettings(chainConfig).keeperFee,
   )
 
   const feeToken = useMemo(
