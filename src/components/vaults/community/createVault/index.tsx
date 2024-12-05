@@ -54,11 +54,11 @@ export default function CreateVault() {
     return vaultTitle.trim() !== '' && description.trim() !== '' && selectedAsset !== null
   }
 
-  const handleCreate = useCallback(async () => {
+  const handleMintVaultAddress = useCallback(async () => {
     try {
       setIsTxPending(true)
 
-      const feeRate = performanceFee.dividedBy(100000).toFixed(18)
+      const feeRate = performanceFee.dividedBy(100).dividedBy(1000).toFixed(18)
 
       const vaultParams = {
         title: vaultTitle || 'Test Vault',
@@ -75,20 +75,20 @@ export default function CreateVault() {
 
       const result = await createManagedVault(vaultParams)
 
-      if (!result || !result.address) {
-        throw new Error('Failed to create vault')
+      if (!result) return
+
+      console.log('result address:', result.address)
+      if (result.address) {
+        if (accountId)
+          navigate(
+            getRoute(
+              getPage(`vaults/${result.address}/mint-account`, chainConfig),
+              searchParams,
+              address,
+              accountId,
+            ),
+          )
       }
-
-      if (accountId)
-        navigate(
-          getRoute(
-            getPage(`vaults/${result.address}/mint-account`, chainConfig),
-            searchParams,
-            address,
-            accountId,
-          ),
-        )
-
       useStore.setState({
         focusComponent: {
           component: <MintVaultAccount vaultAddress={result.address} />,
@@ -248,7 +248,7 @@ export default function CreateVault() {
           <Button
             onClick={(e) => {
               e.preventDefault()
-              handleCreate()
+              handleMintVaultAddress()
             }}
             size='md'
             rightIcon={<ArrowRight />}
