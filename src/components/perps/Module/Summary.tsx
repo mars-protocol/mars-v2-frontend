@@ -298,8 +298,6 @@ export default function PerpsSummary(props: Props) {
     if (isLimitOrder) return 'Create Limit Order'
   }, [isStopOrder, isLimitOrder])
 
-  if (!account) return null
-
   return (
     <div className='flex w-full flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20'>
       <ManageSummary
@@ -323,14 +321,16 @@ export default function PerpsSummary(props: Props) {
         </SummaryLine>
         {!isLimitOrder && (
           <SummaryLine label='Liquidation Price'>
-            <LiqPrice
-              denom={asset.denom}
-              computeLiquidationPrice={computeLiquidationPrice}
-              type='perp'
-              amount={newAmount.isEqualTo(previousAmount) ? 0 : newAmount.toNumber()}
-              account={updatedAccount ?? account}
-              isWhitelisted={true}
-            />
+            {account && (
+              <LiqPrice
+                denom={asset.denom}
+                computeLiquidationPrice={computeLiquidationPrice}
+                type='perp'
+                amount={newAmount.isEqualTo(previousAmount) ? 0 : newAmount.toNumber()}
+                account={updatedAccount ?? account}
+                isWhitelisted={true}
+              />
+            )}
           </SummaryLine>
         )}
         <SummaryLine label='Fees' tooltip={tradingFeeTooltip}>
