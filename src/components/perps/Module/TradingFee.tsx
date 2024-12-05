@@ -1,5 +1,6 @@
 import { CircularProgress } from 'components/common/CircularProgress'
 import DisplayCurrency from 'components/common/DisplayCurrency'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getPerpsPriceDecimals } from 'utils/formatters'
@@ -26,7 +27,7 @@ export default function TradingFee(props: Props) {
 
   const fee = tradingFeeAndPrice.fee.opening
     .plus(tradingFeeAndPrice.fee.closing)
-    .plus(keeperFee?.amount ?? 0)
+    .plus(keeperFee ? keeperFee.amount.shiftedBy(-PRICE_ORACLE_DECIMALS) : 0)
 
   return (
     <DisplayCurrency
