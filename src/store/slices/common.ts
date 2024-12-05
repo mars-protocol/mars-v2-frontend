@@ -1,8 +1,10 @@
-import { GetState, SetState } from 'zustand'
-
 import Osmosis1 from 'chains/osmosis/osmosis-1'
+import { StoreApi } from 'zustand'
 
-export default function createCommonSlice(set: SetState<CommonSlice>, get: GetState<CommonSlice>) {
+export default function createCommonSlice(
+  set: StoreApi<Store>['setState'],
+  get: StoreApi<Store>['getState'],
+) {
   return {
     accounts: null,
     balances: [],

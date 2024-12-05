@@ -1,6 +1,9 @@
-import { GetState, SetState } from 'zustand'
+import { StoreApi } from 'zustand'
 
-export default function createModalSlice(set: SetState<ModalSlice>, get: GetState<ModalSlice>) {
+export default function createModalSlice(
+  set: StoreApi<Store>['setState'],
+  get: StoreApi<Store>['getState'],
+) {
   return {
     accountDeleteModal: null,
     addFarmBorrowingsModal: null,
