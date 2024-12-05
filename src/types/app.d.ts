@@ -275,6 +275,7 @@ interface ChainConfig {
   name: string
   network: 'mainnet' | 'testnet'
   vaults: VaultMetaData[]
+  vaultCodeId?: string
   hls: boolean
   perps: boolean
   farm: boolean
@@ -1815,4 +1816,5 @@ interface VaultParams {
   withdrawFreezePeriod: number
   enableHls: boolean
   performanceFee: PerformanceFeeConfig
+  vault_token_subdenom: string
 }

@@ -1,23 +1,23 @@
+import AssetSelectContent from 'components/vaults/community/createVault/AssetSelectContent'
 import Button from 'components/common/Button'
 import CharacterCount from 'components/common/CharacterCount'
-import DisplayCurrency from 'components/common/DisplayCurrency'
-import { ArrowRight } from 'components/common/Icons'
-import Text from 'components/common/Text'
-import TextArea from 'components/common/TextArea'
-import { TextLink } from 'components/common/TextLink'
-import AssetSelectContent from 'components/vaults/community/createVault/AssetSelectContent'
 import CreateVaultContent from 'components/vaults/community/createVault/CreateVaultContent'
+import DisplayCurrency from 'components/common/DisplayCurrency'
 import HlsSwitch from 'components/vaults/community/createVault/HLSSwitch'
 import MintVaultAccount from 'components/vaults/community/createVault/MintVaultAccount'
 import PerformanceFee from 'components/vaults/community/createVault/PerformanceFee'
+import Text from 'components/common/Text'
+import TextArea from 'components/common/TextArea'
 import VaultInputElement from 'components/vaults/community/createVault/VaultInputElement'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
+import useStore from 'store'
+import { ArrowRight } from 'components/common/Icons'
+import { TextLink } from 'components/common/TextLink'
 import React, { useCallback, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
@@ -53,12 +53,10 @@ export default function CreateVault() {
   const navigate = useNavigate()
 
   const handleCreate = useCallback(async () => {
-    // TODO: Implement create vault logic
-    //  await for the response. once I have the response with the vault address, proceed to next page
-    // if user filled out the vault details, store them
-
     try {
       setIsTxPending(true)
+
+      const feeRate = performanceFee.dividedBy(100000).toFixed(18)
 
       const vaultParams = {
         title: vaultTitle || 'Test Vault',
@@ -67,13 +65,12 @@ export default function CreateVault() {
         withdrawFreezePeriod: Number(withdrawFreezePeriod) * 3600,
         enableHls: enableHlsVault,
         performanceFee: {
-          fee_rate: performanceFee.dividedBy(100).toString(),
+          fee_rate: feeRate,
           withdrawal_interval: 24 * 3600,
         },
-        tokenSubdenom: `vault_${selectedAsset.symbol.toLowerCase()}`,
+        vault_token_subdenom: `vault_${selectedAsset.symbol.toLowerCase()}`,
       }
 
-      console.log(vaultParams, 'vaultParams-=======')
       const result = await createManagedVault(vaultParams)
 
       if (!result || !result.address) {
@@ -104,18 +101,19 @@ export default function CreateVault() {
       setIsTxPending(false)
     }
   }, [
-    accountId,
-    address,
-    chainConfig,
-    createManagedVault,
+    vaultTitle,
     description,
-    enableHlsVault,
-    navigate,
-    pathname,
-    searchParams,
-    selectedAsset.denom,
-    selectedAsset.symbol,
+    selectedAsset,
     withdrawFreezePeriod,
+    enableHlsVault,
+    performanceFee,
+    createManagedVault,
+    accountId,
+    navigate,
+    chainConfig,
+    searchParams,
+    address,
+    pathname,
   ])
 
   const handleWithdrawFreezePeriod = useCallback((value: string) => {
@@ -138,7 +136,7 @@ export default function CreateVault() {
             <VaultInputElement
               type='text'
               value={vaultTitle}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setVaultTitle(e.target.value)}
+              onChange={(value) => setVaultTitle(value)}
               label='Vault title'
               placeholder='Enter vault title'
               required
@@ -246,11 +244,14 @@ export default function CreateVault() {
             </Text>
           </div>
           <Button
-            onClick={handleCreate}
+            onClick={(e) => {
+              e.preventDefault()
+              handleCreate()
+            }}
             size='md'
             rightIcon={<ArrowRight />}
-            className='w-full md:w-auto'
-            text='Create Vault Account (1/2)'
+            className='w-full md:w-70'
+            text='Mint Vault Address (1/2)'
             disabled={isTxPending}
             showProgressIndicator={isTxPending}
           />

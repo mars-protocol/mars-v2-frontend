@@ -1,4 +1,8 @@
-import { DEFAULT_GAS_MULTIPLIER, MsgExecuteContract } from '@delphi-labs/shuttle-react'
+import {
+  DEFAULT_GAS_MULTIPLIER,
+  MsgExecuteContract,
+  MsgInstantiateContract,
+} from '@delphi-labs/shuttle-react'
 import moment from 'moment'
 import { isMobile } from 'react-device-detect'
 import { StoreApi } from 'zustand'
@@ -1291,21 +1295,66 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-    createManagedVault: async (params: VaultParams) => {
+    createManagedVault: async (params: VaultParams): Promise<{ address: string } | null> => {
       try {
-        const mockVaultAddress = `vault${Date.now()}`
-
-        const vaultDetails = {
-          address: mockVaultAddress,
-          ...params,
+        const address = get().address
+        if (!address) {
+          console.error('Wallet not connected')
+          return null
         }
 
-        console.log('Creating managed vault:', vaultDetails)
+        const instantiateMsg = {
+          base_token: params.baseToken,
+          cooldown_period: params.withdrawFreezePeriod,
+          credit_manager: get().chainConfig.contracts.creditManager,
+          description: params.description,
+          performance_fee_config: params.performanceFee,
+          subtitle: null,
+          title: params.title,
+          vault_token_subdenom: params.vault_token_subdenom,
+        }
 
-        return { address: mockVaultAddress }
+        const vaultCodeId = get().chainConfig.vaultCodeId
+        if (!vaultCodeId) {
+          console.error('Vault code ID not configured for this network')
+          return null
+        }
+
+        const messages = [
+          new MsgInstantiateContract({
+            sender: address,
+            admin: address,
+            codeId: vaultCodeId,
+            label: `Vault-${params.title}-${Date.now()}`,
+            msg: instantiateMsg,
+            funds: [],
+          }),
+        ]
+
+        const response = get().executeMsg({
+          messages,
+        })
+
+        get().handleTransaction({ response })
+
+        const result = await response
+        if (!result?.result) {
+          return null
+        }
+
+        const vaultAddress = getSingleValueFromBroadcastResult(
+          result.result,
+          'instantiate',
+          '_contract_address',
+        )
+        if (!vaultAddress) {
+          return null
+        }
+        console.log('Vault created:', vaultAddress)
+        return { address: vaultAddress }
       } catch (error) {
-        console.error('Error creating vault:', error)
-        throw error
+        console.error('Failed to create vault:', error)
+        return null
       }
     },
   }

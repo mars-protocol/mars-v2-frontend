@@ -125,8 +125,12 @@ function InputElement(props: InputElementProps) {
       <div className='relative mt-3'>
         <input
           type='text'
-          value={value}
-          onChange={onChange}
+          value={value || ''}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            const newValue = e.target.value
+            setInputValue(newValue)
+            onChange(newValue)
+          }}
           maxLength={maxLength}
           placeholder={placeholder}
           className={classNames(
