@@ -1,14 +1,14 @@
-import { GetState, SetState } from 'zustand'
-
 import Osmosis1 from 'chains/osmosis/osmosis-1'
+import { StoreApi } from 'zustand'
 
-export default function createCommonSlice(set: SetState<CommonSlice>, get: GetState<CommonSlice>) {
+export default function createCommonSlice(
+  set: StoreApi<Store>['setState'],
+  get: StoreApi<Store>['getState'],
+) {
   return {
     accounts: null,
     balances: [],
     chainConfig: Osmosis1,
-    creditAccounts: null,
-    hlsAccounts: null,
     isOpen: true,
     selectedAccount: null,
     focusComponent: null,
@@ -19,8 +19,11 @@ export default function createCommonSlice(set: SetState<CommonSlice>, get: GetSt
     useMargin: true,
     useAutoRepay: true,
     isOracleStale: false,
-    isHLS: false,
+    isHls: false,
     isV1: false,
     assets: [],
+    hlsBorrowAmount: null,
+    errorStore: { apiError: null, nodeError: null },
+    creditManagerConfig: null,
   }
 }

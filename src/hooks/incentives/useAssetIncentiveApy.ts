@@ -53,7 +53,8 @@ async function getTotalActiveEmissionValue(
 ): Promise<BigNumber | null> {
   try {
     const activeEmissions = await clients.incentives.activeEmissions({
-      collateralDenom: market.asset.denom,
+      denom: market.asset.denom,
+      kind: 'red_bank',
     })
 
     if (activeEmissions.length === 0) {

@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import debounce from 'lodash.debounce'
-import { ChangeEvent, useCallback, useMemo } from 'react'
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 
 import InputOverlay from 'components/common/LeverageSlider/InputOverlay'
 
@@ -14,48 +14,49 @@ type Props = {
   marginThreshold?: number
   wrapperClassName?: string
   onChange: (value: number) => void
-  onDebounce?: () => void
   onBlur?: () => void
   type: LeverageSliderType
 }
 
 export type LeverageSliderType = 'margin' | 'long' | 'short'
 function LeverageSlider(props: Props) {
-  const {
-    value,
-    max,
-    onChange,
-    wrapperClassName,
-    disabled,
-    marginThreshold,
-    onBlur,
-    type,
-    onDebounce,
-  } = props
+  const { value, max, onChange, wrapperClassName, disabled, marginThreshold, onBlur, type } = props
   const min = props.min ?? 0
 
-  const debounceFunction = useMemo(
+  const [debouncedValue, setDebouncedValue] = useState(value)
+
+  const debouncedOnChange = useMemo(
     () =>
-      debounce(() => {
-        if (!onDebounce) return
-        onDebounce()
-      }, 250),
-    [onDebounce],
+      debounce((newValue: number) => {
+        onChange(newValue)
+      }, 100),
+    [onChange],
   )
+
+  useEffect(() => {
+    setDebouncedValue(value)
+  }, [value])
 
   const handleOnChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      onChange(parseFloat(event.target.value))
-      debounceFunction()
+      const newValue = parseFloat(event.target.value)
+      setDebouncedValue(newValue)
+      debouncedOnChange(newValue)
     },
-    [onChange, debounceFunction],
+    [debouncedOnChange],
   )
+
+  useEffect(() => {
+    return () => {
+      debouncedOnChange.cancel()
+    }
+  }, [debouncedOnChange])
 
   const markPosPercent = 100 / (max / (marginThreshold ?? 1))
   return (
     <div
       className={classNames(
-        'relative min-h-3 w-full transition-opacity',
+        'relative min-h-3 w-full transition-opacity pb-5',
         wrapperClassName,
         disabled && 'pointer-events-none opacity-50',
       )}
@@ -70,7 +71,7 @@ function LeverageSlider(props: Props) {
             '[&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:bg-transparent [&::-moz-range-thumb]:opacity-0 [&::-moz-range-thumb]:w-[33px] [&::-moz-range-thumb]:h-4',
           )}
           type='range'
-          value={value.toFixed(2)}
+          value={debouncedValue.toFixed(2)}
           step={(max - min) / 101}
           min={min}
           max={max}
@@ -80,7 +81,7 @@ function LeverageSlider(props: Props) {
         <InputOverlay
           max={max}
           marginThreshold={marginThreshold}
-          value={value}
+          value={debouncedValue}
           type={type}
           min={min}
         />

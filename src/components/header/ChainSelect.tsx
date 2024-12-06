@@ -77,6 +77,7 @@ export default function ChainSelect(props: Props) {
       setCurrentChainId(chainConfig.id)
       mutate(() => true)
       useStore.setState({
+        assets: [],
         mobileNavExpanded: false,
         chainConfig,
         isV1: false,
@@ -85,7 +86,7 @@ export default function ChainSelect(props: Props) {
         userDomain: undefined,
         balances: [],
       })
-      navigate(getRoute('trade', searchParams))
+      navigate(getRoute(chainConfig.perps ? 'perps' : 'trade', searchParams))
     },
     [setCurrentChainId, setShowMenu, mutate, navigate, searchParams],
   )
@@ -101,7 +102,12 @@ export default function ChainSelect(props: Props) {
         role='button'
         onClick={
           onSelect && chainConfig
-            ? () => onSelect(chainConfig)
+            ? () => {
+                onSelect(chainConfig)
+                mutate(`chains/${chainConfig.id}/accounts/default`)
+                mutate(`chains/${chainConfig.id}/accounts/high_levered_strategy`)
+                mutate(`chains/${chainConfig.id}/clients`)
+              }
             : () => {
                 if (chainConfig) {
                   setCurrentChainId(chainConfig.id)

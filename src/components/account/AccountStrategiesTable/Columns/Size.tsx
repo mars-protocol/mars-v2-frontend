@@ -10,7 +10,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { formatAmountToPrecision } from 'utils/formatters'
 
-export const SIZE_META = { header: 'Size' }
+export const SIZE_META = { header: 'Size', meta: { className: 'w-20 min-w-20' } }
 
 interface Props {
   coins: AccountStrategyRow['coins']

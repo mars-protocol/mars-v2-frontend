@@ -1,1 +1,1 @@
-export const LEFT_ALIGNED_ROWS = ['symbol', 'name', 'campaign']
+export const LEFT_ALIGNED_ROWS = ['symbol', 'name', 'campaign', 'type']

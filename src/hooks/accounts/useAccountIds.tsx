@@ -20,7 +20,7 @@ export default function useAccountIdsAndKinds(address?: string, suspense = true,
     {
       suspense: suspense,
       fallback: [] as string[],
-      revalidateOnFocus: false,
+      revalidateOnFocus: true,
     },
   )
 }

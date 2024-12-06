@@ -17,7 +17,7 @@ import { Check, Copy, ExternalLink, Wallet } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
-import useBaseAsset from 'hooks/assets/useBasetAsset'
+import useBaseAsset from 'hooks/assets/useBaseAsset'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
@@ -87,7 +87,7 @@ export default function WalletConnectedButton() {
       })
     }
 
-    navigate(getRoute(getPage(pathname), new URLSearchParams()))
+    navigate(getRoute(getPage(pathname, chainConfig), new URLSearchParams()))
   }
 
   useEffect(() => {

@@ -8,13 +8,15 @@ import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendi
 import SummarySkeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import useAccounts from 'hooks/accounts/useAccounts'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
-import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
+import useAssetParams from 'hooks/params/useAssetParams'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
+import { mergeBNCoinArrays, mergePerpsVaults } from 'utils/helpers'
 
 export default function PortfolioSummary() {
   const { address: urlAddress } = useParams()
@@ -22,27 +24,35 @@ export default function PortfolioSummary() {
   const data = useBorrowMarketAssetsTableData()
   const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
-  const { data: accounts } = useAccounts('default', urlAddress || walletAddress)
-  const { data: hlsStrategies } = useHLSStakingAssets()
+  const { data: defaultAccounts } = useAccounts('default', urlAddress || walletAddress)
+  const { data: hlsAccounts } = useAccounts('high_levered_strategy', urlAddress || walletAddress)
   const { data: vaultAprs } = useVaultAprs()
-  const assets = useWhitelistedAssets()
+  const { data: assets } = useAssets()
   const astroLpAprs = useAstroLpAprs()
+  const assetParams = useAssetParams()
+  const { data: perpsVault } = usePerpsVault()
+
+  const allAccounts = useMemo(() => {
+    return [...(defaultAccounts || []), ...(hlsAccounts || [])]
+  }, [defaultAccounts, hlsAccounts])
 
   const stats = useMemo(() => {
-    if (!accounts?.length) return
-    const combinedAccount = accounts.reduce(
+    if (!allAccounts?.length) return
+    const combinedAccount = allAccounts.reduce(
       (combinedAccount, account) => {
-        combinedAccount.debts = combinedAccount.debts.concat(account.debts)
-        combinedAccount.deposits = combinedAccount.deposits.concat(account.deposits)
-        combinedAccount.lends = combinedAccount.lends.concat(account.lends)
+        combinedAccount.debts = mergeBNCoinArrays(combinedAccount.debts, account.debts)
+        combinedAccount.deposits = mergeBNCoinArrays(combinedAccount.deposits, account.deposits)
+        combinedAccount.lends = mergeBNCoinArrays(combinedAccount.lends, account.lends)
         combinedAccount.vaults = combinedAccount.vaults.concat(account.vaults)
-        combinedAccount.stakedAstroLps = combinedAccount.stakedAstroLps.concat(
+        combinedAccount.stakedAstroLps = mergeBNCoinArrays(
+          combinedAccount.stakedAstroLps,
           account.stakedAstroLps,
         )
+
         return combinedAccount
       },
       {
-        id: '1',
+        id: 'combined',
         deposits: [],
         lends: [],
         debts: [],
@@ -53,16 +63,20 @@ export default function PortfolioSummary() {
         kind: 'default' as AccountKind,
       } as Account,
     )
+    const combinedPerpsVaults = mergePerpsVaults(allAccounts.map((account) => account.perpsVault))
+    combinedAccount.perpsVault = combinedPerpsVaults.denom !== '' ? combinedPerpsVaults : null
 
-    const { positionValue, debts, netWorth, apr, leverage } = getAccountSummaryStats(
-      combinedAccount,
-      borrowAssets,
-      lendingAssets,
-      hlsStrategies,
-      assets,
-      vaultAprs,
-      astroLpAprs,
-    )
+    const { positionValue, debts, netWorth, collateralValue, apy, leverage } =
+      getAccountSummaryStats(
+        combinedAccount,
+        borrowAssets,
+        lendingAssets,
+        assets,
+        vaultAprs,
+        astroLpAprs,
+        assetParams.data || [],
+        perpsVault?.apy || 0,
+      )
 
     return [
       {
@@ -70,26 +84,30 @@ export default function PortfolioSummary() {
         sub: DEFAULT_PORTFOLIO_STATS[0].sub,
       },
       {
-        title: <DisplayCurrency className='text-xl' coin={debts} />,
+        title: <DisplayCurrency className='text-xl' coin={collateralValue} />,
         sub: DEFAULT_PORTFOLIO_STATS[1].sub,
       },
       {
-        title: <DisplayCurrency className='text-xl' coin={netWorth} />,
+        title: <DisplayCurrency className='text-xl' coin={debts} />,
         sub: DEFAULT_PORTFOLIO_STATS[2].sub,
+      },
+      {
+        title: <DisplayCurrency className='text-xl' coin={netWorth} />,
+        sub: DEFAULT_PORTFOLIO_STATS[3].sub,
       },
       {
         title: (
           <FormattedNumber
             className='text-xl'
-            amount={apr.toNumber()}
+            amount={apy.toNumber()}
             options={{
               suffix: '%',
-              maxDecimals: apr.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
+              maxDecimals: apy.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
               minDecimals: 2,
             }}
           />
         ),
-        sub: 'Combined APR',
+        sub: 'Combined APY',
       },
       {
         title: (
@@ -102,7 +120,16 @@ export default function PortfolioSummary() {
         sub: 'Combined leverage',
       },
     ]
-  }, [accounts, assets, borrowAssets, hlsStrategies, lendingAssets, vaultAprs, astroLpAprs])
+  }, [
+    allAccounts,
+    assets,
+    borrowAssets,
+    lendingAssets,
+    vaultAprs,
+    astroLpAprs,
+    assetParams,
+    perpsVault?.apy,
+  ])
 
   if (!walletAddress && !urlAddress) return null
 

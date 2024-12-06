@@ -1,13 +1,12 @@
 import { Row } from '@tanstack/react-table'
-import React from 'react'
 
 import DepositCapCell from 'components/common/DepositCapCell'
 
 export const CAP_META = { header: 'Cap', accessorKey: 'strategy.depositCap' }
 
 export const depositCapSortingFn = (
-  a: Row<HLSAccountWithStrategy>,
-  b: Row<HLSAccountWithStrategy>,
+  a: Row<HlsAccountWithStrategy>,
+  b: Row<HlsAccountWithStrategy>,
 ): number => {
   const depositCapA = a.original.strategy.depositCap.max
   const depositCapB = b.original.strategy.depositCap.max

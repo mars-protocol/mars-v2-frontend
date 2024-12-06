@@ -1,32 +1,47 @@
-import BigNumber from 'bignumber.js'
-
 import { CircularProgress } from 'components/common/CircularProgress'
 import DisplayCurrency from 'components/common/DisplayCurrency'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import { BNCoin } from 'types/classes/BNCoin'
+import { getPerpsPriceDecimals } from 'utils/formatters'
 
 type Props = {
   denom: string
   newAmount: BigNumber
   previousAmount: BigNumber
+  className?: string
+  showPrefix?: boolean
+  keeperFee?: BNCoin
 }
 
 export default function TradingFee(props: Props) {
-  const { data: tradingFeeAndPrice, isLoading } = useTradingFeeAndPrice(
-    props.denom,
-    props.newAmount,
-    props.previousAmount,
-  )
+  const { denom, newAmount, previousAmount, className, showPrefix, keeperFee } = props
+  const {
+    data: tradingFeeAndPrice,
+    isValidating,
+    isLoading,
+  } = useTradingFeeAndPrice(denom, newAmount)
 
-  if (isLoading) return <CircularProgress className='h-full' size={12} />
-  if (props.newAmount.isEqualTo(props.previousAmount) || !tradingFeeAndPrice?.fee) return '-'
+  if (isValidating || isLoading) return <CircularProgress className='h-full' size={12} />
+  if (newAmount.isEqualTo(previousAmount) || !tradingFeeAndPrice?.fee) return '-'
+
+  const fee = tradingFeeAndPrice.fee.opening
+    .plus(tradingFeeAndPrice.fee.closing)
+    .plus(keeperFee ? keeperFee.amount.shiftedBy(-PRICE_ORACLE_DECIMALS) : 0)
 
   return (
     <DisplayCurrency
       coin={BNCoin.fromDenomAndBigNumber(
         tradingFeeAndPrice.baseDenom,
-        tradingFeeAndPrice.fee.opening.plus(tradingFeeAndPrice.fee.closing),
+        showPrefix ? fee.negated() : fee,
       )}
+      className={className}
+      showSignPrefix={!!showPrefix}
+      showDetailedPrice
+      options={{
+        maxDecimals: getPerpsPriceDecimals(fee),
+        abbreviated: false,
+      }}
     />
   )
 }

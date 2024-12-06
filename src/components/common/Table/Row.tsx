@@ -1,5 +1,6 @@
 import { flexRender, Row as TanstackRow, Table as TanstackTable } from '@tanstack/react-table'
 import classNames from 'classnames'
+import { Tooltip } from 'components/common/Tooltip'
 
 import { LEFT_ALIGNED_ROWS } from 'constants/table'
 
@@ -13,14 +14,17 @@ interface Props<T> {
   isSelectable?: boolean
   type?: TableType
   onClick?: (id: string) => void
+  isBalancesTable?: boolean
 }
 
 function getBorderColor(
   type: TableType,
   row: AccountBalanceRow | AccountStrategyRow | AccountPerpRow,
+  isWhitelisted: boolean,
 ) {
   if (type === 'strategies') return ''
   if (type === 'balances') {
+    if (!isWhitelisted) return 'border-grey-dark'
     const balancesRow = row as AccountBalanceRow
     return balancesRow.type === 'borrow' ? 'border-loss' : 'border-profit'
   }
@@ -30,7 +34,8 @@ function getBorderColor(
 }
 
 export default function Row<T>(props: Props<T>) {
-  const { renderExpanded, table, row, type, spacingClassName, isSelectable } = props
+  const { renderExpanded, table, row, type, spacingClassName, isSelectable, isBalancesTable } =
+    props
   const canExpand = !!renderExpanded
   return (
     <>
@@ -72,7 +77,9 @@ export default function Row<T>(props: Props<T>) {
                   type !== 'strategies' &&
                   LEFT_ALIGNED_ROWS.includes(cell.column.id) &&
                   'border-l',
-                type && type !== 'strategies' && getBorderColor(type, cell.row.original as any),
+                type &&
+                  type !== 'strategies' &&
+                  getBorderColor(type, cell.row.original as any, isBalancesTable ?? false),
                 cell.column.columnDef.meta?.className,
               )}
             >

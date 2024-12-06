@@ -1,13 +1,12 @@
 import classNames from 'classnames'
 import React from 'react'
 
-import Modal from 'components/Modals/Modal'
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
 import Card from 'components/common/Card'
 import { CircularProgress } from 'components/common/CircularProgress'
+import Modal from 'components/Modals/Modal'
 
 interface Props extends ModalProps {
-  isHls?: boolean
   account?: Account
   isContentCard?: boolean
   subHeader?: React.ReactNode
@@ -39,7 +38,7 @@ export default function ModalContentWithSummary(props: Props) {
     <Modal
       {...props}
       headerClassName={classNames(
-        'gradient-header pl-2 pr-2.5 py-3 border-b-white/5 border-b',
+        'gradient-header border-b-white/5 border-b',
         props.headerClassName,
       )}
       contentClassName={classNames(
@@ -50,7 +49,7 @@ export default function ModalContentWithSummary(props: Props) {
       )}
     >
       {modalContent(props.content, props.isContentCard, props.account)}
-      {props.account && <AccountSummaryInModal account={props.account} isHls={props.isHls} />}
+      {props.account && <AccountSummaryInModal account={props.account} />}
     </Modal>
   )
 }

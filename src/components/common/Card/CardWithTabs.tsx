@@ -30,7 +30,7 @@ type TabsProps = {
 
 function Tabs(props: TabsProps) {
   return (
-    <div className='flex gap-6 items-center w-full font-semibold bg-white/10 px-4'>
+    <div className='flex items-center w-full gap-6 px-4 font-semibold bg-white/10'>
       {props.tabs.map((tab, index) => {
         return (
           <button
@@ -38,7 +38,7 @@ function Tabs(props: TabsProps) {
             className={classNames(
               'py-4 border-b-[2px] border-transparent flex items-center',
               props.tabs.length < 2 && 'cursor-default text-white border-transparent',
-              index === props.activeIdx && props.tabs.length > 1 && 'border-mars',
+              index === props.activeIdx && props.tabs.length > 1 && 'border-b-martian-red',
               index !== props.activeIdx && props.tabs.length > 1 && 'text-white/20',
             )}
             onClick={() => props.onChange(index)}
@@ -59,5 +59,5 @@ interface NotificationCountProps {
 function NotificationCount(props: NotificationCountProps) {
   if (!props.count) return null
 
-  return <div className='px-1 bg-martian-red text-xs text-white rounded-sm ml-1'>{props.count}</div>
+  return <div className='px-1 ml-1 text-xs text-white rounded-sm bg-martian-red'>{props.count}</div>
 }

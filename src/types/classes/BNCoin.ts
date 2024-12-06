@@ -22,7 +22,7 @@ export class BNCoin {
   toCoin(): Coin {
     return {
       denom: this.denom,
-      amount: this.amount.integerValue().toString(),
+      amount: this.amount.toString(),
     }
   }
 
@@ -70,5 +70,9 @@ export class BNCoin {
 
   plus(amount: BigNumber) {
     return BNCoin.fromDenomAndBigNumber(this.denom, this.amount.plus(amount))
+  }
+
+  negated() {
+    return BNCoin.fromDenomAndBigNumber(this.denom, this.amount.negated())
   }
 }

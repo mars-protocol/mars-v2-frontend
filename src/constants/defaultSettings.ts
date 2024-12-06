@@ -11,7 +11,7 @@ export const getDefaultChainSettings = (chainConfig: ChainConfig) => {
     tradingPairSimple: chainConfig.defaultTradingPair,
     tradingPairAdvanced: chainConfig.defaultTradingPair,
     displayCurrency: ORACLE_DENOM,
-    slippage: 0.02,
+    slippage: 0.01,
     tutorial: true,
     migrationBanner: true,
     perpsAsset: '',
@@ -19,5 +19,10 @@ export const getDefaultChainSettings = (chainConfig: ChainConfig) => {
     chartInterval: '60' as ResolutionString,
     theme: 'default',
     rewardsCenterType: RewardsCenterType.Token,
+    showSummary: true,
+    tvChartStore: JSON.stringify({}),
+    showPerpsVaultBanner: true,
+    fundingRateInterval: '1H',
+    keeperFee: JSON.stringify({ denom: 'uusd', amount: '100000' }),
   }
 }

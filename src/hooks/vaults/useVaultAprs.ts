@@ -1,6 +1,8 @@
 import useSWR from 'swr'
 
+import { FETCH_TIMEOUT } from 'constants/query'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import { fetchWithTimeout } from 'utils/fetch'
 import { convertAprToApy } from 'utils/parsers'
 
 export default function useVaultAprs() {
@@ -14,7 +16,7 @@ export default function useVaultAprs() {
 async function getAprs(chainConfig: ChainConfig) {
   if (!chainConfig.farm) return []
   try {
-    const response = await fetch(chainConfig.endpoints.aprs.vaults)
+    const response = await fetchWithTimeout(chainConfig.endpoints.aprs.vaults, FETCH_TIMEOUT)
 
     if (response.ok) {
       const data: AprResponse = await response.json()

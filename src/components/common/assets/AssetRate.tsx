@@ -12,16 +12,22 @@ interface Props {
   orientation: 'ltr' | 'rtl'
   className?: string
   suffix?: boolean
+  hasCampaignApy?: boolean
 }
 
 interface TooltipProps {
   orientation: Props['orientation']
+  hasCampaignApy?: boolean
 }
 
 function RateTooltip(props: TooltipProps) {
   return (
     <Tooltip
-      content='This asset cannot be borrowed, and thus does not currently generate yield when lending.'
+      content={
+        props.hasCampaignApy
+          ? 'This asset cannot be borrowed, but generates its underlying staking APY.'
+          : 'This asset cannot be borrowed, and thus does not currently generate yield when lending.'
+      }
       type='info'
       className={props.orientation === 'ltr' ? 'mr-1' : 'ml-1'}
     >
@@ -31,14 +37,15 @@ function RateTooltip(props: TooltipProps) {
 }
 
 export default function AssetRate(props: Props) {
-  const { rate, isEnabled, type, orientation, className } = props
+  const { rate, isEnabled, type, orientation, className, hasCampaignApy } = props
   const suffix = type === 'apy' ? 'APY' : 'APR'
 
   if (!isEnabled)
     return (
       <Text tag='div' className={classNames('flex items-center', className)}>
-        {orientation === 'ltr' && <RateTooltip orientation='ltr' />}N/A
-        {orientation === 'rtl' && <RateTooltip orientation='rtl' />}
+        {orientation === 'ltr' && <RateTooltip orientation='ltr' hasCampaignApy={hasCampaignApy} />}
+        N/A
+        {orientation === 'rtl' && <RateTooltip orientation='rtl' hasCampaignApy={hasCampaignApy} />}
       </Text>
     )
 
@@ -46,7 +53,7 @@ export default function AssetRate(props: Props) {
     <FormattedNumber
       amount={rate}
       className={className}
-      options={{ suffix: props.suffix ? `% ${suffix}` : '%', maxDecimals: 2 }}
+      options={{ suffix: props.suffix ? `% ${suffix}` : '%', maxDecimals: 2, abbreviated: true }}
       animate
     />
   )

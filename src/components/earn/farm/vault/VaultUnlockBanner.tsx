@@ -18,8 +18,6 @@ export default function VaultUnlockBanner(props: Props) {
   const [isConfirming, setIsConfirming] = useState(false)
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
   const [slippage] = useSlippage()
-  const { mutate } = useSWRConfig()
-  const chainConfig = useChainConfig()
 
   async function handleWithdraw() {
     if (!accountId) return
@@ -34,8 +32,6 @@ export default function VaultUnlockBanner(props: Props) {
         vaults: props.vaults,
         slippage,
       })
-      await mutate(`chains/${chainConfig.id}/accounts/${accountId}`)
-      await mutate(`chains/${chainConfig.id}/vaults/${accountId}/deposited`)
       setIsConfirming(false)
     }
   }

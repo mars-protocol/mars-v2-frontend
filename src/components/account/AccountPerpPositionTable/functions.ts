@@ -1,4 +1,5 @@
-import { demagnify } from 'utils/formatters'
+import { BNCoin } from 'types/classes/BNCoin'
+import { getCoinValue } from 'utils/formatters'
 
 export function getAssetAccountPerpRow(
   asset: Asset,
@@ -10,7 +11,8 @@ export function getAssetAccountPerpRow(
 
   return {
     symbol: asset.symbol,
-    value: demagnify(amount.times(position.currentPrice), asset).toString(),
+    asset,
+    value: getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, amount), [asset]).toString(),
     amountChange,
     ...position,
   }

@@ -46,8 +46,8 @@ export default function AccountFundRow(props: Props) {
       {asset.campaigns.length > 0 &&
         asset.campaigns.map((campaign, index) => (
           <div
-            key={index}
             className='flex justify-center w-full p-2 mt-4 border rounded border-white/20'
+            key={index}
           >
             <AssetCampaignCopy
               campaign={campaign}

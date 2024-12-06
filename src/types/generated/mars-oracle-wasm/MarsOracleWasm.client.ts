@@ -5,18 +5,26 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
+import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { Coin, StdFee } from '@cosmjs/amino'
-import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import {
-  ActionKind,
-  ArrayOfPriceResponse,
-  ArrayOfPriceSourceResponseForString,
-  ConfigResponse,
+  InstantiateMsg,
+  WasmOracleCustomInitParams,
+  ExecuteMsg,
+  WasmPriceSourceForString,
+  Decimal,
+  Identifier,
   OwnerUpdate,
+  WasmOracleCustomExecuteMsg,
+  RedemptionRateForString,
+  AstroportTwapForString,
+  QueryMsg,
+  ActionKind,
+  ConfigResponse,
   PriceResponse,
   PriceSourceResponseForString,
-  WasmOracleCustomExecuteMsg,
-  WasmPriceSourceForString
+  ArrayOfPriceSourceResponseForString,
+  ArrayOfPriceResponse,
 } from './MarsOracleWasm.types'
 export interface MarsOracleWasmReadOnlyInterface {
   contractAddress: string
@@ -39,6 +47,13 @@ export interface MarsOracleWasmReadOnlyInterface {
     limit?: number
     startAfter?: string
   }) => Promise<ArrayOfPriceResponse>
+  pricesByDenoms: ({
+    denoms,
+    kind,
+  }: {
+    denoms: string[]
+    kind?: ActionKind
+  }) => Promise<ArrayOfPriceResponse>
 }
 export class MarsOracleWasmQueryClient implements MarsOracleWasmReadOnlyInterface {
   client: CosmWasmClient
@@ -51,6 +66,7 @@ export class MarsOracleWasmQueryClient implements MarsOracleWasmReadOnlyInterfac
     this.priceSources = this.priceSources.bind(this)
     this.price = this.price.bind(this)
     this.prices = this.prices.bind(this)
+    this.pricesByDenoms = this.pricesByDenoms.bind(this)
   }
   config = async (): Promise<ConfigResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
@@ -89,7 +105,7 @@ export class MarsOracleWasmQueryClient implements MarsOracleWasmReadOnlyInterfac
   prices = async ({
     kind,
     limit,
-    startAfter, 
+    startAfter,
   }: {
     kind?: ActionKind
     limit?: number
@@ -100,6 +116,20 @@ export class MarsOracleWasmQueryClient implements MarsOracleWasmReadOnlyInterfac
         kind,
         limit,
         start_after: startAfter,
+      },
+    })
+  }
+  pricesByDenoms = async ({
+    denoms,
+    kind,
+  }: {
+    denoms: string[]
+    kind?: ActionKind
+  }): Promise<ArrayOfPriceResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      prices_by_denoms: {
+        denoms,
+        kind,
       },
     })
   }

@@ -1,4 +1,4 @@
-import { Droplet, Lido, Stride } from 'components/common/Icons'
+import { Droplet, Lido, MilkyWay, Stride } from 'components/common/Icons'
 
 export const CAMPAIGNS: AssetCampaign[] = [
   {
@@ -6,10 +6,10 @@ export const CAMPAIGNS: AssetCampaign[] = [
     name: 'Stride Staking',
     type: 'apy',
     apyApi: {
-      url: 'https://edge.stride.zone/api/stake-stats',
+      url: 'https://neutron-cache-api.onrender.com/stride',
       isApr: true,
       isPercent: false,
-      apyStructure: ['stats', 'strideYield'],
+      apyStructure: ['strideData', 'stats', 'strideYield'],
       denomStructure: ['stats', 'denom'],
     },
     incentiveCopy: '+##APY##% APY',
@@ -46,10 +46,10 @@ export const CAMPAIGNS: AssetCampaign[] = [
     name: 'Drop Staking',
     type: 'apy',
     apyApi: {
-      url: 'https://app.drop.money/api/apy',
+      url: 'https://neutron-cache-api.onrender.com/drop',
       isApr: false,
       isPercent: false,
-      apyStructure: ['apy'],
+      apyStructure: ['dropData', 'apy'],
       denomStructure: ['denom'],
     },
     incentiveCopy: '+##APY##% APY',
@@ -64,10 +64,10 @@ export const CAMPAIGNS: AssetCampaign[] = [
     name: 'Lido Staking',
     type: 'apy',
     apyApi: {
-      url: 'https://eth-api.lido.fi/v1/protocol/steth/apr/sma',
+      url: 'https://neutron-cache-api.onrender.com/lido',
       isApr: true,
       isPercent: true,
-      apyStructure: ['data', 'smaApr'],
+      apyStructure: ['lidoData', 'data', 'smaApr'],
       denomStructure: ['meta', 'symbol'],
     },
     incentiveCopy: '+##APY##% APY',
@@ -76,6 +76,24 @@ export const CAMPAIGNS: AssetCampaign[] = [
     detailedIncentiveCopy: 'Deposits earn ##APY##% APY via Lido',
     tooltip:
       'Your deposit will still earn the underlying Lido staking yield. This number is based on the moving average of APR for 7 days period.',
+    enabledOnV1: true,
+  },
+  {
+    id: 'milkyway',
+    name: 'Milkyway Staking',
+    type: 'apy',
+    apyApi: {
+      url: 'https://neutron-cache-api.onrender.com/milkyway',
+      isApr: true,
+      isPercent: true,
+      apyStructure: ['milkywayData', 'apr'],
+      denomStructure: ['symbol'],
+    },
+    incentiveCopy: '+##APY##% APY',
+    classNames: 'milkyway',
+    bgClassNames: 'gradient-milkyway',
+    detailedIncentiveCopy: 'Deposits earn ##APY##% APY via Milkyway',
+    tooltip: 'Your deposit will still earn the underlying Milkyway staking APY.',
     enabledOnV1: true,
   },
 ]
@@ -89,6 +107,8 @@ export function CampaignLogo({ campaignId }: { campaignId: AssetCampaignId }) {
       return <Droplet />
     case 'lido':
       return <Lido />
+    case 'milkyway':
+      return <MilkyWay />
     default:
       return null
   }

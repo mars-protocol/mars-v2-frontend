@@ -1,9 +1,11 @@
 import chains from 'chains'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { getCurrentChainId } from 'utils/getCurrentChainId'
+import useCreditManagerConfig from 'hooks/chain/useCreditManagerConfig'
 
-export default function useChainConfig() {
+export default function useChainConfig(): ChainConfig {
   const chainId = getCurrentChainId()
+  useCreditManagerConfig()
 
   const rpcEndpoint =
     localStorage.getItem(`${chainId}/${LocalStorageKeys.RPC_ENDPOINT}`) ??

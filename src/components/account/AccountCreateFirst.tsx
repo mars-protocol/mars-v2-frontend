@@ -21,9 +21,9 @@ export default function AccountCreateFirst() {
   const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
+  const chainConfig = useChainConfig()
   const createAccount = useStore((s) => s.createAccount)
   const [isCreating, setIsCreating] = useToggle(false)
-  const chainConfig = useChainConfig()
   const [isAutoLendEnabled] = useEnableAutoLendGlobal()
 
   const { data: accounts, isLoading } = useAccounts('default', address)
@@ -41,17 +41,27 @@ export default function AccountCreateFirst() {
     const accountId = await createAccount('default', isAutoLendEnabled)
     setIsCreating(false)
     if (accountId) {
-      navigate(getRoute(getPage(pathname), searchParams, address, accountId))
+      navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, accountId))
       useStore.setState({
         focusComponent: {
           component: <AccountFundFullPage />,
           onClose: () => {
-            useStore.setState({ getStartedModal: true })
+            // TODO: update docs to reflect the current state of v2
+            //useStore.setState({ getStartedModal: true })
           },
         },
       })
     }
-  }, [setIsCreating, createAccount, navigate, pathname, searchParams, address, isAutoLendEnabled])
+  }, [
+    setIsCreating,
+    createAccount,
+    navigate,
+    pathname,
+    searchParams,
+    address,
+    isAutoLendEnabled,
+    chainConfig,
+  ])
 
   if (!chainConfig.evmAssetSupport) {
     return (

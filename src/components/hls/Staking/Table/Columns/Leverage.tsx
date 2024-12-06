@@ -1,19 +1,18 @@
 import { Row } from '@tanstack/react-table'
-import React from 'react'
 
 import { FormattedNumber } from 'components/common/FormattedNumber'
 
 export const LEV_META = { accessorKey: 'leverage ', header: 'Leverage' }
 
 interface Props {
-  account: HLSAccountWithStrategy
+  account: HlsAccountWithStrategy
 }
 
-export function leverageSortingFn(a: Row<HLSAccountWithStrategy>, b: Row<HLSAccountWithStrategy>) {
+export function leverageSortingFn(a: Row<HlsAccountWithStrategy>, b: Row<HlsAccountWithStrategy>) {
   return a.original.leverage - b.original.leverage
 }
 
-export default function MaxLeverage(props: Props) {
+export default function Leverage(props: Props) {
   return (
     <FormattedNumber
       amount={props.account.leverage}

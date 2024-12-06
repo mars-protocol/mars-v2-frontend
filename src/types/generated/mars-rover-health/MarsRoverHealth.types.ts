@@ -38,27 +38,18 @@ export type QueryMsg =
       health_values: {
         account_id: string
         action: ActionKind
-        kind: AccountKind
       }
     }
   | {
       health_state: {
         account_id: string
         action: ActionKind
-        kind: AccountKind
       }
     }
   | {
       config: {}
     }
 export type ActionKind = 'default' | 'liquidation'
-export type AccountKind =
-  | ('default' | 'high_levered_strategy')
-  | {
-      fund_manager: {
-        vault_addr: string
-      }
-    }
 export interface ConfigResponse {
   credit_manager?: string | null
   owner_response: OwnerResponse
@@ -81,11 +72,14 @@ export type Decimal = string
 export type Uint128 = string
 export interface HealthValuesResponse {
   above_max_ltv: boolean
+  has_perps: boolean
   liquidatable: boolean
   liquidation_health_factor?: Decimal | null
   liquidation_threshold_adjusted_collateral: Uint128
   max_ltv_adjusted_collateral: Uint128
   max_ltv_health_factor?: Decimal | null
+  perps_pnl_loss: Uint128
+  perps_pnl_profit: Uint128
   total_collateral_value: Uint128
   total_debt_value: Uint128
 }

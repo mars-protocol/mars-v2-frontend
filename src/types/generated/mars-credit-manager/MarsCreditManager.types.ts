@@ -7,8 +7,8 @@
 
 export type HealthContractBaseForString = string
 export type IncentivesUnchecked = string
-export type Decimal = string
 export type Uint128 = string
+export type Decimal = string
 export type OracleBaseForString = string
 export type ParamsBaseForString = string
 export type RedBankUnchecked = string
@@ -17,6 +17,7 @@ export type ZapperBaseForString = string
 export interface InstantiateMsg {
   health_contract: HealthContractBaseForString
   incentives: IncentivesUnchecked
+  keeper_fee_config: KeeperFeeConfig
   max_slippage: Decimal
   max_unlocking_positions: Uint128
   oracle: OracleBaseForString
@@ -26,15 +27,17 @@ export interface InstantiateMsg {
   swapper: SwapperBaseForString
   zapper: ZapperBaseForString
 }
+export interface KeeperFeeConfig {
+  min_fee: Coin
+}
+export interface Coin {
+  amount: Uint128
+  denom: string
+  [k: string]: unknown
+}
 export type ExecuteMsg =
   | {
       create_credit_account: AccountKind
-    }
-  | {
-      create_credit_account_v2: {
-        account_id?: string | null
-        kind: AccountKind
-      }
     }
   | {
       update_credit_account: {
@@ -46,6 +49,12 @@ export type ExecuteMsg =
   | {
       repay_from_wallet: {
         account_id: string
+      }
+    }
+  | {
+      execute_trigger_order: {
+        account_id: string
+        trigger_order_id: string
       }
     }
   | {
@@ -64,6 +73,12 @@ export type ExecuteMsg =
     }
   | {
       callback: CallbackMsg
+    }
+  | {
+      update_balance_after_deleverage: {
+        account_id: string
+        pnl: PnL
+      }
     }
 export type AccountKind =
   | ('default' | 'high_levered_strategy')
@@ -101,6 +116,41 @@ export type Action =
       repay: {
         coin: ActionCoin
         recipient_account_id?: string | null
+      }
+    }
+  | {
+      deposit_to_perp_vault: {
+        coin: ActionCoin
+        max_receivable_shares?: Uint128 | null
+      }
+    }
+  | {
+      unlock_from_perp_vault: {
+        shares: Uint128
+      }
+    }
+  | {
+      withdraw_from_perp_vault: {
+        min_receive?: Uint128 | null
+      }
+    }
+  | {
+      execute_perp_order: {
+        denom: string
+        order_size: Int128
+        reduce_only?: boolean | null
+      }
+    }
+  | {
+      create_trigger_order: {
+        actions: Action[]
+        conditions: Condition[]
+        keeper_fee: Coin
+      }
+    }
+  | {
+      delete_trigger_order: {
+        trigger_order_id: string
       }
     }
   | {
@@ -179,6 +229,30 @@ export type ActionAmount =
   | {
       exact: Uint128
     }
+export type Int128 = string
+export type Condition =
+  | {
+      oracle_price: {
+        comparison: Comparison
+        denom: string
+        price: Decimal
+      }
+    }
+  | {
+      relative_price: {
+        base_price_denom: string
+        comparison: Comparison
+        price: Decimal
+        quote_price_denom: string
+      }
+    }
+  | {
+      health_factor: {
+        comparison: Comparison
+        threshold: Decimal
+      }
+    }
+export type Comparison = 'greater_than' | 'less_than'
 export type LiquidateRequestForVaultBaseForString =
   | {
       deposit: string
@@ -204,6 +278,7 @@ export type SwapperRoute =
       osmo: OsmoRoute
     }
 export type AccountNftBaseForString = string
+export type PerpsBaseForString = string
 export type OwnerUpdate =
   | {
       propose_new_owner: {
@@ -292,7 +367,42 @@ export type CallbackMsg =
     }
   | {
       assert_deposit_caps: {
-        denoms: string[]
+        denoms: {
+          [k: string]: Uint128 | null
+        }
+      }
+    }
+  | {
+      deposit_to_perp_vault: {
+        account_id: string
+        coin: ActionCoin
+        max_receivable_shares?: Uint128 | null
+      }
+    }
+  | {
+      unlock_from_perp_vault: {
+        account_id: string
+        shares: Uint128
+      }
+    }
+  | {
+      withdraw_from_perp_vault: {
+        account_id: string
+        min_receive?: Uint128 | null
+      }
+    }
+  | {
+      create_trigger_order: {
+        account_id: string
+        actions: Action[]
+        conditions: Condition[]
+        keeper_fee: Coin
+      }
+    }
+  | {
+      delete_trigger_order: {
+        account_id: string
+        trigger_order_id: string
       }
     }
   | {
@@ -317,6 +427,14 @@ export type CallbackMsg =
       }
     }
   | {
+      execute_perp_order: {
+        account_id: string
+        denom: string
+        reduce_only?: boolean | null
+        size: Int128
+      }
+    }
+  | {
       request_vault_unlock: {
         account_id: string
         amount: Uint128
@@ -331,10 +449,16 @@ export type CallbackMsg =
       }
     }
   | {
+      close_all_perps: {
+        account_id: string
+      }
+    }
+  | {
       liquidate: {
         debt_coin: Coin
         liquidatee_account_id: string
         liquidator_account_id: string
+        prev_health: HealthValuesResponse
         request: LiquidateRequestForVaultBaseForAddr
       }
     }
@@ -343,8 +467,7 @@ export type CallbackMsg =
         account_id: string
         coin_in: ActionCoin
         denom_out: string
-        min_receive?: Uint128
-        slippage?: Decimal
+        min_receive: Uint128
         route?: SwapperRoute | null
       }
     }
@@ -433,11 +556,14 @@ export type LiquidateRequestForVaultBaseForAddr =
       staked_astro_lp: string
     }
 export type ChangeExpected = 'increase' | 'decrease'
-export interface Coin {
-  amount: Uint128
-  denom: string
-  [k: string]: unknown
-}
+export type PnL =
+  | 'break_even'
+  | {
+      profit: Coin
+    }
+  | {
+      loss: Coin
+    }
 export interface ActionCoin {
   amount: ActionAmount
   denom: string
@@ -463,9 +589,12 @@ export interface ConfigUpdates {
   account_nft?: AccountNftBaseForString | null
   health_contract?: HealthContractBaseForString | null
   incentives?: IncentivesUnchecked | null
+  keeper_fee_config?: KeeperFeeConfig | null
   max_slippage?: Decimal | null
   max_unlocking_positions?: Uint128 | null
   oracle?: OracleBaseForString | null
+  params?: ParamsBaseForString | null
+  perps?: PerpsBaseForString | null
   red_bank?: RedBankUnchecked | null
   rewards_collector?: string | null
   swapper?: SwapperBaseForString | null
@@ -478,6 +607,19 @@ export interface NftConfigUpdates {
 }
 export interface VaultBaseForAddr {
   address: Addr
+}
+export interface HealthValuesResponse {
+  above_max_ltv: boolean
+  has_perps: boolean
+  liquidatable: boolean
+  liquidation_health_factor?: Decimal | null
+  liquidation_threshold_adjusted_collateral: Uint128
+  max_ltv_adjusted_collateral: Uint128
+  max_ltv_health_factor?: Decimal | null
+  perps_pnl_losses: Uint128
+  perps_pnl_profit: Uint128
+  total_collateral_value: Uint128
+  total_debt_value: Uint128
 }
 export type QueryMsg =
   | {
@@ -509,6 +651,7 @@ export type QueryMsg =
   | {
       positions: {
         account_id: string
+        action?: ActionKind | null
       }
     }
   | {
@@ -555,11 +698,25 @@ export type QueryMsg =
       }
     }
   | {
+      all_trigger_orders: {
+        limit?: number | null
+        start_after?: [string, string] | null
+      }
+    }
+  | {
+      all_account_trigger_orders: {
+        account_id: string
+        limit?: number | null
+        start_after?: string | null
+      }
+    }
+  | {
       vault_bindings: {
         limit?: number | null
         start_after?: string | null
       }
     }
+export type ActionKind = 'default' | 'liquidation'
 export type VaultPositionAmount =
   | {
       unlocked: VaultAmount
@@ -586,6 +743,23 @@ export type ArrayOfAccount = Account[]
 export interface Account {
   id: string
   kind: AccountKind
+}
+export interface PaginationResponseForTriggerOrderResponse {
+  data: TriggerOrderResponse[]
+  metadata: Metadata
+}
+export interface TriggerOrderResponse {
+  account_id: string
+  order: TriggerOrder
+}
+export interface TriggerOrder {
+  actions: Action[]
+  conditions: Condition[]
+  keeper_fee: Coin
+  order_id: string
+}
+export interface Metadata {
+  has_more: boolean
 }
 export type ArrayOfCoinBalanceResponseItem = CoinBalanceResponseItem[]
 export interface CoinBalanceResponseItem {
@@ -617,18 +791,17 @@ export interface VaultUtilizationResponse {
   utilization: Coin
   vault: VaultBaseForString
 }
-export interface Metadata {
-  has_more: boolean
-}
 export interface ConfigResponse {
   account_nft?: string | null
   health_contract: string
   incentives: string
+  keeper_fee_config: KeeperFeeConfig
   max_slippage: Decimal
   max_unlocking_positions: Uint128
   oracle: string
   ownership: OwnerResponse
   params: string
+  perps: string
   red_bank: string
   rewards_collector?: RewardsCollector | null
   swapper: string
@@ -652,6 +825,7 @@ export interface Positions {
   debts: DebtAmount[]
   deposits: Coin[]
   lends: Coin[]
+  perps: PerpPosition[]
   staked_astro_lps: Coin[]
   vaults: VaultPosition[]
 }
@@ -659,6 +833,24 @@ export interface DebtAmount {
   amount: Uint128
   denom: string
   shares: Uint128
+}
+export interface PerpPosition {
+  base_denom: string
+  current_exec_price: Decimal
+  current_price: Decimal
+  denom: string
+  entry_exec_price: Decimal
+  entry_price: Decimal
+  realized_pnl: PnlAmounts
+  size: Int128
+  unrealized_pnl: PnlAmounts
+}
+export interface PnlAmounts {
+  accrued_funding: Int128
+  closing_fee: Int128
+  opening_fee: Int128
+  pnl: Int128
+  price_pnl: Int128
 }
 export type ArrayOfVaultBinding = VaultBinding[]
 export interface VaultBinding {

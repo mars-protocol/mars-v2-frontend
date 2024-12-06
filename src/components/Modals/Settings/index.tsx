@@ -3,9 +3,7 @@ import classNames from 'classnames'
 import { useCallback, useMemo, useState } from 'react'
 
 import chains from 'chains'
-import Modal from 'components/Modals/Modal'
-import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
-import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
+import AssetImage from 'components/common/assets/AssetImage'
 import Button from 'components/common/Button'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { ArrowCircle, Enter } from 'components/common/Icons'
@@ -14,7 +12,9 @@ import Select from 'components/common/Select'
 import Text from 'components/common/Text'
 import TextInput from 'components/common/TextInput'
 import { TextLink } from 'components/common/TextLink'
-import AssetImage from 'components/common/assets/AssetImage'
+import Modal from 'components/Modals/Modal'
+import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
+import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
@@ -30,7 +30,7 @@ import useStore from 'store'
 import { getCurrentChainId } from 'utils/getCurrentChainId'
 import { BN } from 'utils/helpers'
 
-const slippages = [0.02, 0.03]
+const slippages = [0.01, 0.02]
 
 export default function SettingsModal() {
   const chainConfig = useChainConfig()
@@ -70,6 +70,10 @@ export default function SettingsModal() {
   const [updateOracle, setUpdateOracle] = useLocalStorage<boolean>(
     LocalStorageKeys.UPDATE_ORACLE,
     getDefaultChainSettings(chainConfig).updateOracle,
+  )
+  const [showSummary, setShowSummary] = useLocalStorage<boolean>(
+    `${chainConfig.id}/${LocalStorageKeys.SHOW_SUMMARY}`,
+    getDefaultChainSettings(chainConfig).showSummary,
   )
 
   const [tempRpcEndpoint, setTempRpcEndpoint] = useState('')
@@ -196,6 +200,13 @@ export default function SettingsModal() {
     [setUpdateOracle],
   )
 
+  const handleShowSummary = useCallback(
+    (value: boolean) => {
+      setShowSummary(value)
+    },
+    [setShowSummary],
+  )
+
   const handleResetSettings = useCallback(() => {
     handleDisplayCurrency(getDefaultChainSettings(chainConfig).displayCurrency)
     handleSlippage(getDefaultChainSettings(chainConfig).slippage)
@@ -204,6 +215,7 @@ export default function SettingsModal() {
     handleTutorial(getDefaultChainSettings(chainConfig).tutorial)
     handleUpdateOracle(getDefaultChainSettings(chainConfig).updateOracle)
     handleTheme(getDefaultChainSettings(chainConfig).theme)
+    handleShowSummary(getDefaultChainSettings(chainConfig).showSummary)
     setTempRpcEndpoint(chains[chainId].endpoints.rpc)
     setTempRestEndpoint(chains[chainId].endpoints.rest)
     setRpcEndpoint(chains[chainId].endpoints.rpc)
@@ -217,6 +229,7 @@ export default function SettingsModal() {
     handleTutorial,
     handleUpdateOracle,
     handleTheme,
+    handleShowSummary,
     chainId,
     setRpcEndpoint,
     setRestEndpoint,
@@ -352,7 +365,6 @@ export default function SettingsModal() {
         description='By turning this on you will automatically lend out all the assets you deposit into your Credit Accounts to earn yield.'
         withStatus
       />
-
       <SettingsSwitch
         onChange={handleUpdateOracle}
         name='updateOracle'
@@ -384,7 +396,11 @@ export default function SettingsModal() {
               textSize='extraSmall'
               className='leading-4 text-white hover:underline'
               onClick={() => {
-                useStore.setState({ settingsModal: false, getStartedModal: true })
+                useStore.setState({
+                  settingsModal: false,
+                  // TODO: update docs to reflect the current state of v2
+                  //getStartedModal: true
+                })
               }}
             >
               Get Started.
@@ -393,6 +409,16 @@ export default function SettingsModal() {
         }
         withStatus
       />
+      {chainConfig.perps && (
+        <SettingsSwitch
+          onChange={handleShowSummary}
+          name='toggleShowSummary'
+          value={showSummary}
+          label='Show Order Summary on Perps'
+          description='Toggle this setting to show or hide the order summary when placing a trade on Perps.'
+          withStatus
+        />
+      )}
       <SettingsOptions
         label='Display Currency'
         description='Convert all values to the selected asset/currency.'

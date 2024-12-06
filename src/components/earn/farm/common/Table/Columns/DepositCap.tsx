@@ -6,7 +6,7 @@ import Loading from 'components/common/Loading'
 export const DEPOSIT_CAP_META = {
   accessorKey: 'cap',
   header: 'Deposit Cap',
-  meta: { className: 'min-w-35' },
+  meta: { className: 'w-35' },
 }
 
 interface Props {

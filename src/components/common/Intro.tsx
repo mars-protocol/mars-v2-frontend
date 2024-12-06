@@ -9,6 +9,7 @@ import {
   GridPlanet,
   GridTire,
   GridWeb,
+  PerpsVault,
 } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
@@ -52,6 +53,12 @@ function IntroBackground(props: { bg: Props['bg'] }) {
           <GridPlanet />
         </div>
       )
+    case 'perps-vault':
+      return (
+        <div className='absolute top-0 right-0 block w-150 opacity-60'>
+          <PerpsVault />
+        </div>
+      )
     default:
       return (
         <div className='absolute bottom-0 right-0 block w-3/4 md:w-120 opacity-5'>
@@ -63,13 +70,13 @@ function IntroBackground(props: { bg: Props['bg'] }) {
 
 export default function Intro(props: Props) {
   const showTutorial = useStore((s) => s.tutorial)
-  const isHLS = useStore((s) => s.isHLS)
+  const isHls = useStore((s) => s.isHls)
   if (!showTutorial) return null
   return (
     <Card
       className={classNames(
         'relative w-full p-8 bg-cover md:h-55 min-h-55',
-        isHLS ? 'gradient-hls-intro' : 'gradient-intro',
+        isHls ? 'gradient-hls-intro' : 'gradient-intro',
       )}
       contentClassName='flex w-full h-full flex-col justify-between'
     >

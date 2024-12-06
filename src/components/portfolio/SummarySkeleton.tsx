@@ -6,7 +6,7 @@ import Card from 'components/common/Card'
 import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import HLSTag from 'components/hls/HLSTag'
+import HlsTag from 'components/hls/HlsTag'
 import useAccount from 'hooks/accounts/useAccount'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 
@@ -28,7 +28,7 @@ export default function SummarySkeleton(props: Props) {
       <div className='flex flex-wrap justify-between gap-2 md:flex-nowrap'>
         <div className='flex items-center'>
           <Text size='2xl'>{title}</Text>
-          {account?.kind === 'high_levered_strategy' && <HLSTag />}
+          {account?.kind === 'high_levered_strategy' && <HlsTag />}
         </div>
         {health !== undefined && healthFactor !== undefined && (
           <div className='flex items-center gap-2 md:flex-grow md:justify-end'>
@@ -39,7 +39,7 @@ export default function SummarySkeleton(props: Props) {
           </div>
         )}
       </div>
-      <div className='grid grid-cols-2 gap-4 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3'>
+      <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3'>
         {stats.map((stat) => (
           <Card key={stat.sub} className='p-6 text-center bg-white/5 flex-grow-1'>
             <TitleAndSubCell

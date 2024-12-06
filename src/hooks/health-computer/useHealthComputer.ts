@@ -1,18 +1,24 @@
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useAssets from 'hooks/assets/useAssets'
+import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAssetParams from 'hooks/params/useAssetParams'
+import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
+import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useSlippage from 'hooks/settings/useSlippage'
 import useVaultConfigs from 'hooks/vaults/useVaultConfigs'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPositionValue } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { VaultConfigBaseForString } from 'types/generated/mars-params/MarsParams.types'
+import { MarketResponse } from 'types/generated/mars-perps/MarsPerps.types'
 import {
   AssetParamsBaseForAddr,
   HealthComputer,
+  PerpParams,
   Positions,
 } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import { convertAccountToPositions } from 'utils/accounts'
@@ -24,6 +30,7 @@ import {
   liquidation_price_js,
   LiquidationPriceKind,
   max_borrow_estimate_js,
+  max_perp_size_estimate_js,
   max_swap_estimate_js,
   max_withdraw_estimate_js,
   SwapKind,
@@ -35,21 +42,25 @@ import { getTokenPrice } from 'utils/tokens'
 // Pyth returns prices with up to 32 decimals. Javascript only supports 18 decimals. So we need to scale by 14 t
 // avoid "too many decimals" errors.
 // TODO: Remove adjustment properly (after testing). We will just ignore the last 14 decimals.
-const VALUE_SCALE_FACTOR = 12
+export const VALUE_SCALE_FACTOR = 12
 
 export default function useHealthComputer(account?: Account) {
   const { data: assets } = useAssets()
   const whitelistedAssets = useWhitelistedAssets()
+  const perpsAssets = usePerpsEnabledAssets()
   const { data: assetParams } = useAssetParams()
+  const { data: perpsMarketStates } = usePerpsMarketStates()
+  const { data: perpsParams } = useAllPerpsParamsSC()
   const { data: vaultConfigs } = useVaultConfigs()
   const { data: perpsVault } = usePerpsVault()
   const [slippage] = useSlippage()
+  const storeAssets = useStore((s) => s.assets)
 
   const [healthFactor, setHealthFactor] = useState(0)
   const positions: Positions | null = useMemo(() => {
     if (!account) return null
-    return convertAccountToPositions(account)
-  }, [account])
+    return convertAccountToPositions(account, assets)
+  }, [account, assets])
 
   const vaultPositionValues = useMemo(() => {
     if (!account?.vaults) return null
@@ -83,23 +94,24 @@ export default function useHealthComputer(account?: Account) {
   }, [account?.vaults, assets])
 
   const priceData = useMemo(() => {
-    const assetsWithPrice = whitelistedAssets.filter((asset) => asset.price)
+    const allAssets = [...whitelistedAssets, ...perpsAssets]
+    const assetsWithPrice = allAssets.filter((asset) => asset.price)
     const prices = assetsWithPrice.map((asset) => asset.price) as BNCoin[]
     return prices.reduce(
       (prev, curr) => {
-        const decimals = assets.find(byDenom(curr.denom))?.decimals || 6
+        const decimals = assets.find(byDenom(curr.denom))?.decimals || PRICE_ORACLE_DECIMALS
+        const decimalDiffrence = decimals - PRICE_ORACLE_DECIMALS
 
-        // The HealthComputer needs prices expressed per 1 amount. So we need to correct here for any additional decimals.
         prev[curr.denom] = curr.amount
-          .shiftedBy(VALUE_SCALE_FACTOR)
-          .shiftedBy(-decimals + 6)
-          .decimalPlaces(18)
+          .shiftedBy(-decimalDiffrence)
+          .decimalPlaces(decimals)
           .toString()
+
         return prev
       },
       {} as { [key: string]: string },
     )
-  }, [assets, whitelistedAssets])
+  }, [assets, perpsAssets, whitelistedAssets])
 
   const assetsParams = useMemo(
     () =>
@@ -126,12 +138,16 @@ export default function useHealthComputer(account?: Account) {
     )
   }, [vaultConfigs])
 
-  /* PERPS
   const perpsParamsData = useMemo(() => {
     if (!perpsParams) return {}
     return perpsParams.reduce(
       (prev, curr) => {
-        prev[curr.denom] = curr
+        prev[curr.denom] = {
+          ...curr,
+          max_long_oi_value: BN(curr.max_long_oi_value).toString(),
+          max_short_oi_value: BN(curr.max_short_oi_value).toString(),
+          max_net_oi_value: BN(curr.max_net_oi_value).toString(),
+        }
 
         return prev
       },
@@ -139,20 +155,16 @@ export default function useHealthComputer(account?: Account) {
     )
   }, [perpsParams])
 
-  const denomStates = useMemo(() => {
+  const marketStates = useMemo(() => {
+    const marketStates: { [key: string]: MarketResponse } = {}
 
-    let denomStates: { [key: string]: PerpDenomState } = {}
-    
-    
-    if (!perpsDenomStates) return denomStates
+    if (!perpsMarketStates) return marketStates
 
-    for (let denomState of perpsDenomStates) {
-      denomStates[denomState.denom] = denomState
+    for (const marketState of perpsMarketStates) {
+      marketStates[marketState.denom] = marketState
     }
-    return denomStates
-
-  }, [perpsDenomStates])
-  */
+    return marketStates
+  }, [perpsMarketStates])
 
   const healthComputer: HealthComputer | null = useMemo(() => {
     if (
@@ -160,10 +172,8 @@ export default function useHealthComputer(account?: Account) {
       !positions ||
       !vaultPositionValues ||
       !vaultConfigsData ||
-      /* PERPS
-      !denomStates ||
+      !marketStates ||
       !perpsParamsData ||
-      */
       Object.keys(assetsParams).length === 0 ||
       Object.keys(priceData).length === 0 ||
       positions.vaults.length !== Object.keys(vaultPositionValues).length
@@ -173,44 +183,35 @@ export default function useHealthComputer(account?: Account) {
     return {
       kind: account.kind,
       asset_params: assetsParams,
-      oracle_prices: priceData,
+      oracle_prices: { ...priceData, usd: '1000000', uusd: '1' },
       vaults_data: {
         vault_configs: vaultConfigsData,
         vault_values: vaultPositionValues,
       },
-      positions: { ...positions, perps: [] },
+      positions,
       perps_data: {
-        denom_states: {},
-        params: {},
-      },
-      /* PERPS
-       perps_data: {
-        denom_states: denomStates,
         params: perpsParamsData,
       },
-      */
     } as HealthComputer
   }, [
     account,
     positions,
     vaultPositionValues,
     vaultConfigsData,
-    /* PERPS
     perpsParamsData,
-    denomStates,
-    */
+    marketStates,
     assetsParams,
     priceData,
   ])
 
   useEffect(() => {
-    if (!healthComputer) return
+    if (!healthComputer || storeAssets.length === 0) return
     try {
       setHealthFactor(Number(compute_health_js(healthComputer).liquidation_health_factor) || 10)
     } catch (err) {
       console.error('Failed to calculate health: ', err)
     }
-  }, [healthComputer])
+  }, [healthComputer, storeAssets.length])
 
   const computeMaxBorrowAmount = useCallback(
     (denom: string, target: BorrowTarget) => {
@@ -239,14 +240,23 @@ export default function useHealthComputer(account?: Account) {
   )
 
   const computeMaxSwapAmount = useCallback(
-    (from: string, to: string, kind: SwapKind, isRepayDebt: boolean) => {
+    (fromAsset: Asset, toAsset: Asset, kind: SwapKind, isRepayDebt: boolean) => {
       if (!healthComputer) return BN_ZERO
       try {
+        const swapHealthComputer = {
+          ...healthComputer,
+          oracle_prices: {
+            ...priceData,
+            [fromAsset.denom]: fromAsset.price?.amount.toString() || '0',
+            [toAsset.denom]: toAsset.price?.amount.toString() || '0',
+          },
+        }
+
         return BN(
           max_swap_estimate_js(
-            healthComputer,
-            from,
-            to,
+            swapHealthComputer,
+            fromAsset.denom,
+            toAsset.denom,
             kind,
             BN(slippage).plus(SWAP_FEE_BUFFER).toString(),
             isRepayDebt,
@@ -257,20 +267,24 @@ export default function useHealthComputer(account?: Account) {
         return BN_ZERO
       }
     },
-    [healthComputer, slippage],
+    [healthComputer, slippage, priceData],
   )
 
   const computeLiquidationPrice = useCallback(
     (denom: string, kind: LiquidationPriceKind) => {
       if (!healthComputer) return null
+
       try {
-        const asset = whitelistedAssets.find(byDenom(denom))
+        const supportedAssets = [...whitelistedAssets, ...perpsAssets]
+        const asset = supportedAssets.find(byDenom(denom))
         const assetInAccount = findPositionInAccount(healthComputer, denom)
         if (!asset || !assetInAccount) return 0
+
         const decimalDiff = asset.decimals - PRICE_ORACLE_DECIMALS
-        return BN(liquidation_price_js(healthComputer, denom, kind))
-          .shiftedBy(-VALUE_SCALE_FACTOR)
+
+        return BN(liquidation_price_js(healthComputer, asset.denom, kind))
           .shiftedBy(decimalDiff)
+          .decimalPlaces(asset.decimals)
           .toNumber()
       } catch (err) {
         console.error(
@@ -280,49 +294,46 @@ export default function useHealthComputer(account?: Account) {
           denom,
           'kind:',
           kind,
+          'healthComputer:',
+          healthComputer,
         )
         return null
       }
     },
-    [healthComputer, whitelistedAssets],
+    [healthComputer, perpsAssets, whitelistedAssets],
   )
 
   const computeMaxPerpAmount = useCallback(
     (denom: string, tradeDirection: TradeDirection) => {
-      if (
-        !healthComputer ||
-        !perpsVault
-        /* PERPS
-        || !denomStates
-        */
-      )
-        return BN_ZERO
+      if (!healthComputer || !perpsVault || !marketStates) return BN_ZERO
+      const positions = [
+        ...healthComputer.positions.deposits,
+        ...healthComputer.positions.lends,
+        ...healthComputer.positions.perps,
+        ...healthComputer.positions.staked_astro_lps,
+      ]
+      if (positions.length === 0) return BN_ZERO
+      const asset = assets.find(byDenom(denom))
+      if (!asset) return BN_ZERO
+
       try {
-        return BN(
-          /* PERPS
+        const result = BN(
           max_perp_size_estimate_js(
             healthComputer,
             denom,
             perpsVault.denom,
-            denomStates[denom].long_oi.toString(),
-            denomStates[denom].short_oi.toString(),
+            BN(marketStates[denom]?.long_oi ?? '0').toString(),
+            BN(marketStates[denom]?.short_oi ?? '0').toString(),
             tradeDirection,
           ),
-        */
-          1,
         ).abs()
+        return result
       } catch (err) {
         console.error('Failed to calculate max perp size: ', err)
         return BN_ZERO
       }
     },
-    [
-      healthComputer,
-      perpsVault,
-      /* PERPS
-      , denomStates
-      */
-    ],
+    [healthComputer, perpsVault, marketStates, assets],
   )
 
   const health = useMemo(() => {

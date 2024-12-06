@@ -1,6 +1,5 @@
 import getAccount from 'api/accounts/getAccount'
 import getWalletAccountIds from 'api/wallets/getAccountIds'
-import { AccountKind } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 
 export default async function getAccounts(
   kind: AccountKind,
@@ -13,7 +12,7 @@ export default async function getAccounts(
 
   const $accounts = accountIdsAndKinds
     .filter((a) => a.kind === kind)
-    .map((account) => getAccount(chainConfig, assets, account.id))
+    .map((account) => getAccount(chainConfig, assets, account.id, address))
 
   const accounts = await Promise.all($accounts).then((accounts) => accounts)
   if (accounts) {

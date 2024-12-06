@@ -1,7 +1,6 @@
 import classNames from 'classnames'
 import React, { ReactNode } from 'react'
-import { Slide, ToastContainer, toast as toastify } from 'react-toastify'
-import { mutate } from 'swr'
+import { Slide, ToastContainer, toast as toastify, ToastTransitionProps } from 'react-toastify'
 
 import { CheckMark } from 'components/common/CheckMark'
 import { CircularProgress } from 'components/common/CircularProgress'
@@ -29,15 +28,42 @@ function isPromise(object?: any): object is ToastPending {
   return 'promise' in object
 }
 
+const NoTransition: React.FC<ToastTransitionProps> = ({
+  children,
+  position,
+  preventExitTransition,
+  done,
+  nodeRef,
+  isIn,
+  playToast,
+}) => {
+  React.useEffect(() => {
+    if (isIn && playToast) {
+      playToast()
+    }
+    if (!isIn && done) {
+      done()
+    }
+  }, [isIn, done, playToast])
+
+  return (
+    <div ref={nodeRef as React.RefObject<HTMLDivElement>} data-position={position}>
+      {children}
+    </div>
+  )
+}
+
 export function generateToastContent(content: ToastSuccess['content'], assets: Asset[]): ReactNode {
   return content.map((item, index) => (
     <React.Fragment key={index}>
       {item.text && (
         <div className='flex flex-wrap w-full mb-1'>
-          <Text size='sm' className='w-full mb-1 text-white'>
-            {item.text}
-          </Text>
-          {item.coins.length > 0 && (
+          {(!item.coins || item.coins.length > 0) && (
+            <Text size='sm' className='w-full mb-1 text-white'>
+              {item.text}
+            </Text>
+          )}
+          {item.coins.length > 0 && Number(item.coins[0].amount ?? 0) !== 0 && (
             <ul className='flex flex-wrap w-full gap-1 p-1 pl-4 list-disc'>
               {item.coins.map((coin, index) => {
                 let prefix = ''
@@ -77,7 +103,7 @@ export default function Toaster() {
       <div className='relative flex flex-wrap w-full m-0 isolate'>
         <div className='flex items-center w-full gap-2 mb-2'>
           <div className='flex items-center justify-center rounded-sm bg-info w-7 h-7'>
-            <div className='w-4 h-4 -mt-1 -ml-1'>
+            <div className='w-4 h-4 -ml-1'>
               <CircularProgress />
             </div>
           </div>
@@ -99,6 +125,8 @@ export default function Toaster() {
       closeOnClick: false,
       hideProgressBar: true,
       autoClose: false,
+      position: 'bottom-right',
+      transition: reduceMotion ? NoTransition : Slide,
     })
   }
 
@@ -118,7 +146,9 @@ export default function Toaster() {
             </div>
           ) : (
             <div className='flex items-center justify-center rounded-sm bg-success w-7 h-7'>
-              <div className='w-4 h-4 -mt-1 -ml-1 text-white'>
+              <div
+                className={classNames('w-4 h-4 -ml-1 text-white', reduceMotion ? '-mt-2' : '-mt-1')}
+              >
                 <CheckMark />
               </div>
             </div>
@@ -210,7 +240,6 @@ export default function Toaster() {
     }
 
     useStore.setState({ toast: null })
-    mutate(() => true)
   }
 
   if (toast) {
@@ -227,7 +256,7 @@ export default function Toaster() {
       position='top-right'
       newestOnTop
       closeOnClick={false}
-      transition={reduceMotion ? undefined : Slide}
+      transition={reduceMotion ? NoTransition : Slide}
       bodyClassName='p-0 m-0 -z-1'
       className='mt-[81px] p-0'
     />

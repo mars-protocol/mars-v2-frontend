@@ -9,16 +9,16 @@ interface Props {
   markets: Market[]
   denom: string
   type: PositionType
+  hasCampaignApy?: boolean
 }
 
-export default function Apr(props: Props) {
-  const { markets, type, denom, apy } = props
+export default function Apy(props: Props) {
+  const { markets, type, denom, apy, hasCampaignApy } = props
 
   if (apy === undefined) return <Loading />
   if (apy === null) return <Text size='xs'>N/A</Text>
 
-  const isEnabled =
-    markets.find((market) => market.asset.denom === props.denom)?.borrowEnabled ?? false
+  const isEnabled = markets.find((market) => market.asset.denom === denom)?.borrowEnabled ?? false
 
   return (
     <AssetRate
@@ -27,6 +27,7 @@ export default function Apr(props: Props) {
       isEnabled={type !== 'lend' || isEnabled}
       type='apy'
       orientation='ltr'
+      hasCampaignApy={hasCampaignApy}
     />
   )
 }

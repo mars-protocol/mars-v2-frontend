@@ -1,5 +1,4 @@
 import { DEFAULT_GAS_MULTIPLIER, MsgExecuteContract } from '@delphi-labs/shuttle-react'
-import BigNumber from 'bignumber.js'
 import moment from 'moment'
 import { isMobile } from 'react-device-detect'
 import { StoreApi } from 'zustand'
@@ -12,14 +11,16 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { ExecuteMsg as AccountNftExecuteMsg } from 'types/generated/mars-account-nft/MarsAccountNft.types'
 import {
   Action,
+  ActionAmount,
   ActionCoin,
+  Condition,
   Action as CreditManagerAction,
   ExecuteMsg as CreditManagerExecuteMsg,
   ExecuteMsg,
 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { ExecuteMsg as IncentivesExecuteMsg } from 'types/generated/mars-incentives/MarsIncentives.types'
+import { ExecuteMsg as PerpsExecuteMsg } from 'types/generated/mars-perps/MarsPerps.types'
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
-import { AccountKind } from 'types/generated/mars-rover-health-types/MarsRoverHealthTypes.types'
 import { byDenom, bySymbol } from 'utils/array'
 import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
@@ -38,9 +39,7 @@ function generateExecutionMessage(
     | AccountNftExecuteMsg
     | RedBankExecuteMsg
     | PythUpdateExecuteMsg
-    /* PERPS
     | PerpsExecuteMsg
-    */
     | IncentivesExecuteMsg,
   funds: Coin[],
 ) {
@@ -56,9 +55,11 @@ export default function createBroadcastSlice(
   set: StoreApi<Store>['setState'],
   get: StoreApi<Store>['getState'],
 ): BroadcastSlice {
-  const getEstimatedFee = async (messages: MsgExecuteContract[]) => {
+  const getEstimatedFee = async (
+    messages: MsgExecuteContract[],
+  ): Promise<{ fee: StdFee | undefined; error?: string }> => {
     if (!get().client) {
-      return defaultFee(get().chainConfig)
+      return { fee: undefined, error: 'The client disconnected. Please reload the page!' }
     }
     try {
       const gasPrice = await getGasPrice(get().chainConfig)
@@ -77,15 +78,16 @@ export default function createBroadcastSlice(
         if (success) {
           const fee = simulateResult.fee
           return {
-            amount: fee.amount,
-            gas: BN(fee.gas).toFixed(0),
+            fee: {
+              amount: fee.amount,
+              gas: BN(fee.gas).toFixed(0),
+            },
           }
         }
       }
-
-      throw 'Simulation failed'
+      return { fee: undefined, error: simulateResult?.error ?? 'Unknown Error' }
     } catch (ex) {
-      return defaultFee(get().chainConfig)
+      return { fee: undefined, error: ex as string }
     }
   }
 
@@ -171,7 +173,7 @@ export default function createBroadcastSlice(
       get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
-    closeHlsStakingPosition: async (options: { accountId: string; actions: Action[] }) => {
+    closeHlsPosition: async (options: { accountId: string; actions: Action[] }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
@@ -188,7 +190,6 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-
     createAccount: async (accountKind: AccountKind, isAutoLendEnabled: boolean) => {
       const msg: CreditManagerExecuteMsg = {
         create_credit_account: accountKind,
@@ -235,6 +236,7 @@ export default function createBroadcastSlice(
       const cmContract = get().chainConfig.contracts.creditManager
       const nftContract = get().chainConfig.contracts.accountNft
 
+      if (!nftContract) return false
       const response = get().executeMsg({
         messages: [
           generateExecutionMessage(get().address, cmContract, refundMessage, []),
@@ -320,6 +322,7 @@ export default function createBroadcastSlice(
         ? get().chainConfig.contracts.incentives
         : get().chainConfig.contracts.creditManager
 
+      if (!contract) return false
       const response = get().executeMsg({
         messages: [
           generateExecutionMessage(
@@ -420,13 +423,16 @@ export default function createBroadcastSlice(
             },
           })
         }
-        /* PERPS
         if (vault.type === 'perp') {
           actions.push({
             withdraw_from_perp_vault: {},
           })
+          if (checkAutoLendEnabled(options.accountId, get().chainConfig.id)) {
+            actions.push({
+              lend: { denom: vault.denoms.lp, amount: 'account_balance' },
+            })
+          }
         }
-        */
       })
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
@@ -477,7 +483,9 @@ export default function createBroadcastSlice(
             get().address,
             cmContract,
             msg,
-            options.kind === 'default' ? [] : options.deposits.map((coin) => coin.toCoin()),
+            options.kind === 'default'
+              ? []
+              : sortFunds(options.deposits.map((coin) => coin.toCoin())),
           ),
         ],
       })
@@ -488,6 +496,8 @@ export default function createBroadcastSlice(
       accountId: string
       astroLps: DepositedAstroLp[]
       amount: string
+      toWallet: boolean
+      rewards: BNCoin[]
     }) => {
       const actions: CreditManagerAction[] = []
 
@@ -508,6 +518,19 @@ export default function createBroadcastSlice(
             slippage: '0',
           },
         })
+        if (options.toWallet) {
+          actions.push({
+            withdraw: { denom: astroLp.denoms.primary, amount: 'account_balance' },
+          })
+          actions.push({
+            withdraw: { denom: astroLp.denoms.secondary, amount: 'account_balance' },
+          })
+          options.rewards.forEach((reward) => {
+            actions.push({
+              withdraw: { denom: reward.denom, amount: 'account_balance' },
+            })
+          })
+        }
       })
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
@@ -767,10 +790,279 @@ export default function createBroadcastSlice(
           toastOptions,
           get().address ?? '',
           get().assets,
+          get().perpsBaseDenom,
         )
         toast.then((t) => set({ toast: t }))
         return
       })
+    },
+    createTriggerOrder: async (options: CreateTriggerOrdersOptions) => {
+      const triggerActions: Action[] = [
+        {
+          execute_perp_order: {
+            denom: options.coin.denom,
+            order_size: options.coin.amount.toString() as any,
+            reduce_only: options.reduceOnly,
+          },
+        },
+      ]
+      if (options.autolend)
+        triggerActions.push({
+          lend: {
+            denom: options.keeperFee.denom,
+            amount: 'account_balance',
+          },
+        })
+
+      const triggerConditions: Condition[] = [
+        {
+          oracle_price: {
+            comparison: options.tradeDirection === 'long' ? 'less_than' : 'greater_than',
+            denom: options.coin.denom,
+            price: options.price.toString(),
+          },
+        },
+      ]
+
+      const actions: Action[] = []
+
+      if (!options.keeperFeeFromLends.amount.isZero()) {
+        actions.push({
+          reclaim: options.keeperFeeFromLends.toActionCoin(),
+        })
+      }
+
+      if (!options.keeperFeeFromBorrows.amount.isZero()) {
+        actions.push({
+          borrow: {
+            amount: options.keeperFeeFromBorrows.amount.toString(),
+            denom: options.keeperFeeFromBorrows.denom,
+          },
+        })
+      }
+
+      actions.push({
+        create_trigger_order: {
+          keeper_fee: options.keeperFee.toCoin(),
+          actions: triggerActions,
+          conditions: triggerConditions,
+        },
+      })
+
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions,
+        },
+      }
+
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().handleTransaction({ response })
+
+      return response.then((response) => !!response.result)
+    },
+    createMultipleTriggerOrders: async (options: CreateMultipleTriggerOrdersOptions) => {
+      const actions: Action[] = []
+
+      if (!options.keeperFeeFromLends.amount.isZero()) {
+        actions.push({
+          reclaim: options.keeperFeeFromLends.toActionCoin(),
+        })
+      }
+
+      if (!options.keeperFeeFromBorrows.amount.isZero()) {
+        actions.push({
+          borrow: {
+            amount: options.keeperFeeFromBorrows.amount.toString(),
+            denom: options.keeperFeeFromBorrows.denom,
+          },
+        })
+      }
+
+      options.orders.forEach((order) => {
+        const triggerActions: Action[] = [
+          {
+            execute_perp_order: {
+              denom: order.coin.denom,
+              order_size: order.coin.amount.toString() as any,
+              reduce_only: order.reduceOnly,
+            },
+          },
+        ]
+        if (order.autolend)
+          triggerActions.push({
+            lend: {
+              denom: order.keeperFee.denom,
+              amount: 'account_balance',
+            },
+          })
+
+        const triggerConditions: Condition[] = [
+          {
+            oracle_price: {
+              comparison: order.tradeDirection === 'long' ? 'less_than' : 'greater_than',
+              denom: order.coin.denom,
+              price: order.price.toString(),
+            },
+          },
+        ]
+
+        actions.push({
+          create_trigger_order: {
+            keeper_fee: order.keeperFee.toCoin(),
+            actions: triggerActions,
+            conditions: triggerConditions,
+          },
+        })
+      })
+
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions,
+        },
+      }
+
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().handleTransaction({ response })
+
+      return response.then((response) => !!response.result)
+    },
+    executePerpOrder: async (options: {
+      accountId: string
+      coin: BNCoin
+      reduceOnly?: boolean
+      autolend: boolean
+      baseDenom: string
+    }) => {
+      const actions: Action[] = [
+        {
+          execute_perp_order: {
+            denom: options.coin.denom,
+            order_size: options.coin.amount.toString() as any,
+            reduce_only: options.reduceOnly,
+          },
+        },
+      ]
+      if (options.autolend)
+        actions.push({
+          lend: {
+            denom: options.baseDenom,
+            amount: 'account_balance',
+          },
+        })
+
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions,
+        },
+      }
+
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().handleTransaction({ response })
+
+      return response.then((response) => !!response.result)
+    },
+    closePerpPosition: async (options: {
+      accountId: string
+      coin: BNCoin
+      reduceOnly?: boolean
+      autolend: boolean
+      baseDenom: string
+      orderIds?: string[]
+    }) => {
+      const actions: Action[] = [
+        {
+          execute_perp_order: {
+            denom: options.coin.denom,
+            order_size: options.coin.amount.toString() as any,
+            reduce_only: options.reduceOnly,
+          },
+        },
+        ...(options.orderIds?.map((orderId) => ({
+          delete_trigger_order: {
+            trigger_order_id: orderId,
+          },
+        })) || []),
+      ]
+      if (options.autolend)
+        actions.push({
+          lend: {
+            denom: options.baseDenom,
+            amount: 'account_balance',
+          },
+        })
+
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions,
+        },
+      }
+
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().handleTransaction({ response })
+
+      return response.then((response) => !!response.result)
+    },
+    cancelTriggerOrder: async (options: {
+      accountId: string
+      orderId: string
+      autolend: boolean
+      baseDenom: string
+    }) => {
+      const actions: Action[] = [
+        {
+          delete_trigger_order: {
+            trigger_order_id: options.orderId,
+          },
+        },
+      ]
+      if (options.autolend)
+        actions.push({
+          lend: {
+            denom: options.baseDenom,
+            amount: 'account_balance',
+          },
+        })
+
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions,
+        },
+      }
+
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+      })
+
+      get().handleTransaction({ response })
+
+      return response.then((response) => !!response.result)
     },
     executeMsg: async (options: {
       messages: MsgExecuteContract[]
@@ -785,129 +1077,48 @@ export default function createBroadcastSlice(
         const gasPrice = await getGasPrice(get().chainConfig)
         if (!client)
           return { result: undefined, error: 'No client detected. Please reconnect your wallet.' }
-        if ((checkPythUpdateEnabled() || options.isPythUpdate) && !isLedger) {
+        if (
+          (checkPythUpdateEnabled() || options.isPythUpdate) &&
+          !isLedger &&
+          !get().chainConfig.slinky
+        ) {
           const pythUpdateMsg = await get().getPythVaas()
           options.messages.unshift(pythUpdateMsg)
         }
-        const fee = await getEstimatedFee(options.messages)
-        const broadcastOptions = {
-          messages: options.messages,
-          feeAmount: fee.amount[0].amount,
-          gasLimit: fee.gas,
-          memo,
-          wallet: client.connectedWallet,
-          mobile: isMobile,
-          overrides: {
-            gasPrice,
-            gasAdjustment: DEFAULT_GAS_MULTIPLIER,
-          },
-        }
-        const result = await client.broadcast(broadcastOptions)
-        if (result.hash) {
-          return { result }
+        const feeObject = await getEstimatedFee(options.messages)
+        if (feeObject.fee) {
+          const broadcastOptions = {
+            messages: options.messages,
+            feeAmount: feeObject.fee.amount[0].amount,
+            gasLimit: feeObject.fee.gas,
+            memo,
+            wallet: client.connectedWallet,
+            mobile: isMobile,
+            overrides: {
+              gasPrice,
+              gasAdjustment: DEFAULT_GAS_MULTIPLIER,
+            },
+          }
+          const result = await client.broadcast(broadcastOptions)
+          if (result.hash) {
+            return { result }
+          }
+
+          return {
+            result: undefined,
+            error: 'Transaction failed',
+          }
         }
 
         return {
           result: undefined,
-          error: 'Transaction failed',
+          error: feeObject.error ?? 'Transaction failed',
         }
       } catch (error) {
         const e = error as { message: string }
         console.log(e)
         return { result: undefined, error: e.message }
       }
-    },
-    openPerpPosition: async (options: { accountId: string; coin: BNCoin }) => {
-      const msg: CreditManagerExecuteMsg = {
-        update_credit_account: {
-          account_id: options.accountId,
-          actions: [
-            /* PERPS
-            {
-              open_perp: options.coin.toSignedCoin(),
-            },
-             */
-          ],
-        },
-      }
-
-      const cmContract = get().chainConfig.contracts.creditManager
-
-      const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
-      })
-
-      get().handleTransaction({ response })
-      return response.then((response) => !!response.result)
-    },
-    closePerpPosition: async (options: { accountId: string; denom: string }) => {
-      const msg: CreditManagerExecuteMsg = {
-        update_credit_account: {
-          account_id: options.accountId,
-          actions: [
-            /* PERPS
-            {
-              close_perp: { denom: options.denom },
-            },
-            */
-          ],
-        },
-      }
-
-      const cmContract = get().chainConfig.contracts.creditManager
-
-      const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
-      })
-
-      get().handleTransaction({ response })
-
-      return response.then((response) => !!response.result)
-    },
-    modifyPerpPosition: async (options: {
-      accountId: string
-      coin: BNCoin
-      changeDirection: boolean
-    }) => {
-      const msg: CreditManagerExecuteMsg = {
-        update_credit_account: {
-          account_id: options.accountId,
-          actions: [
-            /* PERPS
-            ...(options.changeDirection
-              ? [
-
-                  {
-                    close_perp: {
-                      denom: options.coin.denom,
-                    },
-                  },
-                  {
-                    open_perp: options.coin.toSignedCoin(),
-                  },
-                ]
-              : [
-                  {
-                    modify_perp: {
-                      denom: options.coin.denom,
-                      new_size: options.coin.amount.toString() as any,
-                    },
-                  },
-                ]),
-                */
-          ],
-        },
-      }
-
-      const cmContract = get().chainConfig.contracts.creditManager
-
-      const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
-      })
-
-      get().handleTransaction({ response })
-
-      return response.then((response) => !!response.result)
     },
     getPythVaas: async () => {
       const priceFeedIds = get()
@@ -919,7 +1130,10 @@ export default function createBroadcastSlice(
       const pythContract = get().chainConfig.contracts.pyth
 
       return generateExecutionMessage(get().address, pythContract, msg, [
-        { denom: get().assets[0].denom, amount: String(pythAssets.length) },
+        {
+          denom: get().chainConfig.defaultCurrency.coinMinimalDenom,
+          amount: String(pythAssets.length),
+        },
       ])
     },
     v1Action: async (type: V1ActionType, coin: BNCoin) => {
@@ -967,6 +1181,7 @@ export default function createBroadcastSlice(
 
       const redBankContract = get().chainConfig.contracts.redBank
 
+      if (!redBankContract) return false
       const response = get().executeMsg({
         messages: [generateExecutionMessage(get().address, redBankContract, msg, sortFunds(funds))],
       })
@@ -979,39 +1194,46 @@ export default function createBroadcastSlice(
     depositIntoPerpsVault: async (options: {
       accountId: string
       denom: string
+      fromWallet?: BigNumber
       fromDeposits?: BigNumber
       fromLends?: BigNumber
     }) => {
+      const fromDeposits = options.fromDeposits ?? BN_ZERO
+      const fromLends = options.fromLends ?? BN_ZERO
+      const fromWallet = options.fromWallet ?? BN_ZERO
       const depositCoin = BNCoin.fromDenomAndBigNumber(
         options.denom,
-        (options.fromDeposits || BN_ZERO).plus(options.fromLends || BN_ZERO),
+        fromDeposits.plus(fromLends).plus(fromWallet),
       )
+
+      const actions = [] as Action[]
+      if (fromWallet.isGreaterThan(0))
+        actions.push({
+          deposit: BNCoin.fromDenomAndBigNumber(options.denom, fromWallet).toCoin(),
+        })
+
+      if (fromLends.isGreaterThan(0))
+        actions.push({
+          reclaim: BNCoin.fromDenomAndBigNumber(options.denom, fromLends).toActionCoin(),
+        })
+
+      actions.push({
+        deposit_to_perp_vault: {
+          coin: depositCoin.toActionCoin(),
+        },
+      })
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
-          actions: [
-            ...(options.fromLends
-              ? [
-                  {
-                    reclaim: BNCoin.fromDenomAndBigNumber(
-                      options.denom,
-                      options.fromLends,
-                    ).toActionCoin(),
-                  },
-                ]
-              : []),
-            /* PERPS
-            {
-              deposit_to_perp_vault: depositCoin.toActionCoin(),
-            },
-            */
-          ],
+          actions,
         },
       }
       const cmContract = get().chainConfig.contracts.creditManager
 
+      const funds = fromWallet.isGreaterThan(0) ? [depositCoin.toCoin()] : []
+
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+        messages: [generateExecutionMessage(get().address, cmContract, msg, funds)],
       })
 
       get().handleTransaction({ response })
@@ -1023,13 +1245,11 @@ export default function createBroadcastSlice(
         update_credit_account: {
           account_id: options.accountId,
           actions: [
-            /* PERPS
             {
               unlock_from_perp_vault: {
                 shares: options.amount.integerValue().toString(),
               },
             },
-            */
           ],
         },
       }
@@ -1043,16 +1263,28 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-    withdrawFromPerpsVault: (options: { accountId: string }) => {
+    withdrawFromPerpsVault: (options: {
+      accountId: string
+      isAutoLend: boolean
+      vaultDenom: string
+    }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
           actions: [
-            /* PERPS
             {
               withdraw_from_perp_vault: {},
             },
-            */
+            ...(options.isAutoLend
+              ? [
+                  {
+                    lend: {
+                      denom: options.vaultDenom,
+                      amount: 'account_balance' as ActionAmount,
+                    },
+                  },
+                ]
+              : []),
           ],
         },
       }

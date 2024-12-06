@@ -20,17 +20,17 @@ import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import {
-  calculateAccountApr,
+  calculateAccountApy,
   calculateAccountBalanceValue,
   calculateAccountLeverage,
 } from 'utils/accounts'
@@ -45,16 +45,15 @@ interface AccountDetailsControllerProps {
 
 export default function AccountDetailsController(props: AccountDetailsControllerProps) {
   const address = useStore((s) => s.address)
-  const isHLS = useStore((s) => s.isHLS)
+  const isHls = useStore((s) => s.isHls)
   const isV1 = useStore((s) => s.isV1)
   const { data: _, isLoading } = useAccounts('default', address)
   const { data: accountIds } = useAccountIds(address, false, true)
   const accountId = useAccountId()
-
   const account = useCurrentAccount()
   const focusComponent = useStore((s) => s.focusComponent)
   const isOwnAccount = accountId && accountIds?.includes(accountId)
-  const hideAccountDetails = !address || focusComponent || !isOwnAccount || isHLS || isV1
+  const hideAccountDetails = !address || focusComponent || !isOwnAccount || isHls || isV1
   const isLoadingAccountDetails = (isLoading && accountId && !focusComponent) || !account
 
   if (hideAccountDetails) return null
@@ -67,8 +66,8 @@ function AccountDetails(props: Props) {
   const chainConfig = useChainConfig()
   const { account } = props
   const location = useLocation()
-  const { data: hlsStrategies } = useHLSStakingAssets()
   const { data: vaultAprs } = useVaultAprs()
+  const { data: perpsVault } = usePerpsVault()
   const astroLpAprs = useAstroLpAprs()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
@@ -80,23 +79,20 @@ function AccountDetails(props: Props) {
   const { health: updatedHealth, healthFactor: updatedHealthFactor } = useHealthComputer(
     updatedAccount || account,
   )
-  const whitelistedAssets = useWhitelistedAssets()
+  const { data: assets } = useAssets()
   const accountBalanceValue = useMemo(
-    () => calculateAccountBalanceValue(updatedAccount ?? account, whitelistedAssets),
-    [updatedAccount, account, whitelistedAssets],
+    () => calculateAccountBalanceValue(updatedAccount ?? account, assets),
+    [updatedAccount, account, assets],
   )
   const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalanceValue)
-  const leverage = useMemo(
-    () => calculateAccountLeverage(account, whitelistedAssets),
-    [account, whitelistedAssets],
-  )
+  const leverage = useMemo(() => calculateAccountLeverage(account, assets), [account, assets])
   const updatedLeverage = useMemo(() => {
     if (!updatedAccount) return null
-    const updatedLeverage = calculateAccountLeverage(updatedAccount, whitelistedAssets)
+    const updatedLeverage = calculateAccountLeverage(updatedAccount, assets)
 
     if (updatedLeverage.eq(leverage)) return null
     return updatedLeverage
-  }, [updatedAccount, leverage, whitelistedAssets])
+  }, [updatedAccount, assets, leverage])
 
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
@@ -108,27 +104,26 @@ function AccountDetails(props: Props) {
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
   )
-  const apr = useMemo(
+  const apy = useMemo(
     () =>
-      calculateAccountApr(
+      calculateAccountApy(
         updatedAccount ?? account,
         borrowAssetsData,
         lendingAssetsData,
-        hlsStrategies,
-        whitelistedAssets,
+        assets,
         vaultAprs,
         astroLpAprs,
-        account.kind === 'high_levered_strategy',
+        perpsVault?.apy || 0,
       ),
     [
-      account,
-      whitelistedAssets,
-      borrowAssetsData,
-      hlsStrategies,
-      lendingAssetsData,
       updatedAccount,
+      account,
+      borrowAssetsData,
+      lendingAssetsData,
+      assets,
       vaultAprs,
       astroLpAprs,
+      perpsVault?.apy,
     ],
   )
   const isFullWidth =
@@ -201,18 +196,18 @@ function AccountDetails(props: Props) {
                 Leverage
               </Text>
               <AccountSummaryLeverage
-                leverage={leverage.toNumber() || 1}
+                leverage={leverage?.toNumber() || 1}
                 updatedLeverage={updatedLeverage?.toNumber() || null}
               />
             </div>
             <div className='w-full py-4 border-t border-white/20'>
               <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
-                APR
+                APY
               </Text>
               <FormattedNumber
                 className={'w-full text-center text-2xs'}
-                amount={apr.toNumber()}
-                options={{ maxDecimals: 2, minDecimals: 2, suffix: '%' }}
+                amount={apy.toNumber()}
+                options={{ maxDecimals: 2, minDecimals: 2, suffix: '%', abbreviated: true }}
                 animate
               />
             </div>

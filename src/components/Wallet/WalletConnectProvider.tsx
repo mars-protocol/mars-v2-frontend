@@ -68,6 +68,10 @@ const mobileProviders: WalletMobileProvider[] = [
   new CosmostationMobileProvider({
     networks: getSupportedChainsInfos(WalletID.CosmostationMobile),
   }),
+  new CosmiframeExtensionProvider({
+    allowedParentOrigins: DAODAO_ORIGINS,
+    networks: getSupportedChainsInfos(WalletID.DaoDao),
+  }) as any,
 ]
 
 const extensionProviders: WalletExtensionProvider[] = [

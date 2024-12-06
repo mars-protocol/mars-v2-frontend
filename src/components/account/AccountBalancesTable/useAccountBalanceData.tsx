@@ -2,12 +2,11 @@ import { useMemo } from 'react'
 
 import { getAssetAccountBalanceRow } from 'components/account/AccountBalancesTable/functions'
 import useAssets from 'hooks/assets/useAssets'
-import useHLSStakingAssets from 'hooks/hls/useHLSStakingAssets'
+import useHlsStakingAssets from 'hooks/hls/useHlsStakingAssets'
 import { byDenom } from 'utils/array'
 
 interface Props {
   account: Account
-  isHls?: boolean
   updatedAccount?: Account
   lendingData: LendingMarketTableData[]
   borrowingData: BorrowMarketTableData[]
@@ -15,8 +14,9 @@ interface Props {
 
 export default function useAccountBalanceData(props: Props) {
   const { account, updatedAccount, lendingData, borrowingData } = props
-  const { data: hlsStrategies } = useHLSStakingAssets()
+  const { data: hlsStrategies } = useHlsStakingAssets()
   const { data: assets } = useAssets()
+  const isHls = account.kind === 'high_levered_strategy'
 
   return useMemo<AccountBalanceRow[]>(() => {
     const usedAccount = updatedAccount ?? account
@@ -28,7 +28,7 @@ export default function useAccountBalanceData(props: Props) {
     accountDeposits.forEach((deposit) => {
       const asset = assets.find(byDenom(deposit.denom))
       if (!asset) return
-      const apy = props.isHls
+      const apy = isHls
         ? (hlsStrategies.find((strategy) => strategy.denoms.deposit === asset.denom)?.apy ?? 0)
         : 0
       const prevDeposit = updatedAccount ? account?.deposits.find(byDenom(deposit.denom)) : deposit
@@ -56,5 +56,5 @@ export default function useAccountBalanceData(props: Props) {
       return getAssetAccountBalanceRow('borrow', asset, assets, debt, apy, prevDebt)
     })
     return [...deposits, ...lends, ...debts]
-  }, [updatedAccount, account, props.isHls, hlsStrategies, assets, lendingData, borrowingData])
+  }, [updatedAccount, account, isHls, hlsStrategies, assets, lendingData, borrowingData])
 }

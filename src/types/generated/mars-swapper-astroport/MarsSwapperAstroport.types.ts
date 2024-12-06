@@ -23,8 +23,7 @@ export type ExecuteMsg =
       swap_exact_in: {
         coin_in: Coin
         denom_out: string
-        min_receive?: Uint128
-        slippage?: Decimal
+        min_receive: Uint128
         route?: SwapperRoute | null
       }
     }

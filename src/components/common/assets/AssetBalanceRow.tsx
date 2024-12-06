@@ -10,48 +10,57 @@ interface Props {
   asset: Asset
   coin: BNCoin
   className?: string
-  small?: boolean
   hideBalances?: boolean
   hideNames?: boolean
   bridgeStatus?: string
   skipTxHash?: string
+  small?: boolean
+  tiny?: boolean
 }
 
 export default function AssetBalanceRow(props: Props) {
+  const { asset, coin, className, hideBalances, hideNames, small, tiny } = props
   return (
     <div
       className={classNames(
         'flex items-center w-full',
-        props.small ? 'gap-2' : 'gap-4',
-        props.className,
+        small || tiny ? 'gap-2' : 'gap-4',
+        className,
       )}
     >
-      <AssetImage asset={props.asset} className={classNames(props.small ? 'w-5 h-5' : 'w-8 h-8')} />
-      <div className='flex flex-wrap flex-1'>
-        <Text className='w-full' size={props.small ? 'sm' : 'base'}>
-          {props.asset.symbol}
-        </Text>
-        {!props.hideBalances && !props.hideNames && (
-          <Text size={props.small ? 'xs' : 'sm'} className='w-full text-white/50'>
-            {props.asset.name}
+      <AssetImage asset={asset} className={classNames(small || tiny ? 'w-5 h-5' : 'w-8 h-8')} />
+      {!tiny && (
+        <div className='flex flex-wrap flex-1'>
+          <Text className='w-full' size={small ? 'sm' : 'base'}>
+            {asset.symbol}
           </Text>
-        )}
-      </div>
+          {!hideBalances && !hideNames && (
+            <Text size={small || tiny ? 'xs' : 'sm'} className='w-full text-white/50'>
+              {asset.name}
+            </Text>
+          )}
+        </div>
+      )}
       <div className='flex flex-wrap'>
-        {!props.hideBalances && (
+        {!hideBalances && (
           <DisplayCurrency
-            coin={props.coin}
-            className={classNames('w-full text-right', props.small && 'text-sm')}
+            coin={coin}
+            className={classNames(
+              'w-full',
+              (small || tiny) && 'text-sm',
+              tiny ? '!justify-start' : 'text-right',
+            )}
           />
         )}
         <FormattedNumber
-          amount={demagnify(props.coin.amount, props.asset)}
+          amount={demagnify(coin.amount, asset)}
           className={classNames(
-            'w-full text-right',
-            !props.hideBalances && 'text-white/50',
-            props.small ? 'text-xs' : 'text-sm',
+            'w-full',
+            !tiny && 'text-right',
+            !hideBalances && 'text-white/50',
+            small || tiny ? 'text-xs' : 'text-sm',
           )}
-          options={{ suffix: ` ${props.asset.symbol}`, maxDecimals: props.asset.decimals }}
+          options={{ suffix: ` ${asset.symbol}`, maxDecimals: asset.decimals }}
           animate
         />
       </div>

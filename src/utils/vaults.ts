@@ -1,5 +1,4 @@
 import { BN_ZERO } from 'constants/math'
-import { VAULT_DEPOSIT_BUFFER } from 'constants/vaults'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action, Uint128 } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { byDenom } from 'utils/array'
@@ -66,8 +65,7 @@ export function getVaultBaseDepositCoinsAndValue(
   const isCustomRatio =
     primaryAssetValue.isZero() || secondaryAssetValue.isZero()
       ? true
-      : ratio.isLessThan(BN(VAULT_DEPOSIT_BUFFER).minus(slippage)) ||
-        ratio.isGreaterThan(BN(VAULT_DEPOSIT_BUFFER).plus(slippage))
+      : ratio.isLessThan(BN(0.999).minus(slippage)) || ratio.isGreaterThan(BN(0.999).plus(slippage))
 
   if (isCustomRatio) {
     // on a custom ratio the value of the asset with the highe value has to deducted by the value of the asset with the lower value

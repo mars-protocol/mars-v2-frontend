@@ -46,7 +46,7 @@ export default function Size(props: Props) {
 
   const formattedAmount = formatAmountToPrecision(size, MAX_AMOUNT_DECIMALS)
   const minimumAmount = allowZero ? 0 : MIN_AMOUNT
-  const lowAmount = formattedAmount === 0 ? minimumAmount : Math.max(formattedAmount, MIN_AMOUNT)
+  const lowAmount = formattedAmount === 0 ? minimumAmount : formattedAmount
 
   return (
     <FormattedNumber

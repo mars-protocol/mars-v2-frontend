@@ -85,11 +85,14 @@ export interface HealthValuesResponse {
   liquidation_threshold_adjusted_collateral: Uint128
   max_ltv_health_factor: Decimal | null
   liquidation_health_factor: Decimal | null
+  perps_pnl_profit: Uint128
+  perps_pnl_loss: Uint128
   liquidatable: boolean
   above_max_ltv: boolean
+  has_perps: boolean
 }
 
-export type LiquidationPriceKind = 'asset' | 'debt'
+export type LiquidationPriceKind = 'asset' | 'debt' | 'perp'
 
 export type Uint = Uint128
 
@@ -133,10 +136,10 @@ export interface InitOutput {
     h: number,
     i: number,
   ) => void
+  readonly interface_version_8: () => void
   readonly allocate: (a: number) => number
   readonly deallocate: (a: number) => void
   readonly requires_iterator: () => void
-  readonly interface_version_8: () => void
   readonly __wbindgen_malloc: (a: number, b: number) => number
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number

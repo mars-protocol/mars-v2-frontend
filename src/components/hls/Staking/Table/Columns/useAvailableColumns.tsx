@@ -1,11 +1,11 @@
 import { ColumnDef } from '@tanstack/react-table'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
-import Deposit, { DEPOSIT_META } from 'components/hls/Farm/Table/Columns/Deposit'
 import ApyRange, {
   APY_RANGE_META,
   apyRangeSortingFn,
 } from 'components/hls/Staking/Table/Columns/ApyRange'
+import Deposit, { DEPOSIT_META } from 'components/hls/Staking/Table/Columns/Deposit'
 import DepositCap, { CAP_META } from 'components/hls/Staking/Table/Columns/DepositCap'
 import MaxLeverage, { MAX_LEV_META } from 'components/hls/Staking/Table/Columns/MaxLeverage'
 import MaxLTV, { LTV_MAX_META } from 'components/hls/Staking/Table/Columns/MaxLTV'
@@ -16,11 +16,11 @@ interface Props {
 }
 
 export default function useAvailableColumns(props: Props) {
-  return useMemo<ColumnDef<HLSStrategy>[]>(
+  return useMemo<ColumnDef<HlsStrategy>[]>(
     () => [
       {
         ...NAME_META,
-        cell: ({ row }) => <Name strategy={row.original as HLSStrategy} />,
+        cell: ({ row }) => <Name strategy={row.original} />,
       },
       {
         ...MAX_LEV_META,
@@ -29,7 +29,7 @@ export default function useAvailableColumns(props: Props) {
       {
         ...LTV_MAX_META,
         cell: ({ row }) => (
-          <MaxLTV strategy={row.original as HLSStrategy} isLoading={props.isLoading} />
+          <MaxLTV strategy={row.original as HlsStrategy} isLoading={props.isLoading} />
         ),
       },
       {
@@ -39,14 +39,14 @@ export default function useAvailableColumns(props: Props) {
       {
         ...APY_RANGE_META,
         cell: ({ row }) => (
-          <ApyRange strategy={row.original as HLSStrategy} isLoading={props.isLoading} />
+          <ApyRange strategy={row.original as HlsStrategy} isLoading={props.isLoading} />
         ),
         sortingFn: apyRangeSortingFn,
       },
       {
         ...DEPOSIT_META,
         cell: ({ row }) => (
-          <Deposit strategy={row.original as HLSStrategy} isLoading={props.isLoading} />
+          <Deposit strategy={row.original as HlsStrategy} isLoading={props.isLoading} />
         ),
       },
     ],

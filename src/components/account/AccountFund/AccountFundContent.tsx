@@ -3,6 +3,10 @@ import WalletBridges from 'components/Wallet/WalletBridges'
 import DepositCapMessage from 'components/common/DepositCapMessage'
 import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
 import Text from 'components/common/Text'
+import { BN_ZERO } from 'constants/math'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
+import useBaseAsset from 'hooks/assets/useBaseAsset'
+import useMarkets from 'hooks/markets/useMarkets'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
@@ -23,12 +27,10 @@ import { WalletClient } from 'viem'
 import { chainNameToUSDCAttributes } from 'utils/fetchUSDCBalance'
 import { getWalletClient } from '@wagmi/core'
 import { config } from 'config/ethereumConfig'
-import useBaseAsset from 'hooks/assets/useBasetAsset'
 import { useNavigate } from 'react-router-dom'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import { getPage, getRoute } from 'utils/route'
 import { Callout, CalloutType } from 'components/common/Callout'
-import { BN_ZERO } from 'constants/math'
 
 interface Props {
   account?: Account
@@ -349,13 +351,16 @@ export default function AccountFundContent(props: Props) {
         const accountId = props.accountId
           ? await deposit({ ...depositObject, accountId: props.accountId })
           : await deposit(depositObject)
+        const { pathname } = window.location
+        const searchParams = new URLSearchParams(window.location.search)
+        navigate(getRoute(getPage(pathname, chainConfig), searchParams, props.address, accountId))
 
         if (accountId) {
           useStore.setState((state) => ({ ...state, selectedAccountId: accountId }))
 
           const { pathname } = window.location
           const searchParams = new URLSearchParams(window.location.search)
-          navigate(getRoute(getPage(pathname), searchParams, props.address, accountId))
+          navigate(getRoute(getPage(pathname, chainConfig), searchParams, props.address, accountId))
 
           if (props.isFullPage) {
             useStore.setState((state) => ({
@@ -394,6 +399,7 @@ export default function AccountFundContent(props: Props) {
     isAutoLendEnabledGlobal,
     navigate,
     handleSkipTransfer,
+    chainConfig,
   ])
 
   useEffect(() => {

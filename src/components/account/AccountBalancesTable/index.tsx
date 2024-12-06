@@ -10,11 +10,12 @@ import Table from 'components/common/Table'
 import Text from 'components/common/Text'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import { useMemo } from 'react'
 import useStore from 'store'
 import { ColumnDef } from '@tanstack/table-core'
 import { getPage, getRoute } from 'utils/route'
 import { useSkipBridgeStatus } from 'hooks/localStorage/useSkipBridgeStatus'
-import { useMemo } from 'react'
 import { BN_ZERO } from 'constants/math'
 import { BN, getValueFromBNCoins } from 'utils/helpers'
 import { demagnify } from 'utils/formatters'
@@ -22,6 +23,7 @@ import Button from 'components/common/Button'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import { BNCoin } from 'types/classes/BNCoin'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 interface Props {
   account: Account
@@ -44,20 +46,35 @@ export default function AccountBalancesTable(props: Props) {
     showLiquidationPrice,
     isUsersAccount,
   } = props
+  const chainConfig = useChainConfig()
   const currentAccount = useCurrentAccount()
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const address = useStore((s) => s.address)
   const updatedAccount = useStore((s) => s.updatedAccount)
   const isHls = account.kind === 'high_levered_strategy'
+  const whitelistedAssets = useWhitelistedAssets()
   const accountBalanceData = useAccountBalanceData({
     account,
     updatedAccount,
     lendingData,
     borrowingData,
-    isHls,
   })
   const deposit = useStore((s) => s.deposit)
+
+  const enhancedAccountBalanceData = useMemo(() => {
+    return accountBalanceData.map((row) => ({
+      ...row,
+      isWhitelisted: whitelistedAssets.some((asset) => asset.denom === row.denom),
+    }))
+  }, [accountBalanceData, whitelistedAssets])
+
+  const sortedAccountBalanceData = enhancedAccountBalanceData.sort((a, b) => {
+    if (a.isWhitelisted && !b.isWhitelisted) return -1
+    if (!a.isWhitelisted && b.isWhitelisted) return 1
+    return 0
+  })
+
   const columns = useAccountBalancesColumns(account, showLiquidationPrice)
   const { skipBridge, clearSkipBridge } = useSkipBridgeStatus()
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
@@ -136,6 +153,7 @@ export default function AccountBalancesTable(props: Props) {
         amount: BN(skipBridge.amount || 0),
         apy: 0,
         amountChange: BN('0'),
+        campaigns: [],
       }
       assets = [bridgedAsset, ...assets]
     }
@@ -145,62 +163,68 @@ export default function AccountBalancesTable(props: Props) {
 
   console.log('dynamicAssets', dynamicAssets)
   if (accountBalanceData.length === 0) {
-    return (
-      <ConditionalWrapper
-        condition={!hideCard}
-        wrapper={(children) => (
-          <Card className='w-full' title='Balances'>
-            {children}
-          </Card>
-        )}
-      >
-        <div className='w-full p-4'>
-          {isUsersAccount && !isHls ? (
-            <ActionButton
-              className='w-full'
-              text='Fund this Account'
-              color='tertiary'
-              onClick={() => {
-                if (currentAccount?.id !== account.id) {
-                  navigate(getRoute(getPage(pathname), searchParams, address, account.id))
-                }
-                useStore.setState({
-                  focusComponent: {
-                    component: <AccountFundFullPage />,
-                    onClose: () => {
-                      useStore.setState({ getStartedModal: true })
-                    },
-                  },
-                })
-              }}
-            />
-          ) : (
-            <Text size='sm' className='text-center'>
-              This account has no balances.
-            </Text>
+    if (sortedAccountBalanceData.length === 0) {
+      return (
+        <ConditionalWrapper
+          condition={!hideCard}
+          wrapper={(children) => (
+            <Card className='w-full' title='Balances'>
+              {children}
+            </Card>
           )}
-        </div>
-      </ConditionalWrapper>
+        >
+          <div className='w-full p-4'>
+            {isUsersAccount && !isHls ? (
+              <ActionButton
+                className='w-full'
+                text='Fund this Account'
+                color='tertiary'
+                onClick={() => {
+                  if (currentAccount?.id !== account.id) {
+                    navigate(
+                      getRoute(getPage(pathname, chainConfig), searchParams, address, account.id),
+                    )
+                  }
+                  useStore.setState({
+                    focusComponent: {
+                      component: <AccountFundFullPage />,
+                      onClose: () => {
+                        // TODO: update docs to reflect the current state of v2
+                        //useStore.setState({ getStartedModal: true })
+                      },
+                    },
+                  })
+                }}
+              />
+            ) : (
+              <Text size='sm' className='text-center'>
+                This account has no balances.
+              </Text>
+            )}
+          </div>
+        </ConditionalWrapper>
+      )
+    }
+    return (
+      <Table
+        title={
+          <Text
+            size='lg'
+            className='flex items-center justify-between w-full p-4 font-semibold bg-white/10'
+          >
+            <span>Balances</span>
+            <span className='text-white/60'>Credit Account {account.id}</span>
+          </Text>
+        }
+        columns={dynamicColumns}
+        data={dynamicAssets}
+        tableBodyClassName={classNames(tableBodyClassName, 'text-white/60')}
+        initialSorting={[]}
+        spacingClassName='p-2'
+        hideCard={hideCard}
+        type='balances'
+        isBalancesTable
+      />
     )
   }
-  return (
-    <Table
-      title={
-        <Text
-          size='lg'
-          className='flex items-center justify-between w-full p-4 font-semibold bg-white/10'
-        >
-          <span>Balances</span>
-          <span className='text-white/60'>Credit Account {account.id}</span>
-        </Text>
-      }
-      columns={dynamicColumns}
-      data={dynamicAssets}
-      tableBodyClassName={classNames(tableBodyClassName, 'text-white/60')}
-      initialSorting={[]}
-      spacingClassName='p-2'
-      hideCard={hideCard}
-      type='balances'
-    />
-  )
 }

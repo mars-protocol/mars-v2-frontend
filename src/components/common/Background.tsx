@@ -16,16 +16,16 @@ export default function Background() {
     getDefaultChainSettings(chainConfig).reduceMotion,
   )
   const { pathname } = useLocation()
-  const page = getPage(pathname)
-  const [isHLS, isV1] = useMemo(() => [page.split('-')[0] === 'hls', page === 'v1'], [page])
+  const page = getPage(pathname, chainConfig)
+  const [isHls, isV1] = useMemo(() => [page.split('-')[0] === 'hls', page === 'v1'], [page])
 
   useEffect(() => {
-    useStore.setState({ isHLS: isHLS, isV1: isV1 })
-  }, [isHLS, isV1])
+    useStore.setState({ isHls, isV1 })
+  }, [isHls, isV1])
 
   const [primaryOrbClassName, secondaryOrbClassName, tertiaryOrbClassName, bodyClassName] =
     useMemo(() => {
-      if (isHLS) {
+      if (isHls) {
         return ['bg-orb-primary-hls', 'bg-orb-secondary-hls', 'bg-orb-tertiary-hls', 'bg-body-hls']
       }
       if (isV1) {
@@ -38,7 +38,7 @@ export default function Background() {
       }
 
       return ['bg-orb-primary', 'bg-orb-secondary', 'bg-orb-tertiary', 'bg-body']
-    }, [isHLS, isV1])
+    }, [isHls, isV1])
 
   return (
     <div

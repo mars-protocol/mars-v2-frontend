@@ -1,6 +1,9 @@
-import { GetState, SetState } from 'zustand'
+import { StoreApi } from 'zustand'
 
-export default function createModalSlice(set: SetState<ModalSlice>, get: GetState<ModalSlice>) {
+export default function createModalSlice(
+  set: StoreApi<Store>['setState'],
+  get: StoreApi<Store>['getState'],
+) {
   return {
     accountDeleteModal: null,
     addFarmBorrowingsModal: null,
@@ -24,5 +27,7 @@ export default function createModalSlice(set: SetState<ModalSlice>, get: GetStat
     withdrawFromAstroLpModal: null,
     v1DepositAndWithdrawModal: null,
     v1BorrowAndRepayModal: null,
+    keeperFeeModal: false,
+    addSLTPModal: false,
   }
 }

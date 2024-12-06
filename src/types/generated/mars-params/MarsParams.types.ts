@@ -5,29 +5,36 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-export type Decimal = string
 export interface InstantiateMsg {
   address_provider: string
+  max_perp_params: number
   owner: string
-  target_health_factor: Decimal
+  risk_manager?: string | null
 }
 export type ExecuteMsg =
   | {
       update_owner: OwnerUpdate
     }
   | {
-      update_config: {
-        address_provider?: string | null
-      }
+      update_risk_manager: OwnerUpdate
     }
   | {
-      update_target_health_factor: Decimal
+      reset_risk_manager: []
+    }
+  | {
+      update_config: {
+        address_provider?: string | null
+        max_perp_params?: number | null
+      }
     }
   | {
       update_asset_params: AssetParamsUpdate
     }
   | {
       update_vault_config: VaultConfigUpdate
+    }
+  | {
+      update_perp_params: PerpParamsUpdate
     }
   | {
       emergency_update: EmergencyUpdate
@@ -52,6 +59,7 @@ export type AssetParamsUpdate = {
     params: AssetParamsBaseForString
   }
 }
+export type Decimal = string
 export type HlsAssetTypeForString =
   | {
       coin: {
@@ -69,12 +77,20 @@ export type VaultConfigUpdate = {
     config: VaultConfigBaseForString
   }
 }
+export type PerpParamsUpdate = {
+  add_or_update: {
+    params: PerpParams
+  }
+}
 export type EmergencyUpdate =
   | {
       credit_manager: CmEmergencyUpdate
     }
   | {
       red_bank: RedBankEmergencyUpdate
+    }
+  | {
+      perps: PerpsEmergencyUpdate
     }
 export type CmEmergencyUpdate =
   | {
@@ -86,10 +102,28 @@ export type CmEmergencyUpdate =
   | {
       disallow_coin: string
     }
-export type RedBankEmergencyUpdate = {
-  disable_borrowing: string
-}
+  | {
+      disable_withdraw: string
+    }
+export type RedBankEmergencyUpdate =
+  | {
+      disable_borrowing: string
+    }
+  | {
+      disable_withdraw: string
+    }
+export type PerpsEmergencyUpdate =
+  | {
+      disable_trading: string
+    }
+  | {
+      disable_deleverage: []
+    }
+  | {
+      disable_counterparty_vault_withdraw: []
+    }
 export interface AssetParamsBaseForString {
+  close_factor: Decimal
   credit_manager: CmSettingsForString
   denom: string
   deposit_cap: Uint128
@@ -102,6 +136,7 @@ export interface AssetParamsBaseForString {
 export interface CmSettingsForString {
   hls?: HlsParamsBaseForString | null
   whitelisted: boolean
+  withdraw_enabled: boolean
 }
 export interface HlsParamsBaseForString {
   correlations: HlsAssetTypeForString[]
@@ -117,6 +152,7 @@ export interface LiquidationBonus {
 export interface RedBankSettings {
   borrow_enabled: boolean
   deposit_enabled: boolean
+  withdraw_enabled: boolean
 }
 export interface VaultConfigBaseForString {
   addr: string
@@ -131,9 +167,27 @@ export interface Coin {
   denom: string
   [k: string]: unknown
 }
+export interface PerpParams {
+  closing_fee_rate: Decimal
+  denom: string
+  enabled: boolean
+  liquidation_threshold: Decimal
+  max_funding_velocity: Decimal
+  max_loan_to_value: Decimal
+  max_long_oi_value: Uint128
+  max_net_oi_value: Uint128
+  max_position_value?: Uint128 | null
+  max_short_oi_value: Uint128
+  min_position_value: Uint128
+  opening_fee_rate: Decimal
+  skew_scale: Uint128
+}
 export type QueryMsg =
   | {
       owner: {}
+    }
+  | {
+      risk_manager: {}
     }
   | {
       config: {}
@@ -145,6 +199,12 @@ export type QueryMsg =
     }
   | {
       all_asset_params: {
+        limit?: number | null
+        start_after?: string | null
+      }
+    }
+  | {
+      all_asset_params_v2: {
         limit?: number | null
         start_after?: string | null
       }
@@ -167,7 +227,21 @@ export type QueryMsg =
       }
     }
   | {
-      target_health_factor: {}
+      perp_params: {
+        denom: string
+      }
+    }
+  | {
+      all_perp_params: {
+        limit?: number | null
+        start_after?: string | null
+      }
+    }
+  | {
+      all_perp_params_v2: {
+        limit?: number | null
+        start_after?: string | null
+      }
     }
   | {
       total_deposit: {
@@ -194,6 +268,7 @@ export type HlsAssetTypeForAddr =
 export type Addr = string
 export type ArrayOfAssetParamsBaseForAddr = AssetParamsBaseForAddr[]
 export interface AssetParamsBaseForAddr {
+  close_factor: Decimal
   credit_manager: CmSettingsForAddr
   denom: string
   deposit_cap: Uint128
@@ -206,11 +281,24 @@ export interface AssetParamsBaseForAddr {
 export interface CmSettingsForAddr {
   hls?: HlsParamsBaseForAddr | null
   whitelisted: boolean
+  withdraw_enabled: boolean
 }
 export interface HlsParamsBaseForAddr {
   correlations: HlsAssetTypeForAddr[]
   liquidation_threshold: Decimal
   max_loan_to_value: Decimal
+}
+export interface PaginationResponseForAssetParamsBaseForAddr {
+  data: AssetParamsBaseForAddr[]
+  metadata: Metadata
+}
+export interface Metadata {
+  has_more: boolean
+}
+export type ArrayOfPerpParams = PerpParams[]
+export interface PaginationResponseForPerpParams {
+  data: PerpParams[]
+  metadata: Metadata
 }
 export interface PaginationResponseForTotalDepositResponse {
   data: TotalDepositResponse[]
@@ -220,9 +308,6 @@ export interface TotalDepositResponse {
   amount: Uint128
   cap: Uint128
   denom: string
-}
-export interface Metadata {
-  has_more: boolean
 }
 export type ArrayOfVaultConfigBaseForAddr = VaultConfigBaseForAddr[]
 export interface VaultConfigBaseForAddr {
@@ -240,6 +325,7 @@ export interface PaginationResponseForVaultConfigBaseForAddr {
 export type NullableAssetParamsBaseForAddr = AssetParamsBaseForAddr | null
 export interface ConfigResponse {
   address_provider: string
+  max_perp_params: number
 }
 export interface OwnerResponse {
   abolished: boolean

@@ -78,6 +78,7 @@ function VaultModal(props: Props) {
         removedDeposits={removedDeposits}
         removedLends={removedLends}
         simulateVaultDeposit={simulateVaultDeposit}
+        type='vault'
       />
     </Modal>
   )

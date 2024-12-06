@@ -6,10 +6,7 @@ const Neutron1: ChainConfig = {
   id: ChainInfoID.Neutron1,
   isOsmosis: false,
   name: 'Neutron',
-  stables: [
-    'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
-    'ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349',
-  ],
+  stables: ['ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81'],
   campaignAssets: [
     {
       denom: 'factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom',
@@ -62,7 +59,10 @@ const Neutron1: ChainConfig = {
       campaignDenom: 'stETH',
     },
   ],
-  deprecated: ['ibc/3649CE0C8A2C79048D8C6F31FF18FA69C9BC7EB193512E0BD03B733011290445'],
+  deprecated: [
+    'ibc/3649CE0C8A2C79048D8C6F31FF18FA69C9BC7EB193512E0BD03B733011290445',
+    'ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349',
+  ],
   defaultTradingPair: {
     buy: 'untrn',
     sell: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
@@ -79,16 +79,16 @@ const Neutron1: ChainConfig = {
   },
   endpoints: {
     routes: 'https://app.astroport.fi/api/routes',
-    rpc: process.env.NEXT_PUBLIC_NEUTRON_RPC ?? 'https://rpc-kralum.neutron-1.neutron.org',
-    rest: process.env.NEXT_PUBLIC_NEUTRON_REST ?? 'https://rest-kralum.neutron-1.neutron.org',
+    rpc: process.env.NEXT_PUBLIC_NEUTRON_RPC ?? 'https://rpc-lb.neutron.org',
+    fallbackRpc: 'https://neutron-rpc.cosmos-apis.com',
+    rest: process.env.NEXT_PUBLIC_NEUTRON_REST ?? 'https://rest-lb.neutron.org',
     swap: 'https://neutron.astroport.fi/swap',
     explorer: 'https://mintscan.io/neutron',
-    dexAssets: 'https://api.astroport.fi/api/tokens?chainId=neutron-1',
-    dexPools: 'https://api.astroport.fi/api/pools?chainId=neutron-1',
+    dexAssets: 'https://neutron-cache-api.onrender.com/neutron-1/tokens',
+    dexPools: 'https://neutron-cache-api.onrender.com/neutron-1/pools',
     gasPrices: '/feemarket/v1/gas_price/untrn',
     aprs: {
       vaults: '',
-      stride: 'https://edge.stride.zone/api/stake-stats',
     },
   },
   network: NETWORK.MAINNET,
@@ -104,11 +104,12 @@ const Neutron1: ChainConfig = {
   },
   features: ['ibc-transfer', 'ibc-go'],
   gasPrice: '0.015untrn',
-  hls: false,
+  hls: true,
   perps: false,
   farm: true,
   anyAsset: true,
   evmAssetSupport: true,
+  slinky: false,
 }
 
 export default Neutron1

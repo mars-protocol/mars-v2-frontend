@@ -10,7 +10,7 @@ import { BN } from 'utils/helpers'
 export const STRATEGY_AND_VALUE_META = {
   header: 'Strategy & Value',
   id: 'name',
-  meta: { className: 'w-40 min-w-40' },
+  meta: { className: 'min-w-40' },
 }
 
 interface Props {

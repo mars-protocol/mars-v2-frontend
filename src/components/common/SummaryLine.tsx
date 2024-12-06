@@ -15,7 +15,7 @@ interface SummaryLineProps {
 }
 export default function SummaryLine(props: SummaryLineProps) {
   return (
-    <div className={classNames(infoLineClasses, props.className)}>
+    <div className={classNames(infoLineClasses, props.className, 'items-center')}>
       {props.tooltip ? (
         <Tooltip content={<span className='text-sm'>{props.tooltip}</span>} type='info' underline>
           <Text size='xs' className='text-white/50'>
