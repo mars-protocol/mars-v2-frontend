@@ -5,7 +5,7 @@ import useStore from 'store'
 
 export function useWeb3WalletConnection() {
   const { open } = useWeb3Modal()
-  const { isConnected } = useAccount()
+  const { isConnected, address } = useAccount()
   const { disconnect } = useDisconnect()
   const hasLoggedConnection = useRef(false)
   const wasInFundModal = useRef(false)
@@ -74,5 +74,5 @@ export function useWeb3WalletConnection() {
     }
   }, [modalState.open])
 
-  return { isConnected, handleConnectWallet, handleDisconnectWallet }
+  return { isConnected, address, handleConnectWallet, handleDisconnectWallet }
 }

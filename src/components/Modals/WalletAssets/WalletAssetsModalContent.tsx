@@ -75,11 +75,13 @@ export default function WalletAssetsModalContent(props: Props) {
   const collateralAssets = useMemo(
     () =>
       whitelistedAssets.filter((asset) =>
-        filteredAssets.some((filteredAsset) => filteredAsset.denom === asset.denom),
+        filteredAssets.some(
+          (filteredAsset) =>
+            filteredAsset.denom === asset.denom && filteredAsset.chainName === asset.chainName,
+        ),
       ),
     [whitelistedAssets, filteredAssets],
   )
-
   const nonCollateralAssets = useMemo(
     () =>
       depositEnabledAssets.filter(

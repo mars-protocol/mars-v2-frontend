@@ -22,6 +22,7 @@
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.32.4",
     "@delphi-labs/shuttle-react": "^3.29.0",
+    "@skip-go/client": "^0.7.0",
     "@keplr-wallet/cosmos": "^0.12.159",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tanstack/react-query": "^5.51.21",

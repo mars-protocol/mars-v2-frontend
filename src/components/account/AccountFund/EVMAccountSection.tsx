@@ -25,7 +25,7 @@ export default function EVMAccountSection({
       <Button
         className='w-full mt-4'
         text={isConnected ? 'Disconnect EVM Wallet' : 'Connect EVM Wallet'}
-        color='primary'
+        color='quaternary'
         onClick={isConnected ? handleDisconnectWallet : handleConnectWallet}
         disabled={isConfirming}
       />
