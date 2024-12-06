@@ -5,15 +5,21 @@ import ProfileVaultCard from 'components/vaults/community/vaultDetails/profileVa
 import VaultAction from 'components/vaults/community/vaultDetails/common/Overlays/VaultAction'
 import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
+import useManagedVaultDetails from 'hooks/managedVaults/useManagedVaultDetails'
 import useStore from 'store'
 import useToggle from 'hooks/common/useToggle'
 import { ArrowDownLine } from 'components/common/Icons'
 import { useState } from 'react'
 import { vaultProfileData } from 'components/vaults/dummyData'
 import { Callout, CalloutType } from 'components/common/Callout'
+import { useParams } from 'react-router-dom'
 
 export default function VaultDetails() {
-  // temp solution
+  const { vaultAddress } = useParams<{ vaultAddress: string }>()
+  const { data: vaultDetails, error, isLoading } = useManagedVaultDetails(vaultAddress!)
+
+  console.log('vaultDetails:', vaultDetails)
+
   const address = useStore((s) => s.address)
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
   const [showFeeActionModal, setShowFeeActionModal] = useToggle()
@@ -44,12 +50,12 @@ export default function VaultDetails() {
         <div className='md:w-100'>
           {/* TODO: fetch the data */}
           <ProfileVaultCard
-            vaultName={vaultProfileData.vaultName}
+            vaultTitle={vaultDetails?.title || ''}
             apr={vaultProfileData.apr}
             tvl={vaultProfileData.tvl}
             accuredPnl={vaultProfileData.accuredPnl}
             wallet={vaultProfileData.wallet}
-            description={description}
+            description={vaultDetails?.description || ''}
             avatarUrl={vaultProfileData.avatarUrl}
             onDelete={() => console.log('Delete clicked')}
             onEdit={() => setShowEditDescriptionModal(true)}

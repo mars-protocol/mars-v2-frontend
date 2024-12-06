@@ -10,6 +10,7 @@ import { MarsPerpsQueryClient } from 'types/generated/mars-perps/MarsPerps.clien
 import { MarsRedBankQueryClient } from 'types/generated/mars-red-bank/MarsRedBank.client'
 import { setNodeError } from 'utils/error'
 import { getUrl } from 'utils/url'
+import { MarsVaultQueryClient } from 'types/generated/mars-vault/MarsVault.client'
 
 const _cosmWasmClient: Map<string, CosmWasmClient> = new Map()
 const _creditManagerQueryClient: Map<string, MarsCreditManagerQueryClient> = new Map()
@@ -18,6 +19,7 @@ const _paramsQueryClient: Map<string, MarsParamsQueryClient> = new Map()
 const _incentivesQueryClient: Map<string, MarsIncentivesQueryClient> = new Map()
 const _perpsClient: Map<string, MarsPerpsQueryClient> = new Map()
 const _redBankQueryClient: Map<string, MarsRedBankQueryClient> = new Map()
+const _managedVaultQueryClient: Map<string, MarsVaultQueryClient> = new Map()
 
 const getClient = async (rpc: string) => {
   try {
@@ -167,6 +169,23 @@ const getRedBankQueryClient = async (chainConfig: ChainConfig) => {
   }
 }
 
+const getManagedVaultQueryClient = async (chainConfig: ChainConfig, address: string) => {
+  try {
+    const rpc = getUrl(chainConfig.endpoints.rpc)
+    const key = rpc + address
+
+    if (!_managedVaultQueryClient.get(key)) {
+      const client = await getClient(rpc)
+      _managedVaultQueryClient.set(key, new MarsVaultQueryClient(client, address))
+    }
+
+    return _managedVaultQueryClient.get(key)!
+  } catch (error) {
+    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
+    throw error
+  }
+}
+
 export {
   getClient,
   getCreditManagerQueryClient,
@@ -177,4 +196,5 @@ export {
   getPerpsQueryClient,
   getRedBankQueryClient,
   getVaultQueryClient,
+  getManagedVaultQueryClient,
 }

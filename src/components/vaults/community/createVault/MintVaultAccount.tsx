@@ -26,7 +26,7 @@ export default function MintVaultAccount(props: Props) {
   const chainConfig = useChainConfig()
   const navigate = useNavigate()
 
-  const handleCreate = useCallback(async () => {
+  const handleCreateVault = useCallback(async () => {
     setIsTxPending(true)
     try {
       const accountKind = {
@@ -39,6 +39,7 @@ export default function MintVaultAccount(props: Props) {
       const response = await createAccount(accountKind, false)
 
       console.log('response:', response)
+      console.log(vaultAddress, 'vaultAddressvaultAddress')
 
       if (response === null) {
         setIsTxPending(false)
@@ -96,13 +97,12 @@ export default function MintVaultAccount(props: Props) {
         </div>
 
         <Button
-          // TODO: add Create vault acc logic
-          onClick={handleCreate}
+          onClick={handleCreateVault}
           variant='solid'
           color='primary'
           size='md'
           rightIcon={<ArrowRight />}
-          className='w-full md:w-auto'
+          className='w-full md:w-70'
           text='Create Vault Account (2/2)'
           showProgressIndicator={isTxPending}
           disabled={isTxPending}

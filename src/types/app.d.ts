@@ -1166,6 +1166,7 @@ interface BroadcastSlice {
   }) => Promise<boolean>
   v1Action: (type: V1ActionType, funds: BNCoin) => Promise<boolean>
   createManagedVault: (params: VaultParams) => Promise<{ address: string } | null>
+  getManagedVaultDetails: (vaultAddress: string) => Promise<VaultDetails | null>
 }
 
 type V1ActionType = 'withdraw' | 'deposit' | 'borrow' | 'repay'
@@ -1817,4 +1818,32 @@ interface VaultParams {
   enableHls: boolean
   performanceFee: PerformanceFeeConfig
   vault_token_subdenom: string
+}
+
+interface VaultParams {
+  title: string
+  description: string
+  baseToken: string
+  withdrawFreezePeriod: number
+  enableHls: boolean
+  performanceFee: {
+    fee_rate: string
+    withdrawal_interval: number
+  }
+  vault_token_subdenom: string
+}
+
+interface VaultDetails {
+  base_token: string
+  vault_token: string
+  title: string
+  subtitle: string | null
+  description: string
+  credit_manager: string
+  vault_account_id: string | null
+  cooldown_period: number
+  performance_fee_config: {
+    fee_rate: string
+    withdrawal_interval: number
+  }
 }

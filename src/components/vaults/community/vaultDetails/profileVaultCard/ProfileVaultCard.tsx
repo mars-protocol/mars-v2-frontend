@@ -17,7 +17,7 @@ import { ExternalLink, TrashBin } from 'components/common/Icons'
 import { TextLink } from 'components/common/TextLink'
 
 interface Props {
-  vaultName: string
+  vaultTitle: string
   apr: number
   tvl: number
   accuredPnl: number
@@ -31,7 +31,7 @@ interface Props {
 
 export default function ProfileVaultCard(props: Props) {
   const {
-    vaultName,
+    vaultTitle,
     apr,
     tvl,
     accuredPnl,
@@ -75,7 +75,7 @@ export default function ProfileVaultCard(props: Props) {
 
       <div className='space-y-5 p-6'>
         <div className='flex justify-between items-center'>
-          <Text tag='h4'>{vaultName}</Text>
+          <Text tag='h4'>{vaultTitle}</Text>
           <div className='flex gap-3'>
             {/* TODO: this will be conditional render */}
             <HLSTag />

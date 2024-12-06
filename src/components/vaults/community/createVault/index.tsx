@@ -61,8 +61,8 @@ export default function CreateVault() {
       const feeRate = performanceFee.dividedBy(100).dividedBy(1000).toFixed(18)
 
       const vaultParams = {
-        title: vaultTitle || 'Test Vault',
-        description: description || 'Test vault description',
+        title: vaultTitle,
+        description: description,
         baseToken: selectedAsset.denom,
         withdrawFreezePeriod: Number(withdrawFreezePeriod) * 3600,
         enableHls: enableHlsVault,
