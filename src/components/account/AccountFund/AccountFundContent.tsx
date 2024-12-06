@@ -128,6 +128,7 @@ export default function AccountFundContent(props: Props) {
     isAutoLendEnabledForCurrentAccount,
     isAutoLendEnabledGlobal,
     navigate,
+    chainConfig,
   ])
 
   useEffect(() => {

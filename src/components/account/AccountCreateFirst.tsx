@@ -52,7 +52,16 @@ export default function AccountCreateFirst() {
         },
       })
     }
-  }, [setIsCreating, createAccount, navigate, pathname, searchParams, address, isAutoLendEnabled])
+  }, [
+    setIsCreating,
+    createAccount,
+    navigate,
+    pathname,
+    searchParams,
+    address,
+    isAutoLendEnabled,
+    chainConfig,
+  ])
 
   if (!chainConfig.evmAssetSupport) {
     return (
