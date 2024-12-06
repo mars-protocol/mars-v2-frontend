@@ -3,7 +3,7 @@ import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
 import usePerpsMarketState from 'hooks/perps/usePerpsMarketState'
 import { BN } from 'utils/helpers'
-import usePerpsAsset from './usePerpsAsset'
+import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 
 export function useOpenInterestLeft() {
   const { perpsAsset } = usePerpsAsset()

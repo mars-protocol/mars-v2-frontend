@@ -146,7 +146,9 @@ export default function Toaster() {
             </div>
           ) : (
             <div className='flex items-center justify-center rounded-sm bg-success w-7 h-7'>
-              <div className={`w-4 h-4 ${reduceMotion ? '-mt-2' : '-mt-1'} -ml-1 text-white`}>
+              <div
+                className={classNames('w-4 h-4 -ml-1 text-white', reduceMotion ? '-mt-2' : '-mt-1')}
+              >
                 <CheckMark />
               </div>
             </div>
