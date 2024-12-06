@@ -1,6 +1,7 @@
 import Button from 'components/common/Button'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Text from 'components/common/Text'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -20,7 +21,11 @@ export default function KeeperFee() {
     },
   )
 
-  const [keeperFee] = useLocalStorage(LocalStorageKeys.PERPS_KEEPER_FEE, defaultKeeperFee)
+  const [keeperFee] = useLocalStorage(
+    `${chainConfig.id}/${LocalStorageKeys.PERPS_KEEPER_FEE}`,
+    creditManagerConfig?.keeper_fee_config?.min_fee ??
+      getDefaultChainSettings(chainConfig).keeperFee,
+  )
 
   const parsedKeeperFee = useMemo(() => {
     try {

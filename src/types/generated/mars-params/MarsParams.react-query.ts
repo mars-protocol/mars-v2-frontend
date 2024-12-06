@@ -72,6 +72,14 @@ export const marsParamsQueryKeys = {
         args,
       },
     ] as const,
+  riskManager: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
+    [
+      {
+        ...marsParamsQueryKeys.address(contractAddress)[0],
+        method: 'risk_manager',
+        args,
+      },
+    ] as const,
   config: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
     [
       {
@@ -474,6 +482,21 @@ export function useMarsParamsConfigQuery<TData = ConfigResponse>({
     },
   )
 }
+export interface MarsParamsRiskManagerQuery<TData>
+  extends MarsParamsReactQuery<OwnerResponse, TData> {}
+export function useMarsParamsRiskManagerQuery<TData = OwnerResponse>({
+  client,
+  options,
+}: MarsParamsRiskManagerQuery<TData>) {
+  return useQuery<OwnerResponse, Error, TData>(
+    marsParamsQueryKeys.riskManager(client?.contractAddress),
+    () => (client ? client.riskManager() : Promise.reject(new Error('Invalid client'))),
+    {
+      ...options,
+      enabled: !!client && (options?.enabled != undefined ? options.enabled : true),
+    },
+  )
+}
 export interface MarsParamsOwnerQuery<TData> extends MarsParamsReactQuery<OwnerResponse, TData> {}
 export function useMarsParamsOwnerQuery<TData = OwnerResponse>({
   client,
@@ -593,6 +616,46 @@ export function useMarsParamsUpdateConfigMutation(
   return useMutation<ExecuteResult, Error, MarsParamsUpdateConfigMutation>(
     ({ client, msg, args: { fee, memo, funds } = {} }) =>
       client.updateConfig(msg, fee, memo, funds),
+    options,
+  )
+}
+export interface MarsParamsResetRiskManagerMutation {
+  client: MarsParamsClient
+  args?: {
+    fee?: number | StdFee | 'auto'
+    memo?: string
+    funds?: Coin[]
+  }
+}
+export function useMarsParamsResetRiskManagerMutation(
+  options?: Omit<
+    UseMutationOptions<ExecuteResult, Error, MarsParamsResetRiskManagerMutation>,
+    'mutationFn'
+  >,
+) {
+  return useMutation<ExecuteResult, Error, MarsParamsResetRiskManagerMutation>(
+    ({ client, args: { fee, memo, funds } = {} }) => client.resetRiskManager(fee, memo, funds),
+    options,
+  )
+}
+export interface MarsParamsUpdateRiskManagerMutation {
+  client: MarsParamsClient
+  msg: OwnerUpdate
+  args?: {
+    fee?: number | StdFee | 'auto'
+    memo?: string
+    funds?: Coin[]
+  }
+}
+export function useMarsParamsUpdateRiskManagerMutation(
+  options?: Omit<
+    UseMutationOptions<ExecuteResult, Error, MarsParamsUpdateRiskManagerMutation>,
+    'mutationFn'
+  >,
+) {
+  return useMutation<ExecuteResult, Error, MarsParamsUpdateRiskManagerMutation>(
+    ({ client, msg, args: { fee, memo, funds } = {} }) =>
+      client.updateRiskManager(msg, fee, memo, funds),
     options,
   )
 }

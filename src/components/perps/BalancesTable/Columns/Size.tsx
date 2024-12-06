@@ -18,7 +18,9 @@ export const SIZE_META = {
       </Text>
     </div>
   ),
-  meta: { className: 'min-w-30 w-50' },
+  meta: {
+    className: 'min-w-20 lg:w-40',
+  },
 }
 
 export const sizeSortingFn = (a: Row<PerpPositionRow>, b: Row<PerpPositionRow>): number => {

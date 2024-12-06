@@ -31,8 +31,8 @@ import {
   widget,
 } from 'utils/charting_library'
 import { formatValue, getPerpsPriceDecimals, magnify } from 'utils/formatters'
-import { getTradingViewSettings } from 'utils/theme'
 import { BN } from 'utils/helpers'
+import { getTradingViewSettings } from 'utils/theme'
 
 interface Props {
   buyAsset: Asset
@@ -55,7 +55,6 @@ function getLimitOrderText(
   positionAmount: BigNumber | null,
 ) {
   let label = order.type === 'stop' ? 'Stop' : 'Limit'
-  console.log(order)
   if (positionAmount && order.amount.abs().isEqualTo(positionAmount.abs())) {
     const isClosing =
       (currentPosition === 'long' && order.tradeDirection === 'short') ||
@@ -390,7 +389,7 @@ export default function TradeChart(props: Props) {
           {!priceBuyAsset || !priceSellAsset ? null : ratio.isZero() ? (
             <Loading className='h-4 m-4 md:m-0 md:mr-4 w-60' />
           ) : (
-            <div className='flex items-center gap-1'>
+            <div className='sm:hidden md:flex md:items-center md:gap-1 md:flex-nowrap'>
               <Text size='sm'>1 {props.buyAsset.symbol}</Text>
               {props.isPerps ? (
                 <FormattedNumber
