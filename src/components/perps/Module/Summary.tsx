@@ -74,9 +74,10 @@ export default function PerpsSummary(props: Props) {
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const chainConfig = useChainConfig()
   const creditManagerConfig = useStore((s) => s.creditManagerConfig)
-  const [keeperFee, _] = useLocalStorage(
-    LocalStorageKeys.PERPS_KEEPER_FEE,
-    creditManagerConfig?.keeper_fee_config?.min_fee,
+  const [keeperFee] = useLocalStorage(
+    `${chainConfig.id}/${LocalStorageKeys.PERPS_KEEPER_FEE}`,
+    creditManagerConfig?.keeper_fee_config?.min_fee ??
+      getDefaultChainSettings(chainConfig).keeperFee,
   )
 
   const currentAccount = useCurrentAccount()
@@ -87,7 +88,7 @@ export default function PerpsSummary(props: Props) {
   const assets = useDepositEnabledAssets()
   const executePerpOrder = useStore((s) => s.executePerpOrder)
   const [showSummary, setShowSummary] = useLocalStorage<boolean>(
-    LocalStorageKeys.SHOW_SUMMARY,
+    `${chainConfig.id}/${LocalStorageKeys.SHOW_SUMMARY}`,
     getDefaultChainSettings(chainConfig).showSummary,
   )
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount ?? account)
@@ -106,13 +107,13 @@ export default function PerpsSummary(props: Props) {
 
   const calculateKeeperFee = useMemo(
     () =>
-      (isLimitOrder || isStopOrder) && feeToken
+      (isLimitOrder || isStopOrder) && feeToken && keeperFee?.amount
         ? BNCoin.fromDenomAndBigNumber(
             feeToken.denom,
             magnify(BN(keeperFee.amount).toNumber(), feeToken),
           )
         : undefined,
-    [feeToken, isLimitOrder, isStopOrder, keeperFee.amount],
+    [feeToken, isLimitOrder, isStopOrder, keeperFee?.amount],
   )
 
   const submitLimitOrder = useSubmitLimitOrder()
@@ -297,8 +298,6 @@ export default function PerpsSummary(props: Props) {
     if (isLimitOrder) return 'Create Limit Order'
   }, [isStopOrder, isLimitOrder])
 
-  if (!account) return null
-
   return (
     <div className='flex w-full flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20'>
       <ManageSummary
@@ -317,18 +316,21 @@ export default function PerpsSummary(props: Props) {
             denom={asset.denom}
             newAmount={newAmount}
             override={isLimitOrder ? limitPrice : undefined}
+            tradeDirection={tradeDirection}
           />
         </SummaryLine>
         {!isLimitOrder && (
           <SummaryLine label='Liquidation Price'>
-            <LiqPrice
-              denom={asset.denom}
-              computeLiquidationPrice={computeLiquidationPrice}
-              type='perp'
-              amount={newAmount.isEqualTo(previousAmount) ? 0 : newAmount.toNumber()}
-              account={updatedAccount ?? account}
-              isWhitelisted={true}
-            />
+            {account && (
+              <LiqPrice
+                denom={asset.denom}
+                computeLiquidationPrice={computeLiquidationPrice}
+                type='perp'
+                amount={newAmount.isEqualTo(previousAmount) ? 0 : newAmount.toNumber()}
+                account={updatedAccount ?? account}
+                isWhitelisted={true}
+              />
+            )}
           </SummaryLine>
         )}
         <SummaryLine label='Fees' tooltip={tradingFeeTooltip}>

@@ -72,7 +72,7 @@ export default function SettingsModal() {
     getDefaultChainSettings(chainConfig).updateOracle,
   )
   const [showSummary, setShowSummary] = useLocalStorage<boolean>(
-    LocalStorageKeys.SHOW_SUMMARY,
+    `${chainConfig.id}/${LocalStorageKeys.SHOW_SUMMARY}`,
     getDefaultChainSettings(chainConfig).showSummary,
   )
 

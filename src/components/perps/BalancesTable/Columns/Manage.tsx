@@ -3,12 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 
 import ActionButton from 'components/common/Button/ActionButton'
 import DropDownButton from 'components/common/Button/DropDownButton'
-import {
-  Check,
-  Cross,
-  Edit,
-  //  Shield
-} from 'components/common/Icons'
+import { Check, Cross, Edit } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import PerpsSlTpModal from 'components/Modals/PerpsSlTpModal'
 import CloseLabel from 'components/perps/BalancesTable/Columns/CloseLabel'
@@ -41,7 +36,7 @@ export default function Manage(props: Props) {
   const [isConfirming, setIsConfirming] = useState<boolean>(false)
   const { data: limitOrders } = usePerpsLimitOrders()
   const [showSummary, setShowSummary] = useLocalStorage<boolean>(
-    LocalStorageKeys.SHOW_SUMMARY,
+    `${chainConfig.id}/${LocalStorageKeys.SHOW_SUMMARY}`,
     getDefaultChainSettings(chainConfig).showSummary,
   )
 

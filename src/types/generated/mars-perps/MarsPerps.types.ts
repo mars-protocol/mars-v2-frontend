@@ -151,6 +151,7 @@ export type QueryMsg =
         account_id: string
         denom: string
         order_size?: Int128 | null
+        reduce_only?: boolean | null
       }
     }
   | {
@@ -209,7 +210,9 @@ export interface MarketResponse {
   denom: string
   enabled: boolean
   long_oi: Uint128
+  long_oi_value: Uint128
   short_oi: Uint128
+  short_oi_value: Uint128
 }
 export interface AccountingResponse {
   accounting: Accounting
@@ -319,6 +322,8 @@ export interface VaultResponse {
   total_debt: Uint128
   total_liquidity: Uint128
   total_shares: Uint128
+  total_unlocking_or_unlocked_amount: Uint128
+  total_unlocking_or_unlocked_shares: Uint128
   total_withdrawal_balance: Uint128
 }
 export type NullableVaultPositionResponse = VaultPositionResponse | null

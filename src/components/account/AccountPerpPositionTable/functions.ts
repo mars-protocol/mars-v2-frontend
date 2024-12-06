@@ -11,6 +11,7 @@ export function getAssetAccountPerpRow(
 
   return {
     symbol: asset.symbol,
+    asset,
     value: getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, amount), [asset]).toString(),
     amountChange,
     ...position,

@@ -144,13 +144,13 @@ export default function usePerpsModule(
     return messages
   }, [amount, tradeDirection, params, perpsAsset, perpsMarket, previousAmount, price, perpPosition])
 
-  useEffect(() => {
-    setLeverage(calculateLeverage)
-  }, [calculateLeverage])
-
-  const updateAmount = useCallback((newAmount: BigNumber) => {
-    setAmount(newAmount)
-  }, [])
+  const updateAmount = useCallback(
+    (newAmount: BigNumber) => {
+      setAmount(newAmount)
+      setLeverage(calculateLeverage)
+    },
+    [calculateLeverage],
+  )
 
   const updateLeverage = useCallback(
     (newLeverage: number) => {
