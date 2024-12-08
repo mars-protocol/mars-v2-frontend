@@ -8,19 +8,49 @@ import classNames from 'classnames'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 import { Callout, CalloutType } from 'components/common/Callout'
+import { useState } from 'react'
+import useStore from 'store'
 
 interface Props {
   showFeeActionModal: boolean
   setShowFeeActionModal: (show: boolean) => void
   type: 'edit' | 'withdraw'
+  vaultAddress: string
 }
 
 export default function FeeAction(props: Props) {
-  const { showFeeActionModal, setShowFeeActionModal, type } = props
+  const { showFeeActionModal, setShowFeeActionModal, type, vaultAddress } = props
+  const [isTxPending, setIsTxPending] = useState(false)
+  const [performanceFee, setPerformanceFee] = useState<BigNumber>(BN(1))
+  const updatePerformanceFee = useStore((s) => s.updatePerformanceFee)
 
+  console.log('vaultAddress:', vaultAddress)
   const isEdit = type === 'edit'
 
-  //   TODO: add logic for updating/withdrawing the fee
+  const handleUpdateFee = async () => {
+    const feeRate = performanceFee.dividedBy(100).dividedBy(1000).toFixed(18)
+
+    console.log('feeRate:', feeRate)
+
+    const newFee = {
+      fee_rate: feeRate,
+      withdrawal_interval: 24 * 3600,
+    }
+
+    console.log('newFee:', newFee)
+
+    const result = await updatePerformanceFee({
+      vaultAddress,
+      newFee,
+    })
+
+    console.log('result:', result)
+
+    if (result) {
+      setShowFeeActionModal(false)
+      setIsTxPending(false)
+    }
+  }
 
   return (
     <Overlay
@@ -48,7 +78,7 @@ export default function FeeAction(props: Props) {
         </div>
 
         {isEdit ? (
-          <PerformanceFee />
+          <PerformanceFee value={performanceFee} onChange={setPerformanceFee} />
         ) : (
           <div className='text-center'>
             <DisplayCurrency
@@ -69,11 +99,13 @@ export default function FeeAction(props: Props) {
         )}
 
         <Button
-          onClick={() => {}}
+          onClick={handleUpdateFee}
           color={isEdit ? 'tertiary' : 'primary'}
           size='md'
           className='w-full'
           text={isEdit ? 'Update Fees' : 'Withdraw'}
+          disabled={isTxPending}
+          showProgressIndicator={isTxPending}
         />
       </div>
     </Overlay>

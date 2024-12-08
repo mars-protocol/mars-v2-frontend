@@ -25,6 +25,7 @@ import {
 import { ExecuteMsg as IncentivesExecuteMsg } from 'types/generated/mars-incentives/MarsIncentives.types'
 import { ExecuteMsg as PerpsExecuteMsg } from 'types/generated/mars-perps/MarsPerps.types'
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
+import { ExecuteMsg as ManagedVaultExecuteMsg } from 'types/generated/mars-vault/MarsVault.types'
 import { byDenom, bySymbol } from 'utils/array'
 import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
@@ -43,7 +44,8 @@ function generateExecutionMessage(
     | RedBankExecuteMsg
     | PythUpdateExecuteMsg
     | PerpsExecuteMsg
-    | IncentivesExecuteMsg,
+    | IncentivesExecuteMsg
+    | ManagedVaultExecuteMsg,
   funds: Coin[],
 ) {
   return new MsgExecuteContract({
@@ -1365,11 +1367,51 @@ export default function createBroadcastSlice(
           vault_info: {},
         })
 
-        console.log(response, 'contract repsonse')
+        // console.log(response, 'contract repsonse')
         return response as unknown as VaultDetails
       } catch (error) {
         console.error('Failed to get vault details:', error)
         return null
+      }
+    },
+    updatePerformanceFee: async (options: UpdatePerformanceFeeOptions) => {
+      try {
+        const address = get().address
+        if (!address) {
+          console.error('Wallet not connected')
+          return false
+        }
+
+        const vaultDetails = await get().getManagedVaultDetails(options.vaultAddress)
+        console.log('Vault details for updating fee:', vaultDetails)
+
+        console.log(options.newFee, 'new fee IN HERE=======')
+        const msg: ManagedVaultExecuteMsg = {
+          vault_extension: {
+            withdraw_performance_fee: {
+              new_performance_fee_config: options.newFee,
+            },
+          },
+        }
+
+        const message = generateExecutionMessage(
+          address,
+          options.vaultAddress, // this has to be vaults address
+          msg,
+          [],
+        )
+
+        console.log('Sending message:', JSON.stringify(message, null, 2))
+
+        const response = get().executeMsg({
+          messages: [message],
+        })
+
+        get().handleTransaction({ response })
+        return response.then((response) => !!response.result)
+      } catch (error) {
+        console.error('Failed to update performance fee:', error)
+        return false
       }
     },
   }

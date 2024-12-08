@@ -25,7 +25,7 @@ export default function VaultDetails() {
   const [showFeeActionModal, setShowFeeActionModal] = useToggle()
   const [showActionModal, setShowActionModal] = useToggle()
 
-  const [description, setDescription] = useState<string>(vaultProfileData.description)
+  const [description, setDescription] = useState<string>(vaultDetails?.description || '')
   const [modalType, setModalType] = useState<'deposit' | 'withdraw' | null>(null)
   const [modalFeeType, setModalFeeType] = useState<'edit' | 'withdraw' | null>(null)
 
@@ -74,6 +74,7 @@ export default function VaultDetails() {
           showFeeActionModal={showFeeActionModal}
           setShowFeeActionModal={setShowFeeActionModal}
           type={modalFeeType || 'edit'}
+          vaultAddress={vaultAddress}
         />
 
         <VaultAction
