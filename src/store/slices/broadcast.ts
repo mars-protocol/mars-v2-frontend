@@ -1114,22 +1114,20 @@ export default function createBroadcastSlice(
       const priceFeedIds = [
         ...new Set(
           get()
-            .assets.filter((asset) => asset.isWhitelisted && !asset.isPerpsEnabled)
+            .assets.filter(
+              (asset) => !!asset.pythPriceFeedId && asset.isWhitelisted && !asset.isPerpsEnabled,
+            )
             .map((asset) => asset.pythPriceFeedId as string),
         ),
       ]
 
       const pricesData = await getPythPriceData(priceFeedIds)
       const msg: PythUpdateExecuteMsg = { update_price_feeds: { data: pricesData } }
-      const pythAssets = get().assets.filter(
-        (asset) => !!asset.pythPriceFeedId && asset.isWhitelisted,
-      )
       const pythContract = get().chainConfig.contracts.pyth
-
       return generateExecutionMessage(get().address, pythContract, msg, [
         {
           denom: get().chainConfig.defaultCurrency.coinMinimalDenom,
-          amount: String(pythAssets.length),
+          amount: String(priceFeedIds.length),
         },
       ])
     },
