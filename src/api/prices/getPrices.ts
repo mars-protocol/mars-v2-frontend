@@ -12,12 +12,12 @@ export default async function getPrices(
   const lendingMarketAssets = assets.filter(
     (asset) => asset.isWhitelisted && asset.isDepositEnabled && !asset.isPerpsEnabled,
   )
-
   const perpsAssets = assets.filter((asset) => asset.isPerpsEnabled)
 
   const assetsWithPythPriceFeedId = lendingMarketAssets.filter((asset) => asset.pythPriceFeedId)
   const priceFeedIds = assetsWithPythPriceFeedId.map((asset) => asset.pythPriceFeedId) as string[]
-  const pythPrices = await fetchPythPrices(priceFeedIds, assetsWithPythPriceFeedId)
+  const feedsToFetch = [...new Set(priceFeedIds)]
+  const pythPrices = await fetchPythPrices(feedsToFetch, assetsWithPythPriceFeedId)
 
   pythAndOraclePrices.push(...pythPrices)
 
