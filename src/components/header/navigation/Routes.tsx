@@ -55,10 +55,10 @@ export default function Routes() {
           <Route path='borrow' element={<BorrowPage />} />
           <Route path='portfolio' element={<PortfolioPage />} />
           <Route
-            path='/hls-staking'
+            path='hls-staking'
             element={chainConfig.hls ? <HlsStakingPage /> : <TradePage />}
           />
-          <Route path='/hls-farm' element={chainConfig.hls ? <HlsFarmPage /> : <TradePage />} />
+          <Route path='hls-farm' element={chainConfig.hls ? <HlsFarmPage /> : <TradePage />} />
           <Route path='v1' element={<V1Page />} />
           <Route path='portfolio/:accountId'>
             <Route path='' element={<PortfolioAccountPage />} />
