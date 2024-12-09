@@ -17,4 +17,3 @@ frontend:
       - node_modules/**/*
       - .next/cache/**/*
       - .yarn/cache/**/*         # Yarn specific cache
-      - .yarn/unplugged/**/*     # For Yarn PnP if used
