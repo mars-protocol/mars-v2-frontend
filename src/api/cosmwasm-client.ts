@@ -185,6 +185,17 @@ const getManagedVaultQueryClient = async (chainConfig: ChainConfig, address: str
     throw error
   }
 }
+const getManagedVaultOwner = async (chainConfig: ChainConfig, address: string) => {
+  try {
+    const client = await getClient(getUrl(chainConfig.endpoints.rpc))
+    const contractInfo = await client.getContract(address)
+
+    return contractInfo.admin
+  } catch (error) {
+    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
+    throw error
+  }
+}
 
 export {
   getClient,
@@ -197,4 +208,5 @@ export {
   getRedBankQueryClient,
   getVaultQueryClient,
   getManagedVaultQueryClient,
+  getManagedVaultOwner,
 }

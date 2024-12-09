@@ -5,22 +5,23 @@ import ProfileVaultCard from 'components/vaults/community/vaultDetails/profileVa
 import VaultAction from 'components/vaults/community/vaultDetails/common/Overlays/VaultAction'
 import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useManagedVaultDetails from 'hooks/managedVaults/useManagedVaultDetails'
 import useStore from 'store'
 import useToggle from 'hooks/common/useToggle'
 import { ArrowDownLine } from 'components/common/Icons'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { vaultProfileData } from 'components/vaults/dummyData'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { useParams } from 'react-router-dom'
+import { getManagedVaultOwner } from 'api/cosmwasm-client'
 
 export default function VaultDetails() {
   const { vaultAddress } = useParams<{ vaultAddress: string }>()
+  const address = useStore((s) => s.address)
+  const chainConfig = useChainConfig()
   const { data: vaultDetails, error, isLoading } = useManagedVaultDetails(vaultAddress!)
 
-  console.log('vaultDetails:', vaultDetails)
-
-  const address = useStore((s) => s.address)
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
   const [showFeeActionModal, setShowFeeActionModal] = useToggle()
   const [showActionModal, setShowActionModal] = useToggle()
@@ -28,6 +29,7 @@ export default function VaultDetails() {
   const [description, setDescription] = useState<string>(vaultDetails?.description || '')
   const [modalType, setModalType] = useState<'deposit' | 'withdraw' | null>(null)
   const [modalFeeType, setModalFeeType] = useState<'edit' | 'withdraw' | null>(null)
+  const [isOwner, setIsOwner] = useState(false)
 
   const handleUpdateDescription = (newDescription: string) => {
     setDescription(newDescription)
@@ -43,6 +45,23 @@ export default function VaultDetails() {
     setModalFeeType(type)
     setShowFeeActionModal(true)
   }
+
+  useEffect(() => {
+    const checkOwner = async () => {
+      try {
+        const owner = await getManagedVaultOwner(chainConfig, vaultAddress!)
+        setIsOwner(owner === address)
+        console.log('owner:', owner)
+      } catch (error) {
+        console.error('Failed to check vault owner:', error)
+        setIsOwner(false)
+      }
+    }
+
+    if (vaultAddress && address) {
+      checkOwner()
+    }
+  }, [vaultAddress, address, chainConfig])
 
   return (
     <div className='min-h-screen md:h-screen-full md:min-h-[600px] w-full'>
@@ -74,7 +93,7 @@ export default function VaultDetails() {
           showFeeActionModal={showFeeActionModal}
           setShowFeeActionModal={setShowFeeActionModal}
           type={modalFeeType || 'edit'}
-          vaultAddress={vaultAddress}
+          vaultAddress={vaultAddress!}
         />
 
         <VaultAction
