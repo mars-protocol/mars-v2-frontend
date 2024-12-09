@@ -28,37 +28,28 @@ export default function Routes() {
       >
         <Route path='/trade' element={<TradePage />} />
         <Route path='/trade-advanced' element={<TradePage />} />
-        <Route path='/perps' element={chainConfig.perps ? <PerpsPage /> : <TradePage />} />
+        <Route path='/perps' element={<PerpsPage />} />
         <Route path='/farm' element={<FarmPage />} />
         <Route path='/lend' element={<LendPage />} />
-        <Route
-          path='/perps-vault'
-          element={chainConfig.perps ? <PerpsVaultPage /> : <TradePage />}
-        />
+        <Route path='/perps-vault' element={<PerpsVaultPage />} />
         <Route path='/borrow' element={<BorrowPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
         <Route path='/v1' element={<V1Page />} />
-        <Route path='/hls-staking' element={chainConfig.hls ? <HlsStakingPage /> : <TradePage />} />
-        <Route path='/hls-farm' element={chainConfig.hls ? <HlsFarmPage /> : <TradePage />} />
+        <Route path='/hls-staking' element={<HlsStakingPage />} />
+        <Route path='/hls-farm' element={<HlsFarmPage />} />
         <Route path='/' element={<TradePage />} />
         <Route path='/wallets/:address'>
           <Route path='execute' element={<ExecuteMessagePage />} />
           <Route path='trade' element={<TradePage />} />
           <Route path='trade-advanced' element={<TradePage />} />
-          <Route path='perps' element={chainConfig.perps ? <PerpsPage /> : <TradePage />} />
+          <Route path='perps' element={<PerpsPage />} />
           <Route path='farm' element={<FarmPage />} />
           <Route path='lend' element={<LendPage />} />
-          <Route
-            path='perps-vault'
-            element={chainConfig.perps ? <PerpsVaultPage /> : <TradePage />}
-          />
+          <Route path='perps-vault' element={<PerpsVaultPage />} />
           <Route path='borrow' element={<BorrowPage />} />
           <Route path='portfolio' element={<PortfolioPage />} />
-          <Route
-            path='hls-staking'
-            element={chainConfig.hls ? <HlsStakingPage /> : <TradePage />}
-          />
-          <Route path='hls-farm' element={chainConfig.hls ? <HlsFarmPage /> : <TradePage />} />
+          <Route path='hls-staking' element={<HlsStakingPage />} />
+          <Route path='hls-farm' element={<HlsFarmPage />} />
           <Route path='v1' element={<V1Page />} />
           <Route path='portfolio/:accountId'>
             <Route path='' element={<PortfolioAccountPage />} />
