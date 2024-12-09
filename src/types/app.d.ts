@@ -1167,6 +1167,7 @@ interface BroadcastSlice {
   v1Action: (type: V1ActionType, funds: BNCoin) => Promise<boolean>
   createManagedVault: (params: VaultParams) => Promise<{ address: string } | null>
   getManagedVaultDetails: (vaultAddress: string) => Promise<VaultDetails | null>
+  bindVaultWithAccount: (options: { vaultAddress: string; accountId: string }) => Promise<boolean>
   updatePerformanceFee: (options: UpdatePerformanceFeeOptions) => Promise<boolean>
 }
 
@@ -1850,8 +1851,9 @@ interface VaultDetails {
 }
 interface UpdatePerformanceFeeOptions {
   vaultAddress: string
-  newFee?: {
-    fee_rate: string
-    withdrawal_interval: number
-  }
+  newFee?: PerformanceFeeConfig
+}
+interface PerformanceFeeConfig {
+  fee_rate: string
+  withdrawal_interval: number
 }

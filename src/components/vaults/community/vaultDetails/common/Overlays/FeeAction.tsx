@@ -28,26 +28,26 @@ export default function FeeAction(props: Props) {
   const isEdit = type === 'edit'
 
   const handleUpdateFee = async () => {
-    const feeRate = performanceFee.dividedBy(100).dividedBy(1000).toFixed(18)
+    try {
+      setIsTxPending(true)
+      const feeRate = performanceFee.dividedBy(100).dividedBy(1000).toFixed(18)
 
-    console.log('feeRate:', feeRate)
+      const newFee: PerformanceFeeConfig = {
+        fee_rate: feeRate,
+        withdrawal_interval: 24 * 3600,
+      }
 
-    const newFee = {
-      fee_rate: feeRate,
-      withdrawal_interval: 24 * 3600,
-    }
+      const result = await updatePerformanceFee({
+        vaultAddress,
+        newFee,
+      })
 
-    console.log('newFee:', newFee)
-
-    const result = await updatePerformanceFee({
-      vaultAddress,
-      newFee,
-    })
-
-    console.log('result:', result)
-
-    if (result) {
-      setShowFeeActionModal(false)
+      if (result) {
+        setShowFeeActionModal(false)
+      }
+    } catch (error) {
+      console.error('Failed to update performance fee:', error)
+    } finally {
       setIsTxPending(false)
     }
   }

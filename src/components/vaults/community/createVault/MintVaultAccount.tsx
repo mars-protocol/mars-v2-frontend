@@ -18,6 +18,7 @@ export default function MintVaultAccount(props: Props) {
   const { vaultAddress } = props
   const [isTxPending, setIsTxPending] = useState(false)
   const createAccount = useStore((s) => s.createAccount)
+  const bindVaultWithAccount = useStore((s) => s.bindVaultWithAccount)
 
   const accountId = useAccountId()
   const { pathname } = useLocation()
@@ -36,13 +37,25 @@ export default function MintVaultAccount(props: Props) {
       }
       console.log('accountKind:', accountKind)
 
-      const response = await createAccount(accountKind, false)
+      const accountId = await createAccount(accountKind, false)
 
-      console.log('response:', response)
+      console.log('accountId:', accountId)
       console.log(vaultAddress, 'vaultAddressvaultAddress')
 
-      if (response === null) {
+      if (!accountId) {
         setIsTxPending(false)
+        return
+      }
+
+      const bindResult = await bindVaultWithAccount({
+        vaultAddress,
+        accountId,
+      })
+
+      console.log('bindResult:', bindResult)
+
+      if (!bindResult) {
+        console.error('Failed to bind vault with account')
         return
       }
 
@@ -73,7 +86,7 @@ export default function MintVaultAccount(props: Props) {
   }, [
     vaultAddress,
     createAccount,
-    accountId,
+    bindVaultWithAccount,
     navigate,
     chainConfig,
     searchParams,
