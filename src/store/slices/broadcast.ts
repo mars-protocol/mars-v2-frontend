@@ -1114,7 +1114,7 @@ export default function createBroadcastSlice(
       const priceFeedIds = [
         ...new Set(
           get()
-            .assets.filter((asset) => !!asset.pythPriceFeedId && asset.isWhitelisted)
+            .assets.filter((asset) => asset.isWhitelisted && !asset.isPerpsEnabled)
             .map((asset) => asset.pythPriceFeedId as string),
         ),
       ]
