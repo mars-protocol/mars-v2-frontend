@@ -1168,7 +1168,7 @@ interface BroadcastSlice {
   createManagedVault: (params: VaultParams) => Promise<{ address: string } | null>
   getManagedVaultDetails: (vaultAddress: string) => Promise<VaultDetails | null>
   bindVaultWithAccount: (options: { vaultAddress: string; accountId: string }) => Promise<boolean>
-  updatePerformanceFee: (options: UpdatePerformanceFeeOptions) => Promise<boolean>
+  handlePerformanceFeeAction: (options: PerformanceFeeOptions) => Promise<boolean>
 }
 
 type V1ActionType = 'withdraw' | 'deposit' | 'borrow' | 'repay'
@@ -1849,7 +1849,7 @@ interface VaultDetails {
     withdrawal_interval: number
   }
 }
-interface UpdatePerformanceFeeOptions {
+interface PerformanceFeeOptions {
   vaultAddress: string
   newFee?: PerformanceFeeConfig
 }

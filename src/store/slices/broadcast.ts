@@ -1395,7 +1395,7 @@ export default function createBroadcastSlice(
         return null
       }
     },
-    updatePerformanceFee: async (options: UpdatePerformanceFeeOptions) => {
+    handlePerformanceFeeAction: async (options: PerformanceFeeOptions) => {
       try {
         const address = get().address
         if (!address) {
@@ -1403,14 +1403,10 @@ export default function createBroadcastSlice(
           return false
         }
 
-        const vaultDetails = await get().getManagedVaultDetails(options.vaultAddress)
-        console.log('Vault details for updating fee:', vaultDetails)
-
-        console.log(options.newFee, 'new fee IN HERE=======')
         const msg: ManagedVaultExecuteMsg = {
           vault_extension: {
             withdraw_performance_fee: {
-              new_performance_fee_config: options.newFee,
+              ...(options.newFee && { new_performance_fee_config: options.newFee }),
             },
           },
         }
@@ -1421,8 +1417,6 @@ export default function createBroadcastSlice(
           msg,
           [],
         )
-
-        console.log('Sending message:', JSON.stringify(message, null, 2))
 
         const response = get().executeMsg({
           messages: [message],

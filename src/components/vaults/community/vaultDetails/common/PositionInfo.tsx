@@ -10,14 +10,11 @@ interface Props {
   subtitle: string
   primaryButton: ButtonProps
   secondaryButton: ButtonProps
-  address: string
+  isOwner: boolean
 }
 
 export default function PositionInfo(props: Props) {
-  const { value, subtitle, primaryButton, secondaryButton, address } = props
-
-  //  temp: if address - owner of the vault else user who deposited into vault
-  const isOwner = Boolean(address)
+  const { value, subtitle, primaryButton, secondaryButton, isOwner } = props
 
   return (
     <Card className='bg-white/5 w-full'>

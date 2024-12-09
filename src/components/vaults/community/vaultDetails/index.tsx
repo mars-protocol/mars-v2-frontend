@@ -46,12 +46,14 @@ export default function VaultDetails() {
     setShowFeeActionModal(true)
   }
 
+  //  TODO: temp solution - this needs to be updated and added somewhere else
   useEffect(() => {
     const checkOwner = async () => {
       try {
         const owner = await getManagedVaultOwner(chainConfig, vaultAddress!)
         setIsOwner(owner === address)
         console.log('owner:', owner)
+        console.log('address:', address)
       } catch (error) {
         console.error('Failed to check vault owner:', error)
         setIsOwner(false)
@@ -105,7 +107,7 @@ export default function VaultDetails() {
         <div className='md:w-180'>
           <div className='relative flex flex-wrap justify-center w-full gap-4'>
             {/* conditional message warning */}
-            {!address && (
+            {!isOwner && (
               <Callout type={CalloutType.WARNING} className='w-full'>
                 The vault does not have enough USDC to service withdrawals and cannot borrow funds
                 due to a low health factor. Please contact the vault owner to resolve.
@@ -113,7 +115,7 @@ export default function VaultDetails() {
             )}
 
             {/* // TODO: update data that can be fetched */}
-            {address ? (
+            {isOwner ? (
               <PositionInfo
                 value={500.38}
                 subtitle='1% Fee'
@@ -128,7 +130,7 @@ export default function VaultDetails() {
                   onClick: () => handleFeeActionModal('withdraw'),
                   rightIcon: <ArrowDownLine />,
                 }}
-                address={address}
+                isOwner={isOwner}
               />
             ) : (
               <PositionInfo
@@ -144,7 +146,7 @@ export default function VaultDetails() {
                   onClick: () => handleActionModal('withdraw'),
                   rightIcon: <ArrowDownLine />,
                 }}
-                address={''}
+                isOwner={isOwner}
               />
             )}
 

@@ -1,15 +1,15 @@
 import Button from 'components/common/Button'
+import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import EscButton from 'components/common/Button/EscButton'
 import Overlay from 'components/common/Overlay'
-import Text from 'components/common/Text'
 import PerformanceFee from 'components/vaults/community/createVault/PerformanceFee'
-import classNames from 'classnames'
-import { BNCoin } from 'types/classes/BNCoin'
+import Text from 'components/common/Text'
+import useStore from 'store'
 import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { useState } from 'react'
-import useStore from 'store'
 
 interface Props {
   showFeeActionModal: boolean
@@ -22,31 +22,35 @@ export default function FeeAction(props: Props) {
   const { showFeeActionModal, setShowFeeActionModal, type, vaultAddress } = props
   const [isTxPending, setIsTxPending] = useState(false)
   const [performanceFee, setPerformanceFee] = useState<BigNumber>(BN(1))
-  const updatePerformanceFee = useStore((s) => s.updatePerformanceFee)
+  const handlePerformanceFeeAction = useStore((s) => s.handlePerformanceFeeAction)
 
   console.log('vaultAddress:', vaultAddress)
   const isEdit = type === 'edit'
 
-  const handleUpdateFee = async () => {
+  const handleFeeAction = async () => {
+    setIsTxPending(true)
+
     try {
-      setIsTxPending(true)
-      const feeRate = performanceFee.dividedBy(100).dividedBy(1000).toFixed(18)
+      if (isEdit) {
+        const feeRate = performanceFee.dividedBy(100).dividedBy(1000).toFixed(18)
+        const newFee = {
+          fee_rate: feeRate,
+          withdrawal_interval: 24 * 3600,
+        }
 
-      const newFee: PerformanceFeeConfig = {
-        fee_rate: feeRate,
-        withdrawal_interval: 24 * 3600,
+        await handlePerformanceFeeAction({
+          vaultAddress,
+          newFee,
+        })
+      } else {
+        await handlePerformanceFeeAction({
+          vaultAddress,
+        })
       }
 
-      const result = await updatePerformanceFee({
-        vaultAddress,
-        newFee,
-      })
-
-      if (result) {
-        setShowFeeActionModal(false)
-      }
+      setShowFeeActionModal(false)
     } catch (error) {
-      console.error('Failed to update performance fee:', error)
+      console.error('Failed to handle fee action:', error)
     } finally {
       setIsTxPending(false)
     }
@@ -58,7 +62,7 @@ export default function FeeAction(props: Props) {
       show={showFeeActionModal}
       setShow={setShowFeeActionModal}
     >
-      <div className='gradient-description absolute h-full w-full opacity-30' />
+      <div className='gradient-description absolute h-full w-full opacity-30 pointer-events-none' />
       <div
         className={classNames(
           'p-4 z-10 min-h-90 h-full',
@@ -99,7 +103,7 @@ export default function FeeAction(props: Props) {
         )}
 
         <Button
-          onClick={handleUpdateFee}
+          onClick={handleFeeAction}
           color={isEdit ? 'tertiary' : 'primary'}
           size='md'
           className='w-full'
