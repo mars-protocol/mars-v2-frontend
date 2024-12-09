@@ -14,7 +14,6 @@ import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useAsset from 'hooks/assets/useAsset'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
@@ -22,6 +21,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
+import { formatLockupPeriod } from 'utils/formatters'
 
 export default function PerpsVaultModalController() {
   const modal = useStore((s) => s.perpsVaultModal)
@@ -36,7 +36,6 @@ type Props = {
 }
 
 function PerpsVaultModal(props: Props) {
-  const chainConfig = useChainConfig()
   const account = useCurrentAccount()
   const [amount, setAmount] = useState(BN(0))
   const [isConfirming, setIsConfirming] = useState(false)
@@ -180,8 +179,10 @@ function PerpsVaultModal(props: Props) {
               </div>
 
               <Callout type={CalloutType.INFO}>
-                {`Please note there is an unlocking period of ${perpsVault.lockup.duration} ${perpsVault.lockup.timeframe} when depositing into this
-                  vault.`}
+                {`Please note there is an unlocking period of ${formatLockupPeriod(
+                  perpsVault.lockup.duration,
+                  perpsVault.lockup.timeframe,
+                )} when depositing into this vault.`}
               </Callout>
               <Callout type={CalloutType.INFO}>
                 Your overall leverage may be increased as any deposits into this vault are removed

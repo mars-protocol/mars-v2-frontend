@@ -7,20 +7,26 @@ export default async function getPrices(
   chainConfig: ChainConfig,
   assets: Asset[],
 ): Promise<BNCoin[]> {
-  const isPerps = chainConfig.perps
   const pythAndOraclePrices = []
-  const assetsToFetchPrices = assets.filter((asset) =>
-    isPerps ? asset.isWhitelisted || asset.isPerpsEnabled : asset.isWhitelisted,
+
+  const lendingMarketAssets = assets.filter(
+    (asset) => asset.isWhitelisted && asset.isDepositEnabled && !asset.isPerpsEnabled,
   )
 
-  const assetsWithPythPriceFeedId = assets.filter((asset) => asset.pythPriceFeedId)
-  const assetsWithOraclePrices = assetsToFetchPrices.filter((asset) => !asset.pythPriceFeedId)
-  const pythPrices = await requestPythPrices(assetsWithPythPriceFeedId)
+  const perpsAssets = assets.filter((asset) => asset.isPerpsEnabled)
+
+  const assetsWithPythPriceFeedId = lendingMarketAssets.filter((asset) => asset.pythPriceFeedId)
+  const priceFeedIds = assetsWithPythPriceFeedId.map((asset) => asset.pythPriceFeedId) as string[]
+  const pythPrices = await fetchPythPrices(priceFeedIds, assetsWithPythPriceFeedId)
 
   pythAndOraclePrices.push(...pythPrices)
 
   try {
-    const oraclePrices: BNCoin[] = await getOraclePrices(chainConfig, assetsWithOraclePrices)
+    const assetsForOracle = [
+      ...perpsAssets,
+      ...lendingMarketAssets.filter((asset) => !asset.pythPriceFeedId),
+    ]
+    const oraclePrices: BNCoin[] = await getOraclePrices(chainConfig, assetsForOracle)
 
     if (oraclePrices) useStore.setState({ isOracleStale: false })
 
@@ -34,13 +40,4 @@ export default async function getPrices(
 
     return [...pythAndOraclePrices]
   }
-}
-
-async function requestPythPrices(assets: Asset[]): Promise<BNCoin[]> {
-  if (!assets.length) return []
-
-  const priceFeedIds = assets
-    .map((a) => a.pythPriceFeedId)
-    .filter((priceFeedId, index, array) => array.indexOf(priceFeedId) === index) as string[]
-  return await fetchPythPrices(priceFeedIds, assets)
 }
