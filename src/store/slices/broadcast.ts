@@ -1114,7 +1114,13 @@ export default function createBroadcastSlice(
       const priceFeedIds = [
         ...new Set(
           get()
-            .assets.filter((asset) => !!asset.pythPriceFeedId)
+            .assets.filter(
+              (asset) =>
+                !!asset.pythPriceFeedId &&
+                asset.isWhitelisted &&
+                asset.isDepositEnabled &&
+                !asset.isPerpsEnabled,
+            )
             .map((asset) => asset.pythPriceFeedId as string),
         ),
       ]
