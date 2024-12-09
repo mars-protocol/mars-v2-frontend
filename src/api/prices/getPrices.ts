@@ -7,18 +7,15 @@ export default async function getPrices(
   chainConfig: ChainConfig,
   assets: Asset[],
 ): Promise<BNCoin[]> {
-  const isSlinky = chainConfig.slinky
   const isPerps = chainConfig.perps
   const pythAndOraclePrices = []
   const assetsToFetchPrices = assets.filter((asset) =>
     isPerps ? asset.isWhitelisted || asset.isPerpsEnabled : asset.isWhitelisted,
   )
 
-  const assetsWithPythPriceFeedId = isSlinky ? [] : assets.filter((asset) => asset.pythPriceFeedId)
-  const assetsWithOraclePrices = isSlinky
-    ? assetsToFetchPrices
-    : assetsToFetchPrices.filter((asset) => !asset.pythPriceFeedId)
-  const pythPrices = isSlinky ? [] : await requestPythPrices(assetsWithPythPriceFeedId)
+  const assetsWithPythPriceFeedId = assets.filter((asset) => asset.pythPriceFeedId)
+  const assetsWithOraclePrices = assetsToFetchPrices.filter((asset) => !asset.pythPriceFeedId)
+  const pythPrices = await requestPythPrices(assetsWithPythPriceFeedId)
 
   pythAndOraclePrices.push(...pythPrices)
 
