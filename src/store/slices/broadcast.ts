@@ -1111,9 +1111,14 @@ export default function createBroadcastSlice(
       }
     },
     getPythVaas: async () => {
-      const priceFeedIds = get()
-        .assets.filter((asset) => !!asset.pythPriceFeedId)
-        .map((asset) => asset.pythPriceFeedId as string)
+      const priceFeedIds = [
+        ...new Set(
+          get()
+            .assets.filter((asset) => !!asset.pythPriceFeedId)
+            .map((asset) => asset.pythPriceFeedId as string),
+        ),
+      ]
+
       const pricesData = await getPythPriceData(priceFeedIds)
       const msg: PythUpdateExecuteMsg = { update_price_feeds: { data: pricesData } }
       const pythAssets = get().assets.filter((asset) => !!asset.pythPriceFeedId)

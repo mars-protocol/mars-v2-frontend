@@ -9,12 +9,7 @@ export default async function getPrices(
 ): Promise<BNCoin[]> {
   const pythAndOraclePrices = []
 
-  const lendingMarketAssets = assets.filter(
-    (asset) => asset.isWhitelisted && asset.isDepositEnabled && !asset.isPerpsEnabled,
-  )
-  const perpsAssets = assets.filter((asset) => asset.isPerpsEnabled)
-
-  const assetsWithPythPriceFeedId = lendingMarketAssets.filter((asset) => asset.pythPriceFeedId)
+  const assetsWithPythPriceFeedId = assets.filter((asset) => asset.pythPriceFeedId)
   const priceFeedIds = assetsWithPythPriceFeedId.map((asset) => asset.pythPriceFeedId) as string[]
   const feedsToFetch = [...new Set(priceFeedIds)]
   const pythPrices = await fetchPythPrices(feedsToFetch, assetsWithPythPriceFeedId)
@@ -22,10 +17,7 @@ export default async function getPrices(
   pythAndOraclePrices.push(...pythPrices)
 
   try {
-    const assetsForOracle = [
-      ...perpsAssets,
-      ...lendingMarketAssets.filter((asset) => !asset.pythPriceFeedId),
-    ]
+    const assetsForOracle = assets.filter((asset) => !asset.pythPriceFeedId)
     const oraclePrices: BNCoin[] = await getOraclePrices(chainConfig, assetsForOracle)
 
     if (oraclePrices) useStore.setState({ isOracleStale: false })
