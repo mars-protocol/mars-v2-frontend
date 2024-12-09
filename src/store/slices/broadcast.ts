@@ -1071,11 +1071,7 @@ export default function createBroadcastSlice(
         const gasPrice = await getGasPrice(get().chainConfig)
         if (!client)
           return { result: undefined, error: 'No client detected. Please reconnect your wallet.' }
-        if (
-          (checkPythUpdateEnabled() || options.isPythUpdate) &&
-          !isLedger &&
-          !get().chainConfig.slinky
-        ) {
+        if ((checkPythUpdateEnabled() || options.isPythUpdate) && !isLedger) {
           const pythUpdateMsg = await get().getPythVaas()
           options.messages.unshift(pythUpdateMsg)
         }

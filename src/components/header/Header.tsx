@@ -83,10 +83,7 @@ export default function Header() {
     useStore.setState({ focusComponent: null })
   }
 
-  const showStaleOracle = useMemo(
-    () => (chainConfig.slinky ? false : isOracleStale && address),
-    [chainConfig.slinky, isOracleStale, address],
-  )
+  const showStaleOracle = useMemo(() => isOracleStale && address, [isOracleStale, address])
   const showRewardsCenter = useMemo(
     () => (isV1 ? address && !isMobile : accountId && !isMobile),
     [isV1, address, accountId],
