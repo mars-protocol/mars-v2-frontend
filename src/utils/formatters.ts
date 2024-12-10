@@ -258,15 +258,15 @@ export function formatLockupPeriod(duration: number, timeframe: string): string 
       return `${duration}m`
     case 'hours':
       if (duration === 168) return '7d'
-      return `${duration} h`
+      return `${duration}h`
     case 'days':
-      return `${duration} d`
+      return `${duration}d`
     case 'weeks':
-      return `${duration} w`
+      return `${duration}w`
     case 'months':
-      return `${duration} mo`
+      return `${duration}mo`
     case 'years':
-      return `${duration} y`
+      return `${duration}y`
     default:
       return `${duration} ${timeframe}`
   }

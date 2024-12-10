@@ -15,13 +15,14 @@ import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useAsset from 'hooks/assets/useAsset'
 import useToggle from 'hooks/common/useToggle'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { BN } from 'utils/helpers'
 import { formatLockupPeriod } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 export default function PerpsVaultModalController() {
   const modal = useStore((s) => s.perpsVaultModal)
@@ -44,6 +45,8 @@ function PerpsVaultModal(props: Props) {
   const asset = useAsset(perpsVault?.denom || '')
   const [depositFromWallet, setDepositFromWallet] = useToggle()
   const walletAddress = useStore((s) => s.address)
+
+  const { computeMaxWithdrawAmount } = useHealthComputer(account)
   const { data: walletBalances } = useWalletBalances(walletAddress)
 
   const updateAmount = useCallback(
@@ -70,22 +73,28 @@ function PerpsVaultModal(props: Props) {
   )
 
   const [amountInDeposits, maxAmount] = useMemo(() => {
-    if (!account || !perpsVault?.denom) return [BN(0), BN(0), BN(0)]
+    if (!account || !perpsVault?.denom) return [BN_ZERO, BN_ZERO]
 
     if (props.modal.type === 'deposit') {
       const amountInDeposits =
         account.deposits.find((d) => d.denom === perpsVault.denom)?.amount || BN(0)
-      const amountInLends = account.lends.find((d) => d.denom === perpsVault.denom)?.amount || BN(0)
 
       const maxAmount = depositFromWallet
         ? BN(walletBalances.find(byDenom(perpsVault.denom))?.amount ?? 0)
-        : amountInDeposits.plus(amountInLends)
+        : computeMaxWithdrawAmount(perpsVault.denom)
 
       return [amountInDeposits, maxAmount]
     }
 
-    return [BN_ZERO, account.perpsVault?.active?.amount ?? BN_ZERO]
-  }, [account, perpsVault?.denom, props.modal.type, depositFromWallet, walletBalances])
+    return [BN_ZERO, BN_ZERO]
+  }, [
+    account,
+    perpsVault?.denom,
+    props.modal.type,
+    computeMaxWithdrawAmount,
+    depositFromWallet,
+    walletBalances,
+  ])
 
   const onClose = useCallback(() => {
     useStore.setState({ perpsVaultModal: null })
