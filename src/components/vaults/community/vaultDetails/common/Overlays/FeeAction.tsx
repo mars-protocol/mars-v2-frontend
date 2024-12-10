@@ -27,27 +27,24 @@ export default function FeeAction(props: Props) {
   const isEdit = type === 'edit'
 
   const handleFeeAction = async () => {
+    if (!vaultAddress) return
+
     setIsTxPending(true)
-
     try {
-      if (isEdit) {
-        const feeRate = performanceFee.dividedBy(100).dividedBy(1000).toFixed(18)
-        const newFee = {
-          fee_rate: feeRate,
-          withdrawal_interval: 24 * 3600,
-        }
-
-        await handlePerformanceFeeAction({
-          vaultAddress,
-          newFee,
-        })
-      } else {
-        await handlePerformanceFeeAction({
-          vaultAddress,
-        })
+      const options: PerformanceFeeOptions = {
+        vaultAddress,
+        ...(isEdit && {
+          newFee: {
+            fee_rate: performanceFee.dividedBy(100).dividedBy(1000).toFixed(5),
+            withdrawal_interval: 24 * 3600,
+          },
+        }),
       }
 
-      setShowFeeActionModal(false)
+      const result = await handlePerformanceFeeAction(options)
+      if (result) {
+        setShowFeeActionModal(false)
+      }
     } catch (error) {
       console.error('Failed to handle fee action:', error)
     } finally {

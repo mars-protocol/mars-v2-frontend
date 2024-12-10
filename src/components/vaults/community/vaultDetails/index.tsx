@@ -15,6 +15,7 @@ import { vaultProfileData } from 'components/vaults/dummyData'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { useParams } from 'react-router-dom'
 import { getManagedVaultOwner } from 'api/cosmwasm-client'
+import { FormattedNumber } from 'components/common/FormattedNumber'
 
 export default function VaultDetails() {
   const { vaultAddress } = useParams<{ vaultAddress: string }>()
@@ -30,6 +31,9 @@ export default function VaultDetails() {
   const [modalType, setModalType] = useState<'deposit' | 'withdraw' | null>(null)
   const [modalFeeType, setModalFeeType] = useState<'edit' | 'withdraw' | null>(null)
   const [isOwner, setIsOwner] = useState(false)
+
+  // TODO: fetch from contract
+  const hasAccumulatedFees = false
 
   const handleUpdateDescription = (newDescription: string) => {
     setDescription(newDescription)
@@ -115,25 +119,48 @@ export default function VaultDetails() {
             {/* // TODO: update data that can be fetched */}
             {isOwner ? (
               <PositionInfo
-                value={500.38}
-                subtitle='1% Fee'
+                value={0}
+                subtitle={
+                  <FormattedNumber
+                    amount={Number(vaultDetails?.performance_fee_config.fee_rate ?? 0) * 100000}
+                    options={{
+                      suffix: '%',
+                      minDecimals: 0,
+                      maxDecimals: 0,
+                      abbreviated: false,
+                    }}
+                    className='text-xs text-white/60'
+                  />
+                }
                 primaryButton={{
                   text: 'Edit Fee',
                   color: 'secondary',
                   onClick: () => handleFeeActionModal('edit'),
-                  // TODO: conditional disable
+                  disabled: !hasAccumulatedFees,
                 }}
                 secondaryButton={{
                   text: 'Withdraw',
                   onClick: () => handleFeeActionModal('withdraw'),
                   rightIcon: <ArrowDownLine />,
+                  disabled: !hasAccumulatedFees,
                 }}
                 isOwner={isOwner}
               />
             ) : (
               <PositionInfo
                 value={149087}
-                subtitle='2% of total vault'
+                subtitle={
+                  <FormattedNumber
+                    amount={3}
+                    options={{
+                      suffix: '% of the vault',
+                      minDecimals: 0,
+                      maxDecimals: 0,
+                      abbreviated: false,
+                    }}
+                    className='text-xs text-white/60'
+                  />
+                }
                 primaryButton={{
                   text: 'Deposit',
                   onClick: () => handleActionModal('deposit'),

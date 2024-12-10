@@ -1388,12 +1388,7 @@ export default function createBroadcastSlice(
           },
         }
 
-        const message = generateExecutionMessage(
-          address,
-          options.vaultAddress, // this has to be vaults address
-          msg,
-          [],
-        )
+        const message = generateExecutionMessage(address, options.vaultAddress, msg, [])
 
         const response = get().executeMsg({
           messages: [message],

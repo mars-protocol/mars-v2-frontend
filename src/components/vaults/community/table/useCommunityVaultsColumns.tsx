@@ -32,7 +32,7 @@ export default function useCommunityVaultsColumns(props: Props) {
   const navigate = useNavigate()
   const handleVaultDetails = useCallback(() => {
     // temp vault address
-    const tempVaultAddress = 'neutron1s6jq5mc75y8rvdqpsprkevyxec9atjqmwv8h9a44r82xy8uw984slpquvh'
+    const tempVaultAddress = 'neutron1k6yx75905s4u923l2dhee9vj8vr50n0946hp0ld2vvwv95hn992q0smkf0'
 
     if (accountId)
       navigate(

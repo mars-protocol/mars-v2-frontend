@@ -1850,7 +1850,7 @@ interface VaultDetails {
 }
 interface PerformanceFeeOptions {
   vaultAddress: string
-  newFee?: PerformanceFeeConfig
+  newFee?: PerformanceFeeConfig | null
 }
 interface PerformanceFeeConfig {
   fee_rate: string

@@ -7,7 +7,7 @@ import { BN } from 'utils/helpers'
 
 interface Props {
   value: number
-  subtitle: string
+  subtitle: React.ReactNode
   primaryButton: ButtonProps
   secondaryButton: ButtonProps
   isOwner: boolean
@@ -29,9 +29,7 @@ export default function PositionInfo(props: Props) {
               className='text-2xl'
             />
 
-            <Text size='xs' className='text-white/60'>
-              {subtitle}
-            </Text>
+            {subtitle}
           </div>
           {isOwner && (
             <Text size='xs' className='text-white/50'>
