@@ -526,15 +526,6 @@ export function getAccountUnrealizedPnlValue(account: Account, assets: Asset[]) 
   return perps
 }
 
-export function getAccountTotalPnlValue(account: Account | null, assets?: Asset[]): BigNumber {
-  if (!account || !assets) return BN_ZERO
-
-  return account.perps
-    .reduce((total, position) => total.plus(position.pnl.realized.net.amount), BN_ZERO)
-    .shiftedBy(-PRICE_ORACLE_DECIMALS)
-    .decimalPlaces(2)
-}
-
 export function convertCoinArrayIntoBNCoinArrayAndRemoveEmptyCoins(coins: Coin[]) {
   const BNCoins = [] as BNCoin[]
   coins.forEach((coin) => {
