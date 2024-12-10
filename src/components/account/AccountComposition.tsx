@@ -18,11 +18,7 @@ import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import {
-  getAccountSummaryStats,
-  getAccountTotalPnlValue,
-  getAccountUnrealizedPnlValue,
-} from 'utils/accounts'
+import { getAccountSummaryStats, getAccountUnrealizedPnlValue } from 'utils/accounts'
 
 interface Props {
   account: Account
@@ -60,12 +56,7 @@ export default function AccountComposition(props: Props) {
     [lendingAvailableAssets, accountLentAssets],
   )
   const assetParams = useAssetParams()
-  const totalPnl = useMemo(() => getAccountTotalPnlValue(account, assets), [account, assets])
 
-  const updatedTotalPnl = useMemo(
-    () => getAccountTotalPnlValue(updatedAccount ?? account, assets),
-    [updatedAccount, account, assets],
-  )
   const { positionValue, debts, netWorth, collateralValue, apy, leverage } = useMemo(
     () =>
       getAccountSummaryStats(
@@ -167,20 +158,12 @@ export default function AccountComposition(props: Props) {
         isDecrease
       />
       {chainConfig.perps && accountPerpData.length !== 0 && (
-        <>
-          <Item
-            title='Unrealized PnL'
-            current={totalUnrealizedPnl}
-            change={hasChanged ? updatedUnrealizedPnl : totalUnrealizedPnl}
-            className='pb-3'
-          />
-          <Item
-            title='Total PnL'
-            current={totalPnl}
-            change={hasChanged ? updatedTotalPnl : totalPnl}
-            className='pb-3'
-          />
-        </>
+        <Item
+          title='Unrealized PnL'
+          current={totalUnrealizedPnl}
+          change={hasChanged ? updatedUnrealizedPnl : totalUnrealizedPnl}
+          className='pb-3'
+        />
       )}
       <Item
         title='APY'
@@ -222,7 +205,7 @@ function Item(props: ItemProps) {
             coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, current)}
             className='text-sm'
             options={{ abbreviated: false }}
-            {...((title === 'Unrealized PnL' || title === 'Total PnL') && {
+            {...(title === 'Unrealized PnL' && {
               showSignPrefix: true,
             })}
           />
@@ -248,7 +231,7 @@ function Item(props: ItemProps) {
                 coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, change)}
                 className={classNames('text-sm', decrease ? 'text-loss' : 'text-profit')}
                 options={{ abbreviated: false }}
-                {...((title === 'Unrealized PnL' || title === 'Total PnL') && {
+                {...(title === 'Unrealized PnL' && {
                   showSignPrefix: true,
                 })}
               />

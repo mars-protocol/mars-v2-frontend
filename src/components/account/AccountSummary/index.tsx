@@ -199,7 +199,9 @@ export default function AccountSummary(props: Props) {
       itemsArray.push({
         title: 'Perp Positions',
         renderContent: () =>
-          account ? <AccountPerpPositionTable account={account} hideCard /> : null,
+          account ? (
+            <AccountPerpPositionTable account={account} hideCard isBalancesTable={false} />
+          ) : null,
         isOpen: accountSummaryTabs[showStrategies ? 3 : 2] ?? false,
         toggleOpen: (index: number) => handleToggle(index),
         renderSubTitle: () => <></>,
