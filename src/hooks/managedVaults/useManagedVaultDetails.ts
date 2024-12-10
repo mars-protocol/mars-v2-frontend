@@ -27,7 +27,6 @@ export default function useManagedVaultDetails(vaultAddress: string) {
     async () => {
       const details = await getManagedVaultDetails(vaultAddress)
 
-      console.log('details:', details)
       return details as VaultDetails
     },
     {

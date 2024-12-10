@@ -52,8 +52,6 @@ export default function VaultDetails() {
       try {
         const owner = await getManagedVaultOwner(chainConfig, vaultAddress!)
         setIsOwner(owner === address)
-        console.log('owner:', owner)
-        console.log('address:', address)
       } catch (error) {
         console.error('Failed to check vault owner:', error)
         setIsOwner(false)

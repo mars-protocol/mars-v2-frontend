@@ -1353,7 +1353,6 @@ export default function createBroadcastSlice(
         if (!vaultAddress) {
           return null
         }
-        console.log('Vault created:', vaultAddress)
         return { address: vaultAddress }
       } catch (error) {
         console.error('Failed to create vault:', error)
@@ -1367,7 +1366,6 @@ export default function createBroadcastSlice(
           vault_info: {},
         })
 
-        // console.log(response, 'contract repsonse')
         return response as unknown as VaultDetails
       } catch (error) {
         console.error('Failed to get vault details:', error)

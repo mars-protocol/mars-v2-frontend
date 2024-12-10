@@ -33,12 +33,7 @@ export default function MintVaultAccount() {
           vault_addr: vaultAddress,
         },
       }
-      console.log('accountKind:', accountKind)
-
       const accountId = await createAccount(accountKind, false)
-
-      console.log('accountId:', accountId)
-      console.log(vaultAddress, 'vaultAddressvaultAddress')
 
       if (!accountId) {
         setIsTxPending(false)

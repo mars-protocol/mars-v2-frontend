@@ -77,7 +77,6 @@ export default function CreateVault() {
 
       if (!result) return
 
-      console.log('result address:', result.address)
       if (result.address) {
         if (accountId)
           navigate(
@@ -91,7 +90,7 @@ export default function CreateVault() {
       }
       useStore.setState({
         focusComponent: {
-          component: <MintVaultAccount vaultAddress={result.address} />,
+          component: <MintVaultAccount />,
           onClose: () => {
             navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
           },

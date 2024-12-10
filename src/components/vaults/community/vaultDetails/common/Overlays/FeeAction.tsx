@@ -24,7 +24,6 @@ export default function FeeAction(props: Props) {
   const [performanceFee, setPerformanceFee] = useState<BigNumber>(BN(1))
   const handlePerformanceFeeAction = useStore((s) => s.handlePerformanceFeeAction)
 
-  console.log('vaultAddress:', vaultAddress)
   const isEdit = type === 'edit'
 
   const handleFeeAction = async () => {
@@ -95,10 +94,9 @@ export default function FeeAction(props: Props) {
           </div>
         )}
 
-        {/* TODO: do we have this message or disabled Edit Fee button instead? */}
         {isEdit && (
           <Callout type={CalloutType.INFO}>
-            Your performance fee will be withdrawn first when updating your fees.
+            Updating the performance fee will first withdraw any accrued performance fees.
           </Callout>
         )}
 
