@@ -1360,27 +1360,6 @@ export default function createBroadcastSlice(
         return null
       }
     },
-    bindVaultWithAccount: async (options: { vaultAddress: string; accountId: string }) => {
-      const msg: ManagedVaultExecuteMsg = {
-        vault_extension: {
-          bind_credit_manager_account: {
-            account_id: options.accountId,
-          },
-        },
-      }
-
-      console.log(msg, 'message')
-
-      const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, options.vaultAddress, msg, [])],
-      })
-
-      console.log(response, 'response')
-
-      get().handleTransaction({ response })
-
-      return response.then((response) => !!response.result)
-    },
     getManagedVaultDetails: async (vaultAddress: string): Promise<VaultDetails | null> => {
       try {
         const client = await getManagedVaultQueryClient(get().chainConfig, vaultAddress)
@@ -1406,7 +1385,7 @@ export default function createBroadcastSlice(
         const msg: ManagedVaultExecuteMsg = {
           vault_extension: {
             withdraw_performance_fee: {
-              ...(options.newFee && { new_performance_fee_config: options.newFee }),
+              new_performance_fee_config: options.newFee || null,
             },
           },
         }
