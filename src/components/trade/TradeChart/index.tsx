@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react'
+import { ReactNode, RefObject, useCallback, useEffect, useMemo, useRef } from 'react'
 import { isMobile } from 'react-device-detect'
 
 import Card from 'components/common/Card'
@@ -117,7 +117,9 @@ export default function TradeChart(props: Props) {
     return [priceBuyAsset.dividedBy(priceSellAsset), priceBuyAsset, priceSellAsset]
   }, [props.buyAsset, props.sellAsset])
 
-  const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
+  const chartContainerRef = useRef<HTMLDivElement | null>(
+    null,
+  ) as RefObject<HTMLInputElement | null>
 
   const [liquidationPrice, entryPrice, tradeDirection] = useMemo(() => {
     if (!props.isPerps || !props.perpsPosition?.entryPrice) return [null, null, 'long']
@@ -438,7 +440,7 @@ export default function TradeChart(props: Props) {
         'md:h-screen/70 md:max-h-[980px] md:min-h-[560px] order-1 w-full',
       )}
     >
-      <div ref={chartContainerRef} className='h-[calc(100%-32px)] overflow-hidden'>
+      <div ref={chartContainerRef ?? undefined} className='h-[calc(100%-32px)] overflow-hidden'>
         <div className='flex items-center w-full h-full'>
           <div className='flex flex-col flex-wrap items-center w-full gap-2'>
             <div className='w-8 mb-2'>

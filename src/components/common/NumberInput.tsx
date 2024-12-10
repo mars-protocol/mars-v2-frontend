@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 
 import { BN_ZERO } from 'constants/math'
-import { demagnify, formatValue, magnify } from 'utils/formatters'
+import { formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 interface Props {
@@ -20,12 +20,12 @@ interface Props {
   onChange: (amount: BigNumber) => void
   onBlur?: () => void
   onFocus?: () => void
-  onRef?: (ref: React.RefObject<HTMLInputElement>) => void
+  onRef?: (ref: React.RefObject<HTMLInputElement | null>) => void
   isUSD?: boolean
 }
 
 export default function NumberInput(props: Props) {
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLInputElement | null>(null)
   const cursorRef = useRef(0)
   const { onRef } = props
 
