@@ -10,17 +10,24 @@ interface Props {
   tableBodyClassName?: string
   showLiquidationPrice?: boolean
   hideCard?: boolean
+  isBalancesTable?: boolean
 }
 
 export default function AccountPerpPositionTable(props: Props) {
-  const { account, tableBodyClassName, showLiquidationPrice, hideCard } = props
+  const {
+    account,
+    tableBodyClassName,
+    showLiquidationPrice,
+    hideCard,
+    isBalancesTable = true,
+  } = props
   const updatedAccount = useStore((s) => s.updatedAccount)
   const accountPerpData = useAccountPerpData({
     account,
     updatedAccount,
   })
 
-  const columns = useAccountPerpsColumns(account)
+  const columns = useAccountPerpsColumns({ account, isBalancesTable })
 
   return (
     <Table

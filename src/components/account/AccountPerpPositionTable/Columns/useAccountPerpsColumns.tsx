@@ -13,6 +13,11 @@ import Price, { PRICE_META } from 'components/account/AccountBalancesTable/Colum
 import Size, { SIZE_META } from 'components/perps/BalancesTable/Columns/Size'
 import { BN } from 'utils/helpers'
 
+interface Props {
+  account: Account
+  isBalancesTable?: boolean
+}
+
 const accountPerpSizeSortingFn = (a: Row<AccountPerpRow>, b: Row<AccountPerpRow>): number => {
   return a.original.amount.abs().minus(b.original.amount.abs()).toNumber()
 }
@@ -21,12 +26,60 @@ const pnlSortingFn = (a: Row<AccountPerpRow>, b: Row<AccountPerpRow>): number =>
   return BN(a.original.pnl.net.amount).minus(BN(b.original.pnl.net.amount)).toNumber()
 }
 
-export default function useAccountPerpsColumns(account: Account) {
+export default function useAccountPerpsColumns(props: Props) {
+  const { account, isBalancesTable } = props
   const updatedAccount = useStore((s) => s.updatedAccount)
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount ?? account)
   const whitelistedAssets = useWhitelistedAssets()
 
   return useMemo<ColumnDef<AccountPerpRow>[]>(() => {
+    if (isBalancesTable) {
+      return [
+        {
+          ...ASSET_META,
+          meta: { className: 'min-w-30' },
+          cell: ({ row }) => <Asset row={row.original} />,
+        },
+        {
+          ...SIZE_META,
+          id: 'size',
+          meta: { className: 'min-w-30' },
+          cell: ({ row }) => {
+            const { asset, amount, value } = row.original
+            return <Size amount={amount} asset={asset} value={BN(value)} />
+          },
+          sortingFn: accountPerpSizeSortingFn,
+        },
+        {
+          ...PRICE_META,
+          meta: { className: 'min-w-30' },
+          cell: ({ row }) => (
+            <Price amount={row.original.amount.toNumber()} denom={row.original.denom} type='perp' />
+          ),
+          sortingFn: valuePerpSortingFn,
+        },
+        {
+          ...LIQ_META,
+          meta: { className: 'min-w-30' },
+          cell: ({ row }) => (
+            <LiqPrice
+              denom={row.original.denom}
+              computeLiquidationPrice={computeLiquidationPrice}
+              type='perp'
+              amount={row.original.amount.toNumber()}
+              account={updatedAccount ?? account}
+              isWhitelisted={whitelistedAssets.find(byDenom(row.original.denom)) !== undefined}
+            />
+          ),
+        },
+        {
+          ...PNL_META,
+          meta: { className: 'min-w-30' },
+          cell: ({ row }) => <TotalPnL pnl={row.original.pnl} />,
+          sortingFn: pnlSortingFn,
+        },
+      ]
+    }
     return [
       {
         ...ASSET_META,
@@ -39,31 +92,11 @@ export default function useAccountPerpsColumns(account: Account) {
         meta: { className: 'min-w-30' },
         cell: ({ row }) => {
           const { asset, amount, value } = row.original
-          return <Size amount={amount} asset={asset} value={BN(value)} />
+          return (
+            <Size amount={amount} asset={asset} value={BN(value)} options={{ abbreviated: true }} />
+          )
         },
         sortingFn: accountPerpSizeSortingFn,
-      },
-      {
-        ...PRICE_META,
-        meta: { className: 'min-w-30' },
-        cell: ({ row }) => (
-          <Price amount={row.original.amount.toNumber()} denom={row.original.denom} type='perp' />
-        ),
-        sortingFn: valuePerpSortingFn,
-      },
-      {
-        ...LIQ_META,
-        meta: { className: 'min-w-30' },
-        cell: ({ row }) => (
-          <LiqPrice
-            denom={row.original.denom}
-            computeLiquidationPrice={computeLiquidationPrice}
-            type='perp'
-            amount={row.original.amount.toNumber()}
-            account={updatedAccount ?? account}
-            isWhitelisted={whitelistedAssets.find(byDenom(row.original.denom)) !== undefined}
-          />
-        ),
       },
       {
         ...PNL_META,
@@ -72,5 +105,5 @@ export default function useAccountPerpsColumns(account: Account) {
         sortingFn: pnlSortingFn,
       },
     ]
-  }, [computeLiquidationPrice, account, updatedAccount, whitelistedAssets])
+  }, [computeLiquidationPrice, account, updatedAccount, whitelistedAssets, isBalancesTable])
 }
