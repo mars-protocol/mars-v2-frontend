@@ -18,6 +18,7 @@ export function useManagedVaultData(vaultAddress: string | undefined) {
       const details = await getManagedVaultDetails(vaultAddress!)
       return details as VaultDetails
     },
+    { suspense: true },
   )
 
   const {
@@ -29,6 +30,7 @@ export function useManagedVaultData(vaultAddress: string | undefined) {
     async () => {
       return await getManagedVaultOwner(chainConfig, vaultAddress!)
     },
+    { suspense: true },
   )
 
   return {

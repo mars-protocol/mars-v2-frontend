@@ -14,13 +14,39 @@ import { CircularProgress } from 'components/common/CircularProgress'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { useManagedVaultData } from 'hooks/managedVaults/useManagedVaultData'
 import { useParams } from 'react-router-dom'
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { vaultProfileData } from 'components/vaults/dummyData'
+
+function VaultLoadingState() {
+  return (
+    <div className='flex flex-wrap justify-center w-full gap-4'>
+      <CircularProgress size={60} />
+      <Text className='w-full text-center' size='2xl'>
+        Fetching on-chain data...
+      </Text>
+    </div>
+  )
+}
 
 export default function VaultDetails() {
   const { vaultAddress } = useParams<{ vaultAddress: string }>()
   const address = useStore((s) => s.address)
-  const { details: vaultDetails, isOwner, isLoading, error } = useManagedVaultData(vaultAddress)
+
+  return (
+    <Suspense fallback={<VaultLoadingState />}>
+      <VaultDetailsContent vaultAddress={vaultAddress} address={address} />
+    </Suspense>
+  )
+}
+
+function VaultDetailsContent({
+  vaultAddress,
+  address,
+}: {
+  vaultAddress: string | undefined
+  address: string | undefined
+}) {
+  const { details: vaultDetails, isOwner, error } = useManagedVaultData(vaultAddress)
 
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
   const [showFeeActionModal, setShowFeeActionModal] = useToggle()
@@ -30,6 +56,7 @@ export default function VaultDetails() {
   const [modalType, setModalType] = useState<'deposit' | 'withdraw' | null>(null)
   const [modalFeeType, setModalFeeType] = useState<'edit' | 'withdraw' | null>(null)
 
+  console.log('isOwner', isOwner)
   // TODO: fetch from contract
   const hasAccumulatedFees = false
 
@@ -47,16 +74,6 @@ export default function VaultDetails() {
     setModalFeeType(type)
     setShowFeeActionModal(true)
   }
-
-  if (isLoading)
-    return (
-      <div className='flex flex-wrap justify-center'>
-        <CircularProgress size={60} />
-        <Text className='w-full text-center' size='2xl'>
-          Fetching on-chain data...
-        </Text>
-      </div>
-    )
 
   return (
     <div className='min-h-screen md:h-screen-full md:min-h-[600px] w-full'>
