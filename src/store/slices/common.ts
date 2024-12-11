@@ -20,6 +20,7 @@ export default function createCommonSlice(
     useAutoRepay: true,
     isOracleStale: false,
     isHls: false,
+    isVaults: false,
     isV1: false,
     assets: [],
     hlsBorrowAmount: null,

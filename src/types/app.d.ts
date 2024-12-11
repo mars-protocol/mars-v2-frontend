@@ -275,11 +275,13 @@ interface ChainConfig {
   name: string
   network: 'mainnet' | 'testnet'
   vaults: VaultMetaData[]
+  vaultCodeId?: string
   hls: boolean
   perps: boolean
   farm: boolean
   anyAsset: boolean
   slinky: boolean
+  managedVaults: boolean
 }
 
 interface AssetCampaignInfo {
@@ -417,6 +419,10 @@ type Page =
   | 'portfolio/{accountId}'
   | 'hls-farm'
   | 'hls-staking'
+  | 'vaults'
+  | 'vaults-community'
+  | 'vaults/create'
+  | 'vaults/{vaultId}'
   | 'governance'
   | 'execute'
   | 'v1'
@@ -608,7 +614,29 @@ interface PerpsVault {
   cap: DepositCap | null
 }
 
+interface Vaults {
+  // TODO: update with correct types
+  vaultName: string
+  vaultSub: string
+  apy: number
+  tvl: number
+  fee: number
+  freezePeriod: number
+}
+
+interface VaultData {
+  vault_address: string
+  name: string
+  subtitle: string
+  tvl: string
+  apr: string
+  fee: string
+  fee_rate: string
+  freezePeriod: string
+}
+
 interface DepositedPerpsVault extends PerpsVault, DepositedVault {}
+
 interface VaultValuesAndAmounts {
   amounts: {
     primary: BigNumber
@@ -1137,6 +1165,9 @@ interface BroadcastSlice {
     vaultDenom: string
   }) => Promise<boolean>
   v1Action: (type: V1ActionType, funds: BNCoin) => Promise<boolean>
+  createManagedVault: (params: VaultParams) => Promise<{ address: string } | null>
+  getManagedVaultDetails: (vaultAddress: string) => Promise<VaultDetails | null>
+  handlePerformanceFeeAction: (options: PerformanceFeeOptions) => Promise<boolean>
 }
 
 type V1ActionType = 'withdraw' | 'deposit' | 'borrow' | 'repay'
@@ -1221,6 +1252,7 @@ interface CommonSlice {
   useAutoRepay: boolean
   isOracleStale: boolean
   isHls: boolean
+  isVaults: boolean
   isV1: boolean
   assets: Asset[]
   perpsBaseDenom?: string
@@ -1288,6 +1320,8 @@ interface AlertDialogConfig {
   negativeButton?: AlertDialogButton
   positiveButton?: AlertDialogButton
   title?: string
+  modalClassName?: string
+  titleClassName?: string
 }
 
 interface BorrowModal {
@@ -1776,4 +1810,49 @@ interface PerpsTradingFee {
     opening: BigNumber
     closing: BigNumber
   }
+}
+interface VaultParams {
+  title: string
+  description: string
+  baseToken: string
+  withdrawFreezePeriod: number
+  enableHls: boolean
+  performanceFee: PerformanceFeeConfig
+  vault_token_subdenom: string
+}
+
+interface VaultParams {
+  title: string
+  description: string
+  baseToken: string
+  withdrawFreezePeriod: number
+  enableHls: boolean
+  performanceFee: {
+    fee_rate: string
+    withdrawal_interval: number
+  }
+  vault_token_subdenom: string
+}
+
+interface VaultDetails {
+  base_token: string
+  vault_token: string
+  title: string
+  subtitle: string | null
+  description: string
+  credit_manager: string
+  vault_account_id: string | null
+  cooldown_period: number
+  performance_fee_config: {
+    fee_rate: string
+    withdrawal_interval: number
+  }
+}
+interface PerformanceFeeOptions {
+  vaultAddress: string
+  newFee?: PerformanceFeeConfig | null
+}
+interface PerformanceFeeConfig {
+  fee_rate: string
+  withdrawal_interval: number
 }

@@ -133,6 +133,7 @@ const Osmosis1: ChainConfig = {
   farm: true,
   anyAsset: false,
   slinky: false,
+  managedVaults: false,
 }
 
 export default Osmosis1

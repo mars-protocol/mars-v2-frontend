@@ -179,6 +179,7 @@ export default function PerpsSummary(props: Props) {
       reduceOnly: isReduceOnly,
     }
 
+    console.log('perpOrderParams', perpOrderParams)
     await executePerpOrder(perpOrderParams)
     return onTxExecuted()
   }, [
