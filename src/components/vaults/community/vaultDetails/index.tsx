@@ -2,26 +2,25 @@ import EditDescription from 'components/vaults/community/vaultDetails/common/Ove
 import FeeAction from 'components/vaults/community/vaultDetails/common/Overlays/FeeAction'
 import PositionInfo from 'components/vaults/community/vaultDetails/common/PositionInfo'
 import ProfileVaultCard from 'components/vaults/community/vaultDetails/profileVaultCard/ProfileVaultCard'
+import Text from 'components/common/Text'
 import VaultAction from 'components/vaults/community/vaultDetails/common/Overlays/VaultAction'
 import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import useManagedVaultDetails from 'hooks/managedVaults/useManagedVaultDetails'
 import useStore from 'store'
 import useToggle from 'hooks/common/useToggle'
 import { ArrowDownLine } from 'components/common/Icons'
-import { useEffect, useState } from 'react'
-import { vaultProfileData } from 'components/vaults/dummyData'
 import { Callout, CalloutType } from 'components/common/Callout'
-import { useParams } from 'react-router-dom'
-import { getManagedVaultOwner } from 'api/cosmwasm-client'
+import { CircularProgress } from 'components/common/CircularProgress'
 import { FormattedNumber } from 'components/common/FormattedNumber'
+import { useManagedVaultData } from 'hooks/managedVaults/useManagedVaultData'
+import { useParams } from 'react-router-dom'
+import { useState } from 'react'
+import { vaultProfileData } from 'components/vaults/dummyData'
 
 export default function VaultDetails() {
   const { vaultAddress } = useParams<{ vaultAddress: string }>()
   const address = useStore((s) => s.address)
-  const chainConfig = useChainConfig()
-  const { data: vaultDetails, error, isLoading } = useManagedVaultDetails(vaultAddress!)
+  const { details: vaultDetails, isOwner, isLoading, error } = useManagedVaultData(vaultAddress)
 
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
   const [showFeeActionModal, setShowFeeActionModal] = useToggle()
@@ -30,7 +29,6 @@ export default function VaultDetails() {
   const [description, setDescription] = useState<string>(vaultDetails?.description || '')
   const [modalType, setModalType] = useState<'deposit' | 'withdraw' | null>(null)
   const [modalFeeType, setModalFeeType] = useState<'edit' | 'withdraw' | null>(null)
-  const [isOwner, setIsOwner] = useState(false)
 
   // TODO: fetch from contract
   const hasAccumulatedFees = false
@@ -50,22 +48,15 @@ export default function VaultDetails() {
     setShowFeeActionModal(true)
   }
 
-  //  TODO: temp solution - this needs to be updated and added somewhere else
-  useEffect(() => {
-    const checkOwner = async () => {
-      try {
-        const owner = await getManagedVaultOwner(chainConfig, vaultAddress!)
-        setIsOwner(owner === address)
-      } catch (error) {
-        console.error('Failed to check vault owner:', error)
-        setIsOwner(false)
-      }
-    }
-
-    if (vaultAddress && address) {
-      checkOwner()
-    }
-  }, [vaultAddress, address, chainConfig])
+  if (isLoading)
+    return (
+      <div className='flex flex-wrap justify-center'>
+        <CircularProgress size={60} />
+        <Text className='w-full text-center' size='2xl'>
+          Fetching on-chain data...
+        </Text>
+      </div>
+    )
 
   return (
     <div className='min-h-screen md:h-screen-full md:min-h-[600px] w-full'>
