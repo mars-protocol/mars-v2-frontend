@@ -21,12 +21,13 @@ interface Props {
   apr: number
   tvl: number
   accuredPnl: number
+  fee: string
   wallet: string
   description: string
   onDelete: () => void
   onEdit: (show: boolean) => void
   avatarUrl: string
-  address?: string
+  isOwner: boolean
 }
 
 export default function ProfileVaultCard(props: Props) {
@@ -35,15 +36,14 @@ export default function ProfileVaultCard(props: Props) {
     apr,
     tvl,
     accuredPnl,
+    fee,
     wallet,
     description,
-    address,
+    isOwner,
     onDelete,
     onEdit,
     avatarUrl,
   } = props
-
-  const isOwner = Boolean(address)
 
   return (
     <Card className='bg-white/5'>
@@ -79,8 +79,7 @@ export default function ProfileVaultCard(props: Props) {
           <div className='flex gap-3'>
             {/* TODO: this will be conditional render */}
             <HLSTag />
-            {/* TODO: send fetched value */}
-            {isOwner || <FeeTag fee='5' />}
+            {isOwner || <FeeTag fee={fee} />}
           </div>
         </div>
 

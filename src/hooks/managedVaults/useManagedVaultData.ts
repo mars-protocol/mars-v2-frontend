@@ -33,9 +33,11 @@ export function useManagedVaultData(vaultAddress: string | undefined) {
     { suspense: true },
   )
 
+  const isOwner = Boolean(address && ownerAddress && ownerAddress === address)
+
   return {
     details,
-    isOwner: ownerAddress === address,
+    isOwner,
     isLoading: isDetailsLoading || isOwnerLoading,
     error: detailsError || ownerError,
   }

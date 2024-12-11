@@ -6,7 +6,6 @@ import Text from 'components/common/Text'
 import VaultAction from 'components/vaults/community/vaultDetails/common/Overlays/VaultAction'
 import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
-import useStore from 'store'
 import useToggle from 'hooks/common/useToggle'
 import { ArrowDownLine } from 'components/common/Icons'
 import { Callout, CalloutType } from 'components/common/Callout'
@@ -30,22 +29,15 @@ function VaultLoadingState() {
 
 export default function VaultDetails() {
   const { vaultAddress } = useParams<{ vaultAddress: string }>()
-  const address = useStore((s) => s.address)
 
   return (
     <Suspense fallback={<VaultLoadingState />}>
-      <VaultDetailsContent vaultAddress={vaultAddress} address={address} />
+      <VaultDetailsContent vaultAddress={vaultAddress} />
     </Suspense>
   )
 }
 
-function VaultDetailsContent({
-  vaultAddress,
-  address,
-}: {
-  vaultAddress: string | undefined
-  address: string | undefined
-}) {
+function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefined }) {
   const { details: vaultDetails, isOwner, error } = useManagedVaultData(vaultAddress)
 
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
@@ -85,12 +77,13 @@ function VaultDetailsContent({
             apr={vaultProfileData.apr}
             tvl={vaultProfileData.tvl}
             accuredPnl={vaultProfileData.accuredPnl}
+            fee={vaultDetails?.performance_fee_config.fee_rate || '0'}
             wallet={vaultProfileData.wallet}
             description={vaultDetails?.description || ''}
             avatarUrl={vaultProfileData.avatarUrl}
             onDelete={() => console.log('Delete clicked')}
             onEdit={() => setShowEditDescriptionModal(true)}
-            address={address}
+            isOwner={isOwner}
           />
         </div>
 
