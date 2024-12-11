@@ -31,7 +31,18 @@ function takeObject(idx) {
   return ret
 }
 
-let WASM_VECTOR_LEN = 0
+const cachedTextDecoder =
+  typeof TextDecoder !== 'undefined'
+    ? new TextDecoder('utf-8', { ignoreBOM: true, fatal: true })
+    : {
+        decode: () => {
+          throw Error('TextDecoder not available')
+        },
+      }
+
+if (typeof TextDecoder !== 'undefined') {
+  cachedTextDecoder.decode()
+}
 
 let cachedUint8Memory0 = null
 
@@ -41,6 +52,13 @@ function getUint8Memory0() {
   }
   return cachedUint8Memory0
 }
+
+function getStringFromWasm0(ptr, len) {
+  ptr = ptr >>> 0
+  return cachedTextDecoder.decode(getUint8Memory0().subarray(ptr, ptr + len))
+}
+
+let WASM_VECTOR_LEN = 0
 
 const cachedTextEncoder =
   typeof TextEncoder !== 'undefined'
@@ -116,24 +134,6 @@ function getInt32Memory0() {
     cachedInt32Memory0 = new Int32Array(wasm.memory.buffer)
   }
   return cachedInt32Memory0
-}
-
-const cachedTextDecoder =
-  typeof TextDecoder !== 'undefined'
-    ? new TextDecoder('utf-8', { ignoreBOM: true, fatal: true })
-    : {
-        decode: () => {
-          throw Error('TextDecoder not available')
-        },
-      }
-
-if (typeof TextDecoder !== 'undefined') {
-  cachedTextDecoder.decode()
-}
-
-function getStringFromWasm0(ptr, len) {
-  ptr = ptr >>> 0
-  return cachedTextDecoder.decode(getUint8Memory0().subarray(ptr, ptr + len))
 }
 /**
  * @param {HealthComputer} c
@@ -356,6 +356,13 @@ function __wbg_get_imports() {
   }
   imports.wbg.__wbindgen_object_drop_ref = function (arg0) {
     takeObject(arg0)
+  }
+  imports.wbg.__wbindgen_string_new = function (arg0, arg1) {
+    const ret = getStringFromWasm0(arg0, arg1)
+    return addHeapObject(ret)
+  }
+  imports.wbg.__wbg_log_1d3ae0273d8f4f8a = function (arg0) {
+    console.log(getObject(arg0))
   }
   imports.wbg.__wbindgen_string_get = function (arg0, arg1) {
     const obj = getObject(arg1)
