@@ -76,7 +76,7 @@ export default function SwapForm(props: Props) {
   const { isAutoLendEnabledForCurrentAccount: isAutoLendEnabled } = useAutoLend()
   const modal = useStore<string | null>((s) => s.fundAndWithdrawModal)
   const { simulateTrade, removedLends, updatedAccount } = useUpdatedAccount(account)
-  const { computeLiquidationPrice } = useHealthComputer(updatedAccount)
+  const { computeLiquidationPrice } = useHealthComputer(updatedAccount ?? account)
   const assets = useTradeEnabledAssets()
 
   const { data: routeInfo } = useRouteInfo(inputAsset.denom, outputAsset.denom, inputAssetAmount)
@@ -197,10 +197,19 @@ export default function SwapForm(props: Props) {
     [isRepayable, setAutoRepayChecked],
   )
 
-  const liquidationPrice = useMemo(
-    () => computeLiquidationPrice(outputAsset.denom, 'asset'),
-    [computeLiquidationPrice, outputAsset.denom],
-  )
+  const liquidationPrice = useMemo(() => {
+    const debtAmount = account?.debts.find(byDenom(outputAsset.denom))?.amount ?? BN_ZERO
+    if (isAutoRepayChecked && outputAssetAmount.isLessThan(debtAmount))
+      return computeLiquidationPrice(outputAsset.denom, 'debt')
+    if (isAutoRepayChecked && outputAssetAmount.isEqualTo(debtAmount)) return 0
+    return computeLiquidationPrice(outputAsset.denom, 'asset')
+  }, [
+    account?.debts,
+    computeLiquidationPrice,
+    isAutoRepayChecked,
+    outputAsset.denom,
+    outputAssetAmount,
+  ])
 
   const handleBuyClick = useCallback(async () => {
     if (account?.id) {
