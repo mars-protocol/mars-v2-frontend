@@ -198,6 +198,8 @@ export default function SwapForm(props: Props) {
   )
 
   const liquidationPrice = useMemo(() => {
+    if (!outputAsset.isWhitelisted) return 0
+
     const debtAmount = account?.debts.find(byDenom(outputAsset.denom))?.amount ?? BN_ZERO
     if (isAutoRepayChecked && outputAssetAmount.isLessThan(debtAmount))
       return computeLiquidationPrice(outputAsset.denom, 'debt')
@@ -208,6 +210,7 @@ export default function SwapForm(props: Props) {
     computeLiquidationPrice,
     isAutoRepayChecked,
     outputAsset.denom,
+    outputAsset.isWhitelisted,
     outputAssetAmount,
   ])
 
