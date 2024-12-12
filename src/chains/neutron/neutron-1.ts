@@ -74,7 +74,7 @@ const Neutron1: ChainConfig = {
     params: 'neutron1x4rgd7ry23v2n49y7xdzje0743c5tgrnqrqsvwyya2h6m48tz4jqqex06x',
     creditManager: 'neutron1qdzn3l4kn7gsjna2tfpg3g3mwd6kunx4p50lfya59k02846xas6qslgs3r',
     accountNft: 'neutron184kvu96rqtetmunkkmhu5hru8yaqg7qfhd8ldu5avjnamdqu69squrh3f5',
-    perps: 'neutron14v9g7regs90qvful7djcajsvrfep5pg9qau7qm6wya6c2lzcpnms692dlt',
+    perps: 'neutron169dt6ngsh8p740swcyufgepel7y90ma2hy22lzhd7xz0n6g0djdqu90yuq',
     pyth: 'neutron1m2emc93m9gpwgsrsf2vylv9xvgqh654630v7dfrhrkmr5slly53spg85wv',
   },
   endpoints: {
@@ -105,10 +105,10 @@ const Neutron1: ChainConfig = {
   features: ['ibc-transfer', 'ibc-go'],
   gasPrice: '0.015untrn',
   hls: true,
-  perps: false,
+  perps: true,
   farm: true,
   anyAsset: true,
-  slinky: false,
+  slinky: true,
 }
 
 export default Neutron1

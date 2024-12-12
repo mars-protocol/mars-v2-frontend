@@ -31,7 +31,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
-import { formatLeverage, getPerpsPriceDecimals, magnify } from 'utils/formatters'
+import { formatLeverage, getPerpsPriceDecimals } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 type Props = {
@@ -107,13 +107,10 @@ export default function PerpsSummary(props: Props) {
 
   const calculateKeeperFee = useMemo(
     () =>
-      (isLimitOrder || isStopOrder) && feeToken && keeperFee?.amount
-        ? BNCoin.fromDenomAndBigNumber(
-            feeToken.denom,
-            magnify(BN(keeperFee.amount).toNumber(), feeToken),
-          )
+      (isLimitOrder || isStopOrder) && keeperFee?.amount
+        ? BNCoin.fromDenomAndBigNumber(keeperFee.denom, BN(keeperFee.amount))
         : undefined,
-    [feeToken, isLimitOrder, isStopOrder, keeperFee?.amount],
+    [isLimitOrder, isStopOrder, keeperFee.amount, keeperFee.denom],
   )
 
   const submitLimitOrder = useSubmitLimitOrder()

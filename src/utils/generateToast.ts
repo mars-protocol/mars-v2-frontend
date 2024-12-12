@@ -119,11 +119,8 @@ export async function generateToast(
 }
 
 export function beautifyErrorMessage(error: string) {
-  if (error.includes('Cannot mint more than 1 account per wallet during trading competition'))
-    return 'You can not mint more than 1 account per wallet during the trading competition.'
-
-  if (error.includes('Deposit and withdraw actions are not allowed during trading competition'))
-    return 'You can not deposit or withdraw funds during trading competition.'
+  if (error.includes('too old'))
+    return 'The oracle prices are stale. Please wait until the prices in the oracle contract are updated again.'
 
   if (error.includes('Max LTV health factor'))
     return 'You can not execute this transaction, since it would result in a Health Factor below 1'
