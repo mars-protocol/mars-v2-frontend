@@ -5,6 +5,7 @@ COPY package.json yarn.lock ./
 RUN yarn install
 COPY . .
 RUN apk --update add patch
+RUN apk add git
 RUN patch next.config.js next-config.patch
 
 ENV NEXT_PUBLIC_NETWORK=mainnet
@@ -13,11 +14,14 @@ ENV NEXT_PUBLIC_OSMOSIS_REST=APP_NEXT_OSMOSIS_REST
 ENV NEXT_PUBLIC_NEUTRON_RPC=APP_NEXT_NEUTRON_RPC
 ENV NEXT_PUBLIC_NEUTRON_REST=APP_NEXT_NEUTRON_REST
 ENV NEXT_PUBLIC_WALLET_CONNECT_ID=APP_NEXT_WALLET_CONNECT_ID
+ENV CHARTING_LIBRARY_USERNAME=${CHARTING_LIBRARY_USERNAME}
+ENV CHARTING_LIBRARY_ACCESS_TOKEN=${CHARTING_LIBRARY_ACCESS_TOKEN}
+ENV CHARTING_LIBRARY_REPOSITORY=github.com/tradingview/charting_library/
 ENV NODE_ENV=production
 
 RUN yarn build
 
-FROM node:20-alpine as runner
+FROM node:20-alpine AS runner
 WORKDIR /app
 
 COPY --from=builder /app/package.json .
