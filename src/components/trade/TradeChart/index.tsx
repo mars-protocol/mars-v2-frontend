@@ -391,12 +391,12 @@ export default function TradeChart(props: Props) {
           {!priceBuyAsset || !priceSellAsset ? null : ratio.isZero() ? (
             <Loading className='h-4 m-4 md:m-0 md:mr-4 w-60' />
           ) : (
-            <div className='sm:hidden md:flex md:items-center md:gap-1 md:flex-nowrap'>
+            <div className='hidden md:flex md:items-center md:gap-1 md:flex-nowrap'>
               <Text size='sm'>1 {props.buyAsset.symbol}</Text>
               {props.isPerps ? (
                 <FormattedNumber
                   className='text-sm'
-                  amount={Number(props.buyAsset?.price?.amount.toPrecision(6) ?? 0)}
+                  amount={Number(props.buyAsset?.price?.amount ?? 0)}
                   options={{
                     prefix: '= ',
                     suffix: ` USD`,

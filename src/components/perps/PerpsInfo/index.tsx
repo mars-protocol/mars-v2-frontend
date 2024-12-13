@@ -41,13 +41,12 @@ export function PerpsInfo() {
       <InfoItem
         key='price'
         label='Price'
-        className='md:hidden'
         item={
-          <div className='flex items-center gap-1 text-sm'>
+          <div className='flex items-center gap-1 text-sm md:hidden'>
             <Text size='sm'>1 {market.asset.symbol}</Text>
             <FormattedNumber
               className='text-sm'
-              amount={Number(market.asset.price?.amount.toPrecision(6) ?? 0)}
+              amount={Number(market.asset.price?.amount ?? 0)}
               options={{
                 prefix: '= ',
                 suffix: ` USD`,
