@@ -23,6 +23,9 @@ export const getDefaultChainSettings = (chainConfig: ChainConfig) => {
     tvChartStore: JSON.stringify({}),
     showPerpsVaultBanner: true,
     fundingRateInterval: '1H',
-    keeperFee: JSON.stringify({ denom: 'uusd', amount: '100000' }),
+    keeperFee: JSON.stringify({
+      denom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
+      amount: '200000',
+    }),
   }
 }
