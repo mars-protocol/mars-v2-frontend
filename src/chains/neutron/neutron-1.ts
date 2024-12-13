@@ -89,6 +89,7 @@ const Neutron1: ChainConfig = {
     gasPrices: '/feemarket/v1/gas_price/untrn',
     aprs: {
       vaults: '',
+      perpsVault: 'https://backend.prod.mars-dev.net/v2/perps_vault?chain=neutron',
     },
   },
   network: NETWORK.MAINNET,
