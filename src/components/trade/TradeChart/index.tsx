@@ -398,8 +398,7 @@ export default function TradeChart(props: Props) {
                   className='text-sm'
                   amount={Number(props.buyAsset?.price?.amount ?? 0)}
                   options={{
-                    prefix: '= ',
-                    suffix: ` USD`,
+                    prefix: '= $',
                     abbreviated: false,
                     maxDecimals: getPerpsPriceDecimals(props.buyAsset?.price?.amount),
                   }}

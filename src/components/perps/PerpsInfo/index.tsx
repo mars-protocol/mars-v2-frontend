@@ -48,8 +48,8 @@ export function PerpsInfo() {
               className='text-sm'
               amount={Number(market.asset.price?.amount ?? 0)}
               options={{
-                prefix: '= ',
-                suffix: ` USD`,
+                prefix: '= $',
+                // suffix: ` USD`,
                 abbreviated: false,
                 maxDecimals: getPerpsPriceDecimals(market.asset.price?.amount),
               }}
