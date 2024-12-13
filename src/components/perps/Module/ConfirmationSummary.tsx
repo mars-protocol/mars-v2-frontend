@@ -165,6 +165,7 @@ export default function ConfirmationSummary(props: Props) {
             </SummaryRow>
             <SummaryRow label='Execution Price'>
               <ExpectedPrice
+                tradeDirection={tradeDirection as TradeDirection}
                 className='text-xs'
                 denom={asset.denom}
                 newAmount={newAmount}
