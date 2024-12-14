@@ -41,8 +41,9 @@ export function PerpsInfo() {
       <InfoItem
         key='price'
         label='Price'
+        className='md:hidden'
         item={
-          <div className='flex items-center gap-1 text-sm md:hidden'>
+          <div className='flex items-center gap-1 text-sm'>
             <Text size='sm'>1 {market.asset.symbol}</Text>
             <FormattedNumber
               className='text-sm'
