@@ -1,4 +1,4 @@
-import Osmosis1 from 'chains/osmosis/osmosis-1'
+import Neutron1 from 'chains/neutron/neutron-1'
 import { StoreApi } from 'zustand'
 
 export default function createCommonSlice(
@@ -8,7 +8,7 @@ export default function createCommonSlice(
   return {
     accounts: null,
     balances: [],
-    chainConfig: Osmosis1,
+    chainConfig: Neutron1,
     isOpen: true,
     selectedAccount: null,
     focusComponent: null,
