@@ -5,7 +5,7 @@ import EscButton from 'components/common/Button/EscButton'
 import Card from 'components/common/Card'
 
 export default function Modal(props: ModalProps) {
-  const ref: React.RefObject<HTMLDialogElement> = useRef(null)
+  const ref = useRef<HTMLDialogElement>(null)
   const modalClassName =
     props.modalClassName ??
     'max-w-screen-full md:max-w-modal h-screen-full flex items-center justify-center'
