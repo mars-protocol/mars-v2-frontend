@@ -41,15 +41,15 @@ export function PerpsInfo() {
       <InfoItem
         key='price'
         label='Price'
+        className='md:hidden'
         item={
-          <div className='flex items-center gap-1 text-sm md:hidden'>
+          <div className='flex items-center gap-1 text-sm'>
             <Text size='sm'>1 {market.asset.symbol}</Text>
             <FormattedNumber
               className='text-sm'
               amount={Number(market.asset.price?.amount ?? 0)}
               options={{
                 prefix: '= $',
-                // suffix: ` USD`,
                 abbreviated: false,
                 maxDecimals: getPerpsPriceDecimals(market.asset.price?.amount),
               }}

@@ -43,16 +43,18 @@ export const usePerpsCallbacks = ({
   const reset = useCallback(() => {
     setLimitPrice(BN_ZERO)
     updateAmount(BN_ZERO)
-  }, [updateAmount, setLimitPrice])
+    updateLeverage(0)
+  }, [updateAmount, setLimitPrice, updateLeverage])
 
   const onChangeTradeDirection = useCallback(
     (newTradeDirection: TradeDirection) => {
       updateAmount(BN_ZERO)
       setTradeDirection(newTradeDirection)
+      updateLeverage(0)
       setLimitPrice(BN_ZERO)
       setIsReduceOnly(false)
     },
-    [updateAmount, setLimitPrice, setTradeDirection, setIsReduceOnly],
+    [updateAmount, setLimitPrice, setTradeDirection, setIsReduceOnly, updateLeverage],
   )
 
   const onChangeOrderType = useCallback(
