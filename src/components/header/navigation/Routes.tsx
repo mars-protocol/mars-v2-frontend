@@ -37,7 +37,12 @@ export default function Routes() {
         <Route path='/v1' element={<V1Page />} />
         <Route path='/hls-staking' element={<HlsStakingPage />} />
         <Route path='/hls-farm' element={<HlsFarmPage />} />
-        <Route path='/' element={<TradePage />} />
+        <Route
+          path='/'
+          element={
+            chainConfig.perps ? <Navigate to='/perps' replace /> : <Navigate to='/trade' replace />
+          }
+        />
         <Route path='/wallets/:address'>
           <Route path='execute' element={<ExecuteMessagePage />} />
           <Route path='trade' element={<TradePage />} />
