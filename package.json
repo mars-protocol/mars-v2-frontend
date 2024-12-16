@@ -61,7 +61,7 @@
     "@types/debounce-promise": "^3.1.9",
     "@types/lodash.debounce": "^4.0.9",
     "@types/lodash.throttle": "^4.1.9",
-    "@types/node": "^22.10.1",
+    "@types/node": "^22.10.2",
     "@types/react": "19.0.1",
     "@types/react-dom": "19.0.2",
     "@types/react-helmet": "^6.1.11",
