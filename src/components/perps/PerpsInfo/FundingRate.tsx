@@ -36,12 +36,15 @@ export default function FundingRate() {
 
   if (!market) return '-'
 
+  const rate = fundingRate.toNumber()
+  const decimals = Math.abs(rate) < 1 ? 6 : 2
+
   return (
     <div className='flex items-center gap-1'>
       <FormattedNumber
         className='inline text-sm'
-        amount={fundingRate.toNumber()}
-        options={{ minDecimals: 2, maxDecimals: 6, suffix: '%' }}
+        amount={rate}
+        options={{ minDecimals: 2, maxDecimals: decimals, suffix: '%' }}
       />
       <Tooltip
         content={
