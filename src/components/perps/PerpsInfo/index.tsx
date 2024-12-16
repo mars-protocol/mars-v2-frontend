@@ -50,7 +50,6 @@ export function PerpsInfo() {
               amount={Number(market.asset.price?.amount ?? 0)}
               options={{
                 prefix: '= $',
-                // suffix: ` USD`,
                 abbreviated: false,
                 maxDecimals: getPerpsPriceDecimals(market.asset.price?.amount),
               }}

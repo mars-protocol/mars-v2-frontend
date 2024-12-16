@@ -6,7 +6,7 @@ export const getCurrentChainId = () => {
   const currentNetwork = process.env.NEXT_PUBLIC_NETWORK ?? NETWORK.TESTNET
   const defaultChainId =
     currentNetwork === NETWORK.MAINNET
-      ? chains[ChainInfoID.Osmosis1].id
+      ? chains[ChainInfoID.Neutron1].id
       : chains[ChainInfoID.Pion1].id
   let chainId = defaultChainId
   let subdomain = ''
