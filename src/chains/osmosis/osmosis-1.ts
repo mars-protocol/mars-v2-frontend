@@ -105,9 +105,9 @@ const Osmosis1: ChainConfig = {
     coinGeckoId: 'osmosis',
   },
   endpoints: {
-    rpc: process.env.NEXT_PUBLIC_OSMOSIS_RPC ?? 'https://rpc-osmosis.blockapsis.com',
+    rpc: process.env.NEXT_PUBLIC_OSMOSIS_RPC ?? 'https://osmosis-rpc.polkachu.com',
     fallbackRpc: 'https://osmosis-rpc.polkachu.com',
-    rest: process.env.NEXT_PUBLIC_OSMOSIS_REST ?? 'https://lcd-osmosis.blockapsis.com',
+    rest: process.env.NEXT_PUBLIC_OSMOSIS_REST ?? 'https://osmosis-api.polkachu.com',
     swap: 'https://app.osmosis.zone',
     explorer: 'https://www.mintscan.io/osmosis',
     routes: 'https://sqs.osmosis.zone/router',

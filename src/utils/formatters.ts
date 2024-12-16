@@ -250,3 +250,24 @@ export function getCoinAmount(denom: string, value: BigNumber, assets: Asset[]) 
 export function convertLiquidityRateToAPR(rate: number) {
   return rate >= 0.01 ? rate : 0.0
 }
+
+export function formatLockupPeriod(duration: number, timeframe: string): string {
+  switch (timeframe.toLowerCase()) {
+    case 'minutes':
+      if (duration === 10080) return '7d'
+      return `${duration}m`
+    case 'hours':
+      if (duration === 168) return '7d'
+      return `${duration}h`
+    case 'days':
+      return `${duration}d`
+    case 'weeks':
+      return `${duration}w`
+    case 'months':
+      return `${duration}mo`
+    case 'years':
+      return `${duration}y`
+    default:
+      return `${duration} ${timeframe}`
+  }
+}
