@@ -122,7 +122,10 @@ export function beautifyErrorMessage(error: string) {
   if (error.includes('too old'))
     return 'The oracle prices are stale. Please wait until the prices in the oracle contract are updated again.'
 
-  if (error.includes('Max LTV health factor'))
+  if (
+    error.includes('Max LTV health factor') ||
+    error.includes('Actions did not result in improved health factor')
+  )
     return 'You can not execute this transaction, since it would result in a Health Factor below 1'
 
   if (error.includes('Generic Error')) return 'Generic Error. Please try again'

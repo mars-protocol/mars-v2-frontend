@@ -47,10 +47,9 @@ export function PerpsInfo() {
             <Text size='sm'>1 {market.asset.symbol}</Text>
             <FormattedNumber
               className='text-sm'
-              amount={Number(market.asset.price?.amount.toPrecision(6) ?? 0)}
+              amount={Number(market.asset.price?.amount ?? 0)}
               options={{
-                prefix: '= ',
-                suffix: ` USD`,
+                prefix: '= $',
                 abbreviated: false,
                 maxDecimals: getPerpsPriceDecimals(market.asset.price?.amount),
               }}
