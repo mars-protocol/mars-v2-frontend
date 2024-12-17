@@ -76,13 +76,12 @@ export default function FarmModalContentHeader(props: Props) {
         <TitleAndSubCell
           title={
             <div className='flex flex-row'>
-              <FormattedNumber amount={farm?.apy ?? 0} options={{ suffix: '%' }} animate />
+              <FormattedNumber amount={farm?.apy ?? 0} options={{ suffix: '%' }} />
               <FormattedNumber
                 className='ml-2 text-xs'
                 amount={(farm?.apy ?? 0) / 365}
                 options={{ suffix: '%/day' }}
                 parentheses
-                animate
               />
             </div>
           }

@@ -208,7 +208,6 @@ function AccountDetails(props: Props) {
                 className={'w-full text-center text-2xs'}
                 amount={apy.toNumber()}
                 options={{ maxDecimals: 2, minDecimals: 2, suffix: '%', abbreviated: true }}
-                animate
               />
             </div>
           </div>

@@ -110,7 +110,6 @@ export default function TokenInput(props: Props) {
                 className='mr-1 text-xs text-white/50'
                 amount={props.max.toNumber()}
                 options={{ decimals: props.asset.decimals }}
-                animate
               />
               <Button
                 dataTestId='token-input-max-button'

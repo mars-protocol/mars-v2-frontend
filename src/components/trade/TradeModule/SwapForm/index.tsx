@@ -313,8 +313,9 @@ export default function SwapForm(props: Props) {
     () =>
       inputAssetAmount.isZero() ||
       depositCapReachedCoins.length > 0 ||
-      borrowAmount.isGreaterThan(availableLiquidity),
-    [inputAssetAmount, depositCapReachedCoins, borrowAmount, availableLiquidity],
+      borrowAmount.isGreaterThan(availableLiquidity) ||
+      !routeInfo,
+    [inputAssetAmount, depositCapReachedCoins.length, borrowAmount, availableLiquidity, routeInfo],
   )
 
   return (
