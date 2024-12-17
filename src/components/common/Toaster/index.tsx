@@ -257,8 +257,7 @@ export default function Toaster() {
       newestOnTop
       closeOnClick={false}
       transition={reduceMotion ? NoTransition : Slide}
-      bodyClassName='p-0 m-0 -z-1'
-      className='mt-[81px] p-0'
+      className='p-0 w-[345px] max-w-full'
     />
   )
 }
