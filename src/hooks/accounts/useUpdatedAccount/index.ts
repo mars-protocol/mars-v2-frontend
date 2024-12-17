@@ -184,7 +184,6 @@ export function useUpdatedAccount(account?: Account) {
       target: 'deposit' | 'lend',
       repay: boolean,
     ) => {
-      if (addCoin.amount.isZero() && removeCoin.amount.isZero()) return
       removeDeposits([])
       removeLends([])
       addDebts([])

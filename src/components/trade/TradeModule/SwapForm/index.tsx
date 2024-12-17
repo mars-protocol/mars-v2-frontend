@@ -1,4 +1,3 @@
-import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import AssetAmountInput from 'components/common/AssetAmountInput'
@@ -165,21 +164,27 @@ export default function SwapForm(props: Props) {
     isAutoRepayChecked,
   ])
 
-  const debouncedUpdateAccount = useMemo(
-    () =>
-      debounce(
-        (removeCoin: BNCoin, addCoin: BNCoin, debtCoin: BNCoin, isBorrowEnabled: boolean) => {
-          simulateTrade(
-            removeCoin,
-            addCoin,
-            debtCoin,
-            isAutoLendEnabled && isBorrowEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
-            isAutoRepayChecked,
-          )
-        },
-        250,
-      ),
-    [simulateTrade, isAutoLendEnabled, isAutoRepayChecked],
+  const updateAccount = useCallback(
+    (removeCoin: BNCoin, addCoin: BNCoin, debtCoin: BNCoin, isBorrowEnabled: boolean) => {
+      if (addCoin.amount.isZero()) {
+        simulateTrade(
+          BNCoin.fromDenomAndBigNumber(inputAsset.denom, BN_ZERO),
+          BNCoin.fromDenomAndBigNumber(outputAsset.denom, BN_ZERO),
+          BNCoin.fromDenomAndBigNumber(inputAsset.denom, BN_ZERO),
+          isAutoLendEnabled && isBorrowEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
+          isAutoRepayChecked,
+        )
+      } else {
+        simulateTrade(
+          removeCoin,
+          addCoin,
+          debtCoin,
+          isAutoLendEnabled && isBorrowEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
+          isAutoRepayChecked,
+        )
+      }
+    },
+    [simulateTrade, inputAsset.denom, outputAsset.denom, isAutoLendEnabled, isAutoRepayChecked],
   )
 
   const handleMarginToggleChange = useCallback(
@@ -279,7 +284,7 @@ export default function SwapForm(props: Props) {
     const addCoin = BNCoin.fromDenomAndBigNumber(outputAsset.denom, outputAssetAmount)
     const debtCoin = BNCoin.fromDenomAndBigNumber(inputAsset.denom, addDebtAmount)
 
-    debouncedUpdateAccount(removeCoin, addCoin, debtCoin, outputAsset.isBorrowEnabled ?? true)
+    updateAccount(removeCoin, addCoin, debtCoin, outputAsset.isBorrowEnabled ?? true)
   }, [
     inputAssetAmount,
     outputAssetAmount,
@@ -287,7 +292,7 @@ export default function SwapForm(props: Props) {
     outputAsset.denom,
     outputAsset.isBorrowEnabled,
     inputAsset.denom,
-    debouncedUpdateAccount,
+    updateAccount,
     modal,
   ])
 
