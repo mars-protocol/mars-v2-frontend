@@ -14,11 +14,11 @@ export default function Skew() {
   return (
     <div className='flex items-center gap-1'>
       <DisplayCurrency
-        className='hidden text-sm md:inline'
+        className='text-sm'
         coin={BNCoin.fromDenomAndBigNumber(perpsMarket.asset.denom, skew)}
         showSignPrefix
       />
-      <span className='hidden text-sm md:inline'>/</span>
+      <span className='text-sm'>/</span>
       <FormattedNumber
         className='text-sm'
         amount={openInterest.skewPercentage.toNumber()}
