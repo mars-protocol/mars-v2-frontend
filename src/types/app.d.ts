@@ -1260,7 +1260,7 @@ interface FetchError {
 }
 
 interface FocusComponent {
-  component: import('react').JSX.Element | null
+  component: import('react').ReactElement | null
   onClose?: () => void
 }
 
@@ -1291,20 +1291,20 @@ interface ModalSlice {
 
 interface AlertDialogButton {
   text?: string
-  icon?: JSX.Element
+  icon?: ReactElement
   isAsync?: boolean
   onClick?: () => Promise<void> | void
   disabled?: boolean
 }
 
 interface AlertDialogConfig {
-  icon?: JSX.Element
-  header?: JSX.Element
+  icon?: ReactElement
+  header?: ReactElement
   checkbox?: {
     text: string
     onClick: (isChecked: boolean) => void
   }
-  content: JSX.Element | string
+  content: ReactElement | string
   negativeButton?: AlertDialogButton
   positiveButton?: AlertDialogButton
   title?: string

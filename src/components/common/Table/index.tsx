@@ -25,7 +25,7 @@ interface Props<T> {
   columns: ColumnDef<T>[]
   data: T[]
   initialSorting: SortingState
-  renderExpanded?: (row: TanstackRow<T>, table: TanstackTable<T>) => JSX.Element
+  renderExpanded?: (row: TanstackRow<T>, table: TanstackTable<T>) => ReactElement
   tableBodyClassName?: string
   spacingClassName?: string
   type?: TableType
