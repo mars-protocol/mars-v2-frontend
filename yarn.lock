@@ -2554,6 +2554,13 @@
   resolved "https://registry.yarnpkg.com/@keplr-wallet/simple-fetch/-/simple-fetch-0.12.162.tgz#aef578617148f3e3cc3e3d80d687a8e56c1974c8"
   integrity sha512-motl+PSlr4vynDAsxnc126H0qZSjBaRoWn2yQ88q9C+WKyF5yUD7VBC/Q5QxBHFOBSaeHRFqSf1SUIjHY+NlrQ==
 
+"@keplr-wallet/types@0.12.159":
+  version "0.12.159"
+  resolved "https://registry.yarnpkg.com/@keplr-wallet/types/-/types-0.12.159.tgz#392baeb4eaa80a0e16205265685a0ed9f6eee92a"
+  integrity sha512-Kn4zBFwagMJRLOBXmZeS8IiKoPRAFpjt3tVgteYwNNE0g+xAyXkk7XbeIIJxHKM33LNfAAxCbw/7tzkKddqL2w==
+  dependencies:
+    long "^4.0.0"
+
 "@keplr-wallet/types@0.12.162":
   version "0.12.162"
   resolved "https://registry.yarnpkg.com/@keplr-wallet/types/-/types-0.12.162.tgz#9b857131aa8576912d02cb77da664d5f831ff0f6"
