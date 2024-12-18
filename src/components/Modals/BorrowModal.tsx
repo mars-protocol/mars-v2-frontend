@@ -271,7 +271,6 @@ function BorrowModal(props: Props) {
               className='text-xs'
               amount={modal.marketData?.liquidity.toNumber() ?? 0}
               options={{ decimals: asset.decimals, abbreviated: true, suffix: ` ${asset.symbol}` }}
-              animate
             />
             <DisplayCurrency
               className='text-xs'

@@ -880,7 +880,6 @@ interface DropDownItem {
 
 interface FormattedNumberProps {
   amount: number | string
-  animate?: boolean
   className?: string
   minDecimals?: number
   maxDecimals?: number

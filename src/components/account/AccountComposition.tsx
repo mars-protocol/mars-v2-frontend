@@ -198,7 +198,6 @@ function Item(props: ItemProps) {
               abbreviated: false,
             }}
             className='text-sm'
-            animate
           />
         ) : (
           <DisplayCurrency
@@ -224,7 +223,6 @@ function Item(props: ItemProps) {
                   maxDecimals: change.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
                 }}
                 className={classNames('text-sm', decrease ? 'text-loss' : 'text-profit')}
-                animate
               />
             ) : (
               <DisplayCurrency

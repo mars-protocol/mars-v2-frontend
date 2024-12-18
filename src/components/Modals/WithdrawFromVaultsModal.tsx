@@ -88,7 +88,6 @@ export default function WithdrawFromVaultsModal() {
                       suffix: ` ${vault.symbols.primary}`,
                       maxDecimals: primaryAsset.decimals,
                     }}
-                    animate
                   />
                   <FormattedNumber
                     amount={Number(secondaryAssetAmount.toPrecision(4))}
@@ -97,7 +96,6 @@ export default function WithdrawFromVaultsModal() {
                       suffix: ` ${vault.symbols.secondary}`,
                       maxDecimals: secondaryAsset.decimals,
                     }}
-                    animate
                   />
                 </div>
               </div>

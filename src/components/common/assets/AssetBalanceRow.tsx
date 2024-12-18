@@ -61,7 +61,6 @@ export default function AssetBalanceRow(props: Props) {
             small || tiny ? 'text-xs' : 'text-sm',
           )}
           options={{ suffix: ` ${asset.symbol}`, maxDecimals: asset.decimals }}
-          animate
         />
       </div>
     </div>
