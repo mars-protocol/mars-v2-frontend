@@ -55,7 +55,12 @@ export default function AccountFundContent(props: Props) {
 
   const { usdcBalances } = useUSDCBalances(walletBalances)
   const selectedDenoms = useMemo(() => {
-    return walletAssetModal?.selectedDenoms ?? []
+    return (
+      walletAssetModal?.selectedDenoms?.map((denom) => {
+        const [baseDenom, chain] = denom.split(':')
+        return chain ? `${baseDenom}:${chain}` : baseDenom
+      }) ?? []
+    )
   }, [walletAssetModal?.selectedDenoms])
   const { fundingAssets, updateFundingAssets, setFundingAssets } = useFundingAssets(selectedDenoms)
   const { depositCapReachedCoins } = useDepositCapCalculations(fundingAssets)
