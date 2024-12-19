@@ -16,7 +16,7 @@ export default function Skew() {
       <DisplayCurrency
         className='text-sm'
         coin={BNCoin.fromDenomAndBigNumber(perpsMarket.asset.denom, skew)}
-        showSignPrefix
+        showSignPrefix={skew.isNegative()}
       />
       <span className='text-sm'>/</span>
       <FormattedNumber
