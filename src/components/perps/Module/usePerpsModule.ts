@@ -147,9 +147,22 @@ export default function usePerpsModule(
   const updateAmount = useCallback(
     (newAmount: BigNumber) => {
       setAmount(newAmount)
-      setLeverage(calculateLeverage)
+      const totalAmount = previousAmount.plus(newAmount).abs()
+      const newLeverage = totalAmount.isZero()
+        ? 0
+        : getCoinValue(BNCoin.fromDenomAndBigNumber(perpsAsset.denom, totalAmount), [
+            limitPrice
+              ? {
+                  ...perpsAsset,
+                  price: BNCoin.fromDenomAndBigNumber(perpsAsset.denom, limitPrice),
+                }
+              : perpsAsset,
+          ])
+            .div(accountNetValue)
+            .toNumber()
+      setLeverage(newLeverage)
     },
-    [calculateLeverage],
+    [accountNetValue, limitPrice, perpsAsset, previousAmount],
   )
 
   const updateLeverage = useCallback(
