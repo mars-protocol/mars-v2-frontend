@@ -55,7 +55,6 @@ export default function DepositCap(props: Props) {
         <FormattedNumber
           amount={depositCapUsed}
           options={{ minDecimals: 2, maxDecimals: 2, suffix: '% used' }}
-          animate
           className={classNames(
             depositCapUsed >= 100 ? 'text-loss/60' : depositCapUsed > 90 ? 'text-info/60' : '',
           )}

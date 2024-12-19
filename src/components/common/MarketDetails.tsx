@@ -118,7 +118,6 @@ export default function MarketDetails({ row, type }: Props) {
                   className='text-xs text-center'
                   amount={detail.amount}
                   options={detail.options}
-                  animate
                 />
               }
               sub={detail.title}

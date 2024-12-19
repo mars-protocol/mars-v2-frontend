@@ -37,7 +37,6 @@ export const RiskChart = ({ data }: RiskChartProps) => {
           prefix: 'Risk score: ',
           suffix: '/100',
         }}
-        animate
       />
       <div className='-ml-6 h-[100px] w-[412px]'>
         <ResponsiveContainer width='100%' height='100%'>

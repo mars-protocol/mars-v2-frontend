@@ -11,7 +11,6 @@ export default function MaxLeverage(props: Props) {
       amount={props.farm.maxLeverage || 1}
       options={{ minDecimals: 2, maxDecimals: 2, suffix: 'x' }}
       className='text-xs'
-      animate
     />
   )
 }

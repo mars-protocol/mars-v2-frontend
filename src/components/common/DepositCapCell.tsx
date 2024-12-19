@@ -29,7 +29,6 @@ export default function DepositCapCell(props: Props) {
             'text-xs',
             depositCapUsed >= 100 ? 'text-loss/60' : depositCapUsed > 90 ? 'text-info/60' : '',
           )}
-          animate
         />
       }
     />

@@ -158,7 +158,6 @@ export default function WalletConnectedButton() {
             <FormattedNumber
               amount={walletAmount.toNumber()}
               options={{ suffix: ` ${baseAsset.symbol}`, abbreviated: true }}
-              animate
             />
           )}
         </div>
@@ -177,7 +176,6 @@ export default function WalletConnectedButton() {
               <div className='mr-2 flex h-[31px] items-end text-base-caps'>{baseAsset.symbol}</div>
               <div className='flex flex-wrap justify-end flex-0'>
                 <FormattedNumber
-                  animate
                   className='flex items-end h-[31px] text-2xl !leading-5'
                   amount={walletAmount.toNumber()}
                 />

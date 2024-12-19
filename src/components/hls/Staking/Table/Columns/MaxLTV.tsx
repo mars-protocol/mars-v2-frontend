@@ -19,7 +19,6 @@ export default function MaxLtv(props: Props) {
       amount={strategy.maxLTV * 100}
       options={{ minDecimals: 0, maxDecimals: 0, suffix: '%' }}
       className='text-xs'
-      animate
     />
   )
 }

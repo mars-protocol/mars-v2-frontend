@@ -16,7 +16,6 @@ export default function MaxLeverage(props: Props) {
       amount={props.strategy.maxLeverage}
       options={{ minDecimals: 2, maxDecimals: 2, suffix: 'x', prefix: '~' }}
       className='text-xs'
-      animate
     />
   )
 }

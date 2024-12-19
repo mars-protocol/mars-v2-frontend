@@ -26,7 +26,6 @@ export default function AmountAndValue(props: Props) {
         amount={isZero ? 0 : displayAmount}
         smallerThanThreshold={!isZero && isBelowMinAmount}
         options={{ abbreviated: abbreviated ?? true, maxDecimals: MAX_AMOUNT_DECIMALS }}
-        animate
       />
       <div className='flex'>
         {changePercentage && (

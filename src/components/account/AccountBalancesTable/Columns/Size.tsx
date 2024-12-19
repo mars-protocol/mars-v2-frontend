@@ -40,7 +40,6 @@ export default function Size(props: Props) {
         className={className}
         amount={size}
         options={{ abbreviated: true, maxDecimals: MAX_AMOUNT_DECIMALS }}
-        animate
       />
     )
 
@@ -57,7 +56,6 @@ export default function Size(props: Props) {
         maxDecimals: MAX_AMOUNT_DECIMALS,
         minDecimals: 0,
       }}
-      animate
     />
   )
 }

@@ -121,7 +121,6 @@ export default function DisplayCurrency(props: Props) {
         ...options,
         prefix,
       }}
-      animate
     />
   )
 }

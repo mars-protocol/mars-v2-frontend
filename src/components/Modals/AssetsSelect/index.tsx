@@ -38,7 +38,9 @@ export default function AssetsSelect(props: Props) {
   const defaultSelected = useMemo(() => {
     return assets.reduce(
       (acc, asset, index) => {
-        if (selectedDenoms?.includes(`${asset.denom}:${asset.chainName}`)) {
+        const assetIdentifier = asset.chainName ? `${asset.denom}:${asset.chainName}` : asset.denom
+
+        if (selectedDenoms?.includes(assetIdentifier)) {
           acc[index] = true
         }
         return acc
@@ -106,9 +108,16 @@ export default function AssetsSelect(props: Props) {
     ]
   }, [selectedDenoms, tableData])
 
-  const [whitelistedSelected, setWhitelistedSelected] = useState<RowSelectionState>(initialSelected)
+  const [whitelistedSelected, setWhitelistedSelected] = useState<RowSelectionState>(defaultSelected)
   const [nonCollateralSelected, setNonCollateralSelected] = useState<RowSelectionState>(
-    initialNonCollateralSelected,
+    nonCollateralTableAssets?.reduce((acc, _, index) => {
+      const assetIdentifier = nonCollateralTableAssets[index].chainName
+        ? `${nonCollateralTableAssets[index].denom}:${nonCollateralTableAssets[index].chainName}`
+        : nonCollateralTableAssets[index].denom
+
+      acc[index] = selectedDenoms?.includes(assetIdentifier) || false
+      return acc
+    }, {} as RowSelectionState) ?? {},
   )
 
   useEffect(() => {
@@ -116,28 +125,25 @@ export default function AssetsSelect(props: Props) {
 
     if (Array.isArray(tableData)) {
       newSelectedDenoms = assets
-        .filter((asset) =>
-          tableData.some((row, idx) => row.asset.denom === asset.denom && whitelistedSelected[idx]),
-        )
-        .map((asset) => `${asset.denom}:${asset.chainName}`)
+        .filter((asset, idx) => whitelistedSelected[idx])
+        .map((asset) => (asset.chainName ? `${asset.denom}:${asset.chainName}` : asset.denom))
     } else {
-      const filteredWhitelistedAsset = assets.filter((asset) =>
-        tableData.whitelistedData.some(
-          (row, index) => row.asset.denom === asset.denom && whitelistedSelected[index],
-        ),
-      )
+      const filteredWhitelistedAsset = assets.filter((asset, index) => whitelistedSelected[index])
       const nonCollateralAssets =
         nonCollateralTableAssets?.filter((_, index) => nonCollateralSelected[index]) || []
 
       newSelectedDenoms = [...filteredWhitelistedAsset, ...nonCollateralAssets]
         .sort((a, b) => a.symbol.localeCompare(b.symbol))
-        .map((asset) => `${asset.denom}:${asset.chainName}`)
+        .map((asset) => (asset.chainName ? `${asset.denom}:${asset.chainName}` : asset.denom))
     }
+
     if (
       selectedDenoms.length === newSelectedDenoms.length &&
       newSelectedDenoms.every((denom) => selectedDenoms.includes(denom))
-    )
+    ) {
       return
+    }
+
     onChangeSelected(newSelectedDenoms)
   }, [
     whitelistedSelected,

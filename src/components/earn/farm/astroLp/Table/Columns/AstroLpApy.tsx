@@ -37,7 +37,6 @@ export default function AstroLpApy(props: Props) {
         amount={astroLp.apy ?? 0}
         options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
         className='text-xs'
-        animate
       />
     </ConditionalWrapper>
   )
