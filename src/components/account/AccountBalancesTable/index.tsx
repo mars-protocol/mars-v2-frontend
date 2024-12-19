@@ -162,69 +162,67 @@ export default function AccountBalancesTable(props: Props) {
   }, [accountBalanceData, skipBridge])
 
   console.log('dynamicAssets', dynamicAssets)
-  if (accountBalanceData.length === 0) {
-    if (sortedAccountBalanceData.length === 0) {
-      return (
-        <ConditionalWrapper
-          condition={!hideCard}
-          wrapper={(children) => (
-            <Card className='w-full' title='Balances'>
-              {children}
-            </Card>
-          )}
-        >
-          <div className='w-full p-4'>
-            {isUsersAccount && !isHls ? (
-              <ActionButton
-                className='w-full'
-                text='Fund this Account'
-                color='tertiary'
-                onClick={() => {
-                  if (currentAccount?.id !== account.id) {
-                    navigate(
-                      getRoute(getPage(pathname, chainConfig), searchParams, address, account.id),
-                    )
-                  }
-                  useStore.setState({
-                    focusComponent: {
-                      component: <AccountFundFullPage />,
-                      onClose: () => {
-                        // TODO: update docs to reflect the current state of v2
-                        //useStore.setState({ getStartedModal: true })
-                      },
-                    },
-                  })
-                }}
-              />
-            ) : (
-              <Text size='sm' className='text-center'>
-                This account has no balances.
-              </Text>
-            )}
-          </div>
-        </ConditionalWrapper>
-      )
-    }
+  if (sortedAccountBalanceData.length === 0) {
     return (
-      <Table
-        title={
-          <Text
-            size='lg'
-            className='flex items-center justify-between w-full p-4 font-semibold bg-white/10'
-          >
-            <span>Balances</span>
-            <span className='text-white/60'>Credit Account {account.id}</span>
-          </Text>
-        }
-        columns={dynamicColumns}
-        data={dynamicAssets}
-        tableBodyClassName={classNames(tableBodyClassName, 'text-white/60')}
-        initialSorting={[]}
-        spacingClassName='p-2'
-        hideCard={hideCard}
-        type='balances'
-        isBalancesTable
-      />
+      <ConditionalWrapper
+        condition={!hideCard}
+        wrapper={(children) => (
+          <Card className='w-full' title='Balances'>
+            {children}
+          </Card>
+        )}
+      >
+        <div className='w-full p-4'>
+          {isUsersAccount && !isHls ? (
+            <ActionButton
+              className='w-full'
+              text='Fund this Account'
+              color='tertiary'
+              onClick={() => {
+                if (currentAccount?.id !== account.id) {
+                  navigate(
+                    getRoute(getPage(pathname, chainConfig), searchParams, address, account.id),
+                  )
+                }
+                useStore.setState({
+                  focusComponent: {
+                    component: <AccountFundFullPage />,
+                    onClose: () => {
+                      // TODO: update docs to reflect the current state of v2
+                      //useStore.setState({ getStartedModal: true })
+                    },
+                  },
+                })
+              }}
+            />
+          ) : (
+            <Text size='sm' className='text-center'>
+              This account has no balances.
+            </Text>
+          )}
+        </div>
+      </ConditionalWrapper>
     )
   }
+  return (
+    <Table
+      title={
+        <Text
+          size='lg'
+          className='flex items-center justify-between w-full p-4 font-semibold bg-white/10'
+        >
+          <span>Balances</span>
+          <span className='text-white/60'>Credit Account {account.id}</span>
+        </Text>
+      }
+      columns={dynamicColumns}
+      data={dynamicAssets}
+      tableBodyClassName={classNames(tableBodyClassName, 'text-white/60')}
+      initialSorting={[]}
+      spacingClassName='p-2'
+      hideCard={hideCard}
+      type='balances'
+      isBalancesTable
+    />
+  )
 }
