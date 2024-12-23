@@ -51,7 +51,7 @@
     "sharp": "^0.33.5",
     "starknet": "^6.11.0",
     "swr": "^2.2.5",
-    "tailwind-scrollbar-hide": "^1.1.7",
+    "tailwind-scrollbar-hide": "^2.0.0",
     "zustand": "5.0.2"
   },
   "devDependencies": {
