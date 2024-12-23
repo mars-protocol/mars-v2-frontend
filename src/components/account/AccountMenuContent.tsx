@@ -21,7 +21,7 @@ import useStore from 'store'
 import { isNumber } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import AccountLabel from './AccountLabel'
+import AccountLabel from 'components/account/AccountLabel'
 
 interface Props {
   className?: string

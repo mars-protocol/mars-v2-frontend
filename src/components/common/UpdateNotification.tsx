@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import NotificationBanner from 'components/common/NotificationBanner'
 import Button from 'components/common/Button'
 import packageInfo from '../../../package.json'
-import { ArrowCircle } from './Icons'
+import { ArrowCircle } from 'components/common/Icons'
 
 export default function UpdateNotification() {
   const [isUpdateAvailable, setIsUpdateAvailable] = useState(false)
