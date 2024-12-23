@@ -22,6 +22,7 @@ import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { debugSWR } from 'utils/middleware'
+import UpdateNotification from 'components/common/UpdateNotification'
 
 interface Props {
   focusComponent: FocusComponent | null
@@ -102,6 +103,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         >
           <PageMetadata />
           <Background />
+          <UpdateNotification />
           <Header />
           <main
             className={classNames(

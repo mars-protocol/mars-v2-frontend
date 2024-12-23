@@ -21,6 +21,7 @@ import useStore from 'store'
 import { isNumber } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import AccountLabel from './AccountLabel'
 
 interface Props {
   className?: string
@@ -108,11 +109,15 @@ export default function AccountMenuContent(props: Props) {
         hasSubmenu={hasCreditAccounts}
         className={isMobile ? '!px-2' : undefined}
       >
-        {hasCreditAccounts
-          ? isAccountSelected
-            ? `Credit Account ${accountId}`
-            : 'Select Account'
-          : 'Create Account'}
+        {hasCreditAccounts ? (
+          isAccountSelected ? (
+            <AccountLabel accountId={accountId} />
+          ) : (
+            'Select Account'
+          )
+        ) : (
+          'Create Account'
+        )}
       </Button>
       <Overlay
         className='max-w-screen-full right-0 mt-2 flex md:h-[530px] w-[336px] overflow-hidden fixed md:absolute top-18 md:top-8 h-[calc(100dvh-72px)]'

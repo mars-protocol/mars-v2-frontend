@@ -6,12 +6,12 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import AccountStats from 'components/account/AccountList/AccountStats'
 import Card from 'components/common/Card'
 import Radio from 'components/common/Radio'
-import Text from 'components/common/Text'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
+import AccountLabel from '../AccountLabel'
 
 interface Props {
   setShowMenu: (show: boolean) => void
@@ -67,9 +67,7 @@ export default function AccountList(props: Props) {
                   role='button'
                   onClick={() => setShowMenu(false)}
                 >
-                  <Text size='xs' className='flex flex-1'>
-                    Credit Account {accountId}
-                  </Text>
+                  <AccountLabel accountId={accountId} className='flex flex-1' />
                   <Radio active={isActive} className='group-hover/account:opacity-100' />
                 </div>
               }
