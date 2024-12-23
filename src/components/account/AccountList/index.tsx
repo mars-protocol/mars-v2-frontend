@@ -11,7 +11,7 @@ import useAccountIds from 'hooks/accounts/useAccountIds'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
-import AccountLabel from '../AccountLabel'
+import AccountLabel from 'components/account/AccountLabel'
 
 interface Props {
   setShowMenu: (show: boolean) => void
