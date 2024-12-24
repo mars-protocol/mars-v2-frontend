@@ -14,6 +14,7 @@ import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
+import AccountLabel from 'components/account/AccountLabel'
 
 interface Props {
   account: Account
@@ -105,7 +106,13 @@ function Content(props: Props) {
       stats={stats}
       health={health}
       healthFactor={healthFactor}
-      title={props.v1 ? 'V1 Portfolio' : `Credit Account ${account.id}`}
+      title={
+        props.v1 ? (
+          'V1 Portfolio'
+        ) : (
+          <AccountLabel accountId={account.id} size='base' allowEdit={true} />
+        )
+      }
       accountId={account.id}
     />
   )
@@ -118,7 +125,7 @@ export default function Summary(props: Props) {
         <Skeleton
           health={0}
           healthFactor={0}
-          title={`Credit Account ${props.account.id}`}
+          title={<AccountLabel accountId={props.account.id} />}
           accountId={props.account.id}
         />
       }

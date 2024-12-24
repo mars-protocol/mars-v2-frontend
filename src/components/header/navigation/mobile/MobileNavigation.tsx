@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 
+import AccountLabel from 'components/account/AccountLabel'
 import AccountMenu from 'components/account/AccountMenu'
 import AccountSummary from 'components/account/AccountSummary'
 import Card from 'components/common/Card'
@@ -147,7 +148,7 @@ function Content(props: Props & { account?: Account }) {
         )}
         {account && (
           <div className='flex w-full'>
-            <Card title={isV1 ? 'Red Bank' : `Credit Account ${account.id}`}>
+            <Card title={isV1 ? 'Red Bank' : <AccountLabel accountId={account.id} />}>
               <AccountSummary account={account} />
             </Card>
           </div>

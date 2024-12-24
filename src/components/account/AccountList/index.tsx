@@ -67,7 +67,7 @@ export default function AccountList(props: Props) {
                   role='button'
                   onClick={() => setShowMenu(false)}
                 >
-                  <AccountLabel accountId={accountId} className='flex flex-1' />
+                  <AccountLabel accountId={accountId} allowEdit={true} />
                   <Radio active={isActive} className='group-hover/account:opacity-100' />
                 </div>
               }

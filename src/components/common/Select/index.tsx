@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useCallback, useEffect, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useState } from 'react'
 
 import { ChevronDown } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
@@ -14,7 +14,7 @@ interface Props {
   onChange: (value: string) => void
   isParent?: boolean
   className?: string
-  title?: string
+  title?: string | ReactNode
   label?: string
   displayClassName?: string
   containerClassName?: string

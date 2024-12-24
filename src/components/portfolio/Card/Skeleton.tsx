@@ -1,4 +1,4 @@
-import React from 'react'
+import { ReactNode } from 'react'
 
 import HealthBar from 'components/account/Health/HealthBar'
 import Card from 'components/common/Card'
@@ -10,20 +10,21 @@ interface Props {
   stats: { title: React.ReactNode; sub: string }[]
   health: number
   healthFactor: number
-  accountId: string
+  accountId?: string
+  accountLabel?: ReactNode
   isCurrent?: boolean
   isHls?: boolean
 }
 
 export default function Skeleton(props: Props) {
-  const { stats, health, healthFactor, accountId, isCurrent } = props
+  const { stats, health, healthFactor, accountId, isCurrent, accountLabel } = props
   return (
     <Card className='p-4 bg-white/5'>
       <div className='flex items-center justify-between'>
-        <Text>
-          Credit Account {accountId}
-          {props.isHls && <HlsTag />}
-        </Text>
+        <div className='flex items-end  gap-2'>
+          {accountLabel || <Text>Credit Account {accountId}</Text>}
+          <Text>{props.isHls && <HlsTag />}</Text>
+        </div>
         <Text size='xs' className='text-white/60'>
           {isCurrent && '(current)'}
         </Text>

@@ -4,6 +4,7 @@ import { ArrowRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import useAccountId from 'hooks/accounts/useAccountId'
 import { getRoute } from 'utils/route'
+import AccountLabel from 'components/account/AccountLabel'
 
 interface Props {
   accountId: string
@@ -22,7 +23,7 @@ export default function PortfolioAccountPageHeader(props: Props) {
       <div className='h-3'>
         <ArrowRight className='h-3 text-white/60 ' />
       </div>
-      <Text>Credit Account {props.accountId}</Text>
+      <AccountLabel size='base' accountId={props.accountId} />
     </div>
   )
 }

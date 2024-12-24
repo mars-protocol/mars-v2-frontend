@@ -5,6 +5,7 @@ import AccountSummaryLeverage from 'components/account/AccountSummary/AccountSum
 import HealthBar from 'components/account/Health/HealthBar'
 import Button from 'components/common/Button'
 import DisplayCurrency from 'components/common/DisplayCurrency'
+import AccountLabel from 'components/account/AccountLabel'
 import { ArrowRight, ArrowRightLine } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
@@ -68,10 +69,9 @@ export default function AccountSummaryHeader(props: Props) {
         />
       )}
       {!isInModal && (
-        <Text
-          size='sm'
-          className='w-full pb-1 text-white/50'
-        >{`Credit Account ${account.id}`}</Text>
+        <div className='pb-1'>
+          <AccountLabel size='base' accountId={account.id} className='text-white/50' />
+        </div>
       )}
       <div className='flex items-end w-full gap-2 pb-2 border-b border-white/5'>
         <DisplayCurrency

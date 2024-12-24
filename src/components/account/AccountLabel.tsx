@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from 'react'
-import { Edit, Check } from 'components/common/Icons'
+import { useCallback, useEffect, useState } from 'react'
+import { Check, Edit } from 'components/common/Icons'
 import Button from 'components/common/Button'
 import Text from 'components/common/Text'
 import useAccountLabels from 'hooks/localStorage/useAccountLabels'
@@ -7,9 +7,16 @@ import useAccountLabels from 'hooks/localStorage/useAccountLabels'
 interface Props {
   accountId: string
   className?: string
+  size?: '3xs' | '2xs' | 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl'
+  allowEdit?: boolean
 }
 
-export default function AccountLabel({ accountId, className }: Props) {
+export default function AccountLabel({
+  accountId,
+  className,
+  size = 'sm',
+  allowEdit = false,
+}: Props) {
   const [accountLabels, setAccountLabels] = useAccountLabels()
   const [isEditing, setIsEditing] = useState(false)
   const [label, setLabel] = useState(accountLabels[accountId] || '')
@@ -33,7 +40,7 @@ export default function AccountLabel({ accountId, className }: Props) {
     setIsEditing(true)
   }, [])
 
-  if (isEditing) {
+  if (isEditing && allowEdit) {
     return (
       <div className='flex items-center gap-2' onClick={(e) => e.stopPropagation()}>
         <input
@@ -56,25 +63,31 @@ export default function AccountLabel({ accountId, className }: Props) {
   }
 
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
+    <div className={`flex items-center gap-2 relative`}>
       <div className='relative group/label'>
-        <Text size='xs'>{accountLabels[accountId] || `Credit Account ${accountId}`}</Text>
+        <Text className={className} size={size}>
+          {accountLabels[accountId] || `Credit Account ${accountId}`}
+        </Text>
         {accountLabels[accountId] && (
           <Text
-            size='xs'
-            className='absolute left-1/2 -translate-x-1/2 -bottom-7 opacity-0 group-hover/label:opacity-100 transition-opacity bg-[#1C1A2D] px-2 py-1 rounded-base whitespace-nowrap'
+            size='3xs'
+            className='absolute whitespace-nowrap text-center left-1/2 -translate-x-1/2 -bottom-7 opacity-0 group-hover/label:opacity-100 transition-opacity bg-[#1C1A2D] px-2 py-1 rounded-base z-50'
           >
-            Credit Account {accountId}
+            Credit Account
+            <br />
+            {accountId}
           </Text>
         )}
       </div>
-      <Button
-        color='secondary'
-        size='xs'
-        onClick={handleEditClick}
-        leftIcon={<Edit />}
-        className='!p-1 opacity-50 hover:opacity-100'
-      />
+      {allowEdit && (
+        <Button
+          color='secondary'
+          size='xs'
+          onClick={handleEditClick}
+          leftIcon={<Edit />}
+          className='!p-1 opacity-50 hover:opacity-100'
+        />
+      )}
     </div>
   )
 }
