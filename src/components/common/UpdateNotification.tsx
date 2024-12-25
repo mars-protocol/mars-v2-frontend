@@ -24,7 +24,11 @@ export default function UpdateNotification() {
       }
     }
 
+    const intervalId = setInterval(checkForUpdates, 600000)
+
     checkForUpdates()
+
+    return () => clearInterval(intervalId)
   }, [])
 
   if (!isUpdateAvailable) return null
