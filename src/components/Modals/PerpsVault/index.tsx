@@ -86,6 +86,10 @@ function PerpsVaultModal(props: Props) {
       return [amountInDeposits, maxAmount]
     }
 
+    if (props.modal.type === 'unlock' && account.perpsVault?.active) {
+      return [BN_ZERO, BN(account.perpsVault.active.amount)]
+    }
+
     return [BN_ZERO, BN_ZERO]
   }, [
     account,
