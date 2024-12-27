@@ -9,6 +9,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { calculateAccountBalanceValue } from 'utils/accounts'
 import { getPage, getRoute } from 'utils/route'
+import useAssets from 'hooks/assets/useAssets'
 
 interface Props {
   account: Account
@@ -21,7 +22,7 @@ export default function ManageAccount(props: Props) {
   const chainConfig = useChainConfig()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
-  const assets = useWhitelistedAssets()
+  const { data: assets } = useAssets()
   const isHls = account.kind === 'high_levered_strategy'
   const positionBalance = useMemo(
     () => (!account ? null : calculateAccountBalanceValue(account, assets)),
