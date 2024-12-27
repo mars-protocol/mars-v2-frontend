@@ -12,14 +12,14 @@ const Neutron1: ChainConfig = {
       denom: 'factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom',
       campaignIds: ['drop_apy', 'drop'],
       baseMultiplier: 1,
-      collateralMultiplier: 3,
+      collateralMultiplier: 5,
       campaignDenom: 'dATOM',
     },
     {
       denom: 'factory/neutron1ut4c6pv4u6vyu97yw48y8g7mle0cat54848v6m97k977022lzxtsaqsgmq/udtia',
       campaignIds: ['drop_apy', 'drop'],
       baseMultiplier: 1,
-      collateralMultiplier: 3,
+      collateralMultiplier: 5,
       campaignDenom: 'dTIA',
     },
     //dATOM-NTRN
