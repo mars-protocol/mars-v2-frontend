@@ -281,6 +281,19 @@ export default function PerpsSlTpModal() {
                 disabled={false}
                 isUSD
               />
+              <div className='flex flex-row flex-1 py-3 pl-3 pr-2 mt-2 border rounded border-white/20 bg-white/5'>
+                <Text
+                  className={
+                    stopLossPercentage.isZero()
+                      ? 'text-white'
+                      : stopLossPercentage.isNegative()
+                        ? 'text-error'
+                        : 'text-success'
+                  }
+                >
+                  {formatPercent(stopLossPercentage.toNumber())}
+                </Text>
+              </div>
             </div>
             {stopLossError && (
               <Callout type={CalloutType.WARNING} className='mt-2 text-left'>
