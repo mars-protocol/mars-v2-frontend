@@ -133,6 +133,24 @@ function AccountDeleteModal(props: Props) {
     )
   }
 
+  if (modal.stakedAstroLps.length > 0) {
+    return (
+      <AccountAlertDialog
+        title='Withdraw Staked Astro LP positions to delete your account'
+        content='You must first withdraw your staked Astro LP positions before deleting your account.'
+        closeHandler={closeDeleteAccountModal}
+        positiveButton={{
+          text: 'Go to Farm',
+          icon: <ArrowRight />,
+          onClick: () => {
+            navigate(getRoute('farm', searchParams, address, accountId))
+            closeDeleteAccountModal()
+          },
+        }}
+      />
+    )
+  }
+
   if (depositsAndLends.length === 0)
     return (
       <AccountAlertDialog

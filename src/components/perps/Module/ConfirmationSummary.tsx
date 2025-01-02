@@ -254,6 +254,7 @@ export default function ConfirmationSummary(props: Props) {
                   }
                   baseDenom={baseDenom}
                   className={classNames('text-xs', isPnl && 'font-bold')}
+                  inlinePercentage={true}
                 />
               </SummaryRow>
             )
