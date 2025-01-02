@@ -72,6 +72,14 @@ function AccountDeleteModal(props: Props) {
     [modal],
   )
 
+  const hasPerpsVaultPositions = useMemo(() => {
+    return (
+      modal?.perpsVault?.active ||
+      (modal?.perpsVault?.unlocking && modal?.perpsVault?.unlocking?.length > 0) ||
+      modal?.perpsVault?.unlocked
+    )
+  }, [modal?.perpsVault])
+
   if (debts.length > 0)
     return (
       <AccountAlertDialog
@@ -106,6 +114,24 @@ function AccountDeleteModal(props: Props) {
         }}
       />
     )
+
+  if (hasPerpsVaultPositions) {
+    return (
+      <AccountAlertDialog
+        title='Withdraw from Counterparty Vault to delete your account'
+        content='You must first withdraw your funds from the counterparty vault before deleting your account.'
+        closeHandler={closeDeleteAccountModal}
+        positiveButton={{
+          text: 'Go to Perps Vault',
+          icon: <ArrowRight />,
+          onClick: () => {
+            navigate(getRoute('perps-vault', searchParams, address, accountId))
+            closeDeleteAccountModal()
+          },
+        }}
+      />
+    )
+  }
 
   if (depositsAndLends.length === 0)
     return (

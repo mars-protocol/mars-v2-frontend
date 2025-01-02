@@ -7,6 +7,7 @@ import { CircularProgress } from 'components/common/CircularProgress'
 import Container from 'components/common/Container'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
+import PnLDisplay from 'components/common/PnLDisplay'
 import Text from 'components/common/Text'
 import { ExpectedPrice } from 'components/perps/Module/ExpectedPrice'
 import TradingFee from 'components/perps/Module/TradingFee'
@@ -23,6 +24,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { PnlAmounts } from 'types/generated/mars-perps/MarsPerps.types'
 import { byDenom } from 'utils/array'
 import { BN, mergeBNCoinArrays } from 'utils/helpers'
+import { calculatePnLPercentage } from 'utils/pnl'
 
 interface Props {
   accountId: string
@@ -240,25 +242,18 @@ export default function ConfirmationSummary(props: Props) {
             )
             return (
               <SummaryRow label={label} key={index} className={classNames(isPnl && 'font-bold')}>
-                <DisplayCurrency
-                  className={classNames(
-                    'text-xs',
-                    isPnl && 'font-bold',
-                    isPnl && pnlAmount.isPositive() && 'text-profit',
-                    isPnl && pnlAmount.isNegative() && 'text-loss',
-                  )}
-                  coin={BNCoin.fromDenomAndBigNumber(
-                    baseDenom,
-                    isPnl && !limitPrice
-                      ? pnlAmount.minus(
-                          tradingFeeAndPrice.fee.opening.plus(tradingFeeAndPrice.fee.closing),
-                        )
-                      : pnlAmount,
-                  )}
-                  options={{
-                    abbreviated: false,
-                  }}
-                  showSignPrefix={true}
+                <PnLDisplay
+                  pnlAmount={pnlAmount}
+                  pnlPercentage={
+                    calculatePnLPercentage(
+                      BN(position.entry_price),
+                      limitPrice || BN(position.current_price),
+                      BN(position.size),
+                      BN(position.size).isPositive(),
+                    ).pnlPercentage
+                  }
+                  baseDenom={baseDenom}
+                  className={classNames('text-xs', isPnl && 'font-bold')}
                 />
               </SummaryRow>
             )
