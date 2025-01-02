@@ -10,6 +10,7 @@ interface Props {
   className?: string
   showPrefix?: boolean
   inlinePercentage?: boolean
+  percentageFirst?: boolean
 }
 
 export default function PnLDisplay({
@@ -19,6 +20,7 @@ export default function PnLDisplay({
   className,
   showPrefix = true,
   inlinePercentage = false,
+  percentageFirst = false,
 }: Props) {
   const isProfitable = pnlAmount.isGreaterThan(0)
   const colorClass = isProfitable
@@ -31,6 +33,15 @@ export default function PnLDisplay({
     <span className={classNames('text-xs', colorClass)}>({formattedPercentage})</span>
   )
 
+  const currencyDisplay = (
+    <DisplayCurrency
+      coin={BNCoin.fromDenomAndBigNumber(baseDenom, pnlAmount)}
+      className={colorClass}
+      showSignPrefix={showPrefix}
+      isProfitOrLoss
+    />
+  )
+
   return (
     <div
       className={classNames(
@@ -39,13 +50,17 @@ export default function PnLDisplay({
         className,
       )}
     >
-      <DisplayCurrency
-        coin={BNCoin.fromDenomAndBigNumber(baseDenom, pnlAmount)}
-        className={colorClass}
-        showSignPrefix={showPrefix}
-        isProfitOrLoss
-      />
-      {percentageDisplay}
+      {percentageFirst ? (
+        <>
+          {percentageDisplay}
+          {currencyDisplay}
+        </>
+      ) : (
+        <>
+          {currencyDisplay}
+          {percentageDisplay}
+        </>
+      )}
     </div>
   )
 }

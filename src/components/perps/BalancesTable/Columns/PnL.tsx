@@ -7,8 +7,8 @@ import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import { BNCoin } from 'types/classes/BNCoin'
 import PnLDisplay from 'components/common/PnLDisplay'
-import { calculatePnLPercentage } from 'utils/pnl'
 import { BN_ZERO } from 'constants/math'
+import { BN } from 'utils/helpers'
 
 export const PNL_META = {
   accessorKey: 'pnl.net.amount',
@@ -27,15 +27,11 @@ export default function PnL(props: Props) {
   const { pnl, position } = props
 
   const pnlPercentage = useMemo(() => {
-    if (!position || !position.entryPrice || !position.currentPrice) return BN_ZERO
-    const { pnlPercentage } = calculatePnLPercentage(
-      position.entryPrice,
-      position.currentPrice,
-      position.amount,
-      position.tradeDirection === 'long',
-    )
-    return pnlPercentage
-  }, [position])
+    if (!position || !position.amount || pnl.net.amount.isZero()) return BN_ZERO
+
+    const positionValue = BN(position.amount).abs().times(position.entryPrice)
+    return BN(pnl.net.amount).div(positionValue).times(100)
+  }, [position, pnl.net.amount])
 
   if (props.type === 'limit') {
     return (

@@ -23,8 +23,6 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { formatPercent, magnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import { calculatePnLPercentage } from 'utils/pnl'
-import PnLDisplay from 'components/common/PnLDisplay'
 
 export default function PerpsSlTpModal() {
   const [stopLossPrice, setStopLossPrice] = useState(BN_ZERO)
@@ -283,27 +281,6 @@ export default function PerpsSlTpModal() {
                 disabled={false}
                 isUSD
               />
-              {currentAccount?.perps.find((p) => p.denom === perpsAsset?.denom) && (
-                <PnLDisplay
-                  pnlAmount={
-                    calculatePnLPercentage(
-                      currentAccount?.perps.find((p) => p.denom === perpsAsset?.denom)
-                        ?.entryPrice ?? BN_ZERO,
-                      stopLossPrice,
-                      currentAccount?.perps.find((p) => p.denom === perpsAsset?.denom)?.amount ??
-                        BN_ZERO,
-                      currentAccount?.perps.find((p) => p.denom === perpsAsset?.denom)
-                        ?.tradeDirection === 'long',
-                    ).pnlAmount
-                  }
-                  pnlPercentage={stopLossPercentage}
-                  baseDenom={
-                    currentAccount?.perps.find((p) => p.denom === perpsAsset?.denom)?.baseDenom ??
-                    ''
-                  }
-                  className='flex-1 py-3 pl-3 pr-2 mt-2 border rounded border-white/20 bg-white/5'
-                />
-              )}
             </div>
             {stopLossError && (
               <Callout type={CalloutType.WARNING} className='mt-2 text-left'>

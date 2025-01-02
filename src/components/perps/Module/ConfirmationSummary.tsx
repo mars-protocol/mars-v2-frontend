@@ -24,7 +24,6 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { PnlAmounts } from 'types/generated/mars-perps/MarsPerps.types'
 import { byDenom } from 'utils/array'
 import { BN, mergeBNCoinArrays } from 'utils/helpers'
-import { calculatePnLPercentage } from 'utils/pnl'
 
 interface Props {
   accountId: string
@@ -242,20 +241,31 @@ export default function ConfirmationSummary(props: Props) {
             )
             return (
               <SummaryRow label={label} key={index} className={classNames(isPnl && 'font-bold')}>
-                <PnLDisplay
-                  pnlAmount={pnlAmount}
-                  pnlPercentage={
-                    calculatePnLPercentage(
-                      BN(position.entry_price),
-                      limitPrice || BN(position.current_price),
-                      BN(position.size),
-                      BN(position.size).isPositive(),
-                    ).pnlPercentage
-                  }
-                  baseDenom={baseDenom}
-                  className={classNames('text-xs', isPnl && 'font-bold')}
-                  inlinePercentage={true}
-                />
+                {isPnl ? (
+                  <PnLDisplay
+                    pnlAmount={pnlAmount}
+                    pnlPercentage={(() => {
+                      if (pnlAmount.isZero() || !position.size || !position.entry_price)
+                        return BN_ZERO
+
+                      const positionValue = BN(position.size).abs().times(position.entry_price)
+                      return BN(pnlAmount).div(positionValue).times(100)
+                    })()}
+                    baseDenom={baseDenom}
+                    className={classNames('text-xs', isPnl && 'font-bold')}
+                    inlinePercentage={true}
+                    percentageFirst={true}
+                  />
+                ) : (
+                  <DisplayCurrency
+                    coin={BNCoin.fromDenomAndBigNumber(baseDenom, pnlAmount)}
+                    className={classNames('text-xs')}
+                    showSignPrefix={true}
+                    options={{
+                      abbreviated: false,
+                    }}
+                  />
+                )}
               </SummaryRow>
             )
           })}
