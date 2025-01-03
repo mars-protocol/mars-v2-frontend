@@ -1,4 +1,4 @@
-import DisplayCurrency from './DisplayCurrency'
+import DisplayCurrency from 'components/common/DisplayCurrency'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatPercent } from 'utils/formatters'
 import classNames from 'classnames'
@@ -23,10 +23,11 @@ export default function PnLDisplay({
   percentageFirst = false,
 }: Props) {
   const isProfitable = pnlAmount.isGreaterThan(0)
-  const colorClass = isProfitable
-    ? 'number text-success text-profit'
-    : 'number text-error-loss text-loss'
-
+  const colorClass = pnlAmount.isEqualTo(0)
+    ? 'number'
+    : isProfitable
+      ? 'number text-success text-profit'
+      : 'number text-error-loss text-loss'
   const formattedPercentage = `${isProfitable ? '+' : '-'}${formatPercent(pnlPercentage.abs().toNumber())}`
 
   const percentageDisplay = (
