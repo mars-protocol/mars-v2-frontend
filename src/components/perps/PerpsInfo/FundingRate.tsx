@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ChevronDown } from 'components/common/Icons'
 import { Tooltip } from 'components/common/Tooltip'
@@ -34,6 +33,16 @@ export default function FundingRate() {
     return market?.fundingRate.times(Intervals[interval]) ?? BN_ZERO
   }, [interval, market?.fundingRate])
 
+  const getFundingRateMessage = (rate: number) => {
+    if (rate === 0) {
+      return "The Funding Rate is currently 0%, which means active positions don't have to pay any Funding Fee"
+    }
+    if (rate > 0) {
+      return 'The Funding Rate is currently positive, which means active Long positions have to pay an ongoing fee over time and active Short positions receive this fee'
+    }
+    return 'The Funding Rate is currently negative, which means active Short positions have to pay an ongoing fee over time and active Long positions receive this fee'
+  }
+
   if (!market) return '-'
 
   const rate = fundingRate.toNumber()
@@ -41,11 +50,18 @@ export default function FundingRate() {
 
   return (
     <div className='flex items-center gap-1'>
-      <FormattedNumber
-        className='inline text-sm'
-        amount={rate}
-        options={{ minDecimals: 2, maxDecimals: decimals, suffix: '%' }}
-      />
+      <Tooltip
+        content={<div className='max-w-[240px]'>{getFundingRateMessage(rate)}</div>}
+        type='info'
+      >
+        <div className='border-b border-dashed border-white/40'>
+          <FormattedNumber
+            className='inline text-sm cursor-help'
+            amount={rate}
+            options={{ minDecimals: 2, maxDecimals: decimals, suffix: '%' }}
+          />
+        </div>
+      </Tooltip>
       <Tooltip
         content={
           <div>

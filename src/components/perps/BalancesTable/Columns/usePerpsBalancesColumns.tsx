@@ -97,7 +97,7 @@ export default function usePerpsBalancesColumns(props: Props) {
             {
               ...PNL_META,
               cell: ({ row }: { row: Row<PerpPositionRow> }) => (
-                <PnL pnl={row.original.pnl} type={row.original.type} />
+                <PnL pnl={row.original.pnl} type={row.original.type} position={row.original} />
               ),
             },
           ]),
