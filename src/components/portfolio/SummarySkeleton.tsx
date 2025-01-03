@@ -1,4 +1,4 @@
-import React from 'react'
+import { ReactNode } from 'react'
 
 import HealthBar from 'components/account/Health/HealthBar'
 import HealthIcon from 'components/account/Health/HealthIcon'
@@ -14,7 +14,7 @@ interface Props {
   stats?: { title: React.ReactNode | null; sub: string }[]
   health?: number
   healthFactor?: number
-  title: string
+  title: string | ReactNode
   accountId: string
 }
 

@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 
 import ActionButton from 'components/common/Button/ActionButton'
 import DropDownButton from 'components/common/Button/DropDownButton'
-import { Check, Cross, Edit } from 'components/common/Icons'
+import { Check, Cross, Edit, SwapIcon } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import PerpsSlTpModal from 'components/Modals/PerpsSlTpModal'
 import CloseLabel from 'components/perps/BalancesTable/Columns/CloseLabel'
@@ -193,6 +193,24 @@ export default function Manage(props: Props) {
             // },
           ]),
       {
+        icon: <SwapIcon />,
+        text: 'Flip Direction',
+        onClick: () => {
+          if (!currentAccount) return
+          const newDirection = perpPosition.tradeDirection === 'long' ? 'short' : 'long'
+          const flipAmount = perpPosition.amount.times(2)
+          const signedAmount =
+            newDirection === 'long' ? flipAmount.abs() : flipAmount.abs().negated()
+
+          closePerpPosition({
+            accountId: currentAccount.id,
+            coin: BNCoin.fromDenomAndBigNumber(perpPosition.asset.denom, signedAmount),
+            autolend: isAutoLendEnabledForCurrentAccount,
+            baseDenom: perpPosition.baseDenom,
+          })
+        },
+      },
+      {
         icon: <Cross width={16} />,
         text: 'Close Position',
         onClick: () => handleCloseClick(),
@@ -201,9 +219,12 @@ export default function Manage(props: Props) {
     [
       handleCloseClick,
       // openPerpsSlTpModal,
-      perpPosition.asset.denom,
+      perpPosition,
       searchParams,
       setSearchParams,
+      closePerpPosition,
+      currentAccount,
+      isAutoLendEnabledForCurrentAccount,
     ],
   )
 

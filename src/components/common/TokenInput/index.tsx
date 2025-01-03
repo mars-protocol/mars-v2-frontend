@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 
+import AccountLabel from 'components/account/AccountLabel'
 import Button from 'components/common/Button'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import DoubleLogo from 'components/common/DoubleLogo'
@@ -63,7 +64,13 @@ export default function TokenInput(props: Props) {
             options={props.balances}
             defaultValue={props.asset.denom}
             onChange={onChangeAsset}
-            title={props.accountId ? `Credit Account ${props.accountId}` : 'Your Wallet'}
+            title={
+              props.accountId ? (
+                <AccountLabel accountId={props.accountId} allowEdit={true} />
+              ) : (
+                'Your Wallet'
+              )
+            }
             className='h-full border-r border-white/20 bg-white/5'
             displayClassName='rounded-l-sm'
           />

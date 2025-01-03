@@ -21,6 +21,7 @@ import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { getRoute } from 'utils/route'
+import AccountLabel from 'components/account/AccountLabel'
 
 interface Props {
   accountId: string
@@ -100,7 +101,6 @@ export default function PortfolioCard(props: Props) {
       />
     )
   }
-
   return (
     <NavLink
       to={getRoute(
@@ -115,9 +115,11 @@ export default function PortfolioCard(props: Props) {
         stats={stats}
         health={health}
         healthFactor={healthFactor}
-        accountId={props.accountId}
         isCurrent={props.accountId === currentAccountId}
         isHls={account.kind === 'high_levered_strategy'}
+        accountLabel={
+          <AccountLabel accountId={props.accountId} className='mt-2' size='base' allowEdit={true} />
+        }
       />
     </NavLink>
   )

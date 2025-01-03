@@ -15,6 +15,7 @@ import { useMemo } from 'react'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import AccountLabel from '../AccountLabel'
 
 interface Props {
   account: Account
@@ -117,7 +118,7 @@ export default function AccountBalancesTable(props: Props) {
           className='flex items-center justify-between w-full p-4 font-semibold bg-white/10'
         >
           <span>Balances</span>
-          <span className='text-white/60'>Credit Account {account.id}</span>
+          <AccountLabel accountId={account.id} />
         </Text>
       }
       columns={columns}
