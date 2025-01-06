@@ -244,13 +244,13 @@ export default function ConfirmationSummary(props: Props) {
                 {isPnl ? (
                   <PnLDisplay
                     pnlAmount={pnlAmount}
-                    pnlPercentage={(() => {
-                      if (pnlAmount.isZero() || !position.size || !position.entry_price)
-                        return BN_ZERO
-
-                      const positionValue = BN(position.size).abs().times(position.entry_price)
-                      return BN(pnlAmount).div(positionValue).times(100)
-                    })()}
+                    pnlPercentage={
+                      pnlAmount.isZero() || !position.size || !position.entry_price
+                        ? BN_ZERO
+                        : BN(pnlAmount)
+                            .div(BN(position.size).abs().times(position.entry_price))
+                            .times(100)
+                    }
                     baseDenom={baseDenom}
                     className={classNames('text-xs', isPnl && 'font-bold')}
                     inlinePercentage={true}

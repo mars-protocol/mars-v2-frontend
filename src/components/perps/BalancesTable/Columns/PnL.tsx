@@ -29,8 +29,8 @@ export default function PnL(props: Props) {
   const pnlPercentage = useMemo(() => {
     if (!position || !position.amount || pnl.net.amount.isZero()) return BN_ZERO
 
-    const positionValue = BN(position.amount).abs().times(position.entryPrice)
-    return BN(pnl.net.amount).div(positionValue).times(100)
+    const entryValue = BN(position.amount).abs().times(position.entryPrice)
+    return BN(pnl.net.amount).div(entryValue).times(100)
   }, [position, pnl.net.amount])
 
   if (props.type === 'limit') {
