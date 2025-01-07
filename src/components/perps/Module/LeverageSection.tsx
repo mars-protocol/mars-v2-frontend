@@ -28,15 +28,15 @@ export const LeverageSection = ({
     </Text>
     <LeverageSlider
       max={maxLeverage}
-      value={effectiveLeverage}
+      value={effectiveLeverage > maxLeverage ? 0 : effectiveLeverage}
       onChange={onChangeLeverage}
       type={tradeDirection}
-      disabled={isDisabledAmountInput}
+      disabled={isDisabledAmountInput || effectiveLeverage > maxLeverage}
     />
     {maxLeverage > 5 && (
       <LeverageButtons
         maxLeverage={maxLeverage}
-        currentLeverage={effectiveLeverage}
+        currentLeverage={effectiveLeverage > maxLeverage ? 0 : effectiveLeverage}
         maxAmount={maxAmount}
         onChange={onChangeLeverage}
       />

@@ -91,7 +91,6 @@ export default function AssetSelectorItem(props: Props) {
                     className='text-xs text-left text-white/80'
                     amount={amount}
                     options={{ abbreviated: true, maxDecimals: MAX_AMOUNT_DECIMALS }}
-                    animate
                   />
                 ) : (
                   <FormattedNumber
@@ -102,7 +101,6 @@ export default function AssetSelectorItem(props: Props) {
                       maxDecimals: MAX_AMOUNT_DECIMALS,
                       minDecimals: 0,
                     }}
-                    animate
                   />
                 )}
               </div>

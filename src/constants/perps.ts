@@ -27,6 +27,17 @@ export const PERPS_ASSETS: AstroportAsset[] = [
   },
   {
     chainId: 'neutron-1',
+    denom: 'perps/uatom',
+    symbol: 'ATOM',
+    icon: 'https://raw.githubusercontent.com/mars-protocol/mars-v2-frontend/refs/heads/main/src/components/common/Icons/ATOMLogo.svg',
+    description: 'Cosmos',
+    decimals: 6,
+    priceUSD: 0,
+    totalLiquidityUSD: 0,
+    dayVolumeUSD: 0,
+  },
+  {
+    chainId: 'neutron-1',
     denom: 'perps/ubnb',
     symbol: 'BNB',
     icon: 'https://raw.githubusercontent.com/mars-protocol/mars-v2-frontend/refs/heads/main/src/components/common/Icons/BNBLogo.svg',

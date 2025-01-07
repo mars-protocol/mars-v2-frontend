@@ -429,29 +429,37 @@ function ManageSummary(
           }}
         />
       </SummaryLine>
-      <SummaryLine label='Leverage' contentClassName='flex gap-1 pt-2'>
+      <SummaryLine label='Leverage' contentClassName='flex gap-1'>
         {previousLeverage && !previousAmount.isZero() ? (
           <div className='flex items-center gap-1'>
             <span>{formatLeverage(previousLeverage)}</span>
             <div className='w-4'>
               <ArrowRight
                 className={classNames(
-                  leverage > previousLeverage ? 'text-error' : 'text-success',
+                  leverage === undefined
+                    ? 'text-error'
+                    : leverage > previousLeverage
+                      ? 'text-error'
+                      : 'text-success',
                   'transition-colors duration-200',
                 )}
               />
             </div>
             <span
               className={classNames(
-                leverage > previousLeverage ? 'text-error' : 'text-success',
+                leverage === undefined
+                  ? 'text-error'
+                  : leverage > previousLeverage
+                    ? 'text-error'
+                    : 'text-success',
                 'transition-colors duration-200',
               )}
             >
-              {formatLeverage(leverage)}
+              {leverage === undefined ? '—' : formatLeverage(leverage)}
             </span>
           </div>
         ) : (
-          <span>{formatLeverage(leverage)}</span>
+          <span>{leverage === undefined ? '—' : formatLeverage(leverage)}</span>
         )}
       </SummaryLine>
     </div>

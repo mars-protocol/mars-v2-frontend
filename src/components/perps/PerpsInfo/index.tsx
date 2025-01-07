@@ -1,12 +1,13 @@
-import React, { useMemo } from 'react'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
+import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import FundingRate from 'components/perps/PerpsInfo/FundingRate'
-import usePerpsMarket from 'hooks/perps/usePerpsMarket'
-import { BNCoin } from 'types/classes/BNCoin'
 import Skew from 'components/perps/PerpsInfo/Skew'
-import { FormattedNumber } from 'components/common/FormattedNumber'
+import TotalOpenInterest from 'components/perps/PerpsInfo/TotalOpenInterest'
+import usePerpsMarket from 'hooks/perps/usePerpsMarket'
+import React, { useMemo } from 'react'
+import { BNCoin } from 'types/classes/BNCoin'
 import { getPerpsPriceDecimals } from 'utils/formatters'
 
 export function PerpsInfo() {
@@ -36,6 +37,7 @@ export function PerpsInfo() {
           />
         }
       />,
+      <InfoItem key='totalOpenInterest' label='Total Open Interest' item={<TotalOpenInterest />} />,
       <InfoItem key='skew' label='Skew' item={<Skew />} />,
       <InfoItem key='fundingRate' label='Funding rate' item={<FundingRate />} />,
       <InfoItem
@@ -63,7 +65,7 @@ export function PerpsInfo() {
   if (!market) return null
 
   return (
-    <div className='flex flex-wrap items-center gap-2 md:gap-4 mb-2 sm:mb-0'>
+    <div className='flex flex-wrap items-center gap-2 mb-2 md:gap-4 sm:mb-0'>
       {items.map((item, index) => (
         <React.Fragment key={index}>
           {item}

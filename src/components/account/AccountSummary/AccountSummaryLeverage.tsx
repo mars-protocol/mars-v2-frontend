@@ -23,7 +23,6 @@ export default function AccountSummaryLeverage(props: Props) {
           minDecimals: 2,
           suffix: 'x',
         }}
-        animate
       />
     )
   }
@@ -45,7 +44,6 @@ export default function AccountSummaryLeverage(props: Props) {
           rounded: true,
           suffix: props.enforceSuffix ? 'x' : '',
         }}
-        animate
       />
       <div
         className={classNames(
@@ -69,7 +67,6 @@ export default function AccountSummaryLeverage(props: Props) {
           rounded: true,
           suffix: props.enforceSuffix ? 'x' : '',
         }}
-        animate
       />
     </div>
   )
