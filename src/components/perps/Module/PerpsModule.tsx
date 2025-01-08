@@ -162,8 +162,8 @@ export function PerpsModule() {
   })
 
   const effectiveLeverage = useMemo(() => {
-    if (amount.isGreaterThan(maxAmount) && leverage >= maxLeverage) {
-      return maxLeverage
+    if (amount.isGreaterThan(maxAmount)) {
+      return Math.max((amount.toNumber() / maxAmount.toNumber()) * maxLeverage, 0)
     }
     return Math.max(leverage, 0)
   }, [amount, maxAmount, leverage, maxLeverage])
