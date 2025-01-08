@@ -19,9 +19,10 @@ export default function Text(props: Props) {
 
   const tagIndex = headlines.indexOf(tag)
   const sizeClass = tagIndex > -1 ? headMap[tagIndex] : size
+  const HtmlElement = tag as keyof React.JSX.IntrinsicElements
 
   return (
-    <Component
+    <HtmlElement
       data-testid='text-component'
       className={classNames(
         props.className,
@@ -31,6 +32,6 @@ export default function Text(props: Props) {
       )}
     >
       {props.children}
-    </Component>
+    </HtmlElement>
   )
 }
