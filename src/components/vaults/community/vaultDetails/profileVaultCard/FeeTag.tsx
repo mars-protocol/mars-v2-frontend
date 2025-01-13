@@ -13,7 +13,6 @@ export default function FeeTag(props: Props) {
         amount={parseFloat(fee)}
         options={{ minDecimals: 0, maxDecimals: 1, suffix: '% Fee' }}
         className='text-xs'
-        animate
       />
     </Text>
   )

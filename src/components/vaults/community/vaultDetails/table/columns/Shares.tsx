@@ -23,7 +23,6 @@ export default function Shares(props: Props) {
       amount={parseFloat(value)}
       options={{ minDecimals: 0, maxDecimals: 0 }}
       className='text-xs'
-      animate
     />
   )
 }
