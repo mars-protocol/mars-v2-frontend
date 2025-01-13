@@ -9,7 +9,6 @@ export const TRADE_DIRECTION_META = {
   id: 'direction',
   accessorKey: 'tradeDirection',
   header: 'Direction',
-  meta: { className: 'w-40 min-w-40' },
 }
 
 interface Props {

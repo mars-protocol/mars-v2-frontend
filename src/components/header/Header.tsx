@@ -11,7 +11,7 @@ import DesktopNavigation from 'components/header/navigation/desktop/DesktopNavig
 import { NavLink } from 'components/header/navigation/desktop/NavLink'
 import MobileNavigation from 'components/header/navigation/mobile/MobileNavigation'
 import MobileNavigationToggle from 'components/header/navigation/mobile/MobileNavigationToggle'
-import OracleResyncButton from 'components/header/OracleResyncButton'
+import OracleResyncInfo from 'components/header/OracleResyncInfo'
 import RewardsCenter from 'components/header/RewardsCenter'
 import Wallet from 'components/Wallet'
 import useAccountId from 'hooks/accounts/useAccountId'
@@ -87,10 +87,7 @@ export default function Header() {
     useStore.setState({ focusComponent: null })
   }
 
-  const showStaleOracle = useMemo(
-    () => (chainConfig.slinky ? false : isOracleStale && address),
-    [chainConfig.slinky, isOracleStale, address],
-  )
+  const showStaleOracle = useMemo(() => isOracleStale && address, [isOracleStale, address])
   const showRewardsCenter = useMemo(
     () => (isV1 ? address && !isMobile : accountId && !isMobile),
     [isV1, address, accountId],
@@ -142,7 +139,7 @@ export default function Header() {
             </div>
           ) : (
             <div className='flex gap-4'>
-              {showStaleOracle && <OracleResyncButton />}
+              {showStaleOracle && <OracleResyncInfo />}
               {showRewardsCenter && <RewardsCenter className='hidden lg:flex' />}
               {showAccountMenu && <AccountMenu className='hidden md:flex' />}
               <Wallet />

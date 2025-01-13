@@ -78,6 +78,7 @@ interface AccountStrategyRow {
 interface AccountPerpRow extends PerpsPosition {
   amount: BigNumber
   symbol: string
+  asset: Asset
   value: string
   amountChange: BigNumber
 }
@@ -892,7 +893,6 @@ interface DropDownItem {
 
 interface FormattedNumberProps {
   amount: number | string
-  animate?: boolean
   className?: string
   minDecimals?: number
   maxDecimals?: number

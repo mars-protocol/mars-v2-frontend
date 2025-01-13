@@ -21,7 +21,7 @@ export const LabelValuePair = ({ label, value, className }: Props) => (
     </Text>
     <Text size='xs' className='text-white/60'>
       {value.format === 'number' ? (
-        <FormattedNumber animate {...value} amount={BN(value.amount).toNumber()} />
+        <FormattedNumber {...value} amount={BN(value.amount).toNumber()} />
       ) : (
         value.amount || ''
       )}

@@ -22,7 +22,6 @@ export default function FreezePeriod(props: Props) {
       amount={parseFloat(value)}
       options={{ minDecimals: 0, maxDecimals: 0, suffix: ' hours' }}
       className='text-xs'
-      animate
     />
   )
 }

@@ -242,13 +242,21 @@ export default function useHealthComputer(account?: Account) {
   const computeMaxSwapAmount = useCallback(
     (fromAsset: Asset, toAsset: Asset, kind: SwapKind, isRepayDebt: boolean) => {
       if (!healthComputer) return BN_ZERO
+      const fromAssetDecimalDiff = fromAsset.decimals - PRICE_ORACLE_DECIMALS
+      const toAssetDecimalDiff = toAsset.decimals - PRICE_ORACLE_DECIMALS
       try {
         const swapHealthComputer = {
           ...healthComputer,
           oracle_prices: {
             ...priceData,
-            [fromAsset.denom]: fromAsset.price?.amount.toString() || '0',
-            [toAsset.denom]: toAsset.price?.amount.toString() || '0',
+            [fromAsset.denom]: BN(fromAsset.price?.amount || BN_ZERO)
+              .shiftedBy(-fromAssetDecimalDiff)
+              .decimalPlaces(18)
+              .toString(),
+            [toAsset.denom]: BN(toAsset.price?.amount || BN_ZERO)
+              .shiftedBy(-toAssetDecimalDiff)
+              .decimalPlaces(18)
+              .toString(),
           },
         }
 
@@ -273,7 +281,6 @@ export default function useHealthComputer(account?: Account) {
   const computeLiquidationPrice = useCallback(
     (denom: string, kind: LiquidationPriceKind) => {
       if (!healthComputer) return null
-
       try {
         const supportedAssets = [...whitelistedAssets, ...perpsAssets]
         const asset = supportedAssets.find(byDenom(denom))

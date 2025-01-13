@@ -2,6 +2,7 @@
 
 import { fixupPluginRules } from '@eslint/compat'
 import eslint from '@eslint/js'
+import nextPlugin from '@next/eslint-plugin-next'
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 import eslintPluginReact from 'eslint-plugin-react'
 import eslintPluginReactHooks from 'eslint-plugin-react-hooks'
@@ -11,7 +12,6 @@ export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   eslintPluginPrettierRecommended,
-
   { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
   {
     ignores: [
@@ -28,6 +28,7 @@ export default tseslint.config(
   },
   {
     plugins: {
+      '@next/next': nextPlugin,
       react: eslintPluginReact,
       'react-hooks': fixupPluginRules(eslintPluginReactHooks),
     },

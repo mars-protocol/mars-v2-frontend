@@ -78,7 +78,7 @@ export interface HealthValuesResponse {
   liquidation_threshold_adjusted_collateral: Uint128
   max_ltv_adjusted_collateral: Uint128
   max_ltv_health_factor?: Decimal | null
-  perps_pnl_losses: Uint128
+  perps_pnl_loss: Uint128
   perps_pnl_profit: Uint128
   total_collateral_value: Uint128
   total_debt_value: Uint128

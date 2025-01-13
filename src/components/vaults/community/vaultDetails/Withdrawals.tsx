@@ -48,7 +48,6 @@ export default function Withdrawals() {
                     maxDecimals: 0,
                     suffix: ' hours',
                   }}
-                  animate
                 />
               ),
             },
@@ -61,7 +60,6 @@ export default function Withdrawals() {
                     minDecimals: 0,
                     maxDecimals: 0,
                   }}
-                  animate
                 />
               ),
             },
@@ -108,7 +106,6 @@ export default function Withdrawals() {
                       maxDecimals: 2,
                       suffix: '%',
                     }}
-                    animate
                   />
                 </div>
               ),

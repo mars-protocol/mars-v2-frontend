@@ -22,7 +22,6 @@ export default function Apr(props: Props) {
       amount={parseFloat(value)}
       options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
       className='text-xs'
-      animate
     />
   )
 }

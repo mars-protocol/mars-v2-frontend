@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 
+import Button from 'components/common/Button'
 import ActionButton from 'components/common/Button/ActionButton'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { CircularProgress } from 'components/common/CircularProgress'
@@ -11,10 +12,9 @@ import { BN_ZERO } from 'constants/math'
 import useLiquidationPrice from 'hooks/prices/useLiquidationPrice'
 import useSlippage from 'hooks/settings/useSlippage'
 import { useMemo } from 'react'
+import useStore from 'store'
 import { formatPercent } from 'utils/formatters'
 import { getMinAmountOutFromRouteInfo } from 'utils/swap'
-import useStore from 'store'
-import Button from 'components/common/Button'
 
 interface Props {
   borrowAmount: BigNumber
@@ -95,7 +95,7 @@ export default function TradeSummary(props: Props) {
         <div className='flex flex-col flex-1 m-3'>
           <SummaryLine label='Liquidation Price'>
             <div className='flex h-2'>
-              {isUpdatingLiquidationPrice ? (
+              {isUpdatingLiquidationPrice && buyButtonDisabled ? (
                 <CircularProgress size={10} />
               ) : liquidationPrice === null || liquidationPrice === 0 ? (
                 '-'

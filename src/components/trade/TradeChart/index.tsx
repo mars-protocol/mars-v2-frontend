@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react'
+import { ReactNode, RefObject, useCallback, useEffect, useMemo, useRef } from 'react'
 import { isMobile } from 'react-device-detect'
 
 import Card from 'components/common/Card'
@@ -31,8 +31,8 @@ import {
   widget,
 } from 'utils/charting_library'
 import { formatValue, getPerpsPriceDecimals, magnify } from 'utils/formatters'
-import { getTradingViewSettings } from 'utils/theme'
 import { BN } from 'utils/helpers'
+import { getTradingViewSettings } from 'utils/theme'
 
 interface Props {
   buyAsset: Asset
@@ -55,7 +55,6 @@ function getLimitOrderText(
   positionAmount: BigNumber | null,
 ) {
   let label = order.type === 'stop' ? 'Stop' : 'Limit'
-  console.log(order)
   if (positionAmount && order.amount.abs().isEqualTo(positionAmount.abs())) {
     const isClosing =
       (currentPosition === 'long' && order.tradeDirection === 'short') ||
@@ -118,7 +117,9 @@ export default function TradeChart(props: Props) {
     return [priceBuyAsset.dividedBy(priceSellAsset), priceBuyAsset, priceSellAsset]
   }, [props.buyAsset, props.sellAsset])
 
-  const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
+  const chartContainerRef = useRef<HTMLDivElement | null>(
+    null,
+  ) as RefObject<HTMLInputElement | null>
 
   const [liquidationPrice, entryPrice, tradeDirection] = useMemo(() => {
     if (!props.isPerps || !props.perpsPosition?.entryPrice) return [null, null, 'long']
@@ -158,14 +159,14 @@ export default function TradeChart(props: Props) {
             position: 'top',
             text: 'Set Limit Order Price',
             click: () => {
-              onCreateLimitOrder?.(BN(price))
+              props.onCreateLimitOrder?.(BN(price))
             },
           },
           {
             position: 'top',
             text: 'Set Stop Order Price',
             click: () => {
-              onCreateStopOrder?.(BN(price))
+              props.onCreateStopOrder?.(BN(price))
             },
           },
         ]
@@ -174,7 +175,7 @@ export default function TradeChart(props: Props) {
       console.info('Error on loading chart', e)
       return
     }
-  }, [chartName, onCreateLimitOrder, onCreateStopOrder, isPerps])
+  }, [chartName, isPerps, onCreateLimitOrder, onCreateStopOrder, props])
 
   const updateShapesAndStudies = useCallback(() => {
     try {
@@ -390,15 +391,14 @@ export default function TradeChart(props: Props) {
           {!priceBuyAsset || !priceSellAsset ? null : ratio.isZero() ? (
             <Loading className='h-4 m-4 md:m-0 md:mr-4 w-60' />
           ) : (
-            <div className='flex items-center gap-1'>
+            <div className='hidden md:flex md:items-center md:gap-1 md:flex-nowrap'>
               <Text size='sm'>1 {props.buyAsset.symbol}</Text>
               {props.isPerps ? (
                 <FormattedNumber
                   className='text-sm'
-                  amount={Number(props.buyAsset?.price?.amount.toPrecision(6) ?? 0)}
+                  amount={Number(props.buyAsset?.price?.amount ?? 0)}
                   options={{
-                    prefix: '= ',
-                    suffix: ` USD`,
+                    prefix: '= $',
                     abbreviated: false,
                     maxDecimals: getPerpsPriceDecimals(props.buyAsset?.price?.amount),
                   }}
@@ -439,7 +439,7 @@ export default function TradeChart(props: Props) {
         'md:h-screen/70 md:max-h-[980px] md:min-h-[560px] order-1 w-full',
       )}
     >
-      <div ref={chartContainerRef} className='h-[calc(100%-32px)] overflow-hidden'>
+      <div ref={chartContainerRef ?? undefined} className='h-[calc(100%-32px)] overflow-hidden'>
         <div className='flex items-center w-full h-full'>
           <div className='flex flex-col flex-wrap items-center w-full gap-2'>
             <div className='w-8 mb-2'>

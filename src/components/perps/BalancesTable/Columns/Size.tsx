@@ -18,7 +18,9 @@ export const SIZE_META = {
       </Text>
     </div>
   ),
-  meta: { className: 'min-w-30 w-50' },
+  meta: {
+    className: 'min-w-20 lg:w-40',
+  },
 }
 
 export const sizeSortingFn = (a: Row<PerpPositionRow>, b: Row<PerpPositionRow>): number => {
@@ -29,17 +31,21 @@ type Props = {
   amount: BigNumber
   asset: Asset
   value: BigNumber
+  options?: { abbreviated?: boolean }
 }
 
 export default function Size(props: Props) {
-  const { amount, value, asset } = props
+  const { amount, value, asset, options } = props
 
   return (
     <TitleAndSubCell
       title={
         <FormattedNumber
           amount={Math.abs(Number(demagnify(amount, asset)))}
-          options={{ maxDecimals: props.asset.decimals }}
+          options={{
+            maxDecimals: props.asset.decimals,
+            abbreviated: options?.abbreviated,
+          }}
           className='text-xs'
         />
       }
@@ -49,7 +55,7 @@ export default function Size(props: Props) {
           options={{
             maxDecimals: getPerpsPriceDecimals(value),
             minDecimals: 0,
-            abbreviated: false,
+            abbreviated: options?.abbreviated,
           }}
         />
       }

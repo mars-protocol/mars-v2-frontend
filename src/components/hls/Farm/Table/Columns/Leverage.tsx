@@ -18,7 +18,6 @@ export default function Leverage(props: Props) {
       amount={props.leverage}
       options={{ minDecimals: 2, maxDecimals: 2, suffix: 'x' }}
       className='text-xs'
-      animate
     />
   )
 }

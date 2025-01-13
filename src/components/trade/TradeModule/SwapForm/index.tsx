@@ -1,4 +1,3 @@
-import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import AssetAmountInput from 'components/common/AssetAmountInput'
@@ -76,7 +75,7 @@ export default function SwapForm(props: Props) {
   const { isAutoLendEnabledForCurrentAccount: isAutoLendEnabled } = useAutoLend()
   const modal = useStore<string | null>((s) => s.fundAndWithdrawModal)
   const { simulateTrade, removedLends, updatedAccount } = useUpdatedAccount(account)
-  const { computeLiquidationPrice } = useHealthComputer(updatedAccount)
+  const { computeLiquidationPrice } = useHealthComputer(updatedAccount ?? account)
   const assets = useTradeEnabledAssets()
 
   const { data: routeInfo } = useRouteInfo(inputAsset.denom, outputAsset.denom, inputAssetAmount)
@@ -165,21 +164,27 @@ export default function SwapForm(props: Props) {
     isAutoRepayChecked,
   ])
 
-  const debouncedUpdateAccount = useMemo(
-    () =>
-      debounce(
-        (removeCoin: BNCoin, addCoin: BNCoin, debtCoin: BNCoin, isBorrowEnabled: boolean) => {
-          simulateTrade(
-            removeCoin,
-            addCoin,
-            debtCoin,
-            isAutoLendEnabled && isBorrowEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
-            isAutoRepayChecked,
-          )
-        },
-        250,
-      ),
-    [simulateTrade, isAutoLendEnabled, isAutoRepayChecked],
+  const updateAccount = useCallback(
+    (removeCoin: BNCoin, addCoin: BNCoin, debtCoin: BNCoin, isBorrowEnabled: boolean) => {
+      if (addCoin.amount.isZero()) {
+        simulateTrade(
+          BNCoin.fromDenomAndBigNumber(inputAsset.denom, BN_ZERO),
+          BNCoin.fromDenomAndBigNumber(outputAsset.denom, BN_ZERO),
+          BNCoin.fromDenomAndBigNumber(inputAsset.denom, BN_ZERO),
+          isAutoLendEnabled && isBorrowEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
+          isAutoRepayChecked,
+        )
+      } else {
+        simulateTrade(
+          removeCoin,
+          addCoin,
+          debtCoin,
+          isAutoLendEnabled && isBorrowEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
+          isAutoRepayChecked,
+        )
+      }
+    },
+    [simulateTrade, inputAsset.denom, outputAsset.denom, isAutoLendEnabled, isAutoRepayChecked],
   )
 
   const handleMarginToggleChange = useCallback(
@@ -197,10 +202,22 @@ export default function SwapForm(props: Props) {
     [isRepayable, setAutoRepayChecked],
   )
 
-  const liquidationPrice = useMemo(
-    () => computeLiquidationPrice(outputAsset.denom, 'asset'),
-    [computeLiquidationPrice, outputAsset.denom],
-  )
+  const liquidationPrice = useMemo(() => {
+    if (!outputAsset.isWhitelisted) return 0
+
+    const debtAmount = account?.debts.find(byDenom(outputAsset.denom))?.amount ?? BN_ZERO
+    if (isAutoRepayChecked && outputAssetAmount.isLessThan(debtAmount))
+      return computeLiquidationPrice(outputAsset.denom, 'debt')
+    if (isAutoRepayChecked && outputAssetAmount.isEqualTo(debtAmount)) return 0
+    return computeLiquidationPrice(outputAsset.denom, 'asset')
+  }, [
+    account?.debts,
+    computeLiquidationPrice,
+    isAutoRepayChecked,
+    outputAsset.denom,
+    outputAsset.isWhitelisted,
+    outputAssetAmount,
+  ])
 
   const handleBuyClick = useCallback(async () => {
     if (account?.id) {
@@ -267,7 +284,7 @@ export default function SwapForm(props: Props) {
     const addCoin = BNCoin.fromDenomAndBigNumber(outputAsset.denom, outputAssetAmount)
     const debtCoin = BNCoin.fromDenomAndBigNumber(inputAsset.denom, addDebtAmount)
 
-    debouncedUpdateAccount(removeCoin, addCoin, debtCoin, outputAsset.isBorrowEnabled ?? true)
+    updateAccount(removeCoin, addCoin, debtCoin, outputAsset.isBorrowEnabled ?? true)
   }, [
     inputAssetAmount,
     outputAssetAmount,
@@ -275,7 +292,7 @@ export default function SwapForm(props: Props) {
     outputAsset.denom,
     outputAsset.isBorrowEnabled,
     inputAsset.denom,
-    debouncedUpdateAccount,
+    updateAccount,
     modal,
   ])
 
@@ -301,8 +318,9 @@ export default function SwapForm(props: Props) {
     () =>
       inputAssetAmount.isZero() ||
       depositCapReachedCoins.length > 0 ||
-      borrowAmount.isGreaterThan(availableLiquidity),
-    [inputAssetAmount, depositCapReachedCoins, borrowAmount, availableLiquidity],
+      borrowAmount.isGreaterThan(availableLiquidity) ||
+      !routeInfo,
+    [inputAssetAmount, depositCapReachedCoins.length, borrowAmount, availableLiquidity, routeInfo],
   )
 
   return (

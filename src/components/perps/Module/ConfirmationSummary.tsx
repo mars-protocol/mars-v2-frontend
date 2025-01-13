@@ -7,6 +7,7 @@ import { CircularProgress } from 'components/common/CircularProgress'
 import Container from 'components/common/Container'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
+import PnLDisplay from 'components/common/PnLDisplay'
 import Text from 'components/common/Text'
 import { ExpectedPrice } from 'components/perps/Module/ExpectedPrice'
 import TradingFee from 'components/perps/Module/TradingFee'
@@ -165,6 +166,7 @@ export default function ConfirmationSummary(props: Props) {
             </SummaryRow>
             <SummaryRow label='Execution Price'>
               <ExpectedPrice
+                tradeDirection={tradeDirection as TradeDirection}
                 className='text-xs'
                 denom={asset.denom}
                 newAmount={newAmount}
@@ -239,26 +241,31 @@ export default function ConfirmationSummary(props: Props) {
             )
             return (
               <SummaryRow label={label} key={index} className={classNames(isPnl && 'font-bold')}>
-                <DisplayCurrency
-                  className={classNames(
-                    'text-xs',
-                    isPnl && 'font-bold',
-                    isPnl && pnlAmount.isPositive() && 'text-profit',
-                    isPnl && pnlAmount.isNegative() && 'text-loss',
-                  )}
-                  coin={BNCoin.fromDenomAndBigNumber(
-                    baseDenom,
-                    isPnl && !limitPrice
-                      ? pnlAmount.minus(
-                          tradingFeeAndPrice.fee.opening.plus(tradingFeeAndPrice.fee.closing),
-                        )
-                      : pnlAmount,
-                  )}
-                  options={{
-                    abbreviated: false,
-                  }}
-                  showSignPrefix={true}
-                />
+                {isPnl ? (
+                  <PnLDisplay
+                    pnlAmount={pnlAmount}
+                    pnlPercentage={
+                      pnlAmount.isZero() || !position.size || !position.entry_price
+                        ? BN_ZERO
+                        : BN(pnlAmount)
+                            .div(BN(position.size).abs().times(position.entry_price))
+                            .times(100)
+                    }
+                    baseDenom={baseDenom}
+                    className={classNames('text-xs', isPnl && 'font-bold')}
+                    inlinePercentage={true}
+                    percentageFirst={true}
+                  />
+                ) : (
+                  <DisplayCurrency
+                    coin={BNCoin.fromDenomAndBigNumber(baseDenom, pnlAmount)}
+                    className={classNames('text-xs')}
+                    showSignPrefix={true}
+                    options={{
+                      abbreviated: false,
+                    }}
+                  />
+                )}
               </SummaryRow>
             )
           })}

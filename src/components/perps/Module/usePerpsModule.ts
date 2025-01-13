@@ -144,13 +144,26 @@ export default function usePerpsModule(
     return messages
   }, [amount, tradeDirection, params, perpsAsset, perpsMarket, previousAmount, price, perpPosition])
 
-  useEffect(() => {
-    setLeverage(calculateLeverage)
-  }, [calculateLeverage])
-
-  const updateAmount = useCallback((newAmount: BigNumber) => {
-    setAmount(newAmount)
-  }, [])
+  const updateAmount = useCallback(
+    (newAmount: BigNumber) => {
+      setAmount(newAmount)
+      const totalAmount = previousAmount.plus(newAmount).abs()
+      const newLeverage = totalAmount.isZero()
+        ? 0
+        : getCoinValue(BNCoin.fromDenomAndBigNumber(perpsAsset.denom, totalAmount), [
+            limitPrice
+              ? {
+                  ...perpsAsset,
+                  price: BNCoin.fromDenomAndBigNumber(perpsAsset.denom, limitPrice),
+                }
+              : perpsAsset,
+          ])
+            .div(accountNetValue)
+            .toNumber()
+      setLeverage(newLeverage)
+    },
+    [accountNetValue, limitPrice, perpsAsset, previousAmount],
+  )
 
   const updateLeverage = useCallback(
     (newLeverage: number) => {

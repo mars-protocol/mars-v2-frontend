@@ -45,7 +45,6 @@ export default function VaultSummary() {
                     maxDecimals: 0,
                     suffix: 'x',
                   }}
-                  animate
                 />
               ),
             },
@@ -67,7 +66,6 @@ export default function VaultSummary() {
                     minDecimals: 2,
                     maxDecimals: 2,
                   }}
-                  animate
                 />
               ),
             },

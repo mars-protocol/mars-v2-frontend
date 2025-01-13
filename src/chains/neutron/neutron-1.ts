@@ -12,26 +12,64 @@ const Neutron1: ChainConfig = {
       denom: 'factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom',
       campaignIds: ['drop_apy', 'drop'],
       baseMultiplier: 1,
-      collateralMultiplier: 3,
+      collateralMultiplier: 5,
       campaignDenom: 'dATOM',
     },
+    {
+      denom: 'factory/neutron1ut4c6pv4u6vyu97yw48y8g7mle0cat54848v6m97k977022lzxtsaqsgmq/udtia',
+      campaignIds: ['drop_apy', 'drop'],
+      baseMultiplier: 1,
+      collateralMultiplier: 5,
+      campaignDenom: 'dTIA',
+    },
+    //dATOM-NTRN
     {
       denom:
         'factory/neutron1ke92yjl47eqy0mpgn9x4xups4szsm0ql6xhn4htw9zgn9wl5gm0quzh6ch/astroport/share',
       campaignIds: ['drop'],
       baseMultiplier: 50,
     },
+    //dATOM-USDC
     {
       denom:
         'factory/neutron1nfns3ck2ykrs0fknckrzd9728cyf77devuzernhwcwrdxw7ssk2s3tjf8r/astroport/share',
       campaignIds: ['drop'],
       baseMultiplier: 50,
     },
+    //dTIA-NTRN
+    {
+      denom:
+        'factory/neutron1hljhz97ng9guyqzpelkvphaky0gnav7wt8jmkr7n497wek8373dqgv8tdp/astroport/share',
+      campaignIds: ['drop'],
+      baseMultiplier: 50,
+    },
+    //dTIA-USDC
+    {
+      denom:
+        'factory/neutron1awgqp5ma90qy0ecezzf6ghple8mpgtlv8z3kez065z7x5fprd4qs7vz4dc/astroport/share',
+      campaignIds: ['drop'],
+      baseMultiplier: 50,
+    },
+    //dATOM-ATOM
     {
       denom:
         'factory/neutron1yem82r0wf837lfkwvcu2zxlyds5qrzwkz8alvmg0apyrjthk64gqeq2e98/astroport/share',
       campaignIds: ['drop'],
-      baseMultiplier: 5,
+      baseMultiplier: 10,
+    },
+    //dTIA-TIA
+    {
+      denom:
+        'factory/neutron1f6wucml5pmys4uh7mwurz2ge2v7gamkqdy03rfuatpdphmjjag3qeutzgx/astroport/share',
+      campaignIds: ['drop'],
+      baseMultiplier: 10,
+    },
+    //dATOM-dTIA
+    {
+      denom:
+        'factory/neutron1djs222dtwf3pw5h474fm68wc72ter5y4zftd36ugjs5e069hwqaq79pnrt/astroport/share',
+      campaignIds: ['drop'],
+      baseMultiplier: 20,
     },
     {
       denom: 'ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C',
@@ -74,7 +112,7 @@ const Neutron1: ChainConfig = {
     params: 'neutron1x4rgd7ry23v2n49y7xdzje0743c5tgrnqrqsvwyya2h6m48tz4jqqex06x',
     creditManager: 'neutron1qdzn3l4kn7gsjna2tfpg3g3mwd6kunx4p50lfya59k02846xas6qslgs3r',
     accountNft: 'neutron184kvu96rqtetmunkkmhu5hru8yaqg7qfhd8ldu5avjnamdqu69squrh3f5',
-    perps: 'neutron14v9g7regs90qvful7djcajsvrfep5pg9qau7qm6wya6c2lzcpnms692dlt',
+    perps: 'neutron1g3catxyv0fk8zzsra2mjc0v4s69a7xygdjt85t54l7ym3gv0un4q2xhaf6',
     pyth: 'neutron1m2emc93m9gpwgsrsf2vylv9xvgqh654630v7dfrhrkmr5slly53spg85wv',
   },
   endpoints: {
@@ -89,6 +127,7 @@ const Neutron1: ChainConfig = {
     gasPrices: '/feemarket/v1/gas_price/untrn',
     aprs: {
       vaults: '',
+      perpsVault: 'https://backend.prod.mars-dev.net/v2/perps_vault?chain=neutron',
     },
   },
   network: NETWORK.MAINNET,
@@ -105,10 +144,10 @@ const Neutron1: ChainConfig = {
   features: ['ibc-transfer', 'ibc-go'],
   gasPrice: '0.015untrn',
   hls: true,
-  perps: false,
+  perps: true,
   farm: true,
   anyAsset: true,
-  slinky: false,
+  slinky: true,
   managedVaults: true,
 }
 

@@ -1,17 +1,18 @@
 import classNames from 'classnames'
-import { useCallback, useEffect, useMemo, useState } from 'react'
 import Modal from 'components/Modals/Modal'
 import AssetAmountInput from 'components/common/AssetAmountInput'
 import Button from 'components/common/Button'
 import { Callout, CalloutType } from 'components/common/Callout'
 import Text from 'components/common/Text'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useAsset from 'hooks/assets/useAsset'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 
 export default function KeeperFeeModal() {
   const chainConfig = useChainConfig()
@@ -19,16 +20,10 @@ export default function KeeperFeeModal() {
   const USD = useAsset('usd')
   const modal = useStore((s) => s.keeperFeeModal)
 
-  const defaultKeeperFee = JSON.stringify(
-    creditManagerConfig?.keeper_fee_config?.min_fee ?? {
-      denom: '',
-      amount: '0',
-    },
-  )
-
   const [keeperFee, setKeeperFee] = useLocalStorage(
-    LocalStorageKeys.PERPS_KEEPER_FEE,
-    defaultKeeperFee,
+    `${chainConfig.id}/${LocalStorageKeys.PERPS_KEEPER_FEE}`,
+    creditManagerConfig?.keeper_fee_config?.min_fee ??
+      getDefaultChainSettings(chainConfig).keeperFee,
   )
 
   const parsedKeeperFee = useMemo(() => {
