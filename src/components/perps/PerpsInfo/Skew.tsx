@@ -9,15 +9,16 @@ export default function Skew() {
   if (!perpsMarket) return null
 
   const { openInterest } = perpsMarket
-  const totalOI = openInterest.total
+  const skew = openInterest.long.minus(openInterest.short)
 
   return (
     <div className='flex items-center gap-1'>
       <DisplayCurrency
-        className='text-sm hidden md:inline'
-        coin={BNCoin.fromDenomAndBigNumber(perpsMarket.asset.denom, totalOI)}
+        className='text-sm'
+        coin={BNCoin.fromDenomAndBigNumber(perpsMarket.asset.denom, skew)}
+        showSignPrefix={skew.isNegative()}
       />
-      <span className='text-sm hidden md:inline'>/</span>
+      <span className='text-sm'>/</span>
       <FormattedNumber
         className='text-sm'
         amount={openInterest.skewPercentage.toNumber()}

@@ -1,12 +1,14 @@
-import { GetState, SetState } from 'zustand'
+import Neutron1 from 'chains/neutron/neutron-1'
+import { StoreApi } from 'zustand'
 
-import Osmosis1 from 'chains/osmosis/osmosis-1'
-
-export default function createCommonSlice(set: SetState<CommonSlice>, get: GetState<CommonSlice>) {
+export default function createCommonSlice(
+  set: StoreApi<Store>['setState'],
+  get: StoreApi<Store>['getState'],
+) {
   return {
     accounts: null,
     balances: [],
-    chainConfig: Osmosis1,
+    chainConfig: Neutron1,
     isOpen: true,
     selectedAccount: null,
     focusComponent: null,

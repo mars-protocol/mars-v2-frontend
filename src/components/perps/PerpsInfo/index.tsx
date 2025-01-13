@@ -1,12 +1,14 @@
-import React, { useMemo } from 'react'
-
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
+import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import FundingRate from 'components/perps/PerpsInfo/FundingRate'
-import usePerpsMarket from 'hooks/perps/usePerpsMarket'
-import { BNCoin } from 'types/classes/BNCoin'
 import Skew from 'components/perps/PerpsInfo/Skew'
+import TotalOpenInterest from 'components/perps/PerpsInfo/TotalOpenInterest'
+import usePerpsMarket from 'hooks/perps/usePerpsMarket'
+import React, { useMemo } from 'react'
+import { BNCoin } from 'types/classes/BNCoin'
+import { getPerpsPriceDecimals } from 'utils/formatters'
 
 export function PerpsInfo() {
   const market = usePerpsMarket()
@@ -35,15 +37,35 @@ export function PerpsInfo() {
           />
         }
       />,
+      <InfoItem key='totalOpenInterest' label='Total Open Interest' item={<TotalOpenInterest />} />,
       <InfoItem key='skew' label='Skew' item={<Skew />} />,
       <InfoItem key='fundingRate' label='Funding rate' item={<FundingRate />} />,
+      <InfoItem
+        key='price'
+        label='Price'
+        className='md:hidden'
+        item={
+          <div className='flex items-center gap-1 text-sm'>
+            <Text size='sm'>1 {market.asset.symbol}</Text>
+            <FormattedNumber
+              className='text-sm'
+              amount={Number(market.asset.price?.amount ?? 0)}
+              options={{
+                prefix: '= $',
+                abbreviated: false,
+                maxDecimals: getPerpsPriceDecimals(market.asset.price?.amount),
+              }}
+            />
+          </div>
+        }
+      />,
     ]
   }, [market])
 
   if (!market) return null
 
   return (
-    <div className='flex flex-wrap items-center gap-2 md:gap-4 mb-2 sm:mb-0'>
+    <div className='flex flex-wrap items-center gap-2 mb-2 md:gap-4 sm:mb-0'>
       {items.map((item, index) => (
         <React.Fragment key={index}>
           {item}
@@ -59,11 +81,12 @@ export function PerpsInfo() {
 interface InfoItemProps {
   item: React.ReactNode
   label: string
+  className?: string
 }
 
 function InfoItem(props: InfoItemProps) {
   return (
-    <div className='flex flex-col gap-1 min-w-30'>
+    <div className={`flex flex-col gap-1 min-w-30 ${props.className || ''}`}>
       <Text size='xs' className='text-white/40'>
         {props.label}
       </Text>

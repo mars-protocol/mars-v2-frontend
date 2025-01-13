@@ -14,7 +14,11 @@ import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirectio
 import ConfirmationSummary from 'components/perps/Module/ConfirmationSummary'
 import { ExpectedPrice } from 'components/perps/Module/ExpectedPrice'
 import TradingFee from 'components/perps/Module/TradingFee'
-import { getDefaultChainSettings } from 'constants/defaultSettings'
+import {
+  defaultKeeperFeeAmount,
+  defaultKeeperFeeDenom,
+  getDefaultChainSettings,
+} from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
@@ -31,7 +35,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
-import { formatLeverage, getPerpsPriceDecimals, magnify } from 'utils/formatters'
+import { formatLeverage, getPerpsPriceDecimals } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 type Props = {
@@ -74,9 +78,10 @@ export default function PerpsSummary(props: Props) {
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const chainConfig = useChainConfig()
   const creditManagerConfig = useStore((s) => s.creditManagerConfig)
-  const [keeperFee, _] = useLocalStorage(
-    LocalStorageKeys.PERPS_KEEPER_FEE,
-    creditManagerConfig?.keeper_fee_config?.min_fee,
+  const [keeperFee] = useLocalStorage(
+    `${chainConfig.id}/${LocalStorageKeys.PERPS_KEEPER_FEE}`,
+    creditManagerConfig?.keeper_fee_config?.min_fee ??
+      getDefaultChainSettings(chainConfig).keeperFee,
   )
 
   const currentAccount = useCurrentAccount()
@@ -87,7 +92,7 @@ export default function PerpsSummary(props: Props) {
   const assets = useDepositEnabledAssets()
   const executePerpOrder = useStore((s) => s.executePerpOrder)
   const [showSummary, setShowSummary] = useLocalStorage<boolean>(
-    LocalStorageKeys.SHOW_SUMMARY,
+    `${chainConfig.id}/${LocalStorageKeys.SHOW_SUMMARY}`,
     getDefaultChainSettings(chainConfig).showSummary,
   )
   const { computeLiquidationPrice } = useHealthComputer(updatedAccount ?? account)
@@ -106,13 +111,10 @@ export default function PerpsSummary(props: Props) {
 
   const calculateKeeperFee = useMemo(
     () =>
-      (isLimitOrder || isStopOrder) && feeToken
-        ? BNCoin.fromDenomAndBigNumber(
-            feeToken.denom,
-            magnify(BN(keeperFee.amount).toNumber(), feeToken),
-          )
-        : undefined,
-    [feeToken, isLimitOrder, isStopOrder, keeperFee.amount],
+      (isLimitOrder || isStopOrder) && keeperFee?.amount
+        ? BNCoin.fromDenomAndBigNumber(keeperFee.denom, BN(keeperFee.amount))
+        : BNCoin.fromDenomAndBigNumber(defaultKeeperFeeDenom, BN(defaultKeeperFeeAmount)),
+    [isLimitOrder, isStopOrder, keeperFee.amount, keeperFee.denom],
   )
 
   const submitLimitOrder = useSubmitLimitOrder()
@@ -298,8 +300,6 @@ export default function PerpsSummary(props: Props) {
     if (isLimitOrder) return 'Create Limit Order'
   }, [isStopOrder, isLimitOrder])
 
-  if (!account) return null
-
   return (
     <div className='flex w-full flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20'>
       <ManageSummary
@@ -318,18 +318,21 @@ export default function PerpsSummary(props: Props) {
             denom={asset.denom}
             newAmount={newAmount}
             override={isLimitOrder ? limitPrice : undefined}
+            tradeDirection={tradeDirection}
           />
         </SummaryLine>
         {!isLimitOrder && (
           <SummaryLine label='Liquidation Price'>
-            <LiqPrice
-              denom={asset.denom}
-              computeLiquidationPrice={computeLiquidationPrice}
-              type='perp'
-              amount={newAmount.isEqualTo(previousAmount) ? 0 : newAmount.toNumber()}
-              account={updatedAccount ?? account}
-              isWhitelisted={true}
-            />
+            {account && (
+              <LiqPrice
+                denom={asset.denom}
+                computeLiquidationPrice={computeLiquidationPrice}
+                type='perp'
+                amount={newAmount.isEqualTo(previousAmount) ? 0 : newAmount.toNumber()}
+                account={updatedAccount ?? account}
+                isWhitelisted={true}
+              />
+            )}
           </SummaryLine>
         )}
         <SummaryLine label='Fees' tooltip={tradingFeeTooltip}>
@@ -427,29 +430,37 @@ function ManageSummary(
           }}
         />
       </SummaryLine>
-      <SummaryLine label='Leverage' contentClassName='flex gap-1 pt-2'>
+      <SummaryLine label='Leverage' contentClassName='flex gap-1'>
         {previousLeverage && !previousAmount.isZero() ? (
           <div className='flex items-center gap-1'>
             <span>{formatLeverage(previousLeverage)}</span>
             <div className='w-4'>
               <ArrowRight
                 className={classNames(
-                  leverage > previousLeverage ? 'text-error' : 'text-success',
+                  leverage === undefined
+                    ? 'text-error'
+                    : leverage > previousLeverage
+                      ? 'text-error'
+                      : 'text-success',
                   'transition-colors duration-200',
                 )}
               />
             </div>
             <span
               className={classNames(
-                leverage > previousLeverage ? 'text-error' : 'text-success',
+                leverage === undefined
+                  ? 'text-error'
+                  : leverage > previousLeverage
+                    ? 'text-error'
+                    : 'text-success',
                 'transition-colors duration-200',
               )}
             >
-              {formatLeverage(leverage)}
+              {leverage === undefined ? '—' : formatLeverage(leverage)}
             </span>
           </div>
         ) : (
-          <span>{formatLeverage(leverage)}</span>
+          <span>{leverage === undefined ? '—' : formatLeverage(leverage)}</span>
         )}
       </SummaryLine>
     </div>

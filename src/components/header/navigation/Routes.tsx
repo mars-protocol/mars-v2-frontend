@@ -9,6 +9,7 @@ import HlsFarmPage from 'pages/HlsFarmPage'
 import HlsStakingPage from 'pages/HlsStakingPage'
 import LendPage from 'pages/LendPage'
 import PerpsPage from 'pages/PerpsPage'
+import PerpsVaultPage from 'pages/PerpsVaultPage'
 import PortfolioAccountPage from 'pages/PortfolioAccountPage'
 import PortfolioPage from 'pages/PortfolioPage'
 import TradePage from 'pages/TradePage'
@@ -18,7 +19,6 @@ import VaultsCommunityPage from 'pages/VaultsCommunityPage'
 import CreateVault from 'components/vaults/community/createVault/index'
 import MintVaultAccount from 'components/vaults/community/createVault/MintVaultAccount'
 import VaultDetails from 'components/vaults/community/vaultDetails/index'
-import PerpsVaultPage from 'pages/PerpsVaultPage'
 
 export default function Routes() {
   const chainConfig = useChainConfig()
@@ -34,17 +34,21 @@ export default function Routes() {
         <Route path='/' element={<TradePage />} />
         <Route path='/trade' element={<TradePage />} />
         <Route path='/trade-advanced' element={<TradePage />} />
+        <Route path='/perps' element={<PerpsPage />} />
         <Route path='/farm' element={<FarmPage />} />
         <Route path='/lend' element={<LendPage />} />
-        {chainConfig.perps && <Route path='/perps-vault' element={<PerpsVaultPage />} />}
+        <Route path='/perps-vault' element={<PerpsVaultPage />} />
         <Route path='/borrow' element={<BorrowPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
         <Route path='/v1' element={<V1Page />} />
-
-        {chainConfig.perps && <Route path='/perps' element={<PerpsPage />} />}
-        {chainConfig.hls && <Route path='/hls-staking' element={<HlsStakingPage />} />}
-        {chainConfig.hls && <Route path='/hls-farm' element={<HlsFarmPage />} />}
-
+        <Route path='/hls-staking' element={<HlsStakingPage />} />
+        <Route path='/hls-farm' element={<HlsFarmPage />} />
+        <Route
+          path='/'
+          element={
+            chainConfig.perps ? <Navigate to='/perps' replace /> : <Navigate to='/trade' replace />
+          }
+        />
         <Route path='/vaults' element={<VaultsOfficialPage />}>
           <Route path='create' element={<CreateVault />} />
         </Route>
@@ -55,16 +59,15 @@ export default function Routes() {
           <Route path='execute' element={<ExecuteMessagePage />} />
           <Route path='trade' element={<TradePage />} />
           <Route path='trade-advanced' element={<TradePage />} />
+          <Route path='perps' element={<PerpsPage />} />
           <Route path='farm' element={<FarmPage />} />
           <Route path='lend' element={<LendPage />} />
-          {chainConfig.perps && <Route path='perps-vault' element={<PerpsVaultPage />} />}
+          <Route path='perps-vault' element={<PerpsVaultPage />} />
           <Route path='borrow' element={<BorrowPage />} />
           <Route path='portfolio' element={<PortfolioPage />} />
+          <Route path='hls-staking' element={<HlsStakingPage />} />
+          <Route path='hls-farm' element={<HlsFarmPage />} />
           <Route path='v1' element={<V1Page />} />
-
-          {chainConfig.perps && <Route path='perps' element={<PerpsPage />} />}
-          {chainConfig.hls && <Route path='hls-staking' element={<HlsStakingPage />} />}
-          {chainConfig.hls && <Route path='hls-farm' element={<HlsFarmPage />} />}
 
           <Route path='vaults-community' element={<VaultsCommunityPage />} />
           <Route path='vaults' element={<VaultsOfficialPage />}>

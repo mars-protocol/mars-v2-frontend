@@ -42,7 +42,7 @@ export default function SettingsModal() {
   const displayCurrencies = useDisplayCurrencyAssets()
   const { setAutoLendOnAllAccounts } = useAutoLend()
   const [customSlippage, setCustomSlippage] = useState<number>(0)
-  const [inputRef, setInputRef] = useState<React.RefObject<HTMLInputElement>>()
+  const [inputRef, setInputRef] = useState<React.RefObject<HTMLInputElement | null>>()
   const [isCustom, setIsCustom] = useState(false)
 
   const [displayCurrency, setDisplayCurrency] = useDisplayCurrency()
@@ -72,7 +72,7 @@ export default function SettingsModal() {
     getDefaultChainSettings(chainConfig).updateOracle,
   )
   const [showSummary, setShowSummary] = useLocalStorage<boolean>(
-    LocalStorageKeys.SHOW_SUMMARY,
+    `${chainConfig.id}/${LocalStorageKeys.SHOW_SUMMARY}`,
     getDefaultChainSettings(chainConfig).showSummary,
   )
 

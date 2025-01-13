@@ -133,7 +133,6 @@ export default function Borrow(props: Props) {
               className='text-xs'
               amount={modal.data.liquidity.toNumber() ?? 0}
               options={{ decimals: asset.decimals, abbreviated: true, suffix: ` ${asset.symbol}` }}
-              animate
             />
             <DisplayCurrency
               className='text-xs'

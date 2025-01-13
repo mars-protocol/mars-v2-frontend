@@ -23,22 +23,9 @@ export default function useCreditManagerConfig() {
           config: {},
         })
 
-        if (!config.account_nft || !config.oracle || !config.params || !config.red_bank) {
-          const error = new Error('Credit manager config missing required fields')
-          setNodeError(getUrl(baseConfig.endpoints.rpc), error.message)
-          throw error
-        }
-
         useStore.setState({
           creditManagerConfig: {
             ...config,
-            credit_manager_contract_addr: baseConfig.contracts.creditManager,
-            account_nft: config.account_nft,
-            oracle: config.oracle,
-            params: config.params,
-            red_bank: config.red_bank,
-            incentives: config.incentives,
-            perps: config.perps,
           },
           errorStore: { nodeError: null, apiError: null },
         })
@@ -51,7 +38,7 @@ export default function useCreditManagerConfig() {
       }
     },
     {
-      suspense: true,
+      suspense: false,
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
       revalidateIfStale: false,

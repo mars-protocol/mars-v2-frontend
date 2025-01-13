@@ -71,10 +71,12 @@ export interface MarsPerpsReadOnlyInterface {
     accountId,
     denom,
     orderSize,
+    reduceOnly,
   }: {
     accountId: string
     denom: string
     orderSize?: Int128
+    reduceOnly?: boolean
   }) => Promise<PositionResponse>
   positions: ({
     limit,
@@ -195,16 +197,19 @@ export class MarsPerpsQueryClient implements MarsPerpsReadOnlyInterface {
     accountId,
     denom,
     orderSize,
+    reduceOnly,
   }: {
     accountId: string
     denom: string
     orderSize?: Int128
+    reduceOnly?: boolean
   }): Promise<PositionResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       position: {
         account_id: accountId,
         denom,
         order_size: orderSize,
+        reduce_only: reduceOnly,
       },
     })
   }
