@@ -22,6 +22,7 @@ import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApy, getAccountSummaryStats } from 'utils/accounts'
+import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
 
 interface Props {
   account: Account
@@ -56,6 +57,7 @@ export default function AccountSummary(props: Props) {
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
   )
+  const perpsMarketStates = usePerpsMarketStates()
   const { health, healthFactor } = useHealthComputer(account)
   const { health: updatedHealth, healthFactor: updatedHealthFactor } = useHealthComputer(
     updatedAccount || account,
@@ -72,6 +74,7 @@ export default function AccountSummary(props: Props) {
         astroLpAprs,
         assetParams.data || [],
         perpsVault?.apy || 0,
+        perpsMarketStates.data || [],
       ),
     [
       updatedAccount,
@@ -83,6 +86,7 @@ export default function AccountSummary(props: Props) {
       astroLpAprs,
       assetParams.data,
       perpsVault?.apy,
+      perpsMarketStates.data,
     ],
   )
 
@@ -97,6 +101,7 @@ export default function AccountSummary(props: Props) {
       astroLpAprs,
       assetParams.data || [],
       perpsVault?.apy || 0,
+      perpsMarketStates.data || [],
     )
 
     if (updatedLeverage.eq(leverage)) return null
@@ -111,6 +116,7 @@ export default function AccountSummary(props: Props) {
     assetParams.data,
     perpsVault?.apy,
     leverage,
+    perpsMarketStates.data,
   ])
 
   const handleToggle = useCallback(
@@ -134,6 +140,7 @@ export default function AccountSummary(props: Props) {
         vaultAprs,
         astroLpAprs,
         perpsVault?.apy || 0,
+        perpsMarketStates.data || [],
       ),
     [
       updatedAccount,
@@ -145,6 +152,7 @@ export default function AccountSummary(props: Props) {
       vaultAprs,
       astroLpAprs,
       perpsVault?.apy,
+      perpsMarketStates.data,
     ],
   )
 
