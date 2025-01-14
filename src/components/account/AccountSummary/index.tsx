@@ -22,7 +22,7 @@ import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApy, getAccountSummaryStats } from 'utils/accounts'
-import usePerpsMarket from 'hooks/perps/usePerpsMarket'
+import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
 
 interface Props {
   account: Account
@@ -57,11 +57,11 @@ export default function AccountSummary(props: Props) {
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
   )
+  const perpsMarketStates = usePerpsMarketStates()
   const { health, healthFactor } = useHealthComputer(account)
   const { health: updatedHealth, healthFactor: updatedHealthFactor } = useHealthComputer(
     updatedAccount || account,
   )
-  const perpsMarket = usePerpsMarket()
   const assetParams = useAssetParams()
   const { leverage } = useMemo(
     () =>
@@ -74,7 +74,7 @@ export default function AccountSummary(props: Props) {
         astroLpAprs,
         assetParams.data || [],
         perpsVault?.apy || 0,
-        perpsMarket || undefined,
+        perpsMarketStates.data || [],
       ),
     [
       updatedAccount,
@@ -86,7 +86,7 @@ export default function AccountSummary(props: Props) {
       astroLpAprs,
       assetParams.data,
       perpsVault?.apy,
-      perpsMarket,
+      perpsMarketStates.data,
     ],
   )
 
@@ -101,7 +101,7 @@ export default function AccountSummary(props: Props) {
       astroLpAprs,
       assetParams.data || [],
       perpsVault?.apy || 0,
-      perpsMarket || undefined,
+      perpsMarketStates.data || [],
     )
 
     if (updatedLeverage.eq(leverage)) return null
@@ -116,7 +116,7 @@ export default function AccountSummary(props: Props) {
     assetParams.data,
     perpsVault?.apy,
     leverage,
-    perpsMarket,
+    perpsMarketStates.data,
   ])
 
   const handleToggle = useCallback(
@@ -140,7 +140,7 @@ export default function AccountSummary(props: Props) {
         vaultAprs,
         astroLpAprs,
         perpsVault?.apy || 0,
-        perpsMarket || undefined,
+        perpsMarketStates.data || [],
       ),
     [
       updatedAccount,
@@ -152,7 +152,7 @@ export default function AccountSummary(props: Props) {
       vaultAprs,
       astroLpAprs,
       perpsVault?.apy,
-      perpsMarket,
+      perpsMarketStates.data,
     ],
   )
 

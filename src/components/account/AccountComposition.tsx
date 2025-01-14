@@ -19,7 +19,7 @@ import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getAccountSummaryStats, getAccountUnrealizedPnlValue } from 'utils/accounts'
-import usePerpsMarket from 'hooks/perps/usePerpsMarket'
+import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
 
 interface Props {
   account: Account
@@ -57,7 +57,7 @@ export default function AccountComposition(props: Props) {
     [lendingAvailableAssets, accountLentAssets],
   )
   const assetParams = useAssetParams()
-  const perpsMarket = usePerpsMarket()
+  const perpsMarketStates = usePerpsMarketStates()
 
   const { positionValue, debts, netWorth, collateralValue, apy, leverage } = useMemo(
     () =>
@@ -70,7 +70,7 @@ export default function AccountComposition(props: Props) {
         astroLpAprs,
         assetParams.data || [],
         perpsVault?.apy || 0,
-        perpsMarket || undefined,
+        perpsMarketStates.data || [],
       ),
     [
       account,
@@ -81,7 +81,7 @@ export default function AccountComposition(props: Props) {
       astroLpAprs,
       assetParams.data,
       perpsVault?.apy,
-      perpsMarket,
+      perpsMarketStates,
     ],
   )
 
@@ -112,7 +112,7 @@ export default function AccountComposition(props: Props) {
       astroLpAprs,
       assetParams.data || [],
       perpsVault?.apy || 0,
-      perpsMarket || undefined,
+      perpsMarketStates.data || [],
     )
   }, [
     updatedAccount,
@@ -123,7 +123,7 @@ export default function AccountComposition(props: Props) {
     astroLpAprs,
     assetParams.data,
     perpsVault?.apy,
-    perpsMarket,
+    perpsMarketStates.data,
     positionValue,
     debts,
     netWorth,

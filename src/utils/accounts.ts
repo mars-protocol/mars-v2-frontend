@@ -4,6 +4,7 @@ import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPosition } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { AssetParamsBaseForAddr } from 'types/generated/mars-params/MarsParams.types'
+import { MarketResponse } from 'types/generated/mars-perps/MarsPerps.types'
 import { Positions } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import { byDenom } from 'utils/array'
 import { getCoinValue } from 'utils/formatters'
@@ -137,7 +138,7 @@ export const calculateAccountApy = (
   vaultAprs: Apr[],
   astroLpAprs: Apr[],
   perpsVaultApy: number,
-  perpsMarket?: PerpsMarket,
+  perpsMarketStates?: MarketResponse[],
 ): BigNumber => {
   const totalValue = getAccountTotalValue(account, assets)
   const debtsValue = calculateAccountValue('debts', account, assets)
@@ -155,16 +156,19 @@ export const calculateAccountApy = (
   let totalPerpsVaultInterestValue = BN_ZERO
   let totalPerpsFundingInterestValue = BN_ZERO
 
-  if (perps?.length && perpsMarket?.fundingRate) {
+  if (perps?.length && perpsMarketStates?.length) {
     perps.forEach((position) => {
-      if (position.denom !== perpsMarket.asset.denom) return
+      const marketState = perpsMarketStates.find((state) => state.denom === position.denom)
+
+      if (!marketState?.current_funding_rate) return
 
       const positionValue = position.amount
         .abs()
         .multipliedBy(position.currentPrice)
         .shiftedBy(-PRICE_ORACLE_DECIMALS)
-
-      const annualizedFundingRate = BN(perpsMarket.fundingRate).multipliedBy(365)
+      const annualizedFundingRate = BN(marketState.current_funding_rate)
+        .multipliedBy(100)
+        .multipliedBy(365)
 
       const fundingMultiplier = position.tradeDirection === 'long' ? -1 : 1
 
@@ -468,7 +472,7 @@ export function getAccountSummaryStats(
   astroLpAprs: Apr[],
   assetParams: AssetParamsBaseForAddr[] | undefined,
   perpsVaultApy: number,
-  perpsMarket?: PerpsMarket,
+  perpsMarketStates?: MarketResponse[],
 ) {
   const totalValue = getAccountTotalValue(account, assets)
 
@@ -498,7 +502,7 @@ export function getAccountSummaryStats(
     vaultAprs,
     astroLpAprs,
     perpsVaultApy,
-    perpsMarket,
+    perpsMarketStates,
   )
   const leverage = calculateAccountLeverage(account, assets)
 
