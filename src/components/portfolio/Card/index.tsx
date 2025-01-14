@@ -21,6 +21,7 @@ import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { getRoute } from 'utils/route'
+import usePerpsMarket from 'hooks/perps/usePerpsMarket'
 
 interface Props {
   accountId: string
@@ -45,6 +46,7 @@ export default function PortfolioCard(props: Props) {
     getDefaultChainSettings(chainConfig).reduceMotion,
   )
   const assetParams = useAssetParams()
+  const perpsMarket = usePerpsMarket()
 
   const stats: { title: ReactNode; sub: string }[] = useMemo(() => {
     if (!account || !assets.length || !lendingAssets.length || !borrowAssets.length) {
@@ -63,6 +65,7 @@ export default function PortfolioCard(props: Props) {
       astroLpAprs,
       assetParams.data || [],
       perpsVault?.apy || 0,
+      perpsMarket || undefined,
     )
 
     return [
@@ -88,6 +91,7 @@ export default function PortfolioCard(props: Props) {
     astroLpAprs,
     assetParams.data,
     perpsVault?.apy,
+    perpsMarket,
   ])
 
   if (!account) {

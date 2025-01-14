@@ -14,6 +14,7 @@ import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
+import usePerpsMarket from 'hooks/perps/usePerpsMarket'
 
 interface Props {
   account: Account
@@ -31,7 +32,7 @@ function Content(props: Props) {
   const { data: perpsVault } = usePerpsVault()
   const astroLpAprs = useAstroLpAprs()
   const assetParams = useAssetParams()
-
+  const perpsMarket = usePerpsMarket()
   const stats = useMemo(() => {
     if (!account || !borrowAssets.length || !lendingAssets.length) return DEFAULT_PORTFOLIO_STATS
     const { positionValue, collateralValue, debts, netWorth, apy, leverage } =
@@ -44,6 +45,7 @@ function Content(props: Props) {
         astroLpAprs,
         assetParams.data || [],
         perpsVault?.apy || 0,
+        perpsMarket || undefined,
       )
 
     return [
@@ -97,6 +99,7 @@ function Content(props: Props) {
     astroLpAprs,
     assetParams.data,
     perpsVault?.apy,
+    perpsMarket,
     props.v1,
   ])
 

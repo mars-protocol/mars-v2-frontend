@@ -137,14 +137,15 @@ export const calculateAccountApy = (
   vaultAprs: Apr[],
   astroLpAprs: Apr[],
   perpsVaultApy: number,
+  perpsMarket?: PerpsMarket,
 ): BigNumber => {
   const totalValue = getAccountTotalValue(account, assets)
-
   const debtsValue = calculateAccountValue('debts', account, assets)
   const totalDenominatorValue = totalValue.minus(debtsValue.abs())
 
   if (totalDenominatorValue.isLessThanOrEqualTo(0)) return BN_ZERO
-  const { vaults, lends, debts, deposits, stakedAstroLps, perpsVault } = account
+
+  const { vaults, lends, debts, deposits, stakedAstroLps, perpsVault, perps } = account
 
   let totalDepositsInterestValue = BN_ZERO
   let totalLendsInterestValue = BN_ZERO
@@ -152,6 +153,29 @@ export const calculateAccountApy = (
   let totalDebtInterestValue = BN_ZERO
   let totalAstroStakedLpsInterestValue = BN_ZERO
   let totalPerpsVaultInterestValue = BN_ZERO
+  let totalPerpsFundingInterestValue = BN_ZERO
+
+  if (perps?.length && perpsMarket?.fundingRate) {
+    perps.forEach((position) => {
+      if (position.denom !== perpsMarket.asset.denom) return
+
+      const positionValue = position.amount
+        .abs()
+        .multipliedBy(position.currentPrice)
+        .shiftedBy(-PRICE_ORACLE_DECIMALS)
+
+      const annualizedFundingRate = BN(perpsMarket.fundingRate).multipliedBy(365)
+
+      const fundingMultiplier = position.tradeDirection === 'long' ? -1 : 1
+
+      const fundingInterest = positionValue
+        .multipliedBy(annualizedFundingRate)
+        .multipliedBy(fundingMultiplier)
+        .dividedBy(100)
+
+      totalPerpsFundingInterestValue = totalPerpsFundingInterestValue.plus(fundingInterest)
+    })
+  }
 
   deposits?.forEach((deposit) => {
     const asset = assets.find(byDenom(deposit.denom))
@@ -233,6 +257,7 @@ export const calculateAccountApy = (
     .plus(totalDepositsInterestValue)
     .plus(totalAstroStakedLpsInterestValue)
     .plus(totalPerpsVaultInterestValue)
+    .plus(totalPerpsFundingInterestValue)
     .minus(totalDebtInterestValue)
 
   if (totalInterestValue.isEqualTo(0)) return BN_ZERO
@@ -443,6 +468,7 @@ export function getAccountSummaryStats(
   astroLpAprs: Apr[],
   assetParams: AssetParamsBaseForAddr[] | undefined,
   perpsVaultApy: number,
+  perpsMarket?: PerpsMarket,
 ) {
   const totalValue = getAccountTotalValue(account, assets)
 
@@ -472,6 +498,7 @@ export function getAccountSummaryStats(
     vaultAprs,
     astroLpAprs,
     perpsVaultApy,
+    perpsMarket,
   )
   const leverage = calculateAccountLeverage(account, assets)
 

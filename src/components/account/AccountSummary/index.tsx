@@ -22,6 +22,7 @@ import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApy, getAccountSummaryStats } from 'utils/accounts'
+import usePerpsMarket from 'hooks/perps/usePerpsMarket'
 
 interface Props {
   account: Account
@@ -60,6 +61,7 @@ export default function AccountSummary(props: Props) {
   const { health: updatedHealth, healthFactor: updatedHealthFactor } = useHealthComputer(
     updatedAccount || account,
   )
+  const perpsMarket = usePerpsMarket()
   const assetParams = useAssetParams()
   const { leverage } = useMemo(
     () =>
@@ -72,6 +74,7 @@ export default function AccountSummary(props: Props) {
         astroLpAprs,
         assetParams.data || [],
         perpsVault?.apy || 0,
+        perpsMarket || undefined,
       ),
     [
       updatedAccount,
@@ -83,6 +86,7 @@ export default function AccountSummary(props: Props) {
       astroLpAprs,
       assetParams.data,
       perpsVault?.apy,
+      perpsMarket,
     ],
   )
 
@@ -97,6 +101,7 @@ export default function AccountSummary(props: Props) {
       astroLpAprs,
       assetParams.data || [],
       perpsVault?.apy || 0,
+      perpsMarket || undefined,
     )
 
     if (updatedLeverage.eq(leverage)) return null
@@ -111,6 +116,7 @@ export default function AccountSummary(props: Props) {
     assetParams.data,
     perpsVault?.apy,
     leverage,
+    perpsMarket,
   ])
 
   const handleToggle = useCallback(
@@ -134,6 +140,7 @@ export default function AccountSummary(props: Props) {
         vaultAprs,
         astroLpAprs,
         perpsVault?.apy || 0,
+        perpsMarket || undefined,
       ),
     [
       updatedAccount,
@@ -145,6 +152,7 @@ export default function AccountSummary(props: Props) {
       vaultAprs,
       astroLpAprs,
       perpsVault?.apy,
+      perpsMarket,
     ],
   )
 

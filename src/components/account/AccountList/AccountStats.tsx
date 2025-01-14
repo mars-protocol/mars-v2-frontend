@@ -16,6 +16,7 @@ import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApy, calculateAccountBalanceValue } from 'utils/accounts'
 import { mergeBNCoinArrays } from 'utils/helpers'
+import usePerpsMarket from 'hooks/perps/usePerpsMarket'
 
 interface Props {
   accountId: string
@@ -30,6 +31,8 @@ export default function AccountStats(props: Props) {
   const { data: vaultAprs } = useVaultAprs()
   const { data: perpsVault } = usePerpsVault()
   const astroLpAprs = useAstroLpAprs()
+  const perpsMarket = usePerpsMarket()
+
   const positionBalance = useMemo(
     () => (!account ? null : calculateAccountBalanceValue(account, assets)),
     [account, assets],
@@ -55,8 +58,18 @@ export default function AccountStats(props: Props) {
             vaultAprs,
             astroLpAprs,
             perpsVault?.apy || 0,
+            perpsMarket || undefined,
           ),
-    [account, borrowAssetsData, lendingAssetsData, assets, vaultAprs, astroLpAprs, perpsVault?.apy],
+    [
+      account,
+      borrowAssetsData,
+      lendingAssetsData,
+      assets,
+      vaultAprs,
+      astroLpAprs,
+      perpsVault?.apy,
+      perpsMarket,
+    ],
   )
 
   const deleteAccountHandler = useCallback(() => {

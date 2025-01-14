@@ -34,6 +34,7 @@ import {
   calculateAccountBalanceValue,
   calculateAccountLeverage,
 } from 'utils/accounts'
+import usePerpsMarket from 'hooks/perps/usePerpsMarket'
 
 interface Props {
   account: Account
@@ -84,6 +85,7 @@ function AccountDetails(props: Props) {
     () => calculateAccountBalanceValue(updatedAccount ?? account, assets),
     [updatedAccount, account, assets],
   )
+
   const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalanceValue)
   const leverage = useMemo(() => calculateAccountLeverage(account, assets), [account, assets])
   const updatedLeverage = useMemo(() => {
@@ -100,6 +102,8 @@ function AccountDetails(props: Props) {
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
     useLendingMarketAssetsTableData()
 
+  const perpsMarket = usePerpsMarket()
+
   const lendingAssetsData = useMemo(
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
@@ -114,6 +118,7 @@ function AccountDetails(props: Props) {
         vaultAprs,
         astroLpAprs,
         perpsVault?.apy || 0,
+        perpsMarket || undefined,
       ),
     [
       updatedAccount,
@@ -124,6 +129,7 @@ function AccountDetails(props: Props) {
       vaultAprs,
       astroLpAprs,
       perpsVault?.apy,
+      perpsMarket,
     ],
   )
   const isFullWidth =
