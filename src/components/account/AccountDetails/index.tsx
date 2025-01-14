@@ -34,7 +34,7 @@ import {
   calculateAccountBalanceValue,
   calculateAccountLeverage,
 } from 'utils/accounts'
-import usePerpsMarket from 'hooks/perps/usePerpsMarket'
+import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
 
 interface Props {
   account: Account
@@ -102,7 +102,7 @@ function AccountDetails(props: Props) {
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
     useLendingMarketAssetsTableData()
 
-  const perpsMarket = usePerpsMarket()
+  const perpsMarketStates = usePerpsMarketStates()
 
   const lendingAssetsData = useMemo(
     () => [...lendingAvailableAssets, ...accountLentAssets],
@@ -118,7 +118,7 @@ function AccountDetails(props: Props) {
         vaultAprs,
         astroLpAprs,
         perpsVault?.apy || 0,
-        perpsMarket || undefined,
+        perpsMarketStates.data || [],
       ),
     [
       updatedAccount,
@@ -129,7 +129,7 @@ function AccountDetails(props: Props) {
       vaultAprs,
       astroLpAprs,
       perpsVault?.apy,
-      perpsMarket,
+      perpsMarketStates.data,
     ],
   )
   const isFullWidth =
