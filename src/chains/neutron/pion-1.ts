@@ -50,7 +50,7 @@ const Pion1: ChainConfig = {
   },
   features: ['ibc-transfer', 'ibc-go'],
   gasPrice: '0.025untrn',
-  vaultCodeId: '5467',
+  vaultCodeId: '8778',
   hls: false,
   perps: true,
   farm: true,
