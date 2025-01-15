@@ -17,6 +17,7 @@ import useStore from 'store'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 import { mergeBNCoinArrays, mergePerpsVaults } from 'utils/helpers'
+import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
 
 export default function PortfolioSummary() {
   const { address: urlAddress } = useParams()
@@ -31,6 +32,7 @@ export default function PortfolioSummary() {
   const astroLpAprs = useAstroLpAprs()
   const assetParams = useAssetParams()
   const { data: perpsVault } = usePerpsVault()
+  const perpsMarketStates = usePerpsMarketStates()
 
   const allAccounts = useMemo(() => {
     return [...(defaultAccounts || []), ...(hlsAccounts || [])]
@@ -48,7 +50,7 @@ export default function PortfolioSummary() {
           combinedAccount.stakedAstroLps,
           account.stakedAstroLps,
         )
-
+        combinedAccount.perps = combinedAccount.perps.concat(account.perps)
         return combinedAccount
       },
       {
@@ -76,6 +78,7 @@ export default function PortfolioSummary() {
         astroLpAprs,
         assetParams.data || [],
         perpsVault?.apy || 0,
+        perpsMarketStates.data || [],
       )
 
     return [
@@ -129,6 +132,7 @@ export default function PortfolioSummary() {
     astroLpAprs,
     assetParams,
     perpsVault?.apy,
+    perpsMarketStates.data,
   ])
 
   if (!walletAddress && !urlAddress) return null

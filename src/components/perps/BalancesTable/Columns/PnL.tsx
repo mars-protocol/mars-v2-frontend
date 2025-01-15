@@ -1,11 +1,14 @@
 import classNames from 'classnames'
-import React from 'react'
+import { Fragment, useMemo } from 'react'
 
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import { BNCoin } from 'types/classes/BNCoin'
+import PnLDisplay from 'components/common/PnLDisplay'
+import { BN_ZERO } from 'constants/math'
+import { BN } from 'utils/helpers'
 
 export const PNL_META = {
   accessorKey: 'pnl.net.amount',
@@ -17,10 +20,20 @@ export const PNL_META = {
 type Props = {
   pnl: PerpsPnL
   type: PerpsPosition['type']
+  position: PerpsPosition
 }
 
 export default function PnL(props: Props) {
-  if (props.type === 'limit')
+  const { pnl, position } = props
+
+  const pnlPercentage = useMemo(() => {
+    if (!position || !position.amount || pnl.net.amount.isZero()) return BN_ZERO
+
+    const entryValue = BN(position.amount).abs().times(position.entryPrice)
+    return BN(pnl.net.amount).div(entryValue).times(100)
+  }, [position, pnl.net.amount])
+
+  if (props.type === 'limit') {
     return (
       <Tooltip
         content={<PnLTooltipLimitOrder {...props} />}
@@ -28,23 +41,23 @@ export default function PnL(props: Props) {
         underline
         className='ml-auto w-min'
       >
-        <DisplayCurrency
-          className='inline text-xs'
-          coin={props.pnl.net}
-          isProfitOrLoss
-          showSignPrefix
-          showZero
+        <PnLDisplay
+          pnlAmount={pnl.net.amount}
+          pnlPercentage={pnlPercentage}
+          baseDenom={pnl.net.denom}
+          className='text-xs'
         />
       </Tooltip>
     )
+  }
+
   return (
     <Tooltip content={<PnLTooltip {...props} />} type='info' underline className='ml-auto w-min'>
-      <DisplayCurrency
-        className='inline text-xs'
-        coin={props.pnl.net}
-        isProfitOrLoss
-        showSignPrefix
-        showZero
+      <PnLDisplay
+        pnlAmount={pnl.net.amount}
+        pnlPercentage={pnlPercentage}
+        baseDenom={pnl.net.denom}
+        className='text-xs'
       />
     </Tooltip>
   )
@@ -73,7 +86,7 @@ function PnLTooltip(props: Props) {
   return (
     <div className='flex flex-col w-full gap-2 min-w-[280px]'>
       {[props.pnl.realized, props.pnl.unrealized].map((coins, i) => (
-        <React.Fragment key={i}>
+        <Fragment key={i}>
           <div className='flex items-center w-full gap-8 space-between'>
             <Text className='mr-auto font-bold text-white/60' size='sm'>
               {i === 0 ? 'Realized' : 'Unrealized'} PnL
@@ -95,7 +108,7 @@ function PnLTooltip(props: Props) {
             showSignPrefix
           />
           {i === 0 && <Divider className='my-2' />}
-        </React.Fragment>
+        </Fragment>
       ))}
     </div>
   )
