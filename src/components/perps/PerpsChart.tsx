@@ -70,6 +70,7 @@ export function PerpsChart() {
         limitOrders={currentLimitOrders}
         onCreateLimitOrder={onCreateLimitOrder}
         onCreateStopOrder={onCreateStopOrder}
+        isTab
       />
     </div>
   )
