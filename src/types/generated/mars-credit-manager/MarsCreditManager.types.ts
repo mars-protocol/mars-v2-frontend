@@ -23,6 +23,7 @@ export interface InstantiateMsg {
   oracle: OracleBaseForString
   owner: string
   params: ParamsBaseForString
+  perps_liquidation_bonus_ratio: Decimal
   red_bank: RedBankUnchecked
   swapper: SwapperBaseForString
   zapper: ZapperBaseForString
@@ -188,8 +189,7 @@ export type Action =
       swap_exact_in: {
         coin_in: ActionCoin
         denom_out: string
-        min_receive?: Uint128
-        slippage?: Decimal
+        min_receive: Uint128
         route?: SwapperRoute | null
       }
     }
@@ -595,6 +595,7 @@ export interface ConfigUpdates {
   oracle?: OracleBaseForString | null
   params?: ParamsBaseForString | null
   perps?: PerpsBaseForString | null
+  perps_liquidation_bonus_ratio?: Decimal | null
   red_bank?: RedBankUnchecked | null
   rewards_collector?: string | null
   swapper?: SwapperBaseForString | null
@@ -616,7 +617,7 @@ export interface HealthValuesResponse {
   liquidation_threshold_adjusted_collateral: Uint128
   max_ltv_adjusted_collateral: Uint128
   max_ltv_health_factor?: Decimal | null
-  perps_pnl_losses: Uint128
+  perps_pnl_loss: Uint128
   perps_pnl_profit: Uint128
   total_collateral_value: Uint128
   total_debt_value: Uint128
@@ -802,6 +803,7 @@ export interface ConfigResponse {
   ownership: OwnerResponse
   params: string
   perps: string
+  perps_liquidation_bonus_ratio: Decimal
   red_bank: string
   rewards_collector?: RewardsCollector | null
   swapper: string

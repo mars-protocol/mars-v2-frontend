@@ -75,7 +75,7 @@ export type ExecuteMsg =
       update_owner: OwnerUpdate
     }
   | {
-      migrate: MigrateV2ToV2_0_1
+      migrate: MigrateV2_1_0ToV2_2_0
     }
 export type Uint128 = string
 export type IncentiveKind = 'red_bank' | 'perp_vault'
@@ -100,7 +100,7 @@ export type OwnerUpdate =
       }
     }
   | 'clear_emergency_owner'
-export type MigrateV2ToV2_0_1 =
+export type MigrateV2_1_0ToV2_2_0 =
   | {
       user_unclaimed_rewards: {
         limit: number
