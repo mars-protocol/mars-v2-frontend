@@ -14,14 +14,11 @@ export function getSwapExactInAction(
   routeInfo: SwapRouteInfo,
   slippage: number,
 ): Action {
-  const baseSwapExactInObject = {
-    coin_in: coinIn,
-    denom_out: denomOut,
-    route: routeInfo?.route,
-  }
   return {
     swap_exact_in: {
-      ...baseSwapExactInObject,
+      coin_in: coinIn,
+      denom_out: denomOut,
+      route: routeInfo?.route,
       min_receive: getMinAmountOutFromRouteInfo(routeInfo, slippage).integerValue().toString(),
     },
   }
