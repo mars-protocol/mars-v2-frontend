@@ -7,28 +7,20 @@ import { getSwapExactInAction } from 'utils/swap'
 interface Props {
   borrowCoin: BNCoin
   depositCoin: BNCoin
-  chainConfig: ChainConfig
   routeInfo?: SwapRouteInfo | null
 }
 
 export default function useDepositActions(props: Props) {
-  const { borrowCoin, depositCoin, routeInfo, chainConfig } = props
+  const { borrowCoin, depositCoin, routeInfo } = props
 
   const [slippage] = useSlippage()
-  const isOsmosis = chainConfig.isOsmosis
 
   const swapAction = useMemo(
     () =>
       routeInfo
-        ? getSwapExactInAction(
-            borrowCoin.toActionCoin(),
-            depositCoin.denom,
-            routeInfo,
-            slippage,
-            isOsmosis,
-          )
+        ? getSwapExactInAction(borrowCoin.toActionCoin(), depositCoin.denom, routeInfo, slippage)
         : null,
-    [borrowCoin, depositCoin, routeInfo, slippage, isOsmosis],
+    [borrowCoin, depositCoin, routeInfo, slippage],
   )
   return useMemo(
     () => [

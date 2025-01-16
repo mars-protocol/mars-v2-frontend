@@ -153,7 +153,6 @@ export async function getFarmSwapActionsAndOutputCoins(
               farm.denoms[swapTo],
               astroRouteInfo,
               slippage,
-              false,
             ),
           )
         }
@@ -221,7 +220,6 @@ export async function getFarmSwapActionsAndOutputCoins(
             farm.denoms.primary,
             primarySwapRouteInfo,
             slippage,
-            chainConfig.isOsmosis,
           ),
         )
       }
@@ -251,7 +249,6 @@ export async function getFarmSwapActionsAndOutputCoins(
             farm.denoms.secondary,
             secondarySwapRouteInfo,
             slippage,
-            chainConfig.isOsmosis,
           ),
         )
       }

@@ -11,7 +11,6 @@ export function getHlsStakingChangeLevActions(
   slippage: number,
   routeInfo: SwapRouteInfo,
   swapInAmount: BigNumber,
-  isOsmosis: boolean,
 ): Action[] {
   let actions: Action[] = []
 
@@ -22,7 +21,6 @@ export function getHlsStakingChangeLevActions(
         borrowDenom,
         routeInfo,
         slippage,
-        isOsmosis,
       ),
       {
         repay: {
@@ -52,7 +50,6 @@ export function getHlsStakingChangeLevActions(
         collateralDenom,
         routeInfo,
         slippage,
-        isOsmosis,
       ),
     ]
   }

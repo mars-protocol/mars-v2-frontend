@@ -1,9 +1,8 @@
-import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import { BN_ZERO } from 'constants/math'
-import { useMemo, useState } from 'react'
+import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useSlippage from 'hooks/settings/useSlippage'
 import useRouteInfo from 'hooks/trade/useRouteInfo'
+import { useMemo, useState } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getCoinValue } from 'utils/formatters'
@@ -16,7 +15,6 @@ interface Props {
 export default function useDepositHlsStaking(props: Props) {
   const [slippage] = useSlippage()
   const assets = useDepositEnabledAssets()
-  const chainConfig = useChainConfig()
 
   const [depositAmount, setDepositAmount] = useState<BigNumber>(BN_ZERO)
   const [borrowAmount, setBorrowAmount] = useState<BigNumber>(BN_ZERO)
@@ -83,7 +81,6 @@ export default function useDepositHlsStaking(props: Props) {
               props.collateralDenom,
               route,
               slippage,
-              chainConfig.isOsmosis,
             ),
           ]),
     ]
@@ -95,7 +92,6 @@ export default function useDepositHlsStaking(props: Props) {
     props.borrowDenom,
     props.collateralDenom,
     slippage,
-    chainConfig.isOsmosis,
   ])
 
   return {

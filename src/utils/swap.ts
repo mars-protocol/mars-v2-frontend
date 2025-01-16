@@ -13,19 +13,16 @@ export function getSwapExactInAction(
   denomOut: string,
   routeInfo: SwapRouteInfo,
   slippage: number,
-  isOsmosis: boolean,
 ): Action {
   const baseSwapExactInObject = {
     coin_in: coinIn,
     denom_out: denomOut,
     route: routeInfo?.route,
   }
-  return isOsmosis
-    ? { swap_exact_in: { ...baseSwapExactInObject, slippage: slippage.toString() } }
-    : {
-        swap_exact_in: {
-          ...baseSwapExactInObject,
-          min_receive: getMinAmountOutFromRouteInfo(routeInfo, slippage).integerValue().toString(),
-        },
-      }
+  return {
+    swap_exact_in: {
+      ...baseSwapExactInObject,
+      min_receive: getMinAmountOutFromRouteInfo(routeInfo, slippage).integerValue().toString(),
+    },
+  }
 }

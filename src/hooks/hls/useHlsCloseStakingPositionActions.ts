@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js'
 
 import { BN_ZERO } from 'constants/math'
-import useIsOsmosis from 'hooks/chain/useIsOsmosis'
 import useSlippage from 'hooks/settings/useSlippage'
 import useRouteInfo from 'hooks/trade/useRouteInfo'
 import { useMemo } from 'react'
@@ -19,7 +18,6 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
   isLoadingRoute: boolean
 } {
   const [slippage] = useSlippage()
-  const isOsmosis = useIsOsmosis()
   const collateralDenom = props.account.strategy.denoms.deposit
   const borrowDenom = props.account.strategy.denoms.borrow
 
@@ -73,7 +71,6 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
             borrowDenom,
             routeInfo,
             slippage,
-            isOsmosis,
           )
 
     return {
@@ -117,7 +114,6 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
     collateralAmount,
     collateralDenom,
     debtAmount,
-    isOsmosis,
     routeInfo,
     slippage,
     swapInAmount,
