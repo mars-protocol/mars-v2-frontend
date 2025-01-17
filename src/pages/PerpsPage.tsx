@@ -1,6 +1,6 @@
 import { PerpsModule } from 'components/perps/Module/PerpsModule'
 import PerpsBanner from 'components/perps/PerpsBanner'
-import { PerpsChart } from 'components/perps/PerpsChart'
+import { PerpsTabs } from 'components/perps/PerpsTabs'
 import { PerpsPositions } from 'components/perps/PerpsPositions'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
@@ -35,7 +35,7 @@ export default function PerpsPage() {
     <div className='flex flex-wrap w-full gap-4 md:grid md:grid-cols-chart'>
       <div className='w-full'>
         <PerpsBanner />
-        <PerpsChart />
+        <PerpsTabs />
       </div>
       <div className='w-full row-span-2'>
         <PerpsModule />
