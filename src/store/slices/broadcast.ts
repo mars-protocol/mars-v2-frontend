@@ -689,14 +689,11 @@ export default function createBroadcastSlice(
       repay: boolean
       routeInfo: SwapRouteInfo
     }) => {
-      const isOsmosis = get().chainConfig.isOsmosis
-
       const swapExactIn = getSwapExactInAction(
         options.coinIn.toActionCoin(options.isMax),
         options.denomOut,
         options.routeInfo,
         options.slippage ?? 0,
-        isOsmosis,
       )
 
       const msg: CreditManagerExecuteMsg = {

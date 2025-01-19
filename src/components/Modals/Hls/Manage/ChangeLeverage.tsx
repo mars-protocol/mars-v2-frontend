@@ -5,7 +5,6 @@ import LeverageSummary from 'components/Modals/Hls/Deposit/LeverageSummary'
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
-import useIsOsmosis from 'hooks/chain/useIsOsmosis'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useSlippage from 'hooks/settings/useSlippage'
 import useRouteInfo from 'hooks/trade/useRouteInfo'
@@ -37,7 +36,6 @@ export default function ChangeLeverage(props: Props) {
     leverage,
     addedTrades,
   } = useUpdatedAccount(props.account)
-  const isOsmosis = useIsOsmosis()
 
   const changeHlsStakingLeverage = useStore((s) => s.changeHlsStakingLeverage)
   const { computeMaxBorrowAmount } = useHealthComputer(props.account)
@@ -141,7 +139,6 @@ export default function ChangeLeverage(props: Props) {
       slippage,
       routeInfo,
       swapInAmount,
-      isOsmosis,
     )
     changeHlsStakingLeverage({ accountId: props.account.id, actions })
   }, [
@@ -153,7 +150,6 @@ export default function ChangeLeverage(props: Props) {
     props.account.id,
     slippage,
     swapInAmount,
-    isOsmosis,
     changeHlsStakingLeverage,
   ])
 
