@@ -36,13 +36,10 @@ export default function AssetsSelect(props: Props) {
   const columns = useAssetSelectColumns(isBorrow, hideApy)
 
   const filteredColumns = useMemo(() => {
-    if (!hideColumns || hideColumns.length === 0) {
-      return columns
-    }
+    if (!hideColumns || hideColumns.length === 0) return columns
+
     return columns.filter((column) => {
-      if (!column.id) {
-        return true
-      }
+      if (!column.id) return true
       return !hideColumns.includes(column.id)
     })
   }, [columns, hideColumns])
@@ -103,7 +100,6 @@ export default function AssetsSelect(props: Props) {
       return selectionState
     }
 
-    console.log(selectedDenoms, 'selectedDenoms selectedDenoms')
     return [
       selectionState(
         selectedDenoms,
