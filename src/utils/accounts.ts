@@ -183,7 +183,7 @@ export const calculateAccountApy = (
 
   deposits?.forEach((deposit) => {
     const asset = assets.find(byDenom(deposit.denom))
-    if (!asset) return
+    if (!asset) return BN_ZERO
     const price = asset.price?.amount ?? BN_ZERO
     const amount = deposit.amount.shiftedBy(-asset.decimals)
 
