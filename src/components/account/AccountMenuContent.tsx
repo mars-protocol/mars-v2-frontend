@@ -7,7 +7,6 @@ import AccountCreateFirst from 'components/account/AccountCreateFirst'
 import AccountFund from 'components/account/AccountFund/AccountFundFullPage'
 import AccountList from 'components/account/AccountList'
 import AccountMenuTabs from 'components/account/AccountMenuTabs'
-import AccountVaultList from 'components/account/AccountVaultList'
 import Button from 'components/common/Button'
 import { Account, Plus, PlusCircled } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
@@ -48,7 +47,7 @@ export default function AccountMenuContent(props: Props) {
   const [isAutoLendEnabled] = useEnableAutoLendGlobal()
   const chainConfig = useChainConfig()
 
-  const hasVaults = false // TODO: Replace with actual vault availability check
+  const hasVaults = true // TODO: Replace with actual vault availability check
   const hasCreditAccounts = !!accountIds?.length
   const isAccountSelected =
     hasCreditAccounts && accountId && isNumber(accountId) && accountIds.includes(accountId)
@@ -101,11 +100,11 @@ export default function AccountMenuContent(props: Props) {
   const accountTabs = [
     {
       title: 'Credit Accounts',
-      renderContent: () => <AccountList setShowMenu={setShowMenu} />,
+      renderContent: () => <AccountList setShowMenu={setShowMenu} isVaults={false} />,
     },
     {
       title: 'Vault Accounts',
-      renderContent: () => <AccountVaultList setShowMenu={setShowMenu} />,
+      renderContent: () => <AccountList setShowMenu={setShowMenu} isVaults={true} />,
     },
   ]
 
@@ -163,7 +162,7 @@ export default function AccountMenuContent(props: Props) {
           {hasVaults ? (
             <AccountMenuTabs tabs={accountTabs} />
           ) : (
-            hasCreditAccounts && <AccountList setShowMenu={setShowMenu} />
+            hasCreditAccounts && <AccountList setShowMenu={setShowMenu} isVaults={false} />
           )}
         </div>
       </Overlay>
