@@ -13,7 +13,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import Tab from 'components/earn/Tab'
 import VaultsCommunityIntro from 'components/vaults/community/VaultsCommunityIntro'
-import { VAUTLS_TABS } from 'constants/pages'
+import { VAULTS_TABS } from 'constants/pages'
 
 export default function VaultsCommunityPage() {
   const [showVaultWarning, setShowVaultWarning] = useLocalStorage<boolean>(
@@ -71,7 +71,7 @@ export default function VaultsCommunityPage() {
 
   return (
     <div className='flex flex-wrap w-full gap-6'>
-      <Tab tabs={VAUTLS_TABS} activeTabIdx={1} />
+      <Tab tabs={VAULTS_TABS} activeTabIdx={1} />
       <VaultsCommunityIntro />
       <AvailableCommunityVaults />
     </div>

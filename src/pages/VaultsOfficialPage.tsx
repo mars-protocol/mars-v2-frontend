@@ -7,7 +7,7 @@ import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import VaultsOfficialIntro from 'components/vaults/official/VaultsOfficialIntro'
-import { VAUTLS_TABS } from 'constants/pages'
+import { VAULTS_TABS } from 'constants/pages'
 
 export default function VaultsOfficialPage() {
   const chainConfig = useChainConfig()
@@ -24,7 +24,7 @@ export default function VaultsOfficialPage() {
 
   return (
     <div className='flex flex-wrap w-full gap-6'>
-      <Tab tabs={VAUTLS_TABS} activeTabIdx={0} />
+      <Tab tabs={VAULTS_TABS} activeTabIdx={0} />
       <VaultsOfficialIntro />
       <AvailableOfficialVaults />
     </div>
