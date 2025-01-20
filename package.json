@@ -23,7 +23,7 @@
     "@cosmjs/cosmwasm-stargate": "^0.33.0",
     "@delphi-labs/shuttle-react": "^3.29.0",
     "@keplr-wallet/cosmos": "^0.12.175",
-    "@next/eslint-plugin-next": "^15.1.4",
+    "@next/eslint-plugin-next": "^15.1.5",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tanstack/react-table": "^8.20.6",
     "@tippyjs/react": "^4.2.6",
