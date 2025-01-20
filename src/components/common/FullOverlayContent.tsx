@@ -17,7 +17,7 @@ export default function FullOverlayContent(props: Props) {
   return (
     <div
       className={classNames(
-        'h-screen-full md:min-h-[600px] w-screen-full md:w-100 max-w-full',
+        'h-[calc(100dvh-140px)] md:min-h-[600px] w-screen-full md:w-100 max-w-full',
         props.className,
       )}
     >

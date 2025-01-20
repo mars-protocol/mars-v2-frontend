@@ -1,8 +1,8 @@
 import classNames from 'classnames'
-import Select from 'components/common/Select'
-import React, { useEffect, useState } from 'react'
 import AssetImage from 'components/common/assets/AssetImage'
 import Button from 'components/common/Button'
+import Select from 'components/common/Select'
+import React, { useEffect, useState } from 'react'
 
 interface Props {
   type: 'text' | 'dropdown' | 'button'
@@ -53,9 +53,9 @@ export default function VaultInputElement(props: Props) {
   return (
     <div className='mt-2'>
       {label && (
-        <label className='text-xs flex items-center'>
+        <label className='flex items-center text-xs'>
           {label}
-          {required && <span className='text-primary ml-1'>*</span>}
+          {required && <span className='ml-1 text-primary'>*</span>}
         </label>
       )}
 
@@ -93,11 +93,10 @@ function InputElement(props: InputElementProps) {
     return (
       <Button
         onClick={onClick}
-        variant='transparent'
         color='secondary'
-        className='w-full px-4 py-3 mt-3 bg-white/5 !border !border-white/10 focus:border-white/20 focus:bg-white/10 hover:cursor-pointer'
-        leftIcon={asset && <AssetImage asset={asset} className='h-4 w-4' />}
-        rightIcon={<span className='h-4 w-4'>{suffix}</span>}
+        className='w-full px-4 py-3 mt-3 bg-white/5 !border !border-white/10 hover:cursor-pointer '
+        leftIcon={asset && <AssetImage asset={asset} className='w-4 h-4' />}
+        rightIcon={<span className='w-4 h-4'>{suffix}</span>}
         text={value}
         textClassNames='text-left w-full'
       />
@@ -115,7 +114,7 @@ function InputElement(props: InputElementProps) {
           onChange(newValue)
         }}
         defaultValue={value}
-        className='relative w-full rounded-sm bg-white/5 border border-white/10 text-white/70'
+        className='relative w-full border rounded-sm bg-white/5 border-white/10 text-white/70'
         containerClassName='mt-3'
       />
     )

@@ -1,24 +1,23 @@
-import AssetSelectContent from 'components/vaults/community/createVault/AssetSelectContent'
 import Button from 'components/common/Button'
 import CharacterCount from 'components/common/CharacterCount'
-import CreateVaultContent from 'components/vaults/community/createVault/CreateVaultContent'
 import DisplayCurrency from 'components/common/DisplayCurrency'
+import { ArrowRight } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import TextArea from 'components/common/TextArea'
+import { TextLink } from 'components/common/TextLink'
+import CreateVaultContent from 'components/vaults/community/createVault/CreateVaultContent'
 import HlsSwitch from 'components/vaults/community/createVault/HLSSwitch'
 import MintVaultAccount from 'components/vaults/community/createVault/MintVaultAccount'
 import PerformanceFee from 'components/vaults/community/createVault/PerformanceFee'
-import Text from 'components/common/Text'
-import TextArea from 'components/common/TextArea'
 import VaultInputElement from 'components/vaults/community/createVault/VaultInputElement'
 import useAccountId from 'hooks/accounts/useAccountId'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useVaultAssets from 'hooks/assets/useVaultAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import useToggle from 'hooks/common/useToggle'
-import useStore from 'store'
-import { ArrowRight } from 'components/common/Icons'
-import { TextLink } from 'components/common/TextLink'
-import React, { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
 
@@ -32,23 +31,33 @@ const options = [
 ]
 
 export default function CreateVault() {
-  const assets = useWhitelistedAssets()
+  const assets = useVaultAssets()
+  const chainConfig = useChainConfig()
+  const defaultAsset = useMemo(
+    () => assets.find((asset) => asset.denom === chainConfig.stables[0]) ?? assets[0],
+    [assets, chainConfig.stables],
+  )
   const [withdrawFreezePeriod, setWithdrawFreezePeriod] = useState<string>('24')
-  const [selectedAsset, setSelectedAsset] = useState<Asset>(assets[0])
   const [enableHlsVault, setEnableHlsVault] = useState<boolean>(false)
   const [isTxPending, setIsTxPending] = useState<boolean>(false)
   const [description, setDescription] = useState<string>('')
   const [vaultTitle, setVaultTitle] = useState<string>('')
   const [performanceFee, setPerformanceFee] = useState<BigNumber>(BN(1))
-
-  const [showMenu, setShowMenu] = useToggle()
   const [searchParams] = useSearchParams()
   const { pathname } = useLocation()
   const accountId = useAccountId()
-  const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
   const navigate = useNavigate()
   const createManagedVault = useStore((s) => s.createManagedVault)
+  const selectedDenom = useStore((s) => s.vaultAssetsModal?.selectedDenom) ?? defaultAsset.denom
+
+  const selectedAsset = useMemo(() => {
+    return assets.find(byDenom(selectedDenom)) ?? defaultAsset
+  }, [assets, defaultAsset, selectedDenom])
+
+  const selectableAssets = useMemo(() => {
+    return enableHlsVault ? assets.filter((asset) => asset.isStaking) : assets
+  }, [assets, enableHlsVault])
 
   const isFormValid = () => {
     return vaultTitle.trim() !== '' && description.trim() !== '' && selectedAsset !== null
@@ -126,12 +135,18 @@ export default function CreateVault() {
   }, [])
 
   const handleSelectAssets = useCallback(() => {
-    setShowMenu(true)
-  }, [setShowMenu])
+    useStore.setState({
+      vaultAssetsModal: {
+        isOpen: true,
+        selectedDenom: selectedAsset.denom,
+        assets: selectableAssets,
+      },
+    })
+  }, [selectableAssets, selectedAsset.denom])
 
   return (
     <CreateVaultContent>
-      <form className='flex flex-col flex-grow space-y-6 overflow-y-auto'>
+      <form className='flex flex-col flex-grow space-y-6'>
         <div className='flex flex-col gap-8 md:flex-row'>
           <div className='flex-1 space-y-8'>
             <VaultInputElement
@@ -142,9 +157,7 @@ export default function CreateVault() {
               placeholder='Enter vault title'
               required
             />
-
             <PerformanceFee value={performanceFee} onChange={setPerformanceFee} />
-
             <HlsSwitch onChange={handleHlsSwitch} name='enableHlsVault' value={enableHlsVault} />
 
             <VaultInputElement
@@ -158,12 +171,6 @@ export default function CreateVault() {
               label='Vault Deposit Asset'
               suffix={<ArrowRight />}
               required
-            />
-            <AssetSelectContent
-              showMenu={showMenu}
-              setShowMenu={setShowMenu}
-              assets={assets}
-              setSelectedAsset={setSelectedAsset}
             />
           </div>
 
