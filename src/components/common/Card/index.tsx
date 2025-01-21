@@ -10,9 +10,12 @@ interface Props {
   onClick?: () => void
   title?: string | ReactElement
   id?: string
+  isTab?: boolean
+  showOverflow?: boolean
 }
 
 export default function Card(props: Props) {
+  const isTab = props.isTab ?? false
   return (
     <section
       id={props.id}
@@ -20,8 +23,11 @@ export default function Card(props: Props) {
       className={classNames(
         props.className,
         'flex flex-col',
-        'relative isolate max-w-full overflow-hidden rounded-base max-h-full',
-        'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
+        'relative isolate max-w-full max-h-full',
+        !props.showOverflow && 'overflow-hidden',
+        isTab
+          ? ''
+          : 'before:content-[" "] before:absolute rounded-base before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
       )}
     >
       {typeof props.title === 'string' ? (

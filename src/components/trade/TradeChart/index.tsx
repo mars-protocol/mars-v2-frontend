@@ -42,6 +42,7 @@ interface Props {
   perpsPosition?: PerpsPosition
   liquidationPrice?: number
   limitOrders?: PerpPositionRow[]
+  isTab?: boolean
   onCreateLimitOrder?: (price: BigNumber) => void
   onCreateStopOrder?: (price: BigNumber) => void
 }
@@ -374,6 +375,7 @@ export default function TradeChart(props: Props) {
     })
   }, [updateShapesAndStudies])
 
+  const { isTab = false } = props
   return (
     <Card
       title={
@@ -438,6 +440,7 @@ export default function TradeChart(props: Props) {
         'h-[500px]',
         'md:h-screen/70 md:max-h-[980px] md:min-h-[560px] order-1 w-full',
       )}
+      isTab={isTab}
     >
       <div ref={chartContainerRef ?? undefined} className='h-[calc(100%-32px)] overflow-hidden'>
         <div className='flex items-center w-full h-full'>

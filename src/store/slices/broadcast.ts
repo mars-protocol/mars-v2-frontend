@@ -1,4 +1,8 @@
-import { DEFAULT_GAS_MULTIPLIER, MsgExecuteContract } from '@delphi-labs/shuttle-react'
+import {
+  DEFAULT_GAS_MULTIPLIER,
+  MsgExecuteContract,
+  MsgInstantiateContract,
+} from '@delphi-labs/shuttle-react'
 import moment from 'moment'
 import { isMobile } from 'react-device-detect'
 import { StoreApi } from 'zustand'
@@ -21,6 +25,7 @@ import {
 import { ExecuteMsg as IncentivesExecuteMsg } from 'types/generated/mars-incentives/MarsIncentives.types'
 import { ExecuteMsg as PerpsExecuteMsg } from 'types/generated/mars-perps/MarsPerps.types'
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
+import { ExecuteMsg as ManagedVaultExecuteMsg } from 'types/generated/mars-vault/MarsVault.types'
 import { byDenom, bySymbol } from 'utils/array'
 import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
@@ -28,6 +33,7 @@ import checkPythUpdateEnabled from 'utils/checkPythUpdateEnabled'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
+import { getManagedVaultQueryClient } from 'api/cosmwasm-client'
 
 function generateExecutionMessage(
   sender: string | undefined = '',
@@ -38,7 +44,8 @@ function generateExecutionMessage(
     | RedBankExecuteMsg
     | PythUpdateExecuteMsg
     | PerpsExecuteMsg
-    | IncentivesExecuteMsg,
+    | IncentivesExecuteMsg
+    | ManagedVaultExecuteMsg,
   funds: Coin[],
 ) {
   return new MsgExecuteContract({
@@ -682,14 +689,11 @@ export default function createBroadcastSlice(
       repay: boolean
       routeInfo: SwapRouteInfo
     }) => {
-      const isOsmosis = get().chainConfig.isOsmosis
-
       const swapExactIn = getSwapExactInAction(
         options.coinIn.toActionCoin(options.isMax),
         options.denomOut,
         options.routeInfo,
         options.slippage ?? 0,
-        isOsmosis,
       )
 
       const msg: CreditManagerExecuteMsg = {
@@ -1291,6 +1295,109 @@ export default function createBroadcastSlice(
       get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
+    },
+    createManagedVault: async (params: VaultParams): Promise<{ address: string } | null> => {
+      try {
+        const address = get().address
+        if (!address) {
+          console.error('Wallet not connected')
+          return null
+        }
+
+        const instantiateMsg = {
+          base_token: params.baseToken,
+          cooldown_period: params.withdrawFreezePeriod,
+          credit_manager: get().chainConfig.contracts.creditManager,
+          description: params.description,
+          performance_fee_config: params.performanceFee,
+          subtitle: null,
+          title: params.title,
+          vault_token_subdenom: params.vault_token_subdenom,
+        }
+
+        const vaultCodeId = get().chainConfig.vaultCodeId
+        if (!vaultCodeId) {
+          console.error('Vault code ID not configured for this network')
+          return null
+        }
+
+        const messages = [
+          new MsgInstantiateContract({
+            sender: address,
+            admin: address,
+            codeId: vaultCodeId,
+            label: `Vault-${params.title}`,
+            msg: instantiateMsg,
+            funds: [],
+          }),
+        ]
+
+        const response = get().executeMsg({
+          messages,
+        })
+
+        get().handleTransaction({ response })
+
+        const result = await response
+        if (!result?.result) {
+          return null
+        }
+
+        const vaultAddress = getSingleValueFromBroadcastResult(
+          result.result,
+          'instantiate',
+          '_contract_address',
+        )
+        if (!vaultAddress) {
+          return null
+        }
+        return { address: vaultAddress }
+      } catch (error) {
+        console.error('Failed to create vault:', error)
+        return null
+      }
+    },
+    getManagedVaultDetails: async (vaultAddress: string): Promise<VaultDetails | null> => {
+      try {
+        const client = await getManagedVaultQueryClient(get().chainConfig, vaultAddress)
+        const response = await client.vaultExtension({
+          vault_info: {},
+        })
+
+        return response as unknown as VaultDetails
+      } catch (error) {
+        console.error('Failed to get vault details:', error)
+        return null
+      }
+    },
+    handlePerformanceFeeAction: async (options: PerformanceFeeOptions) => {
+      try {
+        const address = get().address
+        if (!address) {
+          console.error('Wallet not connected')
+          return false
+        }
+
+        const msg: ManagedVaultExecuteMsg = {
+          vault_extension: {
+            withdraw_performance_fee: {
+              new_performance_fee_config: options.newFee || null,
+            },
+          },
+        }
+
+        const message = generateExecutionMessage(address, options.vaultAddress, msg, [])
+
+        const response = get().executeMsg({
+          messages: [message],
+        })
+
+        get().handleTransaction({ response })
+        return response.then((response) => !!response.result)
+      } catch (error) {
+        console.error('Failed to update performance fee:', error)
+        return false
+      }
     },
   }
 }

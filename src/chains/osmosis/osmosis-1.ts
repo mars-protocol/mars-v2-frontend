@@ -131,8 +131,9 @@ const Osmosis1: ChainConfig = {
   hls: true,
   perps: false,
   farm: true,
-  anyAsset: false,
+  anyAsset: true,
   slinky: false,
+  managedVaults: false,
 }
 
 export default Osmosis1

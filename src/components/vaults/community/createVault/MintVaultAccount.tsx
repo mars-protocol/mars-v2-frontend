@@ -1,47 +1,68 @@
 import Button from 'components/common/Button'
-import { ArrowRight, Vault } from 'components/common/Icons'
-import Text from 'components/common/Text'
 import CreateVaultContent from 'components/vaults/community/createVault/CreateVaultContent'
+import Text from 'components/common/Text'
 import VaultDetails from 'components/vaults/community/vaultDetails/index'
-import useAccountId from 'hooks/accounts/useAccountId'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import { useCallback } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
+import { ArrowRight, Vault } from 'components/common/Icons'
 import { getPage, getRoute } from 'utils/route'
+import { useCallback, useState } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 export default function MintVaultAccount() {
-  const accountId = useAccountId()
+  const [isTxPending, setIsTxPending] = useState(false)
+  const createAccount = useStore((s) => s.createAccount)
+  const { vaultAddress } = useParams<{ vaultAddress: string }>()
   const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
   const chainConfig = useChainConfig()
   const navigate = useNavigate()
-  const handleCreate = useCallback(() => {
-    // TODO: Implement mint vault acc logic
 
-    // temp vault address
-    const tempVaultAddress = 'tempvaultaddress'
+  const handleCreateVault = useCallback(async () => {
+    if (!vaultAddress) {
+      console.error('Vault address is undefined')
+      return
+    }
 
-    if (accountId)
+    setIsTxPending(true)
+    try {
+      const accountKind = {
+        fund_manager: {
+          vault_addr: vaultAddress,
+        },
+      }
+      const accountId = await createAccount(accountKind, false)
+
+      if (!accountId) {
+        setIsTxPending(false)
+        return
+      }
+
       navigate(
         getRoute(
-          getPage(`vaults/${tempVaultAddress}/details`, chainConfig),
+          getPage(`vaults/${vaultAddress}/details`, chainConfig),
           searchParams,
           address,
           accountId,
         ),
       )
 
-    useStore.setState({
-      focusComponent: {
-        component: <VaultDetails />,
-        onClose: () => {
-          navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
+      useStore.setState({
+        focusComponent: {
+          component: <VaultDetails />,
+          onClose: () => {
+            navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
+          },
         },
-      },
-    })
-  }, [accountId, navigate, chainConfig, searchParams, address, pathname])
+      })
+    } catch (error) {
+      console.error('Failed to create vault account:', error)
+    } finally {
+      setIsTxPending(false)
+    }
+  }, [vaultAddress, createAccount, navigate, chainConfig, searchParams, address, pathname])
 
   return (
     <CreateVaultContent cardClassName='h-118 flex justify-end'>
@@ -59,14 +80,15 @@ export default function MintVaultAccount() {
         </div>
 
         <Button
-          // TODO: add Create vault acc logic
-          onClick={handleCreate}
+          onClick={handleCreateVault}
           variant='solid'
           color='primary'
           size='md'
           rightIcon={<ArrowRight />}
-          className='w-full md:w-auto'
+          className='w-full md:w-70'
           text='Create Vault Account (2/2)'
+          showProgressIndicator={isTxPending}
+          disabled={isTxPending}
         />
       </div>
     </CreateVaultContent>

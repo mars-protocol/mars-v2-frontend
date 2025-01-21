@@ -24,15 +24,15 @@ export default function useCommunityVaultsColumns(props: Props) {
   const { isLoading } = props
 
   const accountId = useAccountId()
+  const chainConfig = useChainConfig()
+  const address = useStore((s) => s.address)
   const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
-  const address = useStore((s) => s.address)
-  const chainConfig = useChainConfig()
 
   const navigate = useNavigate()
   const handleVaultDetails = useCallback(() => {
     // temp vault address
-    const tempVaultAddress = 'tempvaultaddress'
+    const tempVaultAddress = 'neutron1k6yx75905s4u923l2dhee9vj8vr50n0946hp0ld2vvwv95hn992q0smkf0'
 
     if (accountId)
       navigate(

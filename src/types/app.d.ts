@@ -276,11 +276,13 @@ interface ChainConfig {
   name: string
   network: 'mainnet' | 'testnet'
   vaults: VaultMetaData[]
+  vaultCodeId?: string
   hls: boolean
   perps: boolean
   farm: boolean
   anyAsset: boolean
   slinky: boolean
+  managedVaults: boolean
 }
 
 interface AssetCampaignInfo {
@@ -1163,6 +1165,9 @@ interface BroadcastSlice {
     vaultDenom: string
   }) => Promise<boolean>
   v1Action: (type: V1ActionType, funds: BNCoin) => Promise<boolean>
+  createManagedVault: (params: VaultParams) => Promise<{ address: string } | null>
+  getManagedVaultDetails: (vaultAddress: string) => Promise<VaultDetails | null>
+  handlePerformanceFeeAction: (options: PerformanceFeeOptions) => Promise<boolean>
 }
 
 type V1ActionType = 'withdraw' | 'deposit' | 'borrow' | 'repay'
@@ -1291,6 +1296,7 @@ interface ModalSlice {
   unlockModal: UnlockModal | null
   farmModal: FarmModal | null
   walletAssetsModal: WalletAssetModal | null
+  vaultAssetsModal: VaultAssetModal | null
   withdrawFromVaultsModal: DepositedVault[] | null
   v1DepositAndWithdrawModal: V1DepositAndWithdrawModal | null
   v1BorrowAndRepayModal: V1BorrowAndRepayModal | null
@@ -1355,6 +1361,12 @@ interface WalletAssetModal {
   isOpen?: boolean
   selectedDenoms: string[]
   isBorrow?: boolean
+}
+
+interface VaultAssetModal {
+  isOpen?: boolean
+  selectedDenom: string
+  assets: Asset[]
 }
 
 interface HlsModal {
@@ -1805,4 +1817,49 @@ interface PerpsTradingFee {
     opening: BigNumber
     closing: BigNumber
   }
+}
+interface VaultParams {
+  title: string
+  description: string
+  baseToken: string
+  withdrawFreezePeriod: number
+  enableHls: boolean
+  performanceFee: PerformanceFeeConfig
+  vault_token_subdenom: string
+}
+
+interface VaultParams {
+  title: string
+  description: string
+  baseToken: string
+  withdrawFreezePeriod: number
+  enableHls: boolean
+  performanceFee: {
+    fee_rate: string
+    withdrawal_interval: number
+  }
+  vault_token_subdenom: string
+}
+
+interface VaultDetails {
+  base_token: string
+  vault_token: string
+  title: string
+  subtitle: string | null
+  description: string
+  credit_manager: string
+  vault_account_id: string | null
+  cooldown_period: number
+  performance_fee_config: {
+    fee_rate: string
+    withdrawal_interval: number
+  }
+}
+interface PerformanceFeeOptions {
+  vaultAddress: string
+  newFee?: PerformanceFeeConfig | null
+}
+interface PerformanceFeeConfig {
+  fee_rate: string
+  withdrawal_interval: number
 }

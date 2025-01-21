@@ -12,9 +12,11 @@ import useAccountIds from 'hooks/accounts/useAccountIds'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
+import VaultDetails from 'components/vaults/community/vaultDetails'
 
 interface Props {
   setShowMenu: (show: boolean) => void
+  isVaults?: boolean
 }
 
 const accountCardHeaderClasses = classNames(
@@ -24,7 +26,7 @@ const accountCardHeaderClasses = classNames(
 )
 
 export default function AccountList(props: Props) {
-  const { setShowMenu } = props
+  const { setShowMenu, isVaults } = props
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const chainConfig = useChainConfig()
@@ -59,7 +61,27 @@ export default function AccountList(props: Props) {
                 if (isActive) return
                 if (isMobile) setShowMenu(false)
                 useStore.setState({ accountDeleteModal: null })
-                navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, accountId))
+
+                if (isVaults) {
+                  const tempVaultAddress = 'tempvaultaddress'
+                  navigate(
+                    getRoute(
+                      getPage(`vaults/${tempVaultAddress}/details`, chainConfig),
+                      searchParams,
+                      address,
+                      accountId,
+                    ),
+                  )
+                  useStore.setState({
+                    focusComponent: {
+                      component: <VaultDetails />,
+                    },
+                  })
+                } else {
+                  navigate(
+                    getRoute(getPage(pathname, chainConfig), searchParams, address, accountId),
+                  )
+                }
               }}
               title={
                 <div
@@ -67,14 +89,23 @@ export default function AccountList(props: Props) {
                   role='button'
                   onClick={() => setShowMenu(false)}
                 >
-                  <Text size='xs' className='flex flex-1'>
-                    Credit Account {accountId}
-                  </Text>
+                  {isVaults ? (
+                    <Text size='xs'>Vault Name</Text>
+                  ) : (
+                    <Text size='xs' className='flex flex-1'>
+                      Credit Account {accountId}
+                    </Text>
+                  )}
                   <Radio active={isActive} className='group-hover/account:opacity-100' />
                 </div>
               }
             >
-              <AccountStats accountId={accountId} isActive={isActive} setShowMenu={setShowMenu} />
+              <AccountStats
+                accountId={accountId}
+                isActive={isActive}
+                setShowMenu={setShowMenu}
+                isVaults={isVaults}
+              />
             </Card>
           </div>
         )

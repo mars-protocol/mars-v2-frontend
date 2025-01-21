@@ -1,26 +1,56 @@
 import Button from 'components/common/Button'
+import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import EscButton from 'components/common/Button/EscButton'
 import Overlay from 'components/common/Overlay'
-import Text from 'components/common/Text'
 import PerformanceFee from 'components/vaults/community/createVault/PerformanceFee'
-import classNames from 'classnames'
-import { BNCoin } from 'types/classes/BNCoin'
+import Text from 'components/common/Text'
+import useStore from 'store'
 import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
 import { Callout, CalloutType } from 'components/common/Callout'
+import { useState } from 'react'
 
 interface Props {
   showFeeActionModal: boolean
   setShowFeeActionModal: (show: boolean) => void
   type: 'edit' | 'withdraw'
+  vaultAddress: string
 }
 
 export default function FeeAction(props: Props) {
-  const { showFeeActionModal, setShowFeeActionModal, type } = props
+  const { showFeeActionModal, setShowFeeActionModal, type, vaultAddress } = props
+  const [isTxPending, setIsTxPending] = useState(false)
+  const [performanceFee, setPerformanceFee] = useState<BigNumber>(BN(1))
+  const handlePerformanceFeeAction = useStore((s) => s.handlePerformanceFeeAction)
 
   const isEdit = type === 'edit'
 
-  //   TODO: add logic for updating/withdrawing the fee
+  const handleFeeAction = async () => {
+    if (!vaultAddress) return
+
+    setIsTxPending(true)
+    try {
+      const options: PerformanceFeeOptions = {
+        vaultAddress,
+        ...(isEdit && {
+          newFee: {
+            fee_rate: performanceFee.dividedBy(100).dividedBy(1000).toFixed(5),
+            withdrawal_interval: 24 * 3600,
+          },
+        }),
+      }
+
+      const result = await handlePerformanceFeeAction(options)
+      if (result) {
+        setShowFeeActionModal(false)
+      }
+    } catch (error) {
+      console.error('Failed to handle fee action:', error)
+    } finally {
+      setIsTxPending(false)
+    }
+  }
 
   return (
     <Overlay
@@ -28,7 +58,7 @@ export default function FeeAction(props: Props) {
       show={showFeeActionModal}
       setShow={setShowFeeActionModal}
     >
-      <div className='gradient-description absolute h-full w-full opacity-30' />
+      <div className='gradient-description absolute h-full w-full opacity-30 pointer-events-none' />
       <div
         className={classNames(
           'p-4 z-10 min-h-90 h-full',
@@ -48,7 +78,7 @@ export default function FeeAction(props: Props) {
         </div>
 
         {isEdit ? (
-          <PerformanceFee />
+          <PerformanceFee value={performanceFee} onChange={setPerformanceFee} />
         ) : (
           <div className='text-center'>
             <DisplayCurrency
@@ -61,19 +91,20 @@ export default function FeeAction(props: Props) {
           </div>
         )}
 
-        {/* TODO: do we have this message or disabled Edit Fee button instead? */}
         {isEdit && (
           <Callout type={CalloutType.INFO}>
-            Your performance fee will be withdrawn first when updating your fees.
+            Updating the performance fee will first withdraw any accrued performance fees.
           </Callout>
         )}
 
         <Button
-          onClick={() => {}}
+          onClick={handleFeeAction}
           color={isEdit ? 'tertiary' : 'primary'}
           size='md'
           className='w-full'
           text={isEdit ? 'Update Fees' : 'Withdraw'}
+          disabled={isTxPending}
+          showProgressIndicator={isTxPending}
         />
       </div>
     </Overlay>

@@ -49,6 +49,7 @@ export default function Routes() {
             chainConfig.perps ? <Navigate to='/perps' replace /> : <Navigate to='/trade' replace />
           }
         />
+
         <Route path='/vaults' element={<VaultsOfficialPage />}>
           <Route path='create' element={<CreateVault />} />
         </Route>
@@ -65,9 +66,9 @@ export default function Routes() {
           <Route path='perps-vault' element={<PerpsVaultPage />} />
           <Route path='borrow' element={<BorrowPage />} />
           <Route path='portfolio' element={<PortfolioPage />} />
+          <Route path='v1' element={<V1Page />} />
           <Route path='hls-staking' element={<HlsStakingPage />} />
           <Route path='hls-farm' element={<HlsFarmPage />} />
-          <Route path='v1' element={<V1Page />} />
 
           <Route path='vaults-community' element={<VaultsCommunityPage />} />
           <Route path='vaults' element={<VaultsOfficialPage />}>

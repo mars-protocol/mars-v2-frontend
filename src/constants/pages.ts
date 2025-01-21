@@ -15,7 +15,7 @@ export const HLS_TABS: Tab[] = [
   { page: 'hls-farm', name: 'Farm' },
 ]
 
-export const VAUTLS_TABS: Tab[] = [
+export const VAULTS_TABS: Tab[] = [
   { page: 'vaults', name: 'Official Vaults' },
   { page: 'vaults-community', name: 'Community Vaults' },
 ]

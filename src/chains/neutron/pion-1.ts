@@ -13,13 +13,13 @@ const Pion1: ChainConfig = {
     sell: 'factory/neutron1ke0vqqzyymlp5esr8gjwuzh94ysnpvj8er5hm7/UUSDC',
   },
   contracts: {
-    redBank: 'neutron19ucpt6vyha2k6tgnex880sladcqsguwynst4f8krh9vuxhktwkvq3yc3nl',
-    incentives: 'neutron1xqfgy03gulfyv6dnz9ezsjkgcvsvlaajskw35cluux9g05cmcu4sfdkuvc',
-    oracle: 'neutron12vejgch3jd74j99kdrpjf57f6zjlu425yyfscdjnmnn4vvyrazvqgvcp24',
-    params: 'neutron14a0qr0ahrg3f3yml06m9f0xmvw30ldf3scgashcjw5mrtyrc4aaq0v4tm9',
-    creditManager: 'neutron1zkxezh5e6jvg0h3kj50hz5d0yrgagkp0c3gcdr6stulw7fye9xlqygj2gz',
-    accountNft: 'neutron1pgk4ttz3ned9xvqlg79f4jumjet0443uqh2rga9ahalzgxqngtrqrszdna',
-    perps: 'neutron1dcv8sy6mhgjaum5tj8lghxgxx2jgf3gmcw6kg73rj70sx5sjpguslzv0xu',
+    redBank: 'neutron10z0hh8rkgpxay28zf4zm0knd7h6v6qulw8tmcg28qyrzqvnkrrcsre06tx',
+    incentives: 'neutron192dwv4j2f08z959k0htzlutgejzxa3mkgp0ux3xj798yjqzcg7aqrw4dmj',
+    oracle: 'neutron1k529nj77qcyk4ure79mxzcud636l8x6yjdep2sqreypk6fkm5afq6vlhxu',
+    params: 'neutron19hxedyjky47wyn5h3xpc0gcl94rnx5gmydgycfl7hdkstuvn9w2sna5zu9',
+    creditManager: 'neutron1gkh5u8ue3djq9rfgc4ymyt35yfjt7l0gx0mwg4j2jwnf9w54lhashy44uc',
+    accountNft: 'neutron1xcp7qn8f6wjhgvg2cn7vjkmn6sqpslf7ezea3sfvhmlhysels4nqnldu3w',
+    perps: 'neutron19p5zu0fuhl9qnc5pz4xj0fzhy74r2h50g5cmumgy7yntht0zau7sck3aky',
     pyth: 'neutron15ldst8t80982akgr8w8ekcytejzkmfpgdkeq4xgtge48qs7435jqp87u3t',
   },
   endpoints: {
@@ -50,11 +50,13 @@ const Pion1: ChainConfig = {
   },
   features: ['ibc-transfer', 'ibc-go'],
   gasPrice: '0.025untrn',
+  vaultCodeId: '8778',
   hls: false,
   perps: true,
   farm: true,
   anyAsset: true,
   slinky: true,
+  managedVaults: true,
 }
 
 export default Pion1

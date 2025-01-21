@@ -1,4 +1,5 @@
 import Button from 'components/common/Button'
+import ActionButton from 'components/common/Button/ActionButton'
 import { Account, ArrowRight, HandCoins, Plus, PlusSquared, Wallet } from 'components/common/Icons'
 import Intro from 'components/common/Intro'
 import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
@@ -87,7 +88,12 @@ export default function VaultsCommunityIntro() {
         </>
       }
     >
-      <Button text='Create Vault' color='primary' leftIcon={<Plus />} onClick={handleOnClick} />
+      <ActionButton
+        text='Create Vault'
+        color='primary'
+        leftIcon={<Plus />}
+        onClick={handleOnClick}
+      />
       <Button
         text='Learn more'
         leftIcon={<PlusSquared />}

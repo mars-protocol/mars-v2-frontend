@@ -16,15 +16,15 @@ export default function VaultStats(props: Props) {
   return (
     <div className='bg-white/5 p-3 space-y-3 text-white/60'>
       {stats.map((stat, index) => (
-        <>
-          <div key={index} className='flex justify-between items-center'>
+        <React.Fragment key={index}>
+          <div className='flex justify-between items-center'>
             <Text size='xs'>{stat.description}</Text>
             <Text size='xs' className='text-white'>
               {stat.value}
             </Text>
           </div>
           {index < stats.length - 1 && <Divider />}
-        </>
+        </React.Fragment>
       ))}
     </div>
   )
