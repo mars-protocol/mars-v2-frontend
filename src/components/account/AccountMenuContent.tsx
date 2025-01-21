@@ -14,6 +14,7 @@ import Text from 'components/common/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
+import useAccountVaults from 'hooks/accounts/useAccountVaults'
 import useToggle from 'hooks/common/useToggle'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useAutoLend from 'hooks/wallet/useAutoLend'
@@ -47,7 +48,7 @@ export default function AccountMenuContent(props: Props) {
   const [isAutoLendEnabled] = useEnableAutoLendGlobal()
   const chainConfig = useChainConfig()
 
-  const hasVaults = true // TODO: Replace with actual vault availability check
+  const { hasVaults } = useAccountVaults(address)
   const hasCreditAccounts = !!accountIds?.length
   const isAccountSelected =
     hasCreditAccounts && accountId && isNumber(accountId) && accountIds.includes(accountId)

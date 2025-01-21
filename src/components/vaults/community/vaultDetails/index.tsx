@@ -48,7 +48,6 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
   const [modalType, setModalType] = useState<'deposit' | 'withdraw' | null>(null)
   const [modalFeeType, setModalFeeType] = useState<'edit' | 'withdraw' | null>(null)
 
-  console.log('isOwner', isOwner)
   // TODO: fetch from contract
   const hasAccumulatedFees = false
 

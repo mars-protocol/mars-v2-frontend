@@ -11,7 +11,12 @@ export default async function getAccounts(
   const accountIdsAndKinds = await getWalletAccountIds(chainConfig, address)
 
   const $accounts = accountIdsAndKinds
-    .filter((a) => a.kind === kind)
+    .filter((a) => {
+      if (typeof kind === 'object' && 'fund_manager' in kind) {
+        return typeof a.kind === 'object' && 'fund_manager' in a.kind
+      }
+      return a.kind === kind
+    })
     .map((account) => getAccount(chainConfig, assets, account.id, address))
 
   const accounts = await Promise.all($accounts).then((accounts) => accounts)
