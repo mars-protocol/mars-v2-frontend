@@ -22,7 +22,6 @@ export default function UpdateNotification() {
         if (latestVersion !== packageInfo.version && currentUrl.includes('marsprotocol.io')) {
           setIsUpdateAvailable(true)
         }
-
         if (focusComponent !== null) {
           setIsUpdateAvailable(false)
         }
@@ -44,7 +43,7 @@ export default function UpdateNotification() {
     <div className='w-full mt-[73px] -mb-[93px] p-4'>
       <NotificationBanner
         type='info'
-        text='A new version is available.'
+        text='A new version is available. Reload the app to update.'
         button={
           <Button
             color='tertiary'
