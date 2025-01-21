@@ -1,20 +1,20 @@
-import EditDescription from 'components/vaults/community/vaultDetails/common/Overlays/EditDescription'
-import FeeAction from 'components/vaults/community/vaultDetails/common/Overlays/FeeAction'
-import PositionInfo from 'components/vaults/community/vaultDetails/common/PositionInfo'
-import ProfileVaultCard from 'components/vaults/community/vaultDetails/profileVaultCard/ProfileVaultCard'
-import Text from 'components/common/Text'
-import VaultAction from 'components/vaults/community/vaultDetails/common/Overlays/VaultAction'
-import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
-import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
-import useToggle from 'hooks/common/useToggle'
-import { ArrowDownLine } from 'components/common/Icons'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { CircularProgress } from 'components/common/CircularProgress'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { useManagedVaultData } from 'hooks/managedVaults/useManagedVaultData'
-import { useParams } from 'react-router-dom'
-import { Suspense, useState } from 'react'
+import { ArrowDownLine } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import EditDescription from 'components/vaults/community/vaultDetails/common/Overlays/EditDescription'
+import FeeAction from 'components/vaults/community/vaultDetails/common/Overlays/FeeAction'
+import VaultAction from 'components/vaults/community/vaultDetails/common/Overlays/VaultAction'
+import PositionInfo from 'components/vaults/community/vaultDetails/common/PositionInfo'
+import ProfileVaultCard from 'components/vaults/community/vaultDetails/profileVaultCard/ProfileVaultCard'
+import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
+import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
 import { vaultProfileData } from 'components/vaults/dummyData'
+import useToggle from 'hooks/common/useToggle'
+import { useManagedVaultData } from 'hooks/managedVaults/useManagedVaultData'
+import { Suspense, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 function VaultLoadingState() {
   return (
@@ -68,7 +68,7 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
 
   return (
     <div className='min-h-screen md:h-screen-full md:min-h-[600px] w-full'>
-      <div className='flex flex-col md:flex-row gap-4 justify-center relative'>
+      <div className='relative flex flex-col justify-center gap-4 md:flex-row'>
         <div className='md:w-100'>
           {/* TODO: fetch the data */}
           <ProfileVaultCard

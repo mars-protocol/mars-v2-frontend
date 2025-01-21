@@ -1296,6 +1296,7 @@ interface ModalSlice {
   unlockModal: UnlockModal | null
   farmModal: FarmModal | null
   walletAssetsModal: WalletAssetModal | null
+  vaultAssetsModal: VaultAssetModal | null
   withdrawFromVaultsModal: DepositedVault[] | null
   v1DepositAndWithdrawModal: V1DepositAndWithdrawModal | null
   v1BorrowAndRepayModal: V1BorrowAndRepayModal | null
@@ -1360,6 +1361,12 @@ interface WalletAssetModal {
   isOpen?: boolean
   selectedDenoms: string[]
   isBorrow?: boolean
+}
+
+interface VaultAssetModal {
+  isOpen?: boolean
+  selectedDenom: string
+  assets: Asset[]
 }
 
 interface HlsModal {

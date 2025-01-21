@@ -16,6 +16,7 @@ import {
   UnlockModal,
   V1BorrowAndRepay,
   V1DepositAndWithdraw,
+  VaultAssets,
   VaultModal,
   WalletAssets,
   WithdrawFromVaultsModal,
@@ -44,6 +45,7 @@ export default function ModalsContainer() {
       <V1DepositAndWithdraw />
       <V1BorrowAndRepay />
       <KeeperFeeModal />
+      <VaultAssets />
     </>
   )
 }
