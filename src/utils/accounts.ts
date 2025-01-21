@@ -186,13 +186,15 @@ export const calculateAccountApy = (
     if (!asset) return BN_ZERO
     const price = asset.price?.amount ?? BN_ZERO
     const amount = deposit.amount.shiftedBy(-asset.decimals)
-    let apy = 0
-    asset.campaigns.forEach((campaign) => {
-      if (campaign.type === 'apy') apy = apy + (campaign.apy ?? 0)
+
+    let totalApy = 0
+    asset.campaigns?.forEach((campaign) => {
+      if (campaign.type === 'apy') {
+        totalApy += campaign.apy ?? 0
+      }
     })
 
-    const positionInterest = amount.multipliedBy(price).multipliedBy(apy).dividedBy(100)
-
+    const positionInterest = amount.multipliedBy(price).multipliedBy(totalApy).dividedBy(100)
     totalDepositsInterestValue = totalDepositsInterestValue.plus(positionInterest)
   })
 
