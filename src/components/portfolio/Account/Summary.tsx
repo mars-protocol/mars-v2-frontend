@@ -16,6 +16,8 @@ import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 import AccountLabel from 'components/account/AccountLabel'
 import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
+import { Tooltip } from 'components/common/Tooltip'
+import classNames from 'classnames'
 
 interface Props {
   account: Account
@@ -34,6 +36,13 @@ function Content(props: Props) {
   const astroLpAprs = useAstroLpAprs()
   const assetParams = useAssetParams()
   const perpsMarketStates = usePerpsMarketStates()
+
+  const hasLstApy = useMemo(() => {
+    return account?.deposits?.some((deposit) => {
+      const asset = assets?.find((asset) => asset.denom === deposit.denom)
+      return asset?.campaigns?.some((campaign) => campaign.type === 'apy')
+    })
+  }, [account, assets])
 
   const stats = useMemo(() => {
     if (!account || !borrowAssets.length || !lendingAssets.length) return DEFAULT_PORTFOLIO_STATS
@@ -69,15 +78,31 @@ function Content(props: Props) {
       },
       {
         title: (
-          <FormattedNumber
-            className='text-xl'
-            amount={apy.toNumber()}
-            options={{
-              suffix: '%',
-              maxDecimals: apy.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
-              minDecimals: 2,
-            }}
-          />
+          <Tooltip
+            type='info'
+            content={
+              hasLstApy ? 'Includes underlying staking APY from Liquid Staking Tokens' : undefined
+            }
+          >
+            <div className='flex w-full justify-center'>
+              <div
+                className={classNames(
+                  'text-xl',
+                  hasLstApy && 'border-b border-dashed border-white/40 cursor-help w-fit',
+                )}
+              >
+                <FormattedNumber
+                  className='text-xl'
+                  amount={apy.toNumber()}
+                  options={{
+                    suffix: '%',
+                    maxDecimals: apy.abs().isLessThan(0.1) ? MAX_AMOUNT_DECIMALS : 2,
+                    minDecimals: 2,
+                  }}
+                />
+              </div>
+            </div>
+          </Tooltip>
         ),
         sub: DEFAULT_PORTFOLIO_STATS[4].sub,
       },
@@ -103,6 +128,7 @@ function Content(props: Props) {
     perpsVault?.apy,
     perpsMarketStates.data,
     props.v1,
+    hasLstApy,
   ])
 
   return (

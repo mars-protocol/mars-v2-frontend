@@ -15,7 +15,7 @@ import {
   Addr,
   ActionAmount,
   OwnerUpdate,
-  MigrateV2ToV2_0_1,
+  MigrateV2_1_0ToV2_2_0,
   WhitelistEntry,
   Coin,
   ActionCoin,
@@ -451,7 +451,7 @@ export interface MarsIncentivesInterface extends MarsIncentivesReadOnlyInterface
     _funds?: Coin[],
   ) => Promise<ExecuteResult>
   migrate: (
-    migrateV2ToV201: MigrateV2ToV2_0_1,
+    migrateV210ToV220: MigrateV2_1_0ToV2_2_0,
     fee?: number | StdFee | 'auto',
     memo?: string,
     _funds?: Coin[],
@@ -739,7 +739,7 @@ export class MarsIncentivesClient
     )
   }
   migrate = async (
-    migrateV2ToV201: MigrateV2ToV2_0_1,
+    migrateV210ToV220: MigrateV2_1_0ToV2_2_0,
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
     _funds?: Coin[],
@@ -748,7 +748,7 @@ export class MarsIncentivesClient
       this.sender,
       this.contractAddress,
       {
-        migrate: migrateV2ToV201,
+        migrate: migrateV210ToV220,
       },
       fee,
       memo,

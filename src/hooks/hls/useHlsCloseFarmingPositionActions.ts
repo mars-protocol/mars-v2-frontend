@@ -2,7 +2,6 @@ import BigNumber from 'bignumber.js'
 
 import { BN_ZERO } from 'constants/math'
 import useAssets from 'hooks/assets/useAssets'
-import useIsOsmosis from 'hooks/chain/useIsOsmosis'
 import useStakedAstroLpRewards from 'hooks/incentives/useStakedAstroLpRewards'
 import useMarkets from 'hooks/markets/useMarkets'
 import useSlippage from 'hooks/settings/useSlippage'
@@ -28,7 +27,6 @@ export default function useHlsCloseFarmingPositionActions(props: Props): {
   const { account, farm, borrowAsset } = props.hlsFarm
   const { data: assets } = useAssets()
   const [slippage] = useSlippage()
-  const isOsmosis = useIsOsmosis()
   const markets = useMarkets()
   const borrowDenom = borrowAsset.denom
   const zeroCoin = BNCoin.fromDenomAndBigNumber(farm.denoms.primary, BN_ZERO)
@@ -129,7 +127,6 @@ export default function useHlsCloseFarmingPositionActions(props: Props): {
             borrowDenom,
             routeInfo,
             slippage,
-            isOsmosis,
           )
 
     return {
@@ -182,7 +179,6 @@ export default function useHlsCloseFarmingPositionActions(props: Props): {
     currentLpRewards,
     debtAmount,
     fundsLeftAfterSwap,
-    isOsmosis,
     routeInfo,
     slippage,
     swapInAmount,
