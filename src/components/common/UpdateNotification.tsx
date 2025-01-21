@@ -1,13 +1,16 @@
-import { useEffect, useState } from 'react'
-import NotificationBanner from 'components/common/NotificationBanner'
 import Button from 'components/common/Button'
-import packageInfo from '../../../package.json'
 import { ArrowCircle } from 'components/common/Icons'
+import NotificationBanner from 'components/common/NotificationBanner'
+import { useEffect, useState } from 'react'
+import useStore from 'store'
+import packageInfo from '../../../package.json'
 
 export default function UpdateNotification() {
   const [isUpdateAvailable, setIsUpdateAvailable] = useState(false)
+  const focusComponent = useStore((s) => s.focusComponent)
 
   useEffect(() => {
+    const currentUrl = window ? window.location.href : ''
     async function checkForUpdates() {
       try {
         const response = await fetch(
@@ -16,8 +19,12 @@ export default function UpdateNotification() {
         const data = await response.json()
         const latestVersion = data.version
 
-        if (latestVersion !== packageInfo.version) {
+        if (latestVersion !== packageInfo.version && currentUrl.includes('marsprotocol.io')) {
           setIsUpdateAvailable(true)
+        }
+
+        if (focusComponent !== null) {
+          setIsUpdateAvailable(false)
         }
       } catch (error) {
         console.error('Error checking for updates:', error)
@@ -29,12 +36,12 @@ export default function UpdateNotification() {
     checkForUpdates()
 
     return () => clearInterval(intervalId)
-  }, [])
+  }, [focusComponent])
 
   if (!isUpdateAvailable) return null
 
   return (
-    <div className='absolute top-[73px] left-1/2 transform -translate-x-1/2 flex items-center justify-center z-50 pt-2'>
+    <div className='w-full mt-[73px] -mb-[93px] p-4'>
       <NotificationBanner
         type='info'
         text='A new version is available.'
@@ -44,9 +51,9 @@ export default function UpdateNotification() {
             onClick={() => window.location.reload()}
             text='Refresh to Update'
             rightIcon={<ArrowCircle />}
-            iconClassName='text-info w-4 h-4'
+            iconClassName='w-4 h-4'
           >
-            Refresh
+            Reload
           </Button>
         }
       />

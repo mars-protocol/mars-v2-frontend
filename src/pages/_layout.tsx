@@ -12,6 +12,7 @@ import Footer from 'components/common/Footer'
 import PageMetadata from 'components/common/PageMetadata'
 import Text from 'components/common/Text'
 import Toaster from 'components/common/Toaster'
+import UpdateNotification from 'components/common/UpdateNotification'
 import ErrorBoundary from 'components/error/ErrorBoundary'
 import Header from 'components/header/Header'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
@@ -22,7 +23,6 @@ import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { debugSWR } from 'utils/middleware'
-import UpdateNotification from 'components/common/UpdateNotification'
 
 interface Props {
   focusComponent: FocusComponent | null
