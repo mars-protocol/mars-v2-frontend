@@ -1,8 +1,8 @@
 import AssetRate from 'components/common/assets/AssetRate'
+import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
-import { FormattedNumber } from 'components/common/FormattedNumber'
 
 export const APY_META = { accessorKey: 'apy', header: 'APY', meta: { className: 'w-30 pr-4' } }
 
@@ -32,7 +32,7 @@ export default function Apy(props: Props) {
           <div className='border-b border-dashed hover:cursor-help border-white/40 hover:border-transparent'>
             <FormattedNumber
               amount={totalApy}
-              options={{ suffix: '%', minDecimals: 2, maxDecimals: 2 }}
+              options={{ suffix: '%', minDecimals: 2, maxDecimals: 2, abbreviated: true }}
             />
           </div>
         </Tooltip>
