@@ -6,7 +6,12 @@ export default function useManagedVaults() {
   const chainConfig = useChainConfig()
 
   return useSWR(`chains/${chainConfig.id}/managedVaults`, () => getManagedVaults(chainConfig), {
-    fallbackData: [],
+    fallbackData: {
+      data: [],
+      page: 0,
+      limit: 0,
+      total: 0,
+    },
     revalidateOnFocus: false,
   })
 }
