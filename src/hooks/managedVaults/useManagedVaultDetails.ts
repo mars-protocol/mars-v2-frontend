@@ -8,27 +8,19 @@ export function useManagedVaultDetails(vaultAddress: string | undefined) {
   const address = useStore((s) => s.address)
   const getManagedVaultDetails = useStore((s) => s.getManagedVaultDetails)
 
-  const {
-    data: details,
-    error: detailsError,
-    isLoading: isDetailsLoading,
-  } = useSWR<VaultDetails | null>(
-    vaultAddress ? `chains/${chainConfig.id}/vaults/${vaultAddress}/details` : null,
+  const { data: ownerAddress, isLoading: isOwnerLoading } = useSWR(
+    vaultAddress && address ? `chains/${chainConfig.id}/vaults/${vaultAddress}/owner` : null,
     async () => {
-      const details = await getManagedVaultDetails(vaultAddress!)
-      return details as VaultDetails
+      return await getManagedVaultOwner(chainConfig, vaultAddress!)
     },
     { suspense: true },
   )
 
-  const {
-    data: ownerAddress,
-    error: ownerError,
-    isLoading: isOwnerLoading,
-  } = useSWR(
-    vaultAddress && address ? `chains/${chainConfig.id}/vaults/${vaultAddress}/owner` : null,
+  const { data: details, isLoading: isDetailsLoading } = useSWR(
+    ownerAddress ? `chains/${chainConfig.id}/vaults/${vaultAddress}/details` : null,
     async () => {
-      return await getManagedVaultOwner(chainConfig, vaultAddress!)
+      const details = await getManagedVaultDetails(vaultAddress!)
+      return details as VaultDetails
     },
     { suspense: true },
   )
@@ -39,6 +31,5 @@ export function useManagedVaultDetails(vaultAddress: string | undefined) {
     details,
     isOwner,
     isLoading: isDetailsLoading || isOwnerLoading,
-    error: detailsError || ownerError,
   }
 }
