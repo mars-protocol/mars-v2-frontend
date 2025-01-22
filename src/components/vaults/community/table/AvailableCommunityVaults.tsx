@@ -1,4 +1,5 @@
 import Table from 'components/common/Table'
+import Text from 'components/common/Text'
 import useCommunityVaultsColumns from 'components/vaults/community/table/useCommunityVaultsColumns'
 import useManagedVaults from 'hooks/managedVaults/useManagedVaults'
 import useStore from 'store'
@@ -11,6 +12,16 @@ interface Props {
 export default function AvailableCommunityVaults() {
   const { data, isLoading } = useManagedVaults()
   const address = useStore((s) => s.address)
+
+  const noVaultsAvailable = !data?.ownedVaults?.length && !data?.availableVaults?.length
+
+  if (!isLoading && noVaultsAvailable) {
+    return (
+      <Text size='lg' className='text-center w-full p-8 text-white/60'>
+        No community vaults have been created yet
+      </Text>
+    )
+  }
 
   return (
     <>
