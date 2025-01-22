@@ -616,23 +616,6 @@ interface PerpsVault {
   cap: DepositCap | null
 }
 
-interface ManagedVaultsData {
-  vault_address: string
-  name: string
-  subtitle: string
-  fee_rate: string
-  fee: string
-  tvl: string
-  apr: string
-}
-
-interface ManagedVaultsResponse {
-  data: ManagedVaultsData[]
-  page: string
-  limit: string
-  total: string
-}
-
 interface DepositedPerpsVault extends PerpsVault, DepositedVault {}
 
 interface VaultValuesAndAmounts {
@@ -1163,7 +1146,7 @@ interface BroadcastSlice {
   }) => Promise<boolean>
   v1Action: (type: V1ActionType, funds: BNCoin) => Promise<boolean>
   createManagedVault: (params: VaultParams) => Promise<{ address: string } | null>
-  getManagedVaultDetails: (vaultAddress: string) => Promise<VaultDetails | null>
+  getManagedVaultDetails: (vaultAddress: string) => Promise<ManagedVaultDetails | null>
   handlePerformanceFeeAction: (options: PerformanceFeeOptions) => Promise<boolean>
 }
 
@@ -1821,24 +1804,31 @@ interface VaultParams {
   baseToken: string
   withdrawFreezePeriod: number
   enableHls: boolean
-  performanceFee: PerformanceFeeConfig
-  vault_token_subdenom: string
-}
-
-interface VaultParams {
-  title: string
-  description: string
-  baseToken: string
-  withdrawFreezePeriod: number
-  enableHls: boolean
   performanceFee: {
     fee_rate: string
     withdrawal_interval: number
   }
   vault_token_subdenom: string
 }
+interface ManagedVaultsData extends ManagedVaultDetails {
+  vault_address: string
+  name: string
+  subtitle: string
+  fee_rate: string
+  fee: string
+  tvl: string
+  apr: string
+  isOwner?: boolean
+}
 
-interface VaultDetails {
+interface ManagedVaultsResponse {
+  data: ManagedVaultsData[]
+  page: string
+  limit: string
+  total: string
+}
+
+interface ManagedVaultDetails {
   base_token: string
   vault_token: string
   title: string

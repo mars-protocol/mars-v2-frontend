@@ -1357,14 +1357,14 @@ export default function createBroadcastSlice(
         return null
       }
     },
-    getManagedVaultDetails: async (vaultAddress: string): Promise<VaultDetails | null> => {
+    getManagedVaultDetails: async (vaultAddress: string): Promise<ManagedVaultDetails | null> => {
       try {
         const client = await getManagedVaultQueryClient(get().chainConfig, vaultAddress)
         const response = await client.vaultExtension({
           vault_info: {},
         })
 
-        return response as unknown as VaultDetails
+        return response as unknown as ManagedVaultDetails
       } catch (error) {
         console.error('Failed to get vault details:', error)
         return null

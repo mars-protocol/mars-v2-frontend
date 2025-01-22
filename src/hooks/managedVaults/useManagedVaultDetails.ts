@@ -20,7 +20,7 @@ export function useManagedVaultDetails(vaultAddress: string | undefined) {
     ownerAddress ? `chains/${chainConfig.id}/vaults/${vaultAddress}/details` : null,
     async () => {
       const details = await getManagedVaultDetails(vaultAddress!)
-      return details as VaultDetails
+      return details as ManagedVaultDetails
     },
     { suspense: true },
   )

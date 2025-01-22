@@ -22,7 +22,7 @@ export default function Name(props: Props) {
     <div className='flex items-center'>
       {/* demo asset image */}
       <Logo className='h-6 w-6' />
-      <TitleAndSubCell className='ml-2 mr-2 text-left' title={value.name} sub={value.subtitle} />
+      <TitleAndSubCell className='ml-2 mr-2 text-left' title={value.title} sub={value.subtitle} />
     </div>
   )
 }

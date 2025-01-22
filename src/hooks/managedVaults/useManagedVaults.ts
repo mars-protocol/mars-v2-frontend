@@ -7,6 +7,7 @@ import useSWR from 'swr'
 export default function useManagedVaults() {
   const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
+  const getManagedVaultDetails = useStore((s) => s.getManagedVaultDetails)
 
   return useSWR(
     `chains/${chainConfig.id}/managedVaults`,
@@ -20,23 +21,27 @@ export default function useManagedVaults() {
         }
       }
 
-      const vaultsWithOwnership = await Promise.all(
+      const vaultsWithDetails = await Promise.all(
         managedVaults.data.map(async (vault) => {
-          const owner = await getManagedVaultOwner(chainConfig, vault.vault_address)
+          const [owner, details] = await Promise.all([
+            getManagedVaultOwner(chainConfig, vault.vault_address),
+            getManagedVaultDetails(vault.vault_address),
+          ])
+
           return {
             ...vault,
+            ...details,
             isOwner: owner === address,
           }
         }),
       )
 
-      const ownedVaults = vaultsWithOwnership.filter((vault) => vault.isOwner)
-      const availableVaults = vaultsWithOwnership.filter((vault) => !vault.isOwner)
-
+      const ownedVaults = vaultsWithDetails.filter((vault) => vault.isOwner)
+      const availableVaults = vaultsWithDetails.filter((vault) => !vault.isOwner)
       return {
         ownedVaults,
         availableVaults,
-      }
+      } as { ownedVaults: ManagedVaultsData[]; availableVaults: ManagedVaultsData[] }
     },
     {
       fallbackData: {
