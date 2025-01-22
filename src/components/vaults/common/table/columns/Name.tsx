@@ -9,7 +9,7 @@ export const NAME_META = {
 }
 
 interface Props {
-  value: VaultData
+  value: ManagedVaultsData
   isLoading: boolean
 }
 

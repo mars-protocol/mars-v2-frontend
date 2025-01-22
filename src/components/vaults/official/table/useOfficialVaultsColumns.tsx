@@ -17,11 +17,11 @@ interface Props {
 export default function useOfficialVaultsColumns(props: Props) {
   const { isLoading } = props
 
-  return useMemo<ColumnDef<VaultData>[]>(
+  return useMemo<ColumnDef<ManagedVaultsData>[]>(
     () => [
       {
         ...NAME_META,
-        cell: ({ row }) => <Name value={row.original as VaultData} isLoading={isLoading} />,
+        cell: ({ row }) => <Name value={row.original as ManagedVaultsData} isLoading={isLoading} />,
       },
       {
         ...TVL_META,
@@ -35,10 +35,10 @@ export default function useOfficialVaultsColumns(props: Props) {
         ...FEE_META,
         cell: ({ row }) => <Fee value={row.original.fee} isLoading={isLoading} />,
       },
-      {
-        ...FREEZE_PERIOD_META,
-        cell: ({ row }) => <FreezePeriod value={row.original.freezePeriod} isLoading={isLoading} />,
-      },
+      // {
+      //   ...FREEZE_PERIOD_META,
+      //   cell: ({ row }) => <FreezePeriod value={row.original.freezePeriod} isLoading={isLoading} />,
+      // },
       {
         ...DEPOSIT_META,
         cell: () => <Deposit isLoading={isLoading} />,
