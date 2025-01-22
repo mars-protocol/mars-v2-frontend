@@ -3,7 +3,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import useSWR from 'swr'
 
-export function useManagedVaultData(vaultAddress: string | undefined) {
+export function useManagedVaultDetails(vaultAddress: string | undefined) {
   const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
   const getManagedVaultDetails = useStore((s) => s.getManagedVaultDetails)

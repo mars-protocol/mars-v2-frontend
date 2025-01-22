@@ -14,6 +14,7 @@ import useStore from 'store'
 import Tab from 'components/earn/Tab'
 import VaultsCommunityIntro from 'components/vaults/community/VaultsCommunityIntro'
 import { VAULTS_TABS } from 'constants/pages'
+import useManagedVaults from 'hooks/managedVaults/useManagedVaults'
 
 export default function VaultsCommunityPage() {
   const [showVaultWarning, setShowVaultWarning] = useLocalStorage<boolean>(

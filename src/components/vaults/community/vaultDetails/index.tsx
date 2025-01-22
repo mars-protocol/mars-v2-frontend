@@ -12,7 +12,7 @@ import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
 import { vaultProfileData } from 'components/vaults/dummyData'
 import useToggle from 'hooks/common/useToggle'
-import { useManagedVaultData } from 'hooks/managedVaults/useManagedVaultData'
+import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 import { Suspense, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -38,7 +38,7 @@ export default function VaultDetails() {
 }
 
 function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefined }) {
-  const { details: vaultDetails, isOwner, error } = useManagedVaultData(vaultAddress)
+  const { details: vaultDetails, isOwner, error } = useManagedVaultDetails(vaultAddress)
 
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
   const [showFeeActionModal, setShowFeeActionModal] = useToggle()

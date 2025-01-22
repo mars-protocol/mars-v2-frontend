@@ -1,4 +1,4 @@
-export const vaultsOfficialDummyData: VaultData[] = [
+export const vaultsOfficialDummyData = [
   {
     vault_address: 'neutron17pew0epacxa4udp8umjgrja8xljz03jle92ed8klgvp8alwx28uqf3z0f8',
     name: 'MARS Vault 1',
@@ -7,7 +7,6 @@ export const vaultsOfficialDummyData: VaultData[] = [
     apr: '0.20',
     fee: '0.03',
     fee_rate: '0.000046',
-    freezePeriod: '24',
   },
   {
     vault_address: 'neutron1ulw0kg7d90wuvc8gu5h8hfmnc977hnr5datqc0n6devsujgey4gq2c47a0',
@@ -17,7 +16,6 @@ export const vaultsOfficialDummyData: VaultData[] = [
     apr: '0.30',
     fee: '0.04',
     fee_rate: '0.000046',
-    freezePeriod: '48',
   },
   {
     vault_address: 'neutron17pew0epacxa4udp8umjgrja8xljz03jle92ed8klgvp8alwx28uqf3z0f8',
@@ -27,7 +25,6 @@ export const vaultsOfficialDummyData: VaultData[] = [
     apr: '0.45',
     fee: '0.06',
     fee_rate: '0.000046',
-    freezePeriod: '24',
   },
   {
     vault_address: 'neutron1ulw0kg7d90wuvc8gu5h8hfmnc977hnr5datqc0n6devsujgey4gq2c47a0',
@@ -37,50 +34,6 @@ export const vaultsOfficialDummyData: VaultData[] = [
     apr: '0.35',
     fee: '0.01',
     fee_rate: '0.000046',
-    freezePeriod: '72',
-  },
-]
-
-export const vaultsCommunityDummyData: VaultData[] = [
-  {
-    vault_address: 'neutron17pew0epacxa4udp8umjgrja8xljz03jle92ed8klgvp8alwx28uqf3z0f8',
-    name: 'Vault 1',
-    subtitle: 'RebelBots',
-    tvl: '150000',
-    apr: '0.20',
-    fee: '0.03',
-    fee_rate: '0.000046',
-    freezePeriod: '24',
-  },
-  {
-    vault_address: 'neutron1ulw0kg7d90wuvc8gu5h8hfmnc977hnr5datqc0n6devsujgey4gq2c47a0',
-    name: 'Vault 2',
-    subtitle: 'DefiSaver',
-    tvl: '540000',
-    apr: '0.30',
-    fee: '0.04',
-    fee_rate: '0.000046',
-    freezePeriod: '24',
-  },
-  {
-    vault_address: 'neutron17pew0epacxa4udp8umjgrja8xljz03jle92ed8klgvp8alwx28uqf3z0f8',
-    name: 'Vault 3',
-    subtitle: 'CryptoLegends',
-    tvl: '654777',
-    apr: '0.45',
-    fee: '0.06',
-    fee_rate: '0.000046',
-    freezePeriod: '48',
-  },
-  {
-    vault_address: 'neutron1ulw0kg7d90wuvc8gu5h8hfmnc977hnr5datqc0n6devsujgey4gq2c47a0',
-    name: 'Vault 4',
-    subtitle: 'wagmi',
-    tvl: '1200000',
-    apr: '0.35',
-    fee: '0.01',
-    fee_rate: '0.000046',
-    freezePeriod: '72',
   },
 ]
 

@@ -30,29 +30,29 @@ export default function useCommunityVaultsColumns(props: Props) {
   const [searchParams] = useSearchParams()
 
   const navigate = useNavigate()
-  const handleVaultDetails = useCallback(() => {
-    // temp vault address
-    const tempVaultAddress = 'neutron1k6yx75905s4u923l2dhee9vj8vr50n0946hp0ld2vvwv95hn992q0smkf0'
+  const handleVaultDetails = useCallback(
+    (vaultAddress: string) => {
+      if (accountId)
+        navigate(
+          getRoute(
+            getPage(`vaults/${vaultAddress}/details`, chainConfig),
+            searchParams,
+            address,
+            accountId,
+          ),
+        )
 
-    if (accountId)
-      navigate(
-        getRoute(
-          getPage(`vaults/${tempVaultAddress}/details`, chainConfig),
-          searchParams,
-          address,
-          accountId,
-        ),
-      )
-
-    useStore.setState({
-      focusComponent: {
-        component: <VaultDetails />,
-        onClose: () => {
-          navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
+      useStore.setState({
+        focusComponent: {
+          component: <VaultDetails />,
+          onClose: () => {
+            navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
+          },
         },
-      },
-    })
-  }, [accountId, navigate, chainConfig, searchParams, address, pathname])
+      })
+    },
+    [accountId, navigate, chainConfig, searchParams, address, pathname],
+  )
 
   return useMemo<ColumnDef<VaultData>[]>(
     () => [
@@ -78,7 +78,12 @@ export default function useCommunityVaultsColumns(props: Props) {
       },
       {
         ...DETAILS_META,
-        cell: () => <Details isLoading={isLoading} handleVaultDetails={handleVaultDetails} />,
+        cell: ({ row }) => (
+          <Details
+            isLoading={isLoading}
+            handleVaultDetails={() => handleVaultDetails(row.original.vault_address)}
+          />
+        ),
       },
     ],
     [isLoading, handleVaultDetails],

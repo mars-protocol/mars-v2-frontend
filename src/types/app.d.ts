@@ -263,6 +263,7 @@ interface ChainConfig {
     dexAssets: string
     dexPools?: string
     gasPrices?: string
+    managedVaults?: string
     aprs: {
       vaults: string
       perpsVault?: string
@@ -615,25 +616,21 @@ interface PerpsVault {
   cap: DepositCap | null
 }
 
-interface Vaults {
-  // TODO: update with correct types
-  vaultName: string
-  vaultSub: string
-  apy: number
-  tvl: number
-  fee: number
-  freezePeriod: number
-}
-
-interface VaultData {
+interface ManagedVaultsData {
   vault_address: string
   name: string
   subtitle: string
+  fee_rate: string
+  fee: string
   tvl: string
   apr: string
-  fee: string
-  fee_rate: string
-  freezePeriod: string
+}
+
+interface ManagedVaultsResponse {
+  data: ManagedVaultsData[]
+  page: string
+  limit: string
+  total: string
 }
 
 interface DepositedPerpsVault extends PerpsVault, DepositedVault {}
