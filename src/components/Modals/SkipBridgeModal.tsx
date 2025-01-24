@@ -6,8 +6,7 @@ import { ExternalLink } from 'components/common/Icons'
 import { useSkipBridgeStatus } from 'hooks/localStorage/useSkipBridgeStatus'
 
 export default function SkipBridgeModal() {
-  const explorerLink = JSON.parse(localStorage.getItem('skipBridge') || '{}').explorerLink
-  const { shouldShowSkipBridgeModal } = useSkipBridgeStatus()
+  const { shouldShowSkipBridgeModal, skipBridges } = useSkipBridgeStatus()
 
   if (!shouldShowSkipBridgeModal) return null
   return (
@@ -27,9 +26,9 @@ export default function SkipBridgeModal() {
             Your bridge transaction is still processing. Please check back later. <br />
             The app's functionality is limited until the transaction completes
           </Text>
-          {explorerLink && (
+          {skipBridges.map((bridge) => (
             <div className='flex items-center justify-center my-4'>
-              <Link target='_blank' href={explorerLink} className='flex items-center'>
+              <Link target='_blank' href={bridge.explorerLink} className='flex items-center'>
                 <Text tag='p' className='text-center'>
                   Track your transaction
                 </Text>
@@ -38,7 +37,7 @@ export default function SkipBridgeModal() {
                 </div>
               </Link>
             </div>
-          )}
+          ))}
         </div>
       }
     />

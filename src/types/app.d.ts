@@ -60,6 +60,8 @@ interface AccountChange extends Account {
 interface AccountBalanceRow {
   amount: BigNumber
   bridgeStatus?: string
+  skipBridgeId?: string
+  isWhitelisted?: boolean
   apy?: number | null
   skipTxHash?: string
   denom: string

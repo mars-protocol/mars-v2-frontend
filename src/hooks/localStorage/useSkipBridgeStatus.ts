@@ -13,11 +13,12 @@ type SkipBridgeTransaction = {
   chainID: string
   explorerLink: string
   status: string
+  id: string
 }
 
 export function useSkipBridgeStatus() {
   const [isPendingTransaction, setIsPendingTransaction] = useState(false)
-  const [skipBridge, setSkipBridge] = useState<SkipBridgeTransaction | null>(null)
+  const [skipBridges, setSkipBridges] = useState<SkipBridgeTransaction[]>([])
   const [shouldShowSkipBridgeModal, setShouldShowSkipBridgeModal] = useState(false)
 
   // const { urlAddress, accountId } = useParams()
@@ -34,43 +35,48 @@ export function useSkipBridgeStatus() {
   console.log('account', account)
 
   const checkTransactionStatus = useCallback(async () => {
-    const skipBridgeString = localStorage.getItem('skipBridge')
-    if (!skipBridgeString) {
+    const skipBridgesString = localStorage.getItem('skipBridges')
+    if (!skipBridgesString) {
       setIsPendingTransaction(false)
-      setSkipBridge(null)
+      setSkipBridges([])
       setShouldShowSkipBridgeModal(false)
       return
     }
 
-    const skipBridge: SkipBridgeTransaction = JSON.parse(skipBridgeString)
+    const bridges: SkipBridgeTransaction[] = JSON.parse(skipBridgesString)
+    const hasPendingTransactions = bridges.some((bridge) => bridge.status === 'STATE_PENDING')
 
-    if (skipBridge.status === 'STATE_PENDING') {
-      setIsPendingTransaction(true)
-      setSkipBridge(skipBridge)
-      setShouldShowSkipBridgeModal(hasNoBalances)
+    setIsPendingTransaction(hasPendingTransactions)
+    setSkipBridges(bridges)
+    setShouldShowSkipBridgeModal(hasNoBalances && hasPendingTransactions)
+
+    if (hasPendingTransactions) {
       try {
-        const response = await fetch(
-          `https://api.skip.build/v2/tx/status?chain_id=${skipBridge.chainID}&tx_hash=${skipBridge.txHash}`,
-        )
-        const skipStatus = await response.json()
+        await Promise.all(
+          bridges
+            .filter((bridge) => bridge.status === 'STATE_PENDING')
+            .map(async (bridge) => {
+              const response = await fetch(
+                `https://api.skip.build/v2/tx/status?chain_id=${bridge.chainID}&tx_hash=${bridge.txHash}`,
+              )
+              const skipStatus = await response.json()
 
-        if (skipStatus.status === 'STATE_COMPLETED') {
-          const updatedSkipBridge = {
-            ...skipBridge,
-            status: 'STATE_COMPLETED',
-          }
-          localStorage.setItem('skipBridge', JSON.stringify(updatedSkipBridge))
-          setIsPendingTransaction(false)
-          setSkipBridge(updatedSkipBridge)
-          setShouldShowSkipBridgeModal(false)
-        }
+              if (skipStatus.status === 'STATE_COMPLETED') {
+                const updatedBridges = bridges.map((b) =>
+                  b.id === bridge.id ? { ...b, status: 'STATE_COMPLETED' } : b,
+                )
+                localStorage.setItem('skipBridges', JSON.stringify(updatedBridges))
+                setSkipBridges(updatedBridges)
+
+                const stillHasPending = updatedBridges.some((b) => b.status === 'STATE_PENDING')
+                setIsPendingTransaction(stillHasPending)
+                setShouldShowSkipBridgeModal(hasNoBalances && stillHasPending)
+              }
+            }),
+        )
       } catch (error) {
         console.error('Failed to fetch Skip status:', error)
       }
-    } else {
-      setIsPendingTransaction(false)
-      setSkipBridge(skipBridge)
-      setShouldShowSkipBridgeModal(false)
     }
   }, [hasNoBalances])
 
@@ -80,12 +86,17 @@ export function useSkipBridgeStatus() {
     return () => clearInterval(intervalId)
   }, [checkTransactionStatus])
 
-  const clearSkipBridge = useCallback(() => {
-    localStorage.removeItem('skipBridge')
-    setSkipBridge(null)
+  const clearSkipBridges = useCallback(() => {
+    localStorage.removeItem('skipBridges')
+    setSkipBridges([])
     setIsPendingTransaction(false)
     setShouldShowSkipBridgeModal(false)
   }, [])
 
-  return { isPendingTransaction, skipBridge, shouldShowSkipBridgeModal, clearSkipBridge }
+  return {
+    isPendingTransaction,
+    skipBridges,
+    shouldShowSkipBridgeModal,
+    clearSkipBridges,
+  }
 }

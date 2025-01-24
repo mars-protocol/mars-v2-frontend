@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
 
 import useAccountBalancesColumns from 'components/account/AccountBalancesTable/Columns/useAccountBalancesColumns'
 import useAccountBalanceData from 'components/account/AccountBalancesTable/useAccountBalanceData'
@@ -11,19 +12,17 @@ import Text from 'components/common/Text'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
-import { useMemo } from 'react'
 import useStore from 'store'
 import { ColumnDef } from '@tanstack/table-core'
 import { getPage, getRoute } from 'utils/route'
-import { useSkipBridgeStatus } from 'hooks/localStorage/useSkipBridgeStatus'
-import { BN_ZERO } from 'constants/math'
-import { BN, getValueFromBNCoins } from 'utils/helpers'
+import { BN } from 'utils/helpers'
 import { demagnify } from 'utils/formatters'
 import Button from 'components/common/Button'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import { BNCoin } from 'types/classes/BNCoin'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import { SkipBridgeTransaction, useSkipBridge } from 'hooks/bridge/useSkipBridge'
 
 interface Props {
   account: Account
@@ -76,14 +75,19 @@ export default function AccountBalancesTable(props: Props) {
   })
 
   const columns = useAccountBalancesColumns(account, showLiquidationPrice)
-  const { skipBridge, clearSkipBridge } = useSkipBridgeStatus()
+  const { skipBridges, removeSkipBridge } = useSkipBridge({
+    chainConfig,
+    cosmosAddress: address,
+    evmAddress: undefined,
+  })
+  console.log('skipBridges', skipBridges)
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const [isAutoLendEnabledGlobal] = useEnableAutoLendGlobal()
   const isNewAccount = account.id === currentAccount?.id
 
   const shouldAutoLend = isNewAccount ? isAutoLendEnabledGlobal : isAutoLendEnabledForCurrentAccount
   const dynamicColumns: ColumnDef<AccountBalanceRow>[] = useMemo(() => {
-    if (skipBridge?.status === 'STATE_PENDING' || skipBridge?.status === 'STATE_COMPLETED') {
+    if (skipBridges.length > 0) {
       const assetColumnIndex = columns.findIndex((col) => col.id === 'asset')
       return [
         ...columns.slice(0, assetColumnIndex + 2),
@@ -93,6 +97,7 @@ export default function AccountBalancesTable(props: Props) {
           accessorFn: (row: AccountBalanceRow) => row.bridgeStatus,
           cell: ({ row }) => {
             const bridgeStatus = row.original.bridgeStatus
+            const bridgeId = row.original.skipBridgeId
             return bridgeStatus ? (
               bridgeStatus === 'STATE_PENDING' ? (
                 <Text size='sm'>Pending</Text>
@@ -102,18 +107,21 @@ export default function AccountBalancesTable(props: Props) {
                     size='xs'
                     color='secondary'
                     onClick={async () => {
-                      if (skipBridge) {
-                        const coin = BNCoin.fromDenomAndBigNumber(
-                          'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
-                          BN(skipBridge.amount),
-                        )
-                        await deposit({
-                          accountId: account.id,
-                          coins: [coin],
-                          lend: shouldAutoLend,
-                          isAutoLend: shouldAutoLend,
-                        })
-                        clearSkipBridge()
+                      if (bridgeId) {
+                        const bridge = skipBridges.find((b) => b.id === bridgeId)
+                        if (bridge) {
+                          const coin = BNCoin.fromDenomAndBigNumber(
+                            'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
+                            BN(bridge.amount),
+                          )
+                          await deposit({
+                            accountId: account.id,
+                            coins: [coin],
+                            lend: shouldAutoLend,
+                            isAutoLend: shouldAutoLend,
+                          })
+                          removeSkipBridge(bridgeId)
+                        }
                       }
                     }}
                   >
@@ -128,38 +136,49 @@ export default function AccountBalancesTable(props: Props) {
       ]
     }
     return columns
-  }, [columns, account.id, deposit, clearSkipBridge, skipBridge, shouldAutoLend])
+  }, [columns, account.id, deposit, removeSkipBridge, skipBridges, shouldAutoLend])
+
+  const [, forceUpdate] = useState({})
+  useEffect(() => {
+    const skipBridgesString = localStorage.getItem('skipBridges')
+    if (skipBridgesString) {
+      forceUpdate({})
+    }
+  }, [skipBridges])
 
   const dynamicAssets = useMemo(() => {
     let assets = accountBalanceData.map(
       (asset): AccountBalanceRow => ({
         ...asset,
         bridgeStatus: undefined,
-        skipTxHash: undefined,
+        skipBridgeId: undefined,
       }),
     )
-    if (
-      skipBridge &&
-      (skipBridge.status === 'STATE_PENDING' || skipBridge.status === 'STATE_COMPLETED')
-    ) {
-      const bridgedAsset: AccountBalanceRow = {
-        skipTxHash: skipBridge.txHash,
-        bridgeStatus: skipBridge.status,
-        type: 'bridge',
-        symbol: 'USDC',
-        size: demagnify(skipBridge.amount || 0, { decimals: 6, symbol: 'USDC' }),
-        value: demagnify(skipBridge.amount || 0, { decimals: 6, symbol: 'USDC' }).toString(),
-        denom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
-        amount: BN(skipBridge.amount || 0),
-        apy: 0,
-        amountChange: BN('0'),
-        campaigns: [],
-      }
-      assets = [bridgedAsset, ...assets]
+
+    const skipBridgesString = localStorage.getItem('skipBridges')
+    const currentBridges = skipBridgesString ? JSON.parse(skipBridgesString) : []
+
+    if (currentBridges.length > 0) {
+      const bridgedAssets = currentBridges.map(
+        (bridge: SkipBridgeTransaction): AccountBalanceRow => ({
+          skipBridgeId: bridge.id,
+          bridgeStatus: bridge.status,
+          type: 'bridge',
+          symbol: 'USDC',
+          size: demagnify(bridge.amount || 0, { decimals: 6, symbol: 'USDC' }),
+          value: demagnify(bridge.amount || 0, { decimals: 6, symbol: 'USDC' }).toString(),
+          denom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
+          amount: BN(bridge.amount || 0),
+          apy: 0,
+          amountChange: BN('0'),
+          campaigns: [],
+        }),
+      )
+      assets = [...bridgedAssets, ...assets]
     }
 
     return assets
-  }, [accountBalanceData, skipBridge])
+  }, [accountBalanceData])
 
   console.log('dynamicAssets', dynamicAssets)
   if (sortedAccountBalanceData.length === 0) {

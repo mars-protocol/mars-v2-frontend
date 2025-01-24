@@ -24,6 +24,7 @@ import useStore from 'store'
 import { debugSWR } from 'utils/middleware'
 import SkipBridgeModal from 'components/Modals/SkipBridgeModal'
 import { useSkipBridgeStatus } from 'hooks/localStorage/useSkipBridgeStatus'
+import { SkipBridgeTransaction } from 'hooks/bridge/useSkipBridge'
 
 interface Props {
   focusComponent: FocusComponent | null
@@ -88,10 +89,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }, [chainConfig.id, currentChainId, setCurrentChainId])
   const balances = useStore((s) => s.balances)
   const hasNoBalances = balances.length === 0
-  const skipBridge = localStorage.getItem('skipBridge')
-  const isPendingTransaction = skipBridge && JSON.parse(skipBridge).status === 'STATE_PENDING'
-  console.log('skipBridge', isPendingTransaction, hasNoBalances)
+  const skipBridgesString = localStorage.getItem('skipBridges')
+  const skipBridges = skipBridgesString ? JSON.parse(skipBridgesString) : []
+  const isPendingTransaction = skipBridges.some(
+    (bridge: SkipBridgeTransaction) => bridge.status === 'STATE_PENDING',
+  )
+  console.log('skipBridges', isPendingTransaction, hasNoBalances)
   const { shouldShowSkipBridgeModal } = useSkipBridgeStatus()
+
   return (
     <>
       {shouldShowSkipBridgeModal && <SkipBridgeModal />}

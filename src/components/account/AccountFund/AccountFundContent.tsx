@@ -4,9 +4,7 @@ import DepositCapMessage from 'components/common/DepositCapMessage'
 import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
-import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useBaseAsset from 'hooks/assets/useBaseAsset'
-import useMarkets from 'hooks/markets/useMarkets'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
@@ -22,15 +20,12 @@ import EVMAccountSection from 'components/account/AccountFund/EVMAccountSection'
 import AccountFundingAssets from 'components/account/AccountFund/AccountFundingAssets'
 import { ArrowRight, Plus } from 'components/common/Icons'
 import Button from 'components/common/Button'
-import { SkipClient, StatusState, TxStatusResponse } from '@skip-go/client'
-import { WalletClient } from 'viem'
 import { chainNameToUSDCAttributes } from 'utils/fetchUSDCBalance'
-import { getWalletClient } from '@wagmi/core'
-import { config } from 'config/ethereumConfig'
 import { useNavigate } from 'react-router-dom'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import { getPage, getRoute } from 'utils/route'
 import { Callout, CalloutType } from 'components/common/Callout'
+import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
 
 interface Props {
   account?: Account
@@ -45,7 +40,6 @@ export default function AccountFundContent(props: Props) {
   const deposit = useStore((s) => s.deposit)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
   const [isConfirming, setIsConfirming] = useState(false)
-  const [isBridgeInProgress, setIsBridgeInProgress] = useState(false)
   const [currentEVMAssetValue, setCurrentEVMAssetValue] = useState<BigNumber>(BN_ZERO)
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const [isAutoLendEnabledGlobal] = useEnableAutoLendGlobal()
@@ -78,46 +72,15 @@ export default function AccountFundContent(props: Props) {
 
   const chainConfig = useChainConfig()
 
-  const skipClient = useMemo(
-    () =>
-      new SkipClient({
-        getCosmosSigner: async () => {
-          const offlineSigner = window.keplr?.getOfflineSigner(chainConfig.id.toString())
-          if (!offlineSigner) throw new Error('Keplr not installed')
-          return offlineSigner
-        },
-        getEVMSigner: async (chainID: string) => {
-          const evmWalletClient = (await getWalletClient(config, {
-            chainId: parseInt(chainID),
-          })) as WalletClient
+  const { isBridgeInProgress, handleSkipTransfer } = useSkipBridge({
+    chainConfig,
+    cosmosAddress,
+    evmAddress,
+  })
 
-          if (!evmWalletClient) {
-            throw new Error(`getEVMSigner error: no wallet client available for chain ${chainID}`)
-          }
-
-          return evmWalletClient as any
-        },
-      }),
-    [chainConfig],
-  )
   const [showMinimumUSDCValueOverlay, setShowMinimumUSDCValueOverlay] = useState(false)
 
   const MINIMUM_USDC = 50000
-
-  const wrapTransactionPromise = (promise: Promise<void>): Promise<BroadcastResult> => {
-    return promise.then(
-      () => ({ success: true }) as BroadcastResult,
-      (error) => ({ success: false, error }) as BroadcastResult,
-    )
-  }
-  interface SkipBridgeTransaction {
-    txHash: string
-    chainID: string
-    explorerLink: string
-    status: StatusState
-    denom: string
-    amount: BigNumber
-  }
 
   const updateEVMAssetValue = useCallback(() => {
     const evmAsset = fundingAssets.find(
@@ -145,191 +108,6 @@ export default function AccountFundContent(props: Props) {
     )
   }, [currentEVMAssetValue, fundingAssets])
 
-  const [skipBridge, setSkipBridge] = useState<SkipBridgeTransaction | null>(() => {
-    const savedSkipBridge = localStorage.getItem('skipBridge')
-    return savedSkipBridge && savedSkipBridge !== 'undefined' ? JSON.parse(savedSkipBridge) : null
-  })
-
-  const updateSkipBridge = useCallback((newTransaction: SkipBridgeTransaction) => {
-    setSkipBridge(newTransaction)
-    localStorage.setItem('skipBridge', JSON.stringify(newTransaction))
-  }, [])
-
-  useEffect(() => {
-    if (skipBridge && skipBridge.status === 'STATE_PENDING') {
-      const checkTransactionStatus = async () => {
-        try {
-          const response = await fetch(
-            `https://api.skip.build/v2/tx/status?chain_id=${skipBridge.chainID}&tx_hash=${skipBridge.txHash}`,
-          )
-          const skipStatus = await response.json()
-
-          if (skipStatus.status === 'STATE_COMPLETED') {
-            updateSkipBridge({
-              ...skipBridge,
-              status: 'STATE_COMPLETED',
-            })
-          }
-        } catch (error) {
-          console.error('Failed to fetch Skip status:', error)
-        }
-      }
-
-      const intervalId = setInterval(checkTransactionStatus, 10000)
-
-      return () => clearInterval(intervalId)
-    }
-  }, [skipBridge, updateSkipBridge])
-
-  const handleSkipTransfer = useCallback(
-    async (selectedAsset: WrappedBNCoin) => {
-      if (isBridgeInProgress) {
-        console.log('A bridge transaction is already in progress')
-        return
-      }
-
-      if (!cosmosAddress || !evmAddress || !selectedAsset) {
-        console.error('Missing required data for transfer')
-        return
-      }
-
-      try {
-        setIsBridgeInProgress(true)
-        if (!selectedAsset.chain) throw new Error('Chain not found for selected asset')
-        let osmosisAddress = ''
-        try {
-          if (window.keplr) {
-            await window.keplr.enable('osmosis-1')
-            const key = await window.keplr.getKey('osmosis-1')
-            osmosisAddress = key.bech32Address
-          }
-        } catch (error) {
-          console.error('Failed to get Osmosis address:', error)
-        }
-
-        const expectedChainAttributes = chainNameToUSDCAttributes[selectedAsset.chain]
-        if (!expectedChainAttributes) {
-          console.error(`No chain attributes found for denom: ${selectedAsset.coin.denom}`)
-          return
-        }
-
-        if (chainConfig.id.toString() !== expectedChainAttributes.chainID.toString()) {
-          const { switchChain } = await getWalletClient(config, {
-            chainId: expectedChainAttributes.chainID,
-          })
-
-          if (switchChain) {
-            await switchChain({ id: expectedChainAttributes.chainID })
-          } else {
-            console.error('Unable to switch network. Network switch function not available.')
-            return
-          }
-        }
-
-        if (BN(selectedAsset.coin.amount).isLessThan(MINIMUM_USDC)) {
-          console.log('Minimum USDC value not reached', BN(selectedAsset.coin.amount))
-          setShowMinimumUSDCValueOverlay(true)
-          return
-        } else {
-          console.log('Minimum USDC value reached', BN(selectedAsset.coin.amount))
-          setShowMinimumUSDCValueOverlay(false)
-        }
-
-        const route = await skipClient.route({
-          allowMultiTx: true,
-          allowUnsafe: true,
-          cumulativeAffiliateFeeBPS: '0',
-          experimentalFeatures: ['hyperlane'],
-          smartRelay: true,
-          smartSwapOptions: {
-            splitRoutes: true,
-            evmSwaps: true,
-          },
-          sourceAssetDenom: chainNameToUSDCAttributes[selectedAsset.chain].assetAddress,
-          sourceAssetChainID: chainNameToUSDCAttributes[selectedAsset.chain].chainID.toString(),
-          destAssetDenom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
-          destAssetChainID: chainConfig.id.toString(),
-          amountIn: selectedAsset.coin.amount.toString(),
-        })
-
-        const userAddresses = route.requiredChainAddresses.map((chainID: string) => {
-          if (chainID === chainConfig.id.toString()) {
-            return { chainID, address: cosmosAddress }
-          } else if (chainID === 'osmosis-1') {
-            return { chainID, address: osmosisAddress || cosmosAddress }
-          } else {
-            return { chainID, address: evmAddress }
-          }
-        })
-
-        const transactionPromise = skipClient.executeRoute({
-          route,
-          userAddresses,
-          slippageTolerancePercent: '3',
-          onTransactionTracked: async (txInfo: {
-            txHash: string
-            chainID: string
-            explorerLink: string
-          }) => {
-            console.log('Transaction tracked:', txInfo)
-            updateSkipBridge({
-              ...txInfo,
-              denom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
-              amount: selectedAsset.coin.amount,
-              status: 'STATE_PENDING',
-            })
-          },
-          onTransactionCompleted: async (
-            chainID: string,
-            txHash: string,
-            status: TxStatusResponse,
-          ) => {
-            console.log('Transaction completed:', { chainID, txHash, status })
-            updateSkipBridge({
-              txHash,
-              chainID,
-              explorerLink: skipBridge?.explorerLink ?? '',
-              status: status.status,
-              denom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
-              amount: selectedAsset.coin.amount,
-            })
-            setIsBridgeInProgress(false)
-          },
-        })
-
-        const wrappedTransactionPromise = wrapTransactionPromise(transactionPromise)
-
-        await wrappedTransactionPromise
-      } catch (error) {
-        console.error('Skip transfer failed:', error)
-        if (error instanceof Error) {
-          console.error('Error message:', error.message)
-          console.error('Error stack:', error.stack)
-        }
-        setIsBridgeInProgress(false)
-      }
-    },
-    [
-      chainConfig,
-      cosmosAddress,
-      evmAddress,
-      skipClient,
-      skipBridge?.explorerLink,
-      updateSkipBridge,
-      isBridgeInProgress,
-    ],
-  )
-
-  const handleSelectAssetsClick = useCallback(() => {
-    useStore.setState({
-      walletAssetsModal: {
-        isOpen: true,
-        selectedDenoms,
-        isBorrow: false,
-      },
-    })
-  }, [selectedDenoms])
-
   const handleClick = useCallback(async () => {
     const isNewAccount = !props.hasExistingAccount
     const shouldAutoLend = isNewAccount
@@ -349,20 +127,16 @@ export default function AccountFundContent(props: Props) {
       (asset) => !asset.chain || !chainNameToUSDCAttributes[asset.chain],
     )
 
-    if (nonEvmAssets.length > 0) {
-      setIsConfirming(true)
+    setIsConfirming(true)
 
-      try {
+    try {
+      if (nonEvmAssets.length > 0) {
         const accountId = props.accountId
           ? await deposit({ ...depositObject, accountId: props.accountId })
           : await deposit(depositObject)
-        const { pathname } = window.location
-        const searchParams = new URLSearchParams(window.location.search)
-        navigate(getRoute(getPage(pathname, chainConfig), searchParams, props.address, accountId))
 
         if (accountId) {
           useStore.setState((state) => ({ ...state, selectedAccountId: accountId }))
-
           const { pathname } = window.location
           const searchParams = new URLSearchParams(window.location.search)
           navigate(getRoute(getPage(pathname, chainConfig), searchParams, props.address, accountId))
@@ -381,16 +155,22 @@ export default function AccountFundContent(props: Props) {
             }))
           }
         }
-      } catch (error) {
-        console.error('Deposit failed:', error)
-      } finally {
-        setIsConfirming(false)
       }
-    }
 
-    if (evmAssets.length > 0) {
-      setIsConfirming(true)
-      await handleSkipTransfer(evmAssets[0])
+      for (const evmAsset of evmAssets) {
+        if (isBridgeInProgress) {
+          console.log('Waiting for previous bridge to complete...')
+          continue
+        }
+        const success = await handleSkipTransfer(evmAsset, MINIMUM_USDC)
+        if (!success) {
+          setShowMinimumUSDCValueOverlay(true)
+          break
+        }
+      }
+    } catch (error) {
+      console.error('Transaction failed:', error)
+    } finally {
       setIsConfirming(false)
     }
   }, [
@@ -405,6 +185,7 @@ export default function AccountFundContent(props: Props) {
     navigate,
     handleSkipTransfer,
     chainConfig,
+    isBridgeInProgress,
   ])
 
   useEffect(() => {
@@ -449,7 +230,15 @@ export default function AccountFundContent(props: Props) {
           color='tertiary'
           rightIcon={<Plus />}
           iconClassName='w-3'
-          onClick={handleSelectAssetsClick}
+          onClick={() => {
+            useStore.setState({
+              walletAssetsModal: {
+                isOpen: true,
+                selectedDenoms,
+                isBorrow: false,
+              },
+            })
+          }}
           disabled={isConfirming}
         />
         {chainConfig.evmAssetSupport && (
@@ -479,6 +268,7 @@ export default function AccountFundContent(props: Props) {
           disabled={
             !hasFundingAssets ||
             depositCapReachedCoins.length > 0 ||
+            isBridgeInProgress ||
             (showMinimumUSDCValueOverlay && currentEVMAssetValue.isLessThan(MINIMUM_USDC))
           }
           showProgressIndicator={isConfirming}
