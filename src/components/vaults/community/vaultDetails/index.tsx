@@ -38,7 +38,7 @@ export default function VaultDetails() {
 }
 
 function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefined }) {
-  const { details: vaultDetails, isOwner } = useManagedVaultDetails(vaultAddress)
+  const { details: vaultDetails, isOwner, tvl, apr } = useManagedVaultDetails(vaultAddress)
 
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
   const [showFeeActionModal, setShowFeeActionModal] = useToggle()
@@ -76,8 +76,8 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
           {/* TODO: fetch the data */}
           <ProfileVaultCard
             vaultTitle={vaultDetails?.title || ''}
-            apr={vaultProfileData.apr}
-            tvl={vaultProfileData.tvl}
+            apr={Number(apr)}
+            tvl={Number(tvl)}
             accuredPnl={vaultProfileData.accuredPnl}
             fee={vaultDetails?.performance_fee_config.fee_rate || '0'}
             wallet={vaultProfileData.wallet}

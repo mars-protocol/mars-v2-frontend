@@ -5,10 +5,10 @@ import EscButton from 'components/common/Button/EscButton'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import { ArrowRight } from 'components/common/Icons'
 import { BN } from 'utils/helpers'
 import { Callout, CalloutType } from 'components/common/Callout'
+import useVaultAssets from 'hooks/assets/useVaultAssets'
 
 interface Props {
   showActionModal: boolean
@@ -19,7 +19,7 @@ interface Props {
 export default function VaultAction(props: Props) {
   const { showActionModal, setShowActionModal, type } = props
 
-  const whitelistedAssets = useWhitelistedAssets()
+  const vaultAssets = useVaultAssets()
 
   const isDeposit = type === 'deposit'
 
@@ -40,7 +40,7 @@ export default function VaultAction(props: Props) {
         <Card className='p-4 bg-white/5' contentClassName='flex flex-col justify-between gap-4'>
           {/* TODO: fetch */}
           <TokenInputWithSlider
-            asset={whitelistedAssets[12]}
+            asset={vaultAssets[0]}
             onChange={() => {}}
             amount={BN(10000000)}
             max={BN(20000000)}
