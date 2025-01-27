@@ -19,9 +19,7 @@ export default function VaultStats(props: Props) {
         <React.Fragment key={index}>
           <div className='flex justify-between items-center'>
             <Text size='xs'>{stat.description}</Text>
-            <Text size='xs' className='text-white'>
-              {stat.value}
-            </Text>
+            <div className='text-white text-xs'>{stat.value}</div>
           </div>
           {index < stats.length - 1 && <Divider />}
         </React.Fragment>
