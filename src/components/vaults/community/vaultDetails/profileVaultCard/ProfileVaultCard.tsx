@@ -18,6 +18,7 @@ import { Callout, CalloutType } from 'components/common/Callout'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ExternalLink, TrashBin } from 'components/common/Icons'
 import { TextLink } from 'components/common/TextLink'
+import { formatLockupPeriod } from 'utils/formatters'
 
 interface Metrics {
   apr: number
@@ -37,7 +38,6 @@ export default function ProfileVaultCard(props: Props) {
   const { details, metrics, isOwner, wallet = '', avatarUrl = '', onDelete, onEdit } = props
   const vaultAssets = useVaultAssets()
 
-  const [duration, unit] = moment.duration(details.cooldown_period, 'seconds').humanize().split(' ')
   const depositAsset = vaultAssets.find(byDenom(details.base_token))
 
   return (
@@ -118,7 +118,12 @@ export default function ProfileVaultCard(props: Props) {
                 <Text size='sm'>{depositAsset?.symbol}</Text>
               </InfoRow>
               <InfoRow label='Withdrawal Freeze Period'>
-                <Text size='sm'>{`${duration} ${unit}`}</Text>
+                <Text size='sm'>
+                  {formatLockupPeriod(
+                    moment.duration(details.cooldown_period, 'seconds').as('days'),
+                    'days',
+                  )}
+                </Text>
               </InfoRow>
             </>
           )}
