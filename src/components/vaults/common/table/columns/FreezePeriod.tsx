@@ -1,5 +1,7 @@
-import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
+import Text from 'components/common/Text'
+import moment from 'moment'
+import { formatLockupPeriod } from 'utils/formatters'
 
 export const FREEZE_PERIOD_META = {
   accessorKey: 'freeze_period',
@@ -8,7 +10,7 @@ export const FREEZE_PERIOD_META = {
 }
 
 interface Props {
-  value: string
+  value: number
   isLoading: boolean
 }
 
@@ -18,10 +20,8 @@ export default function FreezePeriod(props: Props) {
   if (isLoading) return <Loading />
 
   return (
-    <FormattedNumber
-      amount={parseFloat(value)}
-      options={{ minDecimals: 0, maxDecimals: 0, suffix: ' hours' }}
-      className='text-xs'
-    />
+    <Text size='xs'>
+      {formatLockupPeriod(moment.duration(value, 'seconds').as('days'), 'days')}
+    </Text>
   )
 }

@@ -14,12 +14,13 @@ interface Props {
 
 export default function Fee(props: Props) {
   const { value, isLoading } = props
+  const percentageValue = parseFloat(value) * 100000
 
   if (isLoading) return <Loading />
 
   return (
     <FormattedNumber
-      amount={parseFloat(value)}
+      amount={percentageValue}
       options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
       className='text-xs'
     />

@@ -1,22 +1,36 @@
+import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Table from 'components/common/Table'
-import VaultStats from 'components/vaults/community/vaultDetails/common/VaultStats'
-import useUserWithdrawals from 'components/vaults/community/vaultDetails/table/useUserWithdrawals'
 import useQueuedWithdrawals from 'components/vaults/community/vaultDetails/table/useQueuedWithdrawals'
-import classNames from 'classnames'
-import { CardWithTabs } from 'components/common/Card/CardWithTabs'
-import { queuedWithdrawDummyData, withdrawalsDummyData } from 'components/vaults/dummyData'
-import { BNCoin } from 'types/classes/BNCoin'
-import { BN } from 'utils/helpers'
-import { FormattedNumber } from 'components/common/FormattedNumber'
 import useStore from 'store'
-import { Tooltip } from 'components/common/Tooltip'
+import useUserWithdrawals from 'components/vaults/community/vaultDetails/table/useUserWithdrawals'
+import VaultStats from 'components/vaults/community/vaultDetails/common/VaultStats'
+import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
+import { CardWithTabs } from 'components/common/Card/CardWithTabs'
 import { ExclamationMarkTriangle } from 'components/common/Icons'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { queuedWithdrawDummyData, withdrawalsDummyData } from 'components/vaults/dummyData'
+import { Tooltip } from 'components/common/Tooltip'
+import Text from 'components/common/Text'
+import { formatLockupPeriod } from 'utils/formatters'
+import moment from 'moment'
+import useVaultAssets from 'hooks/assets/useVaultAssets'
+import { byDenom } from 'utils/array'
 
-export default function Withdrawals() {
+interface Props {
+  details: ManagedVaultDetails
+}
+
+export default function Withdrawals(props: Props) {
+  const { details } = props
   const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false })
   const userWithdrawalColumns = useUserWithdrawals({ isLoading: false })
   const address = useStore((s) => s.address)
+
+  const vaultAssets = useVaultAssets()
+
+  const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
 
   if (!address) {
     return (
@@ -37,18 +51,11 @@ export default function Withdrawals() {
       renderContent: () => (
         <VaultStats
           stats={[
-            // TODO: fetch from contract
             {
               description: 'Depositor Withdrawal Period',
-              value: (
-                <FormattedNumber
-                  amount={24}
-                  options={{
-                    minDecimals: 0,
-                    maxDecimals: 0,
-                    suffix: ' hours',
-                  }}
-                />
+              value: formatLockupPeriod(
+                moment.duration(details.cooldown_period, 'seconds').as('days'),
+                'days',
               ),
             },
             {
@@ -64,8 +71,15 @@ export default function Withdrawals() {
               ),
             },
             {
-              description: 'USDC in vault',
-              value: <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber('usd', BN(1000))} />,
+              description: `${depositAsset.symbol} in vault`,
+              value: (
+                <DisplayCurrency
+                  coin={BNCoin.fromDenomAndBigNumber(
+                    depositAsset.denom,
+                    BN(details.total_base_tokens),
+                  )}
+                />
+              ),
             },
             {
               description: 'Total Withdrawal Value',

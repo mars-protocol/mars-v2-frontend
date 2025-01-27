@@ -12,7 +12,7 @@ import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
 import { vaultProfileData } from 'components/vaults/dummyData'
 import useToggle from 'hooks/common/useToggle'
-import { useManagedVaultData } from 'hooks/managedVaults/useManagedVaultData'
+import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 import { Suspense, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -38,7 +38,7 @@ export default function VaultDetails() {
 }
 
 function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefined }) {
-  const { details: vaultDetails, isOwner, error } = useManagedVaultData(vaultAddress)
+  const { details: vaultDetails, isOwner, tvl, apr } = useManagedVaultDetails(vaultAddress)
 
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
   const [showFeeActionModal, setShowFeeActionModal] = useToggle()
@@ -48,6 +48,9 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
   const [modalType, setModalType] = useState<'deposit' | 'withdraw' | null>(null)
   const [modalFeeType, setModalFeeType] = useState<'edit' | 'withdraw' | null>(null)
 
+  if (isOwner === undefined || !vaultDetails) {
+    return <VaultLoadingState />
+  }
   // TODO: fetch from contract
   const hasAccumulatedFees = false
 
@@ -70,19 +73,14 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
     <div className='min-h-screen md:h-screen-full md:min-h-[600px] w-full'>
       <div className='relative flex flex-col justify-center gap-4 md:flex-row'>
         <div className='md:w-100'>
-          {/* TODO: fetch the data */}
           <ProfileVaultCard
-            vaultTitle={vaultDetails?.title || ''}
-            apr={vaultProfileData.apr}
-            tvl={vaultProfileData.tvl}
-            accuredPnl={vaultProfileData.accuredPnl}
-            fee={vaultDetails?.performance_fee_config.fee_rate || '0'}
+            details={vaultDetails}
+            metrics={{ tvl: Number(tvl), apr: Number(apr) }}
+            isOwner={isOwner}
             wallet={vaultProfileData.wallet}
-            description={vaultDetails?.description || ''}
             avatarUrl={vaultProfileData.avatarUrl}
             onDelete={() => console.log('Delete clicked')}
             onEdit={() => setShowEditDescriptionModal(true)}
-            isOwner={isOwner}
           />
         </div>
 
@@ -175,7 +173,7 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
               />
             )}
 
-            <Withdrawals />
+            <Withdrawals details={vaultDetails} />
             <VaultSummary />
           </div>
         </div>

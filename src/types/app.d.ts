@@ -263,6 +263,7 @@ interface ChainConfig {
     dexAssets: string
     dexPools?: string
     gasPrices?: string
+    managedVaults?: string
     aprs: {
       vaults: string
       perpsVault?: string
@@ -613,27 +614,6 @@ interface PerpsVault {
   liquidity: BigNumber
   lockup: Lockup
   cap: DepositCap | null
-}
-
-interface Vaults {
-  // TODO: update with correct types
-  vaultName: string
-  vaultSub: string
-  apy: number
-  tvl: number
-  fee: number
-  freezePeriod: number
-}
-
-interface VaultData {
-  vault_address: string
-  name: string
-  subtitle: string
-  tvl: string
-  apr: string
-  fee: string
-  fee_rate: string
-  freezePeriod: string
 }
 
 interface DepositedPerpsVault extends PerpsVault, DepositedVault {}
@@ -1166,7 +1146,7 @@ interface BroadcastSlice {
   }) => Promise<boolean>
   v1Action: (type: V1ActionType, funds: BNCoin) => Promise<boolean>
   createManagedVault: (params: VaultParams) => Promise<{ address: string } | null>
-  getManagedVaultDetails: (vaultAddress: string) => Promise<VaultDetails | null>
+  getManagedVaultDetails: (vaultAddress: string) => Promise<ManagedVaultDetails | null>
   handlePerformanceFeeAction: (options: PerformanceFeeOptions) => Promise<boolean>
 }
 
@@ -1824,24 +1804,31 @@ interface VaultParams {
   baseToken: string
   withdrawFreezePeriod: number
   enableHls: boolean
-  performanceFee: PerformanceFeeConfig
-  vault_token_subdenom: string
-}
-
-interface VaultParams {
-  title: string
-  description: string
-  baseToken: string
-  withdrawFreezePeriod: number
-  enableHls: boolean
   performanceFee: {
     fee_rate: string
     withdrawal_interval: number
   }
   vault_token_subdenom: string
 }
+interface ManagedVaultsData extends ManagedVaultDetails {
+  vault_address: string
+  name: string
+  subtitle: string
+  fee_rate: string
+  fee: string
+  tvl: string
+  apr: string
+  isOwner?: boolean
+}
 
-interface VaultDetails {
+interface ManagedVaultsResponse {
+  data: ManagedVaultsData[]
+  page: string
+  limit: string
+  total: string
+}
+
+interface ManagedVaultDetails {
   base_token: string
   vault_token: string
   title: string
@@ -1850,10 +1837,10 @@ interface VaultDetails {
   credit_manager: string
   vault_account_id: string | null
   cooldown_period: number
-  performance_fee_config: {
-    fee_rate: string
-    withdrawal_interval: number
-  }
+  performance_fee_config: PerformanceFeeConfig
+  total_base_tokens: string
+  total_vault_tokens: string
+  share_price: number
 }
 interface PerformanceFeeOptions {
   vaultAddress: string

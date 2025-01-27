@@ -30,35 +30,35 @@ export default function useCommunityVaultsColumns(props: Props) {
   const [searchParams] = useSearchParams()
 
   const navigate = useNavigate()
-  const handleVaultDetails = useCallback(() => {
-    // temp vault address
-    const tempVaultAddress = 'neutron1k6yx75905s4u923l2dhee9vj8vr50n0946hp0ld2vvwv95hn992q0smkf0'
+  const handleVaultDetails = useCallback(
+    (vaultAddress: string) => {
+      if (accountId)
+        navigate(
+          getRoute(
+            getPage(`vaults/${vaultAddress}/details`, chainConfig),
+            searchParams,
+            address,
+            accountId,
+          ),
+        )
 
-    if (accountId)
-      navigate(
-        getRoute(
-          getPage(`vaults/${tempVaultAddress}/details`, chainConfig),
-          searchParams,
-          address,
-          accountId,
-        ),
-      )
-
-    useStore.setState({
-      focusComponent: {
-        component: <VaultDetails />,
-        onClose: () => {
-          navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
+      useStore.setState({
+        focusComponent: {
+          component: <VaultDetails />,
+          onClose: () => {
+            navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
+          },
         },
-      },
-    })
-  }, [accountId, navigate, chainConfig, searchParams, address, pathname])
+      })
+    },
+    [accountId, navigate, chainConfig, searchParams, address, pathname],
+  )
 
-  return useMemo<ColumnDef<VaultData>[]>(
+  return useMemo<ColumnDef<ManagedVaultsData>[]>(
     () => [
       {
         ...NAME_META,
-        cell: ({ row }) => <Name value={row.original as VaultData} isLoading={isLoading} />,
+        cell: ({ row }) => <Name value={row.original as ManagedVaultsData} isLoading={isLoading} />,
       },
       {
         ...TVL_META,
@@ -70,15 +70,22 @@ export default function useCommunityVaultsColumns(props: Props) {
       },
       {
         ...FEE_META,
-        cell: ({ row }) => <Fee value={row.original.fee} isLoading={isLoading} />,
+        cell: ({ row }) => <Fee value={row.original.fee_rate} isLoading={isLoading} />,
       },
       {
         ...FREEZE_PERIOD_META,
-        cell: ({ row }) => <FreezePeriod value={row.original.freezePeriod} isLoading={isLoading} />,
+        cell: ({ row }) => (
+          <FreezePeriod value={row.original.cooldown_period} isLoading={isLoading} />
+        ),
       },
       {
         ...DETAILS_META,
-        cell: () => <Details isLoading={isLoading} handleVaultDetails={handleVaultDetails} />,
+        cell: ({ row }) => (
+          <Details
+            isLoading={isLoading}
+            handleVaultDetails={() => handleVaultDetails(row.original.vault_address)}
+          />
+        ),
       },
     ],
     [isLoading, handleVaultDetails],
