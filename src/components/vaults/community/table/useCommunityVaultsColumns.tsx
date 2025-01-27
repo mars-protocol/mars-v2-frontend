@@ -72,10 +72,12 @@ export default function useCommunityVaultsColumns(props: Props) {
         ...FEE_META,
         cell: ({ row }) => <Fee value={row.original.fee_rate} isLoading={isLoading} />,
       },
-      // {
-      //   ...FREEZE_PERIOD_META,
-      //   cell: ({ row }) => <FreezePeriod value={row.original.freezePeriod} isLoading={isLoading} />,
-      // },
+      {
+        ...FREEZE_PERIOD_META,
+        cell: ({ row }) => (
+          <FreezePeriod value={row.original.cooldown_period} isLoading={isLoading} />
+        ),
+      },
       {
         ...DETAILS_META,
         cell: ({ row }) => (

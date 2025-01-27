@@ -19,9 +19,13 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ExternalLink, TrashBin } from 'components/common/Icons'
 import { TextLink } from 'components/common/TextLink'
 
+interface Metrics {
+  apr: number
+  tvl: number
+}
 interface Props {
   details: ManagedVaultDetails
-  metrics: any
+  metrics: Metrics
   wallet: string
   onDelete: () => void
   onEdit: (show: boolean) => void

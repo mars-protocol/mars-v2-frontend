@@ -5,7 +5,7 @@ import TitleAndSubCell from 'components/common/TitleAndSubCell'
 export const NAME_META = {
   accessorKey: 'name',
   header: 'Vault Name',
-  meta: { className: 'min-w-50' },
+  meta: { className: 'max-w-60' },
 }
 
 interface Props {
@@ -20,9 +20,16 @@ export default function Name(props: Props) {
 
   return (
     <div className='flex items-center'>
-      {/* demo asset image */}
-      <Logo className='h-6 w-6' />
-      <TitleAndSubCell className='ml-2 mr-2 text-left' title={value.title} sub={value.subtitle} />
+      <span className='h-6 w-6 flex-shrink-0'>
+        <Logo />
+      </span>
+      <div className='overflow-hidden'>
+        <TitleAndSubCell
+          className='mx-2 text-left truncate overflow-hidden'
+          title={value.title}
+          sub={value.description}
+        />
+      </div>
     </div>
   )
 }
