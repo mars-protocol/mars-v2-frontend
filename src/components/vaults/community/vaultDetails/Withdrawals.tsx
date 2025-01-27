@@ -15,6 +15,8 @@ import { Tooltip } from 'components/common/Tooltip'
 import Text from 'components/common/Text'
 import { formatLockupPeriod } from 'utils/formatters'
 import moment from 'moment'
+import useVaultAssets from 'hooks/assets/useVaultAssets'
+import { byDenom } from 'utils/array'
 
 interface Props {
   details: ManagedVaultDetails
@@ -25,6 +27,10 @@ export default function Withdrawals(props: Props) {
   const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false })
   const userWithdrawalColumns = useUserWithdrawals({ isLoading: false })
   const address = useStore((s) => s.address)
+
+  const vaultAssets = useVaultAssets()
+
+  const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
 
   if (!address) {
     return (
@@ -65,8 +71,15 @@ export default function Withdrawals(props: Props) {
               ),
             },
             {
-              description: 'USDC in vault',
-              value: <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber('usd', BN(1000))} />,
+              description: `${depositAsset.symbol} in vault`,
+              value: (
+                <DisplayCurrency
+                  coin={BNCoin.fromDenomAndBigNumber(
+                    depositAsset.denom,
+                    BN(details.total_base_tokens),
+                  )}
+                />
+              ),
             },
             {
               description: 'Total Withdrawal Value',

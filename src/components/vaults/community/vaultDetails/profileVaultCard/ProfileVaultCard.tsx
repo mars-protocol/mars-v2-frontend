@@ -19,6 +19,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ExternalLink, TrashBin } from 'components/common/Icons'
 import { TextLink } from 'components/common/TextLink'
 import { formatLockupPeriod } from 'utils/formatters'
+import AssetImage from 'components/common/assets/AssetImage'
 
 interface Metrics {
   apr: number
@@ -38,7 +39,7 @@ export default function ProfileVaultCard(props: Props) {
   const { details, metrics, isOwner, wallet = '', avatarUrl = '', onDelete, onEdit } = props
   const vaultAssets = useVaultAssets()
 
-  const depositAsset = vaultAssets.find(byDenom(details.base_token))
+  const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
 
   return (
     <Card className='bg-white/5'>
@@ -115,7 +116,10 @@ export default function ProfileVaultCard(props: Props) {
           ) : (
             <>
               <InfoRow label='Deposit Asset'>
-                <Text size='sm'>{depositAsset?.symbol}</Text>
+                <div className='flex gap-2 items-center'>
+                  <AssetImage asset={depositAsset} className='w-4 h-4' />
+                  <Text size='sm'>{depositAsset?.symbol}</Text>
+                </div>
               </InfoRow>
               <InfoRow label='Withdrawal Freeze Period'>
                 <Text size='sm'>

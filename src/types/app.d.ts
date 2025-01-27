@@ -1837,10 +1837,10 @@ interface ManagedVaultDetails {
   credit_manager: string
   vault_account_id: string | null
   cooldown_period: number
-  performance_fee_config: {
-    fee_rate: string
-    withdrawal_interval: number
-  }
+  performance_fee_config: PerformanceFeeConfig
+  total_base_tokens: string
+  total_vault_tokens: string
+  share_price: number
 }
 interface PerformanceFeeOptions {
   vaultAddress: string
