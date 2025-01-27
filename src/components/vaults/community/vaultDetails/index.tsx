@@ -73,19 +73,14 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
     <div className='min-h-screen md:h-screen-full md:min-h-[600px] w-full'>
       <div className='relative flex flex-col justify-center gap-4 md:flex-row'>
         <div className='md:w-100'>
-          {/* TODO: fetch the data */}
           <ProfileVaultCard
-            vaultTitle={vaultDetails?.title || ''}
-            apr={Number(apr)}
-            tvl={Number(tvl)}
-            accuredPnl={vaultProfileData.accuredPnl}
-            fee={vaultDetails?.performance_fee_config.fee_rate || '0'}
+            details={vaultDetails}
+            metrics={{ tvl: Number(tvl), apr: Number(apr) }}
+            isOwner={isOwner}
             wallet={vaultProfileData.wallet}
-            description={vaultDetails?.description || ''}
             avatarUrl={vaultProfileData.avatarUrl}
             onDelete={() => console.log('Delete clicked')}
             onEdit={() => setShowEditDescriptionModal(true)}
-            isOwner={isOwner}
           />
         </div>
 
