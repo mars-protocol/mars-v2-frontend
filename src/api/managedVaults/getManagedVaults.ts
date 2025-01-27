@@ -2,8 +2,9 @@ import { FETCH_TIMEOUT } from 'constants/query'
 import { fetchWithTimeout } from 'utils/fetch'
 
 export default async function getManagedVaults(chainConfig: ChainConfig) {
+  const defaultReturn = { data: [], page: 1, limit: 5, total: 0 }
   if (!chainConfig.managedVaults || !chainConfig.endpoints.managedVaults) {
-    return { data: [], page: 1, limit: 5, total: 0 }
+    return defaultReturn
   }
 
   try {
@@ -12,6 +13,6 @@ export default async function getManagedVaults(chainConfig: ChainConfig) {
     return data as ManagedVaultsResponse
   } catch (error) {
     console.error('Could not fetch managed vaults.', error)
-    return { data: [], page: 1, limit: 5, total: 0 }
+    return defaultReturn
   }
 }
