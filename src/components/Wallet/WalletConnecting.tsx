@@ -1,8 +1,5 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { useShuttle } from '@delphi-labs/shuttle-react'
-import { useCallback, useEffect, useMemo } from 'react'
-import { isAndroid, isIOS } from 'react-device-detect'
-
 import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
 import WalletSelect from 'components/Wallet//WalletSelect'
@@ -10,8 +7,10 @@ import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalance
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
+import { useCallback, useEffect, useMemo } from 'react'
 import useStore from 'store'
 import { setNodeError } from 'utils/error'
+import { isAndroid, isIOS } from 'utils/mobile'
 
 interface Props {
   providerId?: string
@@ -162,9 +161,9 @@ export default function WalletConnecting(props: Props) {
             simulate,
           }
           setIsConnecting(false)
-          if (isAndroid) {
+          if (isAndroid()) {
             window.location.href = urls.androidUrl
-          } else if (isIOS) {
+          } else if (isIOS()) {
             window.location.href = urls.iosUrl
           } else {
             window.location.href = urls.androidUrl
