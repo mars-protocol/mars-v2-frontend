@@ -35,6 +35,7 @@ export default function ProfileVaultCard(props: Props) {
   const vaultAssets = useVaultAssets()
 
   const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
+  if (!depositAsset) return null
 
   return (
     <Card className='bg-white/5'>
@@ -70,7 +71,7 @@ export default function ProfileVaultCard(props: Props) {
           <div className='flex gap-3'>
             {/* TODO: this will be conditional render */}
             <HLSTag />
-            {isOwner || <FeeTag fee={details.performance_fee_config.fee_rate} />}
+            {isOwner || <FeeTag fee={details.performance_fee_config?.fee_rate ?? '0'} />}
           </div>
         </div>
 

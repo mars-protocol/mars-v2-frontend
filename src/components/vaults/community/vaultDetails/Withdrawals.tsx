@@ -3,7 +3,6 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import moment from 'moment'
 import Table from 'components/common/Table'
 import useQueuedWithdrawals from 'components/vaults/community/vaultDetails/table/useQueuedWithdrawals'
-import useStore from 'store'
 import useUserWithdrawals from 'components/vaults/community/vaultDetails/table/useUserWithdrawals'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import VaultStats from 'components/vaults/community/vaultDetails/common/VaultStats'
@@ -19,19 +18,18 @@ import { Tooltip } from 'components/common/Tooltip'
 
 interface Props {
   details: ExtendedManagedVaultDetails
+  isOwner?: boolean
 }
 
 export default function Withdrawals(props: Props) {
-  const { details } = props
+  const { details, isOwner } = props
   const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false })
   const userWithdrawalColumns = useUserWithdrawals({ isLoading: false })
-  const address = useStore((s) => s.address)
-
   const vaultAssets = useVaultAssets()
 
   const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
 
-  if (!address) {
+  if (!isOwner) {
     return (
       <Table
         title='Withdrawals'

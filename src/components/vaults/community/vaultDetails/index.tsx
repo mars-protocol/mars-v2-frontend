@@ -38,7 +38,7 @@ export default function VaultDetails() {
 }
 
 function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefined }) {
-  const { details: vaultDetails, isOwner } = useManagedVaultDetails(vaultAddress)
+  const { details: vaultDetails, isOwner, isLoading } = useManagedVaultDetails(vaultAddress)
 
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
   const [showFeeActionModal, setShowFeeActionModal] = useToggle()
@@ -48,7 +48,7 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
   const [modalType, setModalType] = useState<'deposit' | 'withdraw' | null>(null)
   const [modalFeeType, setModalFeeType] = useState<'edit' | 'withdraw' | null>(null)
 
-  if (isOwner === undefined || !vaultDetails) {
+  if (isOwner === undefined || !vaultDetails || isLoading) {
     return <VaultLoadingState />
   }
   // TODO: fetch from contract
@@ -171,7 +171,7 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
               />
             )}
 
-            <Withdrawals details={vaultDetails} />
+            <Withdrawals details={vaultDetails} isOwner={isOwner} />
             <VaultSummary />
           </div>
         </div>
