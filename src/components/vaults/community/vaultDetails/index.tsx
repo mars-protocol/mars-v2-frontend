@@ -38,7 +38,7 @@ export default function VaultDetails() {
 }
 
 function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefined }) {
-  const { details: vaultDetails, isOwner, tvl, apr } = useManagedVaultDetails(vaultAddress)
+  const { details: vaultDetails, isOwner } = useManagedVaultDetails(vaultAddress)
 
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
   const [showFeeActionModal, setShowFeeActionModal] = useToggle()
@@ -75,7 +75,6 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
         <div className='md:w-100'>
           <ProfileVaultCard
             details={vaultDetails}
-            metrics={{ tvl: Number(tvl), apr: Number(apr) }}
             isOwner={isOwner}
             wallet={vaultProfileData.wallet}
             avatarUrl={vaultProfileData.avatarUrl}

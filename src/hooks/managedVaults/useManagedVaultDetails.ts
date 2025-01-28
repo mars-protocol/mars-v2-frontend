@@ -1,4 +1,8 @@
-import { getManagedVaultOwner } from 'api/cosmwasm-client'
+import {
+  getManagedVaultDetails,
+  getManagedVaultOwner,
+  getManagedVaultPerformanceFeeState,
+} from 'api/cosmwasm-client'
 import getManagedVaults from 'api/managedVaults/getManagedVaults'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
@@ -7,7 +11,6 @@ import useSWR from 'swr'
 export function useManagedVaultDetails(vaultAddress: string | undefined) {
   const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
-  const getManagedVaultDetails = useStore((s) => s.getManagedVaultDetails)
 
   const { data: metrics } = useSWR(
     vaultAddress ? `chains/${chainConfig.id}/managedVaults/${vaultAddress}/metrics` : null,
@@ -29,19 +32,34 @@ export function useManagedVaultDetails(vaultAddress: string | undefined) {
   const { data: details, isLoading: isDetailsLoading } = useSWR(
     ownerAddress ? `chains/${chainConfig.id}/vaults/${vaultAddress}/details` : null,
     async () => {
-      const details = await getManagedVaultDetails(vaultAddress!)
-      return details as ManagedVaultDetails
+      return await getManagedVaultDetails(chainConfig, vaultAddress!)
     },
     { suspense: true },
   )
 
+  const { data: performanceFeeState, isLoading: isPerformanceFeeLoading } = useSWR(
+    ownerAddress ? `chains/${chainConfig.id}/vaults/${vaultAddress}/performanceFee` : null,
+    async () => {
+      return await getManagedVaultPerformanceFeeState(chainConfig, vaultAddress!)
+    },
+    { suspense: true },
+  )
+  console.log(performanceFeeState, 'performance ')
+
   const isOwner = Boolean(address && ownerAddress && ownerAddress === address)
 
   return {
-    details,
+    details: {
+      ...details,
+      metrics: metrics ?? { apr: '0', tvl: '0' },
+      performance_fee_state: performanceFeeState ?? {
+        accumulated_fee: '0',
+        accumulated_pnl: '0',
+        base_tokens_amt: '0',
+        last_withdrawal: 0,
+      },
+    },
     isOwner,
-    isLoading: isDetailsLoading || isOwnerLoading,
-    tvl: metrics?.tvl,
-    apr: metrics?.apr,
+    isLoading: isDetailsLoading || isOwnerLoading || isPerformanceFeeLoading,
   }
 }

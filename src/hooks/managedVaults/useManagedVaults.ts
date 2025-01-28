@@ -1,4 +1,4 @@
-import { getManagedVaultOwner } from 'api/cosmwasm-client'
+import { getManagedVaultDetails, getManagedVaultOwner } from 'api/cosmwasm-client'
 import getManagedVaults from 'api/managedVaults/getManagedVaults'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
@@ -7,7 +7,6 @@ import useSWR from 'swr'
 export default function useManagedVaults() {
   const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
-  const getManagedVaultDetails = useStore((s) => s.getManagedVaultDetails)
 
   return useSWR(
     `chains/${chainConfig.id}/managedVaults`,
@@ -25,7 +24,7 @@ export default function useManagedVaults() {
         managedVaults.data.map(async (vault) => {
           const [owner, details] = await Promise.all([
             getManagedVaultOwner(chainConfig, vault.vault_address),
-            getManagedVaultDetails(vault.vault_address),
+            getManagedVaultDetails(chainConfig, vault.vault_address),
           ])
 
           return {

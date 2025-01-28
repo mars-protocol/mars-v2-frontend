@@ -1,3 +1,4 @@
+import AssetImage from 'components/common/assets/AssetImage'
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
 import classNames from 'classnames'
@@ -19,15 +20,9 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ExternalLink, TrashBin } from 'components/common/Icons'
 import { TextLink } from 'components/common/TextLink'
 import { formatLockupPeriod } from 'utils/formatters'
-import AssetImage from 'components/common/assets/AssetImage'
 
-interface Metrics {
-  apr: number
-  tvl: number
-}
 interface Props {
-  details: ManagedVaultDetails
-  metrics: Metrics
+  details: ExtendedManagedVaultDetails
   wallet: string
   onDelete: () => void
   onEdit: (show: boolean) => void
@@ -36,7 +31,7 @@ interface Props {
 }
 
 export default function ProfileVaultCard(props: Props) {
-  const { details, metrics, isOwner, wallet = '', avatarUrl = '', onDelete, onEdit } = props
+  const { details, isOwner, wallet = '', avatarUrl = '', onDelete, onEdit } = props
   const vaultAssets = useVaultAssets()
 
   const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
@@ -84,14 +79,14 @@ export default function ProfileVaultCard(props: Props) {
         <div className='space-y-4'>
           <InfoRow label='APR'>
             <FormattedNumber
-              amount={metrics.apr}
+              amount={Number(details.metrics.apr)}
               options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
               className='text-sm'
             />
           </InfoRow>
           <InfoRow label='TVL'>
             <DisplayCurrency
-              coin={BNCoin.fromDenomAndBigNumber('usd', BN(metrics.tvl))}
+              coin={BNCoin.fromDenomAndBigNumber('usd', BN(details.metrics.tvl))}
               className='text-sm'
             />
           </InfoRow>
@@ -99,7 +94,10 @@ export default function ProfileVaultCard(props: Props) {
             <>
               <InfoRow label='Accrued PnL'>
                 <DisplayCurrency
-                  coin={BNCoin.fromDenomAndBigNumber('usd', BN(0))}
+                  coin={BNCoin.fromDenomAndBigNumber(
+                    'usd',
+                    BN(details.performance_fee_state.accumulated_pnl),
+                  )}
                   // TODO:conditional classnames for profit/loss
                   className={classNames('text-profit text-sm')}
                 />

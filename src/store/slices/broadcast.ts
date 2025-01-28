@@ -33,7 +33,6 @@ import checkPythUpdateEnabled from 'utils/checkPythUpdateEnabled'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
-import { getManagedVaultQueryClient } from 'api/cosmwasm-client'
 
 function generateExecutionMessage(
   sender: string | undefined = '',
@@ -1354,19 +1353,6 @@ export default function createBroadcastSlice(
         return { address: vaultAddress }
       } catch (error) {
         console.error('Failed to create vault:', error)
-        return null
-      }
-    },
-    getManagedVaultDetails: async (vaultAddress: string): Promise<ManagedVaultDetails | null> => {
-      try {
-        const client = await getManagedVaultQueryClient(get().chainConfig, vaultAddress)
-        const response = await client.vaultExtension({
-          vault_info: {},
-        })
-
-        return response as unknown as ManagedVaultDetails
-      } catch (error) {
-        console.error('Failed to get vault details:', error)
         return null
       }
     },
