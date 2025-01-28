@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 import containerQueries from '@tailwindcss/container-queries'
 import scrollbarHide from 'tailwind-scrollbar-hide'
-import plugin from 'tailwindcss/plugin'
+import plugin from 'tailwindcss/dist/plugin'
 
 module.exports = {
   content: ['./src/pages/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
