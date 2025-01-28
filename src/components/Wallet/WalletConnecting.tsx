@@ -1,6 +1,7 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { isAndroid, isIOS, useShuttle } from '@delphi-labs/shuttle-react'
+import { useShuttle } from '@delphi-labs/shuttle-react'
 import { useCallback, useEffect, useMemo } from 'react'
+import { isAndroid, isIOS } from 'react-device-detect'
 
 import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
@@ -161,9 +162,9 @@ export default function WalletConnecting(props: Props) {
             simulate,
           }
           setIsConnecting(false)
-          if (isAndroid()) {
+          if (isAndroid) {
             window.location.href = urls.androidUrl
-          } else if (isIOS()) {
+          } else if (isIOS) {
             window.location.href = urls.iosUrl
           } else {
             window.location.href = urls.androidUrl

@@ -1,4 +1,4 @@
-import { DEFAULT_GAS_MULTIPLIER, MsgExecuteContract } from '@delphi-labs/shuttle-react'
+import { DEFAULT_GAS_MULTIPLIER, MsgExecuteContract } from '@delphi-labs/shuttle'
 import moment from 'moment'
 import { isMobile } from 'react-device-detect'
 import { StoreApi } from 'zustand'
