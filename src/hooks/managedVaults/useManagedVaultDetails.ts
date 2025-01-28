@@ -44,7 +44,6 @@ export function useManagedVaultDetails(vaultAddress: string | undefined) {
     },
     { suspense: true },
   )
-  console.log(performanceFeeState, 'performance ')
 
   const isOwner = Boolean(address && ownerAddress && ownerAddress === address)
 

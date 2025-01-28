@@ -98,8 +98,10 @@ export default function ProfileVaultCard(props: Props) {
                     'usd',
                     BN(details.performance_fee_state.accumulated_pnl),
                   )}
-                  // TODO:conditional classnames for profit/loss
-                  className={classNames('text-profit text-sm')}
+                  className={classNames('text-sm text-white', {
+                    'text-profit': BN(details.performance_fee_state.accumulated_pnl).isPositive(),
+                    'text-loss': BN(details.performance_fee_state.accumulated_pnl).isNegative(),
+                  })}
                 />
               </InfoRow>
               <InfoRow label='Wallet'>

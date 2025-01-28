@@ -113,10 +113,9 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
               </Callout>
             )}
 
-            {/* // TODO: update data that can be fetched */}
             {isOwner ? (
               <PositionInfo
-                value={0}
+                value={Number(vaultDetails.performance_fee_state.accumulated_fee)}
                 subtitle={
                   <FormattedNumber
                     amount={Number(vaultDetails?.performance_fee_config.fee_rate ?? 0) * 100000}
