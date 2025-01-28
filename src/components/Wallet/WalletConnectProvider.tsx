@@ -7,13 +7,13 @@ import {
   LeapCosmosExtensionProvider,
   LeapCosmosMobileProvider,
   LeapMetamaskCosmosSnapExtensionProvider,
-  ShuttleProvider,
   StationExtensionProvider,
   VectisCosmosExtensionProvider,
   WalletExtensionProvider,
   WalletMobileProvider,
   XDEFICosmosExtensionProvider,
-} from '@delphi-labs/shuttle-react'
+} from '@delphi-labs/shuttle'
+import { ShuttleProvider } from '@delphi-labs/shuttle-react'
 import { FC } from 'react'
 
 import chains from 'chains'
