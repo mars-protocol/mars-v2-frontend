@@ -22,8 +22,8 @@ export default function Apy(props: Props) {
   if (apy === null) return <Text size='xs'>N/A</Text>
 
   const isEnabled = markets.find((market) => market.asset.denom === denom)?.borrowEnabled ?? false
-  const hasLstApy = lstApy > 0
-  const totalApy = apy + lstApy
+  const hasLstApy = type !== 'borrow' && lstApy > 0
+  const totalApy = type === 'borrow' ? apy : apy + lstApy
 
   return (
     <div className='flex justify-end my-auto text-xs'>
