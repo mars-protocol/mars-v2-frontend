@@ -14,6 +14,8 @@ import { useState } from 'react'
 import { BN_ZERO } from 'constants/math'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import useStore from 'store'
+import { formatLockupPeriod } from 'utils/formatters'
+import moment from 'moment'
 
 interface Props {
   showActionModal: boolean
@@ -31,9 +33,9 @@ export default function VaultAction(props: Props) {
 
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(vaultDetails.base_token)) as Asset
+  const assetAmountInWallet = BN(useCurrentWalletBalance(vaultDetails.base_token)?.amount || '0')
 
   const isDeposit = type === 'deposit'
-  const assetAmountInWallet = BN(useCurrentWalletBalance(vaultDetails.base_token)?.amount || '0')
 
   const handleAmountChange = (newAmount: BigNumber) => {
     setAmount(newAmount)
@@ -82,14 +84,18 @@ export default function VaultAction(props: Props) {
 
           <div className='space-y-2'>
             <Callout type={CalloutType.INFO}>
-              {/* fetch withdrawal time freeze */}
               {isDeposit
                 ? 'Please note that deposited funds come directly from your wallet. Your credit account will not be affected.'
                 : 'Once you initiate this withdrawal, it will take 24 hours to become available.'}
             </Callout>
             {isDeposit && (
               <Callout type={CalloutType.INFO}>
-                Please note there is a 24h withdrawal freeze.
+                Please note there is a{' '}
+                {formatLockupPeriod(
+                  moment.duration(vaultDetails.cooldown_period, 'seconds').as('days'),
+                  'days',
+                )}{' '}
+                withdrawal freeze.
               </Callout>
             )}
           </div>
