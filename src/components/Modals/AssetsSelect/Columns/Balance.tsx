@@ -29,7 +29,7 @@ export default function Balance(props: Props) {
     <div className='flex flex-wrap items-center'>
       <DisplayCurrency coin={coin} className='mb-0.5 w-full text-white text-m' />
       <FormattedNumber
-        className='w-full text-m text-white/60'
+        className='w-full text-xs text-white/60'
         options={{ minDecimals: 2, maxDecimals: asset.decimals }}
         amount={demagnify(balance, asset)}
       />

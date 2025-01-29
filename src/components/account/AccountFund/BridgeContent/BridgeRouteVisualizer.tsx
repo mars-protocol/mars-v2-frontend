@@ -1,7 +1,8 @@
 import { RouteResponse } from '@skip-go/client'
+import { ArrowRight, Bridge } from 'components/common/Icons'
 import { BridgeInfo } from 'hooks/bridge/useSkipBridge'
+import Image from 'next/image'
 import { getChainLogoByName } from 'utils/chainLogos'
-import { ArrowRight } from 'components/common/Icons'
 
 interface BridgeRouteVisualizerProps {
   route?: RouteResponse
@@ -36,10 +37,12 @@ export default function BridgeRouteVisualizer({
   console.log('getBridgeLogo', getBridgeLogo)
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <img
+      <Image
         src={getChainLogoByName(originChain)}
         alt={originChain}
-        className='w-6 h-6 rounded-full'
+        className='rounded-full'
+        width={24}
+        height={24}
       />
       {route.operations.map((operation, index) => {
         const op = operation as unknown as OperationRuntime
@@ -49,7 +52,13 @@ export default function BridgeRouteVisualizer({
         return (
           <div key={index} className='flex items-center gap-2'>
             <ArrowRight className='w-4 h-4 text-white/60' />
-            {bridgeLogo && <img src={bridgeLogo} alt='bridge' className='w-6 h-6' />}
+            {bridgeLogo ? (
+              <Image src={bridgeLogo} alt='bridge' width={24} height={24} />
+            ) : (
+              <div className='w-6 h-6 text-center text-white/60'>
+                <Bridge />
+              </div>
+            )}
           </div>
         )
       })}
