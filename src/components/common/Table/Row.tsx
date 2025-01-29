@@ -137,7 +137,7 @@ export default function Row<T>(props: Props<T>) {
                     if ((row.original as any)?.skipBridgeId) {
                       try {
                         const coin = BNCoin.fromDenomAndBigNumber(
-                          'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
+                          chainConfig.stables[0],
                           BN((row.original as any).amount),
                         )
                         const store = useStore.getState()

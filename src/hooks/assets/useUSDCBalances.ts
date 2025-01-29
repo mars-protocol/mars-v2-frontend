@@ -20,9 +20,7 @@ export function useUSDCBalances(walletBalances: any[]) {
         const balances = await fetchUSDCBalances(address)
         const usdcAssets = Object.entries(balances).map(([chainId, balance]) =>
           WrappedBNCoin.fromDenomAndBigNumber(
-            isTestnet
-              ? 'ibc/4C19E7EC06C1AB2EC2D70C6855FEB6D48E9CE174913991DA0A517D21978E7E42'
-              : 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
+            isTestnet ? chainConfig.stables[0] : chainConfig.stables[0],
             BN(balance).shiftedBy(6),
             CHAIN_NAMES[Number(chainId)],
           ),
@@ -40,7 +38,7 @@ export function useUSDCBalances(walletBalances: any[]) {
     }
 
     fetchBalances()
-  }, [address, isConnected, isConnecting, walletBalances, isTestnet])
+  }, [address, isConnected, isConnecting, walletBalances, chainConfig.stables, isTestnet])
 
   return useMemo(() => ({ usdcBalances }), [usdcBalances])
 }

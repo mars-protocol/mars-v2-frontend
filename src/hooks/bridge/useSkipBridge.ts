@@ -137,7 +137,7 @@ export function useSkipBridge({
           },
           sourceAssetDenom: expectedChainAttributes.assetAddress,
           sourceAssetChainID: expectedChainAttributes.chainID.toString(),
-          destAssetDenom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
+          destAssetDenom: chainConfig.stables[0],
           destAssetChainID: chainConfig.id.toString(),
           amountIn: selectedAsset.coin.amount.toString(),
           goFast: goFast,
@@ -151,7 +151,7 @@ export function useSkipBridge({
         throw error
       }
     },
-    [chainConfig.id, skipClient, goFast],
+    [chainConfig.id, skipClient, goFast, chainConfig.stables],
   )
 
   const handleSkipTransfer = useCallback(
@@ -207,7 +207,7 @@ export function useSkipBridge({
               updateSkipBridges({
                 ...txInfo,
                 id: transactionId,
-                denom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
+                denom: chainConfig.stables[0],
                 amount: BN(amountOut),
                 status: 'STATE_PENDING',
               })
@@ -232,7 +232,7 @@ export function useSkipBridge({
                 id: transactionId,
                 explorerLink: skipBridges.find((b) => b.id === transactionId)?.explorerLink ?? '',
                 status: status.status,
-                denom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
+                denom: chainConfig.stables[0],
                 amount: BN(amountOut),
               })
               setIsBridgeInProgress(false)
@@ -286,6 +286,7 @@ export function useSkipBridge({
       isBridgeInProgress,
       refreshBalances,
       fetchSkipRoute,
+      chainConfig.stables,
     ],
   )
 

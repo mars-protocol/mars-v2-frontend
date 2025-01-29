@@ -87,7 +87,6 @@ export default function AccountBalancesTable(props: Props) {
       forceUpdate({})
     }
   }, [skipBridges])
-
   const dynamicAssets = useMemo(() => {
     let assets = accountBalanceData.map(
       (asset): AccountBalanceRow => ({
@@ -109,7 +108,7 @@ export default function AccountBalancesTable(props: Props) {
           symbol: 'USDC',
           size: demagnify(bridge.amount || 0, { decimals: 6, symbol: 'USDC' }),
           value: demagnify(bridge.amount || 0, { decimals: 6, symbol: 'USDC' }).toString(),
-          denom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
+          denom: chainConfig.stables[0],
           amount: BN(bridge.amount || 0),
           apy: 0,
           amountChange: BN('0'),
@@ -120,7 +119,7 @@ export default function AccountBalancesTable(props: Props) {
     }
 
     return assets
-  }, [accountBalanceData])
+  }, [accountBalanceData, chainConfig.stables])
 
   if (sortedAccountBalanceData.length === 0) {
     return (

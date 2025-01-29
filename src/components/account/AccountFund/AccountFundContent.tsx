@@ -118,8 +118,6 @@ export default function AccountFundContent(props: Props) {
       (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
     )
 
-    console.log('evmAsset', evmAsset, evmAsset?.coin.amount.toString())
-
     if (evmAsset && !evmAsset.coin.amount.isZero()) {
       setPreviousEVMAmount(evmAsset.coin.amount)
     }
@@ -239,7 +237,6 @@ export default function AccountFundContent(props: Props) {
 
       for (const evmAsset of evmAssets) {
         if (isBridgeInProgress) {
-          console.log('Waiting for previous bridge to complete...')
           continue
         }
         const success = await handleSkipTransfer(evmAsset, MINIMUM_USDC)
