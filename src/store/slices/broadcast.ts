@@ -1,8 +1,13 @@
-import { DEFAULT_GAS_MULTIPLIER, MsgExecuteContract } from '@delphi-labs/shuttle'
+import {
+  DEFAULT_GAS_MULTIPLIER,
+  MsgExecuteContract,
+  MsgInstantiateContract,
+} from '@delphi-labs/shuttle'
 import moment from 'moment'
 import { isMobile } from 'react-device-detect'
 import { StoreApi } from 'zustand'
 
+import { getManagedVaultQueryClient } from 'api/cosmwasm-client'
 import getGasPrice from 'api/gasPrice/getGasPrice'
 import getPythPriceData from 'api/prices/getPythPriceData'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -29,7 +34,6 @@ import checkPythUpdateEnabled from 'utils/checkPythUpdateEnabled'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
-import { getManagedVaultQueryClient } from 'api/cosmwasm-client'
 
 function generateExecutionMessage(
   sender: string | undefined = '',
