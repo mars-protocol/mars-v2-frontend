@@ -13,6 +13,7 @@ interface UseSkipBridgeProps {
   chainConfig: ChainConfig
   cosmosAddress?: string
   evmAddress?: string
+  goFast?: boolean
 }
 
 export interface SkipBridgeTransaction {
@@ -31,7 +32,18 @@ export interface SkipTransactionInfo {
   explorerLink: string
 }
 
-export function useSkipBridge({ chainConfig, cosmosAddress, evmAddress }: UseSkipBridgeProps) {
+export interface BridgeInfo {
+  id: string
+  name: string
+  logo_uri: string
+}
+
+export function useSkipBridge({
+  chainConfig,
+  cosmosAddress,
+  evmAddress,
+  goFast,
+}: UseSkipBridgeProps) {
   const [isBridgeInProgress, setIsBridgeInProgress] = useState(false)
   const [skipBridges, setSkipBridges] = useState<SkipBridgeTransaction[]>(() => {
     const savedSkipBridges = localStorage.getItem('skipBridges')
@@ -43,7 +55,6 @@ export function useSkipBridge({ chainConfig, cosmosAddress, evmAddress }: UseSki
 
   const updateSkipBridges = useCallback(
     (newTransaction: SkipBridgeTransaction) => {
-      // First update localStorage immediately
       const currentBridges = localStorage.getItem('skipBridges')
       const parsedBridges = currentBridges ? JSON.parse(currentBridges) : []
       const updatedBridges = parsedBridges.find(
@@ -56,10 +67,8 @@ export function useSkipBridge({ chainConfig, cosmosAddress, evmAddress }: UseSki
 
       localStorage.setItem('skipBridges', JSON.stringify(updatedBridges))
 
-      // Then update state
       setSkipBridges(updatedBridges)
 
-      // Force update store to trigger re-renders
       useStore.setState((state) => ({
         ...state,
         skipBridgesUpdate: Date.now(),
@@ -93,20 +102,73 @@ export function useSkipBridge({ chainConfig, cosmosAddress, evmAddress }: UseSki
     [chainConfig],
   )
 
-  const handleSkipTransfer = useCallback(
-    async (selectedAsset: WrappedBNCoin, minimumAmount: number) => {
-      if (isBridgeInProgress) {
-        return
+  const fetchSkipRoute = useCallback(
+    async (selectedAsset: WrappedBNCoin) => {
+      if (!selectedAsset.chain) throw new Error('Chain not found for selected asset')
+
+      const expectedChainAttributes = chainNameToUSDCAttributes[selectedAsset.chain]
+      if (!expectedChainAttributes) {
+        throw new Error(`No chain attributes found for denom: ${selectedAsset.coin.denom}`)
       }
 
+      if (chainConfig.id.toString() !== expectedChainAttributes.chainID.toString()) {
+        const { switchChain } = await getWalletClient(config, {
+          chainId: expectedChainAttributes.chainID,
+        })
+
+        if (switchChain) {
+          await switchChain({ id: expectedChainAttributes.chainID })
+        } else {
+          throw new Error('Unable to switch network. Network switch function not available.')
+        }
+      }
+
+      try {
+        skipClient.bridges
+        const response = await skipClient.route({
+          allowMultiTx: true,
+          allowUnsafe: true,
+          cumulativeAffiliateFeeBPS: '0',
+          experimentalFeatures: ['hyperlane'],
+          smartRelay: true,
+          smartSwapOptions: {
+            splitRoutes: true,
+            evmSwaps: true,
+          },
+          sourceAssetDenom: expectedChainAttributes.assetAddress,
+          sourceAssetChainID: expectedChainAttributes.chainID.toString(),
+          destAssetDenom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
+          destAssetChainID: chainConfig.id.toString(),
+          amountIn: selectedAsset.coin.amount.toString(),
+          goFast: goFast,
+        })
+        return response
+      } catch (error: any) {
+        if (error.response?.data) {
+          const errorMessage = error.response.data.message || error.response.data.error
+          throw new Error(errorMessage || 'Failed to fetch route')
+        }
+        throw error
+      }
+    },
+    [chainConfig.id, skipClient, goFast],
+  )
+
+  const handleSkipTransfer = useCallback(
+    async (selectedAsset: WrappedBNCoin, minimumAmount: number) => {
+      if (isBridgeInProgress) return
       if (!cosmosAddress || !evmAddress || !selectedAsset) {
         console.error('Missing required data for transfer')
-        return
+        return false
       }
 
       try {
         setIsBridgeInProgress(true)
-        if (!selectedAsset.chain) throw new Error('Chain not found for selected asset')
+
+        if (BN(selectedAsset.coin.amount).isLessThan(minimumAmount)) {
+          setIsBridgeInProgress(false)
+          return false
+        }
 
         let osmosisAddress = ''
         try {
@@ -117,47 +179,11 @@ export function useSkipBridge({ chainConfig, cosmosAddress, evmAddress }: UseSki
           }
         } catch (error) {
           console.error('Failed to get Osmosis address:', error)
-        }
-
-        const expectedChainAttributes = chainNameToUSDCAttributes[selectedAsset.chain]
-        if (!expectedChainAttributes) {
-          console.error(`No chain attributes found for denom: ${selectedAsset.coin.denom}`)
-          return
-        }
-
-        if (chainConfig.id.toString() !== expectedChainAttributes.chainID.toString()) {
-          const { switchChain } = await getWalletClient(config, {
-            chainId: expectedChainAttributes.chainID,
-          })
-
-          if (switchChain) {
-            await switchChain({ id: expectedChainAttributes.chainID })
-          } else {
-            console.error('Unable to switch network. Network switch function not available.')
-            return
-          }
-        }
-
-        if (BN(selectedAsset.coin.amount).isLessThan(minimumAmount)) {
+          setIsBridgeInProgress(false)
           return false
         }
 
-        const route = await skipClient.route({
-          allowMultiTx: true,
-          allowUnsafe: true,
-          cumulativeAffiliateFeeBPS: '0',
-          experimentalFeatures: ['hyperlane'],
-          smartRelay: true,
-          smartSwapOptions: {
-            splitRoutes: true,
-            evmSwaps: true,
-          },
-          sourceAssetDenom: chainNameToUSDCAttributes[selectedAsset.chain].assetAddress,
-          sourceAssetChainID: chainNameToUSDCAttributes[selectedAsset.chain].chainID.toString(),
-          destAssetDenom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
-          destAssetChainID: chainConfig.id.toString(),
-          amountIn: selectedAsset.coin.amount.toString(),
-        })
+        const route = await fetchSkipRoute(selectedAsset)
 
         const userAddresses = route.requiredChainAddresses.map((chainID: string) => {
           if (chainID === chainConfig.id.toString()) {
@@ -171,57 +197,77 @@ export function useSkipBridge({ chainConfig, cosmosAddress, evmAddress }: UseSki
 
         const transactionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
-        await skipClient.executeRoute({
-          route,
-          userAddresses,
-          slippageTolerancePercent: '3',
-          onTransactionTracked: async (txInfo: {
-            txHash: string
-            chainID: string
-            explorerLink: string
-          }) => {
-            updateSkipBridges({
-              ...txInfo,
-              id: transactionId,
-              denom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
-              amount: selectedAsset.coin.amount,
-              status: 'STATE_PENDING',
-            })
+        try {
+          await skipClient.executeRoute({
+            route,
+            userAddresses,
+            slippageTolerancePercent: '3',
+            onTransactionTracked: async (txInfo: SkipTransactionInfo) => {
+              updateSkipBridges({
+                ...txInfo,
+                id: transactionId,
+                denom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
+                amount: selectedAsset.coin.amount,
+                status: 'STATE_PENDING',
+              })
 
-            // Close the fund modal once the transaction is tracked
-            useStore.setState((state) => ({
-              ...state,
-              fundAndWithdrawModal: null,
-              walletAssetsModal: null,
-              focusComponent: null,
-            }))
+              useStore.setState((state) => ({
+                ...state,
+                fundAndWithdrawModal: null,
+                walletAssetsModal: null,
+                focusComponent: null,
+              }))
 
-            refreshBalances()
-          },
-          onTransactionCompleted: async (
-            chainID: string,
-            txHash: string,
-            status: TxStatusResponse,
-          ) => {
-            updateSkipBridges({
-              txHash,
-              chainID,
-              id: transactionId,
-              explorerLink: skipBridges.find((b) => b.id === transactionId)?.explorerLink ?? '',
-              status: status.status,
-              denom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
-              amount: selectedAsset.coin.amount,
-            })
-            setIsBridgeInProgress(false)
-            // Refresh balances when transaction is completed
-            refreshBalances()
-          },
-        })
+              refreshBalances()
+            },
+            onTransactionCompleted: async (
+              chainID: string,
+              txHash: string,
+              status: TxStatusResponse,
+            ) => {
+              updateSkipBridges({
+                txHash,
+                chainID,
+                id: transactionId,
+                explorerLink: skipBridges.find((b) => b.id === transactionId)?.explorerLink ?? '',
+                status: status.status,
+                denom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
+                amount: selectedAsset.coin.amount,
+              })
+              setIsBridgeInProgress(false)
+              refreshBalances()
+            },
+          })
+        } catch (error: any) {
+          setIsBridgeInProgress(false)
+
+          if (error.name === 'ContractFunctionExecutionError') {
+            return false
+          }
+
+          const errorMessage = error.message?.toLowerCase() || ''
+          if (
+            errorMessage.includes('user rejected') ||
+            errorMessage.includes('user denied') ||
+            errorMessage.includes('rejected by user') ||
+            errorMessage.includes('cancelled') ||
+            errorMessage.includes('rejected the request')
+          ) {
+            return false
+          }
+
+          console.error('Transaction execution failed:', error)
+          throw error
+        }
 
         return true
       } catch (error) {
-        console.error('Skip transfer failed:', error)
-        if (error instanceof Error) {
+        if (
+          error instanceof Error &&
+          !error.message?.toLowerCase().includes('reject') &&
+          !error.message?.toLowerCase().includes('denied')
+        ) {
+          console.error('Skip transfer failed:', error)
           console.error('Error message:', error.message)
           console.error('Error stack:', error.stack)
         }
@@ -230,7 +276,7 @@ export function useSkipBridge({ chainConfig, cosmosAddress, evmAddress }: UseSki
       }
     },
     [
-      chainConfig,
+      chainConfig.id,
       cosmosAddress,
       evmAddress,
       skipClient,
@@ -238,6 +284,7 @@ export function useSkipBridge({ chainConfig, cosmosAddress, evmAddress }: UseSki
       updateSkipBridges,
       isBridgeInProgress,
       refreshBalances,
+      fetchSkipRoute,
     ],
   )
 
@@ -281,10 +328,27 @@ export function useSkipBridge({ chainConfig, cosmosAddress, evmAddress }: UseSki
     }
   }, [skipBridges, updateSkipBridges, refreshBalances])
 
+  const fetchBridgeLogos = useCallback(async (): Promise<BridgeInfo[]> => {
+    try {
+      const bridges = await skipClient.bridges()
+      return bridges.map((bridge) => ({
+        id: bridge.id,
+        name: bridge.name,
+        logo_uri: bridge.logoURI,
+      }))
+    } catch (error) {
+      console.error('Failed to fetch bridge logos:', error)
+      return []
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return {
     skipBridges,
     isBridgeInProgress,
     handleSkipTransfer,
     removeSkipBridge,
+    fetchSkipRoute,
+    fetchBridgeLogos,
   }
 }

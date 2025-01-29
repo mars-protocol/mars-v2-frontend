@@ -21,10 +21,6 @@ export function useSkipBridgeStatus() {
   const [skipBridges, setSkipBridges] = useState<SkipBridgeTransaction[]>([])
   const [shouldShowSkipBridgeModal, setShouldShowSkipBridgeModal] = useState(false)
 
-  // const { urlAddress, accountId } = useParams()
-  // const address = useStore((s) => s.address)
-  // const { data: accountIds } = useAccountIds(address)
-  // const isUsersAccount = accountId && accountIds ? accountIds.includes(accountId) : false
   const account = useCurrentAccount()
   const hasNoBalances =
     account?.deposits.length === 0 &&
@@ -32,7 +28,6 @@ export function useSkipBridgeStatus() {
     account?.lends.length === 0 &&
     account?.stakedAstroLps.length === 0 &&
     account?.vaults.length === 0
-  console.log('account', account)
 
   const checkTransactionStatus = useCallback(async () => {
     const skipBridgesString = localStorage.getItem('skipBridges')

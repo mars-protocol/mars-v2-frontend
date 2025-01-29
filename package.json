@@ -22,9 +22,10 @@
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.32.4",
     "@delphi-labs/shuttle-react": "^3.29.0",
-    "@skip-go/client": "^0.7.0",
     "@keplr-wallet/cosmos": "^0.12.163",
     "@next/eslint-plugin-next": "^15.1.0",
+    "@skip-go/client": "^0.16.7",
+    "@solana/web3.js": "^1.98.0",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tanstack/react-query": "^5.51.21",
     "@tanstack/react-table": "^8.20.6",
@@ -55,7 +56,7 @@
     "starknet": "^6.11.0",
     "swr": "^2.2.5",
     "tailwind-scrollbar-hide": "^1.1.7",
-    "viem": "^2.18.8",
+    "viem": "^2.22.17",
     "wagmi": "^2.12.2",
     "zustand": "5.0.2"
   },

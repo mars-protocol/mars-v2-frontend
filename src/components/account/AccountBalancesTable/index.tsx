@@ -17,10 +17,6 @@ import { ColumnDef } from '@tanstack/table-core'
 import { getPage, getRoute } from 'utils/route'
 import { BN } from 'utils/helpers'
 import { demagnify } from 'utils/formatters'
-import Button from 'components/common/Button'
-import useAutoLend from 'hooks/wallet/useAutoLend'
-import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
-import { BNCoin } from 'types/classes/BNCoin'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { SkipBridgeTransaction, useSkipBridge } from 'hooks/bridge/useSkipBridge'
 
@@ -59,7 +55,6 @@ export default function AccountBalancesTable(props: Props) {
     lendingData,
     borrowingData,
   })
-  const deposit = useStore((s) => s.deposit)
 
   const enhancedAccountBalanceData = useMemo(() => {
     return accountBalanceData.map((row) => ({
@@ -75,68 +70,15 @@ export default function AccountBalancesTable(props: Props) {
   })
 
   const columns = useAccountBalancesColumns(account, showLiquidationPrice)
-  const { skipBridges, removeSkipBridge } = useSkipBridge({
+  const { skipBridges } = useSkipBridge({
     chainConfig,
     cosmosAddress: address,
     evmAddress: undefined,
   })
-  console.log('skipBridges', skipBridges)
-  const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
-  const [isAutoLendEnabledGlobal] = useEnableAutoLendGlobal()
-  const isNewAccount = account.id === currentAccount?.id
 
-  const shouldAutoLend = isNewAccount ? isAutoLendEnabledGlobal : isAutoLendEnabledForCurrentAccount
   const dynamicColumns: ColumnDef<AccountBalanceRow>[] = useMemo(() => {
-    if (skipBridges.length > 0) {
-      const assetColumnIndex = columns.findIndex((col) => col.id === 'asset')
-      return [
-        ...columns.slice(0, assetColumnIndex + 2),
-        {
-          id: 'bridgeStatus',
-          header: 'Bridge Status',
-          accessorFn: (row: AccountBalanceRow) => row.bridgeStatus,
-          cell: ({ row }) => {
-            const bridgeStatus = row.original.bridgeStatus
-            const bridgeId = row.original.skipBridgeId
-            return bridgeStatus ? (
-              bridgeStatus === 'STATE_PENDING' ? (
-                <Text size='sm'>Pending</Text>
-              ) : (
-                <div className='flex justify-end'>
-                  <Button
-                    size='xs'
-                    color='secondary'
-                    onClick={async () => {
-                      if (bridgeId) {
-                        const bridge = skipBridges.find((b) => b.id === bridgeId)
-                        if (bridge) {
-                          const coin = BNCoin.fromDenomAndBigNumber(
-                            'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
-                            BN(bridge.amount),
-                          )
-                          await deposit({
-                            accountId: account.id,
-                            coins: [coin],
-                            lend: shouldAutoLend,
-                            isAutoLend: shouldAutoLend,
-                          })
-                          removeSkipBridge(bridgeId)
-                        }
-                      }
-                    }}
-                  >
-                    Complete Transaction
-                  </Button>
-                </div>
-              )
-            ) : null
-          },
-        },
-        ...columns.slice(assetColumnIndex + 2),
-      ]
-    }
     return columns
-  }, [columns, account.id, deposit, removeSkipBridge, skipBridges, shouldAutoLend])
+  }, [columns])
 
   const [, forceUpdate] = useState({})
   useEffect(() => {
@@ -180,7 +122,6 @@ export default function AccountBalancesTable(props: Props) {
     return assets
   }, [accountBalanceData])
 
-  console.log('dynamicAssets', dynamicAssets)
   if (sortedAccountBalanceData.length === 0) {
     return (
       <ConditionalWrapper

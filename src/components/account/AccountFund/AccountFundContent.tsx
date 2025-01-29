@@ -26,6 +26,11 @@ import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import { getPage, getRoute } from 'utils/route'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
+import { MINIMUM_USDC } from 'utils/constants'
+import classNames from 'classnames'
+import { RouteResponse } from '@skip-go/client'
+import { BridgeInfo } from 'hooks/bridge/useSkipBridge'
+import BridgeRouteVisualizer from './BridgeContent/BridgeRouteVisualizer'
 
 interface Props {
   account?: Account
@@ -72,64 +77,133 @@ export default function AccountFundContent(props: Props) {
 
   const chainConfig = useChainConfig()
 
-  const { isBridgeInProgress, handleSkipTransfer } = useSkipBridge({
-    chainConfig,
-    cosmosAddress,
-    evmAddress,
-  })
+  const [goFast, setGoFast] = useState(false)
+
+  const [currentRoute, setCurrentRoute] = useState<RouteResponse | undefined>(undefined)
+  const [routeError, setRouteError] = useState<string | null>(null)
+
+  const [bridges, setBridges] = useState<BridgeInfo[]>([])
+
+  const { isBridgeInProgress, handleSkipTransfer, fetchSkipRoute, fetchBridgeLogos } =
+    useSkipBridge({
+      chainConfig,
+      cosmosAddress,
+      evmAddress,
+      goFast,
+    })
 
   const [showMinimumUSDCValueOverlay, setShowMinimumUSDCValueOverlay] = useState(false)
 
-  const MINIMUM_USDC = 50000
+  const [isLoadingRoute, setIsLoadingRoute] = useState(false)
+  const evmAsset = fundingAssets.find(
+    (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
+  )
 
+  const isEVMAssetLessThanMinimumUSDC = evmAsset?.coin.amount.isLessThan(MINIMUM_USDC)
   const updateEVMAssetValue = useCallback(() => {
-    const evmAsset = fundingAssets.find(
-      (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
-    )
     if (evmAsset) {
       setCurrentEVMAssetValue(evmAsset.coin.amount)
     } else {
       setCurrentEVMAssetValue(BN_ZERO)
     }
-  }, [fundingAssets])
+  }, [evmAsset])
 
   useEffect(() => {
     updateEVMAssetValue()
   }, [fundingAssets, updateEVMAssetValue])
 
   useEffect(() => {
-    const hasEVMAsset = fundingAssets.some(
+    const evmAsset = fundingAssets.find(
       (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
     )
+
+    console.log('evmAsset', evmAsset, evmAsset?.coin.amount.toString())
     setShowMinimumUSDCValueOverlay(
-      hasEVMAsset &&
-        !currentEVMAssetValue.isZero() &&
-        currentEVMAssetValue.isLessThan(MINIMUM_USDC),
+      evmAsset !== undefined &&
+        !evmAsset.coin.amount.isZero() &&
+        evmAsset.coin.amount.isLessThan(MINIMUM_USDC),
     )
-  }, [currentEVMAssetValue, fundingAssets])
+  }, [fundingAssets, currentEVMAssetValue])
 
-  const handleClick = useCallback(async () => {
-    const isNewAccount = !props.hasExistingAccount
-    const shouldAutoLend = isNewAccount
-      ? isAutoLendEnabledGlobal
-      : isAutoLendEnabledForCurrentAccount
+  const fetchRouteForEVMAsset = useCallback(async () => {
+    const evmAsset = fundingAssets.find(
+      (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
+    )
 
-    const depositObject = {
-      coins: fundingAssets.map((wrappedCoin) => wrappedCoin.coin),
-      lend: shouldAutoLend,
-      isAutoLend: shouldAutoLend,
+    if (!evmAsset || evmAsset.coin.amount.isZero()) {
+      setCurrentRoute(undefined)
+      setRouteError(null)
+      return
     }
 
-    const evmAssets = fundingAssets.filter(
-      (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
-    )
-    const nonEvmAssets = fundingAssets.filter(
-      (asset) => !asset.chain || !chainNameToUSDCAttributes[asset.chain],
-    )
+    if (isLoadingRoute) return
+
+    setIsLoadingRoute(true)
+    setRouteError(null)
+    try {
+      const route = await fetchSkipRoute(evmAsset)
+      setCurrentRoute(route)
+    } catch (error) {
+      console.error('Failed to fetch route:', error)
+      setCurrentRoute(undefined)
+      if (error instanceof Error && error.message.includes('no routes found')) {
+        setRouteError(
+          'No available routes found for this transfer. Please try again later or choose a different asset.',
+        )
+      } else {
+        setRouteError('Failed to fetch route. Please try again later.')
+      }
+    } finally {
+      setIsLoadingRoute(false)
+    }
+  }, [fetchSkipRoute, fundingAssets, isLoadingRoute])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const evmAsset = fundingAssets.find(
+        (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
+      )
+
+      if (evmAsset && !evmAsset.coin.amount.isZero() && !isEVMAssetLessThanMinimumUSDC) {
+        fetchRouteForEVMAsset()
+      }
+    }, 500)
+
+    return () => clearTimeout(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [goFast, currentEVMAssetValue])
+
+  useEffect(() => {
+    const loadBridges = async () => {
+      const bridgeData = await fetchBridgeLogos()
+      setBridges(bridgeData)
+    }
+    loadBridges()
+  }, [fetchBridgeLogos])
+
+  const handleClick = useCallback(async () => {
+    if (isConfirming) return
 
     setIsConfirming(true)
-
     try {
+      const isNewAccount = !props.hasExistingAccount
+      const shouldAutoLend = isNewAccount
+        ? isAutoLendEnabledGlobal
+        : isAutoLendEnabledForCurrentAccount
+
+      const depositObject = {
+        coins: fundingAssets.map((wrappedCoin) => wrappedCoin.coin),
+        lend: shouldAutoLend,
+        isAutoLend: shouldAutoLend,
+      }
+
+      const evmAssets = fundingAssets.filter(
+        (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
+      )
+      const nonEvmAssets = fundingAssets.filter(
+        (asset) => !asset.chain || !chainNameToUSDCAttributes[asset.chain],
+      )
+
       if (nonEvmAssets.length > 0) {
         const accountId = props.accountId
           ? await deposit({ ...depositObject, accountId: props.accountId })
@@ -186,6 +260,7 @@ export default function AccountFundContent(props: Props) {
     handleSkipTransfer,
     chainConfig,
     isBridgeInProgress,
+    isConfirming,
   ])
 
   useEffect(() => {
@@ -218,7 +293,13 @@ export default function AccountFundContent(props: Props) {
           updateFundingAssets={updateFundingAssets}
           isFullPage={props.isFullPage}
           onChange={updateEVMAssetValue}
+          routeResponse={currentRoute}
         />
+        {!isEVMAssetLessThanMinimumUSDC && routeError && (
+          <Callout type={CalloutType.WARNING} className='mt-4'>
+            {routeError}
+          </Callout>
+        )}
         {showMinimumUSDCValueOverlay && (
           <Callout type={CalloutType.WARNING} className='mt-4'>
             You need to deposit at least 0.05 USDC, when bridging from an EVM chain.
@@ -248,7 +329,52 @@ export default function AccountFundContent(props: Props) {
               isConfirming={isConfirming}
               handleConnectWallet={props.onConnectWallet}
               handleDisconnectWallet={handleDisconnectWallet}
+              hasEVMAssetSelected={evmAsset !== undefined}
             />
+            {currentRoute && (
+              <div className='flex flex-col pt-4 mt-4 border-t border-white/10'>
+                <div className='flex flex-row justify-between items-center gap-2'>
+                  <Text className='mr-2 text-white/70' size='sm'>
+                    Route Preference
+                  </Text>
+                  <div className='flex gap-2'>
+                    <button
+                      onClick={() => setGoFast(true)}
+                      className={classNames(
+                        'flex-1 px-4 py-2 rounded text-sm transition-colors duration-200',
+                        goFast
+                          ? 'bg-white/10 text-white'
+                          : 'bg-transparent text-white/60 hover:text-white hover:bg-white/5',
+                      )}
+                    >
+                      Fastest
+                    </button>
+                    <button
+                      onClick={() => setGoFast(false)}
+                      className={classNames(
+                        'flex-1 px-4 py-2 rounded text-sm transition-colors duration-200',
+                        !goFast
+                          ? 'bg-white/10 text-white'
+                          : 'bg-transparent text-white/60 hover:text-white hover:bg-white/5',
+                      )}
+                    >
+                      Cheapest
+                    </button>
+                  </div>
+                </div>
+
+                <div className='mt-4 flex flex-row justify-between gap-2'>
+                  <Text className='mr-2 text-white/70' size='sm'>
+                    Route
+                  </Text>
+                  <BridgeRouteVisualizer
+                    route={currentRoute}
+                    bridges={bridges}
+                    originChain={fundingAssets.find((asset) => asset.chain)?.chain || ''}
+                  />
+                </div>
+              </div>
+            )}
             <DepositCapMessage
               action='fund'
               coins={depositCapReachedCoins}
@@ -269,7 +395,7 @@ export default function AccountFundContent(props: Props) {
             !hasFundingAssets ||
             depositCapReachedCoins.length > 0 ||
             isBridgeInProgress ||
-            (showMinimumUSDCValueOverlay && currentEVMAssetValue.isLessThan(MINIMUM_USDC))
+            showMinimumUSDCValueOverlay
           }
           showProgressIndicator={isConfirming}
           onClick={handleClick}
