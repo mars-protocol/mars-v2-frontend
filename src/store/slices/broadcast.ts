@@ -1385,5 +1385,31 @@ export default function createBroadcastSlice(
         return false
       }
     },
+    depositInManagedVault: async (options: {
+      vaultAddress: string
+      amount: string
+      recipient?: string | null
+    }) => {
+      const msg: ManagedVaultExecuteMsg = {
+        deposit: {
+          amount: options.amount,
+          recipient: options.recipient,
+        },
+      }
+
+      const response = get().executeMsg({
+        messages: [
+          generateExecutionMessage(get().address, options.vaultAddress, msg, [
+            {
+              denom: get().chainConfig.defaultCurrency.coinMinimalDenom,
+              amount: options.amount,
+            },
+          ]),
+        ],
+      })
+
+      get().handleTransaction({ response })
+      return response.then((response) => !!response.result)
+    },
   }
 }

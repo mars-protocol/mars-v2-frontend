@@ -27,6 +27,8 @@ export default function VaultAction(props: Props) {
   const { showActionModal, setShowActionModal, vaultDetails, vaultAddress, type } = props
   const [amount, setAmount] = useState(BN_ZERO)
 
+  const depositInManagedVault = useStore((s) => s.depositInManagedVault)
+
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(vaultDetails.base_token)) as Asset
 
@@ -35,6 +37,20 @@ export default function VaultAction(props: Props) {
 
   const handleAmountChange = (newAmount: BigNumber) => {
     setAmount(newAmount)
+  }
+
+  const handleDeposit = async () => {
+    if (amount.isZero()) return
+
+    try {
+      await depositInManagedVault({
+        vaultAddress,
+        amount: amount.toString(),
+      })
+      setShowActionModal(false)
+    } catch (error) {
+      console.error('Deposit failed:', error)
+    }
   }
 
   return (
@@ -79,7 +95,7 @@ export default function VaultAction(props: Props) {
           </div>
 
           <Button
-            onClick={() => {}}
+            onClick={handleDeposit}
             className='w-full'
             text={isDeposit ? 'Deposit' : 'Withdraw'}
             rightIcon={<ArrowRight />}

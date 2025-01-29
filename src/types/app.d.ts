@@ -1147,6 +1147,11 @@ interface BroadcastSlice {
   v1Action: (type: V1ActionType, funds: BNCoin) => Promise<boolean>
   createManagedVault: (params: VaultParams) => Promise<{ address: string } | null>
   handlePerformanceFeeAction: (options: PerformanceFeeOptions) => Promise<boolean>
+  depositInManagedVault: (options: {
+    vaultAddress: string
+    amount: string
+    recipient?: string | null
+  }) => Promise<boolean>
 }
 
 type V1ActionType = 'withdraw' | 'deposit' | 'borrow' | 'repay'
