@@ -33,7 +33,7 @@ export default function useOfficialVaultsColumns(props: Props) {
       },
       {
         ...FEE_META,
-        cell: ({ row }) => <Fee value={row.original.fee} isLoading={isLoading} />,
+        cell: ({ row }) => <Fee value={row.original.fee_rate} isLoading={isLoading} />,
       },
       {
         ...FREEZE_PERIOD_META,
