@@ -1,4 +1,3 @@
-import { State } from 'wagmi'
 import {
   CosmiframeExtensionProvider,
   CosmostationExtensionProvider,
@@ -8,20 +7,21 @@ import {
   LeapCosmosExtensionProvider,
   LeapCosmosMobileProvider,
   LeapMetamaskCosmosSnapExtensionProvider,
-  ShuttleProvider,
   StationExtensionProvider,
   VectisCosmosExtensionProvider,
   WalletExtensionProvider,
   WalletMobileProvider,
   XDEFICosmosExtensionProvider,
-} from '@delphi-labs/shuttle-react'
+} from '@delphi-labs/shuttle'
+import { ShuttleProvider } from '@delphi-labs/shuttle-react'
 import { FC, useEffect, useState } from 'react'
+import { State } from 'wagmi'
 
 import chains from 'chains'
+import AppKitProvider from 'components/Wallet/AppKitProvider'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { DAODAO_ORIGINS, WALLETS } from 'constants/wallets'
 import { WalletID } from 'types/enums'
-import AppKitProvider from 'components/Wallet/AppKitProvider'
 
 type Props = {
   children?: React.ReactNode

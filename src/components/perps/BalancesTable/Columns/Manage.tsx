@@ -3,10 +3,11 @@ import { useSearchParams } from 'react-router-dom'
 
 import ActionButton from 'components/common/Button/ActionButton'
 import DropDownButton from 'components/common/Button/DropDownButton'
-import { Check, Cross, Edit } from 'components/common/Icons'
+import { Check, Cross, Edit, SwapIcon } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import PerpsSlTpModal from 'components/Modals/PerpsSlTpModal'
 import CloseLabel from 'components/perps/BalancesTable/Columns/CloseLabel'
+import TradeDirection from './TradeDirection'
 import ConfirmationSummary from 'components/perps/Module/ConfirmationSummary'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -159,9 +160,104 @@ export default function Manage(props: Props) {
     limitOrders,
   ])
 
-  // const openPerpsSlTpModal = useCallback(() => {
-  //   useStore.setState({ addSLTPModal: true })
-  // }, [])
+  const handleFlipPosition = useCallback(
+    (newDirection: 'long' | 'short') => {
+      if (!currentAccount) return
+      const flipAmount = perpPosition.amount.times(2)
+      const signedAmount = newDirection === 'long' ? flipAmount.abs() : flipAmount.abs().negated()
+
+      const hasOpenOrders = limitOrders?.some((order) =>
+        order.order.actions.some(
+          (action) =>
+            'execute_perp_order' in action &&
+            action.execute_perp_order.denom === perpPosition.asset.denom,
+        ),
+      )
+
+      const executeFlip = () => {
+        closePerpPosition({
+          accountId: currentAccount.id,
+          coin: BNCoin.fromDenomAndBigNumber(perpPosition.asset.denom, signedAmount),
+          autolend: isAutoLendEnabledForCurrentAccount,
+          baseDenom: perpPosition.baseDenom,
+        })
+      }
+
+      if (!showSummary && hasOpenOrders) {
+        openAlertDialog({
+          header: (
+            <div className='flex items-center justify-between w-full'>
+              <Text size='2xl'>Warning</Text>
+            </div>
+          ),
+          content: (
+            <Text>
+              Flipping this position will also cancel all related limit orders. Do you want to
+              continue?
+            </Text>
+          ),
+          positiveButton: {
+            text: 'Continue',
+            icon: <Check />,
+            onClick: executeFlip,
+          },
+          negativeButton: {
+            text: 'Cancel',
+            onClick: close,
+          },
+        })
+        return
+      }
+
+      if (!showSummary) {
+        executeFlip()
+        return
+      }
+
+      openAlertDialog({
+        header: (
+          <div className='flex items-center justify-between w-full'>
+            <Text size='2xl'>Order Summary</Text>
+            <TradeDirection tradeDirection={newDirection} type='market' />
+          </div>
+        ),
+        content: (
+          <ConfirmationSummary
+            amount={signedAmount}
+            accountId={currentAccount.id}
+            asset={perpPosition.asset}
+            leverage={perpPosition.leverage}
+          />
+        ),
+        positiveButton: {
+          text: 'Confirm',
+          icon: <Check />,
+          onClick: executeFlip,
+        },
+        negativeButton: {
+          text: 'Cancel',
+          onClick: () => {
+            close()
+          },
+        },
+        checkbox: {
+          text: 'Hide summary in the future',
+          onClick: (isChecked: boolean) => setShowSummary(!isChecked),
+        },
+      })
+    },
+    [
+      currentAccount,
+      perpPosition,
+      limitOrders,
+      showSummary,
+      openAlertDialog,
+      close,
+      closePerpPosition,
+      isAutoLendEnabledForCurrentAccount,
+      setShowSummary,
+    ],
+  )
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [
@@ -193,18 +289,20 @@ export default function Manage(props: Props) {
             // },
           ]),
       {
+        icon: <SwapIcon />,
+        text: 'Flip Direction',
+        onClick: () => {
+          const newDirection = perpPosition.tradeDirection === 'long' ? 'short' : 'long'
+          handleFlipPosition(newDirection)
+        },
+      },
+      {
         icon: <Cross width={16} />,
         text: 'Close Position',
         onClick: () => handleCloseClick(),
       },
     ],
-    [
-      handleCloseClick,
-      // openPerpsSlTpModal,
-      perpPosition.asset.denom,
-      searchParams,
-      setSearchParams,
-    ],
+    [handleCloseClick, handleFlipPosition, perpPosition, searchParams, setSearchParams],
   )
 
   if (props.perpPosition.type === 'limit' || props.perpPosition.type === 'stop')

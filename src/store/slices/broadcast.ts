@@ -1,4 +1,4 @@
-import { DEFAULT_GAS_MULTIPLIER, MsgExecuteContract } from '@delphi-labs/shuttle-react'
+import { DEFAULT_GAS_MULTIPLIER, MsgExecuteContract } from '@delphi-labs/shuttle'
 import moment from 'moment'
 import { isMobile } from 'react-device-detect'
 import { StoreApi } from 'zustand'
@@ -688,14 +688,11 @@ export default function createBroadcastSlice(
       repay: boolean
       routeInfo: SwapRouteInfo
     }) => {
-      const isOsmosis = get().chainConfig.isOsmosis
-
       const swapExactIn = getSwapExactInAction(
         options.coinIn.toActionCoin(options.isMax),
         options.denomOut,
         options.routeInfo,
         options.slippage ?? 0,
-        isOsmosis,
       )
 
       const msg: CreditManagerExecuteMsg = {

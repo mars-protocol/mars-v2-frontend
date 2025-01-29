@@ -1,7 +1,5 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { isAndroid, isIOS, useShuttle } from '@delphi-labs/shuttle-react'
-import { useCallback, useEffect, useMemo } from 'react'
-
+import { useShuttle } from '@delphi-labs/shuttle-react'
 import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
 import WalletSelect from 'components/Wallet//WalletSelect'
@@ -9,8 +7,10 @@ import WalletFetchBalancesAndAccounts from 'components/Wallet/WalletFetchBalance
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
+import { useCallback, useEffect, useMemo } from 'react'
 import useStore from 'store'
 import { setNodeError } from 'utils/error'
+import { isAndroid, isIOS } from 'utils/mobile'
 
 interface Props {
   providerId?: string

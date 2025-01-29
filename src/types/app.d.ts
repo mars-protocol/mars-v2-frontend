@@ -727,7 +727,7 @@ interface WalletInfo {
 }
 
 type ChainInfos = Record<ChainInfoID, ChainInfo>
-type Network = import('@delphi-labs/shuttle-react').Network
+type Network = import('@delphi-labs/shuttle').Network
 
 interface ChainInfo extends Network {
   explorer: string
@@ -741,39 +741,39 @@ interface ICNSResult {
 
 interface WalletClient {
   sign: (options: {
-    messages: import('@delphi-labs/shuttle-react').TransactionMsg<any>[]
+    messages: import('@delphi-labs/shuttle').TransactionMsg<any>[]
     feeAmount?: string | null | undefined
     gasLimit?: string | null | undefined
     memo?: string | null | undefined
-    wallet?: import('@delphi-labs/shuttle-react').WalletConnection | null | undefined
-  }) => Promise<import('@delphi-labs/shuttle-react').SigningResult>
+    wallet?: import('@delphi-labs/shuttle').WalletConnection | null | undefined
+  }) => Promise<import('@delphi-labs/shuttle').SigningResult>
   cosmWasmClient: import('@cosmjs/cosmwasm-stargate').CosmWasmClient
-  connectedWallet: import('@delphi-labs/shuttle-react').WalletConnection
+  connectedWallet: import('@delphi-labs/shuttle').WalletConnection
   broadcast: (options: {
-    messages: import('@delphi-labs/shuttle-react').TransactionMsg<any>[]
+    messages: import('@delphi-labs/shuttle').TransactionMsg<any>[]
     feeAmount?: string | null | undefined
     gasLimit?: string | null | undefined
     memo?: string | null | undefined
-    wallet?: import('@delphi-labs/shuttle-react').WalletConnection | null | undefined
+    wallet?: import('@delphi-labs/shuttle').WalletConnection | null | undefined
     overrides?: {
       rpc?: string
       rest?: string
       gasAdjustment?: number
       gasPrice?: string
-      feeCurrency?: import('@delphi-labs/shuttle-react').NetworkCurrency
+      feeCurrency?: import('@delphi-labs/shuttle').NetworkCurrency
     }
-  }) => Promise<import('@delphi-labs/shuttle-react').BroadcastResult>
+  }) => Promise<import('@delphi-labs/shuttle').BroadcastResult>
   simulate: (options: {
-    messages: import('@delphi-labs/shuttle-react').TransactionMsg<any>[]
-    wallet?: import('@delphi-labs/shuttle-react').WalletConnection | null | undefined
+    messages: import('@delphi-labs/shuttle').TransactionMsg<any>[]
+    wallet?: import('@delphi-labs/shuttle').WalletConnection | null | undefined
     overrides?: {
       rpc?: string
       rest?: string
       gasAdjustment?: number
       gasPrice?: string
-      feeCurrency?: import('@delphi-labs/shuttle-react').NetworkCurrency
+      feeCurrency?: import('@delphi-labs/shuttle').NetworkCurrency
     }
-  }) => Promise<import('@delphi-labs/shuttle-react').SimulateResult>
+  }) => Promise<import('@delphi-labs/shuttle').SimulateResult>
 }
 
 interface AssetTableRow {
@@ -936,7 +936,7 @@ interface TradingPair {
 }
 
 interface BroadcastResult {
-  result?: import('@delphi-labs/shuttle-react').BroadcastResult
+  result?: import('@delphi-labs/shuttle').BroadcastResult
   error?: string
 }
 
@@ -1113,7 +1113,7 @@ interface BroadcastSlice {
     amount: string
   }) => Promise<boolean>
   resyncOracle: () => Promise<boolean>
-  getPythVaas: () => Promise<import('@delphi-labs/shuttle-react').MsgExecuteContract>
+  getPythVaas: () => Promise<import('@delphi-labs/shuttle').MsgExecuteContract>
   withdrawFromAstroLps: (options: {
     accountId: string
     astroLps: DepositedAstroLp[]
