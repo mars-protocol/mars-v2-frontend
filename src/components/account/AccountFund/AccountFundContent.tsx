@@ -46,6 +46,7 @@ export default function AccountFundContent(props: Props) {
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
   const [isConfirming, setIsConfirming] = useState(false)
   const [currentEVMAssetValue, setCurrentEVMAssetValue] = useState<BigNumber>(BN_ZERO)
+  const [previousEVMAmount, setPreviousEVMAmount] = useState<BigNumber>(BN_ZERO)
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const [isAutoLendEnabledGlobal] = useEnableAutoLendGlobal()
   const { data: walletBalances } = useWalletBalances(props.address)
@@ -118,12 +119,17 @@ export default function AccountFundContent(props: Props) {
     )
 
     console.log('evmAsset', evmAsset, evmAsset?.coin.amount.toString())
+
+    if (evmAsset && !evmAsset.coin.amount.isZero()) {
+      setPreviousEVMAmount(evmAsset.coin.amount)
+    }
+
+    const amountToCheck = evmAsset ? evmAsset.coin.amount : previousEVMAmount
+
     setShowMinimumUSDCValueOverlay(
-      evmAsset !== undefined &&
-        !evmAsset.coin.amount.isZero() &&
-        evmAsset.coin.amount.isLessThan(MINIMUM_USDC),
+      evmAsset !== undefined && !amountToCheck.isZero() && amountToCheck.isLessThan(MINIMUM_USDC),
     )
-  }, [fundingAssets, currentEVMAssetValue])
+  }, [previousEVMAmount, fundingAssets, currentEVMAssetValue, handleSkipTransfer])
 
   const fetchRouteForEVMAsset = useCallback(async () => {
     const evmAsset = fundingAssets.find(
@@ -191,12 +197,6 @@ export default function AccountFundContent(props: Props) {
         ? isAutoLendEnabledGlobal
         : isAutoLendEnabledForCurrentAccount
 
-      const depositObject = {
-        coins: fundingAssets.map((wrappedCoin) => wrappedCoin.coin),
-        lend: shouldAutoLend,
-        isAutoLend: shouldAutoLend,
-      }
-
       const evmAssets = fundingAssets.filter(
         (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
       )
@@ -205,6 +205,12 @@ export default function AccountFundContent(props: Props) {
       )
 
       if (nonEvmAssets.length > 0) {
+        const depositObject = {
+          coins: nonEvmAssets.map((wrappedCoin) => wrappedCoin.coin),
+          lend: shouldAutoLend,
+          isAutoLend: shouldAutoLend,
+        }
+
         const accountId = props.accountId
           ? await deposit({ ...depositObject, accountId: props.accountId })
           : await deposit(depositObject)
