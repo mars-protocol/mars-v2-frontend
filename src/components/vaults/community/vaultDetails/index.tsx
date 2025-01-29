@@ -100,6 +100,8 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
         <VaultAction
           showActionModal={showActionModal}
           setShowActionModal={setShowActionModal}
+          vaultDetails={vaultDetails}
+          vaultAddress={vaultAddress!}
           type={modalType || 'deposit'}
         />
 

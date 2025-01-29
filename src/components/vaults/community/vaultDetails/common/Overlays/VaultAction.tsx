@@ -9,19 +9,33 @@ import { ArrowRight } from 'components/common/Icons'
 import { BN } from 'utils/helpers'
 import { Callout, CalloutType } from 'components/common/Callout'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
+import { byDenom } from 'utils/array'
+import { useState } from 'react'
+import { BN_ZERO } from 'constants/math'
+import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
+import useStore from 'store'
 
 interface Props {
   showActionModal: boolean
   setShowActionModal: (show: boolean) => void
+  vaultDetails: ExtendedManagedVaultDetails
+  vaultAddress: string
   type: 'deposit' | 'withdraw'
 }
 
 export default function VaultAction(props: Props) {
-  const { showActionModal, setShowActionModal, type } = props
+  const { showActionModal, setShowActionModal, vaultDetails, vaultAddress, type } = props
+  const [amount, setAmount] = useState(BN_ZERO)
 
   const vaultAssets = useVaultAssets()
+  const depositAsset = vaultAssets.find(byDenom(vaultDetails.base_token)) as Asset
 
   const isDeposit = type === 'deposit'
+  const assetAmountInWallet = BN(useCurrentWalletBalance(vaultDetails.base_token)?.amount || '0')
+
+  const handleAmountChange = (newAmount: BigNumber) => {
+    setAmount(newAmount)
+  }
 
   return (
     <Overlay
@@ -38,12 +52,12 @@ export default function VaultAction(props: Props) {
 
       <div className='p-2 md:p-6 mb-4 w-full h-full max-w-screen-full'>
         <Card className='p-4 bg-white/5' contentClassName='flex flex-col justify-between gap-4'>
-          {/* TODO: fetch */}
           <TokenInputWithSlider
-            asset={vaultAssets[0]}
-            onChange={() => {}}
-            amount={BN(10000000)}
-            max={BN(20000000)}
+            asset={depositAsset}
+            onChange={handleAmountChange}
+            amount={amount}
+            max={assetAmountInWallet}
+            disabled={assetAmountInWallet.isZero()}
             className='w-full'
             maxText={isDeposit ? 'In Wallet' : 'Available to Withdraw'}
             warningMessages={[]}
@@ -69,6 +83,7 @@ export default function VaultAction(props: Props) {
             className='w-full'
             text={isDeposit ? 'Deposit' : 'Withdraw'}
             rightIcon={<ArrowRight />}
+            disabled={amount.isZero()}
           />
         </Card>
       </div>
