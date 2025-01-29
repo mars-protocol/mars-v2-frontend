@@ -1817,7 +1817,6 @@ interface VaultParams {
 interface ManagedVaultsData extends ManagedVaultDetails {
   vault_address: string
   name: string
-  subtitle: string
   fee_rate: string
   fee: string
   tvl: string
