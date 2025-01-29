@@ -51,8 +51,10 @@ export function useWeb3WalletConnection() {
         wasInFundModal.current = false
       }
       await open()
+      return true
     } catch (error) {
       console.error('Failed to connect wallet:', error)
+      return false
     }
   }, [open])
 
