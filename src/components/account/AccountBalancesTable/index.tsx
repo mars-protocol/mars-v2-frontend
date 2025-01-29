@@ -121,7 +121,10 @@ export default function AccountBalancesTable(props: Props) {
     return assets
   }, [accountBalanceData, chainConfig.stables])
 
-  if (sortedAccountBalanceData.length === 0) {
+  const skipBridgesString = localStorage.getItem('skipBridges')
+  const currentBridges = skipBridgesString ? JSON.parse(skipBridgesString) : []
+
+  if (sortedAccountBalanceData.length === 0 && currentBridges.length === 0) {
     return (
       <ConditionalWrapper
         condition={!hideCard}
