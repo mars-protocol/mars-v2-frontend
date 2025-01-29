@@ -30,7 +30,7 @@ export function useManagedVaultDetails(vaultAddress: string | undefined) {
   )
 
   const { data: details, isLoading: isDetailsLoading } = useSWR(
-    ownerAddress ? `chains/${chainConfig.id}/vaults/${vaultAddress}/details` : null,
+    vaultAddress ? `chains/${chainConfig.id}/vaults/${vaultAddress}/details` : null,
     async () => {
       return await getManagedVaultDetails(chainConfig, vaultAddress!)
     },

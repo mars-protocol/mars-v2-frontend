@@ -33,9 +33,7 @@ interface Props {
 export default function ProfileVaultCard(props: Props) {
   const { details, isOwner, wallet = '', avatarUrl = '', onDelete, onEdit } = props
   const vaultAssets = useVaultAssets()
-
   const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
-  if (!depositAsset) return null
 
   return (
     <Card className='bg-white/5'>
@@ -116,12 +114,14 @@ export default function ProfileVaultCard(props: Props) {
             </>
           ) : (
             <>
-              <InfoRow label='Deposit Asset'>
-                <div className='flex gap-2 items-center'>
-                  <AssetImage asset={depositAsset} className='w-4 h-4' />
-                  <Text size='sm'>{depositAsset?.symbol}</Text>
-                </div>
-              </InfoRow>
+              {depositAsset && (
+                <InfoRow label='Deposit Asset'>
+                  <div className='flex gap-2 items-center'>
+                    <AssetImage asset={depositAsset} className='w-4 h-4' />
+                    <Text size='sm'>{depositAsset.symbol}</Text>
+                  </div>
+                </InfoRow>
+              )}
               <InfoRow label='Withdrawal Freeze Period'>
                 <Text size='sm'>
                   {formatLockupPeriod(
