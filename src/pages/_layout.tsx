@@ -87,14 +87,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       setCurrentChainId(chainConfig.id)
     }
   }, [chainConfig.id, currentChainId, setCurrentChainId])
-  const balances = useStore((s) => s.balances)
-  const hasNoBalances = balances.length === 0
-  const skipBridgesString = localStorage.getItem('skipBridges')
-  const skipBridges = skipBridgesString ? JSON.parse(skipBridgesString) : []
-  const isPendingTransaction = skipBridges.some(
-    (bridge: SkipBridgeTransaction) => bridge.status === 'STATE_PENDING',
-  )
-  console.log('skipBridges', isPendingTransaction, hasNoBalances)
+
   const { shouldShowSkipBridgeModal } = useSkipBridgeStatus()
 
   return (

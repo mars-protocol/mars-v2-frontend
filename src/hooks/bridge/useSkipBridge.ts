@@ -184,6 +184,7 @@ export function useSkipBridge({
         }
 
         const route = await fetchSkipRoute(selectedAsset)
+        const amountOut = route.amountOut
 
         const userAddresses = route.requiredChainAddresses.map((chainID: string) => {
           if (chainID === chainConfig.id.toString()) {
@@ -207,7 +208,7 @@ export function useSkipBridge({
                 ...txInfo,
                 id: transactionId,
                 denom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
-                amount: selectedAsset.coin.amount,
+                amount: BN(amountOut),
                 status: 'STATE_PENDING',
               })
 
@@ -232,7 +233,7 @@ export function useSkipBridge({
                 explorerLink: skipBridges.find((b) => b.id === transactionId)?.explorerLink ?? '',
                 status: status.status,
                 denom: 'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
-                amount: selectedAsset.coin.amount,
+                amount: BN(amountOut),
               })
               setIsBridgeInProgress(false)
               refreshBalances()

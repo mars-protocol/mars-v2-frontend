@@ -34,7 +34,6 @@ export default function BridgeRouteVisualizer({
     return bridges.find((bridge) => bridge.id === bridgeId)?.logo_uri
   }
 
-  console.log('getBridgeLogo', getBridgeLogo)
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       <Image
@@ -47,8 +46,6 @@ export default function BridgeRouteVisualizer({
       {route.operations.map((operation, index) => {
         const op = operation as unknown as OperationRuntime
         const bridgeLogo = getBridgeLogo(op)
-        console.log('bridgeLogo', bridgeLogo)
-
         return (
           <div key={index} className='flex items-center gap-2'>
             <ArrowRight className='w-4 h-4 text-white/60' />

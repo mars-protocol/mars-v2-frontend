@@ -13,6 +13,7 @@ import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
+import { generateExecutionMessage } from 'store/slices/broadcast'
 
 interface Props<T> {
   row: TanstackRow<T>
@@ -112,51 +113,70 @@ export default function Row<T>(props: Props<T>) {
                   type &&
                     type !== 'strategies' &&
                     LEFT_ALIGNED_ROWS.includes(cell.column.id) &&
-                    'border-l',
+                    'border-l ',
                   type &&
                     type !== 'strategies' &&
                     getBorderColor(type, cell.row.original as any, isBalancesTable ?? false),
                   cell.column.columnDef.meta?.className,
                 )}
               >
-                <div className='opacity-50'>
+                <div className='opacity-30'>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </div>
               </td>
             )
           })}
-          <div className='absolute inset-0 flex items-center justify-center'>
-            {(row.original as any)?.bridgeStatus === 'STATE_COMPLETED' ? (
-              <Button
-                size='xs'
-                color='secondary'
-                onClick={async (e) => {
-                  e.stopPropagation() // Prevent row click when clicking the button
-                  if ((row.original as any)?.skipBridgeId) {
-                    try {
-                      const coin = BNCoin.fromDenomAndBigNumber(
-                        'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
-                        BN((row.original as any).amount),
-                      )
-                      await deposit({
-                        accountId: account?.id,
-                        coins: [coin],
-                        lend: shouldAutoLend,
-                        isAutoLend: shouldAutoLend,
-                      })
-                      removeSkipBridge((row.original as any).skipBridgeId)
-                    } catch (error) {
-                      console.error('Failed to complete transaction:', error)
+          <td colSpan={row.getVisibleCells().length} className='absolute inset-0'>
+            <div className='absolute inset-0 flex items-center justify-center'>
+              {(row.original as any)?.bridgeStatus === 'STATE_COMPLETED' ? (
+                <Button
+                  size='xs'
+                  color='secondary'
+                  onClick={async (e) => {
+                    e.stopPropagation()
+                    if ((row.original as any)?.skipBridgeId) {
+                      try {
+                        const coin = BNCoin.fromDenomAndBigNumber(
+                          'ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81',
+                          BN((row.original as any).amount),
+                        )
+                        const store = useStore.getState()
+                        const response = store.executeMsg({
+                          messages: [
+                            generateExecutionMessage(
+                              store.address,
+                              store.chainConfig.contracts.creditManager,
+                              {
+                                update_credit_account: {
+                                  ...(account?.id ? { account_id: account.id } : {}),
+                                  actions: [{ deposit: coin.toCoin() }],
+                                },
+                              },
+                              [coin.toCoin()],
+                            ),
+                          ],
+                        })
+
+                        store.handleTransaction({ response })
+
+                        const result = await response
+                        if (result.result) {
+                          removeSkipBridge((row.original as any).skipBridgeId)
+                        }
+                      } catch (error: any) {
+                        console.error('Transaction error:', error)
+                        return
+                      }
                     }
-                  }
-                }}
-              >
-                Complete Transaction
-              </Button>
-            ) : (
-              <Text className='text-white pointer-events-none'>Pending...</Text>
-            )}
-          </div>
+                  }}
+                >
+                  Complete Transaction
+                </Button>
+              ) : (
+                <Text className='text-white pointer-events-none'>Pending...</Text>
+              )}
+            </div>
+          </td>
         </tr>
       ) : (
         <tr
