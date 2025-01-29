@@ -132,7 +132,7 @@ export default function Deposit(props: Props) {
     props.borrowMarket.liquidity,
   ])
 
-  const actions = useDepositActions({ depositCoin, borrowCoin, chainConfig, routeInfo })
+  const actions = useDepositActions({ depositCoin, borrowCoin, routeInfo })
 
   const currentDebt: BigNumber = useMemo(
     () => props.account.debts.find(byDenom(props.borrowMarket.asset.denom))?.amount || BN_ZERO,

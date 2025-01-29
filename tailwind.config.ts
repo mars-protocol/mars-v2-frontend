@@ -1,5 +1,7 @@
 /** @type {import('tailwindcss').Config} */
-const plugin = require('tailwindcss/plugin')
+import containerQueries from '@tailwindcss/container-queries'
+import plugin from 'tailwindcss/plugin'
+import scrollbarHide from 'tailwind-scrollbar-hide'
 
 module.exports = {
   content: ['./src/pages/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
@@ -397,8 +399,8 @@ module.exports = {
     },
   },
   plugins: [
-    require('tailwind-scrollbar-hide'),
-    require('@tailwindcss/container-queries'),
+    scrollbarHide,
+    containerQueries,
     plugin(function ({ addBase, addUtilities, theme }) {
       addBase({
         h1: { fontSize: '61px', lineHeight: '80px', fontWeight: theme('fontWeight.light') },
@@ -425,8 +427,6 @@ module.exports = {
           maskComposite: 'exclude',
         },
         '.glow-line': {
-          x: 0,
-          y: 0,
           fill: 'transparent',
           stroke: 'hsl(var(--color-white))',
           strokeWidth: '0.5',
@@ -607,26 +607,26 @@ module.exports = {
           background: 'linear-gradient(90deg, #6039FF, #E8B8FF)',
           '-webkit-background-clip': 'text',
           '-webkit-text-fill-color': 'transparent',
-          fontWeight: 600,
+          fontWeight: 'bold',
         },
         '.stride': {
           background: 'linear-gradient(90deg, #E50571, #FB5DA9)',
           '-webkit-background-clip': 'text',
           '-webkit-text-fill-color': 'transparent',
-          fontWeight: 600,
+          fontWeight: 'bold',
         },
         '.lido': {
           background:
             'linear-gradient(90deg, rgb(101, 98, 255) 11.28%, rgb(0, 163, 255) 61.02%, rgb(99, 214, 210) 100%)',
           '-webkit-background-clip': 'text',
           '-webkit-text-fill-color': 'transparent',
-          fontWeight: 600,
+          fontWeight: 'bold',
         },
         '.milkyway': {
           background: 'linear-gradient(90deg, #FEf7F1 0%, #FDE2FB 50%, #FDE4FC 100%)',
           '-webkit-background-clip': 'text',
           '-webkit-text-fill-color': 'transparent',
-          fontWeight: 600,
+          fontWeight: 'bold',
         },
       })
     }),

@@ -119,6 +119,7 @@ export async function generateToast(
 }
 
 export function beautifyErrorMessage(error: string) {
+  console.error(error)
   if (error.includes('too old'))
     return 'The oracle prices are stale. Please wait until the prices in the oracle contract are updated again.'
 

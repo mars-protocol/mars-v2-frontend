@@ -110,7 +110,7 @@ const Osmosis1: ChainConfig = {
     rest: process.env.NEXT_PUBLIC_OSMOSIS_REST ?? 'https://osmosis-api.polkachu.com',
     swap: 'https://app.osmosis.zone',
     explorer: 'https://www.mintscan.io/osmosis',
-    routes: 'https://sqs.osmosis.zone/router',
+    routes: 'https://sqsprod.osmosis.zone/router',
     pools: getUrl(
       process.env.NEXT_PUBLIC_OSMOSIS_REST ?? 'https://lcd-osmosis.blockapsis.com',
       'osmosis/gamm/v1beta1/pools/POOL_ID',
@@ -131,7 +131,7 @@ const Osmosis1: ChainConfig = {
   hls: true,
   perps: false,
   farm: true,
-  anyAsset: false,
+  anyAsset: true,
   evmAssetSupport: false,
   slinky: false,
 }

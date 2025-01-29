@@ -16,7 +16,7 @@ import {
   Addr,
   ActionAmount,
   OwnerUpdate,
-  MigrateV2ToV2_0_1,
+  MigrateV2_1_0ToV2_2_0,
   WhitelistEntry,
   Coin,
   ActionCoin,
@@ -445,7 +445,7 @@ export function useMarsIncentivesStakedAstroLpRewardsQuery<
 }
 export interface MarsIncentivesMigrateMutation {
   client: MarsIncentivesClient
-  msg: MigrateV2ToV2_0_1
+  msg: MigrateV2_1_0ToV2_2_0
   args?: {
     fee?: number | StdFee | 'auto'
     memo?: string

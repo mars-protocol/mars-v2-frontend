@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 
+import AssetImage from 'components/common/assets/AssetImage'
 import Button from 'components/common/Button'
 import { ChevronDown } from 'components/common/Icons'
 import Text from 'components/common/Text'
@@ -50,6 +51,7 @@ export default function AssetSelectorPerps(props: Props) {
         className='flex items-center justify-between w-full py-5 rounded-b-none bg-white/5 '
       >
         <div className='flex items-center gap-2'>
+          <AssetImage asset={perpsAsset} className='w-5 h-5' />
           <Text size='sm' className='text-white/60'>
             <span className='text-white'>{perpsAsset.symbol}</span>/USD
           </Text>

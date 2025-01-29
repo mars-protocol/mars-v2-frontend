@@ -55,7 +55,7 @@ function IntroBackground(props: { bg: Props['bg'] }) {
       )
     case 'perps-vault':
       return (
-        <div className='absolute top-0 right-0 block w-150 opacity-60'>
+        <div className='absolute -top-8 right-0 block w-120 opacity-40'>
           <PerpsVault />
         </div>
       )
