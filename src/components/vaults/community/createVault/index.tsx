@@ -6,7 +6,6 @@ import Text from 'components/common/Text'
 import TextArea from 'components/common/TextArea'
 import { TextLink } from 'components/common/TextLink'
 import CreateVaultContent from 'components/vaults/community/createVault/CreateVaultContent'
-import HlsSwitch from 'components/vaults/community/createVault/HLSSwitch'
 import MintVaultAccount from 'components/vaults/community/createVault/MintVaultAccount'
 import PerformanceFee from 'components/vaults/community/createVault/PerformanceFee'
 import VaultInputElement from 'components/vaults/community/createVault/VaultInputElement'
@@ -31,14 +30,15 @@ const options = [
 ]
 
 export default function CreateVault() {
-  const assets = useVaultAssets()
+  const selectableAssets = useVaultAssets()
   const chainConfig = useChainConfig()
   const defaultAsset = useMemo(
-    () => assets.find((asset) => asset.denom === chainConfig.stables[0]) ?? assets[0],
-    [assets, chainConfig.stables],
+    () =>
+      selectableAssets.find((asset) => asset.denom === chainConfig.stables[0]) ??
+      selectableAssets[0],
+    [selectableAssets, chainConfig.stables],
   )
   const [withdrawFreezePeriod, setWithdrawFreezePeriod] = useState<string>('24')
-  const [enableHlsVault, setEnableHlsVault] = useState<boolean>(false)
   const [isTxPending, setIsTxPending] = useState<boolean>(false)
   const [description, setDescription] = useState<string>('')
   const [vaultTitle, setVaultTitle] = useState<string>('')
@@ -52,12 +52,8 @@ export default function CreateVault() {
   const selectedDenom = useStore((s) => s.vaultAssetsModal?.selectedDenom) ?? defaultAsset.denom
 
   const selectedAsset = useMemo(() => {
-    return assets.find(byDenom(selectedDenom)) ?? defaultAsset
-  }, [assets, defaultAsset, selectedDenom])
-
-  const selectableAssets = useMemo(() => {
-    return enableHlsVault ? assets.filter((asset) => asset.isStaking) : assets
-  }, [assets, enableHlsVault])
+    return selectableAssets.find(byDenom(selectedDenom)) ?? defaultAsset
+  }, [selectableAssets, defaultAsset, selectedDenom])
 
   const isFormValid = () => {
     return vaultTitle.trim() !== '' && description.trim() !== '' && selectedAsset !== null
@@ -74,7 +70,7 @@ export default function CreateVault() {
         description: description,
         baseToken: selectedAsset.denom,
         withdrawFreezePeriod: Number(withdrawFreezePeriod) * 3600,
-        enableHls: enableHlsVault,
+        enableHls: false,
         performanceFee: {
           fee_rate: feeRate,
           withdrawal_interval: 24 * 3600,
@@ -115,7 +111,6 @@ export default function CreateVault() {
     description,
     selectedAsset,
     withdrawFreezePeriod,
-    enableHlsVault,
     performanceFee,
     createManagedVault,
     accountId,
@@ -128,10 +123,6 @@ export default function CreateVault() {
 
   const handleWithdrawFreezePeriod = useCallback((value: string) => {
     setWithdrawFreezePeriod(value)
-  }, [])
-
-  const handleHlsSwitch = useCallback((value: boolean) => {
-    setEnableHlsVault(value)
   }, [])
 
   const handleSelectAssets = useCallback(() => {
@@ -158,7 +149,6 @@ export default function CreateVault() {
               required
             />
             <PerformanceFee value={performanceFee} onChange={setPerformanceFee} />
-            <HlsSwitch onChange={handleHlsSwitch} name='enableHlsVault' value={enableHlsVault} />
 
             <VaultInputElement
               type='button'

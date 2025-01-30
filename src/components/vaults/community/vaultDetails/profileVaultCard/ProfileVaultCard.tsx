@@ -10,7 +10,6 @@ import { ExternalLink, TrashBin } from 'components/common/Icons'
 import ShareBar from 'components/common/ShareBar'
 import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
-import HLSTag from 'components/hls/HlsTag'
 import FeeTag from 'components/vaults/community/vaultDetails/profileVaultCard/FeeTag'
 import InfoRow from 'components/vaults/community/vaultDetails/profileVaultCard/InfoRow'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
@@ -66,8 +65,6 @@ export default function ProfileVaultCard(props: Props) {
         <div className='flex justify-between items-center'>
           <Text tag='h4'>{details.title}</Text>
           <div className='flex gap-3'>
-            {/* TODO: this will be conditional render */}
-            <HLSTag />
             {isOwner || <FeeTag fee={details.performance_fee_config?.fee_rate ?? '0'} />}
           </div>
         </div>
