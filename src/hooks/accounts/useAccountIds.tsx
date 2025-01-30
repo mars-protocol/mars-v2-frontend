@@ -6,7 +6,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 export default function useAccountIds(
   address?: string,
   suspense = true,
-  kind: AccountKind | 'all' = 'all',
+  kind: AccountKind | 'fund_manager' | 'all' = 'all',
 ) {
   const chainConfig = useChainConfig()
   const fetchKey = typeof kind === 'string' ? kind : 'vaults'
@@ -15,14 +15,18 @@ export default function useAccountIds(
     () =>
       getAccountIds(chainConfig, address).then((accountIdsAndKinds) => {
         if (kind === 'all') return accountIdsAndKinds.map((a) => a.id)
-        if (typeof kind === 'string') {
+        if (kind === 'fund_manager') {
           return accountIdsAndKinds
-            .filter((accountIdAndKind) => accountIdAndKind.kind === kind)
+            .filter(
+              (accountIdAndKind) =>
+                typeof accountIdAndKind.kind === 'object' &&
+                'fund_manager' in accountIdAndKind.kind,
+            )
             .map((a) => a.id)
         }
 
         return accountIdsAndKinds
-          .filter((accountIdAndKind) => typeof accountIdAndKind.kind === 'object')
+          .filter((accountIdAndKind) => accountIdAndKind.kind === kind)
           .map((a) => a.id)
       }),
     {

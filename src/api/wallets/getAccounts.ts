@@ -2,7 +2,7 @@ import getAccount from 'api/accounts/getAccount'
 import getWalletAccountIds from 'api/wallets/getAccountIds'
 
 export default async function getAccounts(
-  kind: AccountKind,
+  kind: AccountKind | 'fund_manager',
   chainConfig: ChainConfig,
   assets: Asset[],
   address?: string,
@@ -12,7 +12,7 @@ export default async function getAccounts(
 
   const $accounts = accountIdsAndKinds
     .filter((a) => {
-      if (typeof kind === 'object' && 'fund_manager' in kind) {
+      if (kind === 'fund_manager') {
         return typeof a.kind === 'object' && 'fund_manager' in a.kind
       }
       return a.kind === kind
