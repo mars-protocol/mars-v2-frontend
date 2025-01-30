@@ -12,6 +12,7 @@ import { Account, Plus, PlusCircled } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
+import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useNonHlsAccountIds from 'hooks/accounts/useNonHlsAccountIds'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -20,6 +21,7 @@ import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useHasFundsForTxFee from 'hooks/wallet/useHasFundsForTxFee'
 import useStore from 'store'
+import { checkAccountKind } from 'utils/accounts'
 import { isNumber } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
 
@@ -36,6 +38,7 @@ export default function AccountMenuContent(props: Props) {
   const address = useStore((s) => s.address)
   const accountIds = useNonHlsAccountIds(address)
   const accountId = useAccountId()
+  const { data: account } = useAccount(accountId ?? undefined)
   const [searchParams] = useSearchParams()
   const chainConfig = useChainConfig()
   const managedVaultsEnabled = chainConfig.managedVaults
@@ -49,6 +52,7 @@ export default function AccountMenuContent(props: Props) {
   const hasCreditAccounts = !!accountIds?.length
   const isAccountSelected =
     hasCreditAccounts && accountId && isNumber(accountId) && accountIds.includes(accountId)
+  const activeAccountKind = checkAccountKind(account?.kind ?? 'default')
 
   const performCreateAccount = useCallback(async () => {
     setShowMenu(false)
@@ -158,7 +162,10 @@ export default function AccountMenuContent(props: Props) {
           )}
         >
           {managedVaultsEnabled ? (
-            <AccountMenuTabs tabs={accountTabs} />
+            <AccountMenuTabs
+              tabs={accountTabs}
+              activeIndex={activeAccountKind === 'default' ? 0 : 1}
+            />
           ) : (
             hasCreditAccounts && <AccountList setShowMenu={setShowMenu} isVaults={false} />
           )}
