@@ -1,9 +1,6 @@
-import useAccount from 'hooks/accounts/useAccount'
 import { useCallback, useEffect, useState } from 'react'
 import useStore from 'store'
-import useAccountIds from 'hooks/accounts/useAccountIds'
-import { useParams } from 'react-router-dom'
-import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useAccounts from 'hooks/accounts/useAccounts'
 
 type SkipBridgeTransaction = {
   asset: string
@@ -21,13 +18,11 @@ export function useSkipBridgeStatus() {
   const [skipBridges, setSkipBridges] = useState<SkipBridgeTransaction[]>([])
   const [shouldShowSkipBridgeModal, setShouldShowSkipBridgeModal] = useState(false)
 
-  const account = useCurrentAccount()
-  const hasNoBalances =
-    account?.deposits.length === 0 &&
-    account?.debts.length === 0 &&
-    account?.lends.length === 0 &&
-    account?.stakedAstroLps.length === 0 &&
-    account?.vaults.length === 0
+  const address = useStore((s) => s.address)
+  const { data: accounts } = useAccounts('default', address)
+  const hasSingleAccount = accounts?.length === 1
+
+  const hasEmptyBalance = accounts[0]?.deposits?.length === 0 && accounts[0]?.debts?.length === 0
 
   const checkTransactionStatus = useCallback(async () => {
     const skipBridgesString = localStorage.getItem('skipBridges')
@@ -43,7 +38,7 @@ export function useSkipBridgeStatus() {
 
     setIsPendingTransaction(hasPendingTransactions)
     setSkipBridges(bridges)
-    setShouldShowSkipBridgeModal(hasNoBalances && hasPendingTransactions)
+    setShouldShowSkipBridgeModal(hasSingleAccount && hasEmptyBalance && hasPendingTransactions)
 
     if (hasPendingTransactions) {
       try {
@@ -65,7 +60,7 @@ export function useSkipBridgeStatus() {
 
                 const stillHasPending = updatedBridges.some((b) => b.status === 'STATE_PENDING')
                 setIsPendingTransaction(stillHasPending)
-                setShouldShowSkipBridgeModal(hasNoBalances && stillHasPending)
+                setShouldShowSkipBridgeModal(hasSingleAccount && hasEmptyBalance && stillHasPending)
               }
             }),
         )
@@ -73,7 +68,7 @@ export function useSkipBridgeStatus() {
         console.error('Failed to fetch Skip status:', error)
       }
     }
-  }, [hasNoBalances])
+  }, [hasSingleAccount, hasEmptyBalance])
 
   useEffect(() => {
     checkTransactionStatus()

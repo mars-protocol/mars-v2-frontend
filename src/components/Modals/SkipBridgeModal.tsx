@@ -26,18 +26,20 @@ export default function SkipBridgeModal() {
             Your bridge transaction is still processing. Please check back later. <br />
             The app's functionality is limited until the transaction completes
           </Text>
-          {skipBridges.map((bridge) => (
-            <div className='flex items-center justify-center my-4' key={bridge.id}>
-              <Link target='_blank' href={bridge.explorerLink} className='flex items-center'>
-                <Text tag='p' className='text-center'>
-                  Track your transaction
-                </Text>
-                <div className='w-3 h-3 ml-1 mt-1 flex items-center justify-center'>
-                  <ExternalLink />
-                </div>
-              </Link>
-            </div>
-          ))}
+          {skipBridges
+            .filter((bridge) => bridge.status === 'STATE_PENDING')
+            .map((bridge) => (
+              <div className='flex items-center justify-center my-4' key={bridge.id}>
+                <Link target='_blank' href={bridge.explorerLink} className='flex items-center'>
+                  <Text tag='p' className='text-center'>
+                    Track your transaction
+                  </Text>
+                  <div className='w-3 h-3 ml-1 mt-1 flex items-center justify-center'>
+                    <ExternalLink />
+                  </div>
+                </Link>
+              </div>
+            ))}
         </div>
       }
     />
