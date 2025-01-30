@@ -24,6 +24,7 @@ export default function Skeleton(props: Props) {
       {positionBalance ? (
         <DisplayCurrency
           coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, positionBalance)}
+          options={{ abbreviated: false }}
           className='w-full text-xl'
         />
       ) : (

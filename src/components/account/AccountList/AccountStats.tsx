@@ -7,13 +7,16 @@ import Button from 'components/common/Button'
 import { ArrowDownLine, ArrowUpLine, TrashBin } from 'components/common/Icons'
 import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import { BN_ZERO } from 'constants/math'
+import { ORACLE_DENOM } from 'constants/oracle'
+import useAssets from 'hooks/assets/useAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountApy, calculateAccountBalanceValue, checkAccountKind } from 'utils/accounts'
 import { mergeBNCoinArrays } from 'utils/helpers'
 
@@ -26,21 +29,30 @@ interface Props {
 export default function AccountStats(props: Props) {
   const { account, isActive, setShowMenu } = props
   const isVault = checkAccountKind(account.kind) === 'fund_manager'
-  const assets = useWhitelistedAssets()
+  const { data: assets } = useAssets()
   const { data: vaultAprs } = useVaultAprs()
   const { data: perpsVault } = usePerpsVault()
   const astroLpAprs = useAstroLpAprs()
-  const perpsMarketStates = usePerpsMarketStates()
 
   const positionBalance = useMemo(
     () => (!account ? null : calculateAccountBalanceValue(account, assets)),
     [account, assets],
   )
   const { health, healthFactor } = useHealthComputer(account)
+  const accountBalanceValue = useMemo(
+    () => (!account ? BN_ZERO : calculateAccountBalanceValue(account, assets)),
+    [account, assets],
+  )
+
+  const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalanceValue)
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
+
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
     useLendingMarketAssetsTableData()
+
+  const perpsMarketStates = usePerpsMarketStates()
+
   const lendingAssetsData = useMemo(
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
@@ -48,7 +60,7 @@ export default function AccountStats(props: Props) {
   const apy = useMemo(
     () =>
       !account
-        ? null
+        ? BN_ZERO
         : calculateAccountApy(
             account,
             borrowAssetsData,
