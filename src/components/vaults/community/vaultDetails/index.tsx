@@ -13,7 +13,7 @@ import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
 import { vaultProfileData } from 'components/vaults/dummyData'
 import useToggle from 'hooks/common/useToggle'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
-import { Suspense, useState } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 function VaultLoadingState() {
@@ -30,11 +30,7 @@ function VaultLoadingState() {
 export default function VaultDetails() {
   const { vaultAddress } = useParams<{ vaultAddress: string }>()
 
-  return (
-    <Suspense fallback={<VaultLoadingState />}>
-      <VaultDetailsContent vaultAddress={vaultAddress} />
-    </Suspense>
-  )
+  return <VaultDetailsContent vaultAddress={vaultAddress} />
 }
 
 function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefined }) {

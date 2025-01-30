@@ -12,21 +12,19 @@ export function useManagedVaultDetails(vaultAddress: string | undefined) {
   const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
 
-  const { data: metrics } = useSWR(
+  const { data: ownerAddress } = useSWR(
+    vaultAddress && address ? `chains/${chainConfig.id}/vaults/${vaultAddress}/owner` : null,
+    async () => {
+      return await getManagedVaultOwner(chainConfig, vaultAddress!)
+    },
+  )
+
+  const { data: metrics, isLoading: isMetricsLoading } = useSWR(
     vaultAddress ? `chains/${chainConfig.id}/managedVaults/${vaultAddress}/metrics` : null,
     async () => {
       const { data } = await getManagedVaults(chainConfig)
       return data.find((v) => v.vault_address === vaultAddress)
     },
-    { suspense: true },
-  )
-
-  const { data: ownerAddress, isLoading: isOwnerLoading } = useSWR(
-    vaultAddress && address ? `chains/${chainConfig.id}/vaults/${vaultAddress}/owner` : null,
-    async () => {
-      return await getManagedVaultOwner(chainConfig, vaultAddress!)
-    },
-    { suspense: true },
   )
 
   const { data: details, isLoading: isDetailsLoading } = useSWR(
@@ -34,18 +32,25 @@ export function useManagedVaultDetails(vaultAddress: string | undefined) {
     async () => {
       return await getManagedVaultDetails(chainConfig, vaultAddress!)
     },
-    { suspense: true },
   )
 
   const { data: performanceFeeState, isLoading: isPerformanceFeeLoading } = useSWR(
-    ownerAddress ? `chains/${chainConfig.id}/vaults/${vaultAddress}/performanceFee` : null,
+    vaultAddress ? `chains/${chainConfig.id}/vaults/${vaultAddress}/performanceFee` : null,
     async () => {
       return await getManagedVaultPerformanceFeeState(chainConfig, vaultAddress!)
     },
-    { suspense: true },
   )
 
   const isOwner = Boolean(address && ownerAddress && ownerAddress === address)
+  const isLoading = isDetailsLoading || isPerformanceFeeLoading || isMetricsLoading
+
+  if (isLoading || !details || !performanceFeeState) {
+    return {
+      details: undefined,
+      isOwner: false,
+      isLoading: true,
+    }
+  }
 
   return {
     details: {
@@ -59,6 +64,6 @@ export function useManagedVaultDetails(vaultAddress: string | undefined) {
       },
     },
     isOwner,
-    isLoading: isDetailsLoading || isOwnerLoading || isPerformanceFeeLoading,
+    isLoading: false,
   }
 }
