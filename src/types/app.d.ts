@@ -1157,6 +1157,12 @@ interface BroadcastSlice {
     amount: string
     vaultToken: string
   }) => Promise<boolean>
+  withdrawFromManagedVault: (options: {
+    vaultAddress: string
+    amount: string
+    recipient?: string | null
+    vaultToken: string
+  }) => Promise<boolean>
 }
 
 type V1ActionType = 'withdraw' | 'deposit' | 'borrow' | 'repay'

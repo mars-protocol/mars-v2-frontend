@@ -13,6 +13,7 @@ import { AccountArrowDown } from 'components/common/Icons'
 import UnlockAmount, {
   UNLOCK_AMOUNT_META,
 } from 'components/earn/farm/common/Table/Columns/UnlockAmount'
+import useStore from 'store'
 
 interface Props {
   isLoading: boolean
@@ -20,6 +21,20 @@ interface Props {
 
 export default function useUserWithdrawals(props: Props) {
   const { isLoading } = props
+
+  const withdrawFromManagedVault = useStore((s) => s.withdrawFromManagedVault)
+
+  // const handleWithdraw = async () => {
+  //   try {
+  //     await withdrawFromManagedVault({
+  //       vaultAddress,
+  //       amount: amount.toString(),
+  //       vaultToken: vaultDetails.vault_token,
+  //     })
+  //   } catch (error) {
+  //     console.error('Withdrawal failed:', error)
+  //   }
+  // }
 
   // TODO: update once we know data structure
   return useMemo<ColumnDef<any>[]>(
@@ -44,7 +59,6 @@ export default function useUserWithdrawals(props: Props) {
       {
         ...WITHDRAW_META,
         // cell: ({ row }) => <VaultWithdraw vault={} />,
-        // temporary showing this button:
         cell: ({ row }) => (
           <Button
             onClick={() => {}}
