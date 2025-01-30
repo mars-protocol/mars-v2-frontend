@@ -1880,3 +1880,11 @@ interface ExtendedManagedVaultDetails extends ManagedVaultDetails {
   metrics: ManagedVaultMetrics
   performance_fee_state: PerformanceFeeState
 }
+
+interface UserManagedVaultUnlock {
+  user_address: string
+  created_at: number
+  cooldown_end: number
+  vault_tokens: string
+  base_tokens: string
+}

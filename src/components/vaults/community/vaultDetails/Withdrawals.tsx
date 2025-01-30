@@ -13,33 +13,40 @@ import { CardWithTabs } from 'components/common/Card/CardWithTabs'
 import { ExclamationMarkTriangle } from 'components/common/Icons'
 import { formatLockupPeriod } from 'utils/formatters'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { queuedWithdrawDummyData, withdrawalsDummyData } from 'components/vaults/dummyData'
+import { queuedWithdrawDummyData } from 'components/vaults/dummyData'
 import { Tooltip } from 'components/common/Tooltip'
+import { useUserUnlocks } from 'hooks/managedVaults/useUserUnlocks'
 
 interface Props {
   details: ExtendedManagedVaultDetails
   isOwner?: boolean
+  vaultAddress: string
 }
 
 export default function Withdrawals(props: Props) {
-  const { details, isOwner } = props
-  const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false })
-  const userWithdrawalColumns = useUserWithdrawals({ isLoading: false })
-  const vaultAssets = useVaultAssets()
+  const { details, isOwner, vaultAddress } = props
+  const { data: userUnlocksData = [], isLoading: isLoadingUnlocks } = useUserUnlocks(vaultAddress)
 
+  const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false })
+  const userWithdrawalColumns = useUserWithdrawals({
+    isLoading: false,
+    details,
+    vaultAddress,
+  })
+  const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
 
   if (!isOwner) {
-    return (
+    return userUnlocksData.length > 0 ? (
       <Table
         title='Withdrawals'
         columns={userWithdrawalColumns}
-        data={withdrawalsDummyData}
-        initialSorting={[]}
+        data={userUnlocksData}
+        initialSorting={[{ id: 'initiated', desc: true }]}
         tableBodyClassName='bg-white/5'
         spacingClassName='p-3'
       />
-    )
+    ) : null
   }
 
   const tabs: CardTab[] = [

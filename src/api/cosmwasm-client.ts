@@ -226,6 +226,25 @@ const getManagedVaultPerformanceFeeState = async (
   }
 }
 
+const getManagedVaultUserUnlocks = async (
+  chainConfig: ChainConfig,
+  vaultAddress: string,
+  userAddress: string,
+) => {
+  try {
+    const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    const response = await client.vaultExtension({
+      user_unlocks: {
+        user_address: userAddress,
+      },
+    })
+    return response as unknown as UserManagedVaultUnlock[]
+  } catch (error) {
+    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
+    throw error
+  }
+}
+
 export {
   getClient,
   getCreditManagerQueryClient,
@@ -240,4 +259,5 @@ export {
   getManagedVaultOwner,
   getManagedVaultDetails,
   getManagedVaultPerformanceFeeState,
+  getManagedVaultUserUnlocks,
 }

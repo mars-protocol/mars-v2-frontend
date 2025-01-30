@@ -8,16 +8,29 @@ export const TIMESTAMP_META = {
 }
 
 interface Props {
-  // TODO: update once we know data structure
-  value: any
+  value: number | string
   isLoading: boolean
 }
 
 export default function Timestamp(props: Props) {
   const { value, isLoading } = props
-  // TODO: update values once we know the structure
 
   if (isLoading) return <Loading />
 
-  return <TitleAndSubCell title={value.unfreeze_date} sub={value.unfreeze_time} />
+  const timestamp = typeof value === 'string' ? parseInt(value) : value
+  const date = new Date(timestamp * 1000)
+
+  const dateInitiated = date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
+
+  const timeInitiated = date.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  })
+
+  return <TitleAndSubCell title={dateInitiated} sub={timeInitiated} />
 }
