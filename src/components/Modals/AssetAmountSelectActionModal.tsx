@@ -23,7 +23,7 @@ interface Props {
   title: string
   coinBalances: BNCoin[]
   actionButtonText: string
-  contentHeader?: JSX.Element
+  contentHeader?: React.JSX.Element
   checkForCampaign?: boolean
   onClose: () => void
   onChange: (value: BigNumber) => void

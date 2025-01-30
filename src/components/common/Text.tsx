@@ -19,7 +19,7 @@ export default function Text(props: Props) {
 
   const tagIndex = headlines.indexOf(tag)
   const sizeClass = tagIndex > -1 ? headMap[tagIndex] : size
-  const HtmlElement = tag as keyof JSX.IntrinsicElements
+  const HtmlElement = tag as keyof React.JSX.IntrinsicElements
 
   return (
     <HtmlElement

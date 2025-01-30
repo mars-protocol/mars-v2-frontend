@@ -7,7 +7,7 @@ import { LEFT_ALIGNED_ROWS } from 'constants/table'
 interface Props<T> {
   row: TanstackRow<T>
   table: TanstackTable<T>
-  renderExpanded?: (row: TanstackRow<T>, table: TanstackTable<T>) => JSX.Element
+  renderExpanded?: (row: TanstackRow<T>, table: TanstackTable<T>) => React.JSX.Element
   rowClassName?: string
   spacingClassName?: string
   className?: string
