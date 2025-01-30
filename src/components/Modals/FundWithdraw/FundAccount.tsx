@@ -3,7 +3,7 @@ import useStore from 'store'
 
 interface Props {
   account: Account
-  onConnectWallet: () => Promise<void>
+  onConnectWallet: () => Promise<boolean>
 }
 
 export default function FundAccount(props: Props) {

@@ -1,35 +1,34 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { RouteResponse } from '@skip-go/client'
+import classNames from 'classnames'
 import WalletBridges from 'components/Wallet/WalletBridges'
+import AccountFundingAssets from 'components/account/AccountFund/AccountFundingAssets'
+import EVMAccountSection from 'components/account/AccountFund/EVMAccountSection'
+import Button from 'components/common/Button'
+import { Callout, CalloutType } from 'components/common/Callout'
 import DepositCapMessage from 'components/common/DepositCapMessage'
+import { ArrowRight, Plus } from 'components/common/Icons'
 import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
 import useBaseAsset from 'hooks/assets/useBaseAsset'
+import { useFundingAssets } from 'hooks/assets/useFundingAssets'
+import { useUSDCBalances } from 'hooks/assets/useUSDCBalances'
+import { BridgeInfo, useSkipBridge } from 'hooks/bridge/useSkipBridge'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
+import { useDepositCapCalculations } from 'hooks/markets/useDepositCapCalculations'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
+import { useWeb3WalletConnection } from 'hooks/wallet/useWeb3WalletConnections'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import useStore from 'store'
 import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 import { byDenom } from 'utils/array'
-import { BN } from 'utils/helpers'
-import { useUSDCBalances } from 'hooks/assets/useUSDCBalances'
-import { useFundingAssets } from 'hooks/assets/useFundingAssets'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import { useDepositCapCalculations } from 'hooks/markets/useDepositCapCalculations'
-import { useWeb3WalletConnection } from 'hooks/wallet/useWeb3WalletConnections'
-import EVMAccountSection from 'components/account/AccountFund/EVMAccountSection'
-import AccountFundingAssets from 'components/account/AccountFund/AccountFundingAssets'
-import { ArrowRight, Plus } from 'components/common/Icons'
-import Button from 'components/common/Button'
-import { chainNameToUSDCAttributes } from 'utils/fetchUSDCBalance'
-import { useNavigate } from 'react-router-dom'
-import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
-import { getPage, getRoute } from 'utils/route'
-import { Callout, CalloutType } from 'components/common/Callout'
-import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
 import { MINIMUM_USDC } from 'utils/constants'
-import classNames from 'classnames'
-import { RouteResponse } from '@skip-go/client'
-import { BridgeInfo } from 'hooks/bridge/useSkipBridge'
+import { chainNameToUSDCAttributes } from 'utils/fetchUSDCBalance'
+import { BN } from 'utils/helpers'
+import { getPage, getRoute } from 'utils/route'
 import BridgeRouteVisualizer from './BridgeContent/BridgeRouteVisualizer'
 
 interface Props {
@@ -37,7 +36,7 @@ interface Props {
   address?: string
   accountId: string
   isFullPage?: boolean
-  onConnectWallet: () => Promise<void>
+  onConnectWallet: () => Promise<boolean>
   hasExistingAccount?: boolean
 }
 
