@@ -4,6 +4,7 @@ export default function useAccountVaults(address?: string) {
   const { data: vaultAccounts, isLoading } = useAccounts(
     { fund_manager: {} } as AccountKind,
     address,
+    false,
   )
 
   return {

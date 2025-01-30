@@ -6,7 +6,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useV1Account from 'hooks/v1/useV1Account'
 import useStore from 'store'
 
-export default function useAccount(accountId?: string, suspense?: boolean) {
+export default function useAccount(accountId?: string, suspense: boolean = false) {
   const { data: assets } = useAssets()
   const chainConfig = useChainConfig()
   const address = chainConfig.contracts.creditManager
@@ -22,7 +22,6 @@ export default function useAccount(accountId?: string, suspense?: boolean) {
       revalidateOnFocus: true,
     },
   )
-
   if (isV1) return v1Account
 
   return v2Account

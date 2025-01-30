@@ -50,7 +50,7 @@ export default function AccountDetailsController(props: AccountDetailsController
   const isVaults = useStore((s) => s.isVaults)
   const isV1 = useStore((s) => s.isV1)
   const { data: _, isLoading } = useAccounts('default', address)
-  const { data: accountIds } = useAccountIds(address, false, true)
+  const { data: accountIds } = useAccountIds(address, false, 'default')
   const accountId = useAccountId()
   const account = useCurrentAccount()
   const focusComponent = useStore((s) => s.focusComponent)

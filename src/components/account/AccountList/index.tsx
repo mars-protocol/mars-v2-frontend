@@ -32,7 +32,7 @@ export default function AccountList(props: Props) {
   const chainConfig = useChainConfig()
   const currentAccountId = useAccountId()
   const address = useStore((s) => s.address)
-  const { data: accountIds } = useAccountIds(address, true, true)
+  const { data: accountIds } = useAccountIds(address, true, 'default')
   const [searchParams] = useSearchParams()
 
   useEffect(() => {

@@ -17,26 +17,27 @@ import { fetchWithTimeout } from 'utils/fetch'
 const lastBarsCache = new Map()
 
 export const datafeed = {
-  onReady: (callback: OnReadyCallback) => {
-    callback({
-      supported_resolutions: [
-        '1',
-        '2',
-        '5',
-        '15',
-        '30',
-        '60',
-        '120',
-        '240',
-        '360',
-        '720',
-        'D',
-        '1D',
-      ] as ResolutionString[],
-      supports_marks: true,
-      supports_timescale_marks: false,
-    })
-  },
+  onReady: (callback: OnReadyCallback) =>
+    setTimeout(() => {
+      callback({
+        supported_resolutions: [
+          '1',
+          '2',
+          '5',
+          '15',
+          '30',
+          '60',
+          '120',
+          '240',
+          '360',
+          '720',
+          'D',
+          '1D',
+        ] as ResolutionString[],
+        supports_marks: true,
+        supports_timescale_marks: false,
+      })
+    }, 0),
   getBars: (
     symbolInfo: LibrarySymbolInfo,
     resolution: ResolutionString,

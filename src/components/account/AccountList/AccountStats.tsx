@@ -11,12 +11,12 @@ import useAccount from 'hooks/accounts/useAccount'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { calculateAccountApy, calculateAccountBalanceValue } from 'utils/accounts'
 import { mergeBNCoinArrays } from 'utils/helpers'
-import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
 
 interface Props {
   accountId: string

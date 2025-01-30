@@ -15,6 +15,7 @@ import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useAccountVaults from 'hooks/accounts/useAccountVaults'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useAutoLend from 'hooks/wallet/useAutoLend'
@@ -22,7 +23,6 @@ import useHasFundsForTxFee from 'hooks/wallet/useHasFundsForTxFee'
 import useStore from 'store'
 import { isNumber } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
-import useChainConfig from 'hooks/chain/useChainConfig'
 
 interface Props {
   className?: string
@@ -35,7 +35,7 @@ export default function AccountMenuContent(props: Props) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const address = useStore((s) => s.address)
-  const { data: accountIds } = useAccountIds(address, true, true)
+  const { data: accountIds } = useAccountIds(address, true, 'default')
   const accountId = useAccountId()
   const [searchParams] = useSearchParams()
 
