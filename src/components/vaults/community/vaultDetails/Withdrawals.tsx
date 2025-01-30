@@ -1,20 +1,20 @@
 import classNames from 'classnames'
+import { CardWithTabs } from 'components/common/Card/CardWithTabs'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import moment from 'moment'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { ExclamationMarkTriangle } from 'components/common/Icons'
 import Table from 'components/common/Table'
+import { Tooltip } from 'components/common/Tooltip'
+import VaultStats from 'components/vaults/community/vaultDetails/common/VaultStats'
 import useQueuedWithdrawals from 'components/vaults/community/vaultDetails/table/useQueuedWithdrawals'
 import useUserWithdrawals from 'components/vaults/community/vaultDetails/table/useUserWithdrawals'
+import { queuedWithdrawDummyData, withdrawalsDummyData } from 'components/vaults/dummyData'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
-import VaultStats from 'components/vaults/community/vaultDetails/common/VaultStats'
-import { BN } from 'utils/helpers'
+import moment from 'moment'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { CardWithTabs } from 'components/common/Card/CardWithTabs'
-import { ExclamationMarkTriangle } from 'components/common/Icons'
 import { formatLockupPeriod } from 'utils/formatters'
-import { FormattedNumber } from 'components/common/FormattedNumber'
-import { queuedWithdrawDummyData, withdrawalsDummyData } from 'components/vaults/dummyData'
-import { Tooltip } from 'components/common/Tooltip'
+import { BN } from 'utils/helpers'
 
 interface Props {
   details: ExtendedManagedVaultDetails
@@ -91,10 +91,12 @@ export default function Withdrawals(props: Props) {
                       'usd',
                       BN(details.performance_fee_state.accumulated_pnl),
                     )}
-                    className={classNames('text-sm text-white', {
-                      'text-profit': BN(details.performance_fee_state.accumulated_pnl).isPositive(),
-                      'text-loss': BN(details.performance_fee_state.accumulated_pnl).isNegative(),
-                    })}
+                    className={classNames(
+                      'text-sm text-white',
+                      BN(details.performance_fee_state.accumulated_pnl).isGreaterThan(0) &&
+                        'text-profit',
+                      BN(details.performance_fee_state.accumulated_pnl).isNegative() && 'text-loss',
+                    )}
                   />
                   <span className='text-white/10'>|</span>
                   <span className='text-white/50'>Since 20.06.24</span>
