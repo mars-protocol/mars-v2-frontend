@@ -1,38 +1,35 @@
 import classNames from 'classnames'
-import DisplayCurrency from 'components/common/DisplayCurrency'
-import Table from 'components/common/Table'
-import useQueuedWithdrawals from 'components/vaults/community/vaultDetails/table/useQueuedWithdrawals'
-import useStore from 'store'
-import useUserWithdrawals from 'components/vaults/community/vaultDetails/table/useUserWithdrawals'
-import VaultStats from 'components/vaults/community/vaultDetails/common/VaultStats'
-import { BN } from 'utils/helpers'
-import { BNCoin } from 'types/classes/BNCoin'
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
-import { ExclamationMarkTriangle } from 'components/common/Icons'
+import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { queuedWithdrawDummyData, withdrawalsDummyData } from 'components/vaults/dummyData'
+import { ExclamationMarkTriangle } from 'components/common/Icons'
+import Table from 'components/common/Table'
 import { Tooltip } from 'components/common/Tooltip'
-import Text from 'components/common/Text'
-import { formatLockupPeriod } from 'utils/formatters'
-import moment from 'moment'
+import VaultStats from 'components/vaults/community/vaultDetails/common/VaultStats'
+import useQueuedWithdrawals from 'components/vaults/community/vaultDetails/table/useQueuedWithdrawals'
+import useUserWithdrawals from 'components/vaults/community/vaultDetails/table/useUserWithdrawals'
+import { queuedWithdrawDummyData, withdrawalsDummyData } from 'components/vaults/dummyData'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
+import moment from 'moment'
+import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
+import { formatLockupPeriod } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 interface Props {
-  details: ManagedVaultDetails
+  details: ExtendedManagedVaultDetails
+  isOwner?: boolean
 }
 
 export default function Withdrawals(props: Props) {
-  const { details } = props
+  const { details, isOwner } = props
   const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false })
   const userWithdrawalColumns = useUserWithdrawals({ isLoading: false })
-  const address = useStore((s) => s.address)
-
   const vaultAssets = useVaultAssets()
 
   const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
 
-  if (!address) {
+  if (!isOwner) {
     return (
       <Table
         title='Withdrawals'
@@ -90,9 +87,16 @@ export default function Withdrawals(props: Props) {
               value: (
                 <div className='flex items-center gap-2'>
                   <DisplayCurrency
-                    coin={BNCoin.fromDenomAndBigNumber('usd', BN(202))}
-                    // TODO: conditional classname text-profit / text-loss
-                    className={classNames('text-profit')}
+                    coin={BNCoin.fromDenomAndBigNumber(
+                      'usd',
+                      BN(details.performance_fee_state.accumulated_pnl),
+                    )}
+                    className={classNames(
+                      'text-sm text-white',
+                      BN(details.performance_fee_state.accumulated_pnl).isGreaterThan(0) &&
+                        'text-profit',
+                      BN(details.performance_fee_state.accumulated_pnl).isNegative() && 'text-loss',
+                    )}
                   />
                   <span className='text-white/10'>|</span>
                   <span className='text-white/50'>Since 20.06.24</span>

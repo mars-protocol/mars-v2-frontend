@@ -1357,19 +1357,6 @@ export default function createBroadcastSlice(
         return null
       }
     },
-    getManagedVaultDetails: async (vaultAddress: string): Promise<ManagedVaultDetails | null> => {
-      try {
-        const client = await getManagedVaultQueryClient(get().chainConfig, vaultAddress)
-        const response = await client.vaultExtension({
-          vault_info: {},
-        })
-
-        return response as unknown as ManagedVaultDetails
-      } catch (error) {
-        console.error('Failed to get vault details:', error)
-        return null
-      }
-    },
     handlePerformanceFeeAction: async (options: PerformanceFeeOptions) => {
       try {
         const address = get().address
@@ -1398,6 +1385,32 @@ export default function createBroadcastSlice(
         console.error('Failed to update performance fee:', error)
         return false
       }
+    },
+    depositInManagedVault: async (options: {
+      vaultAddress: string
+      amount: string
+      recipient?: string | null
+    }) => {
+      const msg: ManagedVaultExecuteMsg = {
+        deposit: {
+          amount: options.amount,
+          recipient: options.recipient,
+        },
+      }
+
+      const response = get().executeMsg({
+        messages: [
+          generateExecutionMessage(get().address, options.vaultAddress, msg, [
+            {
+              denom: get().chainConfig.defaultCurrency.coinMinimalDenom,
+              amount: options.amount,
+            },
+          ]),
+        ],
+      })
+
+      get().handleTransaction({ response })
+      return response.then((response) => !!response.result)
     },
   }
 }

@@ -9,19 +9,51 @@ import { ArrowRight } from 'components/common/Icons'
 import { BN } from 'utils/helpers'
 import { Callout, CalloutType } from 'components/common/Callout'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
+import { byDenom } from 'utils/array'
+import { useState } from 'react'
+import { BN_ZERO } from 'constants/math'
+import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
+import useStore from 'store'
+import { formatLockupPeriod } from 'utils/formatters'
+import moment from 'moment'
 
 interface Props {
   showActionModal: boolean
   setShowActionModal: (show: boolean) => void
+  vaultDetails: ExtendedManagedVaultDetails
+  vaultAddress: string
   type: 'deposit' | 'withdraw'
 }
 
 export default function VaultAction(props: Props) {
-  const { showActionModal, setShowActionModal, type } = props
+  const { showActionModal, setShowActionModal, vaultDetails, vaultAddress, type } = props
+  const [amount, setAmount] = useState(BN_ZERO)
+
+  const depositInManagedVault = useStore((s) => s.depositInManagedVault)
 
   const vaultAssets = useVaultAssets()
+  const depositAsset = vaultAssets.find(byDenom(vaultDetails.base_token)) as Asset
+  const assetAmountInWallet = BN(useCurrentWalletBalance(vaultDetails.base_token)?.amount || '0')
 
   const isDeposit = type === 'deposit'
+
+  const handleAmountChange = (newAmount: BigNumber) => {
+    setAmount(newAmount)
+  }
+
+  const handleDeposit = async () => {
+    if (amount.isZero()) return
+
+    try {
+      await depositInManagedVault({
+        vaultAddress,
+        amount: amount.toString(),
+      })
+      setShowActionModal(false)
+    } catch (error) {
+      console.error('Deposit failed:', error)
+    }
+  }
 
   return (
     <Overlay
@@ -38,12 +70,12 @@ export default function VaultAction(props: Props) {
 
       <div className='p-2 md:p-6 mb-4 w-full h-full max-w-screen-full'>
         <Card className='p-4 bg-white/5' contentClassName='flex flex-col justify-between gap-4'>
-          {/* TODO: fetch */}
           <TokenInputWithSlider
-            asset={vaultAssets[0]}
-            onChange={() => {}}
-            amount={BN(10000000)}
-            max={BN(20000000)}
+            asset={depositAsset}
+            onChange={handleAmountChange}
+            amount={amount}
+            max={assetAmountInWallet}
+            disabled={assetAmountInWallet.isZero()}
             className='w-full'
             maxText={isDeposit ? 'In Wallet' : 'Available to Withdraw'}
             warningMessages={[]}
@@ -52,23 +84,28 @@ export default function VaultAction(props: Props) {
 
           <div className='space-y-2'>
             <Callout type={CalloutType.INFO}>
-              {/* fetch withdrawal time freeze */}
               {isDeposit
                 ? 'Please note that deposited funds come directly from your wallet. Your credit account will not be affected.'
                 : 'Once you initiate this withdrawal, it will take 24 hours to become available.'}
             </Callout>
             {isDeposit && (
               <Callout type={CalloutType.INFO}>
-                Please note there is a 24h withdrawal freeze.
+                Please note there is a{' '}
+                {formatLockupPeriod(
+                  moment.duration(vaultDetails.cooldown_period, 'seconds').as('days'),
+                  'days',
+                )}{' '}
+                withdrawal freeze.
               </Callout>
             )}
           </div>
 
           <Button
-            onClick={() => {}}
+            onClick={handleDeposit}
             className='w-full'
             text={isDeposit ? 'Deposit' : 'Withdraw'}
             rightIcon={<ArrowRight />}
+            disabled={amount.isZero()}
           />
         </Card>
       </div>

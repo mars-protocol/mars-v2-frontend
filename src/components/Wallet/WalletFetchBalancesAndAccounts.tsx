@@ -32,7 +32,7 @@ function Content() {
   const { data: accountIds, isLoading: isLoadingAccounts } = useAccountIds(
     address || '',
     true,
-    true,
+    'default',
   )
   const { data: walletBalances, isLoading: isLoadingBalances } = useWalletBalances(address)
   const baseAsset = useBaseAsset()

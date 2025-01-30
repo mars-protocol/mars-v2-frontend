@@ -13,7 +13,7 @@ import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
 import { vaultProfileData } from 'components/vaults/dummyData'
 import useToggle from 'hooks/common/useToggle'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
-import { Suspense, useState } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 function VaultLoadingState() {
@@ -30,15 +30,11 @@ function VaultLoadingState() {
 export default function VaultDetails() {
   const { vaultAddress } = useParams<{ vaultAddress: string }>()
 
-  return (
-    <Suspense fallback={<VaultLoadingState />}>
-      <VaultDetailsContent vaultAddress={vaultAddress} />
-    </Suspense>
-  )
+  return <VaultDetailsContent vaultAddress={vaultAddress} />
 }
 
 function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefined }) {
-  const { details: vaultDetails, isOwner, tvl, apr } = useManagedVaultDetails(vaultAddress)
+  const { details: vaultDetails, isOwner, isLoading } = useManagedVaultDetails(vaultAddress)
 
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
   const [showFeeActionModal, setShowFeeActionModal] = useToggle()
@@ -48,7 +44,7 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
   const [modalType, setModalType] = useState<'deposit' | 'withdraw' | null>(null)
   const [modalFeeType, setModalFeeType] = useState<'edit' | 'withdraw' | null>(null)
 
-  if (isOwner === undefined || !vaultDetails) {
+  if (isOwner === undefined || !vaultDetails || isLoading) {
     return <VaultLoadingState />
   }
   // TODO: fetch from contract
@@ -75,7 +71,6 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
         <div className='md:w-100'>
           <ProfileVaultCard
             details={vaultDetails}
-            metrics={{ tvl: Number(tvl), apr: Number(apr) }}
             isOwner={isOwner}
             wallet={vaultProfileData.wallet}
             avatarUrl={vaultProfileData.avatarUrl}
@@ -101,6 +96,8 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
         <VaultAction
           showActionModal={showActionModal}
           setShowActionModal={setShowActionModal}
+          vaultDetails={vaultDetails}
+          vaultAddress={vaultAddress!}
           type={modalType || 'deposit'}
         />
 
@@ -114,10 +111,9 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
               </Callout>
             )}
 
-            {/* // TODO: update data that can be fetched */}
             {isOwner ? (
               <PositionInfo
-                value={0}
+                value={Number(vaultDetails.performance_fee_state.accumulated_fee)}
                 subtitle={
                   <FormattedNumber
                     amount={Number(vaultDetails?.performance_fee_config.fee_rate ?? 0) * 100000}
@@ -173,7 +169,7 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
               />
             )}
 
-            <Withdrawals details={vaultDetails} />
+            <Withdrawals details={vaultDetails} isOwner={isOwner} />
             <VaultSummary />
           </div>
         </div>

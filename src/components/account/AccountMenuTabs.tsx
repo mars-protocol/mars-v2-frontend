@@ -8,10 +8,11 @@ type NavigationTab = {
 
 type Props = {
   tabs: NavigationTab[]
+  activeIndex: number
 }
 
 export default function AccountMenuTabs(props: Props) {
-  const [activeIdx, setActiveIdx] = useState(0)
+  const [activeIdx, setActiveIdx] = useState(props.activeIndex)
 
   if (props.tabs.length === 0) return null
 

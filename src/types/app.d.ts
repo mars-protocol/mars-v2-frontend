@@ -1146,8 +1146,12 @@ interface BroadcastSlice {
   }) => Promise<boolean>
   v1Action: (type: V1ActionType, funds: BNCoin) => Promise<boolean>
   createManagedVault: (params: VaultParams) => Promise<{ address: string } | null>
-  getManagedVaultDetails: (vaultAddress: string) => Promise<ManagedVaultDetails | null>
   handlePerformanceFeeAction: (options: PerformanceFeeOptions) => Promise<boolean>
+  depositInManagedVault: (options: {
+    vaultAddress: string
+    amount: string
+    recipient?: string | null
+  }) => Promise<boolean>
 }
 
 type V1ActionType = 'withdraw' | 'deposit' | 'borrow' | 'repay'
@@ -1813,7 +1817,6 @@ interface VaultParams {
 interface ManagedVaultsData extends ManagedVaultDetails {
   vault_address: string
   name: string
-  subtitle: string
   fee_rate: string
   fee: string
   tvl: string
@@ -1842,6 +1845,17 @@ interface ManagedVaultDetails {
   total_vault_tokens: string
   share_price: number
 }
+interface ManagedVaultMetrics {
+  apr: string
+  tvl: string
+}
+interface PerformanceFeeState {
+  accumulated_fee: string
+  accumulated_pnl: string
+  base_tokens_amt: string
+  last_withdrawal: number
+}
+
 interface PerformanceFeeOptions {
   vaultAddress: string
   newFee?: PerformanceFeeConfig | null
@@ -1849,4 +1863,9 @@ interface PerformanceFeeOptions {
 interface PerformanceFeeConfig {
   fee_rate: string
   withdrawal_interval: number
+}
+
+interface ExtendedManagedVaultDetails extends ManagedVaultDetails {
+  metrics: ManagedVaultMetrics
+  performance_fee_state: PerformanceFeeState
 }

@@ -1,33 +1,27 @@
-import Button from 'components/common/Button'
-import Card from 'components/common/Card'
 import classNames from 'classnames'
+import AssetImage from 'components/common/assets/AssetImage'
+import Button from 'components/common/Button'
+import { Callout, CalloutType } from 'components/common/Callout'
+import Card from 'components/common/Card'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
-import FeeTag from 'components/vaults/community/vaultDetails/profileVaultCard/FeeTag'
-import HLSTag from 'components/hls/HlsTag'
-import InfoRow from 'components/vaults/community/vaultDetails/profileVaultCard/InfoRow'
-import moment from 'moment'
-import React from 'react'
-import ShareBar from 'components/common/ShareBar'
-import Text from 'components/common/Text'
-import useVaultAssets from 'hooks/assets/useVaultAssets'
-import { BN } from 'utils/helpers'
-import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from 'utils/array'
-import { Callout, CalloutType } from 'components/common/Callout'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ExternalLink, TrashBin } from 'components/common/Icons'
+import ShareBar from 'components/common/ShareBar'
+import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
+import HLSTag from 'components/hls/HlsTag'
+import FeeTag from 'components/vaults/community/vaultDetails/profileVaultCard/FeeTag'
+import InfoRow from 'components/vaults/community/vaultDetails/profileVaultCard/InfoRow'
+import useVaultAssets from 'hooks/assets/useVaultAssets'
+import moment from 'moment'
+import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
 import { formatLockupPeriod } from 'utils/formatters'
-import AssetImage from 'components/common/assets/AssetImage'
+import { BN } from 'utils/helpers'
 
-interface Metrics {
-  apr: number
-  tvl: number
-}
 interface Props {
-  details: ManagedVaultDetails
-  metrics: Metrics
+  details: ExtendedManagedVaultDetails
   wallet: string
   onDelete: () => void
   onEdit: (show: boolean) => void
@@ -36,9 +30,8 @@ interface Props {
 }
 
 export default function ProfileVaultCard(props: Props) {
-  const { details, metrics, isOwner, wallet = '', avatarUrl = '', onDelete, onEdit } = props
+  const { details, isOwner, wallet = '', avatarUrl = '', onDelete, onEdit } = props
   const vaultAssets = useVaultAssets()
-
   const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
 
   return (
@@ -75,7 +68,7 @@ export default function ProfileVaultCard(props: Props) {
           <div className='flex gap-3'>
             {/* TODO: this will be conditional render */}
             <HLSTag />
-            {isOwner || <FeeTag fee={details.performance_fee_config.fee_rate} />}
+            {isOwner || <FeeTag fee={details.performance_fee_config?.fee_rate ?? '0'} />}
           </div>
         </div>
 
@@ -84,14 +77,14 @@ export default function ProfileVaultCard(props: Props) {
         <div className='space-y-4'>
           <InfoRow label='APR'>
             <FormattedNumber
-              amount={metrics.apr}
+              amount={Number(details.metrics.apr)}
               options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
               className='text-sm'
             />
           </InfoRow>
           <InfoRow label='TVL'>
             <DisplayCurrency
-              coin={BNCoin.fromDenomAndBigNumber('usd', BN(metrics.tvl))}
+              coin={BNCoin.fromDenomAndBigNumber('usd', BN(details.metrics.tvl))}
               className='text-sm'
             />
           </InfoRow>
@@ -99,9 +92,16 @@ export default function ProfileVaultCard(props: Props) {
             <>
               <InfoRow label='Accrued PnL'>
                 <DisplayCurrency
-                  coin={BNCoin.fromDenomAndBigNumber('usd', BN(0))}
-                  // TODO:conditional classnames for profit/loss
-                  className={classNames('text-profit text-sm')}
+                  coin={BNCoin.fromDenomAndBigNumber(
+                    'usd',
+                    BN(details.performance_fee_state.accumulated_pnl),
+                  )}
+                  className={classNames(
+                    'text-sm text-white',
+                    BN(details.performance_fee_state.accumulated_pnl).isGreaterThan(0) &&
+                      'text-profit',
+                    BN(details.performance_fee_state.accumulated_pnl).isNegative() && 'text-loss',
+                  )}
                 />
               </InfoRow>
               <InfoRow label='Wallet'>
@@ -115,12 +115,14 @@ export default function ProfileVaultCard(props: Props) {
             </>
           ) : (
             <>
-              <InfoRow label='Deposit Asset'>
-                <div className='flex gap-2 items-center'>
-                  <AssetImage asset={depositAsset} className='w-4 h-4' />
-                  <Text size='sm'>{depositAsset?.symbol}</Text>
-                </div>
-              </InfoRow>
+              {depositAsset && (
+                <InfoRow label='Deposit Asset'>
+                  <div className='flex gap-2 items-center'>
+                    <AssetImage asset={depositAsset} className='w-4 h-4' />
+                    <Text size='sm'>{depositAsset.symbol}</Text>
+                  </div>
+                </InfoRow>
+              )}
               <InfoRow label='Withdrawal Freeze Period'>
                 <Text size='sm'>
                   {formatLockupPeriod(
