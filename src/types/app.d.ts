@@ -1152,6 +1152,11 @@ interface BroadcastSlice {
     amount: string
     recipient?: string | null
   }) => Promise<boolean>
+  unlockFromManagedVault: (options: {
+    vaultAddress: string
+    amount: string
+    vaultToken: string
+  }) => Promise<boolean>
 }
 
 type V1ActionType = 'withdraw' | 'deposit' | 'borrow' | 'repay'
@@ -1816,7 +1821,7 @@ interface VaultParams {
 }
 interface ManagedVaultsData extends ManagedVaultDetails {
   vault_address: string
-  name: string
+  account_id: string
   fee_rate: string
   fee: string
   tvl: string
