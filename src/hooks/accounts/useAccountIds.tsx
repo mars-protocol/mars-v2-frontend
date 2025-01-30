@@ -2,6 +2,7 @@ import useSWR from 'swr'
 
 import getAccountIds from 'api/wallets/getAccountIds'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import { checkAccountKind } from 'utils/accounts'
 
 export default function useAccountIds(
   address?: string,
@@ -15,18 +16,9 @@ export default function useAccountIds(
     () =>
       getAccountIds(chainConfig, address).then((accountIdsAndKinds) => {
         if (kind === 'all') return accountIdsAndKinds.map((a) => a.id)
-        if (kind === 'fund_manager') {
-          return accountIdsAndKinds
-            .filter(
-              (accountIdAndKind) =>
-                typeof accountIdAndKind.kind === 'object' &&
-                'fund_manager' in accountIdAndKind.kind,
-            )
-            .map((a) => a.id)
-        }
 
         return accountIdsAndKinds
-          .filter((accountIdAndKind) => accountIdAndKind.kind === kind)
+          .filter((accountIdAndKind) => checkAccountKind(accountIdAndKind.kind) === kind)
           .map((a) => a.id)
       }),
     {

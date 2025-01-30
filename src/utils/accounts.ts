@@ -584,3 +584,9 @@ export function removeEmptyBNCoins(coins: BNCoin[]) {
   })
   return newCoins
 }
+
+export function checkAccountKind(kind: AccountKind): AccountKind | 'fund_manager' | 'unknown' {
+  if (typeof kind === 'string') return kind
+  if (typeof kind === 'object' && 'fund_manager' in kind) return 'fund_manager'
+  return 'unknown'
+}

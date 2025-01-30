@@ -5,7 +5,7 @@ import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 
 export default function useAccounts(
-  kind: AccountKind | 'fund_manager',
+  kind: AccountKind | 'fund_manager' | 'all',
   address?: string,
   suspense = true,
 ) {

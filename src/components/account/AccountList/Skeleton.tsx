@@ -1,12 +1,12 @@
-import { ArrowChartLineUp, Shield } from 'components/common/Icons'
-import { BNCoin } from 'types/classes/BNCoin'
-import DisplayCurrency from 'components/common/DisplayCurrency'
-import { FormattedNumber } from 'components/common/FormattedNumber'
 import HealthBar from 'components/account/Health/HealthBar'
 import HealthIcon from 'components/account/Health/HealthIcon'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { ArrowChartLineUp, Shield } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
-import { ORACLE_DENOM } from 'constants/oracle'
 import Text from 'components/common/Text'
+import { ORACLE_DENOM } from 'constants/oracle'
+import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   health: number
@@ -14,11 +14,11 @@ interface Props {
   positionBalance: BigNumber | null
   apy: BigNumber | null
   risk?: number
-  isVaults?: boolean
+  isVault?: boolean
 }
 
 export default function Skeleton(props: Props) {
-  const { apy, health, healthFactor, isVaults, positionBalance, risk } = props
+  const { apy, health, healthFactor, isVault, positionBalance, risk } = props
   return (
     <div className='flex flex-wrap w-full'>
       {positionBalance ? (
@@ -32,7 +32,7 @@ export default function Skeleton(props: Props) {
 
       <div className='flex items-center justify-between w-full mt-1'>
         <div className='flex items-center'>
-          {isVaults ? (
+          {isVault ? (
             <>
               <Shield className='w-3 mr-1' />
               {risk ? (

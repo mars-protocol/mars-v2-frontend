@@ -17,14 +17,15 @@ import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAccountId from 'hooks/accounts/useAccountId'
-import useAccountIds from 'hooks/accounts/useAccountIds'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useNonHlsAccountIds from 'hooks/accounts/useNonHlsAccountIds'
 import useAssets from 'hooks/assets/useAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
@@ -34,7 +35,6 @@ import {
   calculateAccountBalanceValue,
   calculateAccountLeverage,
 } from 'utils/accounts'
-import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
 
 interface Props {
   account: Account
@@ -50,7 +50,7 @@ export default function AccountDetailsController(props: AccountDetailsController
   const isVaults = useStore((s) => s.isVaults)
   const isV1 = useStore((s) => s.isV1)
   const { data: _, isLoading } = useAccounts('default', address)
-  const { data: accountIds } = useAccountIds(address, false, 'default')
+  const accountIds = useNonHlsAccountIds(address)
   const accountId = useAccountId()
   const account = useCurrentAccount()
   const focusComponent = useStore((s) => s.focusComponent)

@@ -13,8 +13,7 @@ import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountId from 'hooks/accounts/useAccountId'
-import useAccountIds from 'hooks/accounts/useAccountIds'
-import useAccountVaults from 'hooks/accounts/useAccountVaults'
+import useNonHlsAccountIds from 'hooks/accounts/useNonHlsAccountIds'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
@@ -35,10 +34,11 @@ export default function AccountMenuContent(props: Props) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const address = useStore((s) => s.address)
-  const { data: accountIds } = useAccountIds(address, true, 'default')
+  const accountIds = useNonHlsAccountIds(address)
   const accountId = useAccountId()
   const [searchParams] = useSearchParams()
-
+  const chainConfig = useChainConfig()
+  const managedVaultsEnabled = chainConfig.managedVaults
   const createAccount = useStore((s) => s.createAccount)
   const [showMenu, setShowMenu] = useToggle()
   const [isCreating, setIsCreating] = useToggle()
@@ -46,9 +46,6 @@ export default function AccountMenuContent(props: Props) {
   const [enableAutoLendGlobal] = useEnableAutoLendGlobal()
   const { enableAutoLendAccountId } = useAutoLend()
   const [isAutoLendEnabled] = useEnableAutoLendGlobal()
-  const chainConfig = useChainConfig()
-
-  const { hasVaults } = useAccountVaults(address)
   const hasCreditAccounts = !!accountIds?.length
   const isAccountSelected =
     hasCreditAccounts && accountId && isNumber(accountId) && accountIds.includes(accountId)
@@ -140,7 +137,7 @@ export default function AccountMenuContent(props: Props) {
           )}
         >
           <Text size='lg' className='font-bold'>
-            {hasVaults ? 'Accounts' : 'Credit Accounts'}
+            {managedVaultsEnabled ? 'Accounts' : 'Credit Accounts'}
           </Text>
           <Button
             color='secondary'
@@ -160,7 +157,7 @@ export default function AccountMenuContent(props: Props) {
             'top-[54px] h-[calc(100%-54px)] items-start',
           )}
         >
-          {hasVaults ? (
+          {managedVaultsEnabled ? (
             <AccountMenuTabs tabs={accountTabs} />
           ) : (
             hasCreditAccounts && <AccountList setShowMenu={setShowMenu} isVaults={false} />
