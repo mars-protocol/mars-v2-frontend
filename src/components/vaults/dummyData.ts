@@ -63,24 +63,3 @@ export const vaultProfileData = {
   avatarUrl:
     'https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg',
 }
-
-export const withdrawalsDummyData = [
-  {
-    amount: 49577,
-    unfreeze_date: '9 Oct 2024',
-    unfreeze_time: '03:45',
-    status: 'unlocked',
-  },
-  {
-    amount: 4232,
-    unfreeze_date: '13 Sep 2024',
-    unfreeze_time: '13:45',
-    status: 'unlocked',
-  },
-  {
-    amount: 125000,
-    unfreeze_date: '19 Sep 2024',
-    unfreeze_time: '17:15',
-    status: 'unlocked',
-  },
-]
