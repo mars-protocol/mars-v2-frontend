@@ -25,9 +25,15 @@ export default function useUserWithdrawals(props: Props) {
         cell: ({ row }) => {
           const coin = BNCoin.fromDenomAndBigNumber(
             details.base_token,
-            BN(row.original.base_tokens),
+            BN(row.original.vault_tokens),
           )
-          return <DisplayCurrency coin={coin} className='text-xs' />
+          return (
+            <DisplayCurrency
+              coin={coin}
+              className='text-xs'
+              options={{ abbreviated: false, minDecimals: 2, maxDecimals: 2 }}
+            />
+          )
         },
       },
       {

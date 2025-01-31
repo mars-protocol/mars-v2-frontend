@@ -1429,7 +1429,7 @@ export default function createBroadcastSlice(
         messages: [
           generateExecutionMessage(get().address, options.vaultAddress, msg, [
             {
-              denom: options.vaultToken,
+              denom: get().chainConfig.defaultCurrency.coinMinimalDenom,
               amount: options.amount,
             },
           ]),

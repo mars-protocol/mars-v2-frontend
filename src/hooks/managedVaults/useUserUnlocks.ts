@@ -21,6 +21,7 @@ export function useUserUnlocks(vaultAddress: string) {
     },
     {
       revalidateOnFocus: false,
+      refreshInterval: 10_000,
     },
   )
 }

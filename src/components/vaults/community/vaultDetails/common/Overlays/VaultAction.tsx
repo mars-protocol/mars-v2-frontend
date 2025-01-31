@@ -102,7 +102,10 @@ export default function VaultAction(props: Props) {
             <Callout type={CalloutType.INFO}>
               {isDeposit
                 ? 'Please note that deposited funds come directly from your wallet. Your credit account will not be affected.'
-                : 'Once you initiate this withdrawal, it will take 24 hours to become available.'}
+                : `Once you initiate this withdrawal, it will take ${formatLockupPeriod(
+                    moment.duration(vaultDetails.cooldown_period, 'seconds').as('days'),
+                    'days',
+                  )} to become available.`}
             </Callout>
             {isDeposit && (
               <Callout type={CalloutType.INFO}>
