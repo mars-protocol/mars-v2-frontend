@@ -5,7 +5,9 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { ColumnDef } from '@tanstack/react-table'
 import React, { useMemo } from 'react'
 import UnlockTime, { UNLOCK_TIME_META } from 'components/earn/farm/common/Table/Columns/UnlockTime'
-import Withdraw, { WITHDRAW_META } from './columns/Withdraw'
+import Withdraw, {
+  WITHDRAW_META,
+} from 'components/vaults/community/vaultDetails/table/columns/Withdraw'
 
 interface Props {
   isLoading: boolean

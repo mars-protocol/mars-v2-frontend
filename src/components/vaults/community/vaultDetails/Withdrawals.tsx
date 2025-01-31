@@ -8,7 +8,6 @@ import { Tooltip } from 'components/common/Tooltip'
 import VaultStats from 'components/vaults/community/vaultDetails/common/VaultStats'
 import useQueuedWithdrawals from 'components/vaults/community/vaultDetails/table/useQueuedWithdrawals'
 import useUserWithdrawals from 'components/vaults/community/vaultDetails/table/useUserWithdrawals'
-import { queuedWithdrawDummyData } from 'components/vaults/dummyData'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import moment from 'moment'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -16,6 +15,7 @@ import { byDenom } from 'utils/array'
 import { formatLockupPeriod } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { useUserUnlocks } from 'hooks/managedVaults/useUserUnlocks'
+import { useAllUnlocks } from 'hooks/managedVaults/useAllUnlocks'
 
 interface Props {
   details: ExtendedManagedVaultDetails
@@ -25,9 +25,11 @@ interface Props {
 
 export default function Withdrawals(props: Props) {
   const { details, isOwner, vaultAddress } = props
+
+  const { data: allUnlocksData = [], isLoading: isLoadingAllUnlocks } = useAllUnlocks(vaultAddress)
   const { data: userUnlocksData = [], isLoading: isLoadingUnlocks } = useUserUnlocks(vaultAddress)
 
-  const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false })
+  const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false, details })
   const userWithdrawalColumns = useUserWithdrawals({
     isLoading: false,
     details,
@@ -146,8 +148,8 @@ export default function Withdrawals(props: Props) {
           title='Queued Summary'
           hideCard
           columns={queuedWithdrawalcolumns}
-          data={queuedWithdrawDummyData}
-          initialSorting={[]}
+          data={allUnlocksData}
+          initialSorting={[{ id: 'created_at', desc: true }]}
           tableBodyClassName='bg-white/5'
           spacingClassName='p-3'
         />

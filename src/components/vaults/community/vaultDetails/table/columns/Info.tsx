@@ -1,13 +1,13 @@
-import { ExternalLink } from 'components/common/Icons'
+import classNames from 'classnames'
 import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
+import { ExternalLink } from 'components/common/Icons'
 import { truncate } from 'utils/formatters'
 
 export const INFO_META = {
   meta: { className: 'w-40' },
 }
 interface Props {
-  // TODO: update once we know data structure
   value: any
   isLoading: boolean
 }
@@ -18,7 +18,13 @@ export default function Info(props: Props) {
   if (isLoading) return <Loading />
 
   const address = value.walletAddress ? truncate(value.walletAddress, [2, 6]) : null
-  const status = value.status || null
+
+  const getStatus = (cooldown_end?: number) => {
+    if (!cooldown_end) return null
+    const now = Math.floor(Date.now() / 1000)
+    return cooldown_end <= now ? 'Ready to withdraw' : 'Queued'
+  }
+  const status = value.cooldown_end ? getStatus(value.cooldown_end) : value.status
 
   return (
     <>
@@ -30,7 +36,10 @@ export default function Info(props: Props) {
         </div>
       )}
       {status && (
-        <Text size='xs' className='text-white/40'>
+        <Text
+          size='xs'
+          className={classNames(status === 'Queued' ? 'text-warning' : 'text-white/40')}
+        >
           {status}
         </Text>
       )}

@@ -245,6 +245,30 @@ const getManagedVaultUserUnlocks = async (
   }
 }
 
+const getManagedVaultAllUnlocks = async (
+  chainConfig: ChainConfig,
+  vaultAddress: string,
+  limit?: number,
+  startAfter?: [string, number] | null,
+) => {
+  try {
+    const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    const response = await client.vaultExtension({
+      all_unlocks: {
+        limit,
+        start_after: startAfter,
+      },
+    })
+    return response as unknown as {
+      data: UserManagedVaultUnlock[]
+      metadata: { has_more: boolean }
+    }
+  } catch (error) {
+    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
+    throw error
+  }
+}
+
 export {
   getClient,
   getCreditManagerQueryClient,
@@ -260,4 +284,5 @@ export {
   getManagedVaultDetails,
   getManagedVaultPerformanceFeeState,
   getManagedVaultUserUnlocks,
+  getManagedVaultAllUnlocks,
 }
