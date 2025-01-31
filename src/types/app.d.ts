@@ -22,7 +22,16 @@ type ActionCoin = import('types/generated/mars-credit-manager/MarsCreditManager.
 type Action = import('types/generated/mars-credit-manager/MarsCreditManager.types').Action
 type BNCoin = import('types/classes/BNCoin').BNCoin
 
-type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp' | 'market' | 'limit' | 'stop'
+type PositionType =
+  | 'deposit'
+  | 'borrow'
+  | 'lend'
+  | 'vault'
+  | 'perp'
+  | 'bridge'
+  | 'market'
+  | 'limit'
+  | 'stop'
 type TableType = 'balances' | 'strategies' | 'perps'
 type AccountKind = import('types/generated/mars-credit-manager/MarsCreditManager.types').AccountKind
 
@@ -50,7 +59,11 @@ interface AccountChange extends Account {
 
 interface AccountBalanceRow {
   amount: BigNumber
+  bridgeStatus?: string
+  skipBridgeId?: string
+  isWhitelisted?: boolean
   apy?: number | null
+  skipTxHash?: string
   denom: string
   size: number
   symbol: string
@@ -1249,7 +1262,7 @@ interface FetchError {
 }
 
 interface FocusComponent {
-  component: import('react').JSX.Element | null
+  component: import('react').ReactElement | null
   onClose?: () => void
 }
 
@@ -1280,20 +1293,20 @@ interface ModalSlice {
 
 interface AlertDialogButton {
   text?: string
-  icon?: JSX.Element
+  icon?: ReactElement
   isAsync?: boolean
   onClick?: () => Promise<void> | void
   disabled?: boolean
 }
 
 interface AlertDialogConfig {
-  icon?: JSX.Element
-  header?: JSX.Element
+  icon?: ReactElement
+  header?: ReactElement
   checkbox?: {
     text: string
     onClick: (isChecked: boolean) => void
   }
-  content: JSX.Element | string
+  content: ReactElement | string
   negativeButton?: AlertDialogButton
   positiveButton?: AlertDialogButton
   title?: string

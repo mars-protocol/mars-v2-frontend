@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { ReactNode } from 'react'
+import { Component, ElementType, ReactNode } from 'react'
 
 interface Props {
   children: ReactNode | string

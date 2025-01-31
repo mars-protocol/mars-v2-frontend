@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
 
 import useAccountBalancesColumns from 'components/account/AccountBalancesTable/Columns/useAccountBalancesColumns'
 import useAccountBalanceData from 'components/account/AccountBalancesTable/useAccountBalanceData'
@@ -11,10 +12,13 @@ import Text from 'components/common/Text'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
-import { useMemo } from 'react'
 import useStore from 'store'
+import { ColumnDef } from '@tanstack/table-core'
 import { getPage, getRoute } from 'utils/route'
+import { BN } from 'utils/helpers'
+import { demagnify } from 'utils/formatters'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import { SkipBridgeTransaction, useSkipBridge } from 'hooks/bridge/useSkipBridge'
 
 interface Props {
   account: Account
@@ -66,8 +70,61 @@ export default function AccountBalancesTable(props: Props) {
   })
 
   const columns = useAccountBalancesColumns(account, showLiquidationPrice)
+  const { skipBridges } = useSkipBridge({
+    chainConfig,
+    cosmosAddress: address,
+    evmAddress: undefined,
+  })
 
-  if (sortedAccountBalanceData.length === 0) {
+  const dynamicColumns: ColumnDef<AccountBalanceRow>[] = useMemo(() => {
+    return columns
+  }, [columns])
+
+  const [, forceUpdate] = useState({})
+  useEffect(() => {
+    const skipBridgesString = localStorage.getItem('skipBridges')
+    if (skipBridgesString) {
+      forceUpdate({})
+    }
+  }, [skipBridges])
+  const dynamicAssets = useMemo(() => {
+    let assets = accountBalanceData.map(
+      (asset): AccountBalanceRow => ({
+        ...asset,
+        bridgeStatus: undefined,
+        skipBridgeId: undefined,
+      }),
+    )
+
+    const skipBridgesString = localStorage.getItem('skipBridges')
+    const currentBridges = skipBridgesString ? JSON.parse(skipBridgesString) : []
+
+    if (currentBridges.length > 0) {
+      const bridgedAssets = currentBridges.map(
+        (bridge: SkipBridgeTransaction): AccountBalanceRow => ({
+          skipBridgeId: bridge.id,
+          bridgeStatus: bridge.status,
+          type: 'bridge',
+          symbol: 'USDC',
+          size: demagnify(bridge.amount || 0, { decimals: 6, symbol: 'USDC' }),
+          value: demagnify(bridge.amount || 0, { decimals: 6, symbol: 'USDC' }).toString(),
+          denom: chainConfig.stables[0],
+          amount: BN(bridge.amount || 0),
+          apy: 0,
+          amountChange: BN('0'),
+          campaigns: [],
+        }),
+      )
+      assets = [...bridgedAssets, ...assets]
+    }
+
+    return assets
+  }, [accountBalanceData, chainConfig.stables])
+
+  const skipBridgesString = localStorage.getItem('skipBridges')
+  const currentBridges = skipBridgesString ? JSON.parse(skipBridgesString) : []
+
+  if (sortedAccountBalanceData.length === 0 && currentBridges.length === 0) {
     return (
       <ConditionalWrapper
         condition={!hideCard}
@@ -120,8 +177,8 @@ export default function AccountBalancesTable(props: Props) {
           <span className='text-white/60'>Credit Account {account.id}</span>
         </Text>
       }
-      columns={columns}
-      data={sortedAccountBalanceData}
+      columns={dynamicColumns}
+      data={dynamicAssets}
       tableBodyClassName={classNames(tableBodyClassName, 'text-white/60')}
       initialSorting={[]}
       spacingClassName='p-2'

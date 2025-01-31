@@ -13,14 +13,13 @@ import Text from 'components/common/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useHasFundsForTxFee from 'hooks/wallet/useHasFundsForTxFee'
 import useStore from 'store'
-import { isNumber } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
-import useChainConfig from 'hooks/chain/useChainConfig'
 
 interface Props {
   className?: string
