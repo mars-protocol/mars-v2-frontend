@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
@@ -8,11 +8,11 @@ import Card from 'components/common/Card'
 import Radio from 'components/common/Radio'
 import Text from 'components/common/Text'
 import useAccountId from 'hooks/accounts/useAccountId'
-import useAccountIds from 'hooks/accounts/useAccountIds'
+import useAccounts from 'hooks/accounts/useAccounts'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
+import { checkAccountKind } from 'utils/accounts'
 import { getPage, getRoute } from 'utils/route'
-import VaultDetails from 'components/vaults/community/vaultDetails'
 
 interface Props {
   setShowMenu: (show: boolean) => void
@@ -32,7 +32,18 @@ export default function AccountList(props: Props) {
   const chainConfig = useChainConfig()
   const currentAccountId = useAccountId()
   const address = useStore((s) => s.address)
-  const { data: accountIds } = useAccountIds(address, true, true)
+  const { data: accounts } = useAccounts('all', address)
+  const filteredAccounts = useMemo(() => {
+    const noHlsAccounts = accounts.filter(
+      (account) => checkAccountKind(account.kind) !== 'high_levered_strategy',
+    )
+
+    if (isVaults) {
+      return noHlsAccounts.filter((account) => checkAccountKind(account.kind) === 'fund_manager')
+    }
+    return noHlsAccounts.filter((account) => checkAccountKind(account.kind) === 'default')
+  }, [accounts, isVaults])
+
   const [searchParams] = useSearchParams()
 
   useEffect(() => {
@@ -43,18 +54,18 @@ export default function AccountList(props: Props) {
     }
   }, [currentAccountId])
 
-  if (!accountIds || !accountIds.length) return null
+  if (!filteredAccounts || !filteredAccounts.length) return null
 
   return (
     <div className='flex flex-wrap w-full p-4'>
-      {accountIds.map((accountId) => {
-        const isActive = currentAccountId === accountId
+      {filteredAccounts.map((account) => {
+        const isActive = currentAccountId === account.id
 
         return (
-          <div key={accountId} id={`account-${accountId}`} className='w-full pt-4'>
+          <div key={account.id} id={`account-${account.id}`} className='w-full pt-4'>
             <Card
-              id={`account-${accountId}`}
-              key={accountId}
+              id={`account-${account.id}`}
+              key={account.id}
               className={classNames('w-full', !isActive && 'group/account hover:cursor-pointer')}
               contentClassName='bg-white/10 group-hover/account:bg-white/20'
               onClick={() => {
@@ -62,26 +73,9 @@ export default function AccountList(props: Props) {
                 if (isMobile) setShowMenu(false)
                 useStore.setState({ accountDeleteModal: null })
 
-                if (isVaults) {
-                  const tempVaultAddress = 'tempvaultaddress'
-                  navigate(
-                    getRoute(
-                      getPage(`vaults/${tempVaultAddress}/details`, chainConfig),
-                      searchParams,
-                      address,
-                      accountId,
-                    ),
-                  )
-                  useStore.setState({
-                    focusComponent: {
-                      component: <VaultDetails />,
-                    },
-                  })
-                } else {
-                  navigate(
-                    getRoute(getPage(pathname, chainConfig), searchParams, address, accountId),
-                  )
-                }
+                navigate(
+                  getRoute(getPage(pathname, chainConfig), searchParams, address, account.id),
+                )
               }}
               title={
                 <div
@@ -93,19 +87,14 @@ export default function AccountList(props: Props) {
                     <Text size='xs'>Vault Name</Text>
                   ) : (
                     <Text size='xs' className='flex flex-1'>
-                      Credit Account {accountId}
+                      Credit Account {account.id}
                     </Text>
                   )}
                   <Radio active={isActive} className='group-hover/account:opacity-100' />
                 </div>
               }
             >
-              <AccountStats
-                accountId={accountId}
-                isActive={isActive}
-                setShowMenu={setShowMenu}
-                isVaults={isVaults}
-              />
+              <AccountStats account={account} isActive={isActive} setShowMenu={setShowMenu} />
             </Card>
           </div>
         )

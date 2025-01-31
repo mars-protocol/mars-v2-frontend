@@ -17,8 +17,8 @@ interface Props {
   depositCoins: BNCoin[]
   displayCurrency: string
   farm: AstroLp | DepositedAstroLp
-  getDepositSubTitle: () => JSX.Element | null
-  getBorrowingsSubTitle: () => JSX.Element | null
+  getDepositSubTitle: () => React.JSX.Element | null
+  getBorrowingsSubTitle: () => React.JSX.Element | null
   isCustomRatio: boolean
   isOpen: boolean[]
   onChangeBorrowings: (coins: BNCoin[]) => void

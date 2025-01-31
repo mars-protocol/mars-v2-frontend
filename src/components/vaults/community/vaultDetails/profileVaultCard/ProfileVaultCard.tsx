@@ -1,25 +1,23 @@
+import classNames from 'classnames'
 import AssetImage from 'components/common/assets/AssetImage'
 import Button from 'components/common/Button'
+import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
-import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
-import FeeTag from 'components/vaults/community/vaultDetails/profileVaultCard/FeeTag'
-import HLSTag from 'components/hls/HlsTag'
-import InfoRow from 'components/vaults/community/vaultDetails/profileVaultCard/InfoRow'
-import moment from 'moment'
-import React from 'react'
-import ShareBar from 'components/common/ShareBar'
-import Text from 'components/common/Text'
-import useVaultAssets from 'hooks/assets/useVaultAssets'
-import { BN } from 'utils/helpers'
-import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from 'utils/array'
-import { Callout, CalloutType } from 'components/common/Callout'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ExternalLink, TrashBin } from 'components/common/Icons'
+import ShareBar from 'components/common/ShareBar'
+import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
+import FeeTag from 'components/vaults/community/vaultDetails/profileVaultCard/FeeTag'
+import InfoRow from 'components/vaults/community/vaultDetails/profileVaultCard/InfoRow'
+import useVaultAssets from 'hooks/assets/useVaultAssets'
+import moment from 'moment'
+import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
 import { formatLockupPeriod } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 interface Props {
   details: ExtendedManagedVaultDetails
@@ -67,8 +65,6 @@ export default function ProfileVaultCard(props: Props) {
         <div className='flex justify-between items-center'>
           <Text tag='h4'>{details.title}</Text>
           <div className='flex gap-3'>
-            {/* TODO: this will be conditional render */}
-            <HLSTag />
             {isOwner || <FeeTag fee={details.performance_fee_config?.fee_rate ?? '0'} />}
           </div>
         </div>
@@ -97,10 +93,12 @@ export default function ProfileVaultCard(props: Props) {
                     'usd',
                     BN(details.performance_fee_state.accumulated_pnl),
                   )}
-                  className={classNames('text-sm text-white', {
-                    'text-profit': BN(details.performance_fee_state.accumulated_pnl).isPositive(),
-                    'text-loss': BN(details.performance_fee_state.accumulated_pnl).isNegative(),
-                  })}
+                  className={classNames(
+                    'text-sm text-white',
+                    BN(details.performance_fee_state.accumulated_pnl).isGreaterThan(0) &&
+                      'text-profit',
+                    BN(details.performance_fee_state.accumulated_pnl).isNegative() && 'text-loss',
+                  )}
                 />
               </InfoRow>
               <InfoRow label='Wallet'>

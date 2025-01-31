@@ -139,5 +139,8 @@ export function beautifyErrorMessage(error: string) {
 
   if (error === 'Transaction failed: Request rejected') return 'Transaction rejected by user'
 
+  if (error.includes('less or equal available liquidity'))
+    return 'There is not enough available liquidity in the selected assets market to borrow.'
+
   return `Transaction failed: ${error}`
 }

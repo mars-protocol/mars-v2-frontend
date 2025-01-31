@@ -42,9 +42,14 @@ export default function RewardsCenter(props: Props) {
   const { isAutoLendEnabledForCurrentAccount: isAutoLend } = useAutoLend()
 
   const { data: stakedAstroLpRewards } = useStakedAstroLpRewards()
+
   const currentLpRewards = useMemo(() => {
-    if (stakedAstroLpRewards.length === 0) return []
-    return stakedAstroLpRewards[0].rewards
+    let currentLpRewardsArray = [] as BNCoin[]
+    if (stakedAstroLpRewards.length === 0) return currentLpRewardsArray
+    stakedAstroLpRewards.forEach((stakeAstroLpReward) => {
+      currentLpRewardsArray = mergeBNCoinArrays(currentLpRewardsArray, stakeAstroLpReward.rewards)
+    })
+    return currentLpRewardsArray
   }, [stakedAstroLpRewards])
 
   const rewards = useMemo(

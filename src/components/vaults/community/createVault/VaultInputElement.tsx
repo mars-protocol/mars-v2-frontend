@@ -8,7 +8,7 @@ interface Props {
   type: 'text' | 'dropdown' | 'button'
   value: string
   asset?: Asset
-  suffix?: string | JSX.Element
+  suffix?: string | React.JSX.Element
   // TODO: update TS once we know value
   options?: Array<{ label: string; value: any }>
   maxLength?: number

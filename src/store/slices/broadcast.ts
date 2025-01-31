@@ -7,6 +7,7 @@ import moment from 'moment'
 import { isMobile } from 'react-device-detect'
 import { StoreApi } from 'zustand'
 
+import { getManagedVaultQueryClient } from 'api/cosmwasm-client'
 import getGasPrice from 'api/gasPrice/getGasPrice'
 import getPythPriceData from 'api/prices/getPythPriceData'
 import { LocalStorageKeys } from 'constants/localStorageKeys'

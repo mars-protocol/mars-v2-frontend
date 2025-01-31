@@ -864,7 +864,7 @@ type CardTab = {
 type DocLinkType = 'wallet' | 'account' | 'terms' | 'fund' | 'hls'
 
 interface DropDownItem {
-  icon: import('react').ReactNode
+  icon: React.ReactNode
   onClick: () => void
   text: string
   disabled?: boolean
@@ -1267,7 +1267,7 @@ interface FetchError {
 }
 
 interface FocusComponent {
-  component: import('react').JSX.Element | null
+  component: React.JSX.Element | null
   onClose?: () => void
 }
 
@@ -1299,20 +1299,20 @@ interface ModalSlice {
 
 interface AlertDialogButton {
   text?: string
-  icon?: JSX.Element
+  icon?: React.JSX.Element
   isAsync?: boolean
   onClick?: () => Promise<void> | void
   disabled?: boolean
 }
 
 interface AlertDialogConfig {
-  icon?: JSX.Element
-  header?: JSX.Element
+  icon?: React.JSX.Element
+  header?: React.JSX.Element
   checkbox?: {
     text: string
     onClick: (isChecked: boolean) => void
   }
-  content: JSX.Element | string
+  content: React.JSX.Element | string
   negativeButton?: AlertDialogButton
   positiveButton?: AlertDialogButton
   title?: string

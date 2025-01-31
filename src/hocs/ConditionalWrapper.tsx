@@ -1,7 +1,7 @@
 interface Props {
   condition: boolean
-  wrapper: (children: JSX.Element) => JSX.Element
-  children: JSX.Element
+  wrapper: (children: React.JSX.Element) => React.JSX.Element
+  children: React.JSX.Element
 }
 
 const ConditionalWrapper = ({ condition, wrapper, children }: Props) =>

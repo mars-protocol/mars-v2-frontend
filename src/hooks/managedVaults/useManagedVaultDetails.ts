@@ -17,6 +17,11 @@ export function useManagedVaultDetails(vaultAddress: string | undefined) {
     async () => {
       return await getManagedVaultOwner(chainConfig, vaultAddress!)
     },
+    {
+      revalidateOnFocus: false,
+      refreshInterval: 10_000,
+      suspense: false,
+    },
   )
 
   const { data: metrics, isLoading: isMetricsLoading } = useSWR(
@@ -25,6 +30,11 @@ export function useManagedVaultDetails(vaultAddress: string | undefined) {
       const { data } = await getManagedVaults(chainConfig)
       return data.find((v) => v.vault_address === vaultAddress)
     },
+    {
+      revalidateOnFocus: false,
+      refreshInterval: 10_000,
+      suspense: false,
+    },
   )
 
   const { data: details, isLoading: isDetailsLoading } = useSWR(
@@ -32,12 +42,22 @@ export function useManagedVaultDetails(vaultAddress: string | undefined) {
     async () => {
       return await getManagedVaultDetails(chainConfig, vaultAddress!)
     },
+    {
+      revalidateOnFocus: false,
+      refreshInterval: 10_000,
+      suspense: false,
+    },
   )
 
   const { data: performanceFeeState, isLoading: isPerformanceFeeLoading } = useSWR(
     vaultAddress ? `chains/${chainConfig.id}/vaults/${vaultAddress}/performanceFee` : null,
     async () => {
       return await getManagedVaultPerformanceFeeState(chainConfig, vaultAddress!)
+    },
+    {
+      revalidateOnFocus: false,
+      refreshInterval: 10_000,
+      suspense: false,
     },
   )
 

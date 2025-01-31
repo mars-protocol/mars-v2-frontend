@@ -4,9 +4,9 @@ import { Enter, InfoCircle } from 'components/common/Icons'
 import useAlertDialog from 'hooks/common/useAlertDialog'
 
 interface Props {
-  content: string | JSX.Element
+  content: string | React.JSX.Element
   title: string
-  icon?: JSX.Element
+  icon?: React.JSX.Element
   closeHandler: () => void
   positiveButton: AlertDialogButton
 }
