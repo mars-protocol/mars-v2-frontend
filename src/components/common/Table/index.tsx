@@ -19,6 +19,7 @@ import Row from 'components/common/Table/Row'
 import Text from 'components/common/Text'
 import { LEFT_ALIGNED_ROWS } from 'constants/table'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
+import TablePagination from './TablePagination'
 
 interface Props<T> {
   title: string | ReactElement
@@ -37,6 +38,11 @@ interface Props<T> {
   disableSortingRow?: boolean
   titleComponent?: ReactElement
   isBalancesTable?: boolean
+  pagination?: {
+    currentPage?: number
+    totalPages?: number
+    onPageChange?: (page: number) => void
+  }
 }
 
 export default function Table<T>(props: Props<T>) {
@@ -158,6 +164,14 @@ export default function Table<T>(props: Props<T>) {
             </tbody>
           </table>
         </div>
+        {props.pagination && (
+          <TablePagination
+            currentPage={props.pagination.currentPage || 1}
+            totalPages={props.pagination.totalPages || 1}
+            onPageChange={props.pagination.onPageChange || (() => {})}
+            className={classNames(props?.tableBodyClassName)}
+          />
+        )}
       </div>
     </ConditionalWrapper>
   )
