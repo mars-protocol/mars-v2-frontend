@@ -19,7 +19,7 @@ import Row from 'components/common/Table/Row'
 import Text from 'components/common/Text'
 import { LEFT_ALIGNED_ROWS } from 'constants/table'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
-import TablePagination from './TablePagination'
+import TablePagination from 'components/common/Table/TablePagination'
 
 interface Props<T> {
   title: string | ReactElement

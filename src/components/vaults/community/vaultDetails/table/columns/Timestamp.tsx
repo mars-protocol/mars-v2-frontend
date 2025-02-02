@@ -3,7 +3,7 @@ import TitleAndSubCell from 'components/common/TitleAndSubCell'
 
 export const TIMESTAMP_META = {
   id: 'name',
-  header: 'Unfreezes',
+  header: 'Initiated',
   meta: { className: 'min-w-30' },
 }
 

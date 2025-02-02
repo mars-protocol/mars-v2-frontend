@@ -25,11 +25,12 @@ interface Props {
 
 export default function Withdrawals(props: Props) {
   const { details, isOwner, vaultAddress } = props
-
-  const { data: allUnlocksData = [], isLoading: isLoadingAllUnlocks } = useAllUnlocks(
-    vaultAddress,
-    3,
-  )
+  const {
+    data: allUnlocksData,
+    currentPage,
+    totalPages,
+    handlePageChange,
+  } = useAllUnlocks(vaultAddress, 3)
   const { data: userUnlocksData = [], isLoading: isLoadingUnlocks } = useUserUnlocks(vaultAddress)
 
   const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false, details })
@@ -40,8 +41,6 @@ export default function Withdrawals(props: Props) {
   })
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
-
-  const handlePageChange = () => {}
 
   if (!isOwner) {
     return userUnlocksData.length > 0 ? (
@@ -158,9 +157,9 @@ export default function Withdrawals(props: Props) {
           tableBodyClassName='bg-white/5'
           spacingClassName='p-3'
           pagination={{
-            currentPage: 1,
-            totalPages: 2,
-            onPageChange: () => {},
+            currentPage,
+            totalPages,
+            onPageChange: handlePageChange,
           }}
         />
       ),
