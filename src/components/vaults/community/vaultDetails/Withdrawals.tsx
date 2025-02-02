@@ -147,25 +147,29 @@ export default function Withdrawals(props: Props) {
         />
       ),
     },
-    {
-      title: 'Queued Withdrawals',
-      renderContent: () => (
-        <Table
-          title='Queued Withdrawals'
-          hideCard
-          columns={queuedWithdrawalcolumns}
-          data={allUnlocksData}
-          initialSorting={[{ id: 'created_at', desc: true }]}
-          tableBodyClassName='bg-white/5'
-          spacingClassName='p-3'
-          pagination={{
-            currentPage,
-            totalPages,
-            onPageChange: handlePageChange,
-          }}
-        />
-      ),
-    },
+    ...(allUnlocksData.length > 0
+      ? [
+          {
+            title: 'Queued Withdrawals',
+            renderContent: () => (
+              <Table
+                title='Queued Withdrawals'
+                hideCard
+                columns={queuedWithdrawalcolumns}
+                data={allUnlocksData}
+                initialSorting={[{ id: 'created_at', desc: true }]}
+                tableBodyClassName='bg-white/5'
+                spacingClassName='p-3'
+                pagination={{
+                  currentPage,
+                  totalPages,
+                  onPageChange: handlePageChange,
+                }}
+              />
+            ),
+          },
+        ]
+      : []),
   ]
   return <CardWithTabs tabs={tabs} />
 }
