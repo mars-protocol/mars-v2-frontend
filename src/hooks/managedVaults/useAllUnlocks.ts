@@ -1,17 +1,25 @@
 import { getManagedVaultAllUnlocks } from 'api/cosmwasm-client'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import { useState } from 'react'
 import useSWR from 'swr'
+import { useState } from 'react'
 
 export function useAllUnlocks(vaultAddress: string, limit: number = 3) {
   const chainConfig = useChainConfig()
 
   const [currentPage, setCurrentPage] = useState<number>(1)
-  const [startAfter, setStartAfter] = useState<[string, number] | null>(null)
+  const [startAfterByPage, setStartAfterByPage] = useState<Record<number, [string, number] | null>>(
+    {
+      1: null,
+    },
+  )
 
   const { data, error, isLoading } = useSWR(
     vaultAddress
-      ? [`chains/${chainConfig.id}/vaults/${vaultAddress}/allUnlocks`, startAfter]
+      ? [
+          `chains/${chainConfig.id}/vaults/${vaultAddress}/allUnlocks`,
+          currentPage,
+          startAfterByPage[currentPage],
+        ]
       : null,
     async () => {
       try {
@@ -19,8 +27,17 @@ export function useAllUnlocks(vaultAddress: string, limit: number = 3) {
           chainConfig,
           vaultAddress!,
           limit,
-          startAfter,
+          startAfterByPage[currentPage],
         )
+
+        if (response.metadata.has_more && response.data.length > 0) {
+          const lastItem = response.data[response.data.length - 1]
+          setStartAfterByPage((prev) => ({
+            ...prev,
+            [currentPage + 1]: [lastItem.user_address, lastItem.created_at],
+          }))
+        }
+
         return response
       } catch (error) {
         console.error('Error fetching all unlocks:', error)
@@ -36,14 +53,6 @@ export function useAllUnlocks(vaultAddress: string, limit: number = 3) {
   const handlePageChange = (newPage: number) => {
     if (newPage < 1) return
     if (!data?.metadata.has_more && newPage > currentPage) return
-
-    if (newPage > currentPage) {
-      const lastItem = data?.data[data.data.length - 1]
-      setStartAfter(lastItem ? [lastItem.user_address, lastItem.created_at] : null)
-    } else if (newPage < currentPage) {
-      setStartAfter(null)
-    }
-
     setCurrentPage(newPage)
   }
 
