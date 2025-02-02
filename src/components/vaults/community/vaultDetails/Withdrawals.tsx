@@ -41,6 +41,8 @@ export default function Withdrawals(props: Props) {
   })
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
+  const withdrawalDate = moment(details.performance_fee_state.last_withdrawal * 1000)
+  const isValidWithdrawal = withdrawalDate.isValid()
 
   if (!isOwner) {
     return userUnlocksData.length > 0 ? (
@@ -106,15 +108,22 @@ export default function Withdrawals(props: Props) {
                       'usd',
                       BN(details.performance_fee_state.accumulated_pnl),
                     )}
+                    showSignPrefix
                     className={classNames(
-                      'text-sm text-white',
+                      'text-sm',
                       BN(details.performance_fee_state.accumulated_pnl).isGreaterThan(0) &&
                         'text-profit',
                       BN(details.performance_fee_state.accumulated_pnl).isNegative() && 'text-loss',
                     )}
                   />
-                  <span className='text-white/10'>|</span>
-                  <span className='text-white/50'>Since 20.06.24</span>
+                  {isValidWithdrawal && (
+                    <>
+                      <span className='text-white/10'>|</span>
+                      <span className='text-white/50'>
+                        Since {withdrawalDate.format('DD.MM.YY')}
+                      </span>
+                    </>
+                  )}
                 </div>
               ),
             },
