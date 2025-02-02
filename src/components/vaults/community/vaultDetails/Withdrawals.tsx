@@ -44,7 +44,7 @@ export default function Withdrawals(props: Props) {
 
   if (!isOwner) {
     return userUnlocksData.length > 0 ? (
-      <div className='w-full h-75'>
+      <div className='w-full max-h-75'>
         <Table
           title='Withdrawals'
           columns={userWithdrawalColumns}

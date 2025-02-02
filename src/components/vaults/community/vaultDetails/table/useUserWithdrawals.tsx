@@ -55,7 +55,7 @@ export default function useUserWithdrawals(props: Props) {
         cell: ({ row }) => {
           return (
             <Withdraw
-              amount={row.original.base_tokens}
+              amount={row.original.vault_tokens}
               vaultAddress={vaultAddress}
               vaultToken={details.vault_token}
               unlocksAt={row.original.cooldown_end * 1000}
