@@ -44,14 +44,16 @@ export default function Withdrawals(props: Props) {
 
   if (!isOwner) {
     return userUnlocksData.length > 0 ? (
-      <Table
-        title='Withdrawals'
-        columns={userWithdrawalColumns}
-        data={userUnlocksData}
-        initialSorting={[{ id: 'initiated', desc: true }]}
-        tableBodyClassName='bg-white/5'
-        spacingClassName='p-3'
-      />
+      <div className='w-full h-75'>
+        <Table
+          title='Withdrawals'
+          columns={userWithdrawalColumns}
+          data={userUnlocksData}
+          initialSorting={[{ id: 'initiated', desc: true }]}
+          tableBodyClassName='bg-white/5'
+          spacingClassName='p-3'
+        />
+      </div>
     ) : null
   }
 
