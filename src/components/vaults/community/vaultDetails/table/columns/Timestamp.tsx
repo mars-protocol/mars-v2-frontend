@@ -1,5 +1,6 @@
 import Loading from 'components/common/Loading'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import moment from 'moment'
 
 export const TIMESTAMP_META = {
   id: 'name',
@@ -18,19 +19,10 @@ export default function Timestamp(props: Props) {
   if (isLoading) return <Loading />
 
   const timestamp = typeof value === 'string' ? parseInt(value) : value
-  const date = new Date(timestamp * 1000)
+  const date = moment(timestamp * 1000)
 
-  const dateInitiated = date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
-
-  const timeInitiated = date.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
-  })
+  const dateInitiated = date.format('MMM D, YYYY')
+  const timeInitiated = date.format('hh:mm A')
 
   return <TitleAndSubCell title={dateInitiated} sub={timeInitiated} />
 }
