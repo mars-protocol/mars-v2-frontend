@@ -1,4 +1,3 @@
-import React from 'react'
 import Button from 'components/common/Button'
 import { Callout, CalloutType } from 'components/common/Callout'
 
@@ -29,7 +28,7 @@ export default function EVMAccountSection({
       <Button
         className='w-full mt-4'
         text={isConnected ? 'Disconnect EVM Wallet' : 'Connect EVM Wallet'}
-        color='quaternary'
+        color={isConnected ? 'secondary' : 'primary'}
         onClick={isConnected ? handleDisconnectWallet : handleConnectWallet}
         disabled={isConfirming}
       />
