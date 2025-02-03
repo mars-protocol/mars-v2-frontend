@@ -1,19 +1,20 @@
 import { flexRender, Row as TanstackRow, Table as TanstackTable } from '@tanstack/react-table'
 import classNames from 'classnames'
-import { ReactElement } from 'react'
-import { LEFT_ALIGNED_ROWS } from 'constants/table'
-import Text from 'components/common/Text'
 import Button from 'components/common/Button'
+import Text from 'components/common/Text'
+import { LEFT_ALIGNED_ROWS } from 'constants/table'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import { ReactElement } from 'react'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
-import useStore from 'store'
-import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 
-import useAutoLend from 'hooks/wallet/useAutoLend'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
+import useAutoLend from 'hooks/wallet/useAutoLend'
 import { generateExecutionMessage } from 'store/slices/broadcast'
+import { CircularProgress } from '../CircularProgress'
 
 interface Props<T> {
   row: TanstackRow<T>
@@ -173,7 +174,10 @@ export default function Row<T>(props: Props<T>) {
                   Complete Transaction
                 </Button>
               ) : (
-                <Text className='text-white pointer-events-none'>Pending...</Text>
+                <div className='flex items-center justify-center gap-2'>
+                  <CircularProgress size={10} />
+                  <Text className='text-white pointer-events-none text-xs'>Pending...</Text>
+                </div>
               )}
             </div>
           </td>
