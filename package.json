@@ -33,7 +33,7 @@
     "ibc-domains-sdk": "^1.1.0",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
-    "mobx": "^6.13.5",
+    "mobx": "^6.13.6",
     "moment": "^2.30.1",
     "next": "^15.1.6",
     "react": "19.0.0",
