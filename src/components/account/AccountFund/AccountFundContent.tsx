@@ -77,7 +77,7 @@ export default function AccountFundContent(props: Props) {
 
   const chainConfig = useChainConfig()
 
-  const [goFast, setGoFast] = useState(false)
+  const [goFast, setGoFast] = useState(true)
 
   const [currentRoute, setCurrentRoute] = useState<RouteResponse | undefined>(undefined)
   const [routeError, setRouteError] = useState<string | null>(null)
