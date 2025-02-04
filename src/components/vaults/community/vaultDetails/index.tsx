@@ -11,10 +11,13 @@ import ProfileVaultCard from 'components/vaults/community/vaultDetails/profileVa
 import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
 import { vaultProfileData } from 'components/vaults/dummyData'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
-import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import useStore from 'store'
+import { getPage, getRoute } from 'utils/route'
 
 function VaultLoadingState() {
   return (
@@ -29,8 +32,23 @@ function VaultLoadingState() {
 
 export default function VaultDetails() {
   const { vaultAddress } = useParams<{ vaultAddress: string }>()
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const chainConfig = useChainConfig()
+  const address = useStore((s) => s.address)
 
-  return <VaultDetailsContent vaultAddress={vaultAddress} />
+  useEffect(() => {
+    useStore.setState({
+      focusComponent: {
+        component: <VaultDetailsContent vaultAddress={vaultAddress} />,
+        onClose: () => {
+          navigate(getRoute(getPage('vaults', chainConfig), searchParams, address))
+        },
+      },
+    })
+  }, [vaultAddress, navigate, chainConfig, searchParams, address])
+
+  return null
 }
 
 function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefined }) {
