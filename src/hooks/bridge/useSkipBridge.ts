@@ -126,21 +126,21 @@ export function useSkipBridge({
       try {
         skipClient.bridges
         const response = await skipClient.route({
-          allowMultiTx: true,
+          sourceAssetDenom: expectedChainAttributes.assetAddress,
+          sourceAssetChainID: expectedChainAttributes.chainID.toString(),
+          destAssetDenom: chainConfig.stables[0],
+          destAssetChainID: chainConfig.id.toString(),
           allowUnsafe: true,
+          experimentalFeatures: ['hyperlane', 'stargate'],
+          allowMultiTx: false,
           cumulativeAffiliateFeeBPS: '0',
-          experimentalFeatures: ['hyperlane'],
           smartRelay: true,
           smartSwapOptions: {
             splitRoutes: true,
             evmSwaps: true,
           },
-          sourceAssetDenom: expectedChainAttributes.assetAddress,
-          sourceAssetChainID: expectedChainAttributes.chainID.toString(),
-          destAssetDenom: chainConfig.stables[0],
-          destAssetChainID: chainConfig.id.toString(),
+          goFast: goFast ?? true,
           amountIn: selectedAsset.coin.amount.toString(),
-          goFast: goFast,
         })
         return response
       } catch (error: any) {
@@ -330,20 +330,21 @@ export function useSkipBridge({
     }
   }, [skipBridges, updateSkipBridges, refreshBalances])
 
-  const fetchBridgeLogos = useCallback(async (): Promise<BridgeInfo[]> => {
+  const fetchBridgeLogos = async ({ chainIDs }: { chainIDs: string[] }) => {
     try {
-      const bridges = await skipClient.bridges()
-      return bridges.map((bridge) => ({
-        id: bridge.id,
-        name: bridge.name,
-        logo_uri: bridge.logoURI,
+      const chains = await skipClient.chains({ chainIDs })
+      const bridgeLogos = chains?.map((chain) => ({
+        id: chain.chainID,
+        name: chain.chainName,
+        logo_uri: chain.logoURI ?? '',
       }))
+      console.log('bridgeLogos', bridgeLogos)
+      return bridgeLogos
     } catch (error) {
       console.error('Failed to fetch bridge logos:', error)
       return []
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }
 
   return {
     skipBridges,

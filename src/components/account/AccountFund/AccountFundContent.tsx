@@ -145,6 +145,8 @@ export default function AccountFundContent(props: Props) {
     setRouteError(null)
     try {
       const route = await fetchSkipRoute(evmAsset)
+      const bridgeLogos = await fetchBridgeLogos({ chainIDs: route.chainIDs })
+      setBridges(bridgeLogos)
       setCurrentRoute(route)
     } catch (error) {
       console.error('Failed to fetch route:', error)
@@ -159,7 +161,7 @@ export default function AccountFundContent(props: Props) {
     } finally {
       setIsLoadingRoute(false)
     }
-  }, [fetchSkipRoute, fundingAssets, isLoadingRoute])
+  }, [fetchSkipRoute, fundingAssets, isLoadingRoute, fetchBridgeLogos])
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -175,14 +177,6 @@ export default function AccountFundContent(props: Props) {
     return () => clearTimeout(timer)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [goFast, currentEVMAssetValue])
-
-  useEffect(() => {
-    const loadBridges = async () => {
-      const bridgeData = await fetchBridgeLogos()
-      setBridges(bridgeData)
-    }
-    loadBridges()
-  }, [fetchBridgeLogos])
 
   const handleClick = useCallback(async () => {
     if (isConfirming) return
@@ -370,7 +364,7 @@ export default function AccountFundContent(props: Props) {
                     Route
                   </Text>
                   <BridgeRouteVisualizer
-                    route={currentRoute}
+                    isLoading={isLoadingRoute}
                     bridges={bridges}
                     originChain={fundingAssets.find((asset) => asset.chain)?.chain || ''}
                   />
