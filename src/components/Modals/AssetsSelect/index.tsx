@@ -117,17 +117,7 @@ export default function AssetsSelect(props: Props) {
       const nonCollateralAssets =
         nonCollateralTableAssets?.filter((_, index) => nonCollateralSelected[index]) || []
 
-      // Get all selected assets from both tables
       const allSelectedAssets = [...filteredWhitelistedAsset, ...nonCollateralAssets]
-      console.log(
-        'Current Selected Assets:',
-        allSelectedAssets.map((asset) => ({
-          symbol: asset.symbol,
-          denom: asset.denom,
-          chainName: asset.chainName,
-          isWhitelisted: filteredWhitelistedAsset.includes(asset),
-        })),
-      )
 
       const selectedEvmAssets = allSelectedAssets.filter((asset) => asset.chainName)
       if (selectedEvmAssets.length > 1) {

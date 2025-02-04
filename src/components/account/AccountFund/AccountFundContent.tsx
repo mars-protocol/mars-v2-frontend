@@ -42,6 +42,8 @@ interface Props {
 
 export default function AccountFundContent(props: Props) {
   const deposit = useStore((s) => s.deposit)
+  const createAccount = useStore((s) => s.createAccount)
+
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
   const [isConfirming, setIsConfirming] = useState(false)
   const [currentEVMAssetValue, setCurrentEVMAssetValue] = useState<BigNumber>(BN_ZERO)
@@ -195,48 +197,54 @@ export default function AccountFundContent(props: Props) {
         (asset) => !asset.chain || !chainNameToUSDCAttributes[asset.chain],
       )
 
+      let accountId = props.accountId
+      if (isNewAccount) {
+        const mintResult = await createAccount('default', shouldAutoLend)
+
+        if (!mintResult) {
+          throw new Error('Failed to create credit account')
+        }
+        accountId = mintResult
+        useStore.setState((state) => ({ ...state, selectedAccountId: accountId }))
+      }
+
       if (nonEvmAssets.length > 0) {
         const depositObject = {
           coins: nonEvmAssets.map((wrappedCoin) => wrappedCoin.coin),
           lend: shouldAutoLend,
           isAutoLend: shouldAutoLend,
+          accountId,
         }
 
-        const accountId = props.accountId
-          ? await deposit({ ...depositObject, accountId: props.accountId })
-          : await deposit(depositObject)
-
-        if (accountId) {
-          useStore.setState((state) => ({ ...state, selectedAccountId: accountId }))
-          const { pathname } = window.location
-          const searchParams = new URLSearchParams(window.location.search)
-          navigate(getRoute(getPage(pathname, chainConfig), searchParams, props.address, accountId))
-
-          if (props.isFullPage) {
-            useStore.setState((state) => ({
-              ...state,
-              walletAssetsModal: null,
-              focusComponent: null,
-            }))
-          } else {
-            useStore.setState((state) => ({
-              ...state,
-              fundAndWithdrawModal: null,
-              walletAssetsModal: null,
-            }))
-          }
-        }
+        await deposit(depositObject)
       }
 
       for (const evmAsset of evmAssets) {
-        if (isBridgeInProgress) {
-          continue
-        }
+        if (isBridgeInProgress) continue
+
         const success = await handleSkipTransfer(evmAsset, MINIMUM_USDC)
         if (!success) {
           setShowMinimumUSDCValueOverlay(true)
           break
         }
+      }
+
+      const { pathname } = window.location
+      const searchParams = new URLSearchParams(window.location.search)
+      navigate(getRoute(getPage(pathname, chainConfig), searchParams, props.address, accountId))
+
+      if (props.isFullPage) {
+        useStore.setState((state) => ({
+          ...state,
+          walletAssetsModal: null,
+          focusComponent: null,
+        }))
+      } else {
+        useStore.setState((state) => ({
+          ...state,
+          fundAndWithdrawModal: null,
+          walletAssetsModal: null,
+        }))
       }
     } catch (error) {
       console.error('Transaction failed:', error)
@@ -257,6 +265,7 @@ export default function AccountFundContent(props: Props) {
     chainConfig,
     isBridgeInProgress,
     isConfirming,
+    createAccount,
   ])
 
   useEffect(() => {

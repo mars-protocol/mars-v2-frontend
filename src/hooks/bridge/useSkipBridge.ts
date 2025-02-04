@@ -333,12 +333,14 @@ export function useSkipBridge({
   const fetchBridgeLogos = async ({ chainIDs }: { chainIDs: string[] }) => {
     try {
       const chains = await skipClient.chains({ chainIDs })
-      const bridgeLogos = chains?.map((chain) => ({
-        id: chain.chainID,
-        name: chain.chainName,
-        logo_uri: chain.logoURI ?? '',
-      }))
-      console.log('bridgeLogos', bridgeLogos)
+      const bridgeLogos = chainIDs.slice(1).map((chainID) => {
+        const chain = chains?.find((c) => c.chainID === chainID)
+        return {
+          id: chainID,
+          name: chain?.chainName ?? chainID,
+          logo_uri: chain?.logoURI ?? '',
+        }
+      })
       return bridgeLogos
     } catch (error) {
       console.error('Failed to fetch bridge logos:', error)

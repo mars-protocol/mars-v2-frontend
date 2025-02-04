@@ -1,6 +1,4 @@
 import { useCallback, useEffect, useState } from 'react'
-import useStore from 'store'
-import useAccounts from 'hooks/accounts/useAccounts'
 
 type SkipBridgeTransaction = {
   asset: string
@@ -16,20 +14,12 @@ type SkipBridgeTransaction = {
 export function useSkipBridgeStatus() {
   const [isPendingTransaction, setIsPendingTransaction] = useState(false)
   const [skipBridges, setSkipBridges] = useState<SkipBridgeTransaction[]>([])
-  const [shouldShowSkipBridgeModal, setShouldShowSkipBridgeModal] = useState(false)
-
-  const address = useStore((s) => s.address)
-  const { data: accounts } = useAccounts('default', address)
-  const hasSingleAccount = accounts?.length === 1
-
-  const hasEmptyBalance = accounts[0]?.deposits?.length === 0 && accounts[0]?.debts?.length === 0
 
   const checkTransactionStatus = useCallback(async () => {
     const skipBridgesString = localStorage.getItem('skipBridges')
     if (!skipBridgesString) {
       setIsPendingTransaction(false)
       setSkipBridges([])
-      setShouldShowSkipBridgeModal(false)
       return
     }
 
@@ -38,7 +28,6 @@ export function useSkipBridgeStatus() {
 
     setIsPendingTransaction(hasPendingTransactions)
     setSkipBridges(bridges)
-    setShouldShowSkipBridgeModal(hasSingleAccount && hasEmptyBalance && hasPendingTransactions)
 
     if (hasPendingTransactions) {
       try {
@@ -60,7 +49,6 @@ export function useSkipBridgeStatus() {
 
                 const stillHasPending = updatedBridges.some((b) => b.status === 'STATE_PENDING')
                 setIsPendingTransaction(stillHasPending)
-                setShouldShowSkipBridgeModal(hasSingleAccount && hasEmptyBalance && stillHasPending)
               }
             }),
         )
@@ -68,7 +56,7 @@ export function useSkipBridgeStatus() {
         console.error('Failed to fetch Skip status:', error)
       }
     }
-  }, [hasSingleAccount, hasEmptyBalance])
+  }, [])
 
   useEffect(() => {
     checkTransactionStatus()
@@ -80,13 +68,11 @@ export function useSkipBridgeStatus() {
     localStorage.removeItem('skipBridges')
     setSkipBridges([])
     setIsPendingTransaction(false)
-    setShouldShowSkipBridgeModal(false)
   }, [])
 
   return {
     isPendingTransaction,
     skipBridges,
-    shouldShowSkipBridgeModal,
     clearSkipBridges,
   }
 }

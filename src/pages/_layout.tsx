@@ -22,9 +22,6 @@ import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { debugSWR } from 'utils/middleware'
-import SkipBridgeModal from 'components/Modals/SkipBridgeModal'
-import { useSkipBridgeStatus } from 'hooks/localStorage/useSkipBridgeStatus'
-import { SkipBridgeTransaction } from 'hooks/bridge/useSkipBridge'
 
 interface Props {
   focusComponent: FocusComponent | null
@@ -88,12 +85,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }
   }, [chainConfig.id, currentChainId, setCurrentChainId])
 
-  const { shouldShowSkipBridgeModal } = useSkipBridgeStatus()
-
   return (
     <>
-      {shouldShowSkipBridgeModal && <SkipBridgeModal />}
-
       <ErrorBoundary errorStore={errorStore}>
         <SWRConfig value={{ use: [debugSWR] }}>
           <Suspense
