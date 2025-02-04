@@ -15,9 +15,9 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 import { useEffect, useState } from 'react'
-import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
-import { getPage, getRoute } from 'utils/route'
+import { getRoute } from 'utils/route'
 
 function VaultLoadingState() {
   return (
@@ -42,11 +42,12 @@ export default function VaultDetails() {
       focusComponent: {
         component: <VaultDetailsContent vaultAddress={vaultAddress} />,
         onClose: () => {
-          navigate(getRoute(getPage('vaults', chainConfig), searchParams, address))
+          useStore.setState({ focusComponent: null })
+          navigate(getRoute('vaults-community', searchParams, address))
         },
       },
     })
-  }, [vaultAddress, navigate, chainConfig, searchParams, address])
+  }, [address, chainConfig, navigate, searchParams, vaultAddress])
 
   return null
 }
