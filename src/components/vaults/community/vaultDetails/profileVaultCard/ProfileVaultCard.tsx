@@ -6,14 +6,17 @@ import Card from 'components/common/Card'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { ExternalLink, TrashBin } from 'components/common/Icons'
+import { ExternalLink, TrashBin, Verified } from 'components/common/Icons'
+import Loading from 'components/common/Loading'
 import ShareBar from 'components/common/ShareBar'
 import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
 import FeeTag from 'components/vaults/community/vaultDetails/profileVaultCard/FeeTag'
 import InfoRow from 'components/vaults/community/vaultDetails/profileVaultCard/InfoRow'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
+import useVaultOwnerInfo from 'hooks/vaults/useVaultOwnerInfo'
 import moment from 'moment'
+import Image from 'next/image'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { formatLockupPeriod } from 'utils/formatters'
@@ -21,40 +24,41 @@ import { BN } from 'utils/helpers'
 
 interface Props {
   details: ExtendedManagedVaultDetails
-  wallet: string
+  wallet?: string
   onDelete: () => void
   onEdit: (show: boolean) => void
-  avatarUrl: string
   isOwner: boolean
 }
 
 export default function ProfileVaultCard(props: Props) {
-  const { details, isOwner, wallet = '', avatarUrl = '', onDelete, onEdit } = props
+  const { details, isOwner, wallet, onDelete, onEdit } = props
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
+  const { vaultOwnerInfo, isLoading } = useVaultOwnerInfo(wallet)
 
   return (
     <Card className='bg-white/5'>
-      {/* TODO: only demo, to be updated depending on how and if we get the users pic */}
       <div className='relative mb-6'>
         <div className='overflow-hidden h-28'>
-          {/* demo */}
-          <img
-            src={avatarUrl}
-            width={50}
-            height={50}
-            alt={'profile'}
-            className='w-full h-full object-cover blur-xl'
-            loading='lazy'
-          />
+          {isLoading ? (
+            <Loading className='h-28 rounded-b-none' />
+          ) : (
+            <Image
+              src={vaultOwnerInfo.avatar.url}
+              width={vaultOwnerInfo.avatar.width}
+              height={vaultOwnerInfo.avatar.height}
+              alt='managed vault background'
+              className='w-full h-full object-cover blur-md'
+              loading='lazy'
+            />
+          )}
         </div>
         <div className='absolute top-12 left-5 w-24 h-24 rounded-full border-4 border-black/70 '>
-          {/* demo */}
-          <img
-            src={avatarUrl}
-            width={24}
-            height={24}
-            alt={'profile'}
+          <Image
+            src={vaultOwnerInfo.avatar.url}
+            width={vaultOwnerInfo.avatar.width}
+            height={vaultOwnerInfo.avatar.height}
+            alt='profile picture'
             className='w-full h-full rounded-full'
             loading='lazy'
           />
@@ -85,32 +89,57 @@ export default function ProfileVaultCard(props: Props) {
               className='text-sm'
             />
           </InfoRow>
-          {isOwner ? (
-            <>
-              <InfoRow label='Accrued PnL'>
-                <DisplayCurrency
-                  coin={BNCoin.fromDenomAndBigNumber(
-                    'usd',
-                    BN(details.performance_fee_state.accumulated_pnl),
-                  )}
-                  className={classNames(
-                    'text-sm text-white',
-                    BN(details.performance_fee_state.accumulated_pnl).isGreaterThan(0) &&
-                      'text-profit',
-                    BN(details.performance_fee_state.accumulated_pnl).isNegative() && 'text-loss',
-                  )}
-                />
-              </InfoRow>
-              <InfoRow label='Wallet'>
-                <div className='flex items-center gap-1'>
-                  <Text size='sm' className='text-primary'>
-                    {wallet}
-                  </Text>
-                  <ExternalLink className='w-4 h-4 text-primary' />
-                </div>
-              </InfoRow>
-            </>
-          ) : (
+          <InfoRow label='Accrued PnL'>
+            <DisplayCurrency
+              coin={BNCoin.fromDenomAndBigNumber(
+                'usd',
+                BN(details.performance_fee_state.accumulated_pnl),
+              )}
+              className={classNames(
+                'text-sm text-white',
+                BN(details.performance_fee_state.accumulated_pnl).isGreaterThan(0) && 'text-profit',
+                BN(details.performance_fee_state.accumulated_pnl).isNegative() && 'text-loss',
+              )}
+            />
+          </InfoRow>
+          <InfoRow label='Vault Manager'>
+            <div className='flex items-center gap-1'>
+              <TextLink
+                href={vaultOwnerInfo.link.href}
+                target='_blank'
+                className={'leading-4 underline hover:no-underline hover:text-white'}
+                title={vaultOwnerInfo.link.title}
+              >
+                {vaultOwnerInfo.link.name}
+                <ExternalLink className='ml-2 inline w-4' />
+              </TextLink>
+            </div>
+          </InfoRow>
+          {vaultOwnerInfo.socials.length > 0 && (
+            <InfoRow label='Contact'>
+              <div className='flex items-center gap-4'>
+                {vaultOwnerInfo.socials.map((social, index) => (
+                  <div className='flex w-4'>
+                    <TextLink
+                      key={index}
+                      href={social.link}
+                      target='_blank'
+                      className={'underline hover:no-underline hover:text-white relative'}
+                      title={social.verified ? social.name : `${social.name} (unverified)`}
+                    >
+                      {social.icon}
+                      {social.verified && (
+                        <div className='w-4 absolute -top-2 -right-2 text-black'>
+                          <Verified className='fill-secondary' />
+                        </div>
+                      )}
+                    </TextLink>
+                  </div>
+                ))}
+              </div>
+            </InfoRow>
+          )}
+          {!isOwner && (
             <>
               {depositAsset && (
                 <InfoRow label='Deposit Asset'>
@@ -142,7 +171,7 @@ export default function ProfileVaultCard(props: Props) {
                 onClick={() => onEdit(true)}
                 variant='transparent'
                 color='quaternary'
-                className='!p-0'
+                className='!p-0 text-xs'
                 textClassNames='text-secondary hover:text-primary'
                 text='Edit'
               />
@@ -156,12 +185,11 @@ export default function ProfileVaultCard(props: Props) {
         <Divider />
 
         <div className='flex justify-between items-center pb-4'>
-          <Text size='sm'>Socials</Text>
+          <Text size='sm'>Share Vault</Text>
           <ShareBar text='Vault Details' />
         </div>
 
-        {isOwner && (
-          // check if no cns
+        {isOwner && !vaultOwnerInfo.hasStargazeNames && (
           <Callout type={CalloutType.INFO}>
             Setup your wallet with{' '}
             <TextLink
@@ -172,16 +200,6 @@ export default function ProfileVaultCard(props: Props) {
               className='text-purple underline'
             >
               Stargaze
-            </TextLink>{' '}
-            or an{' '}
-            <TextLink
-              href='https://medium.com/@icns/announcing-icns-the-interchain-name-service-e61e0c3e2abb'
-              target='_blank'
-              title='Stargaze'
-              textSize='extraSmall'
-              className='text-purple underline'
-            >
-              IBC/ICNS Domain
             </TextLink>{' '}
             so that you can populate a profile image, name, and social links.
           </Callout>

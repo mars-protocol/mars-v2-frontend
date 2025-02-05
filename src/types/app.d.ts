@@ -1888,3 +1888,39 @@ interface UserManagedVaultUnlock {
   vault_tokens: string
   base_tokens: string
 }
+
+interface StargazeNameInfo {
+  wallet: {
+    name: {
+      name: string
+      associatedAddr: string
+      media: StargazeMedia
+      records: StargazeSocialRecord[]
+    }
+  }
+}
+
+interface StargazeMedia extends Image {
+  visualAssets: {
+    lg: Image
+  }
+}
+
+interface StargazeSocialRecord {
+  name: string
+  value: string
+  verified: boolean
+}
+
+interface StargazeSocial {
+  name: string
+  verified: boolean
+  icon: React.ReactNode
+  link: string
+}
+
+interface Image {
+  url: string
+  width: number
+  height: number
+}

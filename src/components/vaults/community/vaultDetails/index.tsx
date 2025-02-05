@@ -72,8 +72,7 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
           <ProfileVaultCard
             details={vaultDetails}
             isOwner={isOwner}
-            wallet={vaultProfileData.wallet}
-            avatarUrl={vaultProfileData.avatarUrl}
+            wallet={vaultDetails.owner}
             onDelete={() => console.log('Delete clicked')}
             onEdit={() => setShowEditDescriptionModal(true)}
           />
