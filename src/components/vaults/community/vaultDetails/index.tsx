@@ -10,7 +10,6 @@ import PositionInfo from 'components/vaults/community/vaultDetails/common/Positi
 import ProfileVaultCard from 'components/vaults/community/vaultDetails/profileVaultCard/ProfileVaultCard'
 import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
-import { vaultProfileData } from 'components/vaults/dummyData'
 import useToggle from 'hooks/common/useToggle'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 import { useState } from 'react'
@@ -29,11 +28,11 @@ function VaultLoadingState() {
 
 export default function VaultDetails() {
   const { vaultAddress } = useParams<{ vaultAddress: string }>()
-
+  if (!vaultAddress) return null
   return <VaultDetailsContent vaultAddress={vaultAddress} />
 }
 
-function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefined }) {
+function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
   const { details: vaultDetails, isOwner, isLoading } = useManagedVaultDetails(vaultAddress)
 
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
