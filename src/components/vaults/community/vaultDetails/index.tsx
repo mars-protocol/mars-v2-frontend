@@ -11,7 +11,6 @@ import ProfileVaultCard from 'components/vaults/community/vaultDetails/profileVa
 import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
 import { vaultProfileData } from 'components/vaults/dummyData'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 import { useEffect, useState } from 'react'
@@ -34,22 +33,27 @@ export default function VaultDetails() {
   const { vaultAddress } = useParams<{ vaultAddress: string }>()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
+  const focusComponent = useStore((s) => s.focusComponent)
 
   useEffect(() => {
-    useStore.setState({
-      focusComponent: {
-        component: <VaultDetailsContent vaultAddress={vaultAddress} />,
-        onClose: () => {
-          useStore.setState({ focusComponent: null })
-          navigate(getRoute('vaults-community', searchParams, address))
-        },
-      },
-    })
-  }, [address, chainConfig, navigate, searchParams, vaultAddress])
+    const currentPath = window.location.pathname
+    const isDirectAccess = currentPath.includes('/details')
 
-  return null
+    if (isDirectAccess && !focusComponent && vaultAddress) {
+      useStore.setState({
+        focusComponent: {
+          component: <VaultDetailsContent vaultAddress={vaultAddress} />,
+          onClose: () => {
+            useStore.setState({ focusComponent: null })
+            navigate(getRoute('vaults-community', searchParams, address))
+          },
+        },
+      })
+    }
+  }, [])
+
+  return <VaultDetailsContent vaultAddress={vaultAddress} />
 }
 
 function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefined }) {
