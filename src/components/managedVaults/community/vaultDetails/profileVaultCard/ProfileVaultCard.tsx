@@ -3,6 +3,7 @@ import AssetImage from 'components/common/assets/AssetImage'
 import Button from 'components/common/Button'
 import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
+import { CircularProgress } from 'components/common/CircularProgress'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
 import { FormattedNumber } from 'components/common/FormattedNumber'
@@ -53,15 +54,20 @@ export default function ProfileVaultCard(props: Props) {
             />
           )}
         </div>
-        <div className='absolute top-12 left-5 w-24 h-24 rounded-full border-4 border-black/70 '>
-          <Image
-            src={vaultOwnerInfo.avatar.url}
-            width={vaultOwnerInfo.avatar.width}
-            height={vaultOwnerInfo.avatar.height}
-            alt='profile picture'
-            className='w-full h-full rounded-full'
-            loading='lazy'
-          />
+        <div className='flex absolute top-12 left-5 w-24 h-24 rounded-full border-4 border-black/70 items-center content-center justify-center bg-black/70'>
+          {isLoading ? (
+            <CircularProgress size={60} />
+          ) : (
+            <Image
+              src={vaultOwnerInfo.avatar.url}
+              width={vaultOwnerInfo.avatar.width}
+              height={vaultOwnerInfo.avatar.height}
+              alt='profile picture'
+              className='w-full h-full rounded-full'
+              loading='lazy'
+              quality={100}
+            />
+          )}
         </div>
       </div>
 
