@@ -1,5 +1,8 @@
 import { Navigate, Outlet, Route, Routes as RoutesWrapper } from 'react-router-dom'
 
+import CreateVault from 'components/managedVaults/community/createVault/index'
+import MintVaultAccount from 'components/managedVaults/community/createVault/MintVaultAccount'
+import VaultDetails from 'components/managedVaults/community/vaultDetails/index'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import Layout from 'pages/_layout'
 import BorrowPage from 'pages/BorrowPage'
@@ -14,11 +17,8 @@ import PortfolioAccountPage from 'pages/PortfolioAccountPage'
 import PortfolioPage from 'pages/PortfolioPage'
 import TradePage from 'pages/TradePage'
 import V1Page from 'pages/V1Page'
-import VaultsOfficialPage from 'pages/VaultsOfficialPage'
 import VaultsCommunityPage from 'pages/VaultsCommunityPage'
-import CreateVault from 'components/vaults/community/createVault/index'
-import MintVaultAccount from 'components/vaults/community/createVault/MintVaultAccount'
-import VaultDetails from 'components/vaults/community/vaultDetails/index'
+import VaultsOfficialPage from 'pages/VaultsOfficialPage'
 
 export default function Routes() {
   const chainConfig = useChainConfig()

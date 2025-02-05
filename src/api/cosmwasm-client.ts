@@ -8,9 +8,9 @@ import { MarsOracleWasmQueryClient } from 'types/generated/mars-oracle-wasm/Mars
 import { MarsParamsQueryClient } from 'types/generated/mars-params/MarsParams.client'
 import { MarsPerpsQueryClient } from 'types/generated/mars-perps/MarsPerps.client'
 import { MarsRedBankQueryClient } from 'types/generated/mars-red-bank/MarsRedBank.client'
+import { MarsVaultQueryClient } from 'types/generated/mars-vault/MarsVault.client'
 import { setNodeError } from 'utils/error'
 import { getUrl } from 'utils/url'
-import { MarsVaultQueryClient } from 'types/generated/mars-vault/MarsVault.client'
 
 const _cosmWasmClient: Map<string, CosmWasmClient> = new Map()
 const _creditManagerQueryClient: Map<string, MarsCreditManagerQueryClient> = new Map()
@@ -189,8 +189,7 @@ const getManagedVaultOwner = async (chainConfig: ChainConfig, address: string) =
   try {
     const client = await getClient(getUrl(chainConfig.endpoints.rpc))
     const contractInfo = await client.getContract(address)
-
-    return contractInfo.admin
+    return contractInfo.admin ?? contractInfo.creator
   } catch (error) {
     setNodeError(getUrl(chainConfig.endpoints.rpc), error)
     throw error
@@ -273,16 +272,16 @@ export {
   getClient,
   getCreditManagerQueryClient,
   getIncentivesQueryClient,
+  getManagedVaultAllUnlocks,
+  getManagedVaultDetails,
+  getManagedVaultOwner,
+  getManagedVaultPerformanceFeeState,
+  getManagedVaultQueryClient,
+  getManagedVaultUserUnlocks,
   getOracleQueryClientNeutron,
   getOracleQueryClientOsmosis,
   getParamsQueryClient,
   getPerpsQueryClient,
   getRedBankQueryClient,
   getVaultQueryClient,
-  getManagedVaultQueryClient,
-  getManagedVaultOwner,
-  getManagedVaultDetails,
-  getManagedVaultPerformanceFeeState,
-  getManagedVaultUserUnlocks,
-  getManagedVaultAllUnlocks,
 }

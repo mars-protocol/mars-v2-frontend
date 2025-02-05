@@ -11,10 +11,10 @@ import Loading from 'components/common/Loading'
 import ShareBar from 'components/common/ShareBar'
 import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
-import FeeTag from 'components/vaults/community/vaultDetails/profileVaultCard/FeeTag'
-import InfoRow from 'components/vaults/community/vaultDetails/profileVaultCard/InfoRow'
+import FeeTag from 'components/managedVaults/community/vaultDetails/profileVaultCard/FeeTag'
+import InfoRow from 'components/managedVaults/community/vaultDetails/profileVaultCard/InfoRow'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
-import useVaultOwnerInfo from 'hooks/vaults/useVaultOwnerInfo'
+import useManagedVaultOwnerInfo from 'hooks/managedVaults/useManagedVaultOwnerInfo'
 import moment from 'moment'
 import Image from 'next/image'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -34,7 +34,7 @@ export default function ProfileVaultCard(props: Props) {
   const { details, isOwner, wallet, onDelete, onEdit } = props
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
-  const { vaultOwnerInfo, isLoading } = useVaultOwnerInfo(wallet)
+  const { vaultOwnerInfo, isLoading } = useManagedVaultOwnerInfo(wallet)
 
   return (
     <Card className='bg-white/5'>

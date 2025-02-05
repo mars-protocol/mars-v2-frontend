@@ -26,23 +26,23 @@ interface VaultOwnerInfo {
   isLoading: boolean
 }
 
-export default function useVaultOwnerInfo(address?: string): VaultOwnerInfo {
-  const { data: stargazeInfo, isLoading } = useStargazeWalletInfo(address)
-
+export default function useManagedVaultOwnerInfo(address?: string): VaultOwnerInfo {
+  const { data, isLoading } = useStargazeWalletInfo(address)
+  const stargazeInfo = data?.wallet.name
   const chainConfig = useChainConfig()
 
   return useMemo(() => {
-    const avatar = stargazeInfo ? stargazeInfo.wallet.name.media.visualAssets.lg : defaultAvatar
+    const avatar = stargazeInfo ? stargazeInfo.media.visualAssets.lg : defaultAvatar
     const walletLinkTarget = stargazeInfo
-      ? `https://www.stargaze.zone/p/${stargazeInfo.wallet.name.associatedAddr}/tokens?from=wallet`
+      ? `https://www.stargaze.zone/p/${stargazeInfo.associatedAddr}/tokens?from=wallet`
       : `${chainConfig.endpoints.explorer}/address/${address}`
-    const walletLinkName = stargazeInfo ? stargazeInfo.wallet.name.name : truncate(address, [2, 6])
+    const walletLinkName = stargazeInfo ? stargazeInfo.name : truncate(address, [2, 6])
     const walletLinkTitle = stargazeInfo
       ? 'View Stargaze Profile'
       : `View on ${chainConfig.explorerName}`
 
     const socials = [] as StargazeSocial[]
-    stargazeInfo?.wallet.name.records.forEach((record) => {
+    stargazeInfo?.records.forEach((record) => {
       switch (record.name) {
         case 'twitter':
           socials.push({

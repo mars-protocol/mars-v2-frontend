@@ -1,13 +1,13 @@
-import { AvailableOfficialVaults } from 'components/vaults/official/table/AvailableOfficialVaults'
-import { getPage, getRoute } from 'utils/route'
 import Tab from 'components/earn/Tab'
+import { AvailableOfficialVaults } from 'components/managedVaults/official/table/AvailableOfficialVaults'
+import VaultsOfficialIntro from 'components/managedVaults/official/VaultsOfficialIntro'
+import { VAULTS_TABS } from 'constants/pages'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
-import VaultsOfficialIntro from 'components/vaults/official/VaultsOfficialIntro'
-import { VAULTS_TABS } from 'constants/pages'
+import { getPage, getRoute } from 'utils/route'
 
 export default function VaultsOfficialPage() {
   const chainConfig = useChainConfig()

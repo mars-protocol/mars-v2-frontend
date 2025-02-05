@@ -1,6 +1,6 @@
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
-import useCommunityVaultsColumns from 'components/vaults/community/table/useCommunityVaultsColumns'
+import useCommunityVaultsColumns from 'components/managedVaults/community/table/useCommunityVaultsColumns'
 import useManagedVaults from 'hooks/managedVaults/useManagedVaults'
 import useStore from 'store'
 interface Props {

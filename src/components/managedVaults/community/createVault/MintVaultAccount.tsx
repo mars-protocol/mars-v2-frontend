@@ -1,14 +1,13 @@
 import Button from 'components/common/Button'
-import CreateVaultContent from 'components/vaults/community/createVault/CreateVaultContent'
-import Text from 'components/common/Text'
-import VaultDetails from 'components/vaults/community/vaultDetails/index'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import useStore from 'store'
 import { ArrowRight, Vault } from 'components/common/Icons'
-import { getPage, getRoute } from 'utils/route'
+import Text from 'components/common/Text'
+import CreateVaultContent from 'components/managedVaults/community/createVault/CreateVaultContent'
+import VaultDetails from 'components/managedVaults/community/vaultDetails/index'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { useCallback, useState } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import useStore from 'store'
+import { getPage, getRoute } from 'utils/route'
 
 export default function MintVaultAccount() {
   const [isTxPending, setIsTxPending] = useState(false)
