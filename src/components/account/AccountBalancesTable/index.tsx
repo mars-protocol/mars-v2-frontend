@@ -58,7 +58,6 @@ export default function AccountBalancesTable(props: Props) {
   const { skipBridges } = useSkipBridge({
     chainConfig,
     cosmosAddress: address,
-    evmAddress: undefined,
   })
 
   const columns = useAccountBalancesColumns(account, showLiquidationPrice)

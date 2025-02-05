@@ -14,7 +14,6 @@ export function useHandleBridgeCompletion() {
   const { removeSkipBridge } = useSkipBridge({
     chainConfig,
     cosmosAddress: address,
-    evmAddress: undefined,
   })
 
   const handleBridgeCompletion = async (rowData: any) => {
