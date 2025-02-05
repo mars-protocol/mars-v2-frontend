@@ -18,6 +18,10 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { getRoute } from 'utils/route'
 
+interface Props {
+  initialVaultAddress?: string
+}
+
 function VaultLoadingState() {
   return (
     <div className='flex flex-wrap justify-center w-full gap-4'>
@@ -29,12 +33,14 @@ function VaultLoadingState() {
   )
 }
 
-export default function VaultDetails() {
-  const { vaultAddress } = useParams<{ vaultAddress: string }>()
+export default function VaultDetails(props: Props) {
+  const { initialVaultAddress } = props
+  const { vaultAddress: urlVaultAddress } = useParams<{ vaultAddress: string }>()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
   const focusComponent = useStore((s) => s.focusComponent)
+  const vaultAddress = urlVaultAddress || initialVaultAddress
 
   useEffect(() => {
     const currentPath = window.location.pathname
@@ -51,7 +57,7 @@ export default function VaultDetails() {
         },
       })
     }
-  }, [])
+  }, [focusComponent, address, vaultAddress, navigate, searchParams])
 
   return <VaultDetailsContent vaultAddress={vaultAddress} />
 }
