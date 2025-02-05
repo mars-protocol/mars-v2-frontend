@@ -41,8 +41,8 @@ export default function PositionInfo(props: Props) {
 
         <div className='flex flex-col md:flex-row gap-2'>
           <div className='flex flex-col md:flex-row gap-2 w-full'>
-            <ActionButton {...primaryButton} />
-            <ActionButton {...secondaryButton} />
+            <ActionButton {...primaryButton} short />
+            <ActionButton {...secondaryButton} short />
           </div>
         </div>
       </div>
