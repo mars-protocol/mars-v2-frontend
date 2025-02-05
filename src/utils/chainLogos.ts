@@ -1,6 +1,4 @@
 import { arbitrum, base, celo, mainnet, optimism, polygon } from '@wagmi/core/chains'
-import { Arbitrum, Base, Celo, Ethereum, Optimism, Polygon } from 'components/common/ChainLogos'
-import { StaticImageData } from 'next/image'
 
 const CHAIN_ID_MAP: Record<string, number> = {
   Ethereum: mainnet.id,
@@ -12,18 +10,18 @@ const CHAIN_ID_MAP: Record<string, number> = {
 }
 
 // Using CDN URLs from chainlist.org which are reliable and optimized
-const CHAIN_ICONS: Record<number, StaticImageData> = {
-  [mainnet.id]: Ethereum,
-  [arbitrum.id]: Arbitrum,
-  [base.id]: Base,
-  [celo.id]: Celo,
-  [optimism.id]: Optimism,
-  [polygon.id]: Polygon,
+const CHAIN_ICONS: Record<number, string> = {
+  [mainnet.id]: '/images/chainLogos/rsz_ethereum.jpg',
+  [arbitrum.id]: '/images/chainLogos/rsz_arbitrum.jpg',
+  [base.id]: '/images/chainLogos/rsz_base.jpg',
+  [celo.id]: '/images/chainLogos/rsz_celo.jpg',
+  [optimism.id]: '/images/chainLogos/rsz_optimism.jpg',
+  [polygon.id]: '/images/chainLogos/rsz_polygon.jpg',
 }
 
-export function getChainLogoByName(chainName: string): StaticImageData | null {
+export function getChainLogoByName(chainName: string): string | null {
   const chainId = CHAIN_ID_MAP[chainName]
-  if (!chainId) return null
+  if (!chainId) return ''
 
-  return CHAIN_ICONS[chainId] ?? null
+  return CHAIN_ICONS[chainId] ?? ''
 }

@@ -1,6 +1,0 @@
-export { default as Arbitrum } from 'components/common/chainLogos/rsz_arbitrum.jpg'
-export { default as Base } from 'components/common/chainLogos/rsz_base.jpg'
-export { default as Celo } from 'components/common/chainLogos/rsz_celo.jpg'
-export { default as Ethereum } from 'components/common/chainLogos/rsz_ethereum.jpg'
-export { default as Optimism } from 'components/common/chainLogos/rsz_optimism.jpg'
-export { default as Polygon } from 'components/common/chainLogos/rsz_polygon.jpg'

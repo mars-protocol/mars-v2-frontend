@@ -5,7 +5,6 @@ import { Tooltip } from 'components/common/Tooltip'
 import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
 import AssetImage from 'components/common/assets/AssetImage'
 import AssetImageEvm from 'components/common/assets/AssetImageEvm'
-import AssetRate from 'components/common/assets/AssetRate'
 import { getChainLogoByName } from 'utils/chainLogos'
 
 export const ASSET_META = { id: 'name', header: 'Asset', accessorKey: 'asset.symbol' }

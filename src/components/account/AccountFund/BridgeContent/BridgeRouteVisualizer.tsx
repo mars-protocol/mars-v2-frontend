@@ -10,7 +10,7 @@ interface BridgeRouteVisualizerProps {
   originChain: string
   isLoading: boolean
   className?: string
-  evmChainLogo: StaticImageData | null
+  evmChainLogo: string | null
 }
 
 export default function BridgeRouteVisualizer({

@@ -1,11 +1,10 @@
-import Image, { StaticImageData } from 'next/image'
+import Image from 'next/image'
 import classNames from 'classnames'
-import ChainLogo from '../chain/ChainLogo'
 
 interface Props {
   asset: Asset
   className?: string
-  evmChainLogo: StaticImageData | null
+  evmChainLogo: string | null
   size?: number
 }
 

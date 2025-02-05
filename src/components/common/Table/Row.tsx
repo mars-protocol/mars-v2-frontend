@@ -1,18 +1,9 @@
 import { flexRender, Row as TanstackRow, Table as TanstackTable } from '@tanstack/react-table'
 import classNames from 'classnames'
-import Button from 'components/common/Button'
-import { CircularProgress } from 'components/common/CircularProgress'
-import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import { LEFT_ALIGNED_ROWS } from 'constants/table'
-import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import { ReactElement } from 'react'
-import useStore from 'store'
-import { generateExecutionMessage } from 'store/slices/broadcast'
-import { BNCoin } from 'types/classes/BNCoin'
-import { BN } from 'utils/helpers'
+import { BridgeRow } from './BridgeRow'
 
 interface Props<T> {
   row: TanstackRow<T>
@@ -46,16 +37,6 @@ function getBorderColor(
 export default function Row<T>(props: Props<T>) {
   const { renderExpanded, table, row, type, spacingClassName, isSelectable, isBalancesTable } =
     props
-
-  const account = useCurrentAccount()
-  const chainConfig = useChainConfig()
-  const address = useStore((s) => s.address)
-
-  const { skipBridges, removeSkipBridge } = useSkipBridge({
-    chainConfig,
-    cosmosAddress: address,
-    evmAddress: undefined,
-  })
 
   const canExpand = !!renderExpanded
 
@@ -94,89 +75,7 @@ export default function Row<T>(props: Props<T>) {
   return (
     <>
       {(row.original as any)?.bridgeStatus ? (
-        <tr
-          key={`${row.id}-row`}
-          className={classNames('bg-black/50 relative')}
-          onClick={handleRowClick}
-        >
-          {row.getVisibleCells().map((cell) => {
-            return (
-              <td
-                key={cell.id}
-                className={classNames(
-                  LEFT_ALIGNED_ROWS.includes(cell.column.id) ? 'text-left' : 'text-right',
-                  spacingClassName ?? 'px-3 py-4',
-                  type &&
-                    type !== 'strategies' &&
-                    LEFT_ALIGNED_ROWS.includes(cell.column.id) &&
-                    'border-l ',
-                  type &&
-                    type !== 'strategies' &&
-                    getBorderColor(type, cell.row.original as any, isBalancesTable ?? false),
-                  cell.column.columnDef.meta?.className,
-                )}
-              >
-                <div className='opacity-30'>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </div>
-              </td>
-            )
-          })}
-          <td colSpan={row.getVisibleCells().length} className='absolute inset-0'>
-            <div className='absolute inset-0 flex items-center justify-center'>
-              {(row.original as any)?.bridgeStatus === 'STATE_COMPLETED' ? (
-                <Button
-                  size='xs'
-                  color='secondary'
-                  onClick={async (e) => {
-                    e.stopPropagation()
-                    if ((row.original as any)?.skipBridgeId) {
-                      try {
-                        const coin = BNCoin.fromDenomAndBigNumber(
-                          chainConfig.stables[0],
-                          BN((row.original as any).amount),
-                        )
-                        const store = useStore.getState()
-                        const response = store.executeMsg({
-                          messages: [
-                            generateExecutionMessage(
-                              store.address,
-                              store.chainConfig.contracts.creditManager,
-                              {
-                                update_credit_account: {
-                                  ...(account?.id ? { account_id: account.id } : {}),
-                                  actions: [{ deposit: coin.toCoin() }],
-                                },
-                              },
-                              [coin.toCoin()],
-                            ),
-                          ],
-                        })
-
-                        store.handleTransaction({ response })
-
-                        const result = await response
-                        if (result.result) {
-                          removeSkipBridge((row.original as any).skipBridgeId)
-                        }
-                      } catch (error: any) {
-                        console.error('Transaction error:', error)
-                        return
-                      }
-                    }
-                  }}
-                >
-                  Complete Transaction
-                </Button>
-              ) : (
-                <div className='flex items-center justify-center gap-2'>
-                  <CircularProgress size={10} />
-                  <Text className='text-white pointer-events-none text-xs'>Pending...</Text>
-                </div>
-              )}
-            </div>
-          </td>
-        </tr>
+        <BridgeRow row={row} spacingClassName={spacingClassName} type={type} />
       ) : (
         <tr
           key={`${row.id}-row`}
