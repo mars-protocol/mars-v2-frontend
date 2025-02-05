@@ -56,29 +56,14 @@ export default function AccountBalancesTable(props: Props) {
     borrowingData,
   })
 
-  const enhancedAccountBalanceData = useMemo(() => {
-    return accountBalanceData.map((row) => ({
-      ...row,
-      isWhitelisted: whitelistedAssets.some((asset) => asset.denom === row.denom),
-    }))
-  }, [accountBalanceData, whitelistedAssets])
-
-  const sortedAccountBalanceData = enhancedAccountBalanceData.sort((a, b) => {
-    if (a.isWhitelisted && !b.isWhitelisted) return -1
-    if (!a.isWhitelisted && b.isWhitelisted) return 1
-    return 0
-  })
-
-  const columns = useAccountBalancesColumns(account, showLiquidationPrice)
   const { skipBridges } = useSkipBridge({
     chainConfig,
     cosmosAddress: address,
     evmAddress: undefined,
   })
 
-  const dynamicColumns: ColumnDef<AccountBalanceRow>[] = useMemo(() => {
-    return columns
-  }, [columns])
+  const columns = useAccountBalancesColumns(account, showLiquidationPrice)
+  const dynamicColumns = useMemo(() => columns, [columns])
 
   const [, forceUpdate] = useState({})
   useEffect(() => {
@@ -87,14 +72,28 @@ export default function AccountBalancesTable(props: Props) {
       forceUpdate({})
     }
   }, [skipBridges])
+
+  const enhancedAccountBalanceData = useMemo(() => {
+    return accountBalanceData.map((row) => ({
+      ...row,
+      isWhitelisted: whitelistedAssets.some((asset) => asset.denom === row.denom),
+    }))
+  }, [accountBalanceData, whitelistedAssets])
+
+  const sortedAccountBalanceData = useMemo(() => {
+    return enhancedAccountBalanceData.sort((a, b) => {
+      if (a.isWhitelisted && !b.isWhitelisted) return -1
+      if (!a.isWhitelisted && b.isWhitelisted) return 1
+      return 0
+    })
+  }, [enhancedAccountBalanceData])
+
   const dynamicAssets = useMemo(() => {
-    let assets = accountBalanceData.map(
-      (asset): AccountBalanceRow => ({
-        ...asset,
-        bridgeStatus: undefined,
-        skipBridgeId: undefined,
-      }),
-    )
+    let assets = sortedAccountBalanceData.map((asset) => ({
+      ...asset,
+      bridgeStatus: undefined,
+      skipBridgeId: undefined,
+    }))
 
     const skipBridgesString = localStorage.getItem('skipBridges')
     const currentBridges = skipBridgesString ? JSON.parse(skipBridgesString) : []
@@ -113,13 +112,14 @@ export default function AccountBalancesTable(props: Props) {
           apy: 0,
           amountChange: BN('0'),
           campaigns: [],
+          isWhitelisted: true,
         }),
       )
       assets = [...bridgedAssets, ...assets]
     }
 
     return assets
-  }, [accountBalanceData, chainConfig.stables])
+  }, [sortedAccountBalanceData, chainConfig.stables])
 
   const skipBridgesString = localStorage.getItem('skipBridges')
   const currentBridges = skipBridgesString ? JSON.parse(skipBridgesString) : []
@@ -166,6 +166,7 @@ export default function AccountBalancesTable(props: Props) {
       </ConditionalWrapper>
     )
   }
+
   return (
     <Table
       title={

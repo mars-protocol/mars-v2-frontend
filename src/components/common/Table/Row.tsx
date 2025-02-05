@@ -15,6 +15,7 @@ import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import { generateExecutionMessage } from 'store/slices/broadcast'
 import { CircularProgress } from '../CircularProgress'
+import { Tooltip } from '../Tooltip'
 
 interface Props<T> {
   row: TanstackRow<T>
@@ -67,6 +68,10 @@ export default function Row<T>(props: Props<T>) {
   const isNewAccount = account?.id === currentAccount?.id
   const shouldAutoLend = isNewAccount ? isAutoLendEnabledGlobal : isAutoLendEnabledForCurrentAccount
   const canExpand = !!renderExpanded
+
+  const name = (row.original as any).name ?? ''
+  const isWhitelisted =
+    (row.original as any).isWhitelisted !== false && !name.includes('Perps USDC Vault')
 
   const handleRowClick = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -191,6 +196,8 @@ export default function Row<T>(props: Props<T>) {
             canExpand && row.getIsExpanded()
               ? 'is-expanded border-t gradient-header'
               : 'hover:bg-white/5',
+            'group/assetRow',
+            !isWhitelisted && 'relative',
           )}
           onClick={handleRowClick}
         >
@@ -207,14 +214,27 @@ export default function Row<T>(props: Props<T>) {
                     'border-l',
                   type &&
                     type !== 'strategies' &&
-                    getBorderColor(type, cell.row.original as any, isBalancesTable ?? false),
+                    getBorderColor(type, cell.row.original as any, isWhitelisted),
                   cell.column.columnDef.meta?.className,
+                  !isWhitelisted && isBalancesTable && 'opacity-60',
+                  !isWhitelisted && isBalancesTable && 'group-hover/assetRow:opacity-100',
                 )}
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>
             )
           })}
+          {!isWhitelisted && isBalancesTable && (
+            <td className='absolute inset-0 p-0'>
+              <Tooltip
+                type='info'
+                content="This asset or strategy is not whitelisted and doesn't count as collateral"
+                className='absolute inset-0 z-10 cursor-help'
+              >
+                <div className='absolute inset-0' />
+              </Tooltip>
+            </td>
+          )}
         </tr>
       )}
       {row.getIsExpanded() && renderExpanded && renderExpanded(row, table)}
