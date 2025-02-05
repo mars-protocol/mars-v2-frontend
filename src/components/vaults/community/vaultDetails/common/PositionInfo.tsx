@@ -1,4 +1,5 @@
 import Button from 'components/common/Button'
+import ActionButton from 'components/common/Button/ActionButton'
 import Card from 'components/common/Card'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Text from 'components/common/Text'
@@ -40,8 +41,8 @@ export default function PositionInfo(props: Props) {
 
         <div className='flex flex-col md:flex-row gap-2'>
           <div className='flex flex-col md:flex-row gap-2 w-full'>
-            <Button {...primaryButton} className='w-32' />
-            <Button {...secondaryButton} className='w-32' />
+            <ActionButton {...primaryButton} />
+            <ActionButton {...secondaryButton} />
           </div>
         </div>
       </div>
