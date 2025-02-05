@@ -102,6 +102,22 @@ export default function ProfileVaultCard(props: Props) {
               )}
             />
           </InfoRow>
+          <InfoRow label='Deposit Asset'>
+            <div className='flex gap-2 items-center'>
+              <AssetImage asset={depositAsset} className='w-4 h-4' />
+              <Text size='sm'>{depositAsset.symbol}</Text>
+            </div>
+          </InfoRow>
+          <InfoRow label='Withdrawal Freeze Period'>
+            <Text size='sm'>
+              {formatLockupPeriod(
+                moment.duration(details.cooldown_period, 'seconds').as('days'),
+                'days',
+              )}
+            </Text>
+          </InfoRow>
+
+          <Divider />
           <InfoRow label='Vault Manager'>
             <div className='flex items-center gap-1'>
               <TextLink
@@ -138,26 +154,6 @@ export default function ProfileVaultCard(props: Props) {
                 ))}
               </div>
             </InfoRow>
-          )}
-          {!isOwner && (
-            <>
-              {depositAsset && (
-                <InfoRow label='Deposit Asset'>
-                  <div className='flex gap-2 items-center'>
-                    <AssetImage asset={depositAsset} className='w-4 h-4' />
-                    <Text size='sm'>{depositAsset.symbol}</Text>
-                  </div>
-                </InfoRow>
-              )}
-              <InfoRow label='Withdrawal Freeze Period'>
-                <Text size='sm'>
-                  {formatLockupPeriod(
-                    moment.duration(details.cooldown_period, 'seconds').as('days'),
-                    'days',
-                  )}
-                </Text>
-              </InfoRow>
-            </>
           )}
         </div>
 
