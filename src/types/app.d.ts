@@ -132,7 +132,7 @@ interface Asset extends AssetMetaData {
   name: string
   decimals: number
   symbol: string
-  chainName?: string
+  chainName?: string | ChainInfoID
 }
 
 interface AssetMetaData {

@@ -38,6 +38,7 @@ export default function Asset(props: Props) {
       {asset.chainName ? (
         <AssetImageEvm
           asset={asset}
+          size={24}
           className='w-6 h-6 ml-4'
           evmChainLogo={getChainLogoByName(asset.chainName)}
         />

@@ -101,14 +101,7 @@ export default function AssetsSelect(props: Props) {
 
     if (Array.isArray(tableData)) {
       const selectedAssets = assets.filter((asset, idx) => whitelistedSelected[idx])
-      console.log(
-        'Single Table - Selected Assets:',
-        selectedAssets.map((asset) => ({
-          symbol: asset.symbol,
-          denom: asset.denom,
-          chainName: asset.chainName,
-        })),
-      )
+
       newSelectedDenoms = selectedAssets.map((asset) =>
         asset.chainName ? `${asset.denom}:${asset.chainName}` : asset.denom,
       )

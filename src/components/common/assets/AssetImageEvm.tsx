@@ -1,10 +1,12 @@
-import Image from 'next/image'
+import Image, { StaticImageData } from 'next/image'
 import classNames from 'classnames'
+import ChainLogo from '../chain/ChainLogo'
 
 interface Props {
   asset: Asset
   className?: string
-  evmChainLogo: string
+  evmChainLogo: StaticImageData | null
+  size?: number
 }
 
 export function LogoUknown() {
@@ -20,18 +22,7 @@ export function LogoUknown() {
 }
 
 export default function AssetImageEvm(props: Props) {
-  const mainImageSize = props.className?.includes('w-24')
-    ? 24
-    : props.className?.includes('w-8')
-      ? 32
-      : props.className?.includes('w-6')
-        ? 24
-        : props.className?.includes('w-5')
-          ? 20
-          : props.className?.includes('w-4')
-            ? 16
-            : 24
-
+  const mainImageSize = props.size ?? 24
   const evmLogoSize = Math.floor(mainImageSize / 2)
 
   if (props.asset.logo)
@@ -53,13 +44,15 @@ export default function AssetImageEvm(props: Props) {
           }}
         >
           <div className='rounded-full' style={{ border: '1px solid #1D1122' }}>
-            <Image
-              src={props.evmChainLogo}
-              width={evmLogoSize}
-              height={evmLogoSize}
-              alt='EVM Chain'
-              className='rounded-full'
-            />
+            {props.asset.chainName && props.evmChainLogo && (
+              <Image
+                src={props.evmChainLogo}
+                width={evmLogoSize}
+                height={evmLogoSize}
+                alt='EVM Chain'
+                className='rounded-full'
+              />
+            )}
           </div>
         </div>
       </div>
@@ -76,13 +69,15 @@ export default function AssetImageEvm(props: Props) {
         }}
       >
         <div className='rounded-full' style={{ border: '1px solid #1D1122' }}>
-          <Image
-            src={props.evmChainLogo}
-            width={evmLogoSize}
-            height={evmLogoSize}
-            alt='EVM Chain'
-            className='rounded-full'
-          />
+          {props.asset.chainName && props.evmChainLogo && (
+            <Image
+              src={props.evmChainLogo}
+              width={evmLogoSize}
+              height={evmLogoSize}
+              alt='EVM Chain'
+              className='rounded-full'
+            />
+          )}
         </div>
       </div>
     </div>

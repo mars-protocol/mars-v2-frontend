@@ -30,6 +30,7 @@ import { chainNameToUSDCAttributes } from 'utils/fetchUSDCBalance'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
 import BridgeRouteVisualizer from './BridgeContent/BridgeRouteVisualizer'
+import { getChainLogoByName } from 'utils/chainLogos'
 
 interface Props {
   account?: Account
@@ -376,6 +377,9 @@ export default function AccountFundContent(props: Props) {
                     isLoading={isLoadingRoute}
                     bridges={bridges}
                     originChain={fundingAssets.find((asset) => asset.chain)?.chain || ''}
+                    evmChainLogo={getChainLogoByName(
+                      fundingAssets.find((asset) => asset.chain)?.chain || '',
+                    )}
                   />
                 </div>
               </div>

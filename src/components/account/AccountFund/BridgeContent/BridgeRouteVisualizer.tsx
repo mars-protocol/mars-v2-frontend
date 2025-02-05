@@ -1,8 +1,7 @@
 import { CircularProgress } from 'components/common/CircularProgress'
 import { ArrowRight, Bridge } from 'components/common/Icons'
 import { BridgeInfo } from 'hooks/bridge/useSkipBridge'
-import Image from 'next/image'
-import { getChainLogoByName } from 'utils/chainLogos'
+import Image, { StaticImageData } from 'next/image'
 import { Tooltip } from 'components/common/Tooltip'
 import Text from 'components/common/Text'
 
@@ -11,6 +10,7 @@ interface BridgeRouteVisualizerProps {
   originChain: string
   isLoading: boolean
   className?: string
+  evmChainLogo: StaticImageData | null
 }
 
 export default function BridgeRouteVisualizer({
@@ -18,6 +18,7 @@ export default function BridgeRouteVisualizer({
   originChain,
   className = '',
   isLoading,
+  evmChainLogo,
 }: BridgeRouteVisualizerProps) {
   if (!bridges?.length) return null
 
@@ -28,15 +29,19 @@ export default function BridgeRouteVisualizer({
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       {isLoading && <CircularProgress />}
-      <Tooltip type='info' content={<Text size='xs'>{capitalizeFirstLetter(originChain)}</Text>}>
-        <Image
-          src={getChainLogoByName(originChain)}
-          alt={originChain}
-          className='rounded-full'
-          width={24}
-          height={24}
-        />
-      </Tooltip>
+      {evmChainLogo && (
+        <Tooltip type='info' content={<Text size='xs'>{capitalizeFirstLetter(originChain)}</Text>}>
+          <div>
+            <Image
+              src={evmChainLogo}
+              width={24}
+              height={24}
+              alt='EVM Chain'
+              className='rounded-full'
+            />
+          </div>
+        </Tooltip>
+      )}
       {bridges.map((bridge, index) => {
         const bridgeLogo = bridge.logo_uri
         return (
@@ -46,13 +51,15 @@ export default function BridgeRouteVisualizer({
               type='info'
               content={<Text size='xs'>{capitalizeFirstLetter(bridge.name)}</Text>}
             >
-              {bridgeLogo ? (
-                <Image src={bridgeLogo} alt='bridge' width={24} height={24} />
-              ) : (
-                <div className='w-6 h-6 text-center text-white/60'>
-                  <Bridge />
-                </div>
-              )}
+              <div>
+                {bridgeLogo ? (
+                  <Image src={bridgeLogo} alt='bridge' width={24} height={24} />
+                ) : (
+                  <div className='w-6 h-6 text-center text-white/60'>
+                    <Bridge />
+                  </div>
+                )}
+              </div>
             </Tooltip>
           </div>
         )

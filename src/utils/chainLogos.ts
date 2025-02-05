@@ -1,5 +1,6 @@
-import { arbitrum, base, celo, mainnet, optimism, polygon, zkSync } from '@wagmi/core/chains'
-import { CHAIN_NAMES } from './fetchUSDCBalance'
+import { arbitrum, base, celo, mainnet, optimism, polygon } from '@wagmi/core/chains'
+import { Arbitrum, Base, Celo, Ethereum, Optimism, Polygon } from 'components/common/ChainLogos'
+import { StaticImageData } from 'next/image'
 
 const CHAIN_ID_MAP: Record<string, number> = {
   Ethereum: mainnet.id,
@@ -8,23 +9,21 @@ const CHAIN_ID_MAP: Record<string, number> = {
   Celo: celo.id,
   Optimism: optimism.id,
   Polygon: polygon.id,
-  zkSync: zkSync.id,
 }
 
 // Using CDN URLs from chainlist.org which are reliable and optimized
-const CHAIN_ICONS: Record<number, string> = {
-  [mainnet.id]: 'https://icons.llamao.fi/icons/chains/rsz_ethereum.jpg',
-  [arbitrum.id]: 'https://icons.llamao.fi/icons/chains/rsz_arbitrum.jpg',
-  [base.id]: 'https://icons.llamao.fi/icons/chains/rsz_base.jpg',
-  [celo.id]: 'https://icons.llamao.fi/icons/chains/rsz_celo.jpg',
-  [optimism.id]: 'https://icons.llamao.fi/icons/chains/rsz_optimism.jpg',
-  [polygon.id]: 'https://icons.llamao.fi/icons/chains/rsz_polygon.jpg',
-  [zkSync.id]: 'https://icons.llamao.fi/icons/chains/rsz_zksync.jpg',
+const CHAIN_ICONS: Record<number, StaticImageData> = {
+  [mainnet.id]: Ethereum,
+  [arbitrum.id]: Arbitrum,
+  [base.id]: Base,
+  [celo.id]: Celo,
+  [optimism.id]: Optimism,
+  [polygon.id]: Polygon,
 }
 
-export function getChainLogoByName(chainName: string): string {
+export function getChainLogoByName(chainName: string): StaticImageData | null {
   const chainId = CHAIN_ID_MAP[chainName]
-  if (!chainId) return ''
+  if (!chainId) return null
 
-  return CHAIN_ICONS[chainId] ?? ''
+  return CHAIN_ICONS[chainId] ?? null
 }
