@@ -1,34 +1,3 @@
-// TODO: update once we know data structure
-export const queuedWithdrawDummyData = [
-  {
-    unfreeze_date: '29 Jan 2024',
-    unfreeze_time: '13:45',
-    status: 'Queued',
-    amount: '28386',
-    shares: '383',
-    totalPosition: '49342',
-    walletAddress: '0x37gs8fksjksjuncgtyyd36xdsfgjjsfsfksfi',
-  },
-  {
-    unfreeze_date: '2 Sep 2025',
-    unfreeze_time: '11:20',
-    status: 'Ready to withdraw',
-    amount: '67999',
-    shares: '3583',
-    totalPosition: '112282',
-    walletAddress: '0x37rdww8fksjksjuncgtyyd36xfsdsfgjjskssafi',
-  },
-  {
-    unfreeze_date: '9 Feb 2025',
-    unfreeze_time: '03:45',
-    status: 'Ready to withdraw',
-    amount: '2298765',
-    shares: '1765',
-    totalPosition: '974367',
-    walletAddress: '0x37wr8fksjksjuncgtyyd36xcfefdsfdsfgjjskfgsdsi',
-  },
-]
-
 export const vaultBalanceData = [
   {
     value: '1000',
@@ -63,24 +32,3 @@ export const vaultProfileData = {
   avatarUrl:
     'https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg',
 }
-
-export const withdrawalsDummyData = [
-  {
-    amount: 49577,
-    unfreeze_date: '9 Oct 2024',
-    unfreeze_time: '03:45',
-    status: 'unlocked',
-  },
-  {
-    amount: 4232,
-    unfreeze_date: '13 Sep 2024',
-    unfreeze_time: '13:45',
-    status: 'unlocked',
-  },
-  {
-    amount: 125000,
-    unfreeze_date: '19 Sep 2024',
-    unfreeze_time: '17:15',
-    status: 'unlocked',
-  },
-]

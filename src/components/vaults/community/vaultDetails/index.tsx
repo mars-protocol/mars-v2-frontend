@@ -169,7 +169,7 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
               />
             )}
 
-            <Withdrawals details={vaultDetails} isOwner={isOwner} />
+            <Withdrawals details={vaultDetails} isOwner={isOwner} vaultAddress={vaultAddress!} />
             <VaultSummary />
           </div>
         </div>

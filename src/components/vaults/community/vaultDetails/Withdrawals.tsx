@@ -8,38 +8,55 @@ import { Tooltip } from 'components/common/Tooltip'
 import VaultStats from 'components/vaults/community/vaultDetails/common/VaultStats'
 import useQueuedWithdrawals from 'components/vaults/community/vaultDetails/table/useQueuedWithdrawals'
 import useUserWithdrawals from 'components/vaults/community/vaultDetails/table/useUserWithdrawals'
-import { queuedWithdrawDummyData, withdrawalsDummyData } from 'components/vaults/dummyData'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import moment from 'moment'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { formatLockupPeriod } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import { useUserUnlocks } from 'hooks/managedVaults/useUserUnlocks'
+import { useAllUnlocks } from 'hooks/managedVaults/useAllUnlocks'
 
 interface Props {
   details: ExtendedManagedVaultDetails
   isOwner?: boolean
+  vaultAddress: string
 }
 
 export default function Withdrawals(props: Props) {
-  const { details, isOwner } = props
-  const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false })
-  const userWithdrawalColumns = useUserWithdrawals({ isLoading: false })
-  const vaultAssets = useVaultAssets()
+  const { details, isOwner, vaultAddress } = props
+  const {
+    data: allUnlocksData,
+    currentPage,
+    totalPages,
+    handlePageChange,
+  } = useAllUnlocks(vaultAddress, 3)
+  const { data: userUnlocksData = [], isLoading: isLoadingUnlocks } = useUserUnlocks(vaultAddress)
 
+  const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false, details })
+  const userWithdrawalColumns = useUserWithdrawals({
+    isLoading: false,
+    details,
+    vaultAddress,
+  })
+  const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
+  const withdrawalDate = moment(details.performance_fee_state.last_withdrawal * 1000)
+  const isValidWithdrawal = withdrawalDate.isValid()
 
   if (!isOwner) {
-    return (
-      <Table
-        title='Withdrawals'
-        columns={userWithdrawalColumns}
-        data={withdrawalsDummyData}
-        initialSorting={[]}
-        tableBodyClassName='bg-white/5'
-        spacingClassName='p-3'
-      />
-    )
+    return userUnlocksData.length > 0 ? (
+      <div className='w-full max-h-75'>
+        <Table
+          title='Withdrawals'
+          columns={userWithdrawalColumns}
+          data={userUnlocksData}
+          initialSorting={[{ id: 'initiated', desc: true }]}
+          tableBodyClassName='bg-white/5'
+          spacingClassName='p-3'
+        />
+      </div>
+    ) : null
   }
 
   const tabs: CardTab[] = [
@@ -91,15 +108,22 @@ export default function Withdrawals(props: Props) {
                       'usd',
                       BN(details.performance_fee_state.accumulated_pnl),
                     )}
+                    showSignPrefix
                     className={classNames(
-                      'text-sm text-white',
+                      'text-sm',
                       BN(details.performance_fee_state.accumulated_pnl).isGreaterThan(0) &&
                         'text-profit',
                       BN(details.performance_fee_state.accumulated_pnl).isNegative() && 'text-loss',
                     )}
                   />
-                  <span className='text-white/10'>|</span>
-                  <span className='text-white/50'>Since 20.06.24</span>
+                  {isValidWithdrawal && (
+                    <>
+                      <span className='text-white/10'>|</span>
+                      <span className='text-white/50'>
+                        Since {withdrawalDate.format('DD.MM.YY')}
+                      </span>
+                    </>
+                  )}
                 </div>
               ),
             },
@@ -132,20 +156,29 @@ export default function Withdrawals(props: Props) {
         />
       ),
     },
-    {
-      title: 'Queued Withdrawals',
-      renderContent: () => (
-        <Table
-          title='Queued Summary'
-          hideCard
-          columns={queuedWithdrawalcolumns}
-          data={queuedWithdrawDummyData}
-          initialSorting={[]}
-          tableBodyClassName='bg-white/5'
-          spacingClassName='p-3'
-        />
-      ),
-    },
+    ...(allUnlocksData.length > 0
+      ? [
+          {
+            title: 'Queued Withdrawals',
+            renderContent: () => (
+              <Table
+                title='Queued Withdrawals'
+                hideCard
+                columns={queuedWithdrawalcolumns}
+                data={allUnlocksData}
+                initialSorting={[{ id: 'created_at', desc: true }]}
+                tableBodyClassName='bg-white/5'
+                spacingClassName='p-3'
+                pagination={{
+                  currentPage,
+                  totalPages,
+                  onPageChange: handlePageChange,
+                }}
+              />
+            ),
+          },
+        ]
+      : []),
   ]
   return <CardWithTabs tabs={tabs} />
 }

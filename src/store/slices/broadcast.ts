@@ -1412,5 +1412,59 @@ export default function createBroadcastSlice(
       get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
+    unlockFromManagedVault: async (options: {
+      vaultAddress: string
+      amount: string
+      vaultToken: string
+    }) => {
+      const msg: ManagedVaultExecuteMsg = {
+        vault_extension: {
+          unlock: {
+            amount: options.amount,
+          },
+        },
+      }
+
+      const response = get().executeMsg({
+        messages: [
+          generateExecutionMessage(get().address, options.vaultAddress, msg, [
+            {
+              denom: get().chainConfig.defaultCurrency.coinMinimalDenom,
+              amount: options.amount,
+            },
+          ]),
+        ],
+      })
+
+      get().handleTransaction({ response })
+      return response.then((response) => !!response.result)
+    },
+    withdrawFromManagedVault: async (options: {
+      vaultAddress: string
+      amount: string
+      recipient?: string | null
+      vaultToken: string
+    }) => {
+      const msg: ManagedVaultExecuteMsg = {
+        redeem: {
+          amount: options.amount,
+          recipient: options.recipient,
+        },
+      }
+
+      const response = get().executeMsg({
+        messages: [
+          generateExecutionMessage(get().address, options.vaultAddress, msg, [
+            {
+              denom: options.vaultToken,
+              amount: options.amount,
+            },
+          ]),
+        ],
+      })
+
+      get().handleTransaction({ response })
+      return response.then((response) => !!response.result)
+    },
   }
 }

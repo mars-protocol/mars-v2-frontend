@@ -30,6 +30,7 @@ export default function VaultAction(props: Props) {
   const [amount, setAmount] = useState(BN_ZERO)
 
   const depositInManagedVault = useStore((s) => s.depositInManagedVault)
+  const unlockFromManagedVault = useStore((s) => s.unlockFromManagedVault)
 
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(vaultDetails.base_token)) as Asset
@@ -52,6 +53,21 @@ export default function VaultAction(props: Props) {
       setShowActionModal(false)
     } catch (error) {
       console.error('Deposit failed:', error)
+    }
+  }
+
+  const handleUnlock = async () => {
+    if (amount.isZero()) return
+
+    try {
+      await unlockFromManagedVault({
+        vaultAddress,
+        amount: amount.toString(),
+        vaultToken: vaultDetails.vault_token,
+      })
+      setShowActionModal(false)
+    } catch (error) {
+      console.error('Unlock failed:', error)
     }
   }
 
@@ -86,7 +102,10 @@ export default function VaultAction(props: Props) {
             <Callout type={CalloutType.INFO}>
               {isDeposit
                 ? 'Please note that deposited funds come directly from your wallet. Your credit account will not be affected.'
-                : 'Once you initiate this withdrawal, it will take 24 hours to become available.'}
+                : `Once you initiate this withdrawal, it will take ${formatLockupPeriod(
+                    moment.duration(vaultDetails.cooldown_period, 'seconds').as('days'),
+                    'days',
+                  )} to become available.`}
             </Callout>
             {isDeposit && (
               <Callout type={CalloutType.INFO}>
@@ -101,7 +120,7 @@ export default function VaultAction(props: Props) {
           </div>
 
           <Button
-            onClick={handleDeposit}
+            onClick={isDeposit ? handleDeposit : handleUnlock}
             className='w-full'
             text={isDeposit ? 'Deposit' : 'Withdraw'}
             rightIcon={<ArrowRight />}

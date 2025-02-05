@@ -1,55 +1,74 @@
-import BigNumber from 'bignumber.js'
-import TVL from 'components/earn/farm/common/Table/Columns/TVL'
 import Info, { INFO_META } from 'components/vaults/community/vaultDetails/table/columns/Info'
+import TVL from 'components/earn/farm/common/Table/Columns/TVL'
 import Timestamp, {
   TIMESTAMP_META,
 } from 'components/vaults/community/vaultDetails/table/columns/Timestamp'
-import Shares, { SHARES_META } from 'components/vaults/community/vaultDetails/table/columns/Shares'
 import React, { useMemo } from 'react'
+import { BN } from 'utils/helpers'
 import { ColumnDef } from '@tanstack/react-table'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 
 interface Props {
   isLoading: boolean
+  details: ExtendedManagedVaultDetails
 }
 
 export default function useQueuedWithdrawals(props: Props) {
-  const { isLoading } = props
+  const { isLoading, details } = props
 
-  // TODO: update once we know data structure
-  return useMemo<ColumnDef<any>[]>(
+  return useMemo<ColumnDef<UserManagedVaultUnlock>[]>(
     () => [
       {
         ...TIMESTAMP_META,
-        cell: ({ row }) => <Timestamp value={row.original} isLoading={isLoading} />,
+        cell: ({ row }) => <Timestamp value={row.original.created_at} isLoading={isLoading} />,
       },
       {
         ...INFO_META,
         accessorKey: 'status',
         header: 'Status',
-        cell: ({ row }) => <Info value={{ status: row.original.status }} isLoading={isLoading} />,
+        cell: ({ row }) => (
+          <Info value={{ cooldown_end: row.original.cooldown_end }} isLoading={isLoading} />
+        ),
       },
       {
         header: 'Amount',
-        cell: ({ row }) => <TVL amount={BigNumber(row.original.amount)} denom={'usd'} />,
+        meta: { className: 'min-w-30' },
+        cell: ({ row }) => (
+          <FormattedNumber
+            amount={Number(row.original.base_tokens)}
+            className='text-xs'
+            options={{ minDecimals: 0, maxDecimals: 0 }}
+          />
+        ),
       },
       {
-        ...SHARES_META,
-        cell: ({ row }) => <Shares value={BigNumber(row.original.shares)} isLoading={isLoading} />,
+        header: 'Shares',
+        meta: { className: 'min-w-20' },
+        cell: ({ row }) => (
+          <FormattedNumber
+            amount={BN(row.original.vault_tokens).shiftedBy(-PRICE_ORACLE_DECIMALS).toNumber()}
+            className='text-xs'
+            options={{ minDecimals: 0, maxDecimals: 0 }}
+          />
+        ),
       },
       {
         header: 'Total Position',
         meta: { className: 'w-30' },
-        cell: ({ row }) => <TVL amount={BigNumber(row.original.totalPosition)} denom={'usd'} />,
+        cell: ({ row }) => {
+          return <TVL amount={BN(row.original.vault_tokens)} denom={details.base_token} />
+        },
       },
       {
         ...INFO_META,
         accessorKey: 'address',
         header: 'Wallet Address',
         cell: ({ row }) => (
-          <Info value={{ walletAddress: row.original.walletAddress }} isLoading={isLoading} />
+          <Info value={{ walletAddress: row.original.user_address }} isLoading={isLoading} />
         ),
       },
     ],
-    [isLoading],
+    [isLoading, details.base_token],
   )
 }

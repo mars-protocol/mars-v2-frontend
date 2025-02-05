@@ -1,23 +1,28 @@
 import Loading from 'components/common/Loading'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import moment from 'moment'
 
 export const TIMESTAMP_META = {
   id: 'name',
-  header: 'Unfreezes',
+  header: 'Initiated',
   meta: { className: 'min-w-30' },
 }
 
 interface Props {
-  // TODO: update once we know data structure
-  value: any
+  value: number | string
   isLoading: boolean
 }
 
 export default function Timestamp(props: Props) {
   const { value, isLoading } = props
-  // TODO: update values once we know the structure
 
   if (isLoading) return <Loading />
 
-  return <TitleAndSubCell title={value.unfreeze_date} sub={value.unfreeze_time} />
+  const timestamp = typeof value === 'string' ? parseInt(value) : value
+  const date = moment(timestamp * 1000)
+
+  const dateInitiated = date.format('MMM D, YYYY')
+  const timeInitiated = date.format('hh:mm A')
+
+  return <TitleAndSubCell title={dateInitiated} sub={timeInitiated} />
 }
