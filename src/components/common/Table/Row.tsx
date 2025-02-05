@@ -1,21 +1,18 @@
 import { flexRender, Row as TanstackRow, Table as TanstackTable } from '@tanstack/react-table'
 import classNames from 'classnames'
 import Button from 'components/common/Button'
+import { CircularProgress } from 'components/common/CircularProgress'
 import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
 import { LEFT_ALIGNED_ROWS } from 'constants/table'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { ReactElement } from 'react'
 import useStore from 'store'
+import { generateExecutionMessage } from 'store/slices/broadcast'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
-
-import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
-import useAutoLend from 'hooks/wallet/useAutoLend'
-import { generateExecutionMessage } from 'store/slices/broadcast'
-import { CircularProgress } from '../CircularProgress'
-import { Tooltip } from '../Tooltip'
 
 interface Props<T> {
   row: TanstackRow<T>
@@ -52,10 +49,7 @@ export default function Row<T>(props: Props<T>) {
 
   const account = useCurrentAccount()
   const chainConfig = useChainConfig()
-  const currentAccount = useCurrentAccount()
   const address = useStore((s) => s.address)
-
-  const deposit = useStore((s) => s.deposit)
 
   const { skipBridges, removeSkipBridge } = useSkipBridge({
     chainConfig,
@@ -63,10 +57,6 @@ export default function Row<T>(props: Props<T>) {
     evmAddress: undefined,
   })
 
-  const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
-  const [isAutoLendEnabledGlobal] = useEnableAutoLendGlobal()
-  const isNewAccount = account?.id === currentAccount?.id
-  const shouldAutoLend = isNewAccount ? isAutoLendEnabledGlobal : isAutoLendEnabledForCurrentAccount
   const canExpand = !!renderExpanded
 
   const name = (row.original as any).name ?? ''
