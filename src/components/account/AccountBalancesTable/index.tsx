@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect } from 'react'
 
 import useAccountBalancesColumns from 'components/account/AccountBalancesTable/Columns/useAccountBalancesColumns'
 import useAccountBalanceData from 'components/account/AccountBalancesTable/useAccountBalanceData'
@@ -11,13 +11,11 @@ import Table from 'components/common/Table'
 import Text from 'components/common/Text'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
-import { BN } from 'utils/helpers'
-import { demagnify } from 'utils/formatters'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
+import { useSkipBridgeData } from 'hooks/bridge/useSkipBridgeData'
 
 interface Props {
   account: Account
@@ -47,13 +45,6 @@ export default function AccountBalancesTable(props: Props) {
   const address = useStore((s) => s.address)
   const updatedAccount = useStore((s) => s.updatedAccount)
   const isHls = account.kind === 'high_levered_strategy'
-  const whitelistedAssets = useWhitelistedAssets()
-  const accountBalanceData = useAccountBalanceData({
-    account,
-    updatedAccount,
-    lendingData,
-    borrowingData,
-  })
 
   const { skipBridges } = useSkipBridge({
     chainConfig,
@@ -61,68 +52,28 @@ export default function AccountBalancesTable(props: Props) {
   })
 
   const columns = useAccountBalancesColumns(account, showLiquidationPrice)
-  const dynamicColumns = useMemo(() => columns, [columns])
+  const dynamicColumns = columns
 
-  const [, forceUpdate] = useState({})
+  const accountBalanceData = useAccountBalanceData({
+    account,
+    updatedAccount,
+    lendingData,
+    borrowingData,
+  })
+
+  const { dynamicAssets, currentBridges, forceUpdate } = useSkipBridgeData({
+    accountBalanceData,
+    chainConfig,
+  })
+
   useEffect(() => {
     const skipBridgesString = localStorage.getItem('skipBridges')
     if (skipBridgesString) {
       forceUpdate({})
     }
-  }, [skipBridges])
+  }, [skipBridges, forceUpdate])
 
-  const enhancedAccountBalanceData = useMemo(() => {
-    return accountBalanceData.map((row) => ({
-      ...row,
-      isWhitelisted: whitelistedAssets.some((asset) => asset.denom === row.denom),
-    }))
-  }, [accountBalanceData, whitelistedAssets])
-
-  const sortedAccountBalanceData = useMemo(() => {
-    return enhancedAccountBalanceData.sort((a, b) => {
-      if (a.isWhitelisted && !b.isWhitelisted) return -1
-      if (!a.isWhitelisted && b.isWhitelisted) return 1
-      return 0
-    })
-  }, [enhancedAccountBalanceData])
-
-  const dynamicAssets = useMemo(() => {
-    let assets = sortedAccountBalanceData.map((asset) => ({
-      ...asset,
-      bridgeStatus: undefined,
-      skipBridgeId: undefined,
-    }))
-
-    const skipBridgesString = localStorage.getItem('skipBridges')
-    const currentBridges = skipBridgesString ? JSON.parse(skipBridgesString) : []
-
-    if (currentBridges.length > 0) {
-      const bridgedAssets = currentBridges.map(
-        (bridge: SkipBridgeTransaction): AccountBalanceRow => ({
-          skipBridgeId: bridge.id,
-          bridgeStatus: bridge.status,
-          type: 'bridge',
-          symbol: 'USDC',
-          size: demagnify(bridge.amount || 0, { decimals: 6, symbol: 'USDC' }),
-          value: demagnify(bridge.amount || 0, { decimals: 6, symbol: 'USDC' }).toString(),
-          denom: chainConfig.stables[0],
-          amount: BN(bridge.amount || 0),
-          apy: 0,
-          amountChange: BN('0'),
-          campaigns: [],
-          isWhitelisted: true,
-        }),
-      )
-      assets = [...bridgedAssets, ...assets]
-    }
-
-    return assets
-  }, [sortedAccountBalanceData, chainConfig.stables])
-
-  const skipBridgesString = localStorage.getItem('skipBridges')
-  const currentBridges = skipBridgesString ? JSON.parse(skipBridgesString) : []
-
-  if (sortedAccountBalanceData.length === 0 && currentBridges.length === 0) {
+  if (accountBalanceData.length === 0 && currentBridges.length === 0) {
     return (
       <ConditionalWrapper
         condition={!hideCard}

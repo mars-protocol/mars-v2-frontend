@@ -9,7 +9,6 @@ const CHAIN_ID_MAP: Record<string, number> = {
   Polygon: polygon.id,
 }
 
-// Using CDN URLs from chainlist.org which are reliable and optimized
 const CHAIN_ICONS: Record<number, string> = {
   [mainnet.id]: '/images/chainLogos/rsz_ethereum.jpg',
   [arbitrum.id]: '/images/chainLogos/rsz_arbitrum.jpg',

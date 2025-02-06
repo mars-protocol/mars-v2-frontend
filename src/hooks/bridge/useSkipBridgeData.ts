@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
 import { BN } from 'utils/helpers'
 import { demagnify } from 'utils/formatters'
-import { StatusState } from '@skip-go/client'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 
 interface UseSkipBridgeDataProps {
