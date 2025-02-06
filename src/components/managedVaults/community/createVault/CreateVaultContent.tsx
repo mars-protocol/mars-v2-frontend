@@ -1,9 +1,9 @@
-import classNames from 'classnames'
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
+import classNames from 'classnames'
 import { ChevronLeft } from 'components/common/Icons'
-import Text from 'components/common/Text'
 import { useNavigate } from 'react-router-dom'
+import Text from 'components/common/Text'
 
 interface Props {
   children: React.ReactNode
@@ -20,7 +20,7 @@ export default function CreateVaultContent(props: Props) {
         <Button
           onClick={() => navigate(-1)}
           variant='transparent'
-          color='secondary'
+          color='quaternary'
           className='text-white/60 hover:text-white'
           leftIcon={<ChevronLeft />}
           iconClassName='w-2 h-2'
