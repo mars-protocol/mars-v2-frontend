@@ -82,25 +82,16 @@ export default function CreateVault() {
 
       if (!result) return
 
-      if (result.address) {
-        if (accountId)
-          navigate(
-            getRoute(
-              getPage(`vaults/${result.address}/mint-account`, chainConfig),
-              searchParams,
-              address,
-              accountId,
-            ),
-          )
+      if (result.address && accountId) {
+        navigate(
+          getRoute(
+            getPage(`vaults/${result.address}/mint-account`, chainConfig),
+            searchParams,
+            address,
+            accountId,
+          ),
+        )
       }
-      useStore.setState({
-        focusComponent: {
-          component: <MintVaultAccount />,
-          onClose: () => {
-            navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
-          },
-        },
-      })
     } catch (error) {
       console.error('Failed to create vault:', error)
     } finally {
@@ -118,7 +109,6 @@ export default function CreateVault() {
     chainConfig,
     searchParams,
     address,
-    pathname,
   ])
 
   const handleWithdrawFreezePeriod = useCallback((value: string) => {

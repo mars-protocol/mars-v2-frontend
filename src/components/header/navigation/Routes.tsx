@@ -51,9 +51,8 @@ export default function Routes() {
         />
 
         <Route path='/vaults/:vaultAddress/details' element={<VaultDetails />} />
-        <Route path='/vaults' element={<VaultsOfficialPage />}>
-          <Route path='create' element={<CreateVault />} />
-        </Route>
+        <Route path='/vaults' element={<VaultsOfficialPage />} />
+        <Route path='/vaults/create' element={<CreateVault />} />
         <Route path='/vaults-community' element={<VaultsCommunityPage />} />
 
         <Route path='/wallets/:address'>
@@ -74,9 +73,9 @@ export default function Routes() {
           <Route path='vaults-community' element={<VaultsCommunityPage />} />
           <Route path='vaults/:vaultAddress/details' element={<VaultDetails />} />
           <Route path='vaults' element={<VaultsOfficialPage />}>
-            <Route path='create' element={<CreateVault />} />
             <Route path=':vaultAddress/mint-account' element={<MintVaultAccount />} />
           </Route>
+          <Route path='vaults/create' element={<CreateVault />} />
 
           <Route path='portfolio/:accountId'>
             <Route path='' element={<PortfolioAccountPage />} />
