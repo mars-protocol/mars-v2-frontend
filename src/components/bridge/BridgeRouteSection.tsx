@@ -1,7 +1,6 @@
 import { RouteResponse } from '@skip-go/client'
 import classNames from 'classnames'
 import Text from 'components/common/Text'
-import { BridgeInfo } from 'hooks/bridge/useSkipBridge'
 import BridgeRouteVisualizer from 'components/account/AccountFund/BridgeContent/BridgeRouteVisualizer'
 import { getChainLogoByName } from 'utils/chainLogos'
 import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'

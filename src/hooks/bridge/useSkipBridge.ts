@@ -1,13 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { SkipClient, StatusState, TxStatusResponse } from '@skip-go/client'
-import { WalletClient } from 'viem'
-import { getWalletClient } from '@wagmi/core'
-import { config } from 'config/ethereumConfig'
-import { chainNameToUSDCAttributes } from 'utils/fetchUSDCBalance'
+import { SkipClient, TxStatusResponse } from '@skip-go/client'
 import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 import { BN } from 'utils/helpers'
 import useStore from 'store'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
+import { useEvmBridge } from './useEvmBridge'
 
 interface UseSkipBridgeProps {
   chainConfig: ChainConfig
@@ -16,34 +13,13 @@ interface UseSkipBridgeProps {
   goFast?: boolean
 }
 
-export interface SkipBridgeTransaction {
-  txHash: string
-  chainID: string
-  explorerLink: string
-  status: StatusState
-  denom: string
-  amount: BigNumber
-  id: string
-}
-
-export interface SkipTransactionInfo {
-  txHash: string
-  chainID: string
-  explorerLink: string
-}
-
-export interface BridgeInfo {
-  id: string
-  name: string
-  logo_uri: string
-}
-
 export function useSkipBridge({
   chainConfig,
   cosmosAddress,
   evmAddress,
   goFast,
 }: UseSkipBridgeProps) {
+  const { getEvmSigner, switchEvmChain } = useEvmBridge()
   const [isBridgeInProgress, setIsBridgeInProgress] = useState(false)
   const [skipBridges, setSkipBridges] = useState<SkipBridgeTransaction[]>(() => {
     const savedSkipBridges = localStorage.getItem('skipBridges')
@@ -86,44 +62,16 @@ export function useSkipBridge({
           if (!offlineSigner) throw new Error('Keplr not installed')
           return offlineSigner
         },
-        getEVMSigner: async (chainID: string) => {
-          const evmWalletClient = (await getWalletClient(config, {
-            chainId: parseInt(chainID),
-          })) as WalletClient
-
-          if (!evmWalletClient) {
-            throw new Error(`getEVMSigner error: no wallet client available for chain ${chainID}`)
-          }
-
-          return evmWalletClient as any
-        },
+        getEVMSigner: getEvmSigner,
       }),
-    [chainConfig],
+    [chainConfig, getEvmSigner],
   )
 
   const fetchSkipRoute = useCallback(
     async (selectedAsset: WrappedBNCoin) => {
-      if (!selectedAsset.chain) throw new Error('Chain not found for selected asset')
-
-      const expectedChainAttributes = chainNameToUSDCAttributes[selectedAsset.chain]
-      if (!expectedChainAttributes) {
-        throw new Error(`No chain attributes found for denom: ${selectedAsset.coin.denom}`)
-      }
-
-      if (chainConfig.id.toString() !== expectedChainAttributes.chainID.toString()) {
-        const { switchChain } = await getWalletClient(config, {
-          chainId: expectedChainAttributes.chainID,
-        })
-
-        if (switchChain) {
-          await switchChain({ id: expectedChainAttributes.chainID })
-        } else {
-          throw new Error('Unable to switch network. Network switch function not available.')
-        }
-      }
-
       try {
-        skipClient.bridges
+        const expectedChainAttributes = await switchEvmChain(selectedAsset, chainConfig)
+
         const response = await skipClient.route({
           sourceAssetDenom: expectedChainAttributes.assetAddress,
           sourceAssetChainID: expectedChainAttributes.chainID.toString(),
@@ -150,7 +98,7 @@ export function useSkipBridge({
         throw error
       }
     },
-    [chainConfig.id, skipClient, goFast, chainConfig.stables],
+    [skipClient, goFast, chainConfig, switchEvmChain],
   )
 
   const handleSkipTransfer = useCallback(

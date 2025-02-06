@@ -1,6 +1,6 @@
 import { RouteResponse } from '@skip-go/client'
 import { useCallback, useEffect, useState } from 'react'
-import { BridgeInfo, useSkipBridge } from 'hooks/bridge/useSkipBridge'
+import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
 import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 import { chainNameToUSDCAttributes } from 'utils/fetchUSDCBalance'
 import { MINIMUM_USDC } from 'utils/constants'

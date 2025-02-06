@@ -35,6 +35,28 @@ type PositionType =
 type TableType = 'balances' | 'strategies' | 'perps'
 type AccountKind = import('types/generated/mars-credit-manager/MarsCreditManager.types').AccountKind
 
+interface BridgeInfo {
+  id: string
+  name: string
+  logo_uri: string
+}
+
+interface SkipTransactionInfo {
+  txHash: string
+  chainID: string
+  explorerLink: string
+}
+
+interface SkipBridgeTransaction {
+  txHash: string
+  chainID: string
+  explorerLink: string
+  status: StatusState
+  denom: string
+  amount: BigNumber
+  id: string
+}
+
 interface Account {
   id: string
   deposits: BNCoin[]

@@ -1,6 +1,5 @@
 import { CircularProgress } from 'components/common/CircularProgress'
 import { ArrowRight, Bridge } from 'components/common/Icons'
-import { BridgeInfo } from 'hooks/bridge/useSkipBridge'
 import Image, { StaticImageData } from 'next/image'
 import { Tooltip } from 'components/common/Tooltip'
 import Text from 'components/common/Text'

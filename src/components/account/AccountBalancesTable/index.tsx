@@ -17,7 +17,7 @@ import { getPage, getRoute } from 'utils/route'
 import { BN } from 'utils/helpers'
 import { demagnify } from 'utils/formatters'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import { SkipBridgeTransaction, useSkipBridge } from 'hooks/bridge/useSkipBridge'
+import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
 
 interface Props {
   account: Account

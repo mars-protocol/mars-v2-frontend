@@ -13,7 +13,7 @@ import { BN_ZERO } from 'constants/math'
 import useBaseAsset from 'hooks/assets/useBaseAsset'
 import { useFundingAssets } from 'hooks/assets/useFundingAssets'
 import { useUSDCBalances } from 'hooks/assets/useUSDCBalances'
-import { BridgeInfo, useSkipBridge } from 'hooks/bridge/useSkipBridge'
+import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import { useDepositCapCalculations } from 'hooks/markets/useDepositCapCalculations'
@@ -175,14 +175,22 @@ export default function AccountFundContent(props: Props) {
         (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
       )
 
-      if (evmAsset && !evmAsset.coin.amount.isZero() && !isEVMAssetLessThanMinimumUSDC) {
+      if (
+        evmAsset &&
+        !evmAsset.coin.amount.isZero() &&
+        !isEVMAssetLessThanMinimumUSDC &&
+        !showMinimumUSDCValueOverlay
+      ) {
         fetchRouteForEVMAsset()
+      } else {
+        setCurrentRoute(undefined)
+        setRouteError(null)
       }
     }, 500)
 
     return () => clearTimeout(timer)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [goFast, currentEVMAssetValue])
+  }, [goFast, currentEVMAssetValue, showMinimumUSDCValueOverlay])
 
   const handleClick = useCallback(async () => {
     if (isConfirming) return
@@ -310,7 +318,7 @@ export default function AccountFundContent(props: Props) {
         )}
         {showMinimumUSDCValueOverlay && (
           <Callout type={CalloutType.WARNING} className='mt-4'>
-            You need to deposit at least 0.05 USDC, when bridging from an EVM chain.
+            You need to deposit at least 1.00 USDC, when bridging from an EVM chain.
           </Callout>
         )}
         <Button
