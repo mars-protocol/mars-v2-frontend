@@ -41,12 +41,10 @@ export function useHandleBridgeCompletion() {
       store.handleTransaction({ response })
 
       const result = await response
-      console.log('result', result)
       if (result.result) {
         removeSkipBridge(rowData.skipBridgeId)
       }
       if (result.error) {
-        console.log('result.error', result.error)
         if (result.error?.includes('spendable balance') && result.error?.includes('is smaller')) {
           removeSkipBridge(rowData.skipBridgeId)
         }

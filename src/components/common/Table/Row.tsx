@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { Tooltip } from 'components/common/Tooltip'
 import { LEFT_ALIGNED_ROWS } from 'constants/table'
 import { ReactElement } from 'react'
-import { BridgeRow } from './BridgeRow'
+import { BridgeRow } from 'components/common/Table/BridgeRow'
 
 interface Props<T> {
   row: TanstackRow<T>
