@@ -1,15 +1,15 @@
-import Button from 'components/common/Button'
 import classNames from 'classnames'
-import DisplayCurrency from 'components/common/DisplayCurrency'
+import Button from 'components/common/Button'
 import EscButton from 'components/common/Button/EscButton'
-import Overlay from 'components/common/Overlay'
-import PerformanceFee from 'components/vaults/community/createVault/PerformanceFee'
-import Text from 'components/common/Text'
-import useStore from 'store'
-import { BN } from 'utils/helpers'
-import { BNCoin } from 'types/classes/BNCoin'
 import { Callout, CalloutType } from 'components/common/Callout'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import Overlay from 'components/common/Overlay'
+import Text from 'components/common/Text'
+import PerformanceFee from 'components/managedVaults/community/createVault/PerformanceFee'
 import { useState } from 'react'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import { BN } from 'utils/helpers'
 
 interface Props {
   showFeeActionModal: boolean

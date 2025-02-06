@@ -1,13 +1,13 @@
-import Info, { INFO_META } from 'components/vaults/community/vaultDetails/table/columns/Info'
-import TVL from 'components/earn/farm/common/Table/Columns/TVL'
-import Timestamp, {
-  TIMESTAMP_META,
-} from 'components/vaults/community/vaultDetails/table/columns/Timestamp'
-import React, { useMemo } from 'react'
-import { BN } from 'utils/helpers'
 import { ColumnDef } from '@tanstack/react-table'
 import { FormattedNumber } from 'components/common/FormattedNumber'
+import TVL from 'components/earn/farm/common/Table/Columns/TVL'
+import Info, { INFO_META } from 'components/managedVaults/community/vaultDetails/table/columns/Info'
+import Timestamp, {
+  TIMESTAMP_META,
+} from 'components/managedVaults/community/vaultDetails/table/columns/Timestamp'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import { useMemo } from 'react'
+import { BN } from 'utils/helpers'
 
 interface Props {
   isLoading: boolean

@@ -3,26 +3,17 @@ import { CircularProgress } from 'components/common/CircularProgress'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ArrowDownLine } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import EditDescription from 'components/vaults/community/vaultDetails/common/Overlays/EditDescription'
-import FeeAction from 'components/vaults/community/vaultDetails/common/Overlays/FeeAction'
-import VaultAction from 'components/vaults/community/vaultDetails/common/Overlays/VaultAction'
-import PositionInfo from 'components/vaults/community/vaultDetails/common/PositionInfo'
-import ProfileVaultCard from 'components/vaults/community/vaultDetails/profileVaultCard/ProfileVaultCard'
-import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
-import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
-import { vaultProfileData } from 'components/vaults/dummyData'
-import WalletConnecting from 'components/Wallet/WalletConnecting'
+import EditDescription from 'components/managedVaults/community/vaultDetails/common/Overlays/EditDescription'
+import FeeAction from 'components/managedVaults/community/vaultDetails/common/Overlays/FeeAction'
+import VaultAction from 'components/managedVaults/community/vaultDetails/common/Overlays/VaultAction'
+import PositionInfo from 'components/managedVaults/community/vaultDetails/common/PositionInfo'
+import ProfileVaultCard from 'components/managedVaults/community/vaultDetails/profileVaultCard/ProfileVaultCard'
+import VaultSummary from 'components/managedVaults/community/vaultDetails/VaultSummary'
+import Withdrawals from 'components/managedVaults/community/vaultDetails/Withdrawals'
 import useToggle from 'hooks/common/useToggle'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
-import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
-import { useEffect, useState } from 'react'
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import useStore from 'store'
-import { getRoute } from 'utils/route'
-
-interface Props {
-  initialVaultAddress?: string
-}
+import { useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 function VaultLoadingState() {
   return (
@@ -35,52 +26,13 @@ function VaultLoadingState() {
   )
 }
 
-export default function VaultDetails(props: Props) {
-  const { initialVaultAddress } = props
-  const { vaultAddress: urlVaultAddress } = useParams<{ vaultAddress: string }>()
-  const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const address = useStore((s) => s.address)
-  const focusComponent = useStore((s) => s.focusComponent)
-  const vaultAddress = urlVaultAddress || initialVaultAddress
-  const currentWallet = useCurrentWallet()
-  const client = useStore((s) => s.client)
-
-  useEffect(() => {
-    const currentPath = window.location.pathname
-    const isDirectAccess = currentPath.includes('/details')
-
-    // Handle wallet reconnection for direct modal access because modal routes bypass the normal wallet connection flow
-    if (currentWallet && (!client || !address)) {
-      useStore.setState({
-        focusComponent: {
-          component: <WalletConnecting providerId={currentWallet.providerId} />,
-          onClose: () => {
-            useStore.setState({ focusComponent: null })
-            navigate(getRoute('vaults-community', searchParams, address))
-          },
-        },
-      })
-      return
-    }
-
-    if (isDirectAccess && !focusComponent && vaultAddress) {
-      useStore.setState({
-        focusComponent: {
-          component: <VaultDetailsContent vaultAddress={vaultAddress} />,
-          onClose: () => {
-            useStore.setState({ focusComponent: null })
-            navigate(getRoute('vaults-community', searchParams, address))
-          },
-        },
-      })
-    }
-  }, [focusComponent, address, vaultAddress, navigate, searchParams, currentWallet, client])
-
+export default function VaultDetails() {
+  const { vaultAddress } = useParams<{ vaultAddress: string }>()
+  if (!vaultAddress) return null
   return <VaultDetailsContent vaultAddress={vaultAddress} />
 }
 
-function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefined }) {
+function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
   const { details: vaultDetails, isOwner, isLoading } = useManagedVaultDetails(vaultAddress)
 
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
@@ -119,8 +71,7 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string | undefine
           <ProfileVaultCard
             details={vaultDetails}
             isOwner={isOwner}
-            wallet={vaultProfileData.wallet}
-            avatarUrl={vaultProfileData.avatarUrl}
+            wallet={vaultDetails.owner}
             onDelete={() => console.log('Delete clicked')}
             onEdit={() => setShowEditDescriptionModal(true)}
           />

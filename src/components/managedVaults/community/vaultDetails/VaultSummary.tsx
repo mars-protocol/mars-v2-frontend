@@ -1,14 +1,14 @@
-import DisplayCurrency from 'components/common/DisplayCurrency'
 import HealthBar from 'components/account/Health/HealthBar'
+import { CardWithTabs } from 'components/common/Card/CardWithTabs'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { FormattedNumber } from 'components/common/FormattedNumber'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
-import VaultStats from 'components/vaults/community/vaultDetails/common/VaultStats'
-import useVaultBalances from 'components/vaults/community/vaultDetails/table/useVaultBalances'
-import { BN } from 'utils/helpers'
+import VaultStats from 'components/managedVaults/community/vaultDetails/common/VaultStats'
+import useVaultBalances from 'components/managedVaults/community/vaultDetails/table/useVaultBalances'
+import { vaultBalanceData } from 'components/managedVaults/dummyData'
 import { BNCoin } from 'types/classes/BNCoin'
-import { CardWithTabs } from 'components/common/Card/CardWithTabs'
-import { FormattedNumber } from 'components/common/FormattedNumber'
-import { vaultBalanceData } from 'components/vaults/dummyData'
+import { BN } from 'utils/helpers'
 
 export default function VaultSummary() {
   const columns = useVaultBalances()

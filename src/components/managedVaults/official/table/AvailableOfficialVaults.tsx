@@ -1,5 +1,5 @@
 import Table from 'components/common/Table'
-import useOfficialVaultsColumns from 'components/vaults/official/table/useOfficialVaultsColumns'
+import useOfficialVaultsColumns from 'components/managedVaults/official/table/useOfficialVaultsColumns'
 import useManagedVaults from 'hooks/managedVaults/useManagedVaults'
 
 export function AvailableOfficialVaults() {

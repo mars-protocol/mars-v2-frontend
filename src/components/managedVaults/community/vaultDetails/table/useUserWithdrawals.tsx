@@ -1,13 +1,13 @@
-import DisplayCurrency from 'components/common/DisplayCurrency'
-import Timestamp from 'components/vaults/community/vaultDetails/table/columns/Timestamp'
-import { BN } from 'utils/helpers'
-import { BNCoin } from 'types/classes/BNCoin'
 import { ColumnDef } from '@tanstack/react-table'
-import React, { useMemo } from 'react'
+import DisplayCurrency from 'components/common/DisplayCurrency'
 import UnlockTime, { UNLOCK_TIME_META } from 'components/earn/farm/common/Table/Columns/UnlockTime'
+import Timestamp from 'components/managedVaults/community/vaultDetails/table/columns/Timestamp'
 import Withdraw, {
   WITHDRAW_META,
-} from 'components/vaults/community/vaultDetails/table/columns/Withdraw'
+} from 'components/managedVaults/community/vaultDetails/table/columns/Withdraw'
+import { useMemo } from 'react'
+import { BNCoin } from 'types/classes/BNCoin'
+import { BN } from 'utils/helpers'
 
 interface Props {
   isLoading: boolean

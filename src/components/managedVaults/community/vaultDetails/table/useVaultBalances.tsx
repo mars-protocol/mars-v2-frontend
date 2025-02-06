@@ -1,9 +1,9 @@
 import { ColumnDef } from '@tanstack/react-table'
 import BigNumber from 'bignumber.js'
-import TVL from 'components/earn/farm/common/Table/Columns/TVL'
-import React, { useMemo } from 'react'
 import Name, { NAME_META } from 'components/borrow/Table/Columns/Name'
-import Apr from 'components/vaults/common/table/columns/Apr'
+import TVL from 'components/earn/farm/common/Table/Columns/TVL'
+import Apr from 'components/managedVaults/common/table/columns/Apr'
+import { useMemo } from 'react'
 
 export default function useVaultBalances() {
   return useMemo<ColumnDef<any>[]>(

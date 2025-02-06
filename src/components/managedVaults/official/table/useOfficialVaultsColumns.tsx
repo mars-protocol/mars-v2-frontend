@@ -1,14 +1,14 @@
-import React, { useMemo } from 'react'
-import Apr, { APR_META } from 'components/vaults/common/table/columns/Apr'
-import Name, { NAME_META } from 'components/vaults/common/table/columns/Name'
-import Fee, { FEE_META } from 'components/vaults/common/table/columns/Fee'
-import Deposit, { DEPOSIT_META } from 'components/vaults/official/table/column/Deposit'
-import FreezePeriod, {
-  FREEZE_PERIOD_META,
-} from 'components/vaults/common/table/columns/FreezePeriod'
-import TVL, { TVL_META } from 'components/earn/farm/common/Table/Columns/TVL'
 import { ColumnDef } from '@tanstack/react-table'
 import BigNumber from 'bignumber.js'
+import TVL, { TVL_META } from 'components/earn/farm/common/Table/Columns/TVL'
+import Apr, { APR_META } from 'components/managedVaults/common/table/columns/Apr'
+import Fee, { FEE_META } from 'components/managedVaults/common/table/columns/Fee'
+import FreezePeriod, {
+  FREEZE_PERIOD_META,
+} from 'components/managedVaults/common/table/columns/FreezePeriod'
+import Name, { NAME_META } from 'components/managedVaults/common/table/columns/Name'
+import Deposit, { DEPOSIT_META } from 'components/managedVaults/official/table/column/Deposit'
+import { useMemo } from 'react'
 
 interface Props {
   isLoading: boolean
