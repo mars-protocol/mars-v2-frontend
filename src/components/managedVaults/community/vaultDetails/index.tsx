@@ -10,10 +10,19 @@ import PositionInfo from 'components/managedVaults/community/vaultDetails/common
 import ProfileVaultCard from 'components/managedVaults/community/vaultDetails/profileVaultCard/ProfileVaultCard'
 import VaultSummary from 'components/managedVaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/managedVaults/community/vaultDetails/Withdrawals'
+import WalletConnecting from 'components/Wallet/WalletConnecting'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
-import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import useStore from 'store'
+import { getPage, getRoute } from 'utils/route'
+
+interface Props {
+  urlVaultAddress?: string
+}
 
 function VaultLoadingState() {
   return (
@@ -26,9 +35,63 @@ function VaultLoadingState() {
   )
 }
 
-export default function VaultDetails() {
-  const { vaultAddress } = useParams<{ vaultAddress: string }>()
-  if (!vaultAddress) return null
+export default function VaultDetails(props: Props) {
+  const { urlVaultAddress } = props
+  const { vaultAddress: initialVaultAddress } = useParams<{ vaultAddress: string }>()
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const address = useStore((s) => s.address)
+  const focusComponent = useStore((s) => s.focusComponent)
+  const currentWallet = useCurrentWallet()
+  const client = useStore((s) => s.client)
+  const { pathname } = useLocation()
+  const chainConfig = useChainConfig()
+  const vaultAddress = initialVaultAddress || urlVaultAddress
+
+  useEffect(() => {
+    const currentPath = window.location.pathname
+    const isDirectAccess = currentPath.includes('/details')
+
+    // Handle wallet reconnection for direct modal access because modal routes bypass the normal wallet connection flow
+    if (currentWallet && (!client || !address)) {
+      useStore.setState({
+        focusComponent: {
+          component: <WalletConnecting providerId={currentWallet.providerId} />,
+          onClose: () => {
+            useStore.setState({ focusComponent: null })
+            navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
+          },
+        },
+      })
+      return
+    }
+    if (isDirectAccess && !focusComponent && vaultAddress) {
+      useStore.setState({
+        focusComponent: {
+          component: <VaultDetailsContent vaultAddress={vaultAddress} />,
+          onClose: () => {
+            useStore.setState({ focusComponent: null })
+            navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
+          },
+        },
+      })
+    }
+  }, [
+    address,
+    client,
+    chainConfig,
+    currentWallet,
+    focusComponent,
+    pathname,
+    navigate,
+    searchParams,
+    vaultAddress,
+  ])
+
+  if (!vaultAddress) {
+    return <VaultLoadingState />
+  }
+
   return <VaultDetailsContent vaultAddress={vaultAddress} />
 }
 

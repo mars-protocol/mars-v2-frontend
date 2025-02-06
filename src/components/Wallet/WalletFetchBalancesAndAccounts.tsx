@@ -4,7 +4,7 @@ import { useLocation, useNavigate, useParams, useSearchParams } from 'react-rout
 import AccountCreateFirst from 'components/account/AccountCreateFirst'
 import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
-import VaultDetails from 'components/vaults/community/vaultDetails'
+import VaultDetails from 'components/managedVaults/community/vaultDetails'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
@@ -95,7 +95,7 @@ function FetchedBalances({
     if (isVaultDetails && urlVaultAddress) {
       useStore.setState({
         focusComponent: {
-          component: <VaultDetails initialVaultAddress={urlVaultAddress} />,
+          component: <VaultDetails urlVaultAddress={urlVaultAddress} />,
           onClose: () => {
             useStore.setState({ focusComponent: null })
             navigate(getRoute('vaults-community', searchParams, address))
