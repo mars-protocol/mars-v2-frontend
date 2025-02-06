@@ -1,7 +1,8 @@
+import Button from 'components/common/Button'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { CircularProgress } from 'components/common/CircularProgress'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { ArrowDownLine } from 'components/common/Icons'
+import { ArrowDownLine, ChevronLeft } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import EditDescription from 'components/managedVaults/community/vaultDetails/common/Overlays/EditDescription'
 import FeeAction from 'components/managedVaults/community/vaultDetails/common/Overlays/FeeAction'
@@ -39,60 +40,29 @@ export default function VaultDetails(props: Props) {
   const { urlVaultAddress } = props
   const { vaultAddress: initialVaultAddress } = useParams<{ vaultAddress: string }>()
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const address = useStore((s) => s.address)
-  const focusComponent = useStore((s) => s.focusComponent)
-  const currentWallet = useCurrentWallet()
-  const client = useStore((s) => s.client)
-  const { pathname } = useLocation()
-  const chainConfig = useChainConfig()
   const vaultAddress = initialVaultAddress || urlVaultAddress
-
-  useEffect(() => {
-    const currentPath = window.location.pathname
-    const isDirectAccess = currentPath.includes('/details')
-
-    // Handle wallet reconnection for direct modal access because modal routes bypass the normal wallet connection flow
-    if (currentWallet && (!client || !address)) {
-      useStore.setState({
-        focusComponent: {
-          component: <WalletConnecting providerId={currentWallet.providerId} />,
-          onClose: () => {
-            useStore.setState({ focusComponent: null })
-            navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
-          },
-        },
-      })
-      return
-    }
-    if (isDirectAccess && !focusComponent && vaultAddress) {
-      useStore.setState({
-        focusComponent: {
-          component: <VaultDetailsContent vaultAddress={vaultAddress} />,
-          onClose: () => {
-            useStore.setState({ focusComponent: null })
-            navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
-          },
-        },
-      })
-    }
-  }, [
-    address,
-    client,
-    chainConfig,
-    currentWallet,
-    focusComponent,
-    pathname,
-    navigate,
-    searchParams,
-    vaultAddress,
-  ])
 
   if (!vaultAddress) {
     return <VaultLoadingState />
   }
 
-  return <VaultDetailsContent vaultAddress={vaultAddress} />
+  return (
+    <div className='container mx-auto'>
+      <div className='flex items-center mb-6'>
+        <Button
+          onClick={() => navigate(-1)}
+          variant='transparent'
+          color='quaternary'
+          className='text-white/60 hover:text-white'
+          leftIcon={<ChevronLeft />}
+          iconClassName='w-2 h-2'
+          text='Back'
+        />
+      </div>
+
+      <VaultDetailsContent vaultAddress={vaultAddress} />
+    </div>
+  )
 }
 
 function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
