@@ -11,7 +11,6 @@ interface Props {
   showEditDescriptionModal: boolean
   setShowEditDescriptionModal: (show: boolean) => void
   description: string
-  onUpdateDescription: (newDescription: string) => void
 }
 
 export default function EditDescription(props: Props) {
