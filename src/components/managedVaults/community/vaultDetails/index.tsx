@@ -102,7 +102,6 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
   const [showFeeActionModal, setShowFeeActionModal] = useToggle()
   const [showActionModal, setShowActionModal] = useToggle()
 
-  const [description, setDescription] = useState<string>(vaultDetails?.description || '')
   const [modalType, setModalType] = useState<'deposit' | 'withdraw' | null>(null)
   const [modalFeeType, setModalFeeType] = useState<'edit' | 'withdraw' | null>(null)
 
@@ -111,11 +110,6 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
   }
   // TODO: fetch from contract
   const hasAccumulatedFees = false
-
-  const handleUpdateDescription = (newDescription: string) => {
-    setDescription(newDescription)
-    setShowEditDescriptionModal(false)
-  }
 
   const handleActionModal = (type: 'deposit' | 'withdraw') => {
     setModalType(type)
@@ -126,6 +120,8 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
     setModalFeeType(type)
     setShowFeeActionModal(true)
   }
+
+  if (!vaultDetails) return null
 
   return (
     <div className='min-h-screen md:h-screen-full md:min-h-[600px] w-full'>
@@ -143,8 +139,7 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
         <EditDescription
           showEditDescriptionModal={showEditDescriptionModal}
           setShowEditDescriptionModal={setShowEditDescriptionModal}
-          description={description}
-          onUpdateDescription={handleUpdateDescription}
+          description={vaultDetails?.description ?? ''}
         />
 
         <FeeAction

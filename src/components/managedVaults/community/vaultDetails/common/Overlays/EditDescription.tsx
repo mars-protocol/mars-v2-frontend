@@ -15,18 +15,18 @@ interface Props {
 }
 
 export default function EditDescription(props: Props) {
-  const {
-    showEditDescriptionModal,
-    setShowEditDescriptionModal,
-    description,
-    onUpdateDescription,
-  } = props
+  const { showEditDescriptionModal, setShowEditDescriptionModal, description } = props
 
   const [tempDescription, setTempDescription] = useState<string>(description)
 
-  const handleSave = () => {
-    onUpdateDescription(tempDescription)
+  const handleEscape = () => {
     setShowEditDescriptionModal(false)
+    setTempDescription(description)
+  }
+
+  const handleSave = () => {
+    setShowEditDescriptionModal(false)
+    /* TODO: update vault meta */
   }
 
   return (
@@ -38,7 +38,7 @@ export default function EditDescription(props: Props) {
       <div className='gradient-description absolute h-full w-full opacity-30' />
       <div className='flex items-center justify-between p-4 gradient-header'>
         <Text size='lg'>Edit Your Description</Text>
-        <EscButton onClick={() => setShowEditDescriptionModal(false)} enableKeyPress />
+        <EscButton onClick={handleEscape} enableKeyPress />
       </div>
 
       <Divider />
@@ -49,7 +49,7 @@ export default function EditDescription(props: Props) {
         maxLength={240}
         placeholder='Enter a detailed description...'
         required
-        className='w-full h-full text-white/60 !bg-transparent !border-none z-10'
+        className='w-full h-full placeholder:text-white/60 !bg-transparent !border-none z-10'
         footer={
           <div className='flex justify-between items-center p-4'>
             <CharacterCount value={tempDescription} maxLength={240} size='base' />
