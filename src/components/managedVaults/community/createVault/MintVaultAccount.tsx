@@ -1,19 +1,17 @@
 import Button from 'components/common/Button'
-import { ArrowRight, Vault } from 'components/common/Icons'
-import Text from 'components/common/Text'
 import CreateVaultContent from 'components/managedVaults/community/createVault/CreateVaultContent'
-import VaultDetails from 'components/managedVaults/community/vaultDetails/index'
+import Text from 'components/common/Text'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import { useCallback, useState } from 'react'
-import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
+import { ArrowRight, Vault } from 'components/common/Icons'
 import { getPage, getRoute } from 'utils/route'
+import { useCallback, useState } from 'react'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 export default function MintVaultAccount() {
   const [isTxPending, setIsTxPending] = useState(false)
   const createAccount = useStore((s) => s.createAccount)
   const { vaultAddress } = useParams<{ vaultAddress: string }>()
-  const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
   const chainConfig = useChainConfig()
@@ -47,21 +45,12 @@ export default function MintVaultAccount() {
           accountId,
         ),
       )
-
-      useStore.setState({
-        focusComponent: {
-          component: <VaultDetails />,
-          onClose: () => {
-            navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
-          },
-        },
-      })
     } catch (error) {
       console.error('Failed to create vault account:', error)
     } finally {
       setIsTxPending(false)
     }
-  }, [vaultAddress, createAccount, navigate, chainConfig, searchParams, address, pathname])
+  }, [vaultAddress, createAccount, navigate, chainConfig, searchParams, address])
 
   return (
     <CreateVaultContent cardClassName='h-118 flex justify-end'>
