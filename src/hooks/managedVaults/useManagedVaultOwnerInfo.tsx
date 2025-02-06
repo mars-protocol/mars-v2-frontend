@@ -7,8 +7,8 @@ import { truncate } from 'utils/formatters'
 
 const defaultAvatar: Image = {
   url: FALLBACK_AVATAR,
-  width: 50,
-  height: 50,
+  width: 216,
+  height: 216,
 }
 
 interface VaultOwnerInfo {
