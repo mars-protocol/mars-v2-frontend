@@ -4,7 +4,6 @@ import { useLocation, useNavigate, useParams, useSearchParams } from 'react-rout
 import AccountCreateFirst from 'components/account/AccountCreateFirst'
 import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
-import VaultDetails from 'components/managedVaults/community/vaultDetails'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
@@ -76,40 +75,24 @@ function FetchedBalances({
   const { pathname } = useLocation()
 
   const page = getPage(pathname, chainConfig)
-  const isVaultDetails = pathname.includes('/details')
-
   useEffect(() => {
-    if (page === 'portfolio' && urlAddress && urlAddress !== address) {
+    if (page.startsWith('vaults/') && urlAddress && urlAddress !== address) {
+      navigate(getRoute(page, searchParams, urlAddress as string))
+    } else if (page === 'portfolio' && urlAddress && urlAddress !== address) {
       navigate(getRoute(page, searchParams, urlAddress as string))
     } else {
       const currentAccountIsHls = urlAccountId && !accountIds.includes(urlAccountId)
       const currentAccount = currentAccountIsHls || !urlAccountId ? accountIds[0] : urlAccountId
 
-      if (!isVaultDetails) {
-        navigate(getRoute(page, searchParams, address, isV1 ? undefined : currentAccount), {
-          replace: true,
-        })
-      }
-    }
-
-    if (isVaultDetails && urlVaultAddress) {
-      useStore.setState({
-        focusComponent: {
-          component: <VaultDetails urlVaultAddress={urlVaultAddress} />,
-          onClose: () => {
-            useStore.setState({ focusComponent: null })
-            navigate(getRoute('vaults-community', searchParams, address))
-          },
-        },
+      navigate(getRoute(page, searchParams, address, isV1 ? undefined : currentAccount), {
+        replace: true,
       })
     }
-
     useStore.setState({ focusComponent: null })
   }, [
     accountIds,
     address,
     isV1,
-    isVaultDetails,
     navigate,
     page,
     searchParams,
