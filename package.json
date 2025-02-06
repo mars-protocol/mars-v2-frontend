@@ -22,7 +22,7 @@
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.33.0",
     "@delphi-labs/shuttle-react": "^4.1.0",
-    "@keplr-wallet/cosmos": "^0.12.177",
+    "@keplr-wallet/cosmos": "^0.12.179",
     "@next/eslint-plugin-next": "^15.1.6",
     "@tanstack/react-table": "^8.20.6",
     "@tippyjs/react": "^4.2.6",
@@ -33,7 +33,7 @@
     "ibc-domains-sdk": "^1.1.0",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
-    "mobx": "^6.13.5",
+    "mobx": "^6.13.6",
     "moment": "^2.30.1",
     "next": "^15.1.6",
     "react": "19.0.0",
