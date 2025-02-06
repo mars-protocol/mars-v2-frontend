@@ -34,7 +34,7 @@ export default function useManagedVaultOwnerInfo(address?: string): VaultOwnerIn
   return useMemo(() => {
     const avatar = stargazeInfo ? stargazeInfo.media.visualAssets.lg : defaultAvatar
     const walletLinkTarget = stargazeInfo
-      ? `https://www.stargaze.zone/p/${stargazeInfo.associatedAddr}/tokens?from=wallet`
+      ? `https://www.stargaze.zone/p/${stargazeInfo.associatedAddr}/names/${stargazeInfo.name}`
       : `${chainConfig.endpoints.explorer}/address/${address}`
     const walletLinkName = stargazeInfo ? stargazeInfo.name : truncate(address, [2, 6])
     const walletLinkTitle = stargazeInfo
