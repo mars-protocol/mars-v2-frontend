@@ -50,8 +50,7 @@ export function useSkipBridge({
     return savedSkipBridges && savedSkipBridges !== 'undefined' ? JSON.parse(savedSkipBridges) : []
   })
 
-  const address = useStore((s) => s.address)
-  const { mutate: refreshBalances } = useWalletBalances(address)
+  const { mutate: refreshBalances } = useWalletBalances(cosmosAddress)
 
   const updateSkipBridges = useCallback(
     (newTransaction: SkipBridgeTransaction) => {
@@ -183,14 +182,38 @@ export function useSkipBridge({
           return false
         }
 
+        let nobleAddress = ''
+        try {
+          if (window.keplr) {
+            await window.keplr.enable('noble-1')
+            const key = await window.keplr.getKey('noble-1')
+            nobleAddress = key.bech32Address
+          }
+        } catch (error) {
+          console.error('Failed to get Noble address:', error)
+        }
+
+        let neutronAddress = ''
+        try {
+          if (window.keplr) {
+            await window.keplr.enable('neutron-1')
+            const key = await window.keplr.getKey('neutron-1')
+            neutronAddress = key.bech32Address
+          }
+        } catch (error) {
+          console.error('Failed to get Neutron address:', error)
+        }
+
         const route = await fetchSkipRoute(selectedAsset)
         const amountOut = route.amountOut
 
         const userAddresses = route.requiredChainAddresses.map((chainID: string) => {
-          if (chainID === chainConfig.id.toString()) {
-            return { chainID, address: cosmosAddress }
+          if (chainID === 'neutron-1') {
+            return { chainID, address: neutronAddress || cosmosAddress }
           } else if (chainID === 'osmosis-1') {
             return { chainID, address: osmosisAddress || cosmosAddress }
+          } else if (chainID === 'noble-1') {
+            return { chainID, address: nobleAddress || cosmosAddress }
           } else {
             return { chainID, address: evmAddress }
           }
@@ -277,7 +300,6 @@ export function useSkipBridge({
       }
     },
     [
-      chainConfig.id,
       cosmosAddress,
       evmAddress,
       skipClient,
