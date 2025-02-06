@@ -11,8 +11,10 @@ import ProfileVaultCard from 'components/vaults/community/vaultDetails/profileVa
 import VaultSummary from 'components/vaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/vaults/community/vaultDetails/Withdrawals'
 import { vaultProfileData } from 'components/vaults/dummyData'
+import WalletConnecting from 'components/Wallet/WalletConnecting'
 import useToggle from 'hooks/common/useToggle'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
+import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
@@ -41,10 +43,26 @@ export default function VaultDetails(props: Props) {
   const address = useStore((s) => s.address)
   const focusComponent = useStore((s) => s.focusComponent)
   const vaultAddress = urlVaultAddress || initialVaultAddress
+  const currentWallet = useCurrentWallet()
+  const client = useStore((s) => s.client)
 
   useEffect(() => {
     const currentPath = window.location.pathname
     const isDirectAccess = currentPath.includes('/details')
+
+    // Handle wallet reconnection for direct modal access because modal routes bypass the normal wallet connection flow
+    if (currentWallet && (!client || !address)) {
+      useStore.setState({
+        focusComponent: {
+          component: <WalletConnecting providerId={currentWallet.providerId} />,
+          onClose: () => {
+            useStore.setState({ focusComponent: null })
+            navigate(getRoute('vaults-community', searchParams, address))
+          },
+        },
+      })
+      return
+    }
 
     if (isDirectAccess && !focusComponent && vaultAddress) {
       useStore.setState({
@@ -57,7 +75,7 @@ export default function VaultDetails(props: Props) {
         },
       })
     }
-  }, [focusComponent, address, vaultAddress, navigate, searchParams])
+  }, [focusComponent, address, vaultAddress, navigate, searchParams, currentWallet, client])
 
   return <VaultDetailsContent vaultAddress={vaultAddress} />
 }
