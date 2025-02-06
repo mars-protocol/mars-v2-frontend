@@ -8,8 +8,7 @@ import FreezePeriod, {
 } from 'components/managedVaults/common/table/columns/FreezePeriod'
 import Name, { NAME_META } from 'components/managedVaults/common/table/columns/Name'
 import Details, { DETAILS_META } from 'components/managedVaults/community/table/column/Details'
-import VaultDetails from 'components/managedVaults/community/vaultDetails/index'
-import useAccountId from 'hooks/accounts/useAccountId'
+import VaultDetails from 'components/managedVaults/community/vaultDetails'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { useCallback, useMemo } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
@@ -23,25 +22,14 @@ interface Props {
 export default function useCommunityVaultsColumns(props: Props) {
   const { isLoading } = props
 
-  const accountId = useAccountId()
   const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
-  const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
+  const { pathname } = useLocation()
 
   const navigate = useNavigate()
   const handleVaultDetails = useCallback(
     (vaultAddress: string) => {
-      if (accountId)
-        navigate(
-          getRoute(
-            getPage(`vaults/${vaultAddress}/details`, chainConfig),
-            searchParams,
-            address,
-            accountId,
-          ),
-        )
-
       useStore.setState({
         focusComponent: {
           component: <VaultDetails />,
@@ -50,8 +38,11 @@ export default function useCommunityVaultsColumns(props: Props) {
           },
         },
       })
+      navigate(
+        getRoute(getPage(`vaults/${vaultAddress}/details`, chainConfig), searchParams, address),
+      )
     },
-    [accountId, navigate, chainConfig, searchParams, address, pathname],
+    [address, chainConfig, navigate, pathname, searchParams],
   )
 
   return useMemo<ColumnDef<ManagedVaultsData>[]>(
