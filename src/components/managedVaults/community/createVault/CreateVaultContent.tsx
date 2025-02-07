@@ -2,6 +2,7 @@ import Card from 'components/common/Card'
 import classNames from 'classnames'
 import NavigationBackButton from 'components/common/Button/NavigationBackButton'
 import Text from 'components/common/Text'
+import useStore from 'store'
 
 interface Props {
   children: React.ReactNode
@@ -10,6 +11,7 @@ interface Props {
 
 export default function CreateVaultContent(props: Props) {
   const { children, cardClassName } = props
+  const address = useStore((s) => s.address)
 
   return (
     <div className='container mx-auto py-8 max-w-4xl'>
@@ -27,7 +29,15 @@ export default function CreateVaultContent(props: Props) {
       </div>
 
       <Card className={classNames('p-4 md:p-6 bg-white/5 w-full', cardClassName)} showOverflow>
-        {children}
+        {address ? (
+          children
+        ) : (
+          <div className='flex items-center justify-center h-118'>
+            <Text size='sm' className='w-full text-center'>
+              You need to be connected to view this page.
+            </Text>
+          </div>
+        )}
       </Card>
     </div>
   )
