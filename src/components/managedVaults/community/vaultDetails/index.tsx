@@ -1,20 +1,20 @@
-import Button from 'components/common/Button'
+import EditDescription from 'components/managedVaults/community/vaultDetails/common/Overlays/EditDescription'
+import FeeAction from 'components/managedVaults/community/vaultDetails/common/Overlays/FeeAction'
+import NavigationBackButton from 'components/common/Button/NavigationBackButton'
+import PositionInfo from 'components/managedVaults/community/vaultDetails/common/PositionInfo'
+import ProfileVaultCard from 'components/managedVaults/community/vaultDetails/profileVaultCard/ProfileVaultCard'
+import Text from 'components/common/Text'
+import useToggle from 'hooks/common/useToggle'
+import VaultAction from 'components/managedVaults/community/vaultDetails/common/Overlays/VaultAction'
+import VaultSummary from 'components/managedVaults/community/vaultDetails/VaultSummary'
+import Withdrawals from 'components/managedVaults/community/vaultDetails/Withdrawals'
+import { ArrowDownLine } from 'components/common/Icons'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { CircularProgress } from 'components/common/CircularProgress'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { ArrowDownLine, ChevronLeft } from 'components/common/Icons'
-import Text from 'components/common/Text'
-import EditDescription from 'components/managedVaults/community/vaultDetails/common/Overlays/EditDescription'
-import FeeAction from 'components/managedVaults/community/vaultDetails/common/Overlays/FeeAction'
-import VaultAction from 'components/managedVaults/community/vaultDetails/common/Overlays/VaultAction'
-import PositionInfo from 'components/managedVaults/community/vaultDetails/common/PositionInfo'
-import ProfileVaultCard from 'components/managedVaults/community/vaultDetails/profileVaultCard/ProfileVaultCard'
-import VaultSummary from 'components/managedVaults/community/vaultDetails/VaultSummary'
-import Withdrawals from 'components/managedVaults/community/vaultDetails/Withdrawals'
-import useToggle from 'hooks/common/useToggle'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
+import { useParams } from 'react-router-dom'
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
 
 function VaultLoadingState() {
   return (
@@ -29,7 +29,6 @@ function VaultLoadingState() {
 
 export default function VaultDetails() {
   const { vaultAddress } = useParams<{ vaultAddress: string }>()
-  const navigate = useNavigate()
 
   if (!vaultAddress) {
     return <VaultLoadingState />
@@ -38,15 +37,7 @@ export default function VaultDetails() {
   return (
     <div className='container mx-auto'>
       <div className='flex items-center mb-6'>
-        <Button
-          onClick={() => navigate(-1)}
-          variant='transparent'
-          color='quaternary'
-          className='text-white/60 hover:text-white'
-          leftIcon={<ChevronLeft />}
-          iconClassName='w-2 h-2'
-          text='Back'
-        />
+        <NavigationBackButton />
       </div>
 
       <VaultDetailsContent vaultAddress={vaultAddress} />

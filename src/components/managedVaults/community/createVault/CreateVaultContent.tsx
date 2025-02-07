@@ -1,8 +1,6 @@
-import Button from 'components/common/Button'
 import Card from 'components/common/Card'
 import classNames from 'classnames'
-import { ChevronLeft } from 'components/common/Icons'
-import { useNavigate } from 'react-router-dom'
+import NavigationBackButton from 'components/common/Button/NavigationBackButton'
 import Text from 'components/common/Text'
 
 interface Props {
@@ -12,20 +10,11 @@ interface Props {
 
 export default function CreateVaultContent(props: Props) {
   const { children, cardClassName } = props
-  const navigate = useNavigate()
 
   return (
     <div className='container mx-auto py-8 max-w-4xl'>
       <div className='flex items-center mb-6'>
-        <Button
-          onClick={() => navigate(-1)}
-          variant='transparent'
-          color='quaternary'
-          className='text-white/60 hover:text-white'
-          leftIcon={<ChevronLeft />}
-          iconClassName='w-2 h-2'
-          text='Back'
-        />
+        <NavigationBackButton />
       </div>
 
       <div className='flex flex-col items-center mb-8'>

@@ -76,9 +76,11 @@ function FetchedBalances({
 
   const page = getPage(pathname, chainConfig)
   useEffect(() => {
-    if (page.startsWith('vaults/') && urlAddress && urlAddress !== address) {
-      navigate(getRoute(page, searchParams, urlAddress as string))
-    } else if (page === 'portfolio' && urlAddress && urlAddress !== address) {
+    if (
+      (page.startsWith('vaults/') || page === 'portfolio') &&
+      urlAddress &&
+      urlAddress !== address
+    ) {
       navigate(getRoute(page, searchParams, urlAddress as string))
     } else {
       const currentAccountIsHls = urlAccountId && !accountIds.includes(urlAccountId)
