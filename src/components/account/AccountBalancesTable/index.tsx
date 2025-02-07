@@ -52,7 +52,6 @@ export default function AccountBalancesTable(props: Props) {
   })
 
   const columns = useAccountBalancesColumns(account, showLiquidationPrice)
-  const dynamicColumns = columns
 
   const accountBalanceData = useAccountBalanceData({
     account,
@@ -127,7 +126,7 @@ export default function AccountBalancesTable(props: Props) {
           <span className='text-white/60'>Credit Account {account.id}</span>
         </Text>
       }
-      columns={dynamicColumns}
+      columns={columns}
       data={dynamicAssets}
       tableBodyClassName={classNames(tableBodyClassName, 'text-white/60')}
       initialSorting={[]}

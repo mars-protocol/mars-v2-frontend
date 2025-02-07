@@ -11,7 +11,6 @@ export function useUSDCBalances(walletBalances: any[]) {
   const { isConnecting, isConnected, address } = useAccount()
   const chainConfig = useChainConfig()
 
-  const isTestnet = chainConfig.id === 'pion-1'
   useEffect(() => {
     const fetchBalances = async () => {
       if (!isConnected || !address || isConnecting) return
@@ -20,7 +19,7 @@ export function useUSDCBalances(walletBalances: any[]) {
         const balances = await fetchUSDCBalances(address)
         const usdcAssets = Object.entries(balances).map(([chainId, balance]) =>
           WrappedBNCoin.fromDenomAndBigNumber(
-            isTestnet ? chainConfig.stables[0] : chainConfig.stables[0],
+            chainConfig.stables[0],
             BN(balance).shiftedBy(6),
             CHAIN_NAMES[Number(chainId)],
           ),
@@ -38,7 +37,7 @@ export function useUSDCBalances(walletBalances: any[]) {
     }
 
     fetchBalances()
-  }, [address, isConnected, isConnecting, walletBalances, chainConfig.stables, isTestnet])
+  }, [address, isConnected, isConnecting, walletBalances, chainConfig.stables])
 
   return useMemo(() => ({ usdcBalances }), [usdcBalances])
 }
