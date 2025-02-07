@@ -1,6 +1,6 @@
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
 import { createStorage } from 'wagmi'
-import { arbitrum, base, celo, mainnet, optimism, polygon, zkSync } from 'wagmi/chains'
+import { arbitrum, base, celo, mainnet, optimism, polygon } from 'wagmi/chains'
 
 export const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID
 
@@ -13,7 +13,7 @@ export const metadata = {
   icons: ['https://avatars.githubusercontent.com/u/82292512'],
 }
 
-const chains = [arbitrum, base, celo, mainnet, optimism, polygon, zkSync] as const
+const chains = [arbitrum, base, celo, mainnet, optimism, polygon] as const
 export const config = defaultWagmiConfig({
   chains,
   projectId,

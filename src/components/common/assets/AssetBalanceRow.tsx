@@ -12,6 +12,8 @@ interface Props {
   className?: string
   hideBalances?: boolean
   hideNames?: boolean
+  bridgeStatus?: string
+  skipTxHash?: string
   small?: boolean
   tiny?: boolean
 }

@@ -1,10 +1,8 @@
 import classNames from 'classnames'
 import { useCallback } from 'react'
 import { isMobile } from 'react-device-detect'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import AccountCreateFirst from 'components/account/AccountCreateFirst'
-import AccountFund from 'components/account/AccountFund/AccountFundFullPage'
 import AccountList from 'components/account/AccountList'
 import Button from 'components/common/Button'
 import { Account, Plus, PlusCircled } from 'components/common/Icons'
@@ -14,13 +12,9 @@ import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useToggle from 'hooks/common/useToggle'
-import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
-import useAutoLend from 'hooks/wallet/useAutoLend'
 import useHasFundsForTxFee from 'hooks/wallet/useHasFundsForTxFee'
 import useStore from 'store'
-import { isNumber } from 'utils/parsers'
-import { getPage, getRoute } from 'utils/route'
-import useChainConfig from 'hooks/chain/useChainConfig'
+import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 
 interface Props {
   className?: string
@@ -30,57 +24,27 @@ const menuClasses = 'absolute isolate flex w-full flex-wrap scrollbar-hide'
 const ACCOUNT_MENU_BUTTON_ID = 'account-menu-button'
 
 export default function AccountMenuContent(props: Props) {
-  const navigate = useNavigate()
-  const { pathname } = useLocation()
   const address = useStore((s) => s.address)
   const { data: accountIds } = useAccountIds(address, true, true)
   const accountId = useAccountId()
-  const [searchParams] = useSearchParams()
-
-  const createAccount = useStore((s) => s.createAccount)
   const [showMenu, setShowMenu] = useToggle()
-  const [isCreating, setIsCreating] = useToggle()
   const hasFundsForTxFee = useHasFundsForTxFee()
-  const [enableAutoLendGlobal] = useEnableAutoLendGlobal()
-  const { enableAutoLendAccountId } = useAutoLend()
-  const [isAutoLendEnabled] = useEnableAutoLendGlobal()
-  const chainConfig = useChainConfig()
 
   const hasCreditAccounts = !!accountIds?.length
   const isAccountSelected = hasCreditAccounts && accountId && accountIds.includes(accountId)
 
-  const performCreateAccount = useCallback(async () => {
+  const performCreateAccount = useCallback(() => {
     setShowMenu(false)
-    setIsCreating(true)
-    const accountId = await createAccount('default', isAutoLendEnabled)
-    setIsCreating(false)
-
-    if (accountId) {
-      navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, accountId))
-      if (enableAutoLendGlobal) enableAutoLendAccountId(accountId)
-      useStore.setState({
-        focusComponent: {
-          component: <AccountFund />,
-          onClose: () => {
-            // TODO: update docs to reflect the current state of v2
-            //useStore.setState({ getStartedModal: true })
-          },
+    useStore.setState({
+      focusComponent: {
+        component: <AccountFundFullPage isCreateAccount />,
+        onClose: () => {
+          // TODO: update docs to reflect the current state of v2
+          //useStore.setState({ getStartedModal: true })
         },
-      })
-    }
-  }, [
-    setShowMenu,
-    setIsCreating,
-    createAccount,
-    isAutoLendEnabled,
-    navigate,
-    pathname,
-    chainConfig,
-    searchParams,
-    address,
-    enableAutoLendGlobal,
-    enableAutoLendAccountId,
-  ])
+      },
+    })
+  }, [setShowMenu])
 
   const handleCreateAccountClick = useCallback(() => {
     setShowMenu(!showMenu)
@@ -133,7 +97,6 @@ export default function AccountMenuContent(props: Props) {
             rightIcon={<Plus />}
             iconClassName='h-2.5 w-2.5'
             text='Create'
-            showProgressIndicator={isCreating}
             onClick={performCreateAccount}
           />
         </div>

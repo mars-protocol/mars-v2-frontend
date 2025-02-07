@@ -39,10 +39,17 @@ export function useFundingAssets(selectedDenoms: string[]) {
   const updateFundingAssets = useCallback(
     (amount: BigNumber, denom: string, chainName?: string) => {
       setFundingAssets((fundingAssets) => {
-        const updateIdx = fundingAssets.findIndex((asset) => asset.coin.denom === denom)
+        const updateIdx = fundingAssets.findIndex(
+          (asset) =>
+            asset.coin.denom === denom &&
+            ((!chainName && !asset.chain) || chainName === asset.chain),
+        )
+
         if (updateIdx === -1) return fundingAssets
+
         const updatedCoin = BNCoin.fromDenomAndBigNumber(denom, amount)
         const updatedAsset = WrappedBNCoin.fromBNCoin(updatedCoin, chainName)
+
         return [
           ...fundingAssets.slice(0, updateIdx),
           updatedAsset,

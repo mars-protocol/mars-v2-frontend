@@ -7,18 +7,25 @@ export function useSelectedDenoms(
   isConnected: boolean,
 ) {
   const currentSelectedDenom = useStore((s) => s.walletAssetsModal?.selectedDenoms ?? [])
-  const [selectedDenoms, setSelectedDenoms] = useState<string[]>(
-    currentSelectedDenom.filter((denom) =>
-      isConnected
-        ? filteredAssets.findIndex((asset) => `${asset.denom}:${asset.chainName}` === denom) !== -1
-        : filteredAssets.findIndex((asset) => `${asset.denom}` === denom) !== -1,
-    ),
-  )
+
+  const [selectedDenoms, setSelectedDenoms] = useState<string[]>(() => {
+    return currentSelectedDenom.filter((denomWithChain) => {
+      const [denom, chainName] = denomWithChain.split(':')
+      return filteredAssets.some(
+        (asset) =>
+          asset.denom === denom && (!chainName ? !asset.chainName : asset.chainName === chainName),
+      )
+    })
+  })
 
   const onChangeSelect = useCallback(
     (denoms: string[]) => {
-      setSelectedDenoms(denoms)
-      onChangeDenoms(denoms)
+      const formattedDenoms = denoms.map((denom) => {
+        const [baseDenom, chain] = denom.split(':')
+        return chain ? `${baseDenom}:${chain}` : baseDenom
+      })
+      setSelectedDenoms(formattedDenoms)
+      onChangeDenoms(formattedDenoms)
     },
     [onChangeDenoms],
   )

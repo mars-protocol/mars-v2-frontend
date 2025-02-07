@@ -5,7 +5,6 @@ import { StoreApi } from 'zustand'
 
 import getGasPrice from 'api/gasPrice/getGasPrice'
 import getPythPriceData from 'api/prices/getPythPriceData'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { ExecuteMsg as AccountNftExecuteMsg } from 'types/generated/mars-account-nft/MarsAccountNft.types'
@@ -22,16 +21,15 @@ import { ExecuteMsg as IncentivesExecuteMsg } from 'types/generated/mars-incenti
 import { ExecuteMsg as PerpsExecuteMsg } from 'types/generated/mars-perps/MarsPerps.types'
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { byDenom, bySymbol } from 'utils/array'
+import { setAutoLendForAccount } from 'utils/autoLend'
 import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import checkPythUpdateEnabled from 'utils/checkPythUpdateEnabled'
-import { defaultFee } from 'utils/constants'
-import { setAutoLendForAccount } from 'utils/autoLend'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
 
-function generateExecutionMessage(
+export function generateExecutionMessage(
   sender: string | undefined = '',
   contract: string,
   msg:
@@ -1109,7 +1107,7 @@ export default function createBroadcastSlice(
         }
       } catch (error) {
         const e = error as { message: string }
-        console.log(e)
+        console.error(e)
         return { result: undefined, error: e.message }
       }
     },

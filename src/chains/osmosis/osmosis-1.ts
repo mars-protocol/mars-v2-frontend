@@ -132,7 +132,7 @@ const Osmosis1: ChainConfig = {
   perps: false,
   farm: true,
   anyAsset: true,
-  evmAssetSupport: false,
+  evmAssetSupport: true,
   slinky: false,
 }
 

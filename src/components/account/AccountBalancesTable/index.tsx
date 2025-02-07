@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useEffect } from 'react'
 
 import useAccountBalancesColumns from 'components/account/AccountBalancesTable/Columns/useAccountBalancesColumns'
 import useAccountBalanceData from 'components/account/AccountBalancesTable/useAccountBalanceData'
@@ -10,11 +11,11 @@ import Table from 'components/common/Table'
 import Text from 'components/common/Text'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
-import { useMemo } from 'react'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
+import { useSkipBridgeData } from 'hooks/bridge/useSkipBridgeData'
 
 interface Props {
   account: Account
@@ -44,7 +45,14 @@ export default function AccountBalancesTable(props: Props) {
   const address = useStore((s) => s.address)
   const updatedAccount = useStore((s) => s.updatedAccount)
   const isHls = account.kind === 'high_levered_strategy'
-  const whitelistedAssets = useWhitelistedAssets()
+
+  const { skipBridges } = useSkipBridge({
+    chainConfig,
+    cosmosAddress: address,
+  })
+
+  const columns = useAccountBalancesColumns(account, showLiquidationPrice)
+
   const accountBalanceData = useAccountBalanceData({
     account,
     updatedAccount,
@@ -52,22 +60,19 @@ export default function AccountBalancesTable(props: Props) {
     borrowingData,
   })
 
-  const enhancedAccountBalanceData = useMemo(() => {
-    return accountBalanceData.map((row) => ({
-      ...row,
-      isWhitelisted: whitelistedAssets.some((asset) => asset.denom === row.denom),
-    }))
-  }, [accountBalanceData, whitelistedAssets])
-
-  const sortedAccountBalanceData = enhancedAccountBalanceData.sort((a, b) => {
-    if (a.isWhitelisted && !b.isWhitelisted) return -1
-    if (!a.isWhitelisted && b.isWhitelisted) return 1
-    return 0
+  const { dynamicAssets, currentBridges, forceUpdate } = useSkipBridgeData({
+    accountBalanceData,
+    chainConfig,
   })
 
-  const columns = useAccountBalancesColumns(account, showLiquidationPrice)
+  useEffect(() => {
+    const skipBridgesString = localStorage.getItem('skipBridges')
+    if (skipBridgesString) {
+      forceUpdate({})
+    }
+  }, [skipBridges, forceUpdate])
 
-  if (sortedAccountBalanceData.length === 0) {
+  if (accountBalanceData.length === 0 && currentBridges.length === 0) {
     return (
       <ConditionalWrapper
         condition={!hideCard}
@@ -109,6 +114,7 @@ export default function AccountBalancesTable(props: Props) {
       </ConditionalWrapper>
     )
   }
+
   return (
     <Table
       title={
@@ -121,7 +127,7 @@ export default function AccountBalancesTable(props: Props) {
         </Text>
       }
       columns={columns}
-      data={sortedAccountBalanceData}
+      data={dynamicAssets}
       tableBodyClassName={classNames(tableBodyClassName, 'text-white/60')}
       initialSorting={[]}
       spacingClassName='p-2'

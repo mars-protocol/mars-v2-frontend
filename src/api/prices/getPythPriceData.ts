@@ -16,7 +16,7 @@ export default async function getPythPriceData(priceFeedIds: string[]) {
     )
     return pythDataResponse
   } catch (ex) {
-    console.log(ex)
+    console.error(ex)
     return []
   }
 }
