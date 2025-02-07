@@ -10,7 +10,11 @@ import useAccountId from 'hooks/accounts/useAccountId'
 import useStore from 'store'
 import { useWeb3WalletConnection } from 'hooks/wallet/useWeb3WalletConnections'
 
-export default function AccountFundFullPage() {
+interface Props {
+  isCreateAccount?: boolean
+}
+
+export default function AccountFundFullPage({ isCreateAccount = false }: Props) {
   const address = useStore((s) => s.address)
   const accountId = useAccountId()
 
@@ -26,9 +30,10 @@ export default function AccountFundFullPage() {
     if (accountId && selectedAccountId !== accountId) setSelectedAccountId(accountId)
   }, [accounts, selectedAccountId, accountId, currentAccount])
 
-  const title = !hasNoAccounts
-    ? `Fund Credit Account ${selectedAccountId ? `#${selectedAccountId}` : ''}`
-    : 'Create and Fund a Credit Account'
+  const title =
+    isCreateAccount || hasNoAccounts
+      ? 'Create and Fund a Credit Account'
+      : `Fund Credit Account ${selectedAccountId ? `#${selectedAccountId}` : ''}`
 
   if (!address) {
     return (
@@ -56,7 +61,7 @@ export default function AccountFundFullPage() {
             accountId={selectedAccountId ?? ''}
             isFullPage
             onConnectWallet={handleConnectWallet}
-            hasExistingAccount={!hasNoAccounts}
+            hasExistingAccount={!isCreateAccount && !hasNoAccounts}
           />
         </Card>
       )}

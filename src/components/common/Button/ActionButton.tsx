@@ -8,6 +8,7 @@ import WalletConnectButton from 'components/Wallet/WalletConnectButton'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useStore from 'store'
+import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 
 interface Props extends ButtonProps {
   short?: boolean
@@ -22,7 +23,7 @@ export default function ActionButton(props: Props) {
   const selectedAccountId = useAccountId()
 
   const handleCreateAccountClick = useCallback(() => {
-    useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
+    useStore.setState({ focusComponent: { component: <AccountFundFullPage isCreateAccount /> } })
   }, [])
 
   if (!address)

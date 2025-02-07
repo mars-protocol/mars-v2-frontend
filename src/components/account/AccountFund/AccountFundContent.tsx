@@ -197,9 +197,10 @@ export default function AccountFundContent(props: Props) {
 
     setIsConfirming(true)
     try {
-      const shouldAutoLend = hasNoAccounts
-        ? isAutoLendEnabledGlobal
-        : isAutoLendEnabledForCurrentAccount
+      const shouldAutoLend =
+        hasNoAccounts || !props.hasExistingAccount
+          ? isAutoLendEnabledGlobal
+          : isAutoLendEnabledForCurrentAccount
 
       const evmAssets = fundingAssets.filter(
         (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
@@ -209,7 +210,7 @@ export default function AccountFundContent(props: Props) {
       )
 
       let accountId = props.accountId
-      if (hasNoAccounts) {
+      if (!props.hasExistingAccount || hasNoAccounts) {
         const mintResult = await createAccount('default', shouldAutoLend)
 
         if (!mintResult) {
@@ -266,6 +267,7 @@ export default function AccountFundContent(props: Props) {
     props.accountId,
     props.address,
     props.isFullPage,
+    props.hasExistingAccount,
     deposit,
     fundingAssets,
     isAutoLendEnabledForCurrentAccount,
