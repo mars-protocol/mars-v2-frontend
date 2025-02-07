@@ -33,7 +33,7 @@ export default function AccountFundFullPage({ isCreateAccount = false }: Props) 
   const title =
     isCreateAccount || hasNoAccounts
       ? 'Create and Fund a Credit Account'
-      : `Fund Credit Account ${selectedAccountId ? `#${selectedAccountId}` : ''}`
+      : `Fund Credit Account ${selectedAccountId && `#${selectedAccountId}`}`
 
   if (!address) {
     return (

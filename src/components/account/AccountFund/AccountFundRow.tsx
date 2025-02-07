@@ -28,13 +28,11 @@ export default function AccountFundRow(props: Props) {
   const balance = findBalanceForAsset(props.balances, props.denom, props.chainName || undefined)
   const chainName = props.chainName && props.chainName !== '' ? props.chainName : undefined
 
-  // Calculate received amount from route response
   const receivedAmount =
     props.routeResponse && !props.amount.isZero() ? BN(props.routeResponse.amountOut) : props.amount
   const formattedReceivedAmount = receivedAmount.dividedBy(10 ** asset.decimals)
   const isEVMAsset = !!chainName
 
-  // Calculate the actual impact percentage using USD amounts
   const impactPercentage =
     props.amount.isZero() || !props.routeResponse
       ? BN_ZERO
@@ -43,7 +41,6 @@ export default function AccountFundRow(props: Props) {
           .dividedBy(props.routeResponse.usdAmountIn || '1')
           .multipliedBy(100)
 
-  // Format duration in minutes, rounded up
   const durationInMinutes = props.routeResponse
     ? Math.ceil(props.routeResponse.estimatedRouteDurationSeconds / 60)
     : 20
