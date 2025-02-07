@@ -1,9 +1,5 @@
+import { Analytics } from '@vercel/analytics/react'
 import classNames from 'classnames'
-import { Suspense, useEffect } from 'react'
-import { isMobile } from 'react-device-detect'
-import { useLocation } from 'react-router-dom'
-import { SWRConfig } from 'swr'
-
 import ModalsContainer from 'components/Modals/ModalsContainer'
 import AccountDetails from 'components/account/AccountDetails'
 import Background from 'components/common/Background'
@@ -20,7 +16,11 @@ import useAccountId from 'hooks/accounts/useAccountId'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import { Suspense, useEffect } from 'react'
+import { isMobile } from 'react-device-detect'
+import { useLocation } from 'react-router-dom'
 import useStore from 'store'
+import { SWRConfig } from 'swr'
 import { debugSWR } from 'utils/middleware'
 
 interface Props {
@@ -130,6 +130,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               {!isMobile && <AccountDetails className='hidden md:flex' />}
             </main>
             <Footer />
+
+            <Analytics />
             <ModalsContainer />
             <Toaster />
           </Suspense>
