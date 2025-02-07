@@ -18,10 +18,7 @@ export default function MintVaultAccount() {
   const navigate = useNavigate()
 
   const handleCreateVault = useCallback(async () => {
-    if (!vaultAddress) {
-      console.error('Vault address is undefined')
-      return
-    }
+    if (!vaultAddress || !address) return
 
     setIsTxPending(true)
     try {
@@ -69,8 +66,6 @@ export default function MintVaultAccount() {
 
         <Button
           onClick={handleCreateVault}
-          variant='solid'
-          color='primary'
           size='md'
           rightIcon={<ArrowRight />}
           className='w-full md:w-70'
