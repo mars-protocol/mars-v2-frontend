@@ -1,14 +1,14 @@
+import { RouteResponse } from '@skip-go/client'
+import classNames from 'classnames'
 import AssetCampaignCopy from 'components/common/assets/AssetCampaignCopy'
+import { Clock } from 'components/common/Icons'
+import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
+import { BN_ZERO } from 'constants/math'
 import useAsset from 'hooks/assets/useAsset'
+import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 import { findBalanceForAsset } from 'utils/balances'
 import { BN } from 'utils/helpers'
-import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
-import Text from 'components/common/Text'
-import classNames from 'classnames'
-import { ClockIcon } from 'components/common/Icons'
-import { BN_ZERO } from 'constants/math'
-import { RouteResponse } from '@skip-go/client'
 
 interface Props {
   amount: BigNumber
@@ -83,7 +83,7 @@ export default function AccountFundRow(props: Props) {
           </div>
           <div className='flex items-center justify-between px-1 mt-2'>
             <div className='flex items-center gap-1.5 text-white/60'>
-              <ClockIcon className='w-3.5 h-3.5' />
+              <Clock className='w-3.5 h-3.5' />
               <Text size='xs'>~{durationInMinutes} min</Text>
             </div>
             <div className='flex items-center gap-1.5'>

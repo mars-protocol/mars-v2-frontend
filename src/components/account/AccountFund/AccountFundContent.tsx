@@ -10,6 +10,7 @@ import { ArrowRight, Plus } from 'components/common/Icons'
 import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
+import useAccounts from 'hooks/accounts/useAccounts'
 import useBaseAsset from 'hooks/assets/useBaseAsset'
 import { useFundingAssets } from 'hooks/assets/useFundingAssets'
 import { useUSDCBalances } from 'hooks/assets/useUSDCBalances'
@@ -25,13 +26,12 @@ import { useNavigate } from 'react-router-dom'
 import useStore from 'store'
 import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 import { byDenom } from 'utils/array'
+import { getChainLogoByName } from 'utils/chainLogos'
 import { MINIMUM_USDC } from 'utils/constants'
 import { chainNameToUSDCAttributes } from 'utils/fetchUSDCBalance'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
 import BridgeRouteVisualizer from './BridgeContent/BridgeRouteVisualizer'
-import { getChainLogoByName } from 'utils/chainLogos'
-import useAccounts from 'hooks/accounts/useAccounts'
 
 interface Props {
   account?: Account
@@ -83,7 +83,6 @@ export default function AccountFundContent(props: Props) {
   const [goFast, setGoFast] = useState(true)
 
   const accounts = useAccounts('default', props.address)
-  console.log('accounts', accounts.data)
   const hasNoAccounts = accounts.data?.length < 1
   const [currentRoute, setCurrentRoute] = useState<RouteResponse | undefined>(undefined)
   const [routeError, setRouteError] = useState<string | null>(null)
