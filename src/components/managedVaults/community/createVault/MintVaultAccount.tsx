@@ -7,6 +7,7 @@ import { ArrowRight, Vault } from 'components/common/Icons'
 import { getPage, getRoute } from 'utils/route'
 import { useCallback, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 
 export default function MintVaultAccount() {
   const [isTxPending, setIsTxPending] = useState(false)
@@ -16,9 +17,10 @@ export default function MintVaultAccount() {
   const address = useStore((s) => s.address)
   const chainConfig = useChainConfig()
   const navigate = useNavigate()
+  const { isOwner } = useManagedVaultDetails(vaultAddress ?? '')
 
   const handleCreateVault = useCallback(async () => {
-    if (!vaultAddress || !address) return
+    if (!vaultAddress || !address || !isOwner) return
 
     setIsTxPending(true)
     try {
@@ -47,20 +49,28 @@ export default function MintVaultAccount() {
     } finally {
       setIsTxPending(false)
     }
-  }, [vaultAddress, createAccount, navigate, chainConfig, searchParams, address])
+  }, [address, chainConfig, createAccount, isOwner, navigate, searchParams, vaultAddress])
 
   return (
     <CreateVaultContent cardClassName='h-118 flex justify-end'>
       <div className='flex flex-col items-center w-full gap-24'>
         <div className='flex flex-col items-center justify-center gap-6 w-80'>
-          <div className='flex items-center justify-center rounded-full h-28 w-28 bg-white/10'>
-            <Vault className='w-10 h-10' />
+          <div className='flex items-center justify-center rounded-full p-10 bg-white/10'>
+            <span className='w-10 h-10'>
+              <Vault />
+            </span>
           </div>
           <div className='space-y-2 text-center'>
             <Text size='base'>Create Vault Account</Text>
-            <Text size='sm' className='text-white/60'>
-              We require one more transaction approval from you in order to continue.
-            </Text>
+            {!isOwner ? (
+              <Text size='sm' className='text-error'>
+                Only the vault creator can mint this account.
+              </Text>
+            ) : (
+              <Text size='sm' className='text-white/60'>
+                We require one more transaction approval from you in order to continue.
+              </Text>
+            )}
           </div>
         </div>
 
@@ -71,7 +81,7 @@ export default function MintVaultAccount() {
           className='w-full md:w-70'
           text='Create Vault Account (2/2)'
           showProgressIndicator={isTxPending}
-          disabled={isTxPending}
+          disabled={isTxPending || !isOwner}
         />
       </div>
     </CreateVaultContent>
