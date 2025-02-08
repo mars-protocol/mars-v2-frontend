@@ -13,6 +13,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { checkAccountKind } from 'utils/accounts'
 import { getPage, getRoute } from 'utils/route'
+import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 
 interface Props {
   setShowMenu: (show: boolean) => void
@@ -37,11 +38,8 @@ export default function AccountList(props: Props) {
     const noHlsAccounts = accounts.filter(
       (account) => checkAccountKind(account.kind) !== 'high_levered_strategy',
     )
-
-    if (isVaults) {
-      return noHlsAccounts.filter((account) => checkAccountKind(account.kind) === 'fund_manager')
-    }
-    return noHlsAccounts.filter((account) => checkAccountKind(account.kind) === 'default')
+    const accountType = isVaults ? 'fund_manager' : 'default'
+    return noHlsAccounts.filter((account) => checkAccountKind(account.kind) === accountType)
   }, [accounts, isVaults])
 
   const [searchParams] = useSearchParams()
@@ -60,7 +58,6 @@ export default function AccountList(props: Props) {
     <div className='flex flex-wrap w-full p-4'>
       {filteredAccounts.map((account) => {
         const isActive = currentAccountId === account.id
-
         return (
           <div key={account.id} id={`account-${account.id}`} className='w-full pt-4'>
             <Card
@@ -84,7 +81,7 @@ export default function AccountList(props: Props) {
                   onClick={() => setShowMenu(false)}
                 >
                   {isVaults ? (
-                    <Text size='xs'>Vault Name</Text>
+                    <VaultName account={account} />
                   ) : (
                     <Text size='xs' className='flex flex-1'>
                       Credit Account {account.id}
@@ -100,5 +97,20 @@ export default function AccountList(props: Props) {
         )
       })}
     </div>
+  )
+}
+
+function VaultName({ account }: { account: Account }) {
+  const vaultAddress =
+    typeof account.kind === 'object' && 'fund_manager' in account.kind
+      ? account.kind.fund_manager.vault_addr
+      : ''
+  const { details } = useManagedVaultDetails(vaultAddress)
+
+  return (
+    <Text
+      size='xs'
+      className='flex flex-1'
+    >{`${details?.title} (Credit Account ${account.id})`}</Text>
   )
 }
