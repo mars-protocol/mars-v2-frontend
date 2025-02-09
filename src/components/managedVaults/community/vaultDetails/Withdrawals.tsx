@@ -164,7 +164,7 @@ export default function Withdrawals(props: Props) {
       title: 'Queued Withdrawals',
       renderContent: () =>
         isLoadingAllUnlocks ? (
-          <div className='flex flex-col items-center justify-center gap-4 bg-white/5 min-h-[247px]'>
+          <div className='flex flex-col items-center justify-center gap-4 bg-white/5 h-62'>
             <CircularProgress size={20} />
             <Text size='sm'>Fetching on-chain data...</Text>
           </div>
@@ -184,8 +184,10 @@ export default function Withdrawals(props: Props) {
             }}
           />
         ) : (
-          <div className='flex justify-center items-center bg-white/5 min-h-[247px]'>
-            <span className='text-white/50'>No queued withdrawals.</span>
+          <div className='flex justify-center items-center bg-white/5 h-62'>
+            <Text size='sm' className='text-white/50'>
+              No queued withdrawals.
+            </Text>
           </div>
         ),
     },
