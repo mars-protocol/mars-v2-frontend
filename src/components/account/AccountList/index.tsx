@@ -7,13 +7,13 @@ import AccountStats from 'components/account/AccountList/AccountStats'
 import Card from 'components/common/Card'
 import Radio from 'components/common/Radio'
 import Text from 'components/common/Text'
+import VaultTitle from 'components/managedVaults/common/VaultTitle'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { checkAccountKind } from 'utils/accounts'
 import { getPage, getRoute } from 'utils/route'
-import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 
 interface Props {
   setShowMenu: (show: boolean) => void
@@ -80,13 +80,9 @@ export default function AccountList(props: Props) {
                   role='button'
                   onClick={() => setShowMenu(false)}
                 >
-                  {isVaults ? (
-                    <VaultName account={account} />
-                  ) : (
-                    <Text size='xs' className='flex flex-1'>
-                      Credit Account {account.id}
-                    </Text>
-                  )}
+                  <Text size='xs' className='flex flex-1'>
+                    {isVaults ? <VaultTitle account={account} /> : `Credit Account ${account.id}`}
+                  </Text>
                   <Radio active={isActive} className='group-hover/account:opacity-100' />
                 </div>
               }
@@ -97,20 +93,5 @@ export default function AccountList(props: Props) {
         )
       })}
     </div>
-  )
-}
-
-function VaultName({ account }: { account: Account }) {
-  const vaultAddress =
-    typeof account.kind === 'object' && 'fund_manager' in account.kind
-      ? account.kind.fund_manager.vault_addr
-      : ''
-  const { details } = useManagedVaultDetails(vaultAddress)
-
-  return (
-    <Text
-      size='xs'
-      className='flex flex-1'
-    >{`${details?.title} (Credit Account ${account.id})`}</Text>
   )
 }
