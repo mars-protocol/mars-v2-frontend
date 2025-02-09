@@ -25,15 +25,16 @@ interface Props {
 
 export default function Withdrawals(props: Props) {
   const { details, isOwner, vaultAddress } = props
+
   const {
-    data: allUnlocksData,
+    data: allUnlocksData = [],
     currentPage,
     totalPages,
-    handlePageChange,
+    totalCount,
     isLoading: isLoadingAllUnlocks,
-  } = useAllUnlocks(vaultAddress, 3)
+    handlePageChange,
+  } = useAllUnlocks(vaultAddress)
   const { data: userUnlocksData = [], isLoading: isLoadingUnlocks } = useUserUnlocks(vaultAddress)
-
   const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false, details })
   const userWithdrawalColumns = useUserWithdrawals({
     isLoading: false,
@@ -157,7 +158,7 @@ export default function Withdrawals(props: Props) {
         />
       ),
     },
-    ...(allUnlocksData.length > 0 || isLoadingAllUnlocks
+    ...(totalCount > 0
       ? [
           {
             title: 'Queued Withdrawals',

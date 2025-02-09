@@ -7,37 +7,19 @@ export function useAllUnlocks(vaultAddress: string, limit: number = 3) {
   const chainConfig = useChainConfig()
 
   const [currentPage, setCurrentPage] = useState<number>(1)
-  const [startAfterByPage, setStartAfterByPage] = useState<Record<number, [string, number] | null>>(
-    {
-      1: null,
-    },
-  )
+  const [allData, setAllData] = useState<UserManagedVaultUnlock[]>([])
 
-  const { data, error, isLoading } = useSWR(
-    vaultAddress
-      ? [
-          `chains/${chainConfig.id}/vaults/${vaultAddress}/allUnlocks`,
-          currentPage,
-          startAfterByPage[currentPage],
-        ]
-      : null,
+  const { data: completeData, isLoading } = useSWR(
+    vaultAddress ? `chains/${chainConfig.id}/vaults/${vaultAddress}/allUnlocks/complete` : null,
     async () => {
       try {
         const response = await getManagedVaultAllUnlocks(
           chainConfig,
           vaultAddress!,
-          limit,
-          startAfterByPage[currentPage],
+          undefined,
+          null,
         )
-
-        if (response.metadata.has_more && response.data.length > 0) {
-          const lastItem = response.data[response.data.length - 1]
-          setStartAfterByPage((prev) => ({
-            ...prev,
-            [currentPage + 1]: [lastItem.user_address, lastItem.created_at],
-          }))
-        }
-
+        setAllData(response.data)
         return response
       } catch (error) {
         console.error('Error fetching all unlocks:', error)
@@ -50,18 +32,21 @@ export function useAllUnlocks(vaultAddress: string, limit: number = 3) {
     },
   )
 
+  const paginatedData = allData.slice((currentPage - 1) * limit, currentPage * limit)
+  const totalPages = Math.ceil(allData.length / limit)
+
   const handlePageChange = (newPage: number) => {
     if (newPage < 1) return
-    if (!data?.metadata.has_more && newPage > currentPage) return
+    if (newPage > totalPages) return
     setCurrentPage(newPage)
   }
 
   return {
-    data: data?.data || [],
+    data: paginatedData,
     isLoading,
-    error,
     currentPage,
-    totalPages: data?.metadata.has_more ? currentPage + 1 : currentPage,
+    totalPages,
+    totalCount: allData.length,
     handlePageChange,
   }
 }
