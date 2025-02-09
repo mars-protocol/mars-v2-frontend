@@ -30,6 +30,7 @@ export default function Withdrawals(props: Props) {
     currentPage,
     totalPages,
     handlePageChange,
+    isLoading: isLoadingAllUnlocks,
   } = useAllUnlocks(vaultAddress, 3)
   const { data: userUnlocksData = [], isLoading: isLoadingUnlocks } = useUserUnlocks(vaultAddress)
 
@@ -156,7 +157,7 @@ export default function Withdrawals(props: Props) {
         />
       ),
     },
-    ...(allUnlocksData.length > 0
+    ...(allUnlocksData.length > 0 || isLoadingAllUnlocks
       ? [
           {
             title: 'Queued Withdrawals',
