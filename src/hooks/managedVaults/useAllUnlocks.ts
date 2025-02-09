@@ -3,13 +3,12 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useSWR from 'swr'
 import { useState } from 'react'
 
-export function useAllUnlocks(vaultAddress: string, limit: number = 3) {
+export function useAllUnlocks(vaultAddress: string, itemsPerPage: number = 3) {
   const chainConfig = useChainConfig()
 
   const [currentPage, setCurrentPage] = useState<number>(1)
-  const [allData, setAllData] = useState<UserManagedVaultUnlock[]>([])
 
-  const { data: completeData, isLoading } = useSWR(
+  const { data = [], isLoading } = useSWR<UserManagedVaultUnlock[]>(
     vaultAddress ? `chains/${chainConfig.id}/vaults/${vaultAddress}/allUnlocks/complete` : null,
     async () => {
       try {
@@ -19,11 +18,10 @@ export function useAllUnlocks(vaultAddress: string, limit: number = 3) {
           undefined,
           null,
         )
-        setAllData(response.data)
-        return response
+        return response.data
       } catch (error) {
         console.error('Error fetching all unlocks:', error)
-        return { data: [], metadata: { has_more: false } }
+        return []
       }
     },
     {
@@ -32,8 +30,8 @@ export function useAllUnlocks(vaultAddress: string, limit: number = 3) {
     },
   )
 
-  const paginatedData = allData.slice((currentPage - 1) * limit, currentPage * limit)
-  const totalPages = Math.ceil(allData.length / limit)
+  const paginatedData = data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+  const totalPages = Math.ceil(data.length / itemsPerPage)
 
   const handlePageChange = (newPage: number) => {
     if (newPage < 1) return
@@ -46,7 +44,7 @@ export function useAllUnlocks(vaultAddress: string, limit: number = 3) {
     isLoading,
     currentPage,
     totalPages,
-    totalCount: allData.length,
+    totalCount: data.length,
     handlePageChange,
   }
 }

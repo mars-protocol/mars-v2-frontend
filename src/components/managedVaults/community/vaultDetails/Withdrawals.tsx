@@ -1,9 +1,11 @@
 import classNames from 'classnames'
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
+import { CircularProgress } from 'components/common/CircularProgress'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ExclamationMarkTriangle } from 'components/common/Icons'
 import Table from 'components/common/Table'
+import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import VaultStats from 'components/managedVaults/community/vaultDetails/common/VaultStats'
 import useQueuedWithdrawals from 'components/managedVaults/community/vaultDetails/table/useQueuedWithdrawals'
@@ -158,29 +160,35 @@ export default function Withdrawals(props: Props) {
         />
       ),
     },
-    ...(totalCount > 0
-      ? [
-          {
-            title: 'Queued Withdrawals',
-            renderContent: () => (
-              <Table
-                title='Queued Withdrawals'
-                hideCard
-                columns={queuedWithdrawalcolumns}
-                data={allUnlocksData}
-                initialSorting={[{ id: 'created_at', desc: true }]}
-                tableBodyClassName='bg-white/5'
-                spacingClassName='p-3'
-                pagination={{
-                  currentPage,
-                  totalPages,
-                  onPageChange: handlePageChange,
-                }}
-              />
-            ),
-          },
-        ]
-      : []),
+    {
+      title: 'Queued Withdrawals',
+      renderContent: () =>
+        isLoadingAllUnlocks ? (
+          <div className='flex flex-col items-center justify-center gap-4 bg-white/5 min-h-[247px]'>
+            <CircularProgress size={20} />
+            <Text size='sm'>Fetching on-chain data...</Text>
+          </div>
+        ) : totalCount > 0 ? (
+          <Table
+            title='Queued Withdrawals'
+            hideCard
+            columns={queuedWithdrawalcolumns}
+            data={allUnlocksData}
+            initialSorting={[{ id: 'created_at', desc: true }]}
+            tableBodyClassName='bg-white/5'
+            spacingClassName='p-3'
+            pagination={{
+              currentPage,
+              totalPages,
+              onPageChange: handlePageChange,
+            }}
+          />
+        ) : (
+          <div className='flex justify-center items-center bg-white/5 min-h-[247px]'>
+            <span className='text-white/50'>No queued withdrawals.</span>
+          </div>
+        ),
+    },
   ]
   return <CardWithTabs tabs={tabs} />
 }
