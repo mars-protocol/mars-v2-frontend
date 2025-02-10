@@ -66,7 +66,7 @@ export default function AccountFundRow(props: Props) {
         chainName={chainName}
       />
 
-      {isEVMAsset && (
+      {isEVMAsset && props.routeResponse && (
         <div className='mt-4'>
           <div className='flex flex-row justify-between items-center p-2 rounded-sm border border-white/20 bg-white/5'>
             <Text size='sm' className='text-white'>

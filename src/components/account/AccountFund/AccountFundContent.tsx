@@ -83,6 +83,7 @@ export default function AccountFundContent(props: Props) {
   const [goFast, setGoFast] = useState(true)
 
   const accounts = useAccounts('default', props.address)
+
   const hasNoAccounts = accounts.data?.length < 1
   const [currentRoute, setCurrentRoute] = useState<RouteResponse | undefined>(undefined)
   const [routeError, setRouteError] = useState<string | null>(null)
@@ -209,6 +210,7 @@ export default function AccountFundContent(props: Props) {
       )
 
       let accountId = props.accountId
+
       if (!props.hasExistingAccount || hasNoAccounts) {
         const mintResult = await createAccount('default', shouldAutoLend)
 
