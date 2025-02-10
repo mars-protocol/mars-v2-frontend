@@ -1,23 +1,25 @@
 import classNames from 'classnames'
-import { CardWithTabs } from 'components/common/Card/CardWithTabs'
-import { CircularProgress } from 'components/common/CircularProgress'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import { FormattedNumber } from 'components/common/FormattedNumber'
-import { ExclamationMarkTriangle } from 'components/common/Icons'
+import moment from 'moment'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
-import { Tooltip } from 'components/common/Tooltip'
-import VaultStats from 'components/managedVaults/community/vaultDetails/common/VaultStats'
+import TokenWithUsdValue from 'components/managedVaults/community/vaultDetails/common/TokenWithUsdValue'
 import useQueuedWithdrawals from 'components/managedVaults/community/vaultDetails/table/useQueuedWithdrawals'
 import useUserWithdrawals from 'components/managedVaults/community/vaultDetails/table/useUserWithdrawals'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
+import VaultStats from 'components/managedVaults/community/vaultDetails/common/VaultStats'
+import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
+import { BN_ZERO } from 'constants/math'
+import { byDenom } from 'utils/array'
+import { CardWithTabs } from 'components/common/Card/CardWithTabs'
+import { CircularProgress } from 'components/common/CircularProgress'
+import { ExclamationMarkTriangle } from 'components/common/Icons'
+import { formatLockupPeriod } from 'utils/formatters'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { Tooltip } from 'components/common/Tooltip'
 import { useAllUnlocks } from 'hooks/managedVaults/useAllUnlocks'
 import { useUserUnlocks } from 'hooks/managedVaults/useUserUnlocks'
-import moment from 'moment'
-import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from 'utils/array'
-import { formatLockupPeriod } from 'utils/formatters'
-import { BN } from 'utils/helpers'
 
 interface Props {
   details: ExtendedManagedVaultDetails
@@ -45,6 +47,7 @@ export default function Withdrawals(props: Props) {
   })
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
+  console.log(depositAsset, 'depositAsset')
   const withdrawalDate = moment(details.performance_fee_state.last_withdrawal * 1000)
   const isValidWithdrawal = withdrawalDate.isValid()
 
@@ -80,7 +83,7 @@ export default function Withdrawals(props: Props) {
               description: 'Queued Withdrawals',
               value: (
                 <FormattedNumber
-                  amount={3}
+                  amount={totalCount}
                   options={{
                     minDecimals: 0,
                     maxDecimals: 0,
@@ -89,19 +92,33 @@ export default function Withdrawals(props: Props) {
               ),
             },
             {
-              description: `${depositAsset.symbol} in vault`,
+              description: 'Total Withdrawal Value',
               value: (
-                <DisplayCurrency
-                  coin={BNCoin.fromDenomAndBigNumber(
-                    depositAsset.denom,
-                    BN(details.total_base_tokens),
+                <TokenWithUsdValue
+                  tokenAmount={allUnlocksData.reduce(
+                    (sum, unlock) => sum.plus(BN(unlock.base_tokens)),
+                    BN_ZERO,
                   )}
+                  usdAmount={allUnlocksData.reduce(
+                    (sum, unlock) =>
+                      sum.plus(BN(unlock.base_tokens).shiftedBy(depositAsset.decimals)),
+                    BN_ZERO,
+                  )}
+                  denom={depositAsset.denom}
+                  symbol={depositAsset.symbol}
                 />
               ),
             },
             {
-              description: 'Total Withdrawal Value',
-              value: <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber('usd', BN(2000))} />,
+              description: `${depositAsset.symbol} in vault`,
+              value: (
+                <TokenWithUsdValue
+                  tokenAmount={BN(details.total_base_tokens).shiftedBy(-depositAsset.decimals)}
+                  denom={depositAsset.denom}
+                  symbol={depositAsset.symbol}
+                  usdAmount={BN(details.total_base_tokens)}
+                />
+              ),
             },
             {
               description: 'Accured PnL',
@@ -132,7 +149,7 @@ export default function Withdrawals(props: Props) {
               ),
             },
             {
-              description: '% of USDC vs Queued Withdrawal Value',
+              description: `% of ${depositAsset.symbol} vs Queued Withdrawal Value`,
               value: (
                 <div className='flex gap-2'>
                   {/* conditional tooltip */}
