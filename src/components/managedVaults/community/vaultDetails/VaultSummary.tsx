@@ -1,17 +1,72 @@
 import HealthBar from 'components/account/Health/HealthBar'
+import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
+import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import VaultStats from 'components/managedVaults/community/vaultDetails/common/VaultStats'
 import useVaultBalances from 'components/managedVaults/community/vaultDetails/table/useVaultBalances'
 import { vaultBalanceData } from 'components/managedVaults/dummyData'
+import { ORACLE_DENOM } from 'constants/oracle'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useAssets from 'hooks/assets/useAssets'
+import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import useAssetParams from 'hooks/params/useAssetParams'
+import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
+import useVaultAprs from 'hooks/vaults/useVaultAprs'
+import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
+import { getAccountSummaryStats } from 'utils/accounts'
 import { BN } from 'utils/helpers'
 
 export default function VaultSummary() {
   const columns = useVaultBalances()
+
+  const account = useCurrentAccount()
+  const { data: vaultAprs } = useVaultAprs()
+  const astroLpAprs = useAstroLpAprs()
+  const { data: assets } = useAssets()
+  const { data: perpsVault } = usePerpsVault()
+  const data = useBorrowMarketAssetsTableData()
+  const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
+  const { availableAssets: lendingAvailableAssets, accountLentAssets } =
+    useLendingMarketAssetsTableData()
+  const lendingAssetsData = useMemo(
+    () => [...lendingAvailableAssets, ...accountLentAssets],
+    [lendingAvailableAssets, accountLentAssets],
+  )
+  const perpsMarketStates = usePerpsMarketStates()
+  const assetParams = useAssetParams()
+
+  const { health, healthFactor } = useHealthComputer(account)
+
+  const { positionValue, debts, netWorth, apy, leverage } = useMemo(() => {
+    return getAccountSummaryStats(
+      account as Account,
+      borrowAssetsData,
+      lendingAssetsData,
+      assets,
+      vaultAprs,
+      astroLpAprs,
+      assetParams.data || [],
+      perpsVault?.apy || 0,
+      perpsMarketStates.data || [],
+    )
+  }, [
+    account,
+    borrowAssetsData,
+    lendingAssetsData,
+    assets,
+    vaultAprs,
+    astroLpAprs,
+    assetParams.data,
+    perpsVault?.apy,
+    perpsMarketStates.data,
+  ])
 
   const tabs: CardTab[] = [
     {
@@ -19,30 +74,34 @@ export default function VaultSummary() {
       renderContent: () => (
         <VaultStats
           stats={[
-            // TODO: fetch from contract
             {
               description: 'Health',
               value: (
                 <div className='flex flex-col justify-end gap-2'>
-                  <HealthBar health={10} healthFactor={2} className='h-1' />
+                  <HealthBar health={health} healthFactor={healthFactor} className='h-1' />
                   <Text size='2xs' className='text-right text-white/50'>
-                    Health Factor: 2
+                    Health Factor: {healthFactor.toFixed(2)}
                   </Text>
                 </div>
               ),
             },
             {
-              description: 'Networth',
-              value: <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber('usd', BN(56789))} />,
+              description: 'Net Worth',
+              value: (
+                <DisplayCurrency
+                  options={{ abbreviated: false }}
+                  coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, netWorth.amount)}
+                />
+              ),
             },
             {
               description: 'Leverage',
               value: (
                 <FormattedNumber
-                  amount={4}
+                  amount={leverage?.toNumber() || 1}
                   options={{
-                    minDecimals: 0,
-                    maxDecimals: 0,
+                    maxDecimals: 2,
+                    minDecimals: 2,
                     suffix: 'x',
                   }}
                 />
@@ -50,17 +109,25 @@ export default function VaultSummary() {
             },
             {
               description: 'Total Position Value',
-              value: <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber('usd', BN(150000))} />,
+              value: (
+                <DisplayCurrency
+                  coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, BN(positionValue.amount))}
+                />
+              ),
             },
             {
               description: 'Debt',
-              value: <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber('usd', BN(22100))} />,
+              value: (
+                <DisplayCurrency
+                  coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, BN(debts.amount))}
+                />
+              ),
             },
             {
-              description: 'Net APR',
+              description: 'Net APY',
               value: (
                 <FormattedNumber
-                  amount={34.2}
+                  amount={Number(apy)}
                   options={{
                     suffix: '%',
                     minDecimals: 2,
