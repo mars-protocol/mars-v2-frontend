@@ -6,14 +6,13 @@ import Text from 'components/common/Text'
 import TextArea from 'components/common/TextArea'
 import { TextLink } from 'components/common/TextLink'
 import CreateVaultContent from 'components/managedVaults/community/createVault/CreateVaultContent'
-import MintVaultAccount from 'components/managedVaults/community/createVault/MintVaultAccount'
 import PerformanceFee from 'components/managedVaults/community/createVault/PerformanceFee'
 import VaultInputElement from 'components/managedVaults/community/createVault/VaultInputElement'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { useCallback, useMemo, useState } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -44,7 +43,6 @@ export default function CreateVault() {
   const [vaultTitle, setVaultTitle] = useState<string>('')
   const [performanceFee, setPerformanceFee] = useState<BigNumber>(BN(1))
   const [searchParams] = useSearchParams()
-  const { pathname } = useLocation()
   const accountId = useAccountId()
   const address = useStore((s) => s.address)
   const navigate = useNavigate()
@@ -82,25 +80,16 @@ export default function CreateVault() {
 
       if (!result) return
 
-      if (result.address) {
-        if (accountId)
-          navigate(
-            getRoute(
-              getPage(`vaults/${result.address}/mint-account`, chainConfig),
-              searchParams,
-              address,
-              accountId,
-            ),
-          )
+      if (result.address && accountId) {
+        navigate(
+          getRoute(
+            getPage(`vaults/${result.address}/mint-account`, chainConfig),
+            searchParams,
+            address,
+            accountId,
+          ),
+        )
       }
-      useStore.setState({
-        focusComponent: {
-          component: <MintVaultAccount />,
-          onClose: () => {
-            navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
-          },
-        },
-      })
     } catch (error) {
       console.error('Failed to create vault:', error)
     } finally {
@@ -118,7 +107,6 @@ export default function CreateVault() {
     chainConfig,
     searchParams,
     address,
-    pathname,
   ])
 
   const handleWithdrawFreezePeriod = useCallback((value: string) => {

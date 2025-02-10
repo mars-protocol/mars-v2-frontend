@@ -1,6 +1,8 @@
-import classNames from 'classnames'
 import Card from 'components/common/Card'
-import FullOverlayContent from 'components/common/FullOverlayContent'
+import classNames from 'classnames'
+import NavigationBackButton from 'components/common/Button/NavigationBackButton'
+import Text from 'components/common/Text'
+import useStore from 'store'
 
 interface Props {
   children: React.ReactNode
@@ -9,16 +11,34 @@ interface Props {
 
 export default function CreateVaultContent(props: Props) {
   const { children, cardClassName } = props
+  const address = useStore((s) => s.address)
 
   return (
-    <FullOverlayContent
-      title='Create Vault'
-      copy="We'll require you to authorise a transaction in your wallet in order to begin."
-      className='items-start p-1 max-w-modal md:w-full md:relative'
-    >
+    <div className='container mx-auto py-8 max-w-4xl'>
+      <div className='flex items-center mb-6'>
+        <NavigationBackButton />
+      </div>
+
+      <div className='flex flex-col items-center mb-8'>
+        <Text size='4xl' className='w-full pb-2 text-center'>
+          Create Vault
+        </Text>
+        <Text size='sm' className='w-full text-center text-white/60'>
+          We'll require you to authorise a transaction in your wallet in order to begin.
+        </Text>
+      </div>
+
       <Card className={classNames('p-4 md:p-6 bg-white/5 w-full', cardClassName)} showOverflow>
-        {children}
+        {address ? (
+          children
+        ) : (
+          <div className='flex items-center justify-center h-118'>
+            <Text size='sm' className='w-full text-center'>
+              You need to be connected to view this page.
+            </Text>
+          </div>
+        )}
       </Card>
-    </FullOverlayContent>
+    </div>
   )
 }

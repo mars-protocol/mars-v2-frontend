@@ -425,6 +425,8 @@ type Page =
   | 'vaults-community'
   | 'vaults/create'
   | 'vaults/{vaultId}'
+  | 'vaults/{vaultId}/mint-account'
+  | 'vaults/{vaultId}/details'
   | 'governance'
   | 'execute'
   | 'v1'

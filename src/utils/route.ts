@@ -44,15 +44,10 @@ export function getPage(pathname: string, chainConfig: ChainConfig): Page {
     'vaults',
     'vaults-community',
     'vaults/create',
+    'vaults/{vaultId}/mint-account',
+    'vaults/{vaultId}/details',
     'v1',
   ]
-
-  if (
-    pathname.startsWith('vaults/') &&
-    (pathname.includes('mint-account') || pathname.includes('details'))
-  ) {
-    return pathname as Page
-  }
 
   const segments = pathname.split('/')
 
@@ -68,9 +63,12 @@ export function getPage(pathname: string, chainConfig: ChainConfig): Page {
       const path = pathname.split('portfolio')[1]
       return (page + path) as Page
     }
+    if (page === 'vaults') {
+      const path = pathname.split('vaults')[1]
+      return (page + path) as Page
+    }
     return page as Page
   }
-
   return chainConfig.perps ? ('perps' as Page) : ('trade' as Page)
 }
 

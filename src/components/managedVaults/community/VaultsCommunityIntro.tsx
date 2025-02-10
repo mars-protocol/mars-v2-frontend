@@ -2,7 +2,6 @@ import Button from 'components/common/Button'
 import ActionButton from 'components/common/Button/ActionButton'
 import { Account, ArrowRight, HandCoins, Plus, PlusSquared, Wallet } from 'components/common/Icons'
 import Intro from 'components/common/Intro'
-import CreateVault from 'components/managedVaults/community/createVault/index'
 import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAccountId from 'hooks/accounts/useAccountId'
@@ -10,7 +9,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { useCallback } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { DocURL } from 'types/enums'
 import { getPage, getRoute } from 'utils/route'
@@ -23,7 +22,6 @@ export default function VaultsCommunityIntro() {
   const { open: showAlertDialog, close } = useAlertDialog()
   const accountId = useAccountId()
   const navigate = useNavigate()
-  const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
   const chainConfig = useChainConfig()
@@ -31,16 +29,7 @@ export default function VaultsCommunityIntro() {
   const openCreateVaultOverlay = useCallback(() => {
     if (accountId)
       navigate(getRoute(getPage('vaults/create', chainConfig), searchParams, address, accountId))
-
-    useStore.setState({
-      focusComponent: {
-        component: <CreateVault />,
-        onClose: () => {
-          navigate(getRoute(getPage(pathname, chainConfig), searchParams, address))
-        },
-      },
-    })
-  }, [accountId, navigate, chainConfig, searchParams, address, pathname])
+  }, [accountId, navigate, chainConfig, searchParams, address])
 
   const handleOnClick = useCallback(() => {
     if (!showVaultInformation) {
