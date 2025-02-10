@@ -124,7 +124,7 @@ export default function Withdrawals(props: Props) {
               ),
             },
             {
-              description: 'Accured PnL',
+              description: 'Accrued PnL',
               value: (
                 <div className='flex items-center gap-2'>
                   <DisplayCurrency
@@ -137,7 +137,8 @@ export default function Withdrawals(props: Props) {
                       'text-sm',
                       BN(details.performance_fee_state.accumulated_pnl).isGreaterThan(0) &&
                         'text-profit',
-                      BN(details.performance_fee_state.accumulated_pnl).isNegative() && 'text-loss',
+                      BN(details.performance_fee_state.accumulated_pnl).isLessThan(0) &&
+                        'text-loss',
                     )}
                   />
                   {isValidWithdrawal && (
