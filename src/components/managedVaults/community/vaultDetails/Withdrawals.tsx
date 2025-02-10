@@ -47,9 +47,18 @@ export default function Withdrawals(props: Props) {
   })
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
-  console.log(depositAsset, 'depositAsset')
   const withdrawalDate = moment(details.performance_fee_state.last_withdrawal * 1000)
   const isValidWithdrawal = withdrawalDate.isValid()
+
+  const lockUpPeriod = formatLockupPeriod(
+    moment.duration(details.cooldown_period, 'seconds').as('days'),
+    'days',
+  )
+  const totalQueuedWithdrawals = allUnlocksData.reduce(
+    (sum, unlock) => sum.plus(BN(unlock.base_tokens)),
+    BN_ZERO,
+  )
+  const vaultTokens = BN(details.total_base_tokens).shiftedBy(-depositAsset.decimals)
 
   if (!isOwner) {
     return userUnlocksData.length > 0 ? (
@@ -74,10 +83,7 @@ export default function Withdrawals(props: Props) {
           stats={[
             {
               description: 'Depositor Withdrawal Period',
-              value: formatLockupPeriod(
-                moment.duration(details.cooldown_period, 'seconds').as('days'),
-                'days',
-              ),
+              value: lockUpPeriod,
             },
             {
               description: 'Queued Withdrawals',
@@ -95,10 +101,7 @@ export default function Withdrawals(props: Props) {
               description: 'Total Withdrawal Value',
               value: (
                 <TokenWithUsdValue
-                  tokenAmount={allUnlocksData.reduce(
-                    (sum, unlock) => sum.plus(BN(unlock.base_tokens)),
-                    BN_ZERO,
-                  )}
+                  tokenAmount={totalQueuedWithdrawals}
                   usdAmount={allUnlocksData.reduce(
                     (sum, unlock) =>
                       sum.plus(BN(unlock.base_tokens).shiftedBy(depositAsset.decimals)),
@@ -113,7 +116,7 @@ export default function Withdrawals(props: Props) {
               description: `${depositAsset.symbol} in vault`,
               value: (
                 <TokenWithUsdValue
-                  tokenAmount={BN(details.total_base_tokens).shiftedBy(-depositAsset.decimals)}
+                  tokenAmount={vaultTokens}
                   denom={depositAsset.denom}
                   symbol={depositAsset.symbol}
                   usdAmount={BN(details.total_base_tokens)}
@@ -150,28 +153,30 @@ export default function Withdrawals(props: Props) {
             },
             {
               description: `% of ${depositAsset.symbol} vs Queued Withdrawal Value`,
-              value: (
-                <div className='flex gap-2'>
-                  {/* conditional tooltip */}
-                  <Tooltip
-                    content={
-                      'Vault does not have enough USDC to service queued withdrawals. please free up some.  If the 1 day freeze period has ended and a user initiates a withdraw without spot USDC available in the Vault, the Vault will automatically borrow USDC to service the withdraw.'
-                    }
-                    type='warning'
-                    contentClassName='w-60'
-                  >
-                    <ExclamationMarkTriangle className='w-3.5 h-3.5 text-info hover:text-primary' />
-                  </Tooltip>
-                  <FormattedNumber
-                    amount={200}
-                    options={{
-                      minDecimals: 2,
-                      maxDecimals: 2,
-                      suffix: '%',
-                    }}
-                  />
-                </div>
-              ),
+              value: (() => {
+                const percentage = vaultTokens.dividedBy(totalQueuedWithdrawals).multipliedBy(100)
+                return (
+                  <div className='flex gap-2'>
+                    {Number(percentage) < 100 && (
+                      <Tooltip
+                        content={`Vault does not have enough ${depositAsset.symbol} to service queued withdrawals. Please free up some. If the ${lockUpPeriod} freeze period has ended and a user initiates a withdraw without spot ${depositAsset.symbol} available in the Vault, the Vault will automatically borrow ${depositAsset.symbol} to service the withdraw.`}
+                        type='warning'
+                        contentClassName='w-60'
+                      >
+                        <ExclamationMarkTriangle className='w-3.5 h-3.5 text-info hover:text-primary' />
+                      </Tooltip>
+                    )}
+                    <FormattedNumber
+                      amount={Number(percentage) || 0}
+                      options={{
+                        minDecimals: 2,
+                        maxDecimals: 2,
+                        suffix: '%',
+                      }}
+                    />
+                  </div>
+                )
+              })(),
             },
           ]}
         />
