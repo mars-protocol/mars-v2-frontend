@@ -98,6 +98,7 @@ export async function generateToast(
           target,
           chainConfig,
           assets,
+          accountId,
         )
         toast.content.push(...contentsAndKeys.content)
         mutationKeys.push(...contentsAndKeys.mutationKeys)

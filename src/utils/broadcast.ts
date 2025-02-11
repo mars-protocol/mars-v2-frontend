@@ -6,6 +6,15 @@ import { getAssetSymbolByDenom } from 'utils/assets'
 import { beautifyErrorMessage } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getVaultNameByCoins } from 'utils/vaults'
+import {
+  trackBorrow,
+  trackDeposit,
+  trackLend,
+  trackRepay,
+  trackSwap,
+  trackUnlend,
+  trackWithdraw,
+} from './analytics'
 
 export function getSingleValueFromBroadcastResult(
   response: BroadcastResult['result'],
@@ -449,6 +458,7 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
   target: string,
   chainConfig: ChainConfig,
   assets: Asset[],
+  accountId: string | null,
 ): { content: ToastContent[]; mutationKeys: string[] } {
   const toastContents = [] as ToastContent[]
   const coins = transactionCoin.coins.map((c) => c.coin.toCoin())
@@ -517,6 +527,9 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
 
       break
     case 'borrow':
+      transactionCoin.coins.forEach(({ coin }) => {
+        trackBorrow(coin, assets)
+      })
       toastContents.push({
         text: 'Borrowed',
         coins: removeEmptyCoins(coins),
@@ -540,6 +553,9 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
       })
       break
     case 'deposit':
+      transactionCoin.coins.forEach(({ coin }) => {
+        trackDeposit(coin, assets)
+      })
       toastContents.push({
         text: isHls ? 'Deposited into Hls account' : 'Deposited',
         coins: removeEmptyCoins(coins),
@@ -552,30 +568,47 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
       })
       break
     case 'lend':
+      transactionCoin.coins.forEach(({ coin }) => {
+        trackLend(coin, assets)
+      })
       toastContents.push({
         text: target === 'Red Bank' ? 'Deposited' : 'Lent',
         coins: removeEmptyCoins(coins),
       })
       break
     case 'reclaim':
+      transactionCoin.coins.forEach(({ coin }) => {
+        trackUnlend(coin, assets)
+      })
       toastContents.push({
         text: 'Unlent',
         coins: removeEmptyCoins(coins),
       })
       break
     case 'repay':
+      transactionCoin.coins.forEach(({ coin }) => {
+        trackRepay(coin, assets)
+      })
       toastContents.push({
         text: 'Repaid',
         coins: removeEmptyCoins(coins),
       })
       break
     case 'swap':
+      if (transactionCoin.coins.length >= 2) {
+        const fromCoin = transactionCoin.coins[0].coin
+        const toCoin = transactionCoin.coins[transactionCoin.coins.length - 1].coin
+        trackSwap(fromCoin, toCoin, assets)
+      }
       toastContents.push({
         text: 'Swapped',
         coins: removeEmptyCoins(coins),
       })
       break
     case 'withdraw':
+      transactionCoin.coins.forEach(({ coin }) => {
+        trackWithdraw(coin, assets)
+      })
       toastContents.push({
         text: 'Withdrew to wallet',
         coins: removeEmptyCoins(coins),
