@@ -1,52 +1,69 @@
-import HealthBar from 'components/account/Health/HealthBar'
-import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
-import { CardWithTabs } from 'components/common/Card/CardWithTabs'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import { FormattedNumber } from 'components/common/FormattedNumber'
+import HealthBar from 'components/account/Health/HealthBar'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
-import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import VaultStats from 'components/managedVaults/community/vaultDetails/common/VaultStats'
-import useVaultBalances from 'components/managedVaults/community/vaultDetails/table/useVaultBalances'
-import { vaultBalanceData } from 'components/managedVaults/dummyData'
-import { ORACLE_DENOM } from 'constants/oracle'
-import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
+import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
+import useAccount from 'hooks/accounts/useAccount'
 import useAssets from 'hooks/assets/useAssets'
+import useAssetParams from 'hooks/params/useAssetParams'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import useAssetParams from 'hooks/params/useAssetParams'
 import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
-import { useMemo } from 'react'
-import { BNCoin } from 'types/classes/BNCoin'
-import { getAccountSummaryStats } from 'utils/accounts'
+import useVaultBalances from 'components/managedVaults/community/vaultDetails/table/useVaultBalances'
 import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
+import { CardWithTabs } from 'components/common/Card/CardWithTabs'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { getAccountSummaryStats } from 'utils/accounts'
+import { ORACLE_DENOM } from 'constants/oracle'
+import { useMemo } from 'react'
+import { vaultBalanceData } from 'components/managedVaults/dummyData'
 
-export default function VaultSummary() {
-  const columns = useVaultBalances()
+interface Props {
+  details: ExtendedManagedVaultDetails
+}
 
-  const account = useCurrentAccount()
+export default function VaultSummary(props: Props) {
+  const { details } = props
+
+  const { data: accountData } = useAccount(details.vault_account_id || undefined)
   const { data: vaultAprs } = useVaultAprs()
-  const astroLpAprs = useAstroLpAprs()
   const { data: assets } = useAssets()
   const { data: perpsVault } = usePerpsVault()
-  const data = useBorrowMarketAssetsTableData()
-  const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
+  const astroLpAprs = useAstroLpAprs()
+  const assetParams = useAssetParams()
+  const perpsMarketStates = usePerpsMarketStates()
+  const columns = useVaultBalances()
+
+  const borrowData = useBorrowMarketAssetsTableData()
+  const borrowAssetsData = useMemo(() => borrowData?.allAssets || [], [borrowData])
+
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
     useLendingMarketAssetsTableData()
   const lendingAssetsData = useMemo(
     () => [...lendingAvailableAssets, ...accountLentAssets],
     [lendingAvailableAssets, accountLentAssets],
   )
-  const perpsMarketStates = usePerpsMarketStates()
-  const assetParams = useAssetParams()
 
-  const { health, healthFactor } = useHealthComputer(account)
+  const { health, healthFactor } = useHealthComputer(accountData)
 
   const { positionValue, debts, netWorth, apy, leverage } = useMemo(() => {
+    if (!accountData) {
+      return {
+        positionValue: { amount: BN(0) },
+        debts: { amount: BN(0) },
+        netWorth: { amount: BN(0) },
+        apy: BN(0),
+        leverage: BN(1),
+      }
+    }
+
     return getAccountSummaryStats(
-      account as Account,
+      accountData,
       borrowAssetsData,
       lendingAssetsData,
       assets,
@@ -57,7 +74,7 @@ export default function VaultSummary() {
       perpsMarketStates.data || [],
     )
   }, [
-    account,
+    accountData,
     borrowAssetsData,
     lendingAssetsData,
     assets,

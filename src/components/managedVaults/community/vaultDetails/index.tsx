@@ -175,7 +175,7 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
           )}
 
           <Withdrawals details={vaultDetails} isOwner={isOwner} vaultAddress={vaultAddress!} />
-          <VaultSummary />
+          <VaultSummary details={vaultDetails} />
         </div>
       </div>
     </div>
