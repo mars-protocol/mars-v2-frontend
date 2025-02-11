@@ -15,7 +15,6 @@ export function trackLend(coin: BNCoin, assets: Asset[]) {
   const symbol = getAssetSymbolByDenom(coin.denom, assets)
   const eventName = `Lend ${symbol}`
 
-  console.log('Analytics Event:', eventName)
   track(eventName)
 }
 
