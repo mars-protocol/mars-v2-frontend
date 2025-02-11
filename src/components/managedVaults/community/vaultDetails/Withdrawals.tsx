@@ -1,9 +1,10 @@
+import AmountAndValue from 'components/common/AmountAndValue'
 import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
+import Loading from 'components/common/Loading'
 import moment from 'moment'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
-import TokenWithUsdValue from 'components/managedVaults/community/vaultDetails/common/TokenWithUsdValue'
 import useQueuedWithdrawals from 'components/managedVaults/community/vaultDetails/table/useQueuedWithdrawals'
 import useUserWithdrawals from 'components/managedVaults/community/vaultDetails/table/useUserWithdrawals'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
@@ -13,14 +14,12 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
 import { byDenom } from 'utils/array'
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
-import { CircularProgress } from 'components/common/CircularProgress'
 import { ExclamationMarkTriangle } from 'components/common/Icons'
 import { formatLockupPeriod } from 'utils/formatters'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { Tooltip } from 'components/common/Tooltip'
 import { useAllUnlocks } from 'hooks/managedVaults/useAllUnlocks'
 import { useUserUnlocks } from 'hooks/managedVaults/useUserUnlocks'
-import AmountAndValue from 'components/common/AmountAndValue'
 
 interface Props {
   details: ExtendedManagedVaultDetails
@@ -104,7 +103,6 @@ export default function Withdrawals(props: Props) {
                 <AmountAndValue
                   asset={depositAsset}
                   amount={totalQueuedWithdrawals.shiftedBy(depositAsset.decimals)}
-                  abbreviated
                   layout='horizontal'
                 />
               ),
@@ -115,7 +113,6 @@ export default function Withdrawals(props: Props) {
                 <AmountAndValue
                   asset={depositAsset}
                   amount={BN(details.total_base_tokens)}
-                  abbreviated
                   layout='horizontal'
                 />
               ),
@@ -184,9 +181,8 @@ export default function Withdrawals(props: Props) {
       title: 'Queued Withdrawals',
       renderContent: () =>
         isLoadingAllUnlocks ? (
-          <div className='flex flex-col items-center justify-center gap-4 bg-white/5 h-62'>
-            <CircularProgress size={20} />
-            <Text size='sm'>Fetching on-chain data...</Text>
+          <div className='flex flex-col justify-evenly bg-white/5 h-62 px-3'>
+            <Loading count={5} className='h-6 w-full' />
           </div>
         ) : totalCount > 0 ? (
           <Table
