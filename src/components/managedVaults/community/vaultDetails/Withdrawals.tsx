@@ -20,6 +20,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { Tooltip } from 'components/common/Tooltip'
 import { useAllUnlocks } from 'hooks/managedVaults/useAllUnlocks'
 import { useUserUnlocks } from 'hooks/managedVaults/useUserUnlocks'
+import AmountAndValue from 'components/common/AmountAndValue'
 
 interface Props {
   details: ExtendedManagedVaultDetails
@@ -100,26 +101,22 @@ export default function Withdrawals(props: Props) {
             {
               description: 'Total Withdrawal Value',
               value: (
-                <TokenWithUsdValue
-                  tokenAmount={totalQueuedWithdrawals}
-                  usdAmount={allUnlocksData.reduce(
-                    (sum, unlock) =>
-                      sum.plus(BN(unlock.base_tokens).shiftedBy(depositAsset.decimals)),
-                    BN_ZERO,
-                  )}
-                  denom={depositAsset.denom}
-                  symbol={depositAsset.symbol}
+                <AmountAndValue
+                  asset={depositAsset}
+                  amount={totalQueuedWithdrawals.shiftedBy(depositAsset.decimals)}
+                  abbreviated
+                  layout='horizontal'
                 />
               ),
             },
             {
               description: `${depositAsset.symbol} in vault`,
               value: (
-                <TokenWithUsdValue
-                  tokenAmount={vaultTokens}
-                  denom={depositAsset.denom}
-                  symbol={depositAsset.symbol}
-                  usdAmount={BN(details.total_base_tokens)}
+                <AmountAndValue
+                  asset={depositAsset}
+                  amount={BN(details.total_base_tokens)}
+                  abbreviated
+                  layout='horizontal'
                 />
               ),
             },
