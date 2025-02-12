@@ -2,27 +2,20 @@ import classNames from 'classnames'
 import { ReactNode, useMemo } from 'react'
 import { NavLink, useParams, useSearchParams } from 'react-router-dom'
 
-import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
-import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import Skeleton from 'components/portfolio/Card/Skeleton'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
-import useAssets from 'hooks/assets/useAssets'
-import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useAssetParams from 'hooks/params/useAssetParams'
-import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
-import usePerpsVault from 'hooks/perps/usePerpsVault'
-import useVaultAprs from 'hooks/vaults/useVaultAprs'
-import { checkAccountKind, getAccountSummaryStats } from 'utils/accounts'
+import { checkAccountKind } from 'utils/accounts'
 import { getRoute } from 'utils/route'
 import VaultTitle from 'components/managedVaults/common/VaultTitle'
+import { useAccountSummaryStats } from 'hooks/accounts/useAccountSummaryStats'
 
 interface Props {
   accountId: string
@@ -33,41 +26,22 @@ export default function PortfolioCard(props: Props) {
   const { data: account } = useAccount(props.accountId)
   const { health, healthFactor } = useHealthComputer(account)
   const { address: urlAddress } = useParams()
-  const astroLpAprs = useAstroLpAprs()
   const currentAccountId = useAccountId()
-  const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
-  const data = useBorrowMarketAssetsTableData()
-  const { data: vaultAprs } = useVaultAprs()
   const [searchParams] = useSearchParams()
-  const { data: assets } = useAssets()
-  const { data: perpsVault } = usePerpsVault()
-  const borrowAssets = useMemo(() => data?.allAssets || [], [data])
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     getDefaultChainSettings(chainConfig).reduceMotion,
   )
-  const assetParams = useAssetParams()
-  const perpsMarketStates = usePerpsMarketStates()
+  const { netWorth, apy, leverage } = useAccountSummaryStats(account)
 
   const stats: { title: ReactNode; sub: string }[] = useMemo(() => {
-    if (!account || !assets.length || !lendingAssets.length || !borrowAssets.length) {
+    if (!account) {
       return [
         { title: <Loading />, sub: 'Net worth' },
         { title: <Loading />, sub: 'Leverage' },
         { title: <Loading />, sub: 'APY' },
       ]
     }
-    const { netWorth, apy, leverage } = getAccountSummaryStats(
-      account as Account,
-      borrowAssets,
-      lendingAssets,
-      assets,
-      vaultAprs,
-      astroLpAprs,
-      assetParams.data || [],
-      perpsVault?.apy || 0,
-      perpsMarketStates.data || [],
-    )
 
     return [
       {
@@ -83,18 +57,7 @@ export default function PortfolioCard(props: Props) {
         sub: 'APY',
       },
     ]
-  }, [
-    account,
-    assets,
-    lendingAssets,
-    borrowAssets,
-    vaultAprs,
-    astroLpAprs,
-    assetParams.data,
-    perpsVault?.apy,
-    perpsMarketStates.data,
-  ])
-
+  }, [account, apy, leverage, netWorth])
   if (!account) {
     return (
       <Skeleton
