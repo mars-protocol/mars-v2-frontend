@@ -13,15 +13,18 @@ interface Props {
   accountId: string
   isCurrent?: boolean
   isHls?: boolean
+  isVault?: boolean
+  vaultTitle?: React.ReactElement
 }
 
 export default function Skeleton(props: Props) {
-  const { stats, health, healthFactor, accountId, isCurrent } = props
+  const { stats, health, healthFactor, accountId, isCurrent, isVault, vaultTitle } = props
+
   return (
     <Card className='p-4 bg-white/5'>
       <div className='flex items-center justify-between'>
         <Text>
-          Credit Account {accountId}
+          {isVault && vaultTitle ? vaultTitle : `Credit Account ${accountId}`}
           {props.isHls && <HlsTag />}
         </Text>
         <Text size='xs' className='text-white/60'>

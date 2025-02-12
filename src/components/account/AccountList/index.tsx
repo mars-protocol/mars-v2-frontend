@@ -7,6 +7,7 @@ import AccountStats from 'components/account/AccountList/AccountStats'
 import Card from 'components/common/Card'
 import Radio from 'components/common/Radio'
 import Text from 'components/common/Text'
+import VaultTitle from 'components/managedVaults/common/VaultTitle'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -37,11 +38,8 @@ export default function AccountList(props: Props) {
     const noHlsAccounts = accounts.filter(
       (account) => checkAccountKind(account.kind) !== 'high_levered_strategy',
     )
-
-    if (isVaults) {
-      return noHlsAccounts.filter((account) => checkAccountKind(account.kind) === 'fund_manager')
-    }
-    return noHlsAccounts.filter((account) => checkAccountKind(account.kind) === 'default')
+    const accountType = isVaults ? 'fund_manager' : 'default'
+    return noHlsAccounts.filter((account) => checkAccountKind(account.kind) === accountType)
   }, [accounts, isVaults])
 
   const [searchParams] = useSearchParams()
@@ -60,7 +58,6 @@ export default function AccountList(props: Props) {
     <div className='flex flex-wrap w-full p-4'>
       {filteredAccounts.map((account) => {
         const isActive = currentAccountId === account.id
-
         return (
           <div key={account.id} id={`account-${account.id}`} className='w-full pt-4'>
             <Card
@@ -83,13 +80,9 @@ export default function AccountList(props: Props) {
                   role='button'
                   onClick={() => setShowMenu(false)}
                 >
-                  {isVaults ? (
-                    <Text size='xs'>Vault Name</Text>
-                  ) : (
-                    <Text size='xs' className='flex flex-1'>
-                      Credit Account {account.id}
-                    </Text>
-                  )}
+                  <Text size='xs' className='flex flex-1'>
+                    {isVaults ? <VaultTitle account={account} /> : `Credit Account ${account.id}`}
+                  </Text>
                   <Radio active={isActive} className='group-hover/account:opacity-100' />
                 </div>
               }

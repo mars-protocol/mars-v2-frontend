@@ -22,6 +22,7 @@ import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { checkAccountKind, getAccountSummaryStats } from 'utils/accounts'
 import { getRoute } from 'utils/route'
+import VaultTitle from 'components/managedVaults/common/VaultTitle'
 
 interface Props {
   accountId: string
@@ -131,6 +132,8 @@ export default function PortfolioCard(props: Props) {
         accountId={props.accountId}
         isCurrent={props.accountId === currentAccountId}
         isHls={account.kind === 'high_levered_strategy'}
+        isVault={isVault}
+        vaultTitle={<VaultTitle account={account} />}
       />
     </NavLink>
   )

@@ -203,6 +203,7 @@ module.exports = {
         45: '180px',
         50: '200px',
         55: '220px',
+        62: '248px',
         75: '300px',
         'screen-full': '100dvh',
         'screen/90': '90dvh',

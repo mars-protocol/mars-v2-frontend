@@ -1,21 +1,25 @@
+import AmountAndValue from 'components/common/AmountAndValue'
 import classNames from 'classnames'
-import { CardWithTabs } from 'components/common/Card/CardWithTabs'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import { FormattedNumber } from 'components/common/FormattedNumber'
-import { ExclamationMarkTriangle } from 'components/common/Icons'
+import Loading from 'components/common/Loading'
+import moment from 'moment'
 import Table from 'components/common/Table'
-import { Tooltip } from 'components/common/Tooltip'
-import VaultStats from 'components/managedVaults/community/vaultDetails/common/VaultStats'
+import Text from 'components/common/Text'
 import useQueuedWithdrawals from 'components/managedVaults/community/vaultDetails/table/useQueuedWithdrawals'
 import useUserWithdrawals from 'components/managedVaults/community/vaultDetails/table/useUserWithdrawals'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
+import VaultStats from 'components/managedVaults/community/vaultDetails/common/VaultStats'
+import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
+import { BN_ZERO } from 'constants/math'
+import { byDenom } from 'utils/array'
+import { CardWithTabs } from 'components/common/Card/CardWithTabs'
+import { ExclamationMarkTriangle } from 'components/common/Icons'
+import { formatLockupPeriod } from 'utils/formatters'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { Tooltip } from 'components/common/Tooltip'
 import { useAllUnlocks } from 'hooks/managedVaults/useAllUnlocks'
 import { useUserUnlocks } from 'hooks/managedVaults/useUserUnlocks'
-import moment from 'moment'
-import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from 'utils/array'
-import { formatLockupPeriod } from 'utils/formatters'
-import { BN } from 'utils/helpers'
 
 interface Props {
   details: ExtendedManagedVaultDetails
@@ -25,14 +29,16 @@ interface Props {
 
 export default function Withdrawals(props: Props) {
   const { details, isOwner, vaultAddress } = props
+
   const {
-    data: allUnlocksData,
+    data: allUnlocksData = [],
     currentPage,
     totalPages,
+    totalCount,
+    isLoading: isLoadingAllUnlocks,
     handlePageChange,
-  } = useAllUnlocks(vaultAddress, 3)
+  } = useAllUnlocks(vaultAddress)
   const { data: userUnlocksData = [], isLoading: isLoadingUnlocks } = useUserUnlocks(vaultAddress)
-
   const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false, details })
   const userWithdrawalColumns = useUserWithdrawals({
     isLoading: false,
@@ -43,6 +49,16 @@ export default function Withdrawals(props: Props) {
   const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
   const withdrawalDate = moment(details.performance_fee_state.last_withdrawal * 1000)
   const isValidWithdrawal = withdrawalDate.isValid()
+
+  const lockUpPeriod = formatLockupPeriod(
+    moment.duration(details.cooldown_period, 'seconds').as('days'),
+    'days',
+  )
+  const totalQueuedWithdrawals = allUnlocksData.reduce(
+    (sum, unlock) => sum.plus(BN(unlock.base_tokens)),
+    BN_ZERO,
+  )
+  const vaultTokens = BN(details.total_base_tokens).shiftedBy(-depositAsset.decimals)
 
   if (!isOwner) {
     return userUnlocksData.length > 0 ? (
@@ -67,16 +83,13 @@ export default function Withdrawals(props: Props) {
           stats={[
             {
               description: 'Depositor Withdrawal Period',
-              value: formatLockupPeriod(
-                moment.duration(details.cooldown_period, 'seconds').as('days'),
-                'days',
-              ),
+              value: lockUpPeriod,
             },
             {
               description: 'Queued Withdrawals',
               value: (
                 <FormattedNumber
-                  amount={3}
+                  amount={totalCount}
                   options={{
                     minDecimals: 0,
                     maxDecimals: 0,
@@ -85,22 +98,27 @@ export default function Withdrawals(props: Props) {
               ),
             },
             {
-              description: `${depositAsset.symbol} in vault`,
+              description: 'Total Withdrawal Value',
               value: (
-                <DisplayCurrency
-                  coin={BNCoin.fromDenomAndBigNumber(
-                    depositAsset.denom,
-                    BN(details.total_base_tokens),
-                  )}
+                <AmountAndValue
+                  asset={depositAsset}
+                  amount={totalQueuedWithdrawals.shiftedBy(depositAsset.decimals)}
+                  layout='horizontal'
                 />
               ),
             },
             {
-              description: 'Total Withdrawal Value',
-              value: <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber('usd', BN(2000))} />,
+              description: `${depositAsset.symbol} in vault`,
+              value: (
+                <AmountAndValue
+                  asset={depositAsset}
+                  amount={BN(details.total_base_tokens)}
+                  layout='horizontal'
+                />
+              ),
             },
             {
-              description: 'Accured PnL',
+              description: 'Accrued PnL',
               value: (
                 <div className='flex items-center gap-2'>
                   <DisplayCurrency
@@ -113,7 +131,8 @@ export default function Withdrawals(props: Props) {
                       'text-sm',
                       BN(details.performance_fee_state.accumulated_pnl).isGreaterThan(0) &&
                         'text-profit',
-                      BN(details.performance_fee_state.accumulated_pnl).isNegative() && 'text-loss',
+                      BN(details.performance_fee_state.accumulated_pnl).isLessThan(0) &&
+                        'text-loss',
                     )}
                   />
                   {isValidWithdrawal && (
@@ -128,57 +147,68 @@ export default function Withdrawals(props: Props) {
               ),
             },
             {
-              description: '% of USDC vs Queued Withdrawal Value',
-              value: (
-                <div className='flex gap-2'>
-                  {/* conditional tooltip */}
-                  <Tooltip
-                    content={
-                      'Vault does not have enough USDC to service queued withdrawals. please free up some.  If the 1 day freeze period has ended and a user initiates a withdraw without spot USDC available in the Vault, the Vault will automatically borrow USDC to service the withdraw.'
-                    }
-                    type='warning'
-                    contentClassName='w-60'
-                  >
-                    <ExclamationMarkTriangle className='w-3.5 h-3.5 text-info hover:text-primary' />
-                  </Tooltip>
-                  <FormattedNumber
-                    amount={200}
-                    options={{
-                      minDecimals: 2,
-                      maxDecimals: 2,
-                      suffix: '%',
-                    }}
-                  />
-                </div>
-              ),
+              description: `% of ${depositAsset.symbol} vs Queued Withdrawal Value`,
+              value: (() => {
+                const percentage = totalQueuedWithdrawals.isZero()
+                  ? 0
+                  : vaultTokens.dividedBy(totalQueuedWithdrawals).multipliedBy(100)
+                return (
+                  <div className='flex gap-2'>
+                    {!totalQueuedWithdrawals.isZero() && Number(percentage) < 100 && (
+                      <Tooltip
+                        content={`Vault does not have enough ${depositAsset.symbol} to service queued withdrawals. Please free up some. If the ${lockUpPeriod} freeze period has ended and a user initiates a withdraw without spot ${depositAsset.symbol} available in the Vault, the Vault will automatically borrow ${depositAsset.symbol} to service the withdraw.`}
+                        type='warning'
+                        contentClassName='w-60'
+                      >
+                        <ExclamationMarkTriangle className='w-3.5 h-3.5 text-info hover:text-primary' />
+                      </Tooltip>
+                    )}
+                    <FormattedNumber
+                      amount={Number(percentage) || 0}
+                      options={{
+                        minDecimals: 2,
+                        maxDecimals: 2,
+                        suffix: '%',
+                      }}
+                    />
+                  </div>
+                )
+              })(),
             },
           ]}
         />
       ),
     },
-    ...(allUnlocksData.length > 0
-      ? [
-          {
-            title: 'Queued Withdrawals',
-            renderContent: () => (
-              <Table
-                title='Queued Withdrawals'
-                hideCard
-                columns={queuedWithdrawalcolumns}
-                data={allUnlocksData}
-                initialSorting={[{ id: 'created_at', desc: true }]}
-                tableBodyClassName='bg-white/5'
-                spacingClassName='p-3'
-                pagination={{
-                  currentPage,
-                  totalPages,
-                  onPageChange: handlePageChange,
-                }}
-              />
-            ),
-          },
-        ]
-      : []),
+    {
+      title: 'Queued Withdrawals',
+      renderContent: () =>
+        isLoadingAllUnlocks ? (
+          <div className='flex flex-col justify-evenly bg-white/5 h-62 px-3'>
+            <Loading count={5} className='h-6 w-full' />
+          </div>
+        ) : totalCount > 0 ? (
+          <Table
+            title='Queued Withdrawals'
+            hideCard
+            columns={queuedWithdrawalcolumns}
+            data={allUnlocksData}
+            initialSorting={[{ id: 'created_at', desc: true }]}
+            tableBodyClassName='bg-white/5'
+            spacingClassName='p-3'
+            pagination={{
+              currentPage,
+              totalPages,
+              onPageChange: handlePageChange,
+            }}
+          />
+        ) : (
+          <div className='flex justify-center items-center bg-white/5 h-62'>
+            <Text size='sm' className='text-white/50'>
+              No queued withdrawals.
+            </Text>
+          </div>
+        ),
+    },
   ]
   return <CardWithTabs tabs={tabs} />
 }

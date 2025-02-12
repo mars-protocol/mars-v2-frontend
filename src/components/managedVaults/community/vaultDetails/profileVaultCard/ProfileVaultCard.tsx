@@ -84,14 +84,14 @@ export default function ProfileVaultCard(props: Props) {
         <div className='space-y-4'>
           <InfoRow label='APR'>
             <FormattedNumber
-              amount={Number(details.metrics.apr)}
+              amount={Number(details.metrics.apr) || 0}
               options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
               className='text-sm'
             />
           </InfoRow>
           <InfoRow label='TVL'>
             <DisplayCurrency
-              coin={BNCoin.fromDenomAndBigNumber('usd', BN(details.metrics.tvl))}
+              coin={BNCoin.fromDenomAndBigNumber(details.base_token, BN(details.total_base_tokens))}
               className='text-sm'
             />
           </InfoRow>
@@ -101,10 +101,11 @@ export default function ProfileVaultCard(props: Props) {
                 'usd',
                 BN(details.performance_fee_state.accumulated_pnl),
               )}
+              showSignPrefix
               className={classNames(
-                'text-sm text-white',
+                'text-sm',
                 BN(details.performance_fee_state.accumulated_pnl).isGreaterThan(0) && 'text-profit',
-                BN(details.performance_fee_state.accumulated_pnl).isNegative() && 'text-loss',
+                BN(details.performance_fee_state.accumulated_pnl).isLessThan(0) && 'text-loss',
               )}
             />
           </InfoRow>

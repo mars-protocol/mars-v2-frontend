@@ -55,7 +55,7 @@ export default function useQueuedWithdrawals(props: Props) {
       },
       {
         header: 'Total Position',
-        meta: { className: 'w-30' },
+        meta: { className: 'min-w-30' },
         cell: ({ row }) => {
           return <TVL amount={BN(row.original.vault_tokens)} denom={details.base_token} />
         },
