@@ -8,20 +8,14 @@ import VaultStats from 'components/managedVaults/community/vaultDetails/common/V
 import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import useAccount from 'hooks/accounts/useAccount'
-import useAssets from 'hooks/assets/useAssets'
-import useAssetParams from 'hooks/params/useAssetParams'
-import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
-import usePerpsVault from 'hooks/perps/usePerpsVault'
-import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { getAccountSummaryStats } from 'utils/accounts'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { useMemo } from 'react'
+import { useAccountSummaryStats } from 'hooks/accounts/useAccountSummaryStats'
 
 interface Props {
   details: ExtendedManagedVaultDetails
@@ -31,16 +25,9 @@ export default function VaultSummary(props: Props) {
   const { details } = props
 
   const { data: accountData } = useAccount(details.vault_account_id || undefined)
-  const { data: vaultAprs } = useVaultAprs()
-  const { data: assets } = useAssets()
-  const { data: perpsVault } = usePerpsVault()
-  const astroLpAprs = useAstroLpAprs()
-  const assetParams = useAssetParams()
-  const perpsMarketStates = usePerpsMarketStates()
-
+  const { health, healthFactor } = useHealthComputer(accountData)
   const borrowData = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => borrowData?.allAssets || [], [borrowData])
-
   const { availableAssets: lendingAvailableAssets, accountLentAssets } =
     useLendingMarketAssetsTableData()
   const lendingAssetsData = useMemo(
@@ -48,41 +35,7 @@ export default function VaultSummary(props: Props) {
     [lendingAvailableAssets, accountLentAssets],
   )
 
-  const { health, healthFactor } = useHealthComputer(accountData)
-
-  const { positionValue, debts, netWorth, apy, leverage } = useMemo(() => {
-    if (!accountData) {
-      return {
-        positionValue: { amount: BN(0) },
-        debts: { amount: BN(0) },
-        netWorth: { amount: BN(0) },
-        apy: BN(0),
-        leverage: BN(1),
-      }
-    }
-
-    return getAccountSummaryStats(
-      accountData,
-      borrowAssetsData,
-      lendingAssetsData,
-      assets,
-      vaultAprs,
-      astroLpAprs,
-      assetParams.data || [],
-      perpsVault?.apy || 0,
-      perpsMarketStates.data || [],
-    )
-  }, [
-    accountData,
-    borrowAssetsData,
-    lendingAssetsData,
-    assets,
-    vaultAprs,
-    astroLpAprs,
-    assetParams.data,
-    perpsVault?.apy,
-    perpsMarketStates.data,
-  ])
+  const { positionValue, debts, netWorth, apy, leverage } = useAccountSummaryStats(accountData)
 
   const tabs = useMemo(() => {
     const tabsArray: CardTab[] = [
