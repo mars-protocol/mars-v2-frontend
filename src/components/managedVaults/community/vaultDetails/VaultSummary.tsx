@@ -106,7 +106,6 @@ export default function VaultSummary(props: Props) {
                 description: 'Net Worth',
                 value: (
                   <DisplayCurrency
-                    options={{ abbreviated: false }}
                     coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, netWorth.amount)}
                   />
                 ),
