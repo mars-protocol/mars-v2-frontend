@@ -125,7 +125,9 @@ export default function AccountMenuContent(props: Props) {
       >
         {hasCreditAccounts
           ? isAccountSelected
-            ? `Credit Account ${accountId}`
+            ? activeAccountKind === 'fund_manager'
+              ? `Vault Account ${accountId}`
+              : `Credit Account ${accountId}`
             : 'Select Account'
           : 'Create Account'}
       </Button>

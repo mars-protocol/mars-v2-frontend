@@ -1,9 +1,10 @@
+import AmountAndValue from 'components/common/AmountAndValue'
 import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
+import Loading from 'components/common/Loading'
 import moment from 'moment'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
-import TokenWithUsdValue from 'components/managedVaults/community/vaultDetails/common/TokenWithUsdValue'
 import useQueuedWithdrawals from 'components/managedVaults/community/vaultDetails/table/useQueuedWithdrawals'
 import useUserWithdrawals from 'components/managedVaults/community/vaultDetails/table/useUserWithdrawals'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
@@ -13,7 +14,6 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
 import { byDenom } from 'utils/array'
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
-import { CircularProgress } from 'components/common/CircularProgress'
 import { ExclamationMarkTriangle } from 'components/common/Icons'
 import { formatLockupPeriod } from 'utils/formatters'
 import { FormattedNumber } from 'components/common/FormattedNumber'
@@ -100,26 +100,20 @@ export default function Withdrawals(props: Props) {
             {
               description: 'Total Withdrawal Value',
               value: (
-                <TokenWithUsdValue
-                  tokenAmount={totalQueuedWithdrawals}
-                  usdAmount={allUnlocksData.reduce(
-                    (sum, unlock) =>
-                      sum.plus(BN(unlock.base_tokens).shiftedBy(depositAsset.decimals)),
-                    BN_ZERO,
-                  )}
-                  denom={depositAsset.denom}
-                  symbol={depositAsset.symbol}
+                <AmountAndValue
+                  asset={depositAsset}
+                  amount={totalQueuedWithdrawals.shiftedBy(depositAsset.decimals)}
+                  layout='horizontal'
                 />
               ),
             },
             {
               description: `${depositAsset.symbol} in vault`,
               value: (
-                <TokenWithUsdValue
-                  tokenAmount={vaultTokens}
-                  denom={depositAsset.denom}
-                  symbol={depositAsset.symbol}
-                  usdAmount={BN(details.total_base_tokens)}
+                <AmountAndValue
+                  asset={depositAsset}
+                  amount={BN(details.total_base_tokens)}
+                  layout='horizontal'
                 />
               ),
             },
@@ -155,10 +149,12 @@ export default function Withdrawals(props: Props) {
             {
               description: `% of ${depositAsset.symbol} vs Queued Withdrawal Value`,
               value: (() => {
-                const percentage = vaultTokens.dividedBy(totalQueuedWithdrawals).multipliedBy(100)
+                const percentage = totalQueuedWithdrawals.isZero()
+                  ? 0
+                  : vaultTokens.dividedBy(totalQueuedWithdrawals).multipliedBy(100)
                 return (
                   <div className='flex gap-2'>
-                    {Number(percentage) < 100 && (
+                    {!totalQueuedWithdrawals.isZero() && Number(percentage) < 100 && (
                       <Tooltip
                         content={`Vault does not have enough ${depositAsset.symbol} to service queued withdrawals. Please free up some. If the ${lockUpPeriod} freeze period has ended and a user initiates a withdraw without spot ${depositAsset.symbol} available in the Vault, the Vault will automatically borrow ${depositAsset.symbol} to service the withdraw.`}
                         type='warning'
@@ -187,9 +183,8 @@ export default function Withdrawals(props: Props) {
       title: 'Queued Withdrawals',
       renderContent: () =>
         isLoadingAllUnlocks ? (
-          <div className='flex flex-col items-center justify-center gap-4 bg-white/5 h-62'>
-            <CircularProgress size={20} />
-            <Text size='sm'>Fetching on-chain data...</Text>
+          <div className='flex flex-col justify-evenly bg-white/5 h-62 px-3'>
+            <Loading count={5} className='h-6 w-full' />
           </div>
         ) : totalCount > 0 ? (
           <Table
