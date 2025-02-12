@@ -8,12 +8,18 @@ import { BN } from 'utils/helpers'
 import { getVaultNameByCoins } from 'utils/vaults'
 import {
   trackBorrow,
+  trackClaimRewards,
   trackDeposit,
   trackLend,
+  trackMintAccount,
+  trackPerpsClose,
+  trackPerpsOpen,
+  trackProvideLiquidity,
   trackRepay,
   trackSwap,
   trackUnlend,
   trackWithdraw,
+  trackWithdrawLiquidity,
 } from './analytics'
 
 export function getSingleValueFromBroadcastResult(
@@ -48,15 +54,12 @@ export async function analizeTransaction(
   transactionType: TransactionType
   txCoinGroups: GroupedTransactionCoin[]
 }> {
-  // Set default values for target (Red Bank or Credit Account) and accountKind (default or high_levered_strategy)
   let target = 'Red Bank'
   let accountKind = 'default'
 
-  // Check for the usage of a credit account in the BroadcastResult
   const accountId = getCreditAccountIdFromBroadcastResult(result)
 
   if (accountId) {
-    // If it is a credit account, get the AccountKind of the credit account
     const creditManagerQueryClient = await getCreditManagerQueryClient(chainConfig)
     accountKind = (await creditManagerQueryClient.accountKind({ accountId: accountId })) as any
     if (accountKind) {
@@ -64,6 +67,12 @@ export async function analizeTransaction(
         accountKind === 'high_levered_strategy'
           ? `Hls Account ${accountId}`
           : `Account ${accountId}`
+
+      // Track new account creation
+      const newAccountId = getSingleValueFromBroadcastResult(result.result, 'wasm', 'token_id')
+      if (newAccountId) {
+        trackMintAccount(accountKind === 'high_levered_strategy' ? 'hls' : 'credit_account')
+      }
     }
   }
   const isHls = accountKind === 'high_levered_strategy'
@@ -489,6 +498,7 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
 
         switch (type) {
           case 'open':
+            trackPerpsOpen(txCoin.coin, txCoin.coin.amount.isPositive(), assets)
             toastContents.push({
               text: txCoin.coin.amount.isPositive()
                 ? `Opened ${perpsAssetSymbol} long`
@@ -498,6 +508,7 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
             break
 
           case 'close':
+            trackPerpsClose(txCoin.coin, txCoin.coin.amount.isPositive(), assets)
             toastContents.push({
               text: txCoin.before.amount.isPositive()
                 ? `Closed ${perpsAssetSymbol} long`
@@ -615,6 +626,9 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
       })
       break
     case 'farm':
+      if (transactionCoin.coins.length === 2) {
+        trackWithdrawLiquidity(transactionCoin.coins[0].coin, transactionCoin.coins[1].coin, assets)
+      }
       toastContents.push({
         text:
           coins.length === 2
@@ -624,6 +638,9 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
       })
       break
     case 'provide_liquidity':
+      if (transactionCoin.coins.length === 2) {
+        trackProvideLiquidity(transactionCoin.coins[0].coin, transactionCoin.coins[1].coin, assets)
+      }
       toastContents.push({
         text:
           coins.length === 2
@@ -656,6 +673,9 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
       break
 
     case 'claim_rewards':
+      transactionCoin.coins.forEach(({ coin }) => {
+        trackClaimRewards(coin, assets)
+      })
       toastContents.push({
         text: 'Claimed rewards',
         coins: removeEmptyCoins(coins),
