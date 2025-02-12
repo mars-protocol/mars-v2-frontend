@@ -149,10 +149,12 @@ export default function Withdrawals(props: Props) {
             {
               description: `% of ${depositAsset.symbol} vs Queued Withdrawal Value`,
               value: (() => {
-                const percentage = vaultTokens.dividedBy(totalQueuedWithdrawals).multipliedBy(100)
+                const percentage = totalQueuedWithdrawals.isZero()
+                  ? 0
+                  : vaultTokens.dividedBy(totalQueuedWithdrawals).multipliedBy(100)
                 return (
                   <div className='flex gap-2'>
-                    {Number(percentage) < 100 && (
+                    {!totalQueuedWithdrawals.isZero() && Number(percentage) < 100 && (
                       <Tooltip
                         content={`Vault does not have enough ${depositAsset.symbol} to service queued withdrawals. Please free up some. If the ${lockUpPeriod} freeze period has ended and a user initiates a withdraw without spot ${depositAsset.symbol} available in the Vault, the Vault will automatically borrow ${depositAsset.symbol} to service the withdraw.`}
                         type='warning'

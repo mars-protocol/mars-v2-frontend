@@ -91,7 +91,7 @@ export default function ProfileVaultCard(props: Props) {
           </InfoRow>
           <InfoRow label='TVL'>
             <DisplayCurrency
-              coin={BNCoin.fromDenomAndBigNumber('usd', BN(details.metrics.tvl))}
+              coin={BNCoin.fromDenomAndBigNumber(details.base_token, BN(details.total_base_tokens))}
               className='text-sm'
             />
           </InfoRow>
