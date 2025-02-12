@@ -1,6 +1,8 @@
+import AccountBalancesTable from 'components/account/AccountBalancesTable'
+import AccountStrategiesTable from 'components/account/AccountStrategiesTable'
+import AccountPerpPositionTable from 'components/account/AccountPerpPositionTable'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import HealthBar from 'components/account/Health/HealthBar'
-import Table from 'components/common/Table'
 import Text from 'components/common/Text'
 import VaultStats from 'components/managedVaults/community/vaultDetails/common/VaultStats'
 import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
@@ -20,9 +22,6 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { getAccountSummaryStats } from 'utils/accounts'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { useMemo } from 'react'
-import AccountBalancesTable from 'components/account/AccountBalancesTable'
-import AccountStrategiesTable from 'components/account/AccountStrategiesTable'
-import AccountPerpPositionTable from 'components/account/AccountPerpPositionTable'
 
 interface Props {
   details: ExtendedManagedVaultDetails
@@ -162,13 +161,14 @@ export default function VaultSummary(props: Props) {
         title: 'Balances',
         renderContent: () =>
           accountData ? (
-            <AccountBalancesTable
-              account={accountData}
-              borrowingData={borrowAssetsData}
-              lendingData={lendingAssetsData}
-              hideCard
-              tableBodyClassName='bg-white/5'
-            />
+            <div className='h-64 overflow-y-auto bg-white/5 scrollbar-hide'>
+              <AccountBalancesTable
+                account={accountData}
+                borrowingData={borrowAssetsData}
+                lendingData={lendingAssetsData}
+                hideCard
+              />
+            </div>
           ) : null,
       },
     ]
@@ -183,7 +183,9 @@ export default function VaultSummary(props: Props) {
       tabsArray.push({
         title: 'Strategies',
         renderContent: () => (
-          <AccountStrategiesTable account={accountData} hideCard tableBodyClassName='bg-white/5' />
+          <div className='h-64 overflow-y-auto bg-white/5 scrollbar-hide'>
+            <AccountStrategiesTable account={accountData} hideCard />
+          </div>
         ),
       })
     }
@@ -194,11 +196,9 @@ export default function VaultSummary(props: Props) {
       tabsArray.push({
         title: 'Perp Positions',
         renderContent: () => (
-          <AccountPerpPositionTable
-            account={accountData}
-            hideCard
-            tableBodyClassName='bg-white/5'
-          />
+          <div className='h-64 overflow-y-auto bg-white/5 scrollbar-hide'>
+            <AccountPerpPositionTable account={accountData} hideCard />
+          </div>
         ),
       })
     }
