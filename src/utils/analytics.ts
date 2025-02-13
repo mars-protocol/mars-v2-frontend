@@ -4,9 +4,14 @@ import { getAssetSymbolByDenom } from 'utils/assets'
 import { removeEmptyCoins } from 'utils/accounts'
 
 export function trackAction(type: TrackActionType, coins: BNCoin | BNCoin[], assets: Asset[]) {
-  // Handle account creation events that don't need coins
-  if (type === 'Mint HLS Account' || type === 'Mint Credit Account') {
-    console.log('Analytics Event:', type)
+  if (
+    [
+      'Mint HLS Account',
+      'Mint Credit Account',
+      'Create Limit Order',
+      'Cancel Limit Order',
+    ].includes(type)
+  ) {
     track(type)
     return
   }
@@ -20,7 +25,6 @@ export function trackAction(type: TrackActionType, coins: BNCoin | BNCoin[], ass
 
   let eventName = ''
 
-  // Handle different event name formats based on type
   switch (type) {
     case 'Swap':
       if (validCoins.length >= 2) {
@@ -37,14 +41,28 @@ export function trackAction(type: TrackActionType, coins: BNCoin | BNCoin[], ass
       }
       break
 
+    case 'Switch Position to Long':
+    case 'Switch Position to Short':
+      if (validCoins.length >= 1) {
+        const symbol = getAssetSymbolByDenom(validCoins[0].denom, assets)
+        eventName = `Switch ${symbol} to ${type === 'Switch Position to Long' ? 'Long' : 'Short'}`
+      }
+      break
+
+    case 'Deposit Into Vault':
+    case 'Deposit Into Perps Vault':
+      if (validCoins.length >= 1) {
+        const symbol = getAssetSymbolByDenom(validCoins[0].denom, assets)
+        eventName = `${type} ${symbol}`
+      }
+      break
+
     default:
-      // Handle single coin events
       const symbol = getAssetSymbolByDenom(validCoins[0].denom, assets)
       eventName = `${type} ${symbol}`
   }
 
   if (eventName) {
-    console.log('Analytics Event:', eventName)
     track(eventName)
   }
 }

@@ -463,6 +463,8 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
   const toastContents = [] as ToastContent[]
   const coins = transactionCoin.coins.map((c) => c.coin.toCoin())
   const mutationKeys = getMutationKeyFromTransactionCoinType(transactionCoin.type, chainConfig)
+  const depositVaultCoins = transactionCoin.coins.map((c) => c.coin.toCoin())
+  const bnCoins = depositVaultCoins.map((coin) => BNCoin.fromCoin(coin))
 
   switch (transactionCoin.type) {
     case 'perps':
@@ -518,14 +520,34 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
 
           case 'modify':
             if (beforeTradeDirection !== afterTradeDirection && !txCoin.coin.amount.isZero()) {
+              trackAction(
+                beforeTradeDirection === 'long'
+                  ? 'Switch Position to Short'
+                  : 'Switch Position to Long',
+                txCoin.coin,
+                assets,
+              )
               toastContents.push({
                 text: `Switched ${perpsAssetSymbol} from ${beforeTradeDirection} to ${afterTradeDirection}`,
                 coins: [txCoin.coin.abs().toCoin()],
               })
               return
             }
+            const isLong = afterTradeDirection === 'long'
+            const isIncrease = modificationAnmount.isPositive()
+            trackAction(
+              isLong
+                ? isIncrease
+                  ? 'Increase Long'
+                  : 'Decrease Long'
+                : isIncrease
+                  ? 'Increase Short'
+                  : 'Decrease Short',
+              modificationCoin,
+              assets,
+            )
             toastContents.push({
-              text: modificationAnmount.isPositive()
+              text: isIncrease
                 ? `Increased ${perpsAssetSymbol} ${afterTradeDirection} by`
                 : `Decreased ${perpsAssetSymbol} ${afterTradeDirection} by`,
               coins: [modificationCoin.abs().toCoin()],
@@ -579,7 +601,7 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
       break
     case 'lend':
       transactionCoin.coins.forEach(({ coin }) => {
-        trackAction('Lend', coin, assets)
+        trackAction('Unlend', coin, assets)
       })
       toastContents.push({
         text: target === 'Red Bank' ? 'Deposited' : 'Lent',
@@ -657,13 +679,15 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
       })
       break
     case 'deposit_into_vault':
-      const depositVaultCoins = transactionCoin.coins.map((c) => c.coin.toCoin())
+      transactionCoin.coins.length === 2
+        ? trackAction('Deposit Into Vault', bnCoins, assets)
+        : trackAction('Deposit Into Perps Vault', bnCoins[0], assets)
       toastContents.push({
         text:
           transactionCoin.coins.length === 2
             ? `Deposited into the ${getVaultNameByCoins(chainConfig, depositVaultCoins)} vault`
             : `Deposited into the Perps ${getAssetSymbolByDenom(depositVaultCoins[0].denom, assets)} vault`,
-        coins: depositVaultCoins,
+        coins,
       })
       break
     case 'perpsOpeningFee':
@@ -690,6 +714,7 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
       break
 
     case 'cancel-order':
+      trackAction('Cancel Limit Order', [], assets)
       toastContents.push({
         text: 'Canceled a Limit Order',
         coins,
@@ -697,6 +722,7 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
       break
 
     case 'create-order':
+      trackAction('Create Limit Order', [], assets)
       toastContents.push({
         text: 'Created a Limit Order',
         coins,
