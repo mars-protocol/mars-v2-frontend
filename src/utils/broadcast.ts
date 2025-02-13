@@ -687,7 +687,7 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
           transactionCoin.coins.length === 2
             ? `Deposited into the ${getVaultNameByCoins(chainConfig, depositVaultCoins)} vault`
             : `Deposited into the Perps ${getAssetSymbolByDenom(depositVaultCoins[0].denom, assets)} vault`,
-        coins,
+        coins: depositVaultCoins,
       })
       break
     case 'perpsOpeningFee':

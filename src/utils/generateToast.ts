@@ -19,6 +19,7 @@ export async function generateToast(
     chainConfig,
     result,
     address,
+    assets,
     perpsBaseDenom,
   )
   const accountId = getCreditAccountIdFromBroadcastResult(result)
