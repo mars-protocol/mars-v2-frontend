@@ -6,21 +6,7 @@ import { getAssetSymbolByDenom } from 'utils/assets'
 import { beautifyErrorMessage } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getVaultNameByCoins } from 'utils/vaults'
-import {
-  trackBorrow,
-  trackClaimRewards,
-  trackDeposit,
-  trackLend,
-  trackMintAccount,
-  trackPerpsClose,
-  trackPerpsOpen,
-  trackProvideLiquidity,
-  trackRepay,
-  trackSwap,
-  trackUnlend,
-  trackWithdraw,
-  trackWithdrawLiquidity,
-} from './analytics'
+import { trackAction } from './analytics'
 
 export function getSingleValueFromBroadcastResult(
   response: BroadcastResult['result'],
@@ -47,6 +33,7 @@ export async function analizeTransaction(
   chainConfig: ChainConfig,
   result: BroadcastResult,
   address: string,
+  assets: Asset[],
   perpsBaseDenom?: string,
 ): Promise<{
   target: string
@@ -71,7 +58,11 @@ export async function analizeTransaction(
       // Track new account creation
       const newAccountId = getSingleValueFromBroadcastResult(result.result, 'wasm', 'token_id')
       if (newAccountId) {
-        trackMintAccount(accountKind === 'high_levered_strategy' ? 'hls' : 'credit_account')
+        trackAction(
+          accountKind === 'high_levered_strategy' ? 'Mint HLS Account' : 'Mint Credit Account',
+          [],
+          assets,
+        )
       }
     }
   }
@@ -498,7 +489,11 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
 
         switch (type) {
           case 'open':
-            trackPerpsOpen(txCoin.coin, txCoin.coin.amount.isPositive(), assets)
+            trackAction(
+              txCoin.coin.amount.isPositive() ? 'Open Long' : 'Open Short',
+              txCoin.coin,
+              assets,
+            )
             toastContents.push({
               text: txCoin.coin.amount.isPositive()
                 ? `Opened ${perpsAssetSymbol} long`
@@ -508,7 +503,11 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
             break
 
           case 'close':
-            trackPerpsClose(txCoin.coin, txCoin.coin.amount.isPositive(), assets)
+            trackAction(
+              txCoin.before.amount.isPositive() ? 'Close Long' : 'Close Short',
+              txCoin.before,
+              assets,
+            )
             toastContents.push({
               text: txCoin.before.amount.isPositive()
                 ? `Closed ${perpsAssetSymbol} long`
@@ -539,7 +538,7 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
       break
     case 'borrow':
       transactionCoin.coins.forEach(({ coin }) => {
-        trackBorrow(coin, assets)
+        trackAction('Borrow', coin, assets)
       })
       toastContents.push({
         text: 'Borrowed',
@@ -565,7 +564,7 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
       break
     case 'deposit':
       transactionCoin.coins.forEach(({ coin }) => {
-        trackDeposit(coin, assets)
+        trackAction('Deposit', coin, assets)
       })
       toastContents.push({
         text: isHls ? 'Deposited into Hls account' : 'Deposited',
@@ -580,7 +579,7 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
       break
     case 'lend':
       transactionCoin.coins.forEach(({ coin }) => {
-        trackLend(coin, assets)
+        trackAction('Lend', coin, assets)
       })
       toastContents.push({
         text: target === 'Red Bank' ? 'Deposited' : 'Lent',
@@ -589,7 +588,7 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
       break
     case 'reclaim':
       transactionCoin.coins.forEach(({ coin }) => {
-        trackUnlend(coin, assets)
+        trackAction('Unlend', coin, assets)
       })
       toastContents.push({
         text: 'Unlent',
@@ -598,7 +597,7 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
       break
     case 'repay':
       transactionCoin.coins.forEach(({ coin }) => {
-        trackRepay(coin, assets)
+        trackAction('Repay', coin, assets)
       })
       toastContents.push({
         text: 'Repaid',
@@ -609,7 +608,7 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
       if (transactionCoin.coins.length >= 2) {
         const fromCoin = transactionCoin.coins[0].coin
         const toCoin = transactionCoin.coins[transactionCoin.coins.length - 1].coin
-        trackSwap(fromCoin, toCoin, assets)
+        trackAction('Swap', [fromCoin, toCoin], assets)
       }
       toastContents.push({
         text: 'Swapped',
@@ -618,7 +617,7 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
       break
     case 'withdraw':
       transactionCoin.coins.forEach(({ coin }) => {
-        trackWithdraw(coin, assets)
+        trackAction('Withdraw', coin, assets)
       })
       toastContents.push({
         text: 'Withdrew to wallet',
@@ -627,7 +626,11 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
       break
     case 'farm':
       if (transactionCoin.coins.length === 2) {
-        trackWithdrawLiquidity(transactionCoin.coins[0].coin, transactionCoin.coins[1].coin, assets)
+        trackAction(
+          'Withdraw LP',
+          [transactionCoin.coins[0].coin, transactionCoin.coins[1].coin],
+          assets,
+        )
       }
       toastContents.push({
         text:
@@ -639,7 +642,11 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
       break
     case 'provide_liquidity':
       if (transactionCoin.coins.length === 2) {
-        trackProvideLiquidity(transactionCoin.coins[0].coin, transactionCoin.coins[1].coin, assets)
+        trackAction(
+          'Provide LP',
+          [transactionCoin.coins[0].coin, transactionCoin.coins[1].coin],
+          assets,
+        )
       }
       toastContents.push({
         text:
@@ -674,7 +681,7 @@ export function getToastContentsAndMutationKeysFromGroupedTransactionCoin(
 
     case 'claim_rewards':
       transactionCoin.coins.forEach(({ coin }) => {
-        trackClaimRewards(coin, assets)
+        trackAction('Claim Rewards', coin, assets)
       })
       toastContents.push({
         text: 'Claimed rewards',

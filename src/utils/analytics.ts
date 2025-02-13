@@ -1,95 +1,50 @@
 import { track } from '@vercel/analytics'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getAssetSymbolByDenom } from 'utils/assets'
+import { removeEmptyCoins } from 'utils/accounts'
 
-export function trackSwap(fromCoin: BNCoin, toCoin: BNCoin, assets: Asset[]) {
-  const fromSymbol = getAssetSymbolByDenom(fromCoin.denom, assets)
-  const toSymbol = getAssetSymbolByDenom(toCoin.denom, assets)
-  const eventName = `Swap ${fromSymbol} → ${toSymbol}`
+export function trackAction(type: TrackActionType, coins: BNCoin | BNCoin[], assets: Asset[]) {
+  // Handle account creation events that don't need coins
+  if (type === 'Mint HLS Account' || type === 'Mint Credit Account') {
+    console.log('Analytics Event:', type)
+    track(type)
+    return
+  }
 
-  console.log('Analytics Event:', eventName)
-  track(eventName)
-}
+  const coinsArray = Array.isArray(coins) ? coins : [coins]
+  const validCoins = removeEmptyCoins(coinsArray.map((coin) => coin.toCoin())).map((coin) =>
+    BNCoin.fromCoin(coin),
+  )
 
-export function trackLend(coin: BNCoin, assets: Asset[]) {
-  const symbol = getAssetSymbolByDenom(coin.denom, assets)
-  const eventName = `Lend ${symbol}`
+  if (validCoins.length === 0) return
 
-  track(eventName)
-}
+  let eventName = ''
 
-export function trackUnlend(coin: BNCoin, assets: Asset[]) {
-  const symbol = getAssetSymbolByDenom(coin.denom, assets)
-  const eventName = `Unlend ${symbol}`
+  // Handle different event name formats based on type
+  switch (type) {
+    case 'Swap':
+      if (validCoins.length >= 2) {
+        const [fromCoin, toCoin] = validCoins
+        eventName = `${type} ${getAssetSymbolByDenom(fromCoin.denom, assets)} → ${getAssetSymbolByDenom(toCoin.denom, assets)}`
+      }
+      break
 
-  track(eventName)
-}
+    case 'Provide LP':
+    case 'Withdraw LP':
+      if (validCoins.length >= 2) {
+        const [coin1, coin2] = validCoins
+        eventName = `${type} ${getAssetSymbolByDenom(coin1.denom, assets)}-${getAssetSymbolByDenom(coin2.denom, assets)}`
+      }
+      break
 
-export function trackBorrow(coin: BNCoin, assets: Asset[]) {
-  const symbol = getAssetSymbolByDenom(coin.denom, assets)
-  const eventName = `Borrow ${symbol}`
+    default:
+      // Handle single coin events
+      const symbol = getAssetSymbolByDenom(validCoins[0].denom, assets)
+      eventName = `${type} ${symbol}`
+  }
 
-  track(eventName)
-}
-
-export function trackRepay(coin: BNCoin, assets: Asset[]) {
-  const symbol = getAssetSymbolByDenom(coin.denom, assets)
-  const eventName = `Repay ${symbol}`
-
-  track(eventName)
-}
-
-export function trackDeposit(coin: BNCoin, assets: Asset[]) {
-  const symbol = getAssetSymbolByDenom(coin.denom, assets)
-  const eventName = `Deposit ${symbol}`
-
-  track(eventName)
-}
-
-export function trackWithdraw(coin: BNCoin, assets: Asset[]) {
-  const symbol = getAssetSymbolByDenom(coin.denom, assets)
-  const eventName = `Withdraw ${symbol}`
-
-  track(eventName)
-}
-
-export function trackProvideLiquidity(coin1: BNCoin, coin2: BNCoin, assets: Asset[]) {
-  const symbol1 = getAssetSymbolByDenom(coin1.denom, assets)
-  const symbol2 = getAssetSymbolByDenom(coin2.denom, assets)
-  const eventName = `Provide LP ${symbol1}-${symbol2}`
-
-  track(eventName)
-}
-
-export function trackWithdrawLiquidity(coin1: BNCoin, coin2: BNCoin, assets: Asset[]) {
-  const symbol1 = getAssetSymbolByDenom(coin1.denom, assets)
-  const symbol2 = getAssetSymbolByDenom(coin2.denom, assets)
-  const eventName = `Withdraw LP ${symbol1}-${symbol2}`
-
-  track(eventName)
-}
-
-export function trackMintAccount(accountType: 'credit_account' | 'hls') {
-  const eventName = accountType === 'hls' ? 'Mint HLS Account' : 'Mint Credit Account'
-
-  track(eventName)
-}
-
-export function trackPerpsOpen(coin: BNCoin, isLong: boolean, assets: Asset[]) {
-  const symbol = getAssetSymbolByDenom(coin.denom, assets)
-  const eventName = `Open ${symbol} ${isLong ? 'Long' : 'Short'}`
-
-  track(eventName)
-}
-
-export function trackPerpsClose(coin: BNCoin, isLong: boolean, assets: Asset[]) {
-  const symbol = getAssetSymbolByDenom(coin.denom, assets)
-  const eventName = `Close ${symbol} ${isLong ? 'Long' : 'Short'}`
-  track(eventName)
-}
-
-export function trackClaimRewards(coin: BNCoin, assets: Asset[]) {
-  const symbol = getAssetSymbolByDenom(coin.denom, assets)
-  const eventName = `Claim ${symbol} Rewards`
-  track(eventName)
+  if (eventName) {
+    console.log('Analytics Event:', eventName)
+    track(eventName)
+  }
 }

@@ -1777,3 +1777,22 @@ interface PerpsTradingFee {
     closing: BigNumber
   }
 }
+
+type TrackActionType =
+  | 'Swap'
+  | 'Lend'
+  | 'Unlend'
+  | 'Borrow'
+  | 'Repay'
+  | 'Withdraw'
+  | 'Deposit'
+  | 'Deposit and Lend'
+  | 'Provide LP'
+  | 'Withdraw LP'
+  | 'Open Long'
+  | 'Open Short'
+  | 'Close Long'
+  | 'Close Short'
+  | 'Claim Rewards'
+  | 'Mint HLS Account'
+  | 'Mint Credit Account'
