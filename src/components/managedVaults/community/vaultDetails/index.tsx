@@ -6,7 +6,7 @@ import ProfileVaultCard from 'components/managedVaults/community/vaultDetails/pr
 import Text from 'components/common/Text'
 import useToggle from 'hooks/common/useToggle'
 import VaultAction from 'components/managedVaults/community/vaultDetails/common/Overlays/VaultAction'
-import VaultDeposits from 'components/managedVaults/community/vaultDetails/VaultDeposits'
+import VaultPosition from 'components/managedVaults/community/vaultDetails/VaultPosition'
 import VaultSummary from 'components/managedVaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/managedVaults/community/vaultDetails/Withdrawals'
 import { ArrowDownLine } from 'components/common/Icons'
@@ -158,7 +158,7 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
               isOwner={isOwner}
             />
           ) : (
-            <VaultDeposits
+            <VaultPosition
               vaultAddress={vaultAddress}
               totalVaultTokens={vaultDetails.total_vault_tokens}
               baseDenom={vaultDetails.base_token}

@@ -18,7 +18,7 @@ interface Props {
   onWithdraw: () => void
 }
 
-export default function VaultDeposits(props: Props) {
+export default function VaultPosition(props: Props) {
   const { vaultAddress, totalVaultTokens, baseDenom, isOwner, onDeposit, onWithdraw } = props
 
   const address = useStore((s) => s.address)

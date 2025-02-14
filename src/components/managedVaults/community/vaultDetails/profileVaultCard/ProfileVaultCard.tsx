@@ -103,7 +103,7 @@ export default function ProfileVaultCard(props: Props) {
             <DisplayCurrency
               coin={BNCoin.fromDenomAndBigNumber(
                 'usd',
-                BN(details.performance_fee_state.accumulated_pnl),
+                BN(details.performance_fee_state.accumulated_pnl).shiftedBy(-PRICE_ORACLE_DECIMALS),
               )}
               showSignPrefix
               className={classNames(
