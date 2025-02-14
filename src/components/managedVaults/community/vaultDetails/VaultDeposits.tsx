@@ -7,6 +7,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { useManagedVaultUserDeposits } from 'hooks/managedVaults/useManagedVaultUserDeposits'
+import Text from 'components/common/Text'
 
 interface Props {
   vaultAddress: string
@@ -21,9 +22,9 @@ export default function VaultDeposits(props: Props) {
   const { vaultAddress, totalVaultTokens, baseDenom, isOwner, onDeposit, onWithdraw } = props
 
   const address = useStore((s) => s.address)
-  const { getVaultDeposit } = useManagedVaultUserDeposits(address)
-
+  const { getVaultDeposit, calculateVaultShare } = useManagedVaultUserDeposits(address)
   const deposits = getVaultDeposit(vaultAddress)
+  const vaultPercentage = calculateVaultShare(vaultAddress, totalVaultTokens)
 
   return (
     <PositionInfo
@@ -37,12 +38,12 @@ export default function VaultDeposits(props: Props) {
             className='text-2xl'
           />
         ) : (
-          0
+          <Text>No deposits</Text>
         )
       }
       subtitle={
         <FormattedNumber
-          amount={6}
+          amount={vaultPercentage}
           options={{
             suffix: '% of the vault',
             minDecimals: 0,

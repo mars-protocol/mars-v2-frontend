@@ -1,14 +1,10 @@
-import Button from 'components/common/Button'
 import ActionButton from 'components/common/Button/ActionButton'
 import Card from 'components/common/Card'
-import DisplayCurrency from 'components/common/DisplayCurrency'
 import Text from 'components/common/Text'
 import { ReactElement } from 'react'
-import { BNCoin } from 'types/classes/BNCoin'
-import { BN } from 'utils/helpers'
 
 interface Props {
-  value: number | ReactElement
+  value: ReactElement
   subtitle: React.ReactNode
   primaryButton: ButtonProps
   secondaryButton: ButtonProps
@@ -26,12 +22,7 @@ export default function PositionInfo(props: Props) {
             {isOwner ? 'Performance Fee' : 'My Position'}
           </Text>
           <div className='flex flex-col md:flex-row items-baseline md:gap-2'>
-            {/* <DisplayCurrency
-              coin={BNCoin.fromDenomAndBigNumber('usd', BN(value))}
-              className='text-2xl'
-            /> */}
             {value}
-
             {subtitle}
           </div>
           {isOwner && (

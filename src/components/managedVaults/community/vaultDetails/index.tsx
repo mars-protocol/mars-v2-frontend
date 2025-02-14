@@ -16,6 +16,9 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 import { useParams } from 'react-router-dom'
 import { useState } from 'react'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { BNCoin } from 'types/classes/BNCoin'
+import { BN } from 'utils/helpers'
 
 function VaultLoadingState() {
   return (
@@ -119,7 +122,15 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
 
           {isOwner ? (
             <PositionInfo
-              value={Number(vaultDetails.performance_fee_state.accumulated_fee)}
+              value={
+                <DisplayCurrency
+                  coin={BNCoin.fromDenomAndBigNumber(
+                    'usd',
+                    BN(vaultDetails.performance_fee_state.accumulated_fee),
+                  )}
+                  className='text-2xl'
+                />
+              }
               subtitle={
                 <FormattedNumber
                   amount={Number(vaultDetails?.performance_fee_config.fee_rate ?? 0) * 100000}
