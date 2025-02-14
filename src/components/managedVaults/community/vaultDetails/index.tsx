@@ -6,6 +6,7 @@ import ProfileVaultCard from 'components/managedVaults/community/vaultDetails/pr
 import Text from 'components/common/Text'
 import useToggle from 'hooks/common/useToggle'
 import VaultAction from 'components/managedVaults/community/vaultDetails/common/Overlays/VaultAction'
+import VaultDeposits from 'components/managedVaults/community/vaultDetails/VaultDeposits'
 import VaultSummary from 'components/managedVaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/managedVaults/community/vaultDetails/Withdrawals'
 import { ArrowDownLine } from 'components/common/Icons'
@@ -146,31 +147,13 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
               isOwner={isOwner}
             />
           ) : (
-            <PositionInfo
-              value={149087}
-              subtitle={
-                <FormattedNumber
-                  amount={3}
-                  options={{
-                    suffix: '% of the vault',
-                    minDecimals: 0,
-                    maxDecimals: 0,
-                    abbreviated: false,
-                  }}
-                  className='text-xs text-white/60'
-                />
-              }
-              primaryButton={{
-                text: 'Deposit',
-                onClick: () => handleActionModal('deposit'),
-              }}
-              secondaryButton={{
-                text: 'Withdraw',
-                color: 'secondary',
-                onClick: () => handleActionModal('withdraw'),
-                rightIcon: <ArrowDownLine />,
-              }}
+            <VaultDeposits
+              vaultAddress={vaultAddress}
+              totalVaultTokens={vaultDetails.total_vault_tokens}
+              baseDenom={vaultDetails.base_token}
               isOwner={isOwner}
+              onDeposit={() => handleActionModal('deposit')}
+              onWithdraw={() => handleActionModal('withdraw')}
             />
           )}
 
