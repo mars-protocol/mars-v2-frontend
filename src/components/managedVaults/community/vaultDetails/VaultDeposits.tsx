@@ -62,6 +62,7 @@ export default function VaultDeposits(props: Props) {
         color: 'secondary',
         onClick: onWithdraw,
         rightIcon: <ArrowDownLine />,
+        disabled: !deposits,
       }}
       isOwner={isOwner}
     />
