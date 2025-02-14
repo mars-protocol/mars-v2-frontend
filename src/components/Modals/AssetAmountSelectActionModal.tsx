@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useCallback, useMemo, useState } from 'react'
+import { ReactElement, useCallback, useMemo, useState } from 'react'
 
 import Modal from 'components/Modals/Modal'
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
@@ -23,7 +23,7 @@ interface Props {
   title: string
   coinBalances: BNCoin[]
   actionButtonText: string
-  contentHeader?: JSX.Element
+  contentHeader?: ReactElement
   checkForCampaign?: boolean
   onClose: () => void
   onChange: (value: BigNumber) => void
