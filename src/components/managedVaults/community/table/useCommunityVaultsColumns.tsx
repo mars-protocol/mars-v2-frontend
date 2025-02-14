@@ -8,6 +8,7 @@ import FreezePeriod, {
 } from 'components/managedVaults/common/table/columns/FreezePeriod'
 import Name, { NAME_META } from 'components/managedVaults/common/table/columns/Name'
 import Details, { DETAILS_META } from 'components/managedVaults/community/table/column/Details'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { useCallback, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
@@ -37,7 +38,12 @@ export default function useCommunityVaultsColumns(props: Props) {
       },
       {
         ...TVL_META,
-        cell: ({ row }) => <TVL amount={BigNumber(row.original.tvl)} denom={'usd'} />,
+        cell: ({ row }) => (
+          <TVL
+            amount={BigNumber(row.original.tvl).shiftedBy(-PRICE_ORACLE_DECIMALS)}
+            denom={'usd'}
+          />
+        ),
       },
       {
         ...APR_META,

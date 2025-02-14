@@ -1,3 +1,4 @@
+import { CircularProgress } from 'components/common/CircularProgress'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
 import useCommunityVaultsColumns from 'components/managedVaults/community/table/useCommunityVaultsColumns'
@@ -13,8 +14,15 @@ export default function AvailableCommunityVaults() {
   const { data, isLoading } = useManagedVaults()
   const address = useStore((s) => s.address)
 
-  const noVaultsAvailable = !data?.ownedVaults?.length && !data?.availableVaults?.length
+  if (isLoading) {
+    return (
+      <div className='flex justify-center w-full mt-10'>
+        <CircularProgress size={50} />
+      </div>
+    )
+  }
 
+  const noVaultsAvailable = !data?.ownedVaults?.length && !data?.availableVaults?.length
   if (!isLoading && noVaultsAvailable) {
     return (
       <Text size='lg' className='text-center w-full p-8 text-white/60'>

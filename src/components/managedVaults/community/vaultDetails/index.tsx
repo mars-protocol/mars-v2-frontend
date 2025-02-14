@@ -6,6 +6,7 @@ import ProfileVaultCard from 'components/managedVaults/community/vaultDetails/pr
 import Text from 'components/common/Text'
 import useToggle from 'hooks/common/useToggle'
 import VaultAction from 'components/managedVaults/community/vaultDetails/common/Overlays/VaultAction'
+import VaultPosition from 'components/managedVaults/community/vaultDetails/VaultPosition'
 import VaultSummary from 'components/managedVaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/managedVaults/community/vaultDetails/Withdrawals'
 import { ArrowDownLine } from 'components/common/Icons'
@@ -15,6 +16,9 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 import { useParams } from 'react-router-dom'
 import { useState } from 'react'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { BNCoin } from 'types/classes/BNCoin'
+import { BN } from 'utils/helpers'
 
 function VaultLoadingState() {
   return (
@@ -118,7 +122,15 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
 
           {isOwner ? (
             <PositionInfo
-              value={Number(vaultDetails.performance_fee_state.accumulated_fee)}
+              value={
+                <DisplayCurrency
+                  coin={BNCoin.fromDenomAndBigNumber(
+                    'usd',
+                    BN(vaultDetails.performance_fee_state.accumulated_fee),
+                  )}
+                  className='text-2xl'
+                />
+              }
               subtitle={
                 <FormattedNumber
                   amount={Number(vaultDetails?.performance_fee_config.fee_rate ?? 0) * 100000}
@@ -146,31 +158,13 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
               isOwner={isOwner}
             />
           ) : (
-            <PositionInfo
-              value={149087}
-              subtitle={
-                <FormattedNumber
-                  amount={3}
-                  options={{
-                    suffix: '% of the vault',
-                    minDecimals: 0,
-                    maxDecimals: 0,
-                    abbreviated: false,
-                  }}
-                  className='text-xs text-white/60'
-                />
-              }
-              primaryButton={{
-                text: 'Deposit',
-                onClick: () => handleActionModal('deposit'),
-              }}
-              secondaryButton={{
-                text: 'Withdraw',
-                color: 'secondary',
-                onClick: () => handleActionModal('withdraw'),
-                rightIcon: <ArrowDownLine />,
-              }}
+            <VaultPosition
+              vaultAddress={vaultAddress}
+              totalVaultTokens={vaultDetails.total_vault_tokens}
+              baseDenom={vaultDetails.base_token}
               isOwner={isOwner}
+              onDeposit={() => handleActionModal('deposit')}
+              onWithdraw={() => handleActionModal('withdraw')}
             />
           )}
 

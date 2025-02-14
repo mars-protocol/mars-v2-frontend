@@ -4,7 +4,6 @@ import moment from 'moment'
 import { formatLockupPeriod } from 'utils/formatters'
 
 export const FREEZE_PERIOD_META = {
-  accessorKey: 'freeze_period',
   header: 'Freeze Period',
   meta: { className: 'w-30' },
 }
