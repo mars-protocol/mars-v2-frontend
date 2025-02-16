@@ -6,6 +6,7 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
 import PerformanceFee from 'components/managedVaults/community/createVault/PerformanceFee'
+import { ORACLE_DENOM } from 'constants/oracle'
 import { useState } from 'react'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -16,10 +17,11 @@ interface Props {
   setShowFeeActionModal: (show: boolean) => void
   type: 'edit' | 'withdraw'
   vaultAddress: string
+  accumulatedFee: string
 }
 
 export default function FeeAction(props: Props) {
-  const { showFeeActionModal, setShowFeeActionModal, type, vaultAddress } = props
+  const { showFeeActionModal, setShowFeeActionModal, type, vaultAddress, accumulatedFee } = props
   const [isTxPending, setIsTxPending] = useState(false)
   const [performanceFee, setPerformanceFee] = useState<BigNumber>(BN(1))
   const handlePerformanceFeeAction = useStore((s) => s.handlePerformanceFeeAction)
@@ -28,6 +30,11 @@ export default function FeeAction(props: Props) {
 
   const handleFeeAction = async () => {
     if (!vaultAddress) return
+
+    if (isEdit && BN(accumulatedFee).isZero()) {
+      console.error('Cannot edit fee when there are no accumulated fees')
+      return
+    }
 
     setIsTxPending(true)
     try {
@@ -82,7 +89,7 @@ export default function FeeAction(props: Props) {
         ) : (
           <div className='text-center'>
             <DisplayCurrency
-              coin={BNCoin.fromDenomAndBigNumber('usd', BN(500.38))}
+              coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, BN(accumulatedFee))}
               className='text-4xl'
             />
             <Text size='sm' className='text-white/50'>

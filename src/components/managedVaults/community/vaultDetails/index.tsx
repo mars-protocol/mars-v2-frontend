@@ -62,9 +62,6 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
   if (isOwner === undefined || !vaultDetails || isLoading) {
     return <VaultLoadingState />
   }
-  // TODO: fetch from contract
-  const hasAccumulatedFees = false
-
   const handleActionModal = (type: 'deposit' | 'withdraw') => {
     setModalType(type)
     setShowActionModal(true)
@@ -100,6 +97,7 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
         setShowFeeActionModal={setShowFeeActionModal}
         type={modalFeeType || 'edit'}
         vaultAddress={vaultAddress!}
+        accumulatedFee={vaultDetails.performance_fee_state.accumulated_fee}
       />
 
       <VaultAction
@@ -121,42 +119,49 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
           )}
 
           {isOwner ? (
-            <PositionInfo
-              value={
-                <DisplayCurrency
-                  coin={BNCoin.fromDenomAndBigNumber(
-                    'usd',
-                    BN(vaultDetails.performance_fee_state.accumulated_fee),
-                  )}
-                  className='text-2xl'
-                />
-              }
-              subtitle={
-                <FormattedNumber
-                  amount={Number(vaultDetails?.performance_fee_config.fee_rate ?? 0) * 100000}
-                  options={{
-                    suffix: '%',
-                    minDecimals: 0,
-                    maxDecimals: 0,
-                    abbreviated: false,
+            (() => {
+              const hasAccumulatedFees =
+                Number(vaultDetails.performance_fee_state.accumulated_fee) > 0
+
+              return (
+                <PositionInfo
+                  value={
+                    <DisplayCurrency
+                      coin={BNCoin.fromDenomAndBigNumber(
+                        'usd',
+                        BN(vaultDetails.performance_fee_state.accumulated_fee),
+                      )}
+                      className='text-2xl'
+                    />
+                  }
+                  subtitle={
+                    <FormattedNumber
+                      amount={Number(vaultDetails?.performance_fee_config.fee_rate ?? 0) * 100000}
+                      options={{
+                        suffix: '%',
+                        minDecimals: 0,
+                        maxDecimals: 0,
+                        abbreviated: false,
+                      }}
+                      className='text-xs text-white/60'
+                    />
+                  }
+                  primaryButton={{
+                    text: 'Edit Fee',
+                    color: 'secondary',
+                    onClick: () => handleFeeActionModal('edit'),
+                    disabled: !hasAccumulatedFees,
                   }}
-                  className='text-xs text-white/60'
+                  secondaryButton={{
+                    text: 'Withdraw',
+                    onClick: () => handleFeeActionModal('withdraw'),
+                    rightIcon: <ArrowDownLine />,
+                    disabled: !hasAccumulatedFees,
+                  }}
+                  isOwner={isOwner}
                 />
-              }
-              primaryButton={{
-                text: 'Edit Fee',
-                color: 'secondary',
-                onClick: () => handleFeeActionModal('edit'),
-                disabled: !hasAccumulatedFees,
-              }}
-              secondaryButton={{
-                text: 'Withdraw',
-                onClick: () => handleFeeActionModal('withdraw'),
-                rightIcon: <ArrowDownLine />,
-                disabled: !hasAccumulatedFees,
-              }}
-              isOwner={isOwner}
-            />
+              )
+            })()
           ) : (
             <VaultPosition
               totalVaultTokens={vaultDetails.total_vault_tokens}
