@@ -1,5 +1,6 @@
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import PositionInfo from './common/PositionInfo'
+import Text from 'components/common/Text'
 import useStore from 'store'
 import { ArrowDownLine } from 'components/common/Icons'
 import { BN } from 'utils/helpers'
@@ -7,7 +8,6 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { useManagedVaultUserDeposits } from 'hooks/managedVaults/useManagedVaultUserDeposits'
-import Text from 'components/common/Text'
 
 interface Props {
   vaultAddress: string
@@ -22,18 +22,18 @@ export default function VaultPosition(props: Props) {
   const { vaultAddress, totalVaultTokens, baseDenom, isOwner, onDeposit, onWithdraw } = props
 
   const address = useStore((s) => s.address)
-  const { getVaultDeposit, calculateVaultShare } = useManagedVaultUserDeposits(address)
-  const deposits = getVaultDeposit(vaultAddress)
-  const vaultPercentage = calculateVaultShare(vaultAddress, totalVaultTokens)
+  const { amount, calculateVaultShare } = useManagedVaultUserDeposits(address, vaultAddress)
+  const sharePercentage = calculateVaultShare(totalVaultTokens)
+  const noDeposits = amount === '0'
 
   return (
     <PositionInfo
       value={
-        deposits ? (
+        !noDeposits ? (
           <DisplayCurrency
             coin={BNCoin.fromDenomAndBigNumber(
               baseDenom,
-              BN(deposits.amount).shiftedBy(-PRICE_ORACLE_DECIMALS),
+              BN(amount).shiftedBy(-PRICE_ORACLE_DECIMALS),
             )}
             className='text-2xl'
           />
@@ -43,7 +43,7 @@ export default function VaultPosition(props: Props) {
       }
       subtitle={
         <FormattedNumber
-          amount={vaultPercentage}
+          amount={sharePercentage}
           options={{
             suffix: '% of the vault',
             minDecimals: 0,
@@ -62,7 +62,7 @@ export default function VaultPosition(props: Props) {
         color: 'secondary',
         onClick: onWithdraw,
         rightIcon: <ArrowDownLine />,
-        disabled: !deposits,
+        disabled: noDeposits,
       }}
       isOwner={isOwner}
     />
