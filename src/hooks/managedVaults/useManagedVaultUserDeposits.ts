@@ -1,11 +1,9 @@
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import { BN } from 'utils/helpers'
 
-export function useManagedVaultUserDeposits(address: string | undefined, vaultAddress: string) {
+export function useManagedVaultUserDeposits(address: string | undefined, tokenDenom: string) {
   const { data: walletBalances } = useWalletBalances(address)
-  const vaultTokenDenom = `factory/${vaultAddress}/vault_ntrn`
-
-  const deposit = walletBalances?.find((balance) => balance.denom === vaultTokenDenom)
+  const deposit = walletBalances?.find((balance) => balance.denom === tokenDenom)
 
   const calculateVaultShare = (totalVaultTokens: string): number => {
     if (!deposit?.amount || !totalVaultTokens || BN(totalVaultTokens).isZero()) {

@@ -159,9 +159,9 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
             />
           ) : (
             <VaultPosition
-              vaultAddress={vaultAddress}
               totalVaultTokens={vaultDetails.total_vault_tokens}
               baseDenom={vaultDetails.base_token}
+              tokenDenom={vaultDetails.vault_token}
               isOwner={isOwner}
               onDeposit={() => handleActionModal('deposit')}
               onWithdraw={() => handleActionModal('withdraw')}

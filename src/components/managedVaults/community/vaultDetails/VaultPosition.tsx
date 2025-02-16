@@ -10,19 +10,19 @@ import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { useManagedVaultUserDeposits } from 'hooks/managedVaults/useManagedVaultUserDeposits'
 
 interface Props {
-  vaultAddress: string
   totalVaultTokens: string
   baseDenom: string
+  tokenDenom: string
   isOwner: boolean
   onDeposit: () => void
   onWithdraw: () => void
 }
 
 export default function VaultPosition(props: Props) {
-  const { vaultAddress, totalVaultTokens, baseDenom, isOwner, onDeposit, onWithdraw } = props
+  const { totalVaultTokens, baseDenom, isOwner, tokenDenom, onDeposit, onWithdraw } = props
 
   const address = useStore((s) => s.address)
-  const { amount, calculateVaultShare } = useManagedVaultUserDeposits(address, vaultAddress)
+  const { amount, calculateVaultShare } = useManagedVaultUserDeposits(address, tokenDenom)
   const sharePercentage = calculateVaultShare(totalVaultTokens)
   const noDeposits = amount === '0'
 
