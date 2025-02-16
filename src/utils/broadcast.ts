@@ -2,11 +2,11 @@ import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { removeEmptyCoins } from 'utils/accounts'
+import { trackAction } from 'utils/analytics'
 import { getAssetSymbolByDenom } from 'utils/assets'
 import { beautifyErrorMessage } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getVaultNameByCoins } from 'utils/vaults'
-import { trackAction } from './analytics'
 
 export function getSingleValueFromBroadcastResult(
   response: BroadcastResult['result'],
