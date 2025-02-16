@@ -3,6 +3,8 @@ import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
 import { ExternalLink } from 'components/common/Icons'
 import { truncate } from 'utils/formatters'
+import { TextLink } from 'components/common/TextLink'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 export const INFO_META = {
   meta: { className: 'w-40' },
@@ -14,6 +16,7 @@ interface Props {
 
 export default function Info(props: Props) {
   const { value, isLoading } = props
+  const chainConfig = useChainConfig()
 
   if (isLoading) return <Loading />
 
@@ -25,14 +28,22 @@ export default function Info(props: Props) {
     return cooldown_end <= now ? 'Ready to withdraw' : 'Queued'
   }
   const status = value.cooldown_end ? getStatus(value.cooldown_end) : value.status
+  const link = `${chainConfig.endpoints.explorer}/address/${address}`
 
   return (
     <>
       {address && (
-        <div className='flex items-center gap-1 justify-end'>
-          <Text size='xs'>{address}</Text>
-          {/* TODO: copy or mintscan link */}
-          <ExternalLink className='w-3.5 h-3.5 text-white/40 hover:text-inherit hover:cursor-pointer' />
+        <div className='flex justify-end'>
+          <TextLink
+            href={link}
+            target='_blank'
+            textSize='extraSmall'
+            className='underline hover:no-underline hover:text-white '
+            title={address}
+          >
+            {address}
+            <ExternalLink className='ml-1 inline w-3' />
+          </TextLink>
         </div>
       )}
       {status && (

@@ -195,7 +195,7 @@ export default function Withdrawals(props: Props) {
             hideCard
             columns={queuedWithdrawalcolumns}
             data={allUnlocksData}
-            initialSorting={[{ id: 'created_at', desc: true }]}
+            initialSorting={[]}
             tableBodyClassName='bg-white/5'
             spacingClassName='p-3'
             pagination={{
