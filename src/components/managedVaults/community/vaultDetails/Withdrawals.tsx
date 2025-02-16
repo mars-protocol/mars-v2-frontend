@@ -20,6 +20,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { Tooltip } from 'components/common/Tooltip'
 import { useAllUnlocks } from 'hooks/managedVaults/useAllUnlocks'
 import { useUserUnlocks } from 'hooks/managedVaults/useUserUnlocks'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 
 interface Props {
   details: ExtendedManagedVaultDetails
@@ -124,7 +125,9 @@ export default function Withdrawals(props: Props) {
                   <DisplayCurrency
                     coin={BNCoin.fromDenomAndBigNumber(
                       'usd',
-                      BN(details.performance_fee_state.accumulated_pnl),
+                      BN(details.performance_fee_state.accumulated_pnl).shiftedBy(
+                        -PRICE_ORACLE_DECIMALS,
+                      ),
                     )}
                     showSignPrefix
                     className={classNames(
