@@ -6,7 +6,7 @@ import SelectAccount from 'components/Modals/Hls/Deposit/SelectAccount'
 import { SelectAccountSubTitle } from 'components/Modals/Hls/Deposit/SubTitles'
 import HlsFarmingSummary from 'components/Modals/Hls/Deposit/Summary/HlsFarmingSummary'
 import useAccounts from 'hooks/accounts/useAccounts'
-import { useMemo } from 'react'
+import { ReactElement, useMemo } from 'react'
 import useStore from 'store'
 import { isAccountEmpty } from 'utils/accounts'
 
@@ -17,8 +17,8 @@ interface Props {
   depositCoins: BNCoin[]
   displayCurrency: string
   farm: AstroLp | DepositedAstroLp
-  getDepositSubTitle: () => React.JSX.Element | null
-  getBorrowingsSubTitle: () => React.JSX.Element | null
+  getDepositSubTitle: () => ReactElement | null
+  getBorrowingsSubTitle: () => ReactElement | null
   isCustomRatio: boolean
   isOpen: boolean[]
   onChangeBorrowings: (coins: BNCoin[]) => void
