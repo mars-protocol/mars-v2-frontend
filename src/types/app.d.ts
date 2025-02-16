@@ -1269,7 +1269,7 @@ interface FetchError {
 }
 
 interface FocusComponent {
-  component: React.JSX.Element | null
+  component: ReactElement | null
   onClose?: () => void
 }
 
@@ -1301,20 +1301,20 @@ interface ModalSlice {
 
 interface AlertDialogButton {
   text?: string
-  icon?: React.JSX.Element
+  icon?: ReactElement
   isAsync?: boolean
   onClick?: () => Promise<void> | void
   disabled?: boolean
 }
 
 interface AlertDialogConfig {
-  icon?: React.JSX.Element
-  header?: React.JSX.Element
+  icon?: ReactElement
+  header?: ReactElement
   checkbox?: {
     text: string
     onClick: (isChecked: boolean) => void
   }
-  content: React.JSX.Element | string
+  content: ReactElement | string
   negativeButton?: AlertDialogButton
   positiveButton?: AlertDialogButton
   title?: string
@@ -1815,6 +1815,36 @@ interface PerpsTradingFee {
     closing: BigNumber
   }
 }
+
+type TrackActionType =
+  | 'Swap'
+  | 'Lend'
+  | 'Unlend'
+  | 'Borrow'
+  | 'Repay'
+  | 'Withdraw'
+  | 'Deposit'
+  | 'Deposit and Lend'
+  | 'Provide LP'
+  | 'Withdraw LP'
+  | 'Open Long'
+  | 'Open Short'
+  | 'Close Long'
+  | 'Close Short'
+  | 'Increase Long'
+  | 'Decrease Long'
+  | 'Increase Short'
+  | 'Decrease Short'
+  | 'Switch Position to Long'
+  | 'Switch Position to Short'
+  | 'Claim Rewards'
+  | 'Mint HLS Account'
+  | 'Mint Credit Account'
+  | 'Create Limit Order'
+  | 'Cancel Limit Order'
+  | 'Deposit Into Vault'
+  | 'Deposit Into Perps Vault'
+
 interface VaultParams {
   title: string
   description: string
