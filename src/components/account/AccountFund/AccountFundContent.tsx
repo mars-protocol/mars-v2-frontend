@@ -83,7 +83,6 @@ export default function AccountFundContent(props: Props) {
   const [goFast, setGoFast] = useState(true)
 
   const accounts = useAccounts('default', props.address)
-  console.log('accounts', accounts.data)
   const hasNoAccounts = accounts.data?.length < 1
   const [currentRoute, setCurrentRoute] = useState<RouteResponse | undefined>(undefined)
   const [routeError, setRouteError] = useState<string | null>(null)
@@ -210,9 +209,11 @@ export default function AccountFundContent(props: Props) {
       )
 
       let accountId = props.accountId
-      if (!props.hasExistingAccount || hasNoAccounts) {
-        const mintResult = await createAccount('default', shouldAutoLend)
+      const isNewAccount = !props.hasExistingAccount || hasNoAccounts
+      const hasEvmAssets = evmAssets.length > 0
 
+      if (isNewAccount && hasEvmAssets) {
+        const mintResult = await createAccount('default', shouldAutoLend)
         if (!mintResult) {
           throw new Error('Failed to create credit account')
         }
@@ -225,10 +226,14 @@ export default function AccountFundContent(props: Props) {
           coins: nonEvmAssets.map((wrappedCoin) => wrappedCoin.coin),
           lend: shouldAutoLend,
           isAutoLend: shouldAutoLend,
-          accountId,
+          ...((!isNewAccount || hasEvmAssets) && { accountId }),
         }
 
-        await deposit(depositObject)
+        const depositResult = await deposit(depositObject)
+        if (isNewAccount && !hasEvmAssets && depositResult) {
+          accountId = depositResult
+          useStore.setState((state) => ({ ...state, selectedAccountId: accountId }))
+        }
       }
 
       for (const evmAsset of evmAssets) {
@@ -416,9 +421,10 @@ export default function AccountFundContent(props: Props) {
             !hasFundingAssets ||
             depositCapReachedCoins.length > 0 ||
             isBridgeInProgress ||
-            showMinimumUSDCValueOverlay
+            showMinimumUSDCValueOverlay ||
+            isLoadingRoute
           }
-          showProgressIndicator={isConfirming}
+          showProgressIndicator={isConfirming || isLoadingRoute}
           onClick={handleClick}
           color={props.isFullPage ? 'tertiary' : undefined}
           size={props.isFullPage ? 'lg' : undefined}
