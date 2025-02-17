@@ -1,3 +1,4 @@
+import DisplayCurrency from 'components/common/DisplayCurrency'
 import EditDescription from 'components/managedVaults/community/vaultDetails/common/Overlays/EditDescription'
 import FeeAction from 'components/managedVaults/community/vaultDetails/common/Overlays/FeeAction'
 import NavigationBackButton from 'components/common/Button/NavigationBackButton'
@@ -10,15 +11,14 @@ import VaultPosition from 'components/managedVaults/community/vaultDetails/Vault
 import VaultSummary from 'components/managedVaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/managedVaults/community/vaultDetails/Withdrawals'
 import { ArrowDownLine } from 'components/common/Icons'
+import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { CircularProgress } from 'components/common/CircularProgress'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 import { useParams } from 'react-router-dom'
 import { useState } from 'react'
-import DisplayCurrency from 'components/common/DisplayCurrency'
-import { BNCoin } from 'types/classes/BNCoin'
-import { BN } from 'utils/helpers'
 
 function VaultLoadingState() {
   return (

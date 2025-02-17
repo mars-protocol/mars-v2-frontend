@@ -268,6 +268,23 @@ const getManagedVaultAllUnlocks = async (
   }
 }
 
+const getManagedVaultPreviewRedeem = async (
+  chainConfig: ChainConfig,
+  vaultAddress: string,
+  amount: string,
+) => {
+  try {
+    const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    const response = await client.previewRedeem({
+      amount,
+    })
+    return response
+  } catch (error) {
+    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
+    throw error
+  }
+}
+
 export {
   getClient,
   getCreditManagerQueryClient,
@@ -284,4 +301,5 @@ export {
   getPerpsQueryClient,
   getRedBankQueryClient,
   getVaultQueryClient,
+  getManagedVaultPreviewRedeem,
 }

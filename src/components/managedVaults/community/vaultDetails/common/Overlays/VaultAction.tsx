@@ -3,19 +3,21 @@ import Card from 'components/common/Card'
 import Divider from 'components/common/Divider'
 import EscButton from 'components/common/Button/EscButton'
 import Overlay from 'components/common/Overlay'
+import moment from 'moment'
 import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
-import { ArrowRight } from 'components/common/Icons'
-import { BN } from 'utils/helpers'
-import { Callout, CalloutType } from 'components/common/Callout'
-import useVaultAssets from 'hooks/assets/useVaultAssets'
-import { byDenom } from 'utils/array'
-import { useState } from 'react'
-import { BN_ZERO } from 'constants/math'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import useStore from 'store'
+import useVaultAssets from 'hooks/assets/useVaultAssets'
+import { ArrowRight } from 'components/common/Icons'
+import { BN } from 'utils/helpers'
+import { BN_ZERO } from 'constants/math'
+import { byDenom } from 'utils/array'
+import { Callout, CalloutType } from 'components/common/Callout'
 import { formatLockupPeriod } from 'utils/formatters'
-import moment from 'moment'
+import { useMemo, useState } from 'react'
+import { useManagedVaultUserDeposits } from 'hooks/managedVaults/useManagedVaultUserDeposits'
+import { useManagedVaultWithdrawalPreview } from 'hooks/managedVaults/useManagedVaultWithdrawalPreview'
 
 interface Props {
   showActionModal: boolean
@@ -29,14 +31,27 @@ export default function VaultAction(props: Props) {
   const { showActionModal, setShowActionModal, vaultDetails, vaultAddress, type } = props
   const [amount, setAmount] = useState(BN_ZERO)
 
+  const address = useStore((s) => s.address)
+  const { amount: userVaultTokens } = useManagedVaultUserDeposits(address, vaultDetails.vault_token)
+  const { data: previewAmount, isLoading: isPreviewLoading } = useManagedVaultWithdrawalPreview(
+    vaultAddress,
+    userVaultTokens,
+  )
+
   const depositInManagedVault = useStore((s) => s.depositInManagedVault)
   const unlockFromManagedVault = useStore((s) => s.unlockFromManagedVault)
 
+  const isDeposit = type === 'deposit'
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(vaultDetails.base_token)) as Asset
   const assetAmountInWallet = BN(useCurrentWalletBalance(vaultDetails.base_token)?.amount || '0')
 
-  const isDeposit = type === 'deposit'
+  const maxAmount = useMemo(() => {
+    if (isDeposit) {
+      return assetAmountInWallet
+    }
+    return BN(previewAmount || '0')
+  }, [assetAmountInWallet, isDeposit, previewAmount])
 
   const handleAmountChange = (newAmount: BigNumber) => {
     setAmount(newAmount)
@@ -90,8 +105,8 @@ export default function VaultAction(props: Props) {
             asset={depositAsset}
             onChange={handleAmountChange}
             amount={amount}
-            max={assetAmountInWallet}
-            disabled={assetAmountInWallet.isZero()}
+            max={maxAmount}
+            disabled={maxAmount.isZero() || isPreviewLoading}
             className='w-full'
             maxText={isDeposit ? 'In Wallet' : 'Available to Withdraw'}
             warningMessages={[]}
