@@ -18,6 +18,8 @@ import { formatLockupPeriod } from 'utils/formatters'
 import { useMemo, useState } from 'react'
 import { useManagedVaultUserDeposits } from 'hooks/managedVaults/useManagedVaultUserDeposits'
 import { useManagedVaultWithdrawalPreview } from 'hooks/managedVaults/useManagedVaultWithdrawalPreview'
+import useAccount from 'hooks/accounts/useAccount'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 
 interface Props {
   showActionModal: boolean
@@ -29,18 +31,18 @@ interface Props {
 
 export default function VaultAction(props: Props) {
   const { showActionModal, setShowActionModal, vaultDetails, vaultAddress, type } = props
-  const [amount, setAmount] = useState(BN_ZERO)
 
+  const [amount, setAmount] = useState(BN_ZERO)
   const address = useStore((s) => s.address)
+  const { data: accountData } = useAccount(vaultDetails.vault_account_id || undefined)
   const { amount: userVaultTokens } = useManagedVaultUserDeposits(address, vaultDetails.vault_token)
   const { data: previewAmount, isLoading: isPreviewLoading } = useManagedVaultWithdrawalPreview(
     vaultAddress,
     userVaultTokens,
   )
-
+  const { computeMaxWithdrawAmount } = useHealthComputer(accountData)
   const depositInManagedVault = useStore((s) => s.depositInManagedVault)
   const unlockFromManagedVault = useStore((s) => s.unlockFromManagedVault)
-
   const isDeposit = type === 'deposit'
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(vaultDetails.base_token)) as Asset
@@ -50,8 +52,18 @@ export default function VaultAction(props: Props) {
     if (isDeposit) {
       return assetAmountInWallet
     }
-    return BN(previewAmount || '0')
-  }, [assetAmountInWallet, isDeposit, previewAmount])
+
+    const preview = BN(previewAmount || '0')
+    const healthComputerLimit = computeMaxWithdrawAmount(vaultDetails.base_token)
+
+    return preview.isLessThan(healthComputerLimit) ? preview : healthComputerLimit
+  }, [
+    isDeposit,
+    assetAmountInWallet,
+    previewAmount,
+    computeMaxWithdrawAmount,
+    vaultDetails.base_token,
+  ])
 
   const handleAmountChange = (newAmount: BigNumber) => {
     setAmount(newAmount)
@@ -139,7 +151,7 @@ export default function VaultAction(props: Props) {
             className='w-full'
             text={isDeposit ? 'Deposit' : 'Withdraw'}
             rightIcon={<ArrowRight />}
-            disabled={amount.isZero()}
+            disabled={amount.isZero() || maxAmount.isZero()}
           />
         </Card>
       </div>
