@@ -1961,37 +1961,37 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@keplr-wallet/common@0.12.186":
-  version "0.12.186"
-  resolved "https://registry.yarnpkg.com/@keplr-wallet/common/-/common-0.12.186.tgz#61ce452ee48aa6dfdc42eab9abe53da09c7c1394"
-  integrity sha512-P7cdsv0hsxpNT4npgUXt4J9IticsUC1iSLD1bmRfBL1IIuqVItN00mGOppJCDLxV3/hHs58KWFC7xC4GQjTZ/w==
+"@keplr-wallet/common@0.12.188":
+  version "0.12.188"
+  resolved "https://registry.yarnpkg.com/@keplr-wallet/common/-/common-0.12.188.tgz#ac0171826ec0156fbb83a76e3ead4fd8e49f5510"
+  integrity sha512-hlqqqe969Nuuzb/ns6VV+KLvz8uuYU0aipYa0chTUqQYALMsHA2I+0iBbYVSYxtRLoufcYkHViNhIb0/R1Bxiw==
   dependencies:
-    "@keplr-wallet/crypto" "0.12.186"
-    "@keplr-wallet/types" "0.12.186"
+    "@keplr-wallet/crypto" "0.12.188"
+    "@keplr-wallet/types" "0.12.188"
     buffer "^6.0.3"
     delay "^4.4.0"
 
-"@keplr-wallet/cosmos@^0.12.186":
-  version "0.12.186"
-  resolved "https://registry.yarnpkg.com/@keplr-wallet/cosmos/-/cosmos-0.12.186.tgz#cf17e53398d1dbbd0bde5e4f964fdf204cbff07b"
-  integrity sha512-8Naa58d2pGQWnORNDIKBQy5/NQTq9jZtq764qd1VfkIXB3bFz1WcsLrROckEUMXV6Q4/pjdbKNNh/HVH8AH2sA==
+"@keplr-wallet/cosmos@^0.12.188":
+  version "0.12.188"
+  resolved "https://registry.yarnpkg.com/@keplr-wallet/cosmos/-/cosmos-0.12.188.tgz#ec9d26d65eaec1f2f827ee3e0615c75e1af0e88f"
+  integrity sha512-0iBc9yKc5TqbzRSsH7gTioMC30cf7d4oR0KByTVQ/IYRpAsk1kGRNp+GJ/h1QNfBMnFSD+GaWOJoQXSgRMQh/w==
   dependencies:
     "@ethersproject/address" "^5.6.0"
-    "@keplr-wallet/common" "0.12.186"
-    "@keplr-wallet/crypto" "0.12.186"
-    "@keplr-wallet/proto-types" "0.12.186"
-    "@keplr-wallet/simple-fetch" "0.12.186"
-    "@keplr-wallet/types" "0.12.186"
-    "@keplr-wallet/unit" "0.12.186"
+    "@keplr-wallet/common" "0.12.188"
+    "@keplr-wallet/crypto" "0.12.188"
+    "@keplr-wallet/proto-types" "0.12.188"
+    "@keplr-wallet/simple-fetch" "0.12.188"
+    "@keplr-wallet/types" "0.12.188"
+    "@keplr-wallet/unit" "0.12.188"
     bech32 "^1.1.4"
     buffer "^6.0.3"
     long "^4.0.0"
     protobufjs "^6.11.2"
 
-"@keplr-wallet/crypto@0.12.186":
-  version "0.12.186"
-  resolved "https://registry.yarnpkg.com/@keplr-wallet/crypto/-/crypto-0.12.186.tgz#b8a1163bbdf2d60a5ceeca823dc87a76c5fbd5ff"
-  integrity sha512-A0/bNkFHyytp6vAZ09mcN34E2cZyU4eMRHOcYRleGMYzGUdFwBzGtYNsZL81zS5JnCW+OJfLTZFWIYpv8uMTzg==
+"@keplr-wallet/crypto@0.12.188":
+  version "0.12.188"
+  resolved "https://registry.yarnpkg.com/@keplr-wallet/crypto/-/crypto-0.12.188.tgz#c91302887e7ddd632c372b8c36f439430664305d"
+  integrity sha512-unqe/oPxGZ3iWLdzWrkEyGXWPj0bp8bKBXHjJ010VeDvb/T7u6V5OvjsPMcURbBA2bpC+PwxWrOgqT6RItzKvg==
   dependencies:
     "@noble/curves" "^1.4.2"
     "@noble/hashes" "^1.4.0"
@@ -2000,32 +2000,32 @@
     bs58check "^2.1.2"
     buffer "^6.0.3"
 
-"@keplr-wallet/proto-types@0.12.186":
-  version "0.12.186"
-  resolved "https://registry.yarnpkg.com/@keplr-wallet/proto-types/-/proto-types-0.12.186.tgz#f3d919114ac56fd04d4ba4aa89317115ae063448"
-  integrity sha512-UQmk95qCXLvrel3KF/nNN0LMEfoNcjaJ+o4IkhVUsy6dVV3klgAzMvFf7UIF2y77R9nk41f6LPaapgV0/9NoQQ==
+"@keplr-wallet/proto-types@0.12.188":
+  version "0.12.188"
+  resolved "https://registry.yarnpkg.com/@keplr-wallet/proto-types/-/proto-types-0.12.188.tgz#b2152c77277f33260e36f5ab796ea6101004fad0"
+  integrity sha512-TY78nOsts4cc4et+oT1j/yd3SJMk2SuF42RzgQOdVt+NAxXPW6HysE8tq9cDBG9wj/JtMoZjDQzJezRiJNQEQA==
   dependencies:
     long "^4.0.0"
     protobufjs "^6.11.2"
 
-"@keplr-wallet/simple-fetch@0.12.186":
-  version "0.12.186"
-  resolved "https://registry.yarnpkg.com/@keplr-wallet/simple-fetch/-/simple-fetch-0.12.186.tgz#81f149f3c0ee0d73f18b6a1bf2a535e564d4248a"
-  integrity sha512-JUR0/AB5/lcJ2mbYHi1HjIYCVFAjF2KQHIkSx64dNAddtqb1FwaG1//cHwWrRYKkrUOvjIn/ICxYMi8zREiPdQ==
+"@keplr-wallet/simple-fetch@0.12.188":
+  version "0.12.188"
+  resolved "https://registry.yarnpkg.com/@keplr-wallet/simple-fetch/-/simple-fetch-0.12.188.tgz#1443fa1cf1dffa8bfb1d79b4bd392bc14dcd6c76"
+  integrity sha512-QZ4CsCCiJyTPoYqJxCaeNZNtH9RIxpv2c35SblRuVGsmkT941XhGTqGaJyf31ZqUOF1UvTUHeTbrF+ARZMQmfQ==
 
-"@keplr-wallet/types@0.12.186":
-  version "0.12.186"
-  resolved "https://registry.yarnpkg.com/@keplr-wallet/types/-/types-0.12.186.tgz#4713f256b4a595cddf2e52c012717c8695679214"
-  integrity sha512-pdE6K40juXxYW9C0e4oCtfkcaBJTfWm6OEjsMSMyIQoDB82YkP0lX05LBmKlG72kIPE36vdmeRqiNKK0YFi6Gw==
+"@keplr-wallet/types@0.12.188":
+  version "0.12.188"
+  resolved "https://registry.yarnpkg.com/@keplr-wallet/types/-/types-0.12.188.tgz#2911996b51248aa9e013119d156a5e494b6edf0f"
+  integrity sha512-ZRppVqDrnGi5Np7EQiR7TzCs7206W3XjeaQBdj+h/0MMce+Wqa3QAQoUGl1h43JnULcVml3RqPHRmSzGJwg4Cg==
   dependencies:
     long "^4.0.0"
 
-"@keplr-wallet/unit@0.12.186":
-  version "0.12.186"
-  resolved "https://registry.yarnpkg.com/@keplr-wallet/unit/-/unit-0.12.186.tgz#71839d62c5ece1087d505701fe8dc70acf7db160"
-  integrity sha512-oDncPsDs4i58zlMhleuX8azEc8EWIlMf0TqZmt+bIT3jno37VFwsGtPWpMswBh+mAkNxongfaW/3nnsLgRFDwA==
+"@keplr-wallet/unit@0.12.188":
+  version "0.12.188"
+  resolved "https://registry.yarnpkg.com/@keplr-wallet/unit/-/unit-0.12.188.tgz#a3922992bc7f567fa7342d0577c6bfdee79df733"
+  integrity sha512-pBBIkeAZavpvp64M30LytyqoMuBZwWQDxnfl8+rblwG78n6/Oj9qPBUFHSDtf/clYC6MZdwVspf84KRLl+Zx0w==
   dependencies:
-    "@keplr-wallet/types" "0.12.186"
+    "@keplr-wallet/types" "0.12.188"
     big-integer "^1.6.48"
     utility-types "^3.10.0"
 
@@ -2807,7 +2807,7 @@
   resolved "https://registry.yarnpkg.com/@types/ms/-/ms-2.1.0.tgz#052aa67a48eccc4309d7f0191b7e41434b90bb78"
   integrity sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==
 
-"@types/node@*", "@types/node@>=13.7.0", "@types/node@^22.13.2":
+"@types/node@*", "@types/node@>=13.7.0":
   version "22.13.2"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-22.13.2.tgz#6f401c5ccadac75354f5652128e9fcc3b0cf23b7"
   integrity sha512-Z+r8y3XL9ZpI2EY52YYygAFmo2/oWfNSj4BCpAXE2McAexDk8VcnBMGC9Djn9gTKt4d2T/hhXqmPzo4hfIXtTg==
@@ -2825,6 +2825,13 @@
   integrity sha512-jML7s2NAzMWc//QSJ1a3prpk78cOPchGvXJsC3C6R6PSMoooztvRVQEz89gmBTBY1SPMaqo5teB4uNHPdetShQ==
   dependencies:
     undici-types "~6.19.2"
+
+"@types/node@^22.13.4":
+  version "22.13.4"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.13.4.tgz#3fe454d77cd4a2d73c214008b3e331bfaaf5038a"
+  integrity sha512-ywP2X0DYtX3y08eFVx5fNIw7/uIv8hYUKgXoK8oayJlLnKcRfEYCxWMVE1XagUdVtCJlZT1AU4LXEABW+L1Peg==
+  dependencies:
+    undici-types "~6.20.0"
 
 "@types/pbkdf2@^3.0.0":
   version "3.1.2"
@@ -2845,10 +2852,17 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@19.0.8":
+"@types/react@*":
   version "19.0.8"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-19.0.8.tgz#7098e6159f2a61e4f4cef2c1223c044a9bec590e"
   integrity sha512-9P/o1IGdfmQxrujGbIMDyYaaCykhLKc0NGCtYcECNUr9UAaDe4gwvV9bR6tvd5Br1SG0j+PBpbKr2UYY8CwqSw==
+  dependencies:
+    csstype "^3.0.2"
+
+"@types/react@19.0.9":
+  version "19.0.9"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-19.0.9.tgz#675255eb7d978bdaf71f9d08f6b740d41b0b7f32"
+  integrity sha512-FedNTYgmMwSZmD1Sru/W1gJKuiYCN/3SuBkmZkcxX+FpO5zL76B22A9YNfAKg4HQO3Neh/30AiynP6BELdU0qQ==
   dependencies:
     csstype "^3.0.2"
 
@@ -6597,10 +6611,10 @@ prettier-plugin-tailwindcss@^0.6.11:
   resolved "https://registry.yarnpkg.com/prettier-plugin-tailwindcss/-/prettier-plugin-tailwindcss-0.6.11.tgz#cfacd60c4f81997353ee913e589037f796df0f5f"
   integrity sha512-YxaYSIvZPAqhrrEpRtonnrXdghZg1irNg4qrjboCXrpybLWVs55cW2N3juhspVJiO0JBvYJT8SYsJpc8OQSnsA==
 
-prettier@^3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.5.0.tgz#50325a28887c6dfdf2ca3f8eaba02b66a8429ca7"
-  integrity sha512-quyMrVt6svPS7CjQ9gKb3GLEX/rl3BCL2oa/QkNcXv4YNVBC9olt3s+H7ukto06q7B1Qz46PbrKLO34PR6vXcA==
+prettier@^3.5.1:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.5.1.tgz#22fac9d0b18c0b92055ac8fb619ac1c7bef02fb7"
+  integrity sha512-hPpFQvHwL3Qv5AdRvBFMhnKo4tYxp0ReXiPn2bxkiohEX6mBeBwEpBSQTkD458RaaDKQMYSp4hX4UtfUTA5wDw==
 
 process-warning@^1.0.0:
   version "1.0.0"
