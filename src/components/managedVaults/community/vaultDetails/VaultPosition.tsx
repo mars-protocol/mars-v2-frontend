@@ -29,7 +29,9 @@ export default function VaultPosition(props: Props) {
   return (
     <PositionInfo
       value={
-        !noDeposits ? (
+        noDeposits ? (
+          <Text>No deposits</Text>
+        ) : (
           <DisplayCurrency
             coin={BNCoin.fromDenomAndBigNumber(
               baseDenom,
@@ -37,8 +39,6 @@ export default function VaultPosition(props: Props) {
             )}
             className='text-2xl'
           />
-        ) : (
-          <Text>No deposits</Text>
         )
       }
       subtitle={
