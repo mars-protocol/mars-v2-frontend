@@ -40,6 +40,7 @@ interface Props {
   isFullPage?: boolean
   onConnectWallet: () => Promise<boolean>
   hasExistingAccount?: boolean
+  isCreateAccount?: boolean
 }
 
 export default function AccountFundContent(props: Props) {
@@ -54,6 +55,7 @@ export default function AccountFundContent(props: Props) {
   const [isAutoLendEnabledGlobal] = useEnableAutoLendGlobal()
   const { data: walletBalances } = useWalletBalances(props.address)
   const baseAsset = useBaseAsset()
+  const { isCreateAccount = false } = props
 
   const { usdcBalances } = useUSDCBalances(walletBalances)
   const selectedDenoms = useMemo(() => {
@@ -209,7 +211,7 @@ export default function AccountFundContent(props: Props) {
       )
 
       let accountId = props.accountId
-      const isNewAccount = !props.hasExistingAccount || hasNoAccounts
+      const isNewAccount = hasNoAccounts || isCreateAccount
       const hasEvmAssets = evmAssets.length > 0
 
       if (isNewAccount && hasEvmAssets) {
@@ -226,11 +228,10 @@ export default function AccountFundContent(props: Props) {
           coins: nonEvmAssets.map((wrappedCoin) => wrappedCoin.coin),
           lend: shouldAutoLend,
           isAutoLend: shouldAutoLend,
-          ...((!isNewAccount || hasEvmAssets) && { accountId }),
+          ...(!isNewAccount && { accountId }),
         }
-
         const depositResult = await deposit(depositObject)
-        if (isNewAccount && !hasEvmAssets && depositResult) {
+        if (!isNewAccount && !hasEvmAssets && depositResult) {
           accountId = depositResult
           useStore.setState((state) => ({ ...state, selectedAccountId: accountId }))
         }
@@ -284,6 +285,7 @@ export default function AccountFundContent(props: Props) {
     isConfirming,
     createAccount,
     hasNoAccounts,
+    isCreateAccount,
   ])
 
   useEffect(() => {
@@ -412,7 +414,7 @@ export default function AccountFundContent(props: Props) {
         <SwitchAutoLend
           className='pt-4 mt-4 border border-transparent border-t-white/10'
           accountId={props.accountId}
-          isNewAccount={!props.hasExistingAccount}
+          isNewAccount={props.isCreateAccount}
         />
         <Button
           className='w-full mt-4'
