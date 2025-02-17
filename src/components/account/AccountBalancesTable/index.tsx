@@ -9,12 +9,13 @@ import Card from 'components/common/Card'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
+import useAccountTitle from 'hooks/accounts/useAccountTitle'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { useMemo } from 'react'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
-import useChainConfig from 'hooks/chain/useChainConfig'
 
 interface Props {
   account: Account
@@ -51,6 +52,7 @@ export default function AccountBalancesTable(props: Props) {
     lendingData,
     borrowingData,
   })
+  const accountTitle = useAccountTitle(account, true)
 
   const enhancedAccountBalanceData = useMemo(() => {
     return accountBalanceData.map((row) => ({
@@ -117,7 +119,7 @@ export default function AccountBalancesTable(props: Props) {
           className='flex items-center justify-between w-full p-4 font-semibold bg-white/10'
         >
           <span>Balances</span>
-          <span className='text-white/60'>Credit Account {account.id}</span>
+          <span className='text-white/60'>{accountTitle}</span>
         </Text>
       }
       columns={columns}

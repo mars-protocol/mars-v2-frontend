@@ -1,16 +1,14 @@
 import classNames from 'classnames'
-import { useEffect, useMemo } from 'react'
-import { isMobile } from 'react-device-detect'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-
 import AccountStats from 'components/account/AccountList/AccountStats'
+import AccountTitle from 'components/account/AccountTitle'
 import Card from 'components/common/Card'
 import Radio from 'components/common/Radio'
-import Text from 'components/common/Text'
-import VaultTitle from 'components/managedVaults/common/VaultTitle'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import { useEffect, useMemo } from 'react'
+import { isMobile } from 'react-device-detect'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { checkAccountKind } from 'utils/accounts'
 import { getPage, getRoute } from 'utils/route'
@@ -80,9 +78,7 @@ export default function AccountList(props: Props) {
                   role='button'
                   onClick={() => setShowMenu(false)}
                 >
-                  <Text size='xs' className='flex flex-1'>
-                    {isVaults ? <VaultTitle account={account} /> : `Credit Account ${account.id}`}
-                  </Text>
+                  <AccountTitle account={account} />
                   <Radio active={isActive} className='group-hover/account:opacity-100' />
                 </div>
               }

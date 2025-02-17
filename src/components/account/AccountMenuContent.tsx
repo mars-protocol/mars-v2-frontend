@@ -14,6 +14,7 @@ import Text from 'components/common/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
+import useAccountTitle from 'hooks/accounts/useAccountTitle'
 import useNonHlsAccountIds from 'hooks/accounts/useNonHlsAccountIds'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
@@ -53,6 +54,7 @@ export default function AccountMenuContent(props: Props) {
   const isAccountSelected =
     hasCreditAccounts && accountId && isNumber(accountId) && accountIds.includes(accountId)
   const activeAccountKind = checkAccountKind(account?.kind ?? 'default')
+  const accountTitle = useAccountTitle(account, true)
 
   const performCreateAccount = useCallback(async () => {
     setShowMenu(false)
@@ -125,9 +127,7 @@ export default function AccountMenuContent(props: Props) {
       >
         {hasCreditAccounts
           ? isAccountSelected
-            ? activeAccountKind === 'fund_manager'
-              ? `Vault Account ${accountId}`
-              : `Credit Account ${accountId}`
+            ? accountTitle
             : 'Select Account'
           : 'Create Account'}
       </Button>
