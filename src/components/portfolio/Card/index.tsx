@@ -9,13 +9,13 @@ import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
+import { useAccountSummaryStats } from 'hooks/accounts/useAccountSummaryStats'
+import useAccountTitle from 'hooks/accounts/useAccountTitle'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { checkAccountKind } from 'utils/accounts'
 import { getRoute } from 'utils/route'
-import VaultTitle from 'components/managedVaults/common/VaultTitle'
-import { useAccountSummaryStats } from 'hooks/accounts/useAccountSummaryStats'
 
 interface Props {
   accountId: string
@@ -33,6 +33,8 @@ export default function PortfolioCard(props: Props) {
     getDefaultChainSettings(chainConfig).reduceMotion,
   )
   const { netWorth, apy, leverage } = useAccountSummaryStats(account)
+
+  const vaultTitle = useAccountTitle(account)
 
   const stats: { title: ReactNode; sub: string }[] = useMemo(() => {
     if (!account) {
@@ -96,7 +98,7 @@ export default function PortfolioCard(props: Props) {
         isCurrent={props.accountId === currentAccountId}
         isHls={account.kind === 'high_levered_strategy'}
         isVault={isVault}
-        vaultTitle={<VaultTitle account={account} />}
+        vaultTitle={vaultTitle}
       />
     </NavLink>
   )

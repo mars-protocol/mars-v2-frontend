@@ -14,7 +14,7 @@ interface Props {
   isCurrent?: boolean
   isHls?: boolean
   isVault?: boolean
-  vaultTitle?: React.ReactElement
+  vaultTitle?: string
 }
 
 export default function Skeleton(props: Props) {
@@ -24,7 +24,7 @@ export default function Skeleton(props: Props) {
     <Card className='p-4 bg-white/5'>
       <div className='flex items-center justify-between'>
         <Text>
-          {isVault && vaultTitle ? vaultTitle : `Credit Account ${accountId}`}
+          {vaultTitle}
           {props.isHls && <HlsTag />}
         </Text>
         <Text size='xs' className='text-white/60'>

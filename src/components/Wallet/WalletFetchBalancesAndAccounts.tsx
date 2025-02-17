@@ -29,11 +29,7 @@ function FetchLoading() {
 function Content() {
   const address = useStore((s) => s.address)
   const isV1 = useStore((s) => s.isV1)
-  const { data: accountIds, isLoading: isLoadingAccounts } = useAccountIds(
-    address || '',
-    true,
-    'default',
-  )
+  const { data: accountIds, isLoading: isLoadingAccounts } = useAccountIds(address || '', true)
   const { data: walletBalances, isLoading: isLoadingBalances } = useWalletBalances(address)
   const baseAsset = useBaseAsset()
 

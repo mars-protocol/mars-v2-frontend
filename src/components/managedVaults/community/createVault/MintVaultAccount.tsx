@@ -1,13 +1,13 @@
 import Button from 'components/common/Button'
-import CreateVaultContent from 'components/managedVaults/community/createVault/CreateVaultContent'
-import Text from 'components/common/Text'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import useStore from 'store'
 import { ArrowRight, Vault } from 'components/common/Icons'
-import { getPage, getRoute } from 'utils/route'
+import Text from 'components/common/Text'
+import CreateVaultContent from 'components/managedVaults/community/createVault/CreateVaultContent'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 import { useCallback, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
+import useStore from 'store'
+import { getPage, getRoute } from 'utils/route'
 
 export default function MintVaultAccount() {
   const [isTxPending, setIsTxPending] = useState(false)
@@ -17,7 +17,7 @@ export default function MintVaultAccount() {
   const address = useStore((s) => s.address)
   const chainConfig = useChainConfig()
   const navigate = useNavigate()
-  const { isOwner } = useManagedVaultDetails(vaultAddress ?? '')
+  const { isOwner } = useManagedVaultDetails(vaultAddress)
 
   const handleCreateVault = useCallback(async () => {
     if (!vaultAddress || !address || !isOwner) return
