@@ -18,7 +18,7 @@ export default function Background() {
   const { pathname } = useLocation()
   const page = getPage(pathname, chainConfig)
   const [isHls, isV1, isVaults] = useMemo(
-    () => [page.split('-')[0] === 'hls', page === 'v1', page.split('-')[0] === 'vaults'],
+    () => [page.split('-')[0] === 'hls', page === 'v1', page.includes('vaults')],
     [page],
   )
 
