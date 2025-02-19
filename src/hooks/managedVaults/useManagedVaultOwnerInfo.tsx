@@ -87,7 +87,9 @@ export default function useManagedVaultOwnerInfo(address?: string): VaultOwnerIn
           name: walletLinkName,
           title: walletLinkTitle,
         },
-        socials,
+        socials: socials.sort((a: StargazeSocial, b: StargazeSocial) =>
+          a.verified === b.verified ? 0 : a.verified ? -1 : 1,
+        ),
         hasStargazeNames: !!stargazeInfo,
       },
       isLoading: isLoading,

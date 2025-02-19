@@ -1,15 +1,16 @@
 import { Suspense, useMemo } from 'react'
 
+import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
+import { Tooltip } from 'components/common/Tooltip'
 import Skeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
+import { useAccountSummaryStats } from 'hooks/accounts/useAccountSummaryStats'
+import useAccountTitle from 'hooks/accounts/useAccountTitle'
 import useAssets from 'hooks/assets/useAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
-import { Tooltip } from 'components/common/Tooltip'
-import classNames from 'classnames'
-import { useAccountSummaryStats } from 'hooks/accounts/useAccountSummaryStats'
 
 interface Props {
   account: Account
@@ -20,6 +21,7 @@ function Content(props: Props) {
   const { account } = props
   const { health, healthFactor } = useHealthComputer(account)
   const { data: assets } = useAssets()
+  const accountTitle = useAccountTitle(account, true)
 
   const hasLstApy = useMemo(() => {
     return account?.deposits?.some((deposit) => {
@@ -99,7 +101,7 @@ function Content(props: Props) {
       stats={stats}
       health={health}
       healthFactor={healthFactor}
-      title={props.v1 ? 'V1 Portfolio' : `Credit Account ${account.id}`}
+      title={props.v1 ? 'V1 Portfolio' : accountTitle}
       accountId={account.id}
     />
   )

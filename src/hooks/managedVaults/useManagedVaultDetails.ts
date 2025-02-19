@@ -9,19 +9,19 @@ import useStore from 'store'
 import useSWR from 'swr'
 import useSWRImmutable from 'swr/immutable'
 
-export function useManagedVaultDetails(vaultAddress: string) {
+export function useManagedVaultDetails(vaultAddress?: string) {
   const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
 
   const { data: ownerAddress } = useSWRImmutable(
-    `chains/${chainConfig.id}/managedVaults/${vaultAddress}/owner`,
+    vaultAddress && `chains/${chainConfig.id}/managedVaults/${vaultAddress}/owner`,
     async () => {
-      return await getManagedVaultOwner(chainConfig, vaultAddress)
+      return await getManagedVaultOwner(chainConfig, vaultAddress ?? '')
     },
   )
 
   const { data: metrics, isLoading: isMetricsLoading } = useSWR(
-    `chains/${chainConfig.id}/managedVaults/${vaultAddress}/metrics`,
+    vaultAddress && `chains/${chainConfig.id}/managedVaults/${vaultAddress}/metrics`,
     async () => {
       const { data } = await getManagedVaults(chainConfig)
       return data.find((v) => v.vault_address === vaultAddress)
@@ -34,7 +34,7 @@ export function useManagedVaultDetails(vaultAddress: string) {
   )
 
   const { data: details, isLoading: isDetailsLoading } = useSWR(
-    `chains/${chainConfig.id}/managedVaults/${vaultAddress}/details`,
+    vaultAddress && `chains/${chainConfig.id}/managedVaults/${vaultAddress}/details`,
     async () => {
       return await getManagedVaultDetails(chainConfig, vaultAddress!)
     },
@@ -46,7 +46,7 @@ export function useManagedVaultDetails(vaultAddress: string) {
   )
 
   const { data: performanceFeeState, isLoading: isPerformanceFeeLoading } = useSWR(
-    `chains/${chainConfig.id}/managedVaults/${vaultAddress}/performanceFee`,
+    vaultAddress && `chains/${chainConfig.id}/managedVaults/${vaultAddress}/performanceFee`,
     async () => {
       return await getManagedVaultPerformanceFeeState(chainConfig, vaultAddress!)
     },
@@ -57,16 +57,17 @@ export function useManagedVaultDetails(vaultAddress: string) {
     },
   )
 
+  if (!vaultAddress) return { details: undefined, isOwner: false, isLoading: false }
+
   const isOwner = Boolean(address && ownerAddress && ownerAddress === address)
   const isLoading = isDetailsLoading || isPerformanceFeeLoading || isMetricsLoading
 
-  if ((isLoading && !ownerAddress) || !details || !performanceFeeState) {
+  if ((isLoading && !ownerAddress) || !details || !performanceFeeState)
     return {
       details: undefined,
       isOwner: false,
       isLoading: true,
     }
-  }
 
   return {
     details: {

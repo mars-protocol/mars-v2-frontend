@@ -33,7 +33,7 @@ export default function useQueuedWithdrawals(props: Props) {
       },
       {
         header: 'Amount',
-        meta: { className: 'min-w-30' },
+        meta: { className: 'min-w-20' },
         cell: ({ row }) => (
           <FormattedNumber
             amount={Number(row.original.base_tokens)}
