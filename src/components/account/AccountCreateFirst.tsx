@@ -98,6 +98,7 @@ export default function AccountCreateFirst() {
             isFullPage
             onConnectWallet={handleConnectWallet}
             hasExistingAccount={hasExistingAccount}
+            isCreateAccount
           />
         </Card>
       )}

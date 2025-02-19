@@ -40,6 +40,7 @@ interface Props {
   isFullPage?: boolean
   onConnectWallet: () => Promise<boolean>
   hasExistingAccount?: boolean
+  isCreateAccount?: boolean
 }
 
 export default function AccountFundContent(props: Props) {
@@ -54,6 +55,7 @@ export default function AccountFundContent(props: Props) {
   const [isAutoLendEnabledGlobal] = useEnableAutoLendGlobal()
   const { data: walletBalances } = useWalletBalances(props.address)
   const baseAsset = useBaseAsset()
+  const { isCreateAccount = false } = props
 
   const { usdcBalances } = useUSDCBalances(walletBalances)
   const selectedDenoms = useMemo(() => {
@@ -83,7 +85,6 @@ export default function AccountFundContent(props: Props) {
   const [goFast, setGoFast] = useState(true)
 
   const accounts = useAccounts('default', props.address)
-
   const hasNoAccounts = accounts.data?.length < 1
   const [currentRoute, setCurrentRoute] = useState<RouteResponse | undefined>(undefined)
   const [routeError, setRouteError] = useState<string | null>(null)
@@ -210,10 +211,11 @@ export default function AccountFundContent(props: Props) {
       )
 
       let accountId = props.accountId
+      const isNewAccount = hasNoAccounts || isCreateAccount
+      const hasEvmAssets = evmAssets.length > 0
 
-      if (!props.hasExistingAccount || hasNoAccounts) {
+      if (isNewAccount && hasEvmAssets) {
         const mintResult = await createAccount('default', shouldAutoLend)
-
         if (!mintResult) {
           throw new Error('Failed to create credit account')
         }
@@ -226,10 +228,13 @@ export default function AccountFundContent(props: Props) {
           coins: nonEvmAssets.map((wrappedCoin) => wrappedCoin.coin),
           lend: shouldAutoLend,
           isAutoLend: shouldAutoLend,
-          accountId,
+          ...(!isNewAccount && { accountId }),
         }
-
-        await deposit(depositObject)
+        const depositResult = await deposit(depositObject)
+        if (!isNewAccount && !hasEvmAssets && depositResult) {
+          accountId = depositResult
+          useStore.setState((state) => ({ ...state, selectedAccountId: accountId }))
+        }
       }
 
       for (const evmAsset of evmAssets) {
@@ -280,6 +285,7 @@ export default function AccountFundContent(props: Props) {
     isConfirming,
     createAccount,
     hasNoAccounts,
+    isCreateAccount,
   ])
 
   useEffect(() => {
@@ -408,7 +414,7 @@ export default function AccountFundContent(props: Props) {
         <SwitchAutoLend
           className='pt-4 mt-4 border border-transparent border-t-white/10'
           accountId={props.accountId}
-          isNewAccount={!props.hasExistingAccount}
+          isNewAccount={props.isCreateAccount}
         />
         <Button
           className='w-full mt-4'
@@ -417,9 +423,10 @@ export default function AccountFundContent(props: Props) {
             !hasFundingAssets ||
             depositCapReachedCoins.length > 0 ||
             isBridgeInProgress ||
-            showMinimumUSDCValueOverlay
+            showMinimumUSDCValueOverlay ||
+            isLoadingRoute
           }
-          showProgressIndicator={isConfirming}
+          showProgressIndicator={isConfirming || isLoadingRoute}
           onClick={handleClick}
           color={props.isFullPage ? 'tertiary' : undefined}
           size={props.isFullPage ? 'lg' : undefined}

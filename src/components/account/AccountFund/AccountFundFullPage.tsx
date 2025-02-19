@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import AccountFundContent from 'components/account/AccountFund/AccountFundContent'
 import Card from 'components/common/Card'
@@ -19,6 +19,8 @@ export default function AccountFundFullPage({ isCreateAccount = false }: Props) 
   const accountId = useAccountId()
 
   const { data: accounts, isLoading } = useAccounts('default', address)
+  const hasExistingAccount = useMemo(() => accounts && accounts.length > 0, [accounts])
+
   const currentAccount = useCurrentAccount()
   const [selectedAccountId, setSelectedAccountId] = useState<null | string>(null)
 
@@ -61,7 +63,8 @@ export default function AccountFundFullPage({ isCreateAccount = false }: Props) 
             accountId={selectedAccountId ?? ''}
             isFullPage
             onConnectWallet={handleConnectWallet}
-            hasExistingAccount={!isCreateAccount && !hasNoAccounts}
+            hasExistingAccount={hasExistingAccount}
+            isCreateAccount
           />
         </Card>
       )}

@@ -12,6 +12,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { combineBNCoins } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
+import getAccountIds from 'api/wallets/getAccountIds'
 
 interface Props {
   modal: Account
@@ -45,12 +46,23 @@ function AccountDeleteModal(props: Props) {
     const options = { accountId: modal.id, lends: modal.lends }
     const path = getPage(pathname, chainChonfig)
     const isDeleted = await deleteAccount(options)
+
     if (isDeleted) {
-      if (path.includes('portfolio')) {
-        // If the current page is the portfolio accounts detail page. Reroute the user to the portfolio overview page.
-        navigate(getRoute('portfolio', searchParams, urlAddress))
+      const remainingAccounts = await getAccountIds(chainChonfig, urlAddress)
+
+      if (remainingAccounts.length > 0) {
+        const firstAccountId = remainingAccounts[0].id
+        if (path.includes('portfolio')) {
+          navigate(getRoute('portfolio', searchParams, urlAddress, firstAccountId))
+        } else {
+          navigate(getRoute(path, searchParams, address, firstAccountId))
+        }
       } else {
-        navigate(getRoute(path, searchParams, address))
+        if (path.includes('portfolio')) {
+          navigate(getRoute('portfolio', searchParams, urlAddress))
+        } else {
+          navigate(getRoute(path, searchParams, address))
+        }
       }
     }
     closeDeleteAccountModal()
