@@ -59,16 +59,12 @@ export default async function getDexAssets(chainConfig: ChainConfig) {
               }
             }
           } catch (error) {
-            console.error('Error loading perp assets from localStorage:', error)
-          }
-
-          if (perpAssets.length === 0) {
             setApiError(
               perpAssetsUrl,
               new Error('Failed to load perp assets from both API and storage'),
             )
-            return []
           }
+          return []
         }
 
         if (perpAssets.length > 0) {
