@@ -1,13 +1,13 @@
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import PositionInfo from './common/PositionInfo'
-import Text from 'components/common/Text'
-import useStore from 'store'
-import { ArrowDownLine } from 'components/common/Icons'
-import { BN } from 'utils/helpers'
-import { BNCoin } from 'types/classes/BNCoin'
 import { FormattedNumber } from 'components/common/FormattedNumber'
+import { ArrowDownLine } from 'components/common/Icons'
+import Text from 'components/common/Text'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
-import { useManagedVaultUserDeposits } from 'hooks/managedVaults/useManagedVaultUserDeposits'
+import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import { BN } from 'utils/helpers'
+import PositionInfo from './common/PositionInfo'
 
 interface Props {
   totalVaultTokens: string
@@ -22,7 +22,7 @@ export default function VaultPosition(props: Props) {
   const { totalVaultTokens, baseDenom, isOwner, tokenDenom, onDeposit, onWithdraw } = props
 
   const address = useStore((s) => s.address)
-  const { amount, calculateVaultShare } = useManagedVaultUserDeposits(address, tokenDenom)
+  const { amount, calculateVaultShare } = useManagedVaultUserShares(address, tokenDenom)
   const sharePercentage = calculateVaultShare(totalVaultTokens)
   const noDeposits = amount === '0'
 

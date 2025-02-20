@@ -1,7 +1,7 @@
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import { BN } from 'utils/helpers'
 
-export function useManagedVaultUserDeposits(address: string | undefined, tokenDenom: string) {
+export function useManagedVaultUserShares(address: string | undefined, tokenDenom: string) {
   const { data: walletBalances } = useWalletBalances(address)
   const deposit = walletBalances?.find((balance) => balance.denom === tokenDenom)
 

@@ -1,7 +1,9 @@
-import ActionButton from 'components/common/Button/ActionButton'
+import Button from 'components/common/Button'
 import Card from 'components/common/Card'
 import Text from 'components/common/Text'
+import WalletConnectButton from 'components/Wallet/WalletConnectButton'
 import { ReactElement } from 'react'
+import useStore from 'store'
 
 interface Props {
   value: ReactElement
@@ -13,6 +15,7 @@ interface Props {
 
 export default function PositionInfo(props: Props) {
   const { value, subtitle, primaryButton, secondaryButton, isOwner } = props
+  const address = useStore((s) => s.address)
 
   return (
     <Card className='bg-white/5 w-full'>
@@ -34,8 +37,14 @@ export default function PositionInfo(props: Props) {
 
         <div className='flex flex-col md:flex-row gap-2'>
           <div className='flex flex-col md:flex-row gap-2 w-full'>
-            <ActionButton {...primaryButton} short />
-            <ActionButton {...secondaryButton} short />
+            {!address ? (
+              <WalletConnectButton {...primaryButton} />
+            ) : (
+              <>
+                <Button {...primaryButton} />
+                <Button {...secondaryButton} />
+              </>
+            )}
           </div>
         </div>
       </div>

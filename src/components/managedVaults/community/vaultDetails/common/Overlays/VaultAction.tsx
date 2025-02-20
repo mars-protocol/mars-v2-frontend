@@ -1,26 +1,26 @@
+import BigNumber from 'bignumber.js'
 import Button from 'components/common/Button'
+import EscButton from 'components/common/Button/EscButton'
+import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
 import Divider from 'components/common/Divider'
-import EscButton from 'components/common/Button/EscButton'
+import { ArrowRight } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
-import moment from 'moment'
 import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
-import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
-import useStore from 'store'
-import useVaultAssets from 'hooks/assets/useVaultAssets'
-import { ArrowRight } from 'components/common/Icons'
-import { BN } from 'utils/helpers'
 import { BN_ZERO } from 'constants/math'
-import { byDenom } from 'utils/array'
-import { Callout, CalloutType } from 'components/common/Callout'
-import { formatLockupPeriod } from 'utils/formatters'
-import { useMemo, useState } from 'react'
-import { useManagedVaultUserDeposits } from 'hooks/managedVaults/useManagedVaultUserDeposits'
-import { useManagedVaultWithdrawalPreview } from 'hooks/managedVaults/useManagedVaultWithdrawalPreview'
 import useAccount from 'hooks/accounts/useAccount'
+import useVaultAssets from 'hooks/assets/useVaultAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import BigNumber from 'bignumber.js'
+import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVaultConvertToTokens'
+import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
+import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
+import moment from 'moment'
+import { useMemo, useState } from 'react'
+import useStore from 'store'
+import { byDenom } from 'utils/array'
+import { formatLockupPeriod } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 interface Props {
   showActionModal: boolean
@@ -35,16 +35,13 @@ export default function VaultAction(props: Props) {
 
   const [amount, setAmount] = useState(BN_ZERO)
   const address = useStore((s) => s.address)
-  const { data: accountData } = useAccount(vaultDetails.vault_account_id || undefined)
-  const { amount: userDepositedVaultTokens } = useManagedVaultUserDeposits(
-    address,
-    vaultDetails.vault_token,
-  )
-  const { data: previewAmount, isLoading: isPreviewLoading } = useManagedVaultWithdrawalPreview(
+  const { data: account } = useAccount(vaultDetails.vault_account_id || undefined)
+  const { amount: userVaultShares } = useManagedVaultUserShares(address, vaultDetails.vault_token)
+  const { data: userVaultTokens, isLoading } = useManagedVaultConvertToTokens(
     vaultAddress,
-    userDepositedVaultTokens,
+    userVaultShares,
   )
-  const { computeMaxWithdrawAmount } = useHealthComputer(accountData)
+  const { computeMaxWithdrawAmount, computeMaxBorrowAmount } = useHealthComputer(account)
   const depositInManagedVault = useStore((s) => s.depositInManagedVault)
   const unlockFromManagedVault = useStore((s) => s.unlockFromManagedVault)
   const vaultAssets = useVaultAssets()
@@ -52,20 +49,21 @@ export default function VaultAction(props: Props) {
   const assetAmountInWallet = BN(useCurrentWalletBalance(vaultDetails.base_token)?.amount || '0')
   const isDeposit = type === 'deposit'
 
-  const maxWithdrawAmount = useMemo(() => {
+  const maxAmount = useMemo(() => {
     if (isDeposit) {
       return assetAmountInWallet
     }
     const maxWithdrawAmount = computeMaxWithdrawAmount(vaultDetails.base_token)
-    const preview = BN(previewAmount || 0)
-    const maxWithdrawable = BigNumber.minimum(preview, maxWithdrawAmount)
-
-    return maxWithdrawable
+    const maxBorrowAmount = computeMaxBorrowAmount(vaultDetails.base_token, 'wallet')
+    const totalMaxWithdrawAmount = maxWithdrawAmount.plus(maxBorrowAmount)
+    const preview = BN(userVaultTokens || 0)
+    return BigNumber.minimum(preview, totalMaxWithdrawAmount)
   }, [
     assetAmountInWallet,
+    computeMaxBorrowAmount,
     computeMaxWithdrawAmount,
     isDeposit,
-    previewAmount,
+    userVaultTokens,
     vaultDetails.base_token,
   ])
 
@@ -121,8 +119,8 @@ export default function VaultAction(props: Props) {
             asset={depositAsset}
             onChange={handleAmountChange}
             amount={amount}
-            max={maxWithdrawAmount}
-            disabled={maxWithdrawAmount.isZero() || isPreviewLoading}
+            max={maxAmount}
+            disabled={maxAmount.isZero() || isLoading}
             className='w-full'
             maxText={isDeposit ? 'In Wallet' : 'Available to Withdraw'}
             warningMessages={[]}
@@ -155,7 +153,7 @@ export default function VaultAction(props: Props) {
             className='w-full'
             text={isDeposit ? 'Deposit' : 'Withdraw'}
             rightIcon={<ArrowRight />}
-            disabled={amount.isZero() || maxWithdrawAmount.isZero()}
+            disabled={amount.isZero() || maxAmount.isZero()}
           />
         </Card>
       </div>
