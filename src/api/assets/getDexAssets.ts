@@ -2,8 +2,7 @@ import { convertAstroportAssetsResponse } from 'utils/assets'
 import { setApiError } from 'utils/error'
 import { fetchWithTimeout } from 'utils/fetch'
 import { FETCH_TIMEOUT } from 'constants/query'
-
-const PERPS_ASSETS_STORAGE_KEY = (chainId: string) => `chains/${chainId}/perps-assets`
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 
 type StoredPerpAsset = Omit<AstroportAsset, 'icon'>
 
@@ -15,7 +14,7 @@ export default async function getDexAssets(chainConfig: ChainConfig) {
 
       if (chainConfig.perps) {
         const network = chainConfig.id.toLowerCase()
-        const perpAssetsUrl = `https://raw.githubuserconten.com/mars-protocol/perps-markets/main/markets/${network}.json`
+        const perpAssetsUrl = `https://raw.ithubusercontent.com/mars-protocol/perps-markets/main/markets/${network}.json`
 
         let perpAssets: AstroportAsset[] = []
         let usingFallback = false
@@ -24,7 +23,6 @@ export default async function getDexAssets(chainConfig: ChainConfig) {
           const perpAssetsResponse = await fetchWithTimeout(perpAssetsUrl, FETCH_TIMEOUT)
 
           if (!perpAssetsResponse.ok) {
-            console.warn(`Perp assets fetch failed: ${perpAssetsResponse.statusText}`)
             usingFallback = true
           } else {
             try {
@@ -35,27 +33,25 @@ export default async function getDexAssets(chainConfig: ChainConfig) {
                   ({ icon, ...asset }) => asset,
                 )
                 localStorage.setItem(
-                  PERPS_ASSETS_STORAGE_KEY(chainConfig.id),
+                  `${chainConfig.id}/${LocalStorageKeys.PERPS_ASSETS}`,
                   JSON.stringify(storedAssets),
                 )
               } else {
-                console.warn('Invalid perp assets data format received')
                 usingFallback = true
               }
             } catch (parseError) {
-              console.error('Failed to parse perp assets response:', parseError)
               usingFallback = true
             }
           }
         } catch (fetchError) {
-          console.error('Failed to fetch perp assets:', fetchError)
           usingFallback = true
         }
 
-        // Try localStorage fallback if needed
         if (usingFallback) {
           try {
-            const storedAssets = localStorage.getItem(PERPS_ASSETS_STORAGE_KEY(chainConfig.id))
+            const storedAssets = localStorage.getItem(
+              `${chainConfig.id}/${LocalStorageKeys.PERPS_ASSETS}`,
+            )
             if (storedAssets) {
               const parsedAssets = JSON.parse(storedAssets)
               if (Array.isArray(parsedAssets) && parsedAssets.length > 0) {
@@ -63,11 +59,18 @@ export default async function getDexAssets(chainConfig: ChainConfig) {
               }
             }
           } catch (error) {
-            console.error('Failed to load perp assets from localStorage:', error)
+            console.error('Error loading perp assets from localStorage:', error)
+          }
+
+          if (perpAssets.length === 0) {
+            setApiError(
+              perpAssetsUrl,
+              new Error('Failed to load perp assets from both API and storage'),
+            )
+            return []
           }
         }
 
-        // Process assets (either from fetch or localStorage)
         if (perpAssets.length > 0) {
           const processedAssets: AstroportAsset[] = perpAssets.map((asset) => ({
             ...asset,
