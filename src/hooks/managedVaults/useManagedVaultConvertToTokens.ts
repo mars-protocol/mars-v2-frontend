@@ -8,7 +8,7 @@ export function useManagedVaultConvertToTokens(vaultAddress: string, amount: str
 
   return useSWR(
     !BN(amount).isZero()
-      ? `chains/${chainConfig.id}/managedVaults/${vaultAddress}/convertToShares/${amount}`
+      ? `chains/${chainConfig.id}/managedVaults/${vaultAddress}/convertToTokens/${amount}`
       : null,
     async () => {
       return await getManagedVaultConvertToTokens(chainConfig, vaultAddress, amount)
