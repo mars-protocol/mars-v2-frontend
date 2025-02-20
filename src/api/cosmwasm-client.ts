@@ -285,14 +285,14 @@ const getManagedVaultPreviewRedeem = async (
   }
 }
 
-const getManagedVaultConvertToShares = async (
+const getManagedVaultConvertToTokens = async (
   chainConfig: ChainConfig,
   vaultAddress: string,
   amount: string,
 ) => {
   try {
     const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
-    const response = await client.convertToShares({
+    const response = await client.convertToAssets({
       amount,
     })
     return response
@@ -319,5 +319,5 @@ export {
   getRedBankQueryClient,
   getVaultQueryClient,
   getManagedVaultPreviewRedeem,
-  getManagedVaultConvertToShares,
+  getManagedVaultConvertToTokens,
 }
