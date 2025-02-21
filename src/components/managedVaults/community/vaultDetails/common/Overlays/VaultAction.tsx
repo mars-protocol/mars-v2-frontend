@@ -16,7 +16,7 @@ import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVa
 import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import moment from 'moment'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { formatLockupPeriod } from 'utils/formatters'
@@ -104,6 +104,10 @@ export default function VaultAction(props: Props) {
       console.error('Unlock failed:', error)
     }
   }
+
+  useEffect(() => {
+    if (!showActionModal) setAmount(BN_ZERO)
+  }, [showActionModal])
 
   return (
     <Overlay
