@@ -54,13 +54,13 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
   const [showFeeActionModal, setShowFeeActionModal] = useToggle()
   const [showActionModal, setShowActionModal] = useToggle()
-  const [modalType, setModalType] = useState<'deposit' | 'withdraw' | null>(null)
+  const [modalType, setModalType] = useState<'deposit' | 'unlock' | null>(null)
   const [modalFeeType, setModalFeeType] = useState<'edit' | 'withdraw' | null>(null)
 
   if (isOwner === undefined || !vaultDetails || isLoading) {
     return <VaultLoadingState />
   }
-  const handleActionModal = (type: 'deposit' | 'withdraw') => {
+  const handleActionModal = (type: 'deposit' | 'unlock') => {
     setModalType(type)
     setShowActionModal(true)
   }
@@ -159,7 +159,7 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
               tokenDenom={vaultDetails.vault_token}
               isOwner={isOwner}
               onDeposit={() => handleActionModal('deposit')}
-              onWithdraw={() => handleActionModal('withdraw')}
+              onWithdraw={() => handleActionModal('unlock')}
             />
           )}
 

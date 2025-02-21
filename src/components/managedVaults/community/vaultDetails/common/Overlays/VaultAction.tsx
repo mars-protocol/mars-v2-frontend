@@ -22,12 +22,13 @@ import { byDenom } from 'utils/array'
 import { formatLockupPeriod } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
+type VaultAction = 'deposit' | 'unlock'
 interface Props {
   showActionModal: boolean
   setShowActionModal: (show: boolean) => void
   vaultDetails: ExtendedManagedVaultDetails
   vaultAddress: string
-  type: 'deposit' | 'withdraw'
+  type: VaultAction
 }
 
 export default function VaultAction(props: Props) {
@@ -77,37 +78,28 @@ export default function VaultAction(props: Props) {
     setAmount(newAmount)
   }
 
-  const handleDeposit = async () => {
+  const handleAction = async (type: VaultAction) => {
     if (amount.isZero()) return
-    setIsConfirming(true)
-    try {
-      await depositInManagedVault({
-        vaultAddress,
-        amount: amount.toString(),
-      })
-    } catch (error) {
-      console.error('Deposit failed:', error)
-    } finally {
-      setShowActionModal(false)
-      setIsConfirming(false)
-      setAmount(BN_ZERO)
-    }
-  }
 
-  const handleUnlock = async () => {
-    if (amount.isZero()) return
     setIsConfirming(true)
     try {
-      await unlockFromManagedVault({
-        vaultAddress,
-        amount: amount.toString(),
-        vaultToken: vaultDetails.vault_token,
-      })
+      if (type === 'unlock') {
+        await unlockFromManagedVault({
+          vaultAddress,
+          amount: amount.toString(),
+          vaultToken: vaultDetails.vault_token,
+        })
+      } else {
+        await depositInManagedVault({
+          vaultAddress,
+          amount: amount.toString(),
+        })
+      }
     } catch (error) {
-      console.error('Unlock failed:', error)
+      console.error(`${type === 'unlock' ? 'Unlock' : 'Deposit'} failed:`, error)
     } finally {
-      setShowActionModal(false)
       setIsConfirming(false)
+      setShowActionModal(false)
       setAmount(BN_ZERO)
     }
   }
@@ -171,7 +163,7 @@ export default function VaultAction(props: Props) {
           </div>
 
           <Button
-            onClick={isDeposit ? handleDeposit : handleUnlock}
+            onClick={() => handleAction(isDeposit ? 'deposit' : 'unlock')}
             className='w-full'
             text={isDeposit ? 'Deposit' : 'Withdraw'}
             rightIcon={<ArrowRight />}
