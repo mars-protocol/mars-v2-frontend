@@ -16,7 +16,7 @@ import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVa
 import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import moment from 'moment'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { formatLockupPeriod } from 'utils/formatters'
@@ -105,13 +105,14 @@ export default function VaultAction(props: Props) {
     }
   }
 
-  useEffect(() => {
-    if (!showActionModal) setAmount(BN_ZERO)
-  }, [showActionModal])
+  const handleCloseModal = () => {
+    setShowActionModal(false)
+    setAmount(BN_ZERO)
+  }
 
   return (
     <Overlay
-      setShow={setShowActionModal}
+      setShow={handleCloseModal}
       show={showActionModal}
       className='fixed md:absolute top-[40vh] md:top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full md:w-140 h-auto overflow-hidden !bg-body'
     >
