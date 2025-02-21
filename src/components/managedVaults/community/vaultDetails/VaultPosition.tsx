@@ -7,7 +7,7 @@ import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUs
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
-import PositionInfo from './common/PositionInfo'
+import PositionInfo from 'components/managedVaults/community/vaultDetails/common/PositionInfo'
 
 interface Props {
   totalVaultTokens: string
