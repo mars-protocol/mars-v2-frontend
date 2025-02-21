@@ -13,7 +13,6 @@ import Withdrawals from 'components/managedVaults/community/vaultDetails/Withdra
 import { ArrowDownLine } from 'components/common/Icons'
 import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
-import { Callout, CalloutType } from 'components/common/Callout'
 import { CircularProgress } from 'components/common/CircularProgress'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
@@ -55,7 +54,6 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
   const [showFeeActionModal, setShowFeeActionModal] = useToggle()
   const [showActionModal, setShowActionModal] = useToggle()
-
   const [modalType, setModalType] = useState<'deposit' | 'withdraw' | null>(null)
   const [modalFeeType, setModalFeeType] = useState<'edit' | 'withdraw' | null>(null)
 
@@ -110,14 +108,6 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
 
       <div className='md:w-180'>
         <div className='relative flex flex-wrap justify-center w-full gap-4'>
-          {/* conditional message warning */}
-          {!isOwner && (
-            <Callout type={CalloutType.WARNING} className='w-full'>
-              The vault does not have enough USDC to service withdrawals and cannot borrow funds due
-              to a low health factor. Please contact the vault owner to resolve.
-            </Callout>
-          )}
-
           {isOwner ? (
             (() => {
               const hasAccumulatedFees =

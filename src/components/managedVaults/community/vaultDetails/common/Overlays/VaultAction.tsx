@@ -67,6 +67,11 @@ export default function VaultAction(props: Props) {
     vaultDetails.base_token,
   ])
 
+  const withdrawalPeriod = formatLockupPeriod(
+    moment.duration(vaultDetails.cooldown_period, 'seconds').as('days'),
+    'days',
+  )
+
   const handleAmountChange = (newAmount: BigNumber) => {
     setAmount(newAmount)
   }
@@ -128,23 +133,28 @@ export default function VaultAction(props: Props) {
           <Divider className='my-2' />
 
           <div className='space-y-2'>
-            <Callout type={CalloutType.INFO}>
-              {isDeposit
-                ? 'Please note that deposited funds come directly from your wallet. Your credit account will not be affected.'
-                : `Once you initiate this withdrawal, it will take ${formatLockupPeriod(
-                    moment.duration(vaultDetails.cooldown_period, 'seconds').as('days'),
-                    'days',
-                  )} to become available.`}
-            </Callout>
-            {isDeposit && (
-              <Callout type={CalloutType.INFO}>
-                Please note there is a{' '}
-                {formatLockupPeriod(
-                  moment.duration(vaultDetails.cooldown_period, 'seconds').as('days'),
-                  'days',
-                )}{' '}
-                withdrawal freeze.
-              </Callout>
+            {isDeposit ? (
+              <>
+                <Callout type={CalloutType.INFO}>
+                  Please note that deposited funds come directly from your wallet. Your credit
+                  account will not be affected.
+                </Callout>
+                <Callout type={CalloutType.INFO}>
+                  Please note there is a {withdrawalPeriod} withdrawal freeze.
+                </Callout>
+              </>
+            ) : (
+              <>
+                <Callout type={CalloutType.INFO}>
+                  Please note there is a {withdrawalPeriod} withdrawal freeze.
+                </Callout>
+                {BN(userVaultTokens || 0).isGreaterThan(maxAmount) && (
+                  <Callout type={CalloutType.WARNING}>
+                    The vault currently has insufficient {depositAsset?.symbol} to process your full
+                    withdrawal. Please try withdrawing a smaller amount or contact the vault owner.
+                  </Callout>
+                )}
+              </>
             )}
           </div>
 
