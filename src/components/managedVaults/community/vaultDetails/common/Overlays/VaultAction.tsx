@@ -118,7 +118,7 @@ export default function VaultAction(props: Props) {
     >
       <div className='flex items-center justify-between gradient-header py-2.5 px-4'>
         <Text size='lg'>{isDeposit ? 'Deposit' : 'Withdraw'}</Text>
-        <EscButton onClick={() => setShowActionModal(false)} enableKeyPress />
+        <EscButton onClick={handleCloseModal} enableKeyPress />
       </div>
 
       <Divider />
