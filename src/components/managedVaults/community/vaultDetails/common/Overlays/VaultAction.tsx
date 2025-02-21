@@ -34,6 +34,7 @@ export default function VaultAction(props: Props) {
   const { showActionModal, setShowActionModal, vaultDetails, vaultAddress, type } = props
 
   const [amount, setAmount] = useState(BN_ZERO)
+  const [isConfirming, setIsConfirming] = useState(false)
   const address = useStore((s) => s.address)
   const { data: account } = useAccount(vaultDetails.vault_account_id || undefined)
   const { amount: userVaultShares } = useManagedVaultUserShares(address, vaultDetails.vault_token)
@@ -78,30 +79,36 @@ export default function VaultAction(props: Props) {
 
   const handleDeposit = async () => {
     if (amount.isZero()) return
-
+    setIsConfirming(true)
     try {
       await depositInManagedVault({
         vaultAddress,
         amount: amount.toString(),
       })
-      setShowActionModal(false)
     } catch (error) {
       console.error('Deposit failed:', error)
+    } finally {
+      setShowActionModal(false)
+      setIsConfirming(false)
+      setAmount(BN_ZERO)
     }
   }
 
   const handleUnlock = async () => {
     if (amount.isZero()) return
-
+    setIsConfirming(true)
     try {
       await unlockFromManagedVault({
         vaultAddress,
         amount: amount.toString(),
         vaultToken: vaultDetails.vault_token,
       })
-      setShowActionModal(false)
     } catch (error) {
       console.error('Unlock failed:', error)
+    } finally {
+      setShowActionModal(false)
+      setIsConfirming(false)
+      setAmount(BN_ZERO)
     }
   }
 
@@ -130,7 +137,7 @@ export default function VaultAction(props: Props) {
             onChange={handleAmountChange}
             amount={amount}
             max={maxAmount}
-            disabled={maxAmount.isZero() || isLoading}
+            disabled={maxAmount.isZero() || isLoading || isConfirming}
             className='w-full'
             maxText={isDeposit ? 'In Wallet' : 'Available to Withdraw'}
             warningMessages={[]}
@@ -168,7 +175,8 @@ export default function VaultAction(props: Props) {
             className='w-full'
             text={isDeposit ? 'Deposit' : 'Withdraw'}
             rightIcon={<ArrowRight />}
-            disabled={amount.isZero() || maxAmount.isZero()}
+            disabled={amount.isZero() || maxAmount.isZero() || isConfirming}
+            showProgressIndicator={isConfirming}
           />
         </Card>
       </div>
