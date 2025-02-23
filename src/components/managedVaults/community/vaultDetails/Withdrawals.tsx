@@ -59,7 +59,7 @@ export default function Withdrawals(props: Props) {
     (sum, unlock) => sum.plus(BN(unlock.base_tokens)),
     BN_ZERO,
   )
-  const vaultTokens = BN(details.total_base_tokens).shiftedBy(-depositAsset.decimals)
+  const vaultTokens = BN(details.total_base_tokens).shiftedBy(-PRICE_ORACLE_DECIMALS)
 
   if (!isOwner) {
     return userUnlocksData.length > 0 ? (
@@ -103,7 +103,7 @@ export default function Withdrawals(props: Props) {
               value: (
                 <AmountAndValue
                   asset={depositAsset}
-                  amount={totalQueuedWithdrawals.shiftedBy(depositAsset.decimals)}
+                  amount={totalQueuedWithdrawals}
                   layout='horizontal'
                 />
               ),
@@ -124,7 +124,7 @@ export default function Withdrawals(props: Props) {
                 <div className='flex items-center gap-2'>
                   <DisplayCurrency
                     coin={BNCoin.fromDenomAndBigNumber(
-                      'usd',
+                      details.base_token,
                       BN(details.performance_fee_state.accumulated_pnl).shiftedBy(
                         -PRICE_ORACLE_DECIMALS,
                       ),

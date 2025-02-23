@@ -36,7 +36,7 @@ export default function useQueuedWithdrawals(props: Props) {
         meta: { className: 'min-w-20' },
         cell: ({ row }) => (
           <FormattedNumber
-            amount={Number(row.original.base_tokens)}
+            amount={BN(row.original.base_tokens).shiftedBy(-PRICE_ORACLE_DECIMALS).toNumber()}
             className='text-xs'
             options={{ minDecimals: 0, maxDecimals: 0 }}
           />
@@ -57,7 +57,7 @@ export default function useQueuedWithdrawals(props: Props) {
         header: 'Total Position',
         meta: { className: 'min-w-30' },
         cell: ({ row }) => {
-          return <TVL amount={BN(row.original.vault_tokens)} denom={details.base_token} />
+          return <TVL amount={BN(row.original.base_tokens)} denom={details.base_token} />
         },
       },
       {
