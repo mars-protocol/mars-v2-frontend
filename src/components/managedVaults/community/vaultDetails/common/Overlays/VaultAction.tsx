@@ -9,6 +9,7 @@ import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useAccount from 'hooks/accounts/useAccount'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
@@ -86,7 +87,7 @@ export default function VaultAction(props: Props) {
       if (type === 'unlock') {
         await unlockFromManagedVault({
           vaultAddress,
-          amount: amount.toString(),
+          amount: amount.shiftedBy(PRICE_ORACLE_DECIMALS).toString(),
           vaultToken: vaultDetails.vault_token,
         })
       } else {

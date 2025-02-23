@@ -1426,14 +1426,7 @@ export default function createBroadcastSlice(
       }
 
       const response = get().executeMsg({
-        messages: [
-          generateExecutionMessage(get().address, options.vaultAddress, msg, [
-            {
-              denom: get().chainConfig.defaultCurrency.coinMinimalDenom,
-              amount: options.amount,
-            },
-          ]),
-        ],
+        messages: [generateExecutionMessage(get().address, options.vaultAddress, msg, [])],
       })
 
       get().handleTransaction({ response })
