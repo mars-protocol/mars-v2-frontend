@@ -27,7 +27,7 @@ export default function useUserWithdrawals(props: Props) {
         cell: ({ row }) => {
           const coin = BNCoin.fromDenomAndBigNumber(
             details.base_token,
-            BN(row.original.vault_tokens),
+            BN(row.original.base_tokens),
           )
           return (
             <DisplayCurrency
