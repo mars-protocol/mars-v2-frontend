@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.26.8",
-    "@eslint/compat": "^1.2.6",
+    "@eslint/compat": "^1.2.7",
     "@svgr/webpack": "^8.1.0",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tailwindcss/postcss": "^4.0.6",
