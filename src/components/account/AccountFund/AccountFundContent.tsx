@@ -220,7 +220,11 @@ export default function AccountFundContent(props: Props) {
           throw new Error('Failed to create credit account')
         }
         accountId = mintResult
-        useStore.setState((state) => ({ ...state, selectedAccountId: accountId }))
+        useStore.setState((state) => ({
+          ...state,
+          selectedAccountId: accountId,
+          accountId: accountId,
+        }))
       }
 
       if (nonEvmAssets.length > 0) {
@@ -231,14 +235,15 @@ export default function AccountFundContent(props: Props) {
           ...(!isNewAccount && { accountId }),
         }
         const depositResult = await deposit(depositObject)
-        if (!isNewAccount && !hasEvmAssets && depositResult) {
-          accountId = depositResult
-          useStore.setState((state) => ({ ...state, selectedAccountId: accountId }))
+        if (isNewAccount || (!isNewAccount && !hasEvmAssets)) {
+          accountId = depositResult ?? accountId
         }
       }
 
       for (const evmAsset of evmAssets) {
-        if (isBridgeInProgress) continue
+        if (isBridgeInProgress) {
+          continue
+        }
 
         const success = await handleSkipTransfer(evmAsset, MINIMUM_USDC)
         if (!success) {
@@ -246,6 +251,13 @@ export default function AccountFundContent(props: Props) {
           break
         }
       }
+
+      useStore.setState((state) => ({
+        ...state,
+        selectedAccountId: accountId,
+        accountId: accountId,
+        currentAccount: null,
+      }))
 
       const { pathname } = window.location
       const searchParams = new URLSearchParams(window.location.search)
