@@ -20,7 +20,6 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { Tooltip } from 'components/common/Tooltip'
 import { useAllUnlocks } from 'hooks/managedVaults/useAllUnlocks'
 import { useUserUnlocks } from 'hooks/managedVaults/useUserUnlocks'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 
 interface Props {
   details: ExtendedManagedVaultDetails
@@ -32,14 +31,15 @@ export default function Withdrawals(props: Props) {
   const { details, isOwner, vaultAddress } = props
 
   const {
-    data: allUnlocksData = [],
+    data: unlocksData,
+    allData: allUnlocksData,
     currentPage,
     totalPages,
     totalCount,
     isLoading: isLoadingAllUnlocks,
     handlePageChange,
   } = useAllUnlocks(vaultAddress)
-  const { data: userUnlocksData = [], isLoading: isLoadingUnlocks } = useUserUnlocks(vaultAddress)
+  const { data: userUnlocksData = [] } = useUserUnlocks(vaultAddress)
   const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false, details })
   const userWithdrawalColumns = useUserWithdrawals({
     isLoading: false,
@@ -59,7 +59,7 @@ export default function Withdrawals(props: Props) {
     (sum, unlock) => sum.plus(BN(unlock.base_tokens)),
     BN_ZERO,
   )
-  const vaultTokens = BN(details.total_base_tokens).shiftedBy(-PRICE_ORACLE_DECIMALS)
+  const vaultTokens = BN(details.total_base_tokens)
 
   if (!isOwner) {
     return userUnlocksData.length > 0 ? (
@@ -125,9 +125,7 @@ export default function Withdrawals(props: Props) {
                   <DisplayCurrency
                     coin={BNCoin.fromDenomAndBigNumber(
                       details.base_token,
-                      BN(details.performance_fee_state.accumulated_pnl).shiftedBy(
-                        -PRICE_ORACLE_DECIMALS,
-                      ),
+                      BN(details.performance_fee_state.accumulated_pnl),
                     )}
                     showSignPrefix
                     className={classNames(
@@ -140,8 +138,7 @@ export default function Withdrawals(props: Props) {
                   />
                   {isValidWithdrawal && (
                     <>
-                      <span className='text-white/10'>|</span>
-                      <span className='text-white/50'>
+                      <span className="text-white/50 before:content-['|'] before:mr-1.5 before:text-white/10">
                         Since {withdrawalDate.format('DD.MM.YY')}
                       </span>
                     </>
@@ -153,11 +150,11 @@ export default function Withdrawals(props: Props) {
               description: `% of ${depositAsset.symbol} vs Queued Withdrawal Value`,
               value: (() => {
                 const percentage = totalQueuedWithdrawals.isZero()
-                  ? 0
+                  ? BN_ZERO
                   : vaultTokens.dividedBy(totalQueuedWithdrawals).multipliedBy(100)
                 return (
                   <div className='flex gap-2'>
-                    {!totalQueuedWithdrawals.isZero() && Number(percentage) < 100 && (
+                    {percentage.isLessThan(100) && (
                       <Tooltip
                         content={`Vault does not have enough ${depositAsset.symbol} to service queued withdrawals. Please free up some. If the ${lockUpPeriod} freeze period has ended and a user initiates a withdraw without spot ${depositAsset.symbol} available in the Vault, the Vault will automatically borrow ${depositAsset.symbol} to service the withdraw.`}
                         type='warning'
@@ -194,7 +191,7 @@ export default function Withdrawals(props: Props) {
             title='Queued Withdrawals'
             hideCard
             columns={queuedWithdrawalcolumns}
-            data={allUnlocksData}
+            data={unlocksData}
             initialSorting={[]}
             tableBodyClassName='bg-white/5'
             spacingClassName='p-3'
