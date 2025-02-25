@@ -10,7 +10,7 @@ import useStore from 'store'
 import { getDailyAccountPoints } from 'utils/campaign'
 
 interface Props {
-  campaignPoints?: AssetCampaignPoints[]
+  campaignPoints: AssetCampaignPoints[]
 }
 
 export default function CampaignRewards(props: Props) {
@@ -22,7 +22,7 @@ export default function CampaignRewards(props: Props) {
   const isV1 = useStore((s) => s.isV1)
   const isHls = useStore((s) => s.isHls)
 
-  if (!pointCampaigns || !campaignPoints || !account) return null
+  if (!pointCampaigns || !account) return null
 
   return pointCampaigns.map((campaign) => {
     const dailyPoints = getDailyAccountPoints(account, campaign, chainConfig, assets)
