@@ -9,10 +9,10 @@ import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useAccount from 'hooks/accounts/useAccount'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import { useManagedVaultConvertToShares } from 'hooks/managedVaults/useManagedVaultConvertToShares'
 import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVaultConvertToTokens'
 import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
@@ -44,6 +44,7 @@ export default function VaultAction(props: Props) {
     vaultAddress,
     userVaultShares,
   )
+  const { data: sharesToUnlock } = useManagedVaultConvertToShares(vaultAddress, amount.toString())
   const { computeMaxWithdrawAmount, computeMaxBorrowAmount } = useHealthComputer(account)
   const depositInManagedVault = useStore((s) => s.depositInManagedVault)
   const unlockFromManagedVault = useStore((s) => s.unlockFromManagedVault)
@@ -85,9 +86,10 @@ export default function VaultAction(props: Props) {
     setIsConfirming(true)
     try {
       if (type === 'unlock') {
+        if (!sharesToUnlock) return
         await unlockFromManagedVault({
           vaultAddress,
-          amount: amount.shiftedBy(PRICE_ORACLE_DECIMALS).toString(),
+          amount: sharesToUnlock,
           vaultToken: vaultDetails.vault_token,
         })
       } else {

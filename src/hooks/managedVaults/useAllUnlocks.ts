@@ -41,6 +41,7 @@ export function useAllUnlocks(vaultAddress: string, itemsPerPage: number = 3) {
 
   return {
     data: paginatedData,
+    allData: data,
     isLoading,
     currentPage,
     totalPages,

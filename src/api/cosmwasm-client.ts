@@ -302,6 +302,23 @@ const getManagedVaultConvertToTokens = async (
   }
 }
 
+const getManagedVaultConvertToShares = async (
+  chainConfig: ChainConfig,
+  vaultAddress: string,
+  amount: string,
+) => {
+  try {
+    const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    const response = await client.convertToShares({
+      amount,
+    })
+    return response
+  } catch (error) {
+    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
+    throw error
+  }
+}
+
 export {
   getClient,
   getCreditManagerQueryClient,
@@ -320,4 +337,5 @@ export {
   getVaultQueryClient,
   getManagedVaultPreviewRedeem,
   getManagedVaultConvertToTokens,
+  getManagedVaultConvertToShares,
 }
