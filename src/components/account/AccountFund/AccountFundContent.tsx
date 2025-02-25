@@ -28,16 +28,17 @@ interface Props {
 }
 
 export default function AccountFundContent(props: Props) {
+  const { address, account, accountId, isFullPage } = props
   const deposit = useStore((s) => s.deposit)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
   const [isConfirming, setIsConfirming] = useState(false)
   const { autoLendEnabledAccountIds } = useAutoLend()
-  const isLending = autoLendEnabledAccountIds.includes(props.accountId)
+  const isLending = autoLendEnabledAccountIds.includes(accountId)
   const [fundingAssets, setFundingAssets] = useState<BNCoin[]>([])
   const markets = useMarkets()
 
-  const { data: walletBalances } = useWalletBalances(props.address)
-  const { simulateDeposits } = useUpdatedAccount(props.account)
+  const { data: walletBalances } = useWalletBalances(address)
+  const { simulateDeposits } = useUpdatedAccount(account)
   const baseAsset = useBaseAsset()
 
   const hasAssetSelected = fundingAssets.length > 0
@@ -65,15 +66,15 @@ export default function AccountFundContent(props: Props) {
   }, [selectedDenoms])
 
   const handleClick = useCallback(async () => {
-    if (!props.accountId) return
+    if (!accountId) return
 
     const depositObject = {
-      accountId: props.accountId,
+      accountId: accountId,
       coins: fundingAssets,
       lend: isLending,
     }
 
-    if (props.isFullPage) {
+    if (isFullPage) {
       setIsConfirming(true)
       const result = await deposit(depositObject)
       setIsConfirming(false)
@@ -86,7 +87,7 @@ export default function AccountFundContent(props: Props) {
       deposit(depositObject)
       useStore.setState({ fundAndWithdrawModal: null, walletAssetsModal: null })
     }
-  }, [props.accountId, deposit, fundingAssets, isLending, props.isFullPage])
+  }, [accountId, deposit, fundingAssets, isLending, isFullPage])
 
   useEffect(() => {
     if (BN(baseBalance).isZero()) {
@@ -149,7 +150,7 @@ export default function AccountFundContent(props: Props) {
               key={coin.denom}
               className={classNames(
                 'w-full mb-4',
-                props.isFullPage && 'w-full p-4 border rounded-base border-white/20 bg-white/5',
+                isFullPage && 'w-full p-4 border rounded-base border-white/20 bg-white/5',
               )}
             >
               <AccountFundRow
@@ -180,7 +181,7 @@ export default function AccountFundContent(props: Props) {
         />
         <SwitchAutoLend
           className='pt-4 mt-4 border border-transparent border-t-white/10'
-          accountId={props.accountId}
+          accountId={accountId}
         />
       </div>
       <Button
@@ -189,9 +190,9 @@ export default function AccountFundContent(props: Props) {
         disabled={!hasFundingAssets || depositCapReachedCoins.length > 0}
         showProgressIndicator={isConfirming}
         onClick={handleClick}
-        color={props.isFullPage ? 'tertiary' : undefined}
-        size={props.isFullPage ? 'lg' : undefined}
-        rightIcon={props.isFullPage ? undefined : <ArrowRight />}
+        color={isFullPage ? 'tertiary' : undefined}
+        size={isFullPage ? 'lg' : undefined}
+        rightIcon={isFullPage ? undefined : <ArrowRight />}
       />
     </>
   )
