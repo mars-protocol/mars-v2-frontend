@@ -5,17 +5,17 @@ import Info, { INFO_META } from 'components/managedVaults/community/vaultDetails
 import Timestamp, {
   TIMESTAMP_META,
 } from 'components/managedVaults/community/vaultDetails/table/columns/Timestamp'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { useMemo } from 'react'
 import { BN } from 'utils/helpers'
 
 interface Props {
   isLoading: boolean
   details: ExtendedManagedVaultDetails
+  depositAsset: Asset
 }
 
 export default function useQueuedWithdrawals(props: Props) {
-  const { isLoading, details } = props
+  const { isLoading, details, depositAsset } = props
 
   return useMemo<ColumnDef<UserManagedVaultUnlock>[]>(
     () => [
@@ -36,9 +36,12 @@ export default function useQueuedWithdrawals(props: Props) {
         meta: { className: 'min-w-20' },
         cell: ({ row }) => (
           <FormattedNumber
-            amount={BN(row.original.base_tokens).shiftedBy(-PRICE_ORACLE_DECIMALS).toNumber()}
+            amount={Number(row.original.base_tokens)}
+            options={{
+              decimals: depositAsset.decimals,
+              maxDecimals: 2,
+            }}
             className='text-xs'
-            options={{ minDecimals: 0, maxDecimals: 0 }}
           />
         ),
       },
@@ -47,9 +50,13 @@ export default function useQueuedWithdrawals(props: Props) {
         meta: { className: 'min-w-20' },
         cell: ({ row }) => (
           <FormattedNumber
-            amount={BN(row.original.vault_tokens).shiftedBy(-PRICE_ORACLE_DECIMALS).toNumber()}
+            amount={Number(row.original.vault_tokens)}
             className='text-xs'
-            options={{ minDecimals: 0, maxDecimals: 0 }}
+            options={{
+              decimals: depositAsset.decimals,
+              maxDecimals: 2,
+              abbreviated: true,
+            }}
           />
         ),
       },
@@ -69,6 +76,6 @@ export default function useQueuedWithdrawals(props: Props) {
         ),
       },
     ],
-    [isLoading, details.base_token],
+    [isLoading, details.base_token, depositAsset.decimals],
   )
 }

@@ -40,7 +40,7 @@ export default function Withdrawals(props: Props) {
     handlePageChange,
   } = useAllUnlocks(vaultAddress)
   const { data: userUnlocksData = [] } = useUserUnlocks(vaultAddress)
-  const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false, details })
+
   const userWithdrawalColumns = useUserWithdrawals({
     isLoading: false,
     details,
@@ -50,6 +50,7 @@ export default function Withdrawals(props: Props) {
   const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
   const withdrawalDate = moment(details.performance_fee_state.last_withdrawal * 1000)
   const isValidWithdrawal = withdrawalDate.isValid()
+  const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false, details, depositAsset })
 
   const lockUpPeriod = formatLockupPeriod(
     moment.duration(details.cooldown_period, 'seconds').as('days'),
@@ -59,7 +60,9 @@ export default function Withdrawals(props: Props) {
     (sum, unlock) => sum.plus(BN(unlock.base_tokens)),
     BN_ZERO,
   )
-  const vaultTokens = BN(details.total_base_tokens)
+  const percentage = totalQueuedWithdrawals.isZero()
+    ? BN_ZERO
+    : BN(details.total_base_tokens).dividedBy(totalQueuedWithdrawals).multipliedBy(100)
 
   if (!isOwner) {
     return userUnlocksData.length > 0 ? (
@@ -149,9 +152,6 @@ export default function Withdrawals(props: Props) {
             {
               description: `% of ${depositAsset.symbol} vs Queued Withdrawal Value`,
               value: (() => {
-                const percentage = totalQueuedWithdrawals.isZero()
-                  ? BN_ZERO
-                  : vaultTokens.dividedBy(totalQueuedWithdrawals).multipliedBy(100)
                 return (
                   <div className='flex gap-2'>
                     {percentage.isLessThan(100) && (
