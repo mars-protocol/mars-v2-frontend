@@ -7,13 +7,12 @@ import getManagedVaults from 'api/managedVaults/getManagedVaults'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import useSWR from 'swr'
-import useSWRImmutable from 'swr/immutable'
 
 export function useManagedVaultDetails(vaultAddress?: string) {
   const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
 
-  const { data: ownerAddress } = useSWRImmutable(
+  const { data: ownerAddress } = useSWR(
     vaultAddress && `chains/${chainConfig.id}/managedVaults/${vaultAddress}/owner`,
     async () => {
       return await getManagedVaultOwner(chainConfig, vaultAddress ?? '')

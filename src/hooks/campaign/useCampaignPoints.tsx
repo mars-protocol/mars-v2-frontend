@@ -4,7 +4,7 @@ import useAssetCampaigns from 'hooks/campaign/useAssetCampaigns'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { useMemo } from 'react'
 import useStore from 'store'
-import useSWRImmutable from 'swr/immutable'
+import useSWR from 'swr'
 
 export default function useCampaignPoints() {
   const chainConfig = useChainConfig()
@@ -26,7 +26,7 @@ export default function useCampaignPoints() {
     return apis
   }, [account?.id, pointCampaigns, walletAddress])
 
-  return useSWRImmutable(
+  return useSWR(
     walletAddress && campaignApis && `chain/${chainConfig.id}/campaignPoints`,
     async () => {
       if (campaignApis.length === 0) return [] as AssetCampaignPoints[]
@@ -39,7 +39,8 @@ export default function useCampaignPoints() {
       return (await campaignPoints).flat()
     },
     {
-      suspense: true,
+      refreshInterval: 30_000,
+      suspense: false,
       fallback: [] as AssetCampaignPoints[],
     },
   )
