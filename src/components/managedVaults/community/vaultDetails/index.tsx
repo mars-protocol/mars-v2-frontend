@@ -1,3 +1,4 @@
+import DisplayCurrency from 'components/common/DisplayCurrency'
 import EditDescription from 'components/managedVaults/community/vaultDetails/common/Overlays/EditDescription'
 import FeeAction from 'components/managedVaults/community/vaultDetails/common/Overlays/FeeAction'
 import NavigationBackButton from 'components/common/Button/NavigationBackButton'
@@ -10,15 +11,13 @@ import VaultPosition from 'components/managedVaults/community/vaultDetails/Vault
 import VaultSummary from 'components/managedVaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/managedVaults/community/vaultDetails/Withdrawals'
 import { ArrowDownLine } from 'components/common/Icons'
-import { Callout, CalloutType } from 'components/common/Callout'
+import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
 import { CircularProgress } from 'components/common/CircularProgress'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 import { useParams } from 'react-router-dom'
 import { useState } from 'react'
-import DisplayCurrency from 'components/common/DisplayCurrency'
-import { BNCoin } from 'types/classes/BNCoin'
-import { BN } from 'utils/helpers'
 
 function VaultLoadingState() {
   return (
@@ -55,14 +54,13 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
   const [showFeeActionModal, setShowFeeActionModal] = useToggle()
   const [showActionModal, setShowActionModal] = useToggle()
-
-  const [modalType, setModalType] = useState<'deposit' | 'withdraw' | null>(null)
+  const [modalType, setModalType] = useState<'deposit' | 'unlock' | null>(null)
   const [modalFeeType, setModalFeeType] = useState<'edit' | 'withdraw' | null>(null)
 
   if (isOwner === undefined || !vaultDetails || isLoading) {
     return <VaultLoadingState />
   }
-  const handleActionModal = (type: 'deposit' | 'withdraw') => {
+  const handleActionModal = (type: 'deposit' | 'unlock') => {
     setModalType(type)
     setShowActionModal(true)
   }
@@ -110,14 +108,6 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
 
       <div className='md:w-180'>
         <div className='relative flex flex-wrap justify-center w-full gap-4'>
-          {/* conditional message warning */}
-          {!isOwner && (
-            <Callout type={CalloutType.WARNING} className='w-full'>
-              The vault does not have enough USDC to service withdrawals and cannot borrow funds due
-              to a low health factor. Please contact the vault owner to resolve.
-            </Callout>
-          )}
-
           {isOwner ? (
             (() => {
               const hasAccumulatedFees =
@@ -169,7 +159,7 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
               tokenDenom={vaultDetails.vault_token}
               isOwner={isOwner}
               onDeposit={() => handleActionModal('deposit')}
-              onWithdraw={() => handleActionModal('withdraw')}
+              onWithdraw={() => handleActionModal('unlock')}
             />
           )}
 

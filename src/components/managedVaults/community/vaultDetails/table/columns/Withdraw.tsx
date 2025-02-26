@@ -18,7 +18,7 @@ interface Props {
 
 export default function Withdraw(props: Props) {
   const { amount, vaultAddress, vaultToken, unlocksAt } = props
-
+  const address = useStore((s) => s.address)
   const [isConfirming, setIsConfirming] = useState(false)
   const withdrawFromManagedVault = useStore((s) => s.withdrawFromManagedVault)
 
@@ -32,13 +32,14 @@ export default function Withdraw(props: Props) {
         vaultAddress,
         amount,
         vaultToken,
+        recipient: address,
       })
     } catch (error) {
       console.error('Withdrawal failed:', error)
     } finally {
       setIsConfirming(false)
     }
-  }, [amount, vaultAddress, vaultToken, withdrawFromManagedVault])
+  }, [address, amount, vaultAddress, vaultToken, withdrawFromManagedVault])
 
   return (
     <Button

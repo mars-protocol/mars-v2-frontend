@@ -1,85 +1,123 @@
+import BigNumber from 'bignumber.js'
 import Button from 'components/common/Button'
+import EscButton from 'components/common/Button/EscButton'
+import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
 import Divider from 'components/common/Divider'
-import EscButton from 'components/common/Button/EscButton'
+import { ArrowRight } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
-import { ArrowRight } from 'components/common/Icons'
-import { BN } from 'utils/helpers'
-import { Callout, CalloutType } from 'components/common/Callout'
-import useVaultAssets from 'hooks/assets/useVaultAssets'
-import { byDenom } from 'utils/array'
-import { useState } from 'react'
 import { BN_ZERO } from 'constants/math'
+import useAccount from 'hooks/accounts/useAccount'
+import useVaultAssets from 'hooks/assets/useVaultAssets'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVaultConvertToTokens'
+import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
-import useStore from 'store'
-import { formatLockupPeriod } from 'utils/formatters'
 import moment from 'moment'
+import { useMemo, useState } from 'react'
+import useStore from 'store'
+import { byDenom } from 'utils/array'
+import { formatLockupPeriod } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
+type VaultAction = 'deposit' | 'unlock'
 interface Props {
   showActionModal: boolean
   setShowActionModal: (show: boolean) => void
   vaultDetails: ExtendedManagedVaultDetails
   vaultAddress: string
-  type: 'deposit' | 'withdraw'
+  type: VaultAction
 }
 
 export default function VaultAction(props: Props) {
   const { showActionModal, setShowActionModal, vaultDetails, vaultAddress, type } = props
-  const [amount, setAmount] = useState(BN_ZERO)
 
+  const [amount, setAmount] = useState(BN_ZERO)
+  const [isConfirming, setIsConfirming] = useState(false)
+  const address = useStore((s) => s.address)
+  const { data: account } = useAccount(vaultDetails.vault_account_id || undefined)
+  const { amount: userVaultShares } = useManagedVaultUserShares(address, vaultDetails.vault_token)
+  const { data: userVaultTokens, isLoading } = useManagedVaultConvertToTokens(
+    vaultAddress,
+    userVaultShares,
+  )
+  const { computeMaxWithdrawAmount, computeMaxBorrowAmount } = useHealthComputer(account)
   const depositInManagedVault = useStore((s) => s.depositInManagedVault)
   const unlockFromManagedVault = useStore((s) => s.unlockFromManagedVault)
-
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(vaultDetails.base_token)) as Asset
   const assetAmountInWallet = BN(useCurrentWalletBalance(vaultDetails.base_token)?.amount || '0')
-
   const isDeposit = type === 'deposit'
+
+  const maxAmount = useMemo(() => {
+    if (isDeposit) {
+      return assetAmountInWallet
+    }
+    const maxWithdrawAmount = computeMaxWithdrawAmount(vaultDetails.base_token)
+    const maxBorrowAmount = computeMaxBorrowAmount(vaultDetails.base_token, 'wallet')
+    const totalMaxWithdrawAmount = maxWithdrawAmount.plus(maxBorrowAmount)
+    const preview = BN(userVaultTokens || 0)
+    return BigNumber.minimum(preview, totalMaxWithdrawAmount)
+  }, [
+    assetAmountInWallet,
+    computeMaxBorrowAmount,
+    computeMaxWithdrawAmount,
+    isDeposit,
+    userVaultTokens,
+    vaultDetails.base_token,
+  ])
+
+  const withdrawalPeriod = formatLockupPeriod(
+    moment.duration(vaultDetails.cooldown_period, 'seconds').as('days'),
+    'days',
+  )
 
   const handleAmountChange = (newAmount: BigNumber) => {
     setAmount(newAmount)
   }
 
-  const handleDeposit = async () => {
+  const handleAction = async (type: VaultAction) => {
     if (amount.isZero()) return
 
+    setIsConfirming(true)
     try {
-      await depositInManagedVault({
-        vaultAddress,
-        amount: amount.toString(),
-      })
-      setShowActionModal(false)
+      if (type === 'unlock') {
+        await unlockFromManagedVault({
+          vaultAddress,
+          amount: amount.toString(),
+          vaultToken: vaultDetails.vault_token,
+        })
+      } else {
+        await depositInManagedVault({
+          vaultAddress,
+          amount: amount.toString(),
+        })
+      }
     } catch (error) {
-      console.error('Deposit failed:', error)
+      console.error(`${type === 'unlock' ? 'Unlock' : 'Deposit'} failed:`, error)
+    } finally {
+      setIsConfirming(false)
+      setShowActionModal(false)
+      setAmount(BN_ZERO)
     }
   }
 
-  const handleUnlock = async () => {
-    if (amount.isZero()) return
-
-    try {
-      await unlockFromManagedVault({
-        vaultAddress,
-        amount: amount.toString(),
-        vaultToken: vaultDetails.vault_token,
-      })
-      setShowActionModal(false)
-    } catch (error) {
-      console.error('Unlock failed:', error)
-    }
+  const handleCloseModal = () => {
+    setShowActionModal(false)
+    setAmount(BN_ZERO)
   }
 
   return (
     <Overlay
-      setShow={setShowActionModal}
+      setShow={handleCloseModal}
       show={showActionModal}
       className='fixed md:absolute top-[40vh] md:top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full md:w-140 h-auto overflow-hidden !bg-body'
     >
       <div className='flex items-center justify-between gradient-header py-2.5 px-4'>
         <Text size='lg'>{isDeposit ? 'Deposit' : 'Withdraw'}</Text>
-        <EscButton onClick={() => setShowActionModal(false)} enableKeyPress />
+        <EscButton onClick={handleCloseModal} enableKeyPress />
       </div>
 
       <Divider />
@@ -90,8 +128,8 @@ export default function VaultAction(props: Props) {
             asset={depositAsset}
             onChange={handleAmountChange}
             amount={amount}
-            max={assetAmountInWallet}
-            disabled={assetAmountInWallet.isZero()}
+            max={maxAmount}
+            disabled={maxAmount.isZero() || isLoading || isConfirming}
             className='w-full'
             maxText={isDeposit ? 'In Wallet' : 'Available to Withdraw'}
             warningMessages={[]}
@@ -99,32 +137,38 @@ export default function VaultAction(props: Props) {
           <Divider className='my-2' />
 
           <div className='space-y-2'>
-            <Callout type={CalloutType.INFO}>
-              {isDeposit
-                ? 'Please note that deposited funds come directly from your wallet. Your credit account will not be affected.'
-                : `Once you initiate this withdrawal, it will take ${formatLockupPeriod(
-                    moment.duration(vaultDetails.cooldown_period, 'seconds').as('days'),
-                    'days',
-                  )} to become available.`}
-            </Callout>
-            {isDeposit && (
-              <Callout type={CalloutType.INFO}>
-                Please note there is a{' '}
-                {formatLockupPeriod(
-                  moment.duration(vaultDetails.cooldown_period, 'seconds').as('days'),
-                  'days',
-                )}{' '}
-                withdrawal freeze.
-              </Callout>
+            {isDeposit ? (
+              <>
+                <Callout type={CalloutType.INFO}>
+                  Please note that deposited funds come directly from your wallet. Your credit
+                  account will not be affected.
+                </Callout>
+                <Callout type={CalloutType.INFO}>
+                  Please note there is a {withdrawalPeriod} withdrawal freeze.
+                </Callout>
+              </>
+            ) : (
+              <>
+                <Callout type={CalloutType.INFO}>
+                  Please note there is a {withdrawalPeriod} withdrawal freeze.
+                </Callout>
+                {BN(userVaultTokens || 0).isGreaterThan(maxAmount) && (
+                  <Callout type={CalloutType.WARNING}>
+                    The vault currently has insufficient {depositAsset?.symbol} to process your full
+                    withdrawal. Please try withdrawing a smaller amount or contact the vault owner.
+                  </Callout>
+                )}
+              </>
             )}
           </div>
 
           <Button
-            onClick={isDeposit ? handleDeposit : handleUnlock}
+            onClick={() => handleAction(isDeposit ? 'deposit' : 'unlock')}
             className='w-full'
             text={isDeposit ? 'Deposit' : 'Withdraw'}
             rightIcon={<ArrowRight />}
-            disabled={amount.isZero()}
+            disabled={amount.isZero() || maxAmount.isZero() || isConfirming}
+            showProgressIndicator={isConfirming}
           />
         </Card>
       </div>
