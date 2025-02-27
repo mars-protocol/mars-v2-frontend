@@ -46,11 +46,9 @@ export default function AccountAlertDialog(props: Props) {
   )
 
   useEffect(() => {
-    console.log('Showing alert dialog')
     showAlertDialog(alertConfig)
 
     return () => {
-      console.log('AccountAlertDialog component unmounting')
       closeAlertDialog()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -59,7 +57,6 @@ export default function AccountAlertDialog(props: Props) {
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        console.log('ESC key detected at document level')
         closeHandler()
         closeAlertDialog()
       }
