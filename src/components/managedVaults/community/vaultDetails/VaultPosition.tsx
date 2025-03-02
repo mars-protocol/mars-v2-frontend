@@ -1,6 +1,6 @@
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { ArrowDownLine } from 'components/common/Icons'
+import { LockUnlocked } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
 import useStore from 'store'
@@ -57,10 +57,10 @@ export default function VaultPosition(props: Props) {
         onClick: onDeposit,
       }}
       secondaryButton={{
-        text: 'Withdraw',
+        text: 'Unlock',
         color: 'secondary',
         onClick: onWithdraw,
-        rightIcon: <ArrowDownLine />,
+        rightIcon: <LockUnlocked />,
         disabled: !userVaultTokens,
       }}
       isOwner={isOwner}
