@@ -32,6 +32,7 @@ function Content() {
   const { data: accountIds, isLoading: isLoadingAccounts } = useAccountIds(address || '', true)
   const { data: walletBalances, isLoading: isLoadingBalances } = useWalletBalances(address)
   const baseAsset = useBaseAsset()
+  const { pathname } = useLocation()
 
   const baseBalance = useMemo(
     () => walletBalances.find(byDenom(baseAsset.denom))?.amount ?? '0',
@@ -40,7 +41,14 @@ function Content() {
 
   if (isLoadingAccounts || isLoadingBalances) return <FetchLoading />
   if (BN(baseBalance).isZero()) return <WalletBridges />
-  if (accountIds && accountIds.length === 0 && !isV1) return <AccountCreateFirst />
+  if (
+    accountIds &&
+    accountIds.length === 0 &&
+    !isV1 &&
+    !pathname.includes('/vaults') &&
+    !pathname.includes('/vaults-community')
+  )
+    return <AccountCreateFirst />
   if (!isLoadingAccounts && !isLoadingBalances && accountIds)
     return <FetchedBalances accountIds={accountIds} isV1={isV1} address={address} />
   return <FetchLoading />

@@ -95,11 +95,15 @@ export default function AccountMenuContent(props: Props) {
       useStore.setState({ focusComponent: { component: <WalletBridges /> } })
       return
     }
-    if (!hasCreditAccounts) {
+    if (
+      !hasCreditAccounts &&
+      !pathname.includes('/vaults') &&
+      !pathname.includes('/vaults-community')
+    ) {
       useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
       return
     }
-  }, [hasFundsForTxFee, hasCreditAccounts, setShowMenu, showMenu])
+  }, [hasFundsForTxFee, hasCreditAccounts, setShowMenu, showMenu, pathname])
 
   const accountTabs = [
     {
