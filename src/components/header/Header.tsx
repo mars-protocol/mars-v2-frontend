@@ -56,6 +56,7 @@ const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
   ...(chainConfig.hls
     ? [{ pages: ['hls-staking', 'hls-farm'] as Page[], label: 'High Leverage' }]
     : []),
+  { pages: ['isolated'], label: 'Isolated' },
   { pages: ['portfolio'], label: 'Portfolio' },
   { pages: ['governance'], label: 'Governance', externalUrl: DocURL.COUNCIL },
 ]
