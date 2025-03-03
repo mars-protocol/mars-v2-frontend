@@ -13,6 +13,8 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountBalanceValue } from 'utils/accounts'
 import { BN } from 'utils/helpers'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useAsset from 'hooks/assets/useAsset'
 
 interface Props {
   account: Account
@@ -54,6 +56,10 @@ export default function AccountSummaryHeader(props: Props) {
     accountBalance.toFixed(2),
   )
   const increase = updatedAccountBalance?.isGreaterThan(accountBalance)
+  const isIsolatedAccount = account.kind === 'isolated_margin'
+  const chainConfig = useChainConfig()
+  const stableDenom = chainConfig.stables[0]
+  const stableAsset = useAsset(stableDenom)
 
   return (
     <div className='relative flex flex-wrap w-full p-4 pb-2 border-b bg-white/10 border-white/10'>
@@ -75,7 +81,10 @@ export default function AccountSummaryHeader(props: Props) {
       )}
       <div className='flex items-end w-full gap-2 pb-2 border-b border-white/5'>
         <DisplayCurrency
-          options={{ abbreviated: false }}
+          options={{
+            abbreviated: false,
+            suffix: isIsolatedAccount ? ` ${stableAsset?.symbol || 'USDC'}` : undefined,
+          }}
           coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalance)}
           className='text-lg -mb-[1px]'
         />
@@ -90,7 +99,10 @@ export default function AccountSummaryHeader(props: Props) {
               <ArrowRight />
             </span>
             <DisplayCurrency
-              options={{ abbreviated: false }}
+              options={{
+                abbreviated: false,
+                suffix: isIsolatedAccount ? ` ${stableAsset?.symbol || 'USDC'}` : undefined,
+              }}
               coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, updatedAccountBalance)}
               className={classNames(
                 'text-lg -mb-[1px]',
