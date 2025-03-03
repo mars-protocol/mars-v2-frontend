@@ -1,16 +1,11 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import Card from 'components/common/Card'
 import { PerpsModule } from 'components/perps/Module/PerpsModule'
 import { PerpsChart } from 'components/perps/PerpsChart'
 import { PerpsPositions } from 'components/perps/PerpsPositions'
 import Button from 'components/common/Button'
 import Text from 'components/common/Text'
-import { Callout, CalloutType } from 'components/common/Callout'
-import IsolatedAccountMintAndFund from 'components/account/IsolatedAccountMintAndFund'
-import useStore from 'store'
-import { Cross, InfoCircle, PlusCircled } from 'components/common/Icons'
-import useHasIsolatedAccounts from 'hooks/accounts/useHasIsolatedAccounts'
-import { CircularProgress } from 'components/common/CircularProgress'
+import { Cross } from 'components/common/Icons'
 import AssetImage from 'components/common/assets/AssetImage'
 import useAsset from 'hooks/assets/useAsset'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -19,7 +14,6 @@ import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 
 export default function IsolatedPage() {
-  const { hasIsolatedAccounts, isLoading } = useHasIsolatedAccounts()
   const chainConfig = useChainConfig()
   const stableDenom = chainConfig.stables[0]
   const stableAsset = useAsset(stableDenom)
@@ -29,62 +23,9 @@ export default function IsolatedPage() {
     getDefaultChainSettings(chainConfig).showIsolatedCollateralBanner,
   )
 
-  const handleCreateIsolatedAccount = useCallback(() => {
-    useStore.setState({
-      focusComponent: {
-        component: <IsolatedAccountMintAndFund />,
-      },
-    })
-  }, [])
-
   const handleCloseBanner = useCallback(() => {
     setIsCollateralBannerVisible(false)
   }, [setIsCollateralBannerVisible])
-
-  const accountCreationBanner = useMemo(() => {
-    if (isLoading) {
-      return (
-        <div className='w-full mb-4'>
-          <Card className='p-4 bg-white/5'>
-            <div className='flex items-center justify-center p-2'>
-              <CircularProgress size={24} className='mr-2' />
-              <Text size='sm'>Checking account status...</Text>
-            </div>
-          </Card>
-        </div>
-      )
-    }
-
-    if (!hasIsolatedAccounts) {
-      return (
-        <div className='w-full mb-4'>
-          <Card className='p-4 bg-white/5'>
-            <div className='flex flex-col md:flex-row md:items-center justify-between'>
-              <div>
-                <Text size='lg' className='font-semibold mb-2'>
-                  Isolated Margin Trading
-                </Text>
-                <Text size='sm' className='text-white/70'>
-                  In order to trade on isolated margin, you should first create an isolated margin
-                  account.
-                </Text>
-              </div>
-              <Button
-                text='Create Isolated Account'
-                color='primary'
-                size='md'
-                className='mt-3 md:mt-0'
-                leftIcon={<PlusCircled />}
-                onClick={handleCreateIsolatedAccount}
-              />
-            </div>
-          </Card>
-        </div>
-      )
-    }
-
-    return null
-  }, [isLoading, hasIsolatedAccounts, handleCreateIsolatedAccount])
 
   const usdcCollateralBanner = useMemo(() => {
     if (!isCollateralBannerVisible) return null
@@ -93,7 +34,7 @@ export default function IsolatedPage() {
       <div className='w-full mb-4'>
         <Card className='p-0 overflow-hidden bg-gradient-to-r from-purple/10 to-white/5'>
           <div className='relative'>
-            <div className='absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple to-purple/50'></div>
+            <div className='absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple to-purple/50' />
 
             <div className='absolute top-2 right-2'>
               <Button
@@ -126,14 +67,6 @@ export default function IsolatedPage() {
                     Isolated accounts only accept {stableAsset?.symbol || 'USDC'} as collateral,
                     allowing you to manage risk by separating your positions from your main account.
                   </Text>
-                  {/* <Callout type={CalloutType.INFO} className='mt-2'>
-                    <div className='flex items-center'>
-                      <span>
-                        Trading in an isolated account helps limit your risk exposure to only the
-                        funds deposited in this account.
-                      </span>
-                    </div>
-                  </Callout> */}
                 </div>
               </div>
             </div>
@@ -147,8 +80,6 @@ export default function IsolatedPage() {
     <div className='flex flex-wrap w-full gap-4 md:grid md:grid-cols-chart'>
       <div className='w-full'>
         {usdcCollateralBanner}
-        {accountCreationBanner}
-
         <Card title='Trading Chart'>
           <PerpsChart />,
         </Card>
