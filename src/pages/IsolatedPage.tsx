@@ -15,6 +15,8 @@ import AssetImage from 'components/common/assets/AssetImage'
 import useAsset from 'hooks/assets/useAsset'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 
 export default function IsolatedPage() {
   const { hasIsolatedAccounts, isLoading } = useHasIsolatedAccounts()
@@ -23,8 +25,8 @@ export default function IsolatedPage() {
   const stableAsset = useAsset(stableDenom)
 
   const [isCollateralBannerVisible, setIsCollateralBannerVisible] = useLocalStorage(
-    'isolated-collateral-banner-visible',
-    true,
+    LocalStorageKeys.SHOW_ISOLATED_COLLATERAL_BANNER,
+    getDefaultChainSettings(chainConfig).showIsolatedCollateralBanner,
   )
 
   const handleCreateIsolatedAccount = useCallback(() => {
