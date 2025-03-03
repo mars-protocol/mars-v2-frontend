@@ -2,6 +2,7 @@ import { Suspense, useEffect, useMemo } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import AccountCreateFirst from 'components/account/AccountCreateFirst'
+import IsolatedAccountMintAndFund from 'components/account/IsolatedAccountMintAndFund'
 import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
 import WalletBridges from 'components/Wallet/WalletBridges'
@@ -14,6 +15,7 @@ import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
+import { getIsolatedAccounts } from 'utils/accounts'
 
 function FetchLoading() {
   return (
@@ -29,6 +31,7 @@ function FetchLoading() {
 function Content() {
   const address = useStore((s) => s.address)
   const isV1 = useStore((s) => s.isV1)
+  const { pathname } = useLocation()
   const { data: accountIds, isLoading: isLoadingAccounts } = useAccountIds(
     address || '',
     true,
@@ -42,9 +45,23 @@ function Content() {
     [walletBalances, baseAsset],
   )
 
+  const isIsolatedPath = pathname.includes('/isolated')
+
   if (isLoadingAccounts || isLoadingBalances) return <FetchLoading />
   if (BN(baseBalance).isZero()) return <WalletBridges />
-  if (accountIds && accountIds.length === 0 && !isV1) return <AccountCreateFirst />
+
+  if (accountIds && accountIds.length === 0 && !isV1) {
+    if (isIsolatedPath) {
+      useStore.setState({
+        focusComponent: {
+          component: <IsolatedAccountMintAndFund />,
+        },
+      })
+      return <FetchLoading />
+    }
+    return <AccountCreateFirst />
+  }
+
   if (!isLoadingAccounts && !isLoadingBalances && accountIds)
     return <FetchedBalances accountIds={accountIds} isV1={isV1} address={address} />
   return <FetchLoading />
@@ -73,6 +90,7 @@ function FetchedBalances({
   const chainConfig = useChainConfig()
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const isIsolatedPath = pathname.includes('/isolated')
 
   const page = getPage(pathname, chainConfig)
 
@@ -83,13 +101,51 @@ function FetchedBalances({
       const currentAccountIsHls = urlAccountId && !accountIds.includes(urlAccountId)
       const currentAccount = currentAccountIsHls || !urlAccountId ? accountIds[0] : urlAccountId
 
-      navigate(getRoute(page, searchParams, address, isV1 ? undefined : currentAccount), {
-        replace: true,
-      })
+      if (isIsolatedPath && !isV1) {
+        const checkIsolatedAccounts = async () => {
+          try {
+            const isolatedAccounts = await getIsolatedAccounts(chainConfig, address || '')
+
+            if (isolatedAccounts.length > 0) {
+              navigate(getRoute(page, searchParams, address, isolatedAccounts[0].id), {
+                replace: true,
+              })
+            } else {
+              useStore.setState({
+                focusComponent: {
+                  component: <IsolatedAccountMintAndFund />,
+                },
+              })
+            }
+          } catch (error) {
+            console.error('Error fetching isolated accounts:', error)
+            navigate(getRoute(page, searchParams, address, isV1 ? undefined : currentAccount), {
+              replace: true,
+            })
+          }
+        }
+
+        checkIsolatedAccounts()
+      } else {
+        navigate(getRoute(page, searchParams, address, isV1 ? undefined : currentAccount), {
+          replace: true,
+        })
+      }
     }
 
     useStore.setState({ focusComponent: null })
-  }, [accountIds, address, isV1, navigate, page, searchParams, urlAccountId, urlAddress])
+  }, [
+    accountIds,
+    address,
+    isV1,
+    navigate,
+    page,
+    searchParams,
+    urlAccountId,
+    urlAddress,
+    isIsolatedPath,
+    chainConfig,
+  ])
 
   return <FetchLoading />
 }
