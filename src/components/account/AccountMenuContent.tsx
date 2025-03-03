@@ -57,6 +57,16 @@ export default function AccountMenuContent(props: Props) {
   const performCreateAccount = useCallback(async () => {
     setShowMenu(false)
     setIsCreating(true)
+
+    if (isIsolatedPage && !hasIsolatedAccounts) {
+      setIsCreating(false)
+      useStore.setState({
+        focusComponent: {
+          component: <IsolatedAccountMintAndFund />,
+        },
+      })
+      return
+    }
     const accountId = await createAccount('default', isAutoLendEnabled)
     setIsCreating(false)
 
@@ -85,6 +95,8 @@ export default function AccountMenuContent(props: Props) {
     address,
     enableAutoLendGlobal,
     enableAutoLendAccountId,
+    isIsolatedPage,
+    hasIsolatedAccounts,
   ])
 
   const handleCreateAccountClick = useCallback(() => {
@@ -122,7 +134,13 @@ export default function AccountMenuContent(props: Props) {
         id={ACCOUNT_MENU_BUTTON_ID}
         onClick={handleCreateAccountClick}
         leftIcon={hasCreditAccounts ? <Account /> : <PlusCircled />}
-        color={hasCreditAccounts ? 'secondary' : 'primary'}
+        color={
+          isIsolatedPage && !hasIsolatedAccounts
+            ? 'primary'
+            : hasCreditAccounts
+              ? 'secondary'
+              : 'primary'
+        }
         hasFocus={showMenu}
         hasSubmenu={hasCreditAccounts}
         className={isMobile ? '!px-2' : undefined}
