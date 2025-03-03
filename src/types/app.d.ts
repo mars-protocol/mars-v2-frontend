@@ -246,6 +246,13 @@ interface ChainConfig {
     creditManager: string
     pyth: string
   }
+  isolatedMargin?: {
+    info: string
+    createAccountButton: {
+      text: string
+      navigateTo: string
+    }
+  }
   defaultCurrency: {
     coinDenom: string
     coinMinimalDenom: string

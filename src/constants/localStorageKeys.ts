@@ -28,5 +28,6 @@ export enum LocalStorageKeys {
   SHOW_SUMMARY = 'showSummary',
   TV_CHART_STORE = 'tvChartStore',
   SHOW_PERPS_VAULT_BANNER = 'showPerpsVaultBanner',
+  SHOW_ISOLATED_COLLATERAL_BANNER = 'showIsolatedCollateralBanner',
   FUNDING_RATE_INTERVAL = 'fundingRateInterval',
 }
