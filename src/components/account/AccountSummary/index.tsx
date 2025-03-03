@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 
 import AccountBalancesTable from 'components/account/AccountBalancesTable'
 import AccountComposition from 'components/account/AccountComposition'
@@ -31,6 +32,8 @@ interface Props {
 
 export default function AccountSummary(props: Props) {
   const { account, isInModal } = props
+  const location = useLocation()
+  const isIsolatedPage = location.pathname.includes('/isolated')
   const chainConfig = useChainConfig()
   const storageKey = isInModal
     ? `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_IN_MODAL_TABS_EXPANDED}`
@@ -159,13 +162,16 @@ export default function AccountSummary(props: Props) {
   const items = useMemo(() => {
     const itemsArray = [
       {
-        title: `Composition`,
+        title: 'Composition',
         renderContent: () => (account ? <AccountComposition account={account} /> : null),
         isOpen: accountSummaryTabs[0],
         toggleOpen: (index: number) => handleToggle(index),
         renderSubTitle: () => <></>,
       },
-      {
+    ]
+
+    if (!isIsolatedPage) {
+      itemsArray.push({
         title: 'Balances',
         renderContent: () =>
           account ? (
@@ -179,8 +185,8 @@ export default function AccountSummary(props: Props) {
         isOpen: accountSummaryTabs[1],
         toggleOpen: (index: number) => handleToggle(index),
         renderSubTitle: () => <></>,
-      },
-    ]
+      })
+    }
 
     const showStrategies =
       !!account.vaults.length ||
@@ -223,6 +229,7 @@ export default function AccountSummary(props: Props) {
     handleToggle,
     accountSummaryTabs,
     updatedAccount,
+    isIsolatedPage,
   ])
 
   if (!account) return null
