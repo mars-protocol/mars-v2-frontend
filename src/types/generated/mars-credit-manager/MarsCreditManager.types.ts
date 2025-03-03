@@ -82,7 +82,7 @@ export type ExecuteMsg =
       }
     }
 export type AccountKind =
-  | ('default' | 'high_levered_strategy')
+  | ('default' | 'isolated_margin' | 'high_levered_strategy')
   | {
       fund_manager: {
         vault_addr: string

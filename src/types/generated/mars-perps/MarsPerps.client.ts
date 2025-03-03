@@ -16,6 +16,7 @@ import {
   Int128,
   ActionKind,
   PerpParams,
+  MarginParams,
   ConfigUpdates,
   QueryMsg,
   ConfigForString,

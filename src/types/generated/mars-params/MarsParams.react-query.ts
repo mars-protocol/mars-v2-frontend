@@ -30,6 +30,7 @@ import {
   VaultConfigBaseForString,
   Coin,
   PerpParams,
+  MarginParams,
   QueryMsg,
   HlsAssetTypeForAddr,
   Addr,

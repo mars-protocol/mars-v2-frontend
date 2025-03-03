@@ -171,9 +171,11 @@ export interface PerpParams {
   closing_fee_rate: Decimal
   denom: string
   enabled: boolean
-  liquidation_threshold: Decimal
+  liquidation_threshold: MarginParams
+  liquidation_threshold_isolated: MarginParams
   max_funding_velocity: Decimal
-  max_loan_to_value: Decimal
+  max_loan_to_value: MarginParams
+  max_loan_to_value_isolated: MarginParams
   max_long_oi_value: Uint128
   max_net_oi_value: Uint128
   max_position_value?: Uint128 | null
@@ -181,6 +183,10 @@ export interface PerpParams {
   min_position_value: Uint128
   opening_fee_rate: Decimal
   skew_scale: Uint128
+}
+export interface MarginParams {
+  is_enabled: boolean
+  value?: Decimal | null
 }
 export type QueryMsg =
   | {

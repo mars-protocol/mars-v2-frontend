@@ -24,6 +24,7 @@ import {
   RedBankSettings,
   PerpsData,
   PerpParams,
+  MarginParams,
   Positions,
   DebtAmount,
   Coin,
