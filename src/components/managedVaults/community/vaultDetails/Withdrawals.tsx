@@ -9,6 +9,7 @@ import useQueuedWithdrawals from 'components/managedVaults/community/vaultDetail
 import useUserWithdrawals from 'components/managedVaults/community/vaultDetails/table/useUserWithdrawals'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import VaultStats from 'components/managedVaults/community/vaultDetails/common/VaultStats'
+import Withdraw from 'components/managedVaults/community/vaultDetails/table/columns/Withdraw'
 import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
@@ -20,6 +21,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { Tooltip } from 'components/common/Tooltip'
 import { useAllUnlocks } from 'hooks/managedVaults/useAllUnlocks'
 import { useUserUnlocks } from 'hooks/managedVaults/useUserUnlocks'
+import { useMemo } from 'react'
 
 interface Props {
   details: ExtendedManagedVaultDetails
@@ -41,15 +43,28 @@ export default function Withdrawals(props: Props) {
   } = useAllUnlocks(vaultAddress)
   const { data: userUnlocksData = [] } = useUserUnlocks(vaultAddress)
 
-  const userWithdrawalColumns = useUserWithdrawals({
-    isLoading: false,
-    details,
-    vaultAddress,
-  })
+  const unlockedPositions = useMemo(() => {
+    return userUnlocksData.filter((unlock) => {
+      const unlocksAtMs = unlock.cooldown_end * 1000
+      return unlocksAtMs <= Date.now()
+    })
+  }, [userUnlocksData])
+
+  const totalUnlockedAmount = useMemo(() => {
+    return unlockedPositions.reduce((total, unlock) => {
+      return total.plus(BN(unlock.vault_tokens))
+    }, BN_ZERO)
+  }, [unlockedPositions])
+
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
   const withdrawalDate = moment(details.performance_fee_state.last_withdrawal * 1000)
   const isValidWithdrawal = withdrawalDate.isValid()
+  const userWithdrawalColumns = useUserWithdrawals({
+    isLoading: false,
+    details,
+    depositAsset,
+  })
   const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false, details, depositAsset })
 
   const lockUpPeriod = formatLockupPeriod(
@@ -68,7 +83,17 @@ export default function Withdrawals(props: Props) {
     return userUnlocksData.length > 0 ? (
       <div className='w-full max-h-75'>
         <Table
-          title='Withdrawals'
+          title={
+            <div className='flex justify-between items-center w-full py-3 px-4 bg-white/10'>
+              <Text size='lg'>Withdrawals</Text>
+              <Withdraw
+                amount={totalUnlockedAmount.toString()}
+                vaultAddress={vaultAddress}
+                vaultToken={details.vault_token}
+                disabled={unlockedPositions.length === 0}
+              />
+            </div>
+          }
           columns={userWithdrawalColumns}
           data={userUnlocksData}
           initialSorting={[{ id: 'initiated', desc: true }]}

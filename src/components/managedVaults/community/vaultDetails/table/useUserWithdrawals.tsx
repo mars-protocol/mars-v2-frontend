@@ -2,28 +2,26 @@ import { ColumnDef } from '@tanstack/react-table'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import UnlockTime, { UNLOCK_TIME_META } from 'components/earn/farm/common/Table/Columns/UnlockTime'
 import Timestamp from 'components/managedVaults/community/vaultDetails/table/columns/Timestamp'
-import Withdraw, {
-  WITHDRAW_META,
-} from 'components/managedVaults/community/vaultDetails/table/columns/Withdraw'
 import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
+import { FormattedNumber } from 'components/common/FormattedNumber'
 
 interface Props {
   isLoading: boolean
   details: ExtendedManagedVaultDetails
-  vaultAddress: string
+  depositAsset: Asset
 }
 
 export default function useUserWithdrawals(props: Props) {
-  const { isLoading, details, vaultAddress } = props
+  const { isLoading, details, depositAsset } = props
 
   return useMemo<ColumnDef<UserManagedVaultUnlock>[]>(
     () => [
       {
         id: 'name',
         accessorKey: 'Unlock Amount',
-        meta: { className: 'min-w-50' },
+        meta: { className: 'min-w-30' },
         cell: ({ row }) => {
           const coin = BNCoin.fromDenomAndBigNumber(
             details.base_token,
@@ -39,9 +37,27 @@ export default function useUserWithdrawals(props: Props) {
         },
       },
       {
+        accessorKey: 'Unlock Tokens',
+        meta: { className: 'min-w-30' },
+        cell: ({ row }) => {
+          return (
+            <FormattedNumber
+              amount={Number(row.original.base_tokens)}
+              options={{
+                decimals: depositAsset.decimals,
+                maxDecimals: 2,
+              }}
+              className='text-xs'
+            />
+          )
+        },
+      },
+      {
         header: 'Initiated',
-        meta: { className: 'min-w-20' },
-        cell: ({ row }) => <Timestamp value={row.original.created_at} isLoading={isLoading} />,
+        meta: { className: 'min-w-30' },
+        cell: ({ row }) => {
+          return <Timestamp value={row.original.created_at} isLoading={isLoading} />
+        },
       },
       {
         ...UNLOCK_TIME_META,
@@ -50,20 +66,7 @@ export default function useUserWithdrawals(props: Props) {
           return <UnlockTime unlocksAt={unlocksAtMs} />
         },
       },
-      {
-        ...WITHDRAW_META,
-        cell: ({ row }) => {
-          return (
-            <Withdraw
-              amount={row.original.vault_tokens}
-              vaultAddress={vaultAddress}
-              vaultToken={details.vault_token}
-              unlocksAt={row.original.cooldown_end * 1000}
-            />
-          )
-        },
-      },
     ],
-    [isLoading, vaultAddress, details.vault_token, details.base_token],
+    [isLoading, details.base_token, depositAsset.decimals],
   )
 }
