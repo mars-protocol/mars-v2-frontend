@@ -1,6 +1,7 @@
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import getWalletAccountIds from 'api/wallets/getAccountIds'
 import { BNCoin } from 'types/classes/BNCoin'
 import { VaultPosition } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { AssetParamsBaseForAddr } from 'types/generated/mars-params/MarsParams.types'
@@ -583,4 +584,22 @@ export function removeEmptyBNCoins(coins: BNCoin[]) {
     newCoins.push(coin)
   })
   return newCoins
+}
+
+/**
+ * Fetches all isolated margin accounts for a given address
+ * @param chainConfig The chain configuration
+ * @param address The user's address
+ * @returns An array of account IDs and kinds filtered to only include isolated margin accounts
+ */
+export async function getIsolatedAccounts(chainConfig: any, address: string) {
+  try {
+    const allAccountsWithKinds = await getWalletAccountIds(chainConfig, address)
+    return allAccountsWithKinds.filter(
+      (a) => typeof a.kind === 'string' && a.kind === 'isolated_margin',
+    )
+  } catch (error) {
+    console.error('Error fetching isolated accounts:', error)
+    return []
+  }
 }
