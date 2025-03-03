@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from 'react'
-import { useLocation } from 'react-router-dom'
 
 import AccountBalancesTable from 'components/account/AccountBalancesTable'
 import AccountComposition from 'components/account/AccountComposition'
@@ -32,8 +31,7 @@ interface Props {
 
 export default function AccountSummary(props: Props) {
   const { account, isInModal } = props
-  const location = useLocation()
-  const isIsolatedPage = location.pathname.includes('/isolated')
+  const isIsolatedAccount = account.kind === 'isolated_margin'
   const chainConfig = useChainConfig()
   const storageKey = isInModal
     ? `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_IN_MODAL_TABS_EXPANDED}`
@@ -170,7 +168,7 @@ export default function AccountSummary(props: Props) {
       },
     ]
 
-    if (!isIsolatedPage) {
+    if (!isIsolatedAccount) {
       itemsArray.push({
         title: 'Balances',
         renderContent: () =>
@@ -229,7 +227,7 @@ export default function AccountSummary(props: Props) {
     handleToggle,
     accountSummaryTabs,
     updatedAccount,
-    isIsolatedPage,
+    isIsolatedAccount,
   ])
 
   if (!account) return null
