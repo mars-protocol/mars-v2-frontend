@@ -346,10 +346,16 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-    deposit: async (options: { accountId: string; coins: BNCoin[]; lend: boolean }) => {
+    deposit: async (options: {
+      accountId?: string
+      accountKind?: AccountKind
+      coins: BNCoin[]
+      lend: boolean
+    }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
+          account_kind: options.accountKind ?? 'default',
           actions: options.coins.map((coin) => ({
             deposit: coin.toCoin(),
           })),

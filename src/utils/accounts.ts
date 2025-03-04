@@ -592,7 +592,7 @@ export function removeEmptyBNCoins(coins: BNCoin[]) {
  * @param address The user's address
  * @returns An array of account IDs and kinds filtered to only include isolated margin accounts
  */
-export async function getIsolatedAccounts(chainConfig: any, address: string) {
+export async function getIsolatedAccounts(chainConfig: ChainConfig, address: string) {
   try {
     const allAccountsWithKinds = await getWalletAccountIds(chainConfig, address)
     return allAccountsWithKinds.filter(

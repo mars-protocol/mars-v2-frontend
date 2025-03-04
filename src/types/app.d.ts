@@ -1048,7 +1048,12 @@ interface BroadcastSlice {
     isAutoLendEnabled: boolean,
   ) => Promise<string | null>
   deleteAccount: (options: { accountId: string; lends: BNCoin[] }) => Promise<boolean>
-  deposit: (options: { accountId: string; coins: BNCoin[]; lend: boolean }) => Promise<boolean>
+  deposit: (options: {
+    accountId?: string
+    accountKind?: AccountKind
+    coins: BNCoin[]
+    lend: boolean
+  }) => Promise<boolean>
   depositIntoFarm: (options: {
     accountId: string
     actions: Action[]
@@ -1219,6 +1224,7 @@ interface CommonSlice {
   client?: WalletClient
   isOpen: boolean
   selectedAccount: string | null
+  selectedIsolatedAccount: string | null
   updatedAccount?: Account
   focusComponent: FocusComponent | null
   mobileNavExpanded: boolean

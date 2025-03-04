@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 
-import AccountCreateFirst from 'components/account/AccountCreateFirst'
+import AccountCreateSelect from 'components/account/AccountCreateSelect'
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
 import { PlusCircled } from 'components/common/Icons'
@@ -26,7 +26,7 @@ export default function AccountSummary() {
       return
     }
 
-    useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
+    useStore.setState({ focusComponent: { component: <AccountCreateSelect /> } })
   }, [hasFundsForTxFee])
 
   if (!walletAddress && !urlAddress) return <ConnectInfo />
