@@ -24,6 +24,7 @@ export default function VaultPosition(props: Props) {
   const { amount: userVaultShares, calculateVaultShare } = useManagedVaultUserShares(
     address,
     details.vault_tokens_denom,
+    vaultAddress,
   )
   const { data: userVaultTokensAmount } = useManagedVaultConvertToTokens(
     vaultAddress,
