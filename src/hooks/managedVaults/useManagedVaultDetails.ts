@@ -68,18 +68,31 @@ export function useManagedVaultDetails(vaultAddress?: string) {
       isLoading: true,
     }
 
-  return {
-    details: {
-      ...details,
-      owner: ownerAddress,
-      metrics: metrics ?? { apr: '0', tvl: '0' },
-      performance_fee_state: performanceFeeState ?? {
-        accumulated_fee: '0',
-        accumulated_pnl: '0',
-        base_tokens_amt: '0',
-        last_withdrawal: 0,
-      },
+  const transformedDetailsData = {
+    title: details.title,
+    subtitle: details.subtitle,
+    description: details.description,
+    credit_manager: details.credit_manager,
+    vault_account_id: details.vault_account_id,
+    cooldown_period: details.cooldown_period,
+    performance_fee_config: details.performance_fee_config,
+    share_price: details.share_price,
+    owner: ownerAddress,
+    metrics: metrics ?? { apr: '0', tvl: '0' },
+    performance_fee_state: performanceFeeState ?? {
+      accumulated_fee: '0',
+      accumulated_pnl: '0',
+      base_tokens_amt: '0',
+      last_withdrawal: 0,
     },
+    base_tokens_denom: details.base_token,
+    base_tokens_amount: details.total_base_tokens,
+    vault_tokens_denom: details.vault_token,
+    vault_tokens_amount: details.total_vault_tokens,
+  }
+
+  return {
+    details: transformedDetailsData,
     isOwner,
     isLoading: false,
   }

@@ -1874,7 +1874,7 @@ interface ManagedVaultsResponse {
   total: string
 }
 
-interface ManagedVaultDetails {
+interface ManagedVaultDetailsResponse {
   base_token: string
   vault_token: string
   title: string
@@ -1888,6 +1888,21 @@ interface ManagedVaultDetails {
   total_vault_tokens: string
   share_price: number
 }
+interface ManagedVaultDetails {
+  base_tokens_denom: string
+  vault_tokens_denom: string
+  title: string
+  subtitle: string | null
+  description: string
+  credit_manager: string
+  vault_account_id: string | null
+  cooldown_period: number
+  performance_fee_config: PerformanceFeeConfig
+  base_tokens_amount: string
+  vault_tokens_amount: string
+  share_price: number
+}
+
 interface ManagedVaultMetrics {
   apr: string
   tvl: string
@@ -1913,12 +1928,20 @@ interface ExtendedManagedVaultDetails extends ManagedVaultDetails {
   performance_fee_state: PerformanceFeeState
 }
 
-interface UserManagedVaultUnlock {
+interface UserManagedVaultUnlockResponse {
   user_address: string
   created_at: number
   cooldown_end: number
   vault_tokens: string
   base_tokens: string
+}
+
+interface UserManagedVaultUnlock {
+  user_address: string
+  created_at: number
+  cooldown_end: number
+  vault_tokens_amount: string
+  base_tokens_amount: string
 }
 
 interface StargazeNameInfo {

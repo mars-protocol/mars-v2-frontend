@@ -202,7 +202,7 @@ const getManagedVaultDetails = async (chainConfig: ChainConfig, vaultAddress: st
     const response = await client.vaultExtension({
       vault_info: {},
     })
-    return response as unknown as ManagedVaultDetails
+    return response as unknown as ManagedVaultDetailsResponse
   } catch (error) {
     setNodeError(getUrl(chainConfig.endpoints.rpc), error)
     throw error
@@ -237,7 +237,7 @@ const getManagedVaultUserUnlocks = async (
         user_address: userAddress,
       },
     })
-    return response as unknown as UserManagedVaultUnlock[]
+    return response as unknown as UserManagedVaultUnlockResponse[]
   } catch (error) {
     setNodeError(getUrl(chainConfig.endpoints.rpc), error)
     throw error
@@ -259,7 +259,7 @@ const getManagedVaultAllUnlocks = async (
       },
     })
     return response as unknown as {
-      data: UserManagedVaultUnlock[]
+      data: UserManagedVaultUnlockResponse[]
       metadata: { has_more: boolean }
     }
   } catch (error) {
@@ -302,6 +302,23 @@ const getManagedVaultConvertToTokens = async (
   }
 }
 
+const getManagedVaultConvertToShares = async (
+  chainConfig: ChainConfig,
+  vaultAddress: string,
+  amount: string,
+) => {
+  try {
+    const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    const response = await client.convertToShares({
+      amount,
+    })
+    return response
+  } catch (error) {
+    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
+    throw error
+  }
+}
+
 export {
   getClient,
   getCreditManagerQueryClient,
@@ -320,4 +337,5 @@ export {
   getVaultQueryClient,
   getManagedVaultPreviewRedeem,
   getManagedVaultConvertToTokens,
+  getManagedVaultConvertToShares,
 }

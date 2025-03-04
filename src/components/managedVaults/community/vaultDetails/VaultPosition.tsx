@@ -1,41 +1,46 @@
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { ArrowDownLine } from 'components/common/Icons'
+import { LockUnlocked } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 import PositionInfo from 'components/managedVaults/community/vaultDetails/common/PositionInfo'
+import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVaultConvertToTokens'
 
 interface Props {
-  totalVaultTokens: string
-  baseDenom: string
-  tokenDenom: string
+  details: ExtendedManagedVaultDetails
+  vaultAddress: string
   isOwner: boolean
   onDeposit: () => void
   onWithdraw: () => void
 }
 
 export default function VaultPosition(props: Props) {
-  const { totalVaultTokens, baseDenom, isOwner, tokenDenom, onDeposit, onWithdraw } = props
+  const { details, isOwner, vaultAddress, onDeposit, onWithdraw } = props
 
   const address = useStore((s) => s.address)
-  const { amount, calculateVaultShare } = useManagedVaultUserShares(address, tokenDenom)
-  const sharePercentage = calculateVaultShare(totalVaultTokens)
-  const noDeposits = amount === '0'
+  const { amount: userVaultShares, calculateVaultShare } = useManagedVaultUserShares(
+    address,
+    details.vault_tokens_denom,
+  )
+  const { data: userVaultTokensAmount } = useManagedVaultConvertToTokens(
+    vaultAddress,
+    userVaultShares,
+  )
+  const sharePercentage = calculateVaultShare(details.vault_tokens_amount)
 
   return (
     <PositionInfo
       value={
-        noDeposits ? (
+        !userVaultTokensAmount ? (
           <Text>No deposits</Text>
         ) : (
           <DisplayCurrency
             coin={BNCoin.fromDenomAndBigNumber(
-              baseDenom,
-              BN(amount).shiftedBy(-PRICE_ORACLE_DECIMALS),
+              details.base_tokens_denom,
+              BN(userVaultTokensAmount),
             )}
             className='text-2xl'
           />
@@ -58,11 +63,11 @@ export default function VaultPosition(props: Props) {
         onClick: onDeposit,
       }}
       secondaryButton={{
-        text: 'Withdraw',
+        text: 'Unlock',
         color: 'secondary',
         onClick: onWithdraw,
-        rightIcon: <ArrowDownLine />,
-        disabled: noDeposits,
+        rightIcon: <LockUnlocked />,
+        disabled: !userVaultTokensAmount,
       }}
       isOwner={isOwner}
     />

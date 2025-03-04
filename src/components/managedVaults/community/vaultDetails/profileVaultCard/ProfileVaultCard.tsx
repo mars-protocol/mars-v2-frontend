@@ -14,7 +14,6 @@ import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
 import FeeTag from 'components/managedVaults/community/vaultDetails/profileVaultCard/FeeTag'
 import InfoRow from 'components/managedVaults/community/vaultDetails/profileVaultCard/InfoRow'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import useManagedVaultOwnerInfo from 'hooks/managedVaults/useManagedVaultOwnerInfo'
 import moment from 'moment'
@@ -35,7 +34,7 @@ interface Props {
 export default function ProfileVaultCard(props: Props) {
   const { details, isOwner, wallet, onDelete, onEdit } = props
   const vaultAssets = useVaultAssets()
-  const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
+  const depositAsset = vaultAssets.find(byDenom(details.base_tokens_denom)) as Asset
   const { vaultOwnerInfo, isLoading } = useManagedVaultOwnerInfo(wallet)
 
   return (
@@ -93,8 +92,8 @@ export default function ProfileVaultCard(props: Props) {
           <InfoRow label='TVL'>
             <DisplayCurrency
               coin={BNCoin.fromDenomAndBigNumber(
-                details.base_token,
-                BN(details.total_vault_tokens).shiftedBy(-PRICE_ORACLE_DECIMALS),
+                details.base_tokens_denom,
+                BN(details.base_tokens_amount),
               )}
               className='text-sm'
             />
@@ -102,8 +101,8 @@ export default function ProfileVaultCard(props: Props) {
           <InfoRow label='Accrued PnL'>
             <DisplayCurrency
               coin={BNCoin.fromDenomAndBigNumber(
-                'usd',
-                BN(details.performance_fee_state.accumulated_pnl).shiftedBy(-PRICE_ORACLE_DECIMALS),
+                details.base_tokens_denom,
+                BN(details.performance_fee_state.accumulated_pnl),
               )}
               showSignPrefix
               className={classNames(

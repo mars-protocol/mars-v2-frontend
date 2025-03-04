@@ -118,7 +118,7 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
                   value={
                     <DisplayCurrency
                       coin={BNCoin.fromDenomAndBigNumber(
-                        'usd',
+                        vaultDetails.base_tokens_denom,
                         BN(vaultDetails.performance_fee_state.accumulated_fee),
                       )}
                       className='text-2xl'
@@ -154,10 +154,9 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
             })()
           ) : (
             <VaultPosition
-              totalVaultTokens={vaultDetails.total_vault_tokens}
-              baseDenom={vaultDetails.base_token}
-              tokenDenom={vaultDetails.vault_token}
+              details={vaultDetails}
               isOwner={isOwner}
+              vaultAddress={vaultAddress}
               onDeposit={() => handleActionModal('deposit')}
               onWithdraw={() => handleActionModal('unlock')}
             />

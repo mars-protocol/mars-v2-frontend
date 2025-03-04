@@ -13,17 +13,14 @@ interface Props {
   amount: string
   vaultAddress: string
   vaultToken: string
-  unlocksAt: number
+  disabled: boolean
 }
 
 export default function Withdraw(props: Props) {
-  const { amount, vaultAddress, vaultToken, unlocksAt } = props
+  const { amount, vaultAddress, vaultToken, disabled } = props
   const address = useStore((s) => s.address)
   const [isConfirming, setIsConfirming] = useState(false)
   const withdrawFromManagedVault = useStore((s) => s.withdrawFromManagedVault)
-
-  const timeLeft = unlocksAt ? unlocksAt - Date.now() : 0
-  const isUnlocked = timeLeft <= 0
 
   const handleWithdraw = useCallback(async () => {
     setIsConfirming(true)
@@ -46,9 +43,9 @@ export default function Withdraw(props: Props) {
       onClick={handleWithdraw}
       color='tertiary'
       leftIcon={<AccountArrowDown />}
-      className='ml-auto'
+      className='ml-auto w-30'
       showProgressIndicator={isConfirming}
-      disabled={!isUnlocked}
+      disabled={disabled}
     >
       Withdraw
     </Button>
