@@ -18,7 +18,13 @@ export function useAllUnlocks(vaultAddress: string, itemsPerPage: number = 3) {
           undefined,
           null,
         )
-        return response.data
+        return response.data.map((unlock) => ({
+          user_address: unlock.user_address,
+          created_at: unlock.created_at,
+          cooldown_end: unlock.cooldown_end,
+          vault_tokens_amount: unlock.vault_tokens,
+          base_tokens_amount: unlock.base_tokens,
+        }))
       } catch (error) {
         console.error('Error fetching all unlocks:', error)
         return []
@@ -41,6 +47,7 @@ export function useAllUnlocks(vaultAddress: string, itemsPerPage: number = 3) {
 
   return {
     data: paginatedData,
+    allData: data,
     isLoading,
     currentPage,
     totalPages,

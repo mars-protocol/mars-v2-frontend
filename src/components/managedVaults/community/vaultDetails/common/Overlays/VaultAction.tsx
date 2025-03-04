@@ -12,6 +12,7 @@ import { BN_ZERO } from 'constants/math'
 import useAccount from 'hooks/accounts/useAccount'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import { useManagedVaultConvertToShares } from 'hooks/managedVaults/useManagedVaultConvertToShares'
 import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVaultConvertToTokens'
 import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
@@ -38,25 +39,31 @@ export default function VaultAction(props: Props) {
   const [isConfirming, setIsConfirming] = useState(false)
   const address = useStore((s) => s.address)
   const { data: account } = useAccount(vaultDetails.vault_account_id || undefined)
-  const { amount: userVaultShares } = useManagedVaultUserShares(address, vaultDetails.vault_token)
+  const { amount: userVaultShares } = useManagedVaultUserShares(
+    address,
+    vaultDetails.vault_tokens_denom,
+  )
   const { data: userVaultTokens, isLoading } = useManagedVaultConvertToTokens(
     vaultAddress,
     userVaultShares,
   )
+  const { data: sharesToUnlock } = useManagedVaultConvertToShares(vaultAddress, amount.toString())
   const { computeMaxWithdrawAmount, computeMaxBorrowAmount } = useHealthComputer(account)
   const depositInManagedVault = useStore((s) => s.depositInManagedVault)
   const unlockFromManagedVault = useStore((s) => s.unlockFromManagedVault)
   const vaultAssets = useVaultAssets()
-  const depositAsset = vaultAssets.find(byDenom(vaultDetails.base_token)) as Asset
-  const assetAmountInWallet = BN(useCurrentWalletBalance(vaultDetails.base_token)?.amount || '0')
+  const depositAsset = vaultAssets.find(byDenom(vaultDetails.base_tokens_denom)) as Asset
+  const assetAmountInWallet = BN(
+    useCurrentWalletBalance(vaultDetails.base_tokens_denom)?.amount || '0',
+  )
   const isDeposit = type === 'deposit'
 
   const maxAmount = useMemo(() => {
     if (isDeposit) {
       return assetAmountInWallet
     }
-    const maxWithdrawAmount = computeMaxWithdrawAmount(vaultDetails.base_token)
-    const maxBorrowAmount = computeMaxBorrowAmount(vaultDetails.base_token, 'wallet')
+    const maxWithdrawAmount = computeMaxWithdrawAmount(vaultDetails.base_tokens_denom)
+    const maxBorrowAmount = computeMaxBorrowAmount(vaultDetails.base_tokens_denom, 'wallet')
     const totalMaxWithdrawAmount = maxWithdrawAmount.plus(maxBorrowAmount)
     const preview = BN(userVaultTokens || 0)
     return BigNumber.minimum(preview, totalMaxWithdrawAmount)
@@ -66,7 +73,7 @@ export default function VaultAction(props: Props) {
     computeMaxWithdrawAmount,
     isDeposit,
     userVaultTokens,
-    vaultDetails.base_token,
+    vaultDetails.base_tokens_denom,
   ])
 
   const withdrawalPeriod = formatLockupPeriod(
@@ -84,10 +91,11 @@ export default function VaultAction(props: Props) {
     setIsConfirming(true)
     try {
       if (type === 'unlock') {
+        if (!sharesToUnlock) return
         await unlockFromManagedVault({
           vaultAddress,
-          amount: amount.toString(),
-          vaultToken: vaultDetails.vault_token,
+          amount: sharesToUnlock,
+          vaultToken: vaultDetails.vault_tokens_denom,
         })
       } else {
         await depositInManagedVault({
@@ -116,7 +124,7 @@ export default function VaultAction(props: Props) {
       className='fixed md:absolute top-[40vh] md:top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full md:w-140 h-auto overflow-hidden !bg-body'
     >
       <div className='flex items-center justify-between gradient-header py-2.5 px-4'>
-        <Text size='lg'>{isDeposit ? 'Deposit' : 'Withdraw'}</Text>
+        <Text size='lg'>{isDeposit ? 'Deposit' : 'Unlock'}</Text>
         <EscButton onClick={handleCloseModal} enableKeyPress />
       </div>
 
@@ -165,7 +173,7 @@ export default function VaultAction(props: Props) {
           <Button
             onClick={() => handleAction(isDeposit ? 'deposit' : 'unlock')}
             className='w-full'
-            text={isDeposit ? 'Deposit' : 'Withdraw'}
+            text={isDeposit ? 'Deposit' : 'Unlock'}
             rightIcon={<ArrowRight />}
             disabled={amount.isZero() || maxAmount.isZero() || isConfirming}
             showProgressIndicator={isConfirming}
