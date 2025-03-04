@@ -425,7 +425,6 @@ type Page =
   | 'portfolio/{accountId}'
   | 'hls-farm'
   | 'hls-staking'
-  | 'isolated'
   | 'governance'
   | 'execute'
   | 'v1'
