@@ -8,6 +8,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 import PositionInfo from 'components/managedVaults/community/vaultDetails/common/PositionInfo'
 import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVaultConvertToTokens'
+import Loading from 'components/common/Loading'
 
 interface Props {
   details: ExtendedManagedVaultDetails
@@ -26,7 +27,7 @@ export default function VaultPosition(props: Props) {
     details.vault_tokens_denom,
     vaultAddress,
   )
-  const { data: userVaultTokensAmount } = useManagedVaultConvertToTokens(
+  const { data: userVaultTokensAmount, isLoading } = useManagedVaultConvertToTokens(
     vaultAddress,
     userVaultShares,
   )
@@ -35,7 +36,9 @@ export default function VaultPosition(props: Props) {
   return (
     <PositionInfo
       value={
-        !userVaultTokensAmount ? (
+        isLoading ? (
+          <Loading className='w-12 h-6' />
+        ) : !userVaultTokensAmount ? (
           <Text>No deposits</Text>
         ) : (
           <DisplayCurrency
