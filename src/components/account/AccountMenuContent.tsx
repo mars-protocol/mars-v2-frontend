@@ -23,9 +23,6 @@ import { isNumber } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import IsolatedAccountMintAndFund from 'components/account/IsolatedAccountMintAndFund'
-import AccountMenuTabs from 'components/account/AccountMenuTabs'
-import useAccount from 'hooks/accounts/useAccount'
-import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 
 interface Props {
   className?: string
@@ -42,8 +39,8 @@ export default function AccountMenuContent(props: Props) {
   const accountId = useAccountId()
   const [searchParams] = useSearchParams()
   const { hasIsolatedAccounts } = useHasIsolatedAccounts()
-  const account = useCurrentAccount()
-  const isIsolatedAccount = account?.kind === 'isolated_margin'
+  const isIsolatedPage = pathname.includes('/isolated')
+
   const createAccount = useStore((s) => s.createAccount)
   const [showMenu, setShowMenu] = useToggle()
   const [isCreating, setIsCreating] = useToggle()
@@ -61,15 +58,15 @@ export default function AccountMenuContent(props: Props) {
     setShowMenu(false)
     setIsCreating(true)
 
-    // if (isIsolatedPage && !hasIsolatedAccounts) {
-    //   setIsCreating(false)
-    //   useStore.setState({
-    //     focusComponent: {
-    //       component: <IsolatedAccountMintAndFund />,
-    //     },
-    //   })
-    //   return
-    // }
+    if (isIsolatedPage && !hasIsolatedAccounts) {
+      setIsCreating(false)
+      useStore.setState({
+        focusComponent: {
+          component: <IsolatedAccountMintAndFund />,
+        },
+      })
+      return
+    }
     const accountId = await createAccount('default', isAutoLendEnabled)
     setIsCreating(false)
 
@@ -98,8 +95,8 @@ export default function AccountMenuContent(props: Props) {
     address,
     enableAutoLendGlobal,
     enableAutoLendAccountId,
-    // isIsolatedPage,
-    // hasIsolatedAccounts,
+    isIsolatedPage,
+    hasIsolatedAccounts,
   ])
 
   const handleCreateAccountClick = useCallback(() => {
@@ -108,14 +105,14 @@ export default function AccountMenuContent(props: Props) {
       useStore.setState({ focusComponent: { component: <WalletBridges /> } })
       return
     }
-    // if (isIsolatedPage && !hasIsolatedAccounts) {
-    //   useStore.setState({
-    //     focusComponent: {
-    //       component: <IsolatedAccountMintAndFund />,
-    //     },
-    //   })
-    //   return
-    // }
+    if (isIsolatedPage && !hasIsolatedAccounts) {
+      useStore.setState({
+        focusComponent: {
+          component: <IsolatedAccountMintAndFund />,
+        },
+      })
+      return
+    }
     if (!hasCreditAccounts) {
       useStore.setState({ focusComponent: { component: <AccountCreateSelect /> } })
       return
@@ -125,20 +122,9 @@ export default function AccountMenuContent(props: Props) {
     hasCreditAccounts,
     setShowMenu,
     showMenu,
-    // isIsolatedPage,
-    // hasIsolatedAccounts,
+    isIsolatedPage,
+    hasIsolatedAccounts,
   ])
-
-  const accountTabs = [
-    {
-      title: 'Credit',
-      renderContent: () => <AccountList setShowMenu={setShowMenu} />,
-    },
-    {
-      title: 'Isolated',
-      renderContent: () => <AccountList setShowMenu={setShowMenu} isIsolated={true} />,
-    },
-  ]
 
   if (!address) return null
 
@@ -148,16 +134,24 @@ export default function AccountMenuContent(props: Props) {
         id={ACCOUNT_MENU_BUTTON_ID}
         onClick={handleCreateAccountClick}
         leftIcon={hasCreditAccounts ? <Account /> : <PlusCircled />}
-        color={hasCreditAccounts ? 'secondary' : 'primary'}
+        color={
+          isIsolatedPage && !hasIsolatedAccounts
+            ? 'primary'
+            : hasCreditAccounts
+              ? 'secondary'
+              : 'primary'
+        }
         hasFocus={showMenu}
         hasSubmenu={hasCreditAccounts}
         className={isMobile ? '!px-2' : undefined}
       >
-        {hasCreditAccounts
-          ? isAccountSelected
-            ? `Credit Account ${accountId}`
-            : 'Select Account'
-          : 'Create Account'}
+        {isIsolatedPage && !hasIsolatedAccounts
+          ? 'Create Isolated Account'
+          : hasCreditAccounts
+            ? isAccountSelected
+              ? `Credit Account ${accountId}`
+              : 'Select Account'
+            : 'Create Account'}
       </Button>
       <Overlay
         className='max-w-screen-full right-0 mt-2 flex md:h-[530px] w-[336px] overflow-hidden fixed md:absolute top-18 md:top-8 h-[calc(100dvh-72px)]'
@@ -171,7 +165,7 @@ export default function AccountMenuContent(props: Props) {
           )}
         >
           <Text size='lg' className='font-bold'>
-            {!hasIsolatedAccounts ? 'Accounts' : 'Credit Accounts'}
+            Credit Accounts
           </Text>
           <Button
             color='secondary'
@@ -190,15 +184,7 @@ export default function AccountMenuContent(props: Props) {
             'top-[54px] h-[calc(100%-54px)] items-start',
           )}
         >
-          {!hasIsolatedAccounts ? (
-            <AccountMenuTabs
-              tabs={accountTabs}
-              activeIndex={1}
-              // activeIndex={activeAccountKind === 'default' ? 0 : 1}
-            />
-          ) : (
-            hasCreditAccounts && <AccountList setShowMenu={setShowMenu} />
-          )}
+          {hasCreditAccounts && <AccountList setShowMenu={setShowMenu} />}
         </div>
       </Overlay>
     </div>
