@@ -15,6 +15,7 @@ import { getPage, getRoute } from 'utils/route'
 
 interface Props {
   setShowMenu: (show: boolean) => void
+  isIsolated?: boolean
 }
 
 const accountCardHeaderClasses = classNames(
@@ -24,7 +25,7 @@ const accountCardHeaderClasses = classNames(
 )
 
 export default function AccountList(props: Props) {
-  const { setShowMenu } = props
+  const { setShowMenu, isIsolated = false } = props
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const chainConfig = useChainConfig()
