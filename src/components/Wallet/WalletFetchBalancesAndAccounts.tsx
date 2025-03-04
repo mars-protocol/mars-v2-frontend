@@ -1,7 +1,7 @@
 import { Suspense, useEffect, useMemo } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
-import AccountCreateFirst from 'components/account/AccountCreateFirst'
+import AccountCreateSelect from 'components/account/AccountCreateSelect'
 import IsolatedAccountMintAndFund from 'components/account/IsolatedAccountMintAndFund'
 import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
@@ -59,7 +59,7 @@ function Content() {
       })
       return <FetchLoading />
     }
-    return <AccountCreateFirst />
+    return <AccountCreateSelect />
   }
 
   if (!isLoadingAccounts && !isLoadingBalances && accountIds)

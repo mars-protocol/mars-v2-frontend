@@ -3,7 +3,7 @@ import { useCallback } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
-import AccountCreateFirst from 'components/account/AccountCreateFirst'
+import AccountCreateSelect from 'components/account/AccountCreateSelect'
 import AccountFund from 'components/account/AccountFund/AccountFundFullPage'
 import AccountList from 'components/account/AccountList'
 import Button from 'components/common/Button'
@@ -114,7 +114,7 @@ export default function AccountMenuContent(props: Props) {
       return
     }
     if (!hasCreditAccounts) {
-      useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
+      useStore.setState({ focusComponent: { component: <AccountCreateSelect /> } })
       return
     }
   }, [

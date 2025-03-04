@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-import AccountCreateFirst from 'components/account/AccountCreateFirst'
+import AccountCreateSelect from 'components/account/AccountCreateSelect'
 import { ACCOUNT_MENU_BUTTON_ID } from 'components/account/AccountMenuContent'
 import Button from 'components/common/Button/index'
 import { Account, PlusCircled } from 'components/common/Icons'
@@ -22,7 +22,7 @@ export default function ActionButton(props: Props) {
   const selectedAccountId = useAccountId()
 
   const handleCreateAccountClick = useCallback(() => {
-    useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
+    useStore.setState({ focusComponent: { component: <AccountCreateSelect /> } })
   }, [])
 
   if (!address)
