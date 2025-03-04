@@ -24,8 +24,8 @@ export default function useUserWithdrawals(props: Props) {
         meta: { className: 'min-w-30' },
         cell: ({ row }) => {
           const coin = BNCoin.fromDenomAndBigNumber(
-            details.base_token,
-            BN(row.original.base_tokens),
+            details.base_tokens_denom,
+            BN(row.original.base_tokens_amount),
           )
           return (
             <DisplayCurrency
@@ -42,7 +42,7 @@ export default function useUserWithdrawals(props: Props) {
         cell: ({ row }) => {
           return (
             <FormattedNumber
-              amount={Number(row.original.base_tokens)}
+              amount={Number(row.original.base_tokens_amount)}
               options={{
                 decimals: depositAsset.decimals,
                 maxDecimals: 2,
@@ -67,6 +67,6 @@ export default function useUserWithdrawals(props: Props) {
         },
       },
     ],
-    [isLoading, details.base_token, depositAsset.decimals],
+    [isLoading, details.base_tokens_denom, depositAsset.decimals],
   )
 }

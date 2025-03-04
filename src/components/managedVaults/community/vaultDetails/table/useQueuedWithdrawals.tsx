@@ -36,7 +36,7 @@ export default function useQueuedWithdrawals(props: Props) {
         meta: { className: 'min-w-20' },
         cell: ({ row }) => (
           <FormattedNumber
-            amount={Number(row.original.base_tokens)}
+            amount={Number(row.original.base_tokens_amount)}
             options={{
               decimals: depositAsset.decimals,
               maxDecimals: 2,
@@ -50,7 +50,7 @@ export default function useQueuedWithdrawals(props: Props) {
         meta: { className: 'min-w-20' },
         cell: ({ row }) => (
           <FormattedNumber
-            amount={Number(row.original.vault_tokens)}
+            amount={Number(row.original.vault_tokens_amount)}
             className='text-xs'
             options={{
               decimals: depositAsset.decimals,
@@ -63,9 +63,9 @@ export default function useQueuedWithdrawals(props: Props) {
       {
         header: 'Total Position',
         meta: { className: 'min-w-30' },
-        cell: ({ row }) => {
-          return <TVL amount={BN(row.original.base_tokens)} denom={details.base_token} />
-        },
+        cell: ({ row }) => (
+          <TVL amount={BN(row.original.base_tokens_amount)} denom={details.base_tokens_denom} />
+        ),
       },
       {
         ...INFO_META,
@@ -76,6 +76,6 @@ export default function useQueuedWithdrawals(props: Props) {
         ),
       },
     ],
-    [isLoading, details.base_token, depositAsset.decimals],
+    [isLoading, details.base_tokens_denom, depositAsset.decimals],
   )
 }

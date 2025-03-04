@@ -34,7 +34,7 @@ interface Props {
 export default function ProfileVaultCard(props: Props) {
   const { details, isOwner, wallet, onDelete, onEdit } = props
   const vaultAssets = useVaultAssets()
-  const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
+  const depositAsset = vaultAssets.find(byDenom(details.base_tokens_denom)) as Asset
   const { vaultOwnerInfo, isLoading } = useManagedVaultOwnerInfo(wallet)
 
   return (
@@ -91,14 +91,17 @@ export default function ProfileVaultCard(props: Props) {
           </InfoRow>
           <InfoRow label='TVL'>
             <DisplayCurrency
-              coin={BNCoin.fromDenomAndBigNumber(details.base_token, BN(details.total_base_tokens))}
+              coin={BNCoin.fromDenomAndBigNumber(
+                details.base_tokens_denom,
+                BN(details.base_tokens_amount),
+              )}
               className='text-sm'
             />
           </InfoRow>
           <InfoRow label='Accrued PnL'>
             <DisplayCurrency
               coin={BNCoin.fromDenomAndBigNumber(
-                details.base_token,
+                details.base_tokens_denom,
                 BN(details.performance_fee_state.accumulated_pnl),
               )}
               showSignPrefix

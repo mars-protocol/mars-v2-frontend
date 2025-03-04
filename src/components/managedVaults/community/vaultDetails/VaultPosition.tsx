@@ -23,19 +23,25 @@ export default function VaultPosition(props: Props) {
   const address = useStore((s) => s.address)
   const { amount: userVaultShares, calculateVaultShare } = useManagedVaultUserShares(
     address,
-    details.vault_token,
+    details.vault_tokens_denom,
   )
-  const { data: userVaultTokens } = useManagedVaultConvertToTokens(vaultAddress, userVaultShares)
-  const sharePercentage = calculateVaultShare(details.total_vault_tokens)
+  const { data: userVaultTokensAmount } = useManagedVaultConvertToTokens(
+    vaultAddress,
+    userVaultShares,
+  )
+  const sharePercentage = calculateVaultShare(details.vault_tokens_amount)
 
   return (
     <PositionInfo
       value={
-        !userVaultTokens ? (
+        !userVaultTokensAmount ? (
           <Text>No deposits</Text>
         ) : (
           <DisplayCurrency
-            coin={BNCoin.fromDenomAndBigNumber(details.base_token, BN(userVaultTokens))}
+            coin={BNCoin.fromDenomAndBigNumber(
+              details.base_tokens_denom,
+              BN(userVaultTokensAmount),
+            )}
             className='text-2xl'
           />
         )
@@ -61,7 +67,7 @@ export default function VaultPosition(props: Props) {
         color: 'secondary',
         onClick: onWithdraw,
         rightIcon: <LockUnlocked />,
-        disabled: !userVaultTokens,
+        disabled: !userVaultTokensAmount,
       }}
       isOwner={isOwner}
     />

@@ -39,7 +39,10 @@ export default function VaultAction(props: Props) {
   const [isConfirming, setIsConfirming] = useState(false)
   const address = useStore((s) => s.address)
   const { data: account } = useAccount(vaultDetails.vault_account_id || undefined)
-  const { amount: userVaultShares } = useManagedVaultUserShares(address, vaultDetails.vault_token)
+  const { amount: userVaultShares } = useManagedVaultUserShares(
+    address,
+    vaultDetails.vault_tokens_denom,
+  )
   const { data: userVaultTokens, isLoading } = useManagedVaultConvertToTokens(
     vaultAddress,
     userVaultShares,
@@ -49,16 +52,18 @@ export default function VaultAction(props: Props) {
   const depositInManagedVault = useStore((s) => s.depositInManagedVault)
   const unlockFromManagedVault = useStore((s) => s.unlockFromManagedVault)
   const vaultAssets = useVaultAssets()
-  const depositAsset = vaultAssets.find(byDenom(vaultDetails.base_token)) as Asset
-  const assetAmountInWallet = BN(useCurrentWalletBalance(vaultDetails.base_token)?.amount || '0')
+  const depositAsset = vaultAssets.find(byDenom(vaultDetails.base_tokens_denom)) as Asset
+  const assetAmountInWallet = BN(
+    useCurrentWalletBalance(vaultDetails.base_tokens_denom)?.amount || '0',
+  )
   const isDeposit = type === 'deposit'
 
   const maxAmount = useMemo(() => {
     if (isDeposit) {
       return assetAmountInWallet
     }
-    const maxWithdrawAmount = computeMaxWithdrawAmount(vaultDetails.base_token)
-    const maxBorrowAmount = computeMaxBorrowAmount(vaultDetails.base_token, 'wallet')
+    const maxWithdrawAmount = computeMaxWithdrawAmount(vaultDetails.base_tokens_denom)
+    const maxBorrowAmount = computeMaxBorrowAmount(vaultDetails.base_tokens_denom, 'wallet')
     const totalMaxWithdrawAmount = maxWithdrawAmount.plus(maxBorrowAmount)
     const preview = BN(userVaultTokens || 0)
     return BigNumber.minimum(preview, totalMaxWithdrawAmount)
@@ -68,7 +73,7 @@ export default function VaultAction(props: Props) {
     computeMaxWithdrawAmount,
     isDeposit,
     userVaultTokens,
-    vaultDetails.base_token,
+    vaultDetails.base_tokens_denom,
   ])
 
   const withdrawalPeriod = formatLockupPeriod(
@@ -90,7 +95,7 @@ export default function VaultAction(props: Props) {
         await unlockFromManagedVault({
           vaultAddress,
           amount: sharesToUnlock,
-          vaultToken: vaultDetails.vault_token,
+          vaultToken: vaultDetails.vault_tokens_denom,
         })
       } else {
         await depositInManagedVault({

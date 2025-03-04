@@ -45,19 +45,18 @@ export default function Withdrawals(props: Props) {
 
   const unlockedPositions = useMemo(() => {
     return userUnlocksData.filter((unlock) => {
-      const unlocksAtMs = unlock.cooldown_end * 1000
-      return unlocksAtMs <= Date.now()
+      return unlock.cooldown_end * 1000 <= Date.now()
     })
   }, [userUnlocksData])
 
   const totalUnlockedAmount = useMemo(() => {
     return unlockedPositions.reduce((total, unlock) => {
-      return total.plus(BN(unlock.vault_tokens))
+      return total.plus(BN(unlock.vault_tokens_amount))
     }, BN_ZERO)
   }, [unlockedPositions])
 
   const vaultAssets = useVaultAssets()
-  const depositAsset = vaultAssets.find(byDenom(details.base_token)) as Asset
+  const depositAsset = vaultAssets.find(byDenom(details.base_tokens_denom)) as Asset
   const withdrawalDate = moment(details.performance_fee_state.last_withdrawal * 1000)
   const isValidWithdrawal = withdrawalDate.isValid()
   const userWithdrawalColumns = useUserWithdrawals({
@@ -72,12 +71,12 @@ export default function Withdrawals(props: Props) {
     'days',
   )
   const totalQueuedWithdrawals = allUnlocksData.reduce(
-    (sum, unlock) => sum.plus(BN(unlock.base_tokens)),
+    (sum, unlock) => sum.plus(BN(unlock.base_tokens_amount)),
     BN_ZERO,
   )
   const percentage = totalQueuedWithdrawals.isZero()
     ? BN_ZERO
-    : BN(details.total_base_tokens).dividedBy(totalQueuedWithdrawals).multipliedBy(100)
+    : BN(details.base_tokens_amount).dividedBy(totalQueuedWithdrawals).multipliedBy(100)
 
   if (!isOwner) {
     return userUnlocksData.length > 0 ? (
@@ -89,7 +88,7 @@ export default function Withdrawals(props: Props) {
               <Withdraw
                 amount={totalUnlockedAmount.toString()}
                 vaultAddress={vaultAddress}
-                vaultToken={details.vault_token}
+                vaultToken={details.vault_tokens_denom}
                 disabled={unlockedPositions.length === 0}
               />
             </div>
@@ -141,7 +140,7 @@ export default function Withdrawals(props: Props) {
               value: (
                 <AmountAndValue
                   asset={depositAsset}
-                  amount={BN(details.total_base_tokens)}
+                  amount={BN(details.base_tokens_amount)}
                   layout='horizontal'
                 />
               ),
@@ -152,7 +151,7 @@ export default function Withdrawals(props: Props) {
                 <div className='flex items-center gap-2'>
                   <DisplayCurrency
                     coin={BNCoin.fromDenomAndBigNumber(
-                      details.base_token,
+                      details.base_tokens_denom,
                       BN(details.performance_fee_state.accumulated_pnl),
                     )}
                     showSignPrefix

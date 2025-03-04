@@ -13,7 +13,14 @@ export function useUserUnlocks(vaultAddress: string) {
       : null,
     async () => {
       try {
-        return await getManagedVaultUserUnlocks(chainConfig, vaultAddress!, address!)
+        const response = await getManagedVaultUserUnlocks(chainConfig, vaultAddress!, address!)
+        return response.map((unlock) => ({
+          user_address: unlock.user_address,
+          created_at: unlock.created_at,
+          cooldown_end: unlock.cooldown_end,
+          vault_tokens_amount: unlock.vault_tokens,
+          base_tokens_amount: unlock.base_tokens,
+        }))
       } catch (error) {
         console.error('Error fetching user unlocks:', error)
         return []

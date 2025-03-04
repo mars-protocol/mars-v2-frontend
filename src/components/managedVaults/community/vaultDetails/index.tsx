@@ -118,7 +118,7 @@ function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
                   value={
                     <DisplayCurrency
                       coin={BNCoin.fromDenomAndBigNumber(
-                        vaultDetails.base_token,
+                        vaultDetails.base_tokens_denom,
                         BN(vaultDetails.performance_fee_state.accumulated_fee),
                       )}
                       className='text-2xl'
