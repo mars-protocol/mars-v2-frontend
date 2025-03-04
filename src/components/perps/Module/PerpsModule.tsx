@@ -11,9 +11,11 @@ import KeeperFee from 'components/perps/Module/KeeperFee'
 import { LeverageSection } from 'components/perps/Module/LeverageSection'
 import PerpsSummary from 'components/perps/Module/Summary'
 import PerpsTradeDirectionSelector from 'components/perps/Module/PerpsTradeDirectionSelector'
+import MarginTypeSelector from 'components/perps/Module/MarginTypeSelector'
 import { LimitPriceSection, StopPriceSection } from './PriceInputs'
 import { ReduceOnlySwitch } from './ReduceOnlySwitch'
 import AssetSelectorPerps from 'components/trade/TradeModule/AssetSelector/AssetSelectorPerps'
+import IsolatedAccountMintAndFund from 'components/account/IsolatedAccountMintAndFund'
 
 import { BN_ZERO } from 'constants/math'
 import useStore from 'store'
@@ -37,6 +39,9 @@ import { useExecutionState } from 'hooks/perps/useExecutionState'
 import { usePositionSimulation } from 'hooks/perps/usePositionSimulation'
 import { usePerpsCallbacks } from 'hooks/perps/usePerpsCallbacks'
 import { useOpenInterestLeft } from 'hooks/perps/useOpenInterestLeft'
+import useHasIsolatedAccounts from 'hooks/accounts/useHasIsolatedAccounts'
+import { getIsolatedAccounts } from 'utils/accounts'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 export function PerpsModule() {
   // State declarations
@@ -44,6 +49,7 @@ export function PerpsModule() {
   const [stopTradeDirection, setStopTradeDirection] = useState<TradeDirection>('long')
   const [selectedOrderType, setSelectedOrderType] = useState<OrderType>(OrderType.MARKET)
   const [isReduceOnly, setIsReduceOnly] = useState(false)
+  const [marginType, setMarginType] = useState<'cross' | 'isolated'>('cross')
 
   // Derived state
   const isLimitOrder = selectedOrderType === OrderType.LIMIT
@@ -57,6 +63,9 @@ export function PerpsModule() {
   const { simulatePerps } = useUpdatedAccount(account)
   const perpsVaultModal = useStore((s) => s.perpsVaultModal)
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
+  const { hasIsolatedAccounts } = useHasIsolatedAccounts()
+  const chainConfig = useChainConfig()
+  const address = useStore((s) => s.address)
 
   const { limitPrice, setLimitPrice, setStopPrice, orderType, stopPrice } = usePerpsOrderForm()
   const {
@@ -73,12 +82,13 @@ export function PerpsModule() {
     previousAmount,
     previousLeverage,
     previousTradeDirection,
-  } = usePerpsModule(
+  } = usePerpsModule({
     tradeDirection,
-    isLimitOrder ? limitPrice : null,
+    limitPrice: isLimitOrder ? limitPrice : null,
     isStopOrder,
     stopTradeDirection,
-  )
+    marginType,
+  })
   const { data: tradingFee } = useTradingFeeAndPrice(perpsAsset.denom, amount.plus(previousAmount))
 
   // Custom price info hooks
@@ -187,6 +197,29 @@ export function PerpsModule() {
     validateReduceOnlyOrder()
   }, [validateReduceOnlyOrder, amount, isReduceOnly])
 
+  // Handle margin type change
+  const handleMarginTypeChange = async (type: 'cross' | 'isolated') => {
+    setMarginType(type)
+    if (type === 'isolated') {
+      if (!hasIsolatedAccounts) {
+        useStore.setState({
+          focusComponent: {
+            component: <IsolatedAccountMintAndFund />,
+          },
+        })
+      } else {
+        // Select first isolated account
+        const isolatedAccounts = await getIsolatedAccounts(chainConfig, address || '')
+        if (isolatedAccounts.length > 0) {
+          useStore.setState((state) => ({
+            ...state,
+            accountId: isolatedAccounts[0].id,
+          }))
+        }
+      }
+    }
+  }
+
   if (!perpsAsset) return null
 
   return (
@@ -206,6 +239,7 @@ export function PerpsModule() {
       )}
     >
       <div className='flex flex-col gap-5'>
+        <MarginTypeSelector selected={marginType} onChange={handleMarginTypeChange} />
         <OrderTypeSelector
           orderTabs={PERPS_ORDER_TYPE_TABS}
           selected={selectedOrderType}

@@ -11,6 +11,7 @@ export default function createCommonSlice(
     chainConfig: Neutron1,
     isOpen: true,
     selectedAccount: null,
+    selectedIsolatedAccount: null,
     focusComponent: null,
     mobileNavExpanded: false,
     accountDetailsExpanded: false,

@@ -25,23 +25,23 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { getPage, getRoute } from 'utils/route'
+import useHasIsolatedAccounts from 'hooks/accounts/useHasIsolatedAccounts'
+import { getIsolatedAccounts } from 'utils/accounts'
 
 export default function IsolatedAccountMintAndFund() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const address = useStore((s) => s.address)
   const chainConfig = useChainConfig()
-  const createAccount = useStore((s) => s.createAccount)
   const deposit = useStore((s) => s.deposit)
   const [isProcessing, setIsProcessing] = useToggle(false)
   const [searchParams] = useSearchParams()
   const [isAutoLendEnabled] = useEnableAutoLendGlobal()
   const markets = useMarkets()
+  const { hasIsolatedAccounts } = useHasIsolatedAccounts()
 
   const stableDenom = chainConfig.stables[0]
-
   const stableAsset = useAsset(stableDenom)
-
   const { data: walletBalances } = useWalletBalances(address || '')
   const balances = walletBalances.map((coin) => new BNCoin(coin))
 
@@ -60,27 +60,46 @@ export default function IsolatedAccountMintAndFund() {
     return fundingAmount.isGreaterThan(capLeft)
   })()
 
+  const accountId = useStore((s) => s.selectedIsolatedAccount)
+
   const handleCreateAndFund = useCallback(async () => {
     if (!address || !stableAsset || fundingAmount.isLessThanOrEqualTo(0)) return
 
     setIsProcessing(true)
 
     try {
-      const accountId = await createAccount('isolated_margin', isAutoLendEnabled)
+      const fundingAsset = BNCoin.fromDenomAndBigNumber(stableDenom, fundingAmount)
 
-      if (accountId) {
-        const fundingAsset = BNCoin.fromDenomAndBigNumber(stableDenom, fundingAmount)
+      const handleDeposit = async () => {
+        try {
+          const success = await deposit({
+            accountId: accountId ?? undefined,
+            coins: [fundingAsset],
+            accountKind: 'isolated_margin',
+            lend: isAutoLendEnabled,
+          })
 
-        await deposit({
-          accountId,
-          coins: [fundingAsset],
-          lend: isAutoLendEnabled,
-        })
-
-        navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, accountId))
-
-        useStore.setState({ focusComponent: null })
+          if (success) {
+            // Fetch isolated accounts to get the new account ID
+            const isolatedAccounts = await getIsolatedAccounts(chainConfig, address)
+            if (isolatedAccounts.length > 0) {
+              navigate(
+                getRoute(
+                  getPage(pathname, chainConfig),
+                  searchParams,
+                  address,
+                  isolatedAccounts[0].id,
+                ),
+              )
+              useStore.setState({ focusComponent: null })
+            }
+          }
+        } catch (error) {
+          console.error('Error depositing:', error)
+        }
       }
+
+      await handleDeposit()
     } catch (error) {
       console.error('Error creating and funding account:', error)
     } finally {
@@ -90,7 +109,6 @@ export default function IsolatedAccountMintAndFund() {
     address,
     stableAsset,
     fundingAmount,
-    createAccount,
     isAutoLendEnabled,
     deposit,
     stableDenom,
@@ -110,8 +128,12 @@ export default function IsolatedAccountMintAndFund() {
 
   return (
     <FullOverlayContent
-      title='Create and Fund Isolated Account'
-      copy='Create an isolated account with a stablecoin. This will create a new account and fund it in one step.'
+      title={hasIsolatedAccounts ? 'Fund Isolated Account' : 'Create and Fund Isolated Account'}
+      copy={
+        hasIsolatedAccounts
+          ? 'Fund your isolated account with a stablecoin.'
+          : 'Create an isolated account with a stablecoin. This will create a new account and fund it in one step.'
+      }
       docs='account'
     >
       <Card className='w-full p-6 bg-white/5'>
@@ -132,7 +154,9 @@ export default function IsolatedAccountMintAndFund() {
 
           <div className='flex items-center mb-3'>
             <Text size='sm' className='text-white/60 mr-2'>
-              Deposit {stableAsset?.symbol || 'Stablecoin'} to create your isolated account
+              {hasIsolatedAccounts
+                ? `Deposit ${stableAsset?.symbol || 'Stablecoin'} to fund your isolated account`
+                : `Deposit ${stableAsset?.symbol || 'Stablecoin'} to create your isolated account`}
             </Text>
             <Tooltip
               type='info'
@@ -147,8 +171,9 @@ export default function IsolatedAccountMintAndFund() {
           </div>
 
           <Callout type={CalloutType.INFO} className='mb-4'>
-            This will create a new isolated account funded with{' '}
-            {stableAsset?.symbol || 'Stablecoin'} only.
+            {hasIsolatedAccounts
+              ? `This will fund your isolated account with ${stableAsset?.symbol || 'Stablecoin'} only.`
+              : `This will create a new isolated account funded with ${stableAsset?.symbol || 'Stablecoin'} only.`}
           </Callout>
 
           {stableAsset && (
@@ -183,7 +208,7 @@ export default function IsolatedAccountMintAndFund() {
 
         <Button
           className='w-full'
-          text='Create and Fund Account'
+          text={hasIsolatedAccounts ? 'Fund Account' : 'Create and Fund Account'}
           color='tertiary'
           size='lg'
           leftIcon={<ArrowUpLine />}
