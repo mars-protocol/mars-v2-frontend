@@ -28,17 +28,6 @@ export default function AccountSummary() {
     'fund_manager',
   )
 
-  const hasFundsForTxFee = useHasFundsForTxFee()
-
-  const handleCreateAccountClick = useCallback(() => {
-    if (!hasFundsForTxFee) {
-      useStore.setState({ focusComponent: { component: <WalletBridges /> } })
-      return
-    }
-
-    useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
-  }, [hasFundsForTxFee])
-
   if (!walletAddress && !urlAddress) return <ConnectInfo />
 
   return (
