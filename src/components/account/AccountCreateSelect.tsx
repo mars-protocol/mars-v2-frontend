@@ -1,18 +1,16 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useCallback, useEffect, useState } from 'react'
 
 import AccountCreateFirst from 'components/account/AccountCreateFirst'
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
 import FullOverlayContent from 'components/common/FullOverlayContent'
+import IsolatedAccountMintAndFund from 'components/account/IsolatedAccountMintAndFund'
 import Text from 'components/common/Text'
 import WalletSelect from 'components/Wallet/WalletSelect'
 import useStore from 'store'
-import IsolatedAccountMintAndFund from './IsolatedAccountMintAndFund'
 import { ChevronDown, ChevronRight } from 'components/common/Icons'
 
 export default function AccountCreateSelect() {
-  const { pathname } = useLocation()
   const address = useStore((s) => s.address)
   const [showAdvanced, setShowAdvanced] = useState(false)
 
@@ -27,12 +25,6 @@ export default function AccountCreateSelect() {
       },
     })
   }, [])
-
-  useEffect(() => {
-    if (pathname.includes('/isolated')) {
-      handleIsolatedAccountClick()
-    }
-  }, [pathname, handleIsolatedAccountClick])
 
   const handleDefaultAccountClick = useCallback(() => {
     useStore.setState({

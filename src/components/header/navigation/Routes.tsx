@@ -7,7 +7,6 @@ import ExecuteMessagePage from 'pages/ExecuteMessagePage'
 import FarmPage from 'pages/FarmPage'
 import HlsFarmPage from 'pages/HlsFarmPage'
 import HlsStakingPage from 'pages/HlsStakingPage'
-import IsolatedPage from 'pages/IsolatedPage'
 import LendPage from 'pages/LendPage'
 import PerpsPage from 'pages/PerpsPage'
 import PerpsVaultPage from 'pages/PerpsVaultPage'
@@ -38,7 +37,6 @@ export default function Routes() {
         <Route path='/v1' element={<V1Page />} />
         <Route path='/hls-staking' element={<HlsStakingPage />} />
         <Route path='/hls-farm' element={<HlsFarmPage />} />
-        <Route path='/isolated' element={<IsolatedPage />} />
         <Route
           path='/'
           element={
@@ -57,7 +55,6 @@ export default function Routes() {
           <Route path='portfolio' element={<PortfolioPage />} />
           <Route path='hls-staking' element={<HlsStakingPage />} />
           <Route path='hls-farm' element={<HlsFarmPage />} />
-          <Route path='isolated' element={<IsolatedPage />} />
           <Route path='v1' element={<V1Page />} />
           <Route path='portfolio/:accountId'>
             <Route path='' element={<PortfolioAccountPage />} />

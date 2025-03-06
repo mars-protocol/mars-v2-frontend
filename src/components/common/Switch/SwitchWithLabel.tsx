@@ -25,7 +25,7 @@ export default function SwitchWithLabel(props: Props) {
           <Tooltip
             type='info'
             content={
-              <Text size='sm' className='px-2 py-3'>
+              <Text size='sm' className='px-2 py-3 max-w-90'>
                 {props.tooltip}
               </Text>
             }
