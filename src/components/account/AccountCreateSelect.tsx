@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useCallback, useEffect, useState } from 'react'
 
 import AccountCreateFirst from 'components/account/AccountCreateFirst'
 import Button from 'components/common/Button'
@@ -9,7 +8,6 @@ import IsolatedAccountMintAndFund from 'components/account/IsolatedAccountMintAn
 import Text from 'components/common/Text'
 import WalletSelect from 'components/Wallet/WalletSelect'
 import useStore from 'store'
-import IsolatedAccountMintAndFund from './IsolatedAccountMintAndFund'
 import { ChevronDown, ChevronRight } from 'components/common/Icons'
 
 export default function AccountCreateSelect() {

@@ -1,37 +1,26 @@
-import classNames from 'classnames'
-import { useEffect } from 'react'
-import { isMobile } from 'react-device-detect'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useCallback, useEffect, useState } from 'react'
+import { useLocation, useSearchParams } from 'react-router-dom'
 
-import AccountStats from 'components/account/AccountList/AccountStats'
-import Card from 'components/common/Card'
-import Radio from 'components/common/Radio'
-import Text from 'components/common/Text'
+import Accordion from 'components/common/Accordion'
+import AccountCard from 'components/account/AccountList/AccountCard'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
-import { getPage, getRoute } from 'utils/route'
 
 interface Props {
   setShowMenu: (show: boolean) => void
 }
 
-const accountCardHeaderClasses = classNames(
-  'flex w-full items-center justify-between bg-white/20 px-4 py-2.5 text-white/70',
-  'border border-transparent border-b-white/20',
-  'group-hover/account:bg-white/30',
-)
-
 export default function AccountList(props: Props) {
   const { setShowMenu } = props
-  const navigate = useNavigate()
   const { pathname } = useLocation()
   const chainConfig = useChainConfig()
   const currentAccountId = useAccountId()
   const address = useStore((s) => s.address)
   const { data: accountIds } = useAccountIds(address, true, true)
   const [searchParams] = useSearchParams()
+  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false)
 
   useEffect(() => {
     if (!currentAccountId) return
@@ -41,44 +30,63 @@ export default function AccountList(props: Props) {
     }
   }, [currentAccountId])
 
+  const isActive = (accountId: string) => currentAccountId === accountId
+
+  const handleToggle = useCallback(() => {
+    setIsAdvancedOpen(!isAdvancedOpen)
+  }, [isAdvancedOpen])
+
   if (!accountIds || !accountIds.length) return null
 
   return (
-    <div className='flex flex-wrap w-full p-4'>
-      {accountIds.map((accountId) => {
-        const isActive = currentAccountId === accountId
-
-        return (
-          <div key={accountId} id={`account-${accountId}`} className='w-full pt-4'>
-            <Card
-              id={`account-${accountId}`}
+    <div className='flex flex-col h-full'>
+      {/* Regular accounts */}
+      <div className='flex-1 overflow-auto scrollbar-hide'>
+        <div className='flex flex-wrap w-full p-4'>
+          {accountIds.map((accountId) => (
+            <AccountCard
               key={accountId}
-              className={classNames('w-full', !isActive && 'group/account hover:cursor-pointer')}
-              contentClassName='bg-white/10 group-hover/account:bg-white/20'
-              onClick={() => {
-                if (isActive) return
-                if (isMobile) setShowMenu(false)
-                useStore.setState({ accountDeleteModal: null })
-                navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, accountId))
-              }}
-              title={
-                <div
-                  className={accountCardHeaderClasses}
-                  role='button'
-                  onClick={() => setShowMenu(false)}
-                >
-                  <Text size='xs' className='flex flex-1'>
-                    Credit Account {accountId}
-                  </Text>
-                  <Radio active={isActive} className='group-hover/account:opacity-100' />
-                </div>
-              }
-            >
-              <AccountStats accountId={accountId} isActive={isActive} setShowMenu={setShowMenu} />
-            </Card>
-          </div>
-        )
-      })}
+              accountId={accountId}
+              isActive={isActive(accountId)}
+              setShowMenu={setShowMenu}
+              pathname={pathname}
+              chainConfig={chainConfig}
+              searchParams={searchParams}
+              address={address}
+              showUSDCMarginOnly={false}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Advanced Accounts Accordion */}
+      <Accordion
+        items={[
+          {
+            title: 'Advanced Accounts',
+            renderContent: () => (
+              <div className='flex flex-wrap w-full p-4'>
+                {accountIds.map((accountId) => (
+                  <AccountCard
+                    key={accountId}
+                    accountId={accountId}
+                    isActive={isActive(accountId)}
+                    setShowMenu={setShowMenu}
+                    pathname={pathname}
+                    chainConfig={chainConfig}
+                    searchParams={searchParams}
+                    address={address}
+                    showUSDCMarginOnly={true}
+                  />
+                ))}
+              </div>
+            ),
+            renderSubTitle: () => null,
+            isOpen: isAdvancedOpen,
+            toggleOpen: handleToggle,
+          },
+        ]}
+      />
     </div>
   )
 }
