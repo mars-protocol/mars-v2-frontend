@@ -1,10 +1,8 @@
 import classNames from 'classnames'
 import { useCallback } from 'react'
 import { isMobile } from 'react-device-detect'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
-import AccountCreateSelect from 'components/account/AccountCreateSelect'
-import AccountFund from 'components/account/AccountFund/AccountFundFullPage'
+import AccountCreateFirst from 'components/account/AccountCreateFirst'
 import AccountList from 'components/account/AccountList'
 import Button from 'components/common/Button'
 import { Account, Plus, PlusCircled } from 'components/common/Icons'
@@ -13,16 +11,10 @@ import Text from 'components/common/Text'
 import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
-import useHasIsolatedAccounts from 'hooks/accounts/useHasIsolatedAccounts'
 import useToggle from 'hooks/common/useToggle'
-import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
-import useAutoLend from 'hooks/wallet/useAutoLend'
 import useHasFundsForTxFee from 'hooks/wallet/useHasFundsForTxFee'
 import useStore from 'store'
-import { isNumber } from 'utils/parsers'
-import { getPage, getRoute } from 'utils/route'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import IsolatedAccountMintAndFund from 'components/account/IsolatedAccountMintAndFund'
+import AccountCreateSelect from './AccountCreateSelect'
 
 interface Props {
   className?: string
@@ -32,72 +24,27 @@ const menuClasses = 'absolute isolate flex w-full flex-wrap scrollbar-hide'
 const ACCOUNT_MENU_BUTTON_ID = 'account-menu-button'
 
 export default function AccountMenuContent(props: Props) {
-  const navigate = useNavigate()
-  const { pathname } = useLocation()
   const address = useStore((s) => s.address)
   const { data: accountIds } = useAccountIds(address, true, true)
   const accountId = useAccountId()
-  const [searchParams] = useSearchParams()
-  const { hasIsolatedAccounts } = useHasIsolatedAccounts()
-  const isIsolatedPage = pathname.includes('/isolated')
-
-  const createAccount = useStore((s) => s.createAccount)
   const [showMenu, setShowMenu] = useToggle()
-  const [isCreating, setIsCreating] = useToggle()
   const hasFundsForTxFee = useHasFundsForTxFee()
-  const [enableAutoLendGlobal] = useEnableAutoLendGlobal()
-  const { enableAutoLendAccountId } = useAutoLend()
-  const [isAutoLendEnabled] = useEnableAutoLendGlobal()
-  const chainConfig = useChainConfig()
 
   const hasCreditAccounts = !!accountIds?.length
-  const isAccountSelected =
-    hasCreditAccounts && accountId && isNumber(accountId) && accountIds.includes(accountId)
+  const isAccountSelected = hasCreditAccounts && accountId && accountIds.includes(accountId)
 
-  const performCreateAccount = useCallback(async () => {
+  const performCreateAccount = useCallback(() => {
     setShowMenu(false)
-    setIsCreating(true)
-
-    if (isIsolatedPage && !hasIsolatedAccounts) {
-      setIsCreating(false)
-      useStore.setState({
-        focusComponent: {
-          component: <IsolatedAccountMintAndFund />,
+    useStore.setState({
+      focusComponent: {
+        component: <AccountCreateSelect />,
+        onClose: () => {
+          // TODO: update docs to reflect the current state of v2
+          //useStore.setState({ getStartedModal: true })
         },
-      })
-      return
-    }
-    const accountId = await createAccount('default', isAutoLendEnabled)
-    setIsCreating(false)
-
-    if (accountId) {
-      navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, accountId))
-      if (enableAutoLendGlobal) enableAutoLendAccountId(accountId)
-      useStore.setState({
-        focusComponent: {
-          component: <AccountFund />,
-          onClose: () => {
-            // TODO: update docs to reflect the current state of v2
-            //useStore.setState({ getStartedModal: true })
-          },
-        },
-      })
-    }
-  }, [
-    setShowMenu,
-    setIsCreating,
-    createAccount,
-    isAutoLendEnabled,
-    navigate,
-    pathname,
-    chainConfig,
-    searchParams,
-    address,
-    enableAutoLendGlobal,
-    enableAutoLendAccountId,
-    isIsolatedPage,
-    hasIsolatedAccounts,
-  ])
+      },
+    })
+  }, [setShowMenu])
 
   const handleCreateAccountClick = useCallback(() => {
     setShowMenu(!showMenu)
@@ -105,26 +52,11 @@ export default function AccountMenuContent(props: Props) {
       useStore.setState({ focusComponent: { component: <WalletBridges /> } })
       return
     }
-    if (isIsolatedPage && !hasIsolatedAccounts) {
-      useStore.setState({
-        focusComponent: {
-          component: <IsolatedAccountMintAndFund />,
-        },
-      })
-      return
-    }
     if (!hasCreditAccounts) {
-      useStore.setState({ focusComponent: { component: <AccountCreateSelect /> } })
+      useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
       return
     }
-  }, [
-    hasFundsForTxFee,
-    hasCreditAccounts,
-    setShowMenu,
-    showMenu,
-    isIsolatedPage,
-    hasIsolatedAccounts,
-  ])
+  }, [hasFundsForTxFee, hasCreditAccounts, setShowMenu, showMenu])
 
   if (!address) return null
 
@@ -134,24 +66,16 @@ export default function AccountMenuContent(props: Props) {
         id={ACCOUNT_MENU_BUTTON_ID}
         onClick={handleCreateAccountClick}
         leftIcon={hasCreditAccounts ? <Account /> : <PlusCircled />}
-        color={
-          isIsolatedPage && !hasIsolatedAccounts
-            ? 'primary'
-            : hasCreditAccounts
-              ? 'secondary'
-              : 'primary'
-        }
+        color={hasCreditAccounts ? 'secondary' : 'primary'}
         hasFocus={showMenu}
         hasSubmenu={hasCreditAccounts}
         className={isMobile ? '!px-2' : undefined}
       >
-        {isIsolatedPage && !hasIsolatedAccounts
-          ? 'Create Isolated Account'
-          : hasCreditAccounts
-            ? isAccountSelected
-              ? `Credit Account ${accountId}`
-              : 'Select Account'
-            : 'Create Account'}
+        {hasCreditAccounts
+          ? isAccountSelected
+            ? `Credit Account ${accountId}`
+            : 'Select Account'
+          : 'Create Account'}
       </Button>
       <Overlay
         className='max-w-screen-full right-0 mt-2 flex md:h-[530px] w-[336px] overflow-hidden fixed md:absolute top-18 md:top-8 h-[calc(100dvh-72px)]'
@@ -173,7 +97,6 @@ export default function AccountMenuContent(props: Props) {
             rightIcon={<Plus />}
             iconClassName='h-2.5 w-2.5'
             text='Create'
-            showProgressIndicator={isCreating}
             onClick={performCreateAccount}
           />
         </div>
