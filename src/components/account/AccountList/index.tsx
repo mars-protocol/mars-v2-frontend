@@ -60,34 +60,36 @@ export default function AccountList(props: Props) {
       </div>
 
       {/* Advanced Accounts Accordion */}
-      <Accordion
-        allowMultipleOpen
-        items={[
-          {
-            title: 'Advanced Accounts',
-            renderContent: () => (
-              <div className='flex flex-wrap w-full'>
-                {accountIds.map((accountId) => (
-                  <AccountCard
-                    key={accountId}
-                    accountId={accountId}
-                    isActive={isActive(accountId)}
-                    setShowMenu={setShowMenu}
-                    pathname={pathname}
-                    chainConfig={chainConfig}
-                    searchParams={searchParams}
-                    address={address}
-                    showUSDCMarginOnly={true}
-                  />
-                ))}
-              </div>
-            ),
-            renderSubTitle: () => null,
-            isOpen: isAdvancedOpen,
-            toggleOpen: handleToggle,
-          },
-        ]}
-      />
+      <div className='border-t border-white/20'>
+        <Accordion
+          allowMultipleOpen
+          items={[
+            {
+              title: 'Advanced Accounts',
+              renderContent: () => (
+                <div className='flex flex-wrap w-full px-4'>
+                  {accountIds.map((accountId) => (
+                    <AccountCard
+                      key={accountId}
+                      accountId={accountId}
+                      isActive={isActive(accountId)}
+                      setShowMenu={setShowMenu}
+                      pathname={pathname}
+                      chainConfig={chainConfig}
+                      searchParams={searchParams}
+                      address={address}
+                      showUSDCMarginOnly={true}
+                    />
+                  ))}
+                </div>
+              ),
+              renderSubTitle: () => null,
+              isOpen: isAdvancedOpen,
+              toggleOpen: handleToggle,
+            },
+          ]}
+        />
+      </div>
     </div>
   )
 }
