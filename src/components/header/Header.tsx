@@ -18,47 +18,61 @@ import useAccountId from 'hooks/accounts/useAccountId'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { DocURL } from 'types/enums'
+import useAccount from 'hooks/accounts/useAccount'
 
-const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
-  {
-    pages: chainConfig.perps ? ['perps', 'trade', 'trade-advanced'] : ['trade', 'trade-advanced'],
-    label: 'Trade',
-    submenu: [
-      ...(chainConfig.perps
-        ? [
-            {
-              page: 'perps' as Page,
-              label: 'Perps',
-              subtitle: 'Trade perps on leverage',
-              icon: <ArrowChartLineUp className='w-6 h-6' />,
-            },
-          ]
-        : []),
+const menuTree = (chainConfig: ChainConfig, isIsolated: boolean): MenuTreeEntry[] => {
+  if (isIsolated) {
+    return [
       {
-        page: 'trade',
-        label: 'Spot',
-        subtitle: 'Trade assets against stables',
-        icon: <Coins className='w-6 h-6' />,
+        pages: ['perps'],
+        label: 'Trade',
       },
-      {
-        page: 'trade-advanced',
-        label: 'Spot Advanced',
-        subtitle: 'Trade any assets',
-        icon: <CoinsSwap className='w-6 h-6' />,
-      },
-    ],
-  },
-  {
-    pages: chainConfig.farm || chainConfig.perps ? ['lend', 'farm', 'perps-vault'] : ['lend'],
-    label: 'Earn',
-  },
-  { pages: ['borrow'], label: 'Borrow' },
-  ...(chainConfig.hls
-    ? [{ pages: ['hls-staking', 'hls-farm'] as Page[], label: 'High Leverage' }]
-    : []),
-  { pages: ['portfolio'], label: 'Portfolio' },
-  { pages: ['governance'], label: 'Governance', externalUrl: DocURL.COUNCIL },
-]
+      { pages: ['portfolio'], label: 'Portfolio' },
+      { pages: ['governance'], label: 'Governance', externalUrl: DocURL.COUNCIL },
+    ]
+  }
+
+  return [
+    {
+      pages: chainConfig.perps ? ['perps', 'trade', 'trade-advanced'] : ['trade', 'trade-advanced'],
+      label: 'Trade',
+      submenu: [
+        ...(chainConfig.perps
+          ? [
+              {
+                page: 'perps' as Page,
+                label: 'Perps',
+                subtitle: 'Trade perps on leverage',
+                icon: <ArrowChartLineUp className='w-6 h-6' />,
+              },
+            ]
+          : []),
+        {
+          page: 'trade',
+          label: 'Spot',
+          subtitle: 'Trade assets against stables',
+          icon: <Coins className='w-6 h-6' />,
+        },
+        {
+          page: 'trade-advanced',
+          label: 'Spot Advanced',
+          subtitle: 'Trade any assets',
+          icon: <CoinsSwap className='w-6 h-6' />,
+        },
+      ],
+    },
+    {
+      pages: chainConfig.farm || chainConfig.perps ? ['lend', 'farm', 'perps-vault'] : ['lend'],
+      label: 'Earn',
+    },
+    { pages: ['borrow'], label: 'Borrow' },
+    ...(chainConfig.hls
+      ? [{ pages: ['hls-staking', 'hls-farm'] as Page[], label: 'High Leverage' }]
+      : []),
+    { pages: ['portfolio'], label: 'Portfolio' },
+    { pages: ['governance'], label: 'Governance', externalUrl: DocURL.COUNCIL },
+  ]
+}
 
 const menuTreeV1 = (): MenuTreeEntry[] => [
   {
@@ -78,6 +92,9 @@ export default function Header() {
   const isV1 = useStore((s) => s.isV1)
   const showAccountMenu = address && !isHls && !isMobile && !isV1
 
+  const account = useAccount(accountId || '')
+  const isIsolated = account.data?.kind === 'isolated_margin'
+
   function handleCloseFocusMode() {
     if (focusComponent && focusComponent.onClose) focusComponent.onClose()
     useStore.setState({ focusComponent: null })
@@ -88,6 +105,7 @@ export default function Header() {
     () => (isV1 ? address && !isMobile : accountId && !isMobile),
     [isV1, address, accountId],
   )
+
   return (
     <>
       <header
@@ -117,7 +135,11 @@ export default function Header() {
                 <Logo className='text-white' />
               </span>
             </NavLink>
-            {!isMobile && <DesktopNavigation menuTree={isV1 ? menuTreeV1 : menuTree} />}
+            {!isMobile && (
+              <DesktopNavigation
+                menuTree={isV1 ? menuTreeV1 : () => menuTree(chainConfig, isIsolated)}
+              />
+            )}
           </div>
           {focusComponent ? (
             <div className='flex justify-between w-full'>
@@ -147,7 +169,9 @@ export default function Header() {
         </div>
       </header>
 
-      {isMobile && <MobileNavigation menuTree={isV1 ? menuTreeV1 : menuTree} />}
+      {isMobile && (
+        <MobileNavigation menuTree={isV1 ? menuTreeV1 : () => menuTree(chainConfig, isIsolated)} />
+      )}
     </>
   )
 }

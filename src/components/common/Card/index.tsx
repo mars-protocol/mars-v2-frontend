@@ -15,6 +15,8 @@ interface Props {
 
 export default function Card(props: Props) {
   const isTab = props.isTab ?? false
+  const hasRoundedNone = props.className?.includes('rounded-none')
+
   return (
     <section
       id={props.id}
@@ -22,10 +24,13 @@ export default function Card(props: Props) {
       className={classNames(
         props.className,
         'flex flex-col',
-        'relative isolate max-w-full overflow-hidden  max-h-full',
+        'relative isolate max-w-full overflow-hidden max-h-full',
         isTab
           ? ''
-          : 'before:content-[" "] before:absolute rounded-base before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
+          : classNames(
+              'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:p-[1px] before:border-glas',
+              !hasRoundedNone && ['rounded-base', 'before:rounded-base'],
+            ),
       )}
     >
       {typeof props.title === 'string' ? (

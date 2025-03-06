@@ -60,7 +60,7 @@ export default function IsolatedAccountMintAndFund() {
     return fundingAmount.isGreaterThan(capLeft)
   })()
 
-  const accountId = useStore((s) => s.selectedIsolatedAccount)
+  const accountId = useStore((s) => s.selectedAccount)
 
   const handleCreateAndFund = useCallback(async () => {
     if (!address || !stableAsset || fundingAmount.isLessThanOrEqualTo(0)) return
@@ -107,6 +107,7 @@ export default function IsolatedAccountMintAndFund() {
     }
   }, [
     address,
+    accountId,
     stableAsset,
     fundingAmount,
     isAutoLendEnabled,

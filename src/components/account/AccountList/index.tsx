@@ -61,11 +61,12 @@ export default function AccountList(props: Props) {
 
       {/* Advanced Accounts Accordion */}
       <Accordion
+        allowMultipleOpen
         items={[
           {
             title: 'Advanced Accounts',
             renderContent: () => (
-              <div className='flex flex-wrap w-full p-4'>
+              <div className='flex flex-wrap w-full'>
                 {accountIds.map((accountId) => (
                   <AccountCard
                     key={accountId}
