@@ -22,7 +22,7 @@ function USDCLendingRow({ data, isLent }: { data: LendingMarketTableData; isLent
         <AssetImage asset={data.asset} className='w-8 h-8' />
         <div>
           <div className='flex items-center gap-2'>
-            <Text size='lg' className='font-medium'>
+            <Text size='sm' className='font-medium'>
               {data.asset.symbol}
             </Text>
             {isLent && (
@@ -32,7 +32,7 @@ function USDCLendingRow({ data, isLent }: { data: LendingMarketTableData; isLent
             )}
           </div>
           <div className='flex items-center gap-2'>
-            <Text size='sm' className='text-white/60'>
+            <Text size='xs' className='text-white/60'>
               APY
             </Text>
             <AssetRate
@@ -40,6 +40,7 @@ function USDCLendingRow({ data, isLent }: { data: LendingMarketTableData; isLent
               isEnabled={data.borrowEnabled}
               type='apy'
               orientation='ltr'
+              className='text-xs'
               hasCampaignApy={
                 data.asset.campaigns.find((c: AssetCampaign) => c.type === 'apy') !== undefined
               }
