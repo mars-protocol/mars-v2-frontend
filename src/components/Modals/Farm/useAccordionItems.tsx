@@ -1,11 +1,14 @@
 import FarmBorrowings from 'components/Modals/Farm/FarmBorrowings'
 import FarmDeposits from 'components/Modals/Farm/FarmDeposits'
+import FarmHedge from 'components/Modals/Farm/FarmHedge'
 import CreateAccount from 'components/Modals/Hls/Deposit/CreateAccount'
 import FarmLeverage from 'components/Modals/Hls/Deposit/FarmLeverage'
 import SelectAccount from 'components/Modals/Hls/Deposit/SelectAccount'
 import { SelectAccountSubTitle } from 'components/Modals/Hls/Deposit/SubTitles'
 import HlsFarmingSummary from 'components/Modals/Hls/Deposit/Summary/HlsFarmingSummary'
+import Text from 'components/common/Text'
 import useAccounts from 'hooks/accounts/useAccounts'
+import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import { ReactElement, useMemo } from 'react'
 import useStore from 'store'
 import { isAccountEmpty } from 'utils/accounts'
@@ -20,6 +23,8 @@ interface Props {
   getDepositSubTitle: () => ReactElement | null
   getBorrowingsSubTitle: () => ReactElement | null
   isCustomRatio: boolean
+  isHedgeEnabled: boolean
+  setIsHedgeEnabled: (enabled: boolean) => void
   isOpen: boolean[]
   onChangeBorrowings: (coins: BNCoin[]) => void
   onChangeDeposits: (coins: BNCoin[]) => void
@@ -47,6 +52,8 @@ export default function useAccordionItems(props: Props) {
     getBorrowingsSubTitle,
     getDepositSubTitle,
     isCustomRatio,
+    isHedgeEnabled,
+    setIsHedgeEnabled,
     isOpen,
     onChangeBorrowings,
     onChangeDeposits,
@@ -75,74 +82,136 @@ export default function useAccordionItems(props: Props) {
     return emptyAccounts
   }, [hlsAccounts, selectedAccount.id, setSelectedAccount])
 
+  const assets = useWhitelistedAssets()
+  const modal = useStore((s) => s.farmModal)
+
   const farmItems = useMemo(() => {
     if (!primaryAsset || !secondaryAsset) return null
 
-    return [
+    const items = [
       {
+        title: 'Deposit',
+        renderSubTitle: getDepositSubTitle,
         renderContent: () => (
           <FarmDeposits
             deposits={depositCoins}
-            onChangeDeposits={onChangeDeposits}
             primaryAsset={primaryAsset}
             secondaryAsset={secondaryAsset}
             account={account}
-            toggleOpen={toggleOpen}
+            onChangeDeposits={onChangeDeposits}
+            type={type}
             isCustomRatio={isCustomRatio}
             onChangeIsCustomRatio={onChangeIsCustomRatio}
+            toggleOpen={toggleOpen}
             depositCapReachedCoins={depositCapReachedCoins}
-            type={type}
           />
         ),
-        title: 'Deposit',
-        renderSubTitle: getDepositSubTitle,
         isOpen: isOpen[0],
         toggleOpen: (index: number) => toggleOpen(index),
       },
-      {
+    ]
+
+    // Add hedge option after deposits for AstroLp
+    if (type === 'astroLp') {
+      items.push({
+        title: 'Hedge Position',
+        renderSubTitle: () =>
+          isHedgeEnabled ? (
+            <Text size='xs' className='text-white/60'>
+              Hedging {secondaryAsset.symbol} exposure
+            </Text>
+          ) : null,
+        renderContent: () => (
+          <FarmHedge
+            isHedgeEnabled={isHedgeEnabled}
+            setIsHedgeEnabled={setIsHedgeEnabled}
+            primaryAsset={primaryAsset}
+            secondaryAsset={secondaryAsset}
+            depositCoins={depositCoins}
+            borrowCoins={borrowCoins}
+            onChangeBorrowings={onChangeBorrowings}
+            assets={assets}
+            toggleOpen={toggleOpen}
+          />
+        ),
+        isOpen: isOpen[1],
+        toggleOpen: (index: number) => toggleOpen(index),
+      })
+    }
+
+    // Add borrowings section if needed
+    if (type === 'high_leverage' || isHedgeEnabled) {
+      items.push({
+        title: 'Borrowings',
+        renderSubTitle: getBorrowingsSubTitle,
         renderContent: () => (
           <FarmBorrowings
-            account={account}
             borrowings={borrowCoins}
+            onChangeBorrowings={onChangeBorrowings}
+            account={account}
+            type={type}
+            farm={farm}
             reclaims={removedLends}
             deposits={removedDeposits}
             primaryAsset={primaryAsset}
             secondaryAsset={secondaryAsset}
-            onChangeBorrowings={onChangeBorrowings}
-            farm={farm}
             depositCapReachedCoins={depositCapReachedCoins}
             displayCurrency={displayCurrency}
             totalValue={totalValue}
-            type={type}
           />
         ),
-        title: 'Borrow',
-        renderSubTitle: getBorrowingsSubTitle,
-        isOpen: isOpen[1],
+        isOpen: isOpen[2],
         toggleOpen: (index: number) => toggleOpen(index),
-      },
-    ]
+      })
+    }
+
+    // Add summary section
+    items.push({
+      title: 'Summary',
+      renderSubTitle: () => null,
+      renderContent: () => (
+        <HlsFarmingSummary
+          borrowings={borrowCoins}
+          deposits={depositCoins}
+          account={account}
+          astroLp={farm}
+          primaryAsset={primaryAsset}
+          secondaryAsset={secondaryAsset}
+          totalValue={totalValue}
+          depositCapReachedCoins={depositCapReachedCoins}
+          isCreate={!isDeposited}
+        />
+      ),
+      isOpen: isOpen[3],
+      toggleOpen: (index: number) => toggleOpen(index),
+    })
+
+    return items
   }, [
-    account,
-    borrowCoins,
-    depositCapReachedCoins,
-    depositCoins,
-    displayCurrency,
-    farm,
-    getBorrowingsSubTitle,
-    getDepositSubTitle,
-    isCustomRatio,
-    isOpen,
-    onChangeBorrowings,
-    onChangeDeposits,
-    onChangeIsCustomRatio,
     primaryAsset,
-    removedDeposits,
-    removedLends,
     secondaryAsset,
-    toggleOpen,
-    totalValue,
+    depositCoins,
+    account,
+    onChangeDeposits,
     type,
+    isCustomRatio,
+    onChangeIsCustomRatio,
+    isHedgeEnabled,
+    setIsHedgeEnabled,
+    borrowCoins,
+    onChangeBorrowings,
+    assets,
+    toggleOpen,
+    getBorrowingsSubTitle,
+    farm,
+    totalValue,
+    depositCapReachedCoins,
+    isDeposited,
+    getDepositSubTitle,
+    removedLends,
+    removedDeposits,
+    displayCurrency,
+    isOpen,
   ])
 
   const createNewHlsFarmItems = useMemo(() => {

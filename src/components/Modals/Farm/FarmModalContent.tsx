@@ -51,6 +51,7 @@ export default function FarmModalContent(props: Props) {
   const hlsToggleCount = isDeposited ? 3 : 4
   const [isOpen, toggleOpen] = useIsOpenArray(type === 'high_leverage' ? hlsToggleCount : 2, false)
   const [isCustomRatio, setIsCustomRatio] = useState(false)
+  const [isHedgeEnabled, setIsHedgeEnabled] = useState(false)
   const [depositCoins, setDepositCoins] = useState<BNCoin[]>([])
   const [borrowCoins, setBorrowCoins] = useState<BNCoin[]>([])
   const displayAsset = useDisplayAsset()
@@ -220,6 +221,8 @@ export default function FarmModalContent(props: Props) {
     getBorrowingsSubTitle,
     getDepositSubTitle,
     isCustomRatio,
+    isHedgeEnabled,
+    setIsHedgeEnabled,
     isOpen,
     onChangeBorrowings,
     onChangeDeposits,
