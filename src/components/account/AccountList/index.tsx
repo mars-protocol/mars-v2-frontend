@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useLocation, useSearchParams } from 'react-router-dom'
 
 import Accordion from 'components/common/Accordion'
@@ -7,7 +7,6 @@ import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
-import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAccounts from 'hooks/accounts/useAccounts'
 
 interface Props {

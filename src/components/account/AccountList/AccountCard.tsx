@@ -3,6 +3,7 @@ import Card from 'components/common/Card'
 import classNames from 'classnames'
 import Radio from 'components/common/Radio'
 import Text from 'components/common/Text'
+import USDCMarginTag from 'components/perps/USDCMarginTag'
 import useAccount from 'hooks/accounts/useAccount'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
@@ -76,11 +77,7 @@ export default function AccountCard(props: AccountCardProps) {
               <Text size='xs' className='flex flex-1'>
                 Credit Account {accountId}
               </Text>
-              {isUSDC && (
-                <span className='px-2 py-0.5 text-xs bg-white/20 rounded-md text-white/70'>
-                  USDC Margin
-                </span>
-              )}
+              {isUSDC && <USDCMarginTag />}
             </div>
             <Radio active={isActive} className='group-hover/account:opacity-100' />
           </div>

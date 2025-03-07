@@ -5,6 +5,7 @@ import Card from 'components/common/Card'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import HlsTag from 'components/hls/HlsTag'
+import USDCMarginTag from 'components/perps/USDCMarginTag'
 
 interface Props {
   stats: { title: React.ReactNode; sub: string }[]
@@ -13,17 +14,21 @@ interface Props {
   accountId: string
   isCurrent?: boolean
   isHls?: boolean
+  isUSDC?: boolean
 }
 
 export default function Skeleton(props: Props) {
-  const { stats, health, healthFactor, accountId, isCurrent } = props
+  const { stats, health, healthFactor, accountId, isCurrent, isHls, isUSDC } = props
   return (
     <Card className='p-4 bg-white/5'>
       <div className='flex items-center justify-between'>
-        <Text>
-          Credit Account {accountId}
-          {props.isHls && <HlsTag />}
-        </Text>
+        <div className='flex items-center gap-2'>
+          <Text>
+            Credit Account {accountId}
+            {isHls && <HlsTag />}
+          </Text>
+          {isUSDC && <USDCMarginTag />}
+        </div>
         <Text size='xs' className='text-white/60'>
           {isCurrent && '(current)'}
         </Text>
