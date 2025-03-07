@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useSearchParams } from 'react-router-dom'
 
 import Accordion from 'components/common/Accordion'
@@ -7,6 +7,8 @@ import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useAccounts from 'hooks/accounts/useAccounts'
 
 interface Props {
   setShowMenu: (show: boolean) => void
@@ -18,9 +20,12 @@ export default function AccountList(props: Props) {
   const chainConfig = useChainConfig()
   const currentAccountId = useAccountId()
   const address = useStore((s) => s.address)
+  const usdcAccounts = useAccounts('usdc', address)
   const { data: accountIds } = useAccountIds(address, true, true)
   const [searchParams] = useSearchParams()
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false)
+
+  const hasUSDCAccounts = usdcAccounts.data?.length > 0
 
   useEffect(() => {
     if (!currentAccountId) return
@@ -60,36 +65,38 @@ export default function AccountList(props: Props) {
       </div>
 
       {/* Advanced Accounts Accordion */}
-      <div className='border-t border-white/20'>
-        <Accordion
-          allowMultipleOpen
-          items={[
-            {
-              title: 'Advanced Accounts',
-              renderContent: () => (
-                <div className='flex flex-wrap w-full px-4'>
-                  {accountIds.map((accountId) => (
-                    <AccountCard
-                      key={accountId}
-                      accountId={accountId}
-                      isActive={isActive(accountId)}
-                      setShowMenu={setShowMenu}
-                      pathname={pathname}
-                      chainConfig={chainConfig}
-                      searchParams={searchParams}
-                      address={address}
-                      showUSDCMarginOnly={true}
-                    />
-                  ))}
-                </div>
-              ),
-              renderSubTitle: () => null,
-              isOpen: isAdvancedOpen,
-              toggleOpen: handleToggle,
-            },
-          ]}
-        />
-      </div>
+      {hasUSDCAccounts && (
+        <div className='border-t border-white/20'>
+          <Accordion
+            allowMultipleOpen
+            items={[
+              {
+                title: 'Advanced Accounts',
+                renderContent: () => (
+                  <div className='flex flex-wrap w-full px-4'>
+                    {accountIds.map((accountId) => (
+                      <AccountCard
+                        key={accountId}
+                        accountId={accountId}
+                        isActive={isActive(accountId)}
+                        setShowMenu={setShowMenu}
+                        pathname={pathname}
+                        chainConfig={chainConfig}
+                        searchParams={searchParams}
+                        address={address}
+                        showUSDCMarginOnly={true}
+                      />
+                    ))}
+                  </div>
+                ),
+                renderSubTitle: () => null,
+                isOpen: isAdvancedOpen,
+                toggleOpen: handleToggle,
+              },
+            ]}
+          />
+        </div>
+      )}
     </div>
   )
 }

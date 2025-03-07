@@ -140,6 +140,7 @@ export default function useHealthComputer(account?: Account) {
 
   const perpsParamsData = useMemo(() => {
     if (!perpsParams) return {}
+    const useUsdcParams = account?.kind === 'usdc'
     return perpsParams.reduce(
       (prev, curr) => {
         prev[curr.denom] = {
@@ -147,13 +148,27 @@ export default function useHealthComputer(account?: Account) {
           max_long_oi_value: BN(curr.max_long_oi_value).toString(),
           max_short_oi_value: BN(curr.max_short_oi_value).toString(),
           max_net_oi_value: BN(curr.max_net_oi_value).toString(),
+          liquidation_threshold: {
+            ...curr.liquidation_threshold,
+            value:
+              useUsdcParams && curr.liquidation_threshold_usdc.is_enabled
+                ? curr.liquidation_threshold_usdc.value
+                : curr.liquidation_threshold.value,
+          },
+          max_loan_to_value: {
+            ...curr.max_loan_to_value,
+            value:
+              useUsdcParams && curr.max_loan_to_value_usdc.is_enabled
+                ? curr.max_loan_to_value_usdc.value
+                : curr.max_loan_to_value.value,
+          },
         }
 
         return prev
       },
       {} as { [key: string]: PerpParams },
     )
-  }, [perpsParams])
+  }, [perpsParams, account?.kind])
 
   const marketStates = useMemo(() => {
     const marketStates: { [key: string]: MarketResponse } = {}
@@ -179,7 +194,6 @@ export default function useHealthComputer(account?: Account) {
       positions.vaults.length !== Object.keys(vaultPositionValues).length
     )
       return null
-
     return {
       kind: account.kind,
       asset_params: assetsParams,

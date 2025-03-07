@@ -53,7 +53,7 @@ export default function AccountMenuContent(props: Props) {
       return
     }
     if (!hasCreditAccounts) {
-      useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
+      useStore.setState({ focusComponent: { component: <AccountCreateSelect /> } })
       return
     }
   }, [hasFundsForTxFee, hasCreditAccounts, setShowMenu, showMenu])
