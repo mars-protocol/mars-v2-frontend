@@ -9,6 +9,7 @@ import OrderTypeSelector from 'components/common/OrderTypeSelector'
 import { PERPS_ORDER_TYPE_TABS } from 'components/perps/Module/constants'
 import KeeperFee from 'components/perps/Module/KeeperFee'
 import { LeverageSection } from 'components/perps/Module/LeverageSection'
+import { MarginTypeSelector } from 'components/perps/Module/MarginTypeSelector'
 import PerpsSummary from 'components/perps/Module/Summary'
 import PerpsTradeDirectionSelector from 'components/perps/Module/PerpsTradeDirectionSelector'
 import { LimitPriceSection, StopPriceSection } from './PriceInputs'
@@ -37,6 +38,7 @@ import { useExecutionState } from 'hooks/perps/useExecutionState'
 import { usePositionSimulation } from 'hooks/perps/usePositionSimulation'
 import { usePerpsCallbacks } from 'hooks/perps/usePerpsCallbacks'
 import { useOpenInterestLeft } from 'hooks/perps/useOpenInterestLeft'
+import useAccounts from 'hooks/accounts/useAccounts'
 
 export function PerpsModule() {
   // State declarations
@@ -44,6 +46,7 @@ export function PerpsModule() {
   const [stopTradeDirection, setStopTradeDirection] = useState<TradeDirection>('long')
   const [selectedOrderType, setSelectedOrderType] = useState<OrderType>(OrderType.MARKET)
   const [isReduceOnly, setIsReduceOnly] = useState(false)
+  const [selectedAccountId, setSelectedAccountId] = useState<string>('')
 
   // Derived state
   const isLimitOrder = selectedOrderType === OrderType.LIMIT
@@ -57,6 +60,23 @@ export function PerpsModule() {
   const { simulatePerps } = useUpdatedAccount(account)
   const perpsVaultModal = useStore((s) => s.perpsVaultModal)
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
+  const address = useStore((s) => s.address)
+  const { data: defaultAccounts } = useAccounts('default', address)
+  const { data: usdcAccounts } = useAccounts('usdc', address)
+
+  // Only show margin selector if both account types exist
+  const shouldShowMarginSelector = defaultAccounts.length > 0 && usdcAccounts.length > 0
+
+  // Auto-select account if only one type exists
+  useEffect(() => {
+    if (!selectedAccountId) {
+      if (defaultAccounts.length > 0 && usdcAccounts.length === 0) {
+        setSelectedAccountId(defaultAccounts[0].id)
+      } else if (usdcAccounts.length > 0 && defaultAccounts.length === 0) {
+        setSelectedAccountId(usdcAccounts[0].id)
+      }
+    }
+  }, [defaultAccounts, usdcAccounts, selectedAccountId])
 
   const { limitPrice, setLimitPrice, setStopPrice, orderType, stopPrice } = usePerpsOrderForm()
   const {
@@ -206,6 +226,14 @@ export function PerpsModule() {
       )}
     >
       <div className='flex flex-col gap-5'>
+        {shouldShowMarginSelector && (
+          <MarginTypeSelector
+            selectedAccountId={selectedAccountId}
+            onAccountSelect={setSelectedAccountId}
+            defaultAccounts={defaultAccounts}
+            usdcAccounts={usdcAccounts}
+          />
+        )}
         <OrderTypeSelector
           orderTabs={PERPS_ORDER_TYPE_TABS}
           selected={selectedOrderType}

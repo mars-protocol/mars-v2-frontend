@@ -51,10 +51,16 @@ export default function AccountCard(props: AccountCardProps) {
           if (isMobile) setShowMenu(false)
           useStore.setState({ accountDeleteModal: null })
           if (isUSDC) {
-            navigate(`/perps?accountId=${accountId}`)
-          } else {
+            navigate(
+              getRoute(
+                getPage(`/perps?accountId=${accountId}`, chainConfig),
+                searchParams,
+                address,
+                accountId,
+              ),
+            )
+          } else
             navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, accountId))
-          }
         }}
         title={
           <div

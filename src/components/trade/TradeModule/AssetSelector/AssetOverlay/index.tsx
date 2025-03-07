@@ -43,10 +43,14 @@ export default function AssetOverlay(props: Props) {
 
   // Filter assets based on USDC account type and liquidation threshold
   const filteredBuyAssets = useMemo(() => {
-    if (account?.kind !== 'usdc') return props.buyAssets
+    if (account?.kind === 'usdc')
+      return props.buyAssets.filter((asset) => {
+        const assetParams = perpsParams?.find((param) => param.denom === asset.denom)
+        return assetParams?.liquidation_threshold_usdc?.is_enabled === true
+      })
     return props.buyAssets.filter((asset) => {
       const assetParams = perpsParams?.find((param) => param.denom === asset.denom)
-      return assetParams?.liquidation_threshold_usdc?.is_enabled === true
+      return assetParams?.liquidation_threshold.is_enabled === true
     })
   }, [account?.kind, props.buyAssets, perpsParams])
 
