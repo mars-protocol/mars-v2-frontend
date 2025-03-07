@@ -34,10 +34,10 @@ export default function AccountCard(props: AccountCardProps) {
 
   const navigate = useNavigate()
   const { data: account } = useAccount(accountId)
-  const isIsolated = account?.kind === 'isolated_margin'
+  const isUSDC = account?.kind === 'usdc'
 
-  if (showUSDCMarginOnly && !isIsolated) return null
-  if (!showUSDCMarginOnly && isIsolated) return null
+  if (showUSDCMarginOnly && !isUSDC) return null
+  if (!showUSDCMarginOnly && isUSDC) return null
 
   return (
     <div key={accountId} id={`account-${accountId}`} className='w-full pt-4 scrollbar-hide'>
@@ -50,7 +50,11 @@ export default function AccountCard(props: AccountCardProps) {
           if (isActive) return
           if (isMobile) setShowMenu(false)
           useStore.setState({ accountDeleteModal: null })
-          navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, accountId))
+          if (isUSDC) {
+            navigate(`/perps?accountId=${accountId}`)
+          } else {
+            navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, accountId))
+          }
         }}
         title={
           <div
@@ -66,7 +70,7 @@ export default function AccountCard(props: AccountCardProps) {
               <Text size='xs' className='flex flex-1'>
                 Credit Account {accountId}
               </Text>
-              {isIsolated && (
+              {isUSDC && (
                 <span className='px-2 py-0.5 text-xs bg-white/20 rounded-md text-white/70'>
                   USDC Margin
                 </span>

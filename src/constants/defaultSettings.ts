@@ -26,7 +26,7 @@ export const getDefaultChainSettings = (chainConfig: ChainConfig) => {
     showSummary: true,
     tvChartStore: JSON.stringify({}),
     showPerpsVaultBanner: true,
-    showIsolatedCollateralBanner: true,
+    showUSDCCollateralBanner: true,
     fundingRateInterval: '1H',
     keeperFee: JSON.stringify({
       denom: defaultKeeperFeeDenom,

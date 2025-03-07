@@ -246,13 +246,6 @@ interface ChainConfig {
     creditManager: string
     pyth: string
   }
-  isolatedMargin?: {
-    info: string
-    createAccountButton: {
-      text: string
-      navigateTo: string
-    }
-  }
   defaultCurrency: {
     coinDenom: string
     coinMinimalDenom: string
@@ -1223,7 +1216,6 @@ interface CommonSlice {
   client?: WalletClient
   isOpen: boolean
   selectedAccount: string | null
-  selectedIsolatedAccount: string | null
   updatedAccount?: Account
   focusComponent: FocusComponent | null
   mobileNavExpanded: boolean

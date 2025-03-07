@@ -15,21 +15,12 @@ import { getAccountNetValue } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { demagnify, getCoinValue } from 'utils/formatters'
 
-interface UsePerpsModuleProps {
-  tradeDirection: TradeDirection
-  limitPrice: BigNumber | null
-  isStopOrder: boolean
-  stopTradeDirection: TradeDirection
-  marginType: 'cross' | 'isolated'
-}
-
-export default function usePerpsModule({
-  tradeDirection,
-  limitPrice,
-  isStopOrder,
-  stopTradeDirection,
-  marginType,
-}: UsePerpsModuleProps) {
+export default function usePerpsModule(
+  tradeDirection: TradeDirection,
+  limitPrice: BigNumber | null,
+  isStopOrder?: boolean,
+  stopTradeDirection?: TradeDirection,
+) {
   const { perpsAsset } = usePerpsAsset()
   const params = usePerpsParams(perpsAsset.denom)
   const perpsMarket = usePerpsMarket()
@@ -77,10 +68,31 @@ export default function usePerpsModule({
   }, [accountNetValue, perpsAsset, previousAmount])
 
   const maxAmount = useMemo(() => {
-    // Isolated margin typically has lower position size limits
-    const baseMaxAmount = account?.deposits.find(byDenom(perpsAsset.denom))?.amount ?? BN_ZERO
-    return marginType === 'isolated' ? baseMaxAmount.multipliedBy(0.5) : baseMaxAmount
-  }, [account?.deposits, perpsAsset.denom, marginType])
+    const directionToUse = isStopOrder ? stopTradeDirection : tradeDirection
+    const baseMaxAmount = BigNumber.max(
+      computeMaxPerpAmount(perpsAsset.denom, directionToUse ?? tradeDirection),
+      BN_ZERO,
+    )
+
+    if (perpPosition) {
+      const wouldClosePosition =
+        (perpPosition.tradeDirection === 'long' && directionToUse === 'short') ||
+        (perpPosition.tradeDirection === 'short' && directionToUse === 'long')
+
+      if (wouldClosePosition) {
+        return baseMaxAmount.plus(perpPosition.amount.abs())
+      }
+    }
+
+    return baseMaxAmount
+  }, [
+    computeMaxPerpAmount,
+    perpsAsset.denom,
+    tradeDirection,
+    isStopOrder,
+    stopTradeDirection,
+    perpPosition,
+  ])
 
   const [leverage, setLeverage] = useState<number>(0)
 
@@ -102,9 +114,14 @@ export default function usePerpsModule({
   }, [accountNetValue, amount, perpsAsset, previousAmount, limitPrice])
 
   const maxLeverage = useMemo(() => {
-    // Isolated margin typically has higher leverage limits but higher liquidation risk
-    return marginType === 'isolated' ? 50 : 20
-  }, [marginType])
+    const priceToUse = limitPrice ?? perpsAsset.price?.amount ?? BN_ZERO
+    const totalPositionValue = priceToUse.times(demagnify(maxAmount.toNumber(), perpsAsset))
+    const maxLeverage = totalPositionValue.div(accountNetValue).toNumber()
+    if (maxLeverage === Infinity) return 0
+    if (maxLeverage < 1 && maxLeverage > 0) return maxLeverage
+
+    return Math.max(maxLeverage, 1)
+  }, [maxAmount, perpsAsset, accountNetValue, limitPrice])
 
   const warningMessages = useMemo(() => {
     const messages = new List<string>()

@@ -69,7 +69,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     location.pathname.includes('trade') ||
     location.pathname === '/' ||
     (location.pathname.includes('perps') && !location.pathname.includes('perps-vault')) ||
-    location.pathname.includes('isolated')
+    location.pathname.includes('usdc')
   const accountId = useAccountId()
 
   useEffect(() => {

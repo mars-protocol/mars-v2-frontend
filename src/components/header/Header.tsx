@@ -20,8 +20,8 @@ import useStore from 'store'
 import { DocURL } from 'types/enums'
 import useAccount from 'hooks/accounts/useAccount'
 
-const menuTree = (chainConfig: ChainConfig, isIsolated: boolean): MenuTreeEntry[] => {
-  if (isIsolated) {
+const menuTree = (chainConfig: ChainConfig, isUSDC: boolean): MenuTreeEntry[] => {
+  if (isUSDC) {
     return [
       {
         pages: ['perps'],
@@ -93,7 +93,7 @@ export default function Header() {
   const showAccountMenu = address && !isHls && !isMobile && !isV1
 
   const account = useAccount(accountId || '')
-  const isIsolated = account.data?.kind === 'isolated_margin'
+  const isUSDC = account.data?.kind === 'usdc'
 
   function handleCloseFocusMode() {
     if (focusComponent && focusComponent.onClose) focusComponent.onClose()
@@ -137,7 +137,7 @@ export default function Header() {
             </NavLink>
             {!isMobile && (
               <DesktopNavigation
-                menuTree={isV1 ? menuTreeV1 : () => menuTree(chainConfig, isIsolated)}
+                menuTree={isV1 ? menuTreeV1 : () => menuTree(chainConfig, isUSDC)}
               />
             )}
           </div>
@@ -170,7 +170,7 @@ export default function Header() {
       </header>
 
       {isMobile && (
-        <MobileNavigation menuTree={isV1 ? menuTreeV1 : () => menuTree(chainConfig, isIsolated)} />
+        <MobileNavigation menuTree={isV1 ? menuTreeV1 : () => menuTree(chainConfig, isUSDC)} />
       )}
     </>
   )

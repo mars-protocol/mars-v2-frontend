@@ -587,19 +587,17 @@ export function removeEmptyBNCoins(coins: BNCoin[]) {
 }
 
 /**
- * Fetches all isolated margin accounts for a given address
+ * Fetches all USDC margin accounts for a given address
  * @param chainConfig The chain configuration
  * @param address The user's address
- * @returns An array of account IDs and kinds filtered to only include isolated margin accounts
+ * @returns An array of account IDs and kinds filtered to only include USDC margin accounts
  */
-export async function getIsolatedAccounts(chainConfig: ChainConfig, address: string) {
+export async function getUSDCAccounts(chainConfig: ChainConfig, address: string) {
   try {
     const allAccountsWithKinds = await getWalletAccountIds(chainConfig, address)
-    return allAccountsWithKinds.filter(
-      (a) => typeof a.kind === 'string' && a.kind === 'isolated_margin',
-    )
+    return allAccountsWithKinds.filter((a) => typeof a.kind === 'string' && a.kind === 'usdc')
   } catch (error) {
-    console.error('Error fetching isolated accounts:', error)
+    console.error('Error fetching USDC accounts:', error)
     return []
   }
 }

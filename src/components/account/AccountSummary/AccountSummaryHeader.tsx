@@ -56,7 +56,7 @@ export default function AccountSummaryHeader(props: Props) {
     accountBalance.toFixed(2),
   )
   const increase = updatedAccountBalance?.isGreaterThan(accountBalance)
-  const isIsolatedAccount = account.kind === 'isolated_margin'
+  const isUSDCAccount = account.kind === 'usdc'
   const chainConfig = useChainConfig()
   const stableDenom = chainConfig.stables[0]
   const stableAsset = useAsset(stableDenom)
@@ -83,7 +83,7 @@ export default function AccountSummaryHeader(props: Props) {
         <DisplayCurrency
           options={{
             abbreviated: false,
-            suffix: isIsolatedAccount ? ` ${stableAsset?.symbol || 'USDC'}` : undefined,
+            suffix: isUSDCAccount ? ` ${stableAsset?.symbol || 'USDC'}` : undefined,
           }}
           coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalance)}
           className='text-lg -mb-[1px]'
@@ -101,7 +101,7 @@ export default function AccountSummaryHeader(props: Props) {
             <DisplayCurrency
               options={{
                 abbreviated: false,
-                suffix: isIsolatedAccount ? ` ${stableAsset?.symbol || 'USDC'}` : undefined,
+                suffix: isUSDCAccount ? ` ${stableAsset?.symbol || 'USDC'}` : undefined,
               }}
               coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, updatedAccountBalance)}
               className={classNames(

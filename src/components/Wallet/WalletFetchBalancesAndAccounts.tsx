@@ -2,7 +2,7 @@ import { Suspense, useEffect, useMemo } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import AccountCreateSelect from 'components/account/AccountCreateSelect'
-import IsolatedAccountMintAndFund from 'components/account/IsolatedAccountMintAndFund'
+import USDCAccountMintAndFund from 'components/account/USDCAccountMintAndFund'
 import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
 import WalletBridges from 'components/Wallet/WalletBridges'
@@ -15,7 +15,7 @@ import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
-import { getIsolatedAccounts } from 'utils/accounts'
+import { getUSDCAccounts } from 'utils/accounts'
 
 function FetchLoading() {
   return (
@@ -45,16 +45,16 @@ function Content() {
     [walletBalances, baseAsset],
   )
 
-  const isIsolatedPath = pathname.includes('/isolated')
+  const isUSDCPath = pathname.includes('/usdc')
 
   if (isLoadingAccounts || isLoadingBalances) return <FetchLoading />
   if (BN(baseBalance).isZero()) return <WalletBridges />
 
   if (accountIds && accountIds.length === 0 && !isV1) {
-    if (isIsolatedPath) {
+    if (isUSDCPath) {
       useStore.setState({
         focusComponent: {
-          component: <IsolatedAccountMintAndFund />,
+          component: <USDCAccountMintAndFund />,
         },
       })
       return <FetchLoading />
@@ -90,7 +90,7 @@ function FetchedBalances({
   const chainConfig = useChainConfig()
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const isIsolatedPath = pathname.includes('/isolated')
+  const isUSDCPath = pathname.includes('/usdc')
 
   const page = getPage(pathname, chainConfig)
 
@@ -101,31 +101,31 @@ function FetchedBalances({
       const currentAccountIsHls = urlAccountId && !accountIds.includes(urlAccountId)
       const currentAccount = currentAccountIsHls || !urlAccountId ? accountIds[0] : urlAccountId
 
-      if (isIsolatedPath && !isV1) {
-        const checkIsolatedAccounts = async () => {
+      if (isUSDCPath && !isV1) {
+        const checkUSDCAccounts = async () => {
           try {
-            const isolatedAccounts = await getIsolatedAccounts(chainConfig, address || '')
+            const usdcAccounts = await getUSDCAccounts(chainConfig, address || '')
 
-            if (isolatedAccounts.length > 0) {
-              navigate(getRoute(page, searchParams, address, isolatedAccounts[0].id), {
+            if (usdcAccounts.length > 0) {
+              navigate(getRoute(page, searchParams, address, usdcAccounts[0].id), {
                 replace: true,
               })
             } else {
               useStore.setState({
                 focusComponent: {
-                  component: <IsolatedAccountMintAndFund />,
+                  component: <USDCAccountMintAndFund />,
                 },
               })
             }
           } catch (error) {
-            console.error('Error fetching isolated accounts:', error)
+            console.error('Error fetching USDC accounts:', error)
             navigate(getRoute(page, searchParams, address, isV1 ? undefined : currentAccount), {
               replace: true,
             })
           }
         }
 
-        checkIsolatedAccounts()
+        checkUSDCAccounts()
       } else {
         navigate(getRoute(page, searchParams, address, isV1 ? undefined : currentAccount), {
           replace: true,
@@ -143,7 +143,7 @@ function FetchedBalances({
     searchParams,
     urlAccountId,
     urlAddress,
-    isIsolatedPath,
+    isUSDCPath,
     chainConfig,
   ])
 

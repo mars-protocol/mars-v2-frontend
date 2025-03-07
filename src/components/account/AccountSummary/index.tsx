@@ -31,7 +31,7 @@ interface Props {
 
 export default function AccountSummary(props: Props) {
   const { account, isInModal } = props
-  const isIsolatedAccount = account.kind === 'isolated_margin'
+  const isUSDCAccount = account.kind === 'usdc'
   const chainConfig = useChainConfig()
   const storageKey = isInModal
     ? `${chainConfig.id}/${LocalStorageKeys.ACCOUNT_SUMMARY_IN_MODAL_TABS_EXPANDED}`
@@ -168,7 +168,7 @@ export default function AccountSummary(props: Props) {
       },
     ]
 
-    if (!isIsolatedAccount) {
+    if (!isUSDCAccount) {
       itemsArray.push({
         title: 'Balances',
         renderContent: () =>
@@ -227,7 +227,7 @@ export default function AccountSummary(props: Props) {
     handleToggle,
     accountSummaryTabs,
     updatedAccount,
-    isIsolatedAccount,
+    isUSDCAccount,
   ])
 
   if (!account) return null

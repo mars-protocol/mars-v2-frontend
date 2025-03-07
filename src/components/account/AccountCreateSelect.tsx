@@ -4,7 +4,7 @@ import AccountCreateFirst from 'components/account/AccountCreateFirst'
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
 import FullOverlayContent from 'components/common/FullOverlayContent'
-import IsolatedAccountMintAndFund from 'components/account/IsolatedAccountMintAndFund'
+import USDCAccountMintAndFund from 'components/account/USDCAccountMintAndFund'
 import Text from 'components/common/Text'
 import WalletSelect from 'components/Wallet/WalletSelect'
 import useStore from 'store'
@@ -18,10 +18,10 @@ export default function AccountCreateSelect() {
     if (!address) useStore.setState({ focusComponent: { component: <WalletSelect /> } })
   }, [address])
 
-  const handleIsolatedAccountClick = useCallback(() => {
+  const handleUSDCAccountClick = useCallback(() => {
     useStore.setState({
       focusComponent: {
-        component: <IsolatedAccountMintAndFund />,
+        component: <USDCAccountMintAndFund />,
       },
     })
   }, [])
@@ -79,17 +79,17 @@ export default function AccountCreateSelect() {
             {showAdvanced && (
               <div className='mt-4'>
                 <Text size='lg' className='mb-2 font-semibold'>
-                  Isolated Account
+                  USDC Account
                 </Text>
                 <Text size='sm' className='mb-4 text-white/70'>
                   A specialized account that only accepts USDC deposits and can only be used for
-                  isolated perpetual positions. Create and fund in one step.
+                  USDC perpetual positions. Create and fund in one step.
                 </Text>
                 <Button
                   className='w-full'
-                  text='Create Isolated USDC Account'
+                  text='Create USDC Account'
                   color='secondary'
-                  onClick={handleIsolatedAccountClick}
+                  onClick={handleUSDCAccountClick}
                   size='lg'
                 />
               </div>

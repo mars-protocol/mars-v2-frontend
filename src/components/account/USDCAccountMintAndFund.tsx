@@ -25,10 +25,10 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { getPage, getRoute } from 'utils/route'
-import useHasIsolatedAccounts from 'hooks/accounts/useHasIsolatedAccounts'
-import { getIsolatedAccounts } from 'utils/accounts'
+import useHasUSDCAccounts from 'hooks/accounts/useHasUSDCAccounts'
+import { getUSDCAccounts } from 'utils/accounts'
 
-export default function IsolatedAccountMintAndFund() {
+export default function USDCAccountMintAndFund() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const address = useStore((s) => s.address)
@@ -38,7 +38,7 @@ export default function IsolatedAccountMintAndFund() {
   const [searchParams] = useSearchParams()
   const [isAutoLendEnabled] = useEnableAutoLendGlobal()
   const markets = useMarkets()
-  const { hasIsolatedAccounts } = useHasIsolatedAccounts()
+  const { hasUSDCAccounts } = useHasUSDCAccounts()
 
   const stableDenom = chainConfig.stables[0]
   const stableAsset = useAsset(stableDenom)
@@ -75,13 +75,13 @@ export default function IsolatedAccountMintAndFund() {
           const success = await deposit({
             accountId: accountId ?? undefined,
             coins: [fundingAsset],
-            accountKind: 'isolated_margin',
+            accountKind: 'usdc',
             lend: isAutoLendEnabled,
           })
 
           if (success) {
             // Fetch isolated accounts to get the new account ID
-            const isolatedAccounts = await getIsolatedAccounts(chainConfig, address)
+            const isolatedAccounts = await getUSDCAccounts(chainConfig, address)
             if (isolatedAccounts.length > 0) {
               navigate(
                 getRoute(
@@ -129,11 +129,11 @@ export default function IsolatedAccountMintAndFund() {
 
   return (
     <FullOverlayContent
-      title={hasIsolatedAccounts ? 'Fund Isolated Account' : 'Create and Fund Isolated Account'}
+      title={hasUSDCAccounts ? 'Fund USDC Account' : 'Create and Fund USDC Account'}
       copy={
-        hasIsolatedAccounts
-          ? 'Fund your isolated account with a stablecoin.'
-          : 'Create an isolated account with a stablecoin. This will create a new account and fund it in one step.'
+        hasUSDCAccounts
+          ? 'Fund your USDC account with a stablecoin.'
+          : 'Create a USDC account with a stablecoin. This will create a new account and fund it in one step.'
       }
       docs='account'
     >
@@ -155,9 +155,9 @@ export default function IsolatedAccountMintAndFund() {
 
           <div className='flex items-center mb-3'>
             <Text size='sm' className='text-white/60 mr-2'>
-              {hasIsolatedAccounts
-                ? `Deposit ${stableAsset?.symbol || 'Stablecoin'} to fund your isolated account`
-                : `Deposit ${stableAsset?.symbol || 'Stablecoin'} to create your isolated account`}
+              {hasUSDCAccounts
+                ? `Deposit ${stableAsset?.symbol || 'Stablecoin'} to fund your USDC account`
+                : `Deposit ${stableAsset?.symbol || 'Stablecoin'} to create your USDC account`}
             </Text>
             <Tooltip
               type='info'
@@ -172,9 +172,9 @@ export default function IsolatedAccountMintAndFund() {
           </div>
 
           <Callout type={CalloutType.INFO} className='mb-4'>
-            {hasIsolatedAccounts
-              ? `This will fund your isolated account with ${stableAsset?.symbol || 'Stablecoin'} only.`
-              : `This will create a new isolated account funded with ${stableAsset?.symbol || 'Stablecoin'} only.`}
+            {hasUSDCAccounts
+              ? `This will fund your USDC account with ${stableAsset?.symbol || 'Stablecoin'} only.`
+              : `This will create a new USDC account funded with ${stableAsset?.symbol || 'Stablecoin'} only.`}
           </Callout>
 
           {stableAsset && (
@@ -209,7 +209,7 @@ export default function IsolatedAccountMintAndFund() {
 
         <Button
           className='w-full'
-          text={hasIsolatedAccounts ? 'Fund Account' : 'Create and Fund Account'}
+          text={hasUSDCAccounts ? 'Fund Account' : 'Create and Fund Account'}
           color='tertiary'
           size='lg'
           leftIcon={<ArrowUpLine />}
