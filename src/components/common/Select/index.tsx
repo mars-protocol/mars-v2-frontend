@@ -116,7 +116,7 @@ export default function Select(props: Props) {
         ) : (
           <div
             className={classNames(
-              'flex items-center gap-2 bg-white/10 p-3',
+              'flex items-center gap-2 bg-white/10 p-2',
               'hover:cursor-pointer',
             )}
           >

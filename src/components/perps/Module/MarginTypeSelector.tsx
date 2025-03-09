@@ -99,14 +99,12 @@ export function MarginTypeSelector({
 
       {relevantAccounts.length > 1 && (
         <div className='flex flex-col gap-2'>
-          <Text size='sm' className='text-white/60'>
-            Select {marginType === 'cross' ? 'Default' : 'USDC'} Account
-          </Text>
           <Select
             options={relevantAccountsOptions}
             onChange={handleAccountChange}
             defaultValue={selectedAccountId}
-            className='relative border border-white/20 rounded-lg'
+            className='border border-white/20 rounded-lg'
+            label={`Select ${marginType === 'cross' ? 'Default' : 'USDC'} Account`}
             isParent={true}
           />
         </div>
