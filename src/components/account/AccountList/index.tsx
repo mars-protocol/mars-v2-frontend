@@ -72,7 +72,7 @@ export default function AccountList(props: Props) {
               {
                 title: 'Advanced Accounts',
                 renderContent: () => (
-                  <div className='flex flex-wrap w-full px-4'>
+                  <div className='flex flex-wrap w-full px-4 mb-2'>
                     {accountIds.map((accountId) => (
                       <AccountCard
                         key={accountId}

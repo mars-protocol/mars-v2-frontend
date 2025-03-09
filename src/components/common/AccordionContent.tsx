@@ -6,6 +6,7 @@ import Text from 'components/common/Text'
 interface Props {
   item: Item
   index: number
+  allowOverflow?: boolean
 }
 
 export default function AccordionContent(props: Props) {
@@ -40,7 +41,13 @@ export default function AccordionContent(props: Props) {
           isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
         )}
       >
-        <div className='overflow-x-scroll overflow-y-hidden md:overflow-hidden'>
+        <div
+          className={classNames(
+            props.allowOverflow
+              ? 'overflow-visible'
+              : 'overflow-x-scroll overflow-y-hidden md:overflow-hidden',
+          )}
+        >
           {renderContent()}
         </div>
       </div>

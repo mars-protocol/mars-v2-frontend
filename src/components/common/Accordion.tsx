@@ -7,6 +7,7 @@ interface Props {
   items: Item[]
   allowMultipleOpen?: boolean
   className?: string
+  allowOverflow?: boolean
 }
 
 export default function Accordion(props: Props) {
@@ -14,7 +15,12 @@ export default function Accordion(props: Props) {
     return (
       <>
         {props.items.map((item, index) => (
-          <AccordionContent key={index} item={item} index={index} />
+          <AccordionContent
+            key={index}
+            item={item}
+            index={index}
+            allowOverflow={props.allowOverflow}
+          />
         ))}
       </>
     )
@@ -24,7 +30,7 @@ export default function Accordion(props: Props) {
     <div className={classNames('w-full', props.className)}>
       {props.items.map((item, index) => (
         <Card key={index} className='mb-4'>
-          <AccordionContent item={item} index={index} />
+          <AccordionContent item={item} index={index} allowOverflow={props.allowOverflow} />
         </Card>
       ))}
     </div>

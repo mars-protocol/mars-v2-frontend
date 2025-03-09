@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import classNames from 'classnames'
 import useStore from 'store'
-import useAccounts from 'hooks/accounts/useAccounts'
 import Text from 'components/common/Text'
 import Accordion from 'components/common/Accordion'
 import useAccountId from 'hooks/accounts/useAccountId'
@@ -10,6 +9,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { getRoute } from 'utils/route'
 import { getPage } from 'utils/route'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import Select from 'components/common/Select'
 
 interface Props {
   selectedAccountId: string
@@ -65,6 +65,11 @@ export function MarginTypeSelector({
     }
   }
 
+  const relevantAccountsOptions: SelectOption[] = relevantAccounts.map((account) => ({
+    label: `Account ${account.id}`,
+    value: account.id,
+  }))
+
   const marginContent = (
     <div className='flex flex-col gap-4 p-4'>
       <div className='flex gap-2'>
@@ -97,18 +102,13 @@ export function MarginTypeSelector({
           <Text size='sm' className='text-white/60'>
             Select {marginType === 'cross' ? 'Default' : 'USDC'} Account
           </Text>
-          <select
-            value={selectedAccountId}
-            onChange={(e) => handleAccountChange(e.target.value)}
-            className='w-full bg-white/10 text-white border border-white/20 rounded-lg py-2 px-3'
-          >
-            <option value=''>Select an account</option>
-            {relevantAccounts.map((account) => (
-              <option key={account.id} value={account.id}>
-                Account {account.id}
-              </option>
-            ))}
-          </select>
+          <Select
+            options={relevantAccountsOptions}
+            onChange={handleAccountChange}
+            defaultValue={selectedAccountId}
+            className='relative border border-white/20 rounded-lg'
+            isParent={true}
+          />
         </div>
       )}
     </div>
@@ -117,6 +117,7 @@ export function MarginTypeSelector({
   return (
     <Accordion
       allowMultipleOpen
+      allowOverflow
       items={[
         {
           title: 'Advanced Margin',
