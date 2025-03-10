@@ -18,9 +18,14 @@ export default function FreezePeriod(props: Props) {
 
   if (isLoading) return <Loading />
 
-  return (
-    <Text size='xs'>
-      {formatLockupPeriod(moment.duration(value, 'seconds').as('days'), 'days')}
-    </Text>
-  )
+  const duration = moment.duration(value, 'seconds')
+  const days = duration.as('days')
+
+  // TODO: temporary UI for freeze period in minutes
+  if (days < 1) {
+    const minutes = duration.as('minutes')
+    return <Text size='xs'>{formatLockupPeriod(minutes, 'minutes')}</Text>
+  }
+
+  return <Text size='xs'>{formatLockupPeriod(days, 'days')}</Text>
 }

@@ -6,7 +6,7 @@ import Fee, { FEE_META } from 'components/managedVaults/common/table/columns/Fee
 import FreezePeriod, {
   FREEZE_PERIOD_META,
 } from 'components/managedVaults/common/table/columns/FreezePeriod'
-import Name, { NAME_META } from 'components/managedVaults/common/table/columns/Name'
+import Title, { TITLE_META } from 'components/managedVaults/common/table/columns/Title'
 import Deposit, { DEPOSIT_META } from 'components/managedVaults/official/table/column/Deposit'
 import { useMemo } from 'react'
 
@@ -20,8 +20,10 @@ export default function useOfficialVaultsColumns(props: Props) {
   return useMemo<ColumnDef<ManagedVaultsData>[]>(
     () => [
       {
-        ...NAME_META,
-        cell: ({ row }) => <Name value={row.original as ManagedVaultsData} isLoading={isLoading} />,
+        ...TITLE_META,
+        cell: ({ row }) => (
+          <Title value={row.original as ManagedVaultsData} isLoading={isLoading} />
+        ),
       },
       {
         ...TVL_META,

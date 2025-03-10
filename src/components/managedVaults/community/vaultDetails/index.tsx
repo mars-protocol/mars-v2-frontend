@@ -48,7 +48,7 @@ export default function VaultDetails() {
   )
 }
 
-function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
+export function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
   const { details: vaultDetails, isOwner, isLoading } = useManagedVaultDetails(vaultAddress)
 
   const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()

@@ -12,12 +12,12 @@ export const WITHDRAW_META = {
 interface Props {
   amount: string
   vaultAddress: string
-  vaultToken: string
+  vaultTokenDenom: string
   disabled: boolean
 }
 
 export default function Withdraw(props: Props) {
-  const { amount, vaultAddress, vaultToken, disabled } = props
+  const { amount, vaultAddress, vaultTokenDenom, disabled } = props
   const address = useStore((s) => s.address)
   const [isConfirming, setIsConfirming] = useState(false)
   const withdrawFromManagedVault = useStore((s) => s.withdrawFromManagedVault)
@@ -28,7 +28,7 @@ export default function Withdraw(props: Props) {
       await withdrawFromManagedVault({
         vaultAddress,
         amount,
-        vaultToken,
+        vaultToken: vaultTokenDenom,
         recipient: address,
       })
     } catch (error) {
@@ -36,7 +36,7 @@ export default function Withdraw(props: Props) {
     } finally {
       setIsConfirming(false)
     }
-  }, [address, amount, vaultAddress, vaultToken, withdrawFromManagedVault])
+  }, [address, amount, vaultAddress, vaultTokenDenom, withdrawFromManagedVault])
 
   return (
     <Button

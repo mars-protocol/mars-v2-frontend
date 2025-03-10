@@ -2,10 +2,10 @@ import { Logo } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 
-export const NAME_META = {
+export const TITLE_META = {
   accessorKey: 'name',
-  header: 'Vault Name',
-  meta: { className: 'max-w-60' },
+  header: 'Vault Title',
+  meta: { className: 'max-w-80' },
 }
 
 interface Props {
@@ -13,7 +13,7 @@ interface Props {
   isLoading: boolean
 }
 
-export default function Name(props: Props) {
+export default function Title(props: Props) {
   const { value, isLoading } = props
 
   if (isLoading) return <Loading />

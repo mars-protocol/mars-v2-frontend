@@ -1,13 +1,17 @@
 import Button from 'components/common/Button'
 import { ChevronLeft } from 'components/common/Icons'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import useStore from 'store'
+import { getRoute } from 'utils/route'
 
 export default function NavigationBackButton() {
   const navigate = useNavigate()
+  const address = useStore((s) => s.address)
+  const [searchParams] = useSearchParams()
 
   return (
     <Button
-      onClick={() => navigate(-1)}
+      onClick={() => navigate(getRoute('vaults-community', searchParams, address))}
       variant='transparent'
       color='quaternary'
       className='text-white/60 hover:text-white'

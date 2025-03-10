@@ -42,6 +42,7 @@ export default function VaultAction(props: Props) {
   const { amount: userVaultShares } = useManagedVaultUserShares(
     address,
     vaultDetails.vault_tokens_denom,
+    vaultAddress,
   )
   const { data: userVaultTokens, isLoading } = useManagedVaultConvertToTokens(
     vaultAddress,

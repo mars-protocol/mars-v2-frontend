@@ -6,13 +6,16 @@ import Fee, { FEE_META } from 'components/managedVaults/common/table/columns/Fee
 import FreezePeriod, {
   FREEZE_PERIOD_META,
 } from 'components/managedVaults/common/table/columns/FreezePeriod'
-import Name, { NAME_META } from 'components/managedVaults/common/table/columns/Name'
+import Title, { TITLE_META } from 'components/managedVaults/common/table/columns/Title'
 import Details, { DETAILS_META } from 'components/managedVaults/community/table/column/Details'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { useCallback, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { getRoute } from 'utils/route'
+import Name from 'components/earn/lend/Table/Columns/Name'
+import useVaultAssets from 'hooks/assets/useVaultAssets'
+import { byDenom } from 'utils/array'
 
 interface Props {
   isLoading: boolean
@@ -23,6 +26,7 @@ export default function useCommunityVaultsColumns(props: Props) {
   const address = useStore((s) => s.address)
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
+  const vaultAssets = useVaultAssets()
 
   const handleVaultDetails = useCallback(
     (vaultAddress: string) => {
@@ -33,8 +37,19 @@ export default function useCommunityVaultsColumns(props: Props) {
   return useMemo<ColumnDef<ManagedVaultsData>[]>(
     () => [
       {
-        ...NAME_META,
-        cell: ({ row }) => <Name value={row.original as ManagedVaultsData} isLoading={isLoading} />,
+        ...TITLE_META,
+        cell: ({ row }) => (
+          <Title value={row.original as ManagedVaultsData} isLoading={isLoading} />
+        ),
+      },
+      {
+        header: 'Deposit Asset',
+        id: 'symbol',
+        meta: { className: 'min-w-30' },
+        cell: ({ row }) => {
+          const asset = vaultAssets.find(byDenom(row.original.base_token))
+          return asset && <Name asset={asset} />
+        },
       },
       {
         ...TVL_META,
@@ -69,6 +84,6 @@ export default function useCommunityVaultsColumns(props: Props) {
         ),
       },
     ],
-    [isLoading, handleVaultDetails],
+    [isLoading, handleVaultDetails, vaultAssets],
   )
 }
