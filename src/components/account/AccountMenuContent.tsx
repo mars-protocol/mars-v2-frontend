@@ -16,6 +16,7 @@ import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountTitle from 'hooks/accounts/useAccountTitle'
 import useNonHlsAccountIds from 'hooks/accounts/useNonHlsAccountIds'
+import useAccountVaults from 'hooks/accounts/useAccountVaults'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
@@ -55,6 +56,7 @@ export default function AccountMenuContent(props: Props) {
     hasCreditAccounts && accountId && isNumber(accountId) && accountIds.includes(accountId)
   const activeAccountKind = checkAccountKind(account?.kind ?? 'default')
   const accountTitle = useAccountTitle(account, true)
+  const { hasVaults } = useAccountVaults(address)
 
   const performCreateAccount = useCallback(async () => {
     setShowMenu(false)
@@ -147,7 +149,7 @@ export default function AccountMenuContent(props: Props) {
           )}
         >
           <Text size='lg' className='font-bold'>
-            {managedVaultsEnabled ? 'Accounts' : 'Credit Accounts'}
+            {managedVaultsEnabled && hasVaults ? 'Accounts' : 'Credit Accounts'}
           </Text>
           <Button
             color='secondary'
@@ -167,7 +169,7 @@ export default function AccountMenuContent(props: Props) {
             'top-[54px] h-[calc(100%-54px)] items-start',
           )}
         >
-          {managedVaultsEnabled ? (
+          {managedVaultsEnabled && hasVaults ? (
             <AccountMenuTabs
               tabs={accountTabs}
               activeIndex={activeAccountKind === 'default' ? 0 : 1}
