@@ -88,7 +88,7 @@ export default function Withdrawals(props: Props) {
               <Withdraw
                 amount={totalUnlockedAmount.toString()}
                 vaultAddress={vaultAddress}
-                vaultToken={details.vault_tokens_denom}
+                vaultTokenDenom={details.vault_tokens_denom}
                 disabled={unlockedPositions.length === 0}
               />
             </div>

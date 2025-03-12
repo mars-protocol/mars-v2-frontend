@@ -5,18 +5,17 @@ export const INFO_ITEMS = [
     icon: <CrossCircled />,
     title: 'Community vaults are not moderated ',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum arcu enim, cursus vel nulla quis, euismod molestie est.',
+      'Community vaults are created by users and not reviewed by the Mars Protocol team.',
   },
   {
     icon: <Flag />,
     title: 'Your funds may be at risk',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum arcu enim, cursus vel nulla quis, euismod molestie est.',
+      "By depositing, you're trusting another user's investment strategy with your funds.",
   },
   {
     icon: <TrashBin />,
-    title: 'Lorem ipsum dolor sit amet',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum arcu enim, cursus vel nulla quis, euismod molestie est.',
+    title: 'Profitability is not guaranteed',
+    description: 'Past performance of community vaults does not guarantee future returns.',
   },
 ]

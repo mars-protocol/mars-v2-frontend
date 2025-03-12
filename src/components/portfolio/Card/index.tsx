@@ -14,8 +14,10 @@ import useAccountTitle from 'hooks/accounts/useAccountTitle'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useStore from 'store'
 import { checkAccountKind } from 'utils/accounts'
 import { getRoute } from 'utils/route'
+import { VaultDetailsContent } from 'components/managedVaults/community/vaultDetails'
 
 interface Props {
   accountId: string
@@ -75,19 +77,30 @@ export default function PortfolioCard(props: Props) {
     typeof account.kind === 'object' && 'fund_manager' in account.kind
       ? account.kind.fund_manager.vault_addr
       : ''
-  const route =
-    isVault && vaultAddress
-      ? getRoute(
-          `vaults/${vaultAddress}/details` as Page,
-          searchParams,
-          urlAddress,
-          currentAccountId,
-        )
-      : getRoute(`portfolio/${props.accountId}` as Page, searchParams, urlAddress, currentAccountId)
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (isVault && vaultAddress) {
+      e.preventDefault()
+      useStore.setState({
+        focusComponent: {
+          component: <VaultDetailsContent vaultAddress={vaultAddress} />,
+          onClose: () => {},
+        },
+      })
+    }
+  }
+
+  const route = getRoute(
+    `portfolio/${props.accountId}` as Page,
+    searchParams,
+    urlAddress,
+    currentAccountId,
+  )
 
   return (
     <NavLink
       to={route}
+      onClick={handleClick}
       className={classNames('w-full hover:bg-white/5', !reduceMotion && 'transition-all')}
     >
       <Skeleton

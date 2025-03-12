@@ -1857,7 +1857,7 @@ interface VaultParams {
   }
   vault_token_subdenom: string
 }
-interface ManagedVaultsData extends ManagedVaultDetails {
+interface ManagedVaultsData extends ManagedVaultDetailsResponse {
   vault_address: string
   account_id: string
   fee_rate: string
