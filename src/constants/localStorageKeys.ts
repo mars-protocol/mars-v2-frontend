@@ -30,4 +30,6 @@ export enum LocalStorageKeys {
   SHOW_PERPS_VAULT_BANNER = 'showPerpsVaultBanner',
   SHOW_USDC_COLLATERAL_BANNER = 'showUSDCCollateralBanner',
   FUNDING_RATE_INTERVAL = 'fundingRateInterval',
+  LAST_CROSS_ACCOUNT = 'lastCrossAccount',
+  LAST_USDC_ACCOUNT = 'lastUsdcAccount',
 }

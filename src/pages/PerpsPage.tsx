@@ -2,7 +2,6 @@ import { PerpsModule } from 'components/perps/Module/PerpsModule'
 import PerpsBanner from 'components/perps/PerpsBanner'
 import { PerpsTabs } from 'components/perps/PerpsTabs'
 import { PerpsPositions } from 'components/perps/PerpsPositions'
-import PerpsUSDCLendBanner from 'components/perps/PerpsUSDCLendBanner'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -11,7 +10,6 @@ import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
-import useAccount from 'hooks/accounts/useAccount'
 
 export default function PerpsPage() {
   const { data: vault } = usePerpsVault()
@@ -23,8 +21,6 @@ export default function PerpsPage() {
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
   const accountId = useAccountId()
-  const { data: account } = useAccount(accountId || '')
-  const isUSDCAccount = account?.kind === 'usdc'
 
   useEffect(() => {
     if (!chainConfig.perps) {
@@ -38,7 +34,6 @@ export default function PerpsPage() {
     <div className='flex flex-wrap w-full gap-4 md:grid md:grid-cols-chart'>
       <div className='w-full'>
         <PerpsBanner />
-        {isUSDCAccount && <PerpsUSDCLendBanner />}
         <PerpsTabs />
       </div>
       <div className='w-full row-span-2'>

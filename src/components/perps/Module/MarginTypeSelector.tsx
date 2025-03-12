@@ -10,6 +10,7 @@ import { getRoute } from 'utils/route'
 import { getPage } from 'utils/route'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import Select from 'components/common/Select'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 
 interface Props {
   selectedAccountId: string
@@ -29,6 +30,8 @@ export function MarginTypeSelector({
   const currentAccountId = useAccountId()
   const { data: currentAccount } = useAccount(currentAccountId || undefined)
   const navigate = useNavigate()
+  const lastUsdcAccountKey = LocalStorageKeys.LAST_USDC_ACCOUNT
+  const lastCrossAccountKey = LocalStorageKeys.LAST_CROSS_ACCOUNT
 
   const relevantAccounts = marginType === 'cross' ? defaultAccounts : usdcAccounts
 
@@ -37,16 +40,41 @@ export function MarginTypeSelector({
       onAccountSelect(currentAccountId)
       if (currentAccount?.kind === 'usdc') {
         setMarginType('isolated')
+        const lastUsdcAccount = localStorage.getItem(lastUsdcAccountKey)
+        if (lastUsdcAccount && usdcAccounts.some((acc) => acc.id === lastUsdcAccount)) {
+          onAccountSelect(lastUsdcAccount)
+        }
       } else {
         setMarginType('cross')
+        const lastCrossAccount = localStorage.getItem(lastCrossAccountKey)
+        if (lastCrossAccount && defaultAccounts.some((acc) => acc.id === lastCrossAccount)) {
+          onAccountSelect(lastCrossAccount)
+        }
       }
     }
-  }, [currentAccountId, selectedAccountId, onAccountSelect, currentAccount])
+  }, [
+    currentAccountId,
+    selectedAccountId,
+    onAccountSelect,
+    currentAccount,
+    usdcAccounts,
+    defaultAccounts,
+    lastUsdcAccountKey,
+    lastCrossAccountKey,
+  ])
+
   const chainConfig = useChainConfig()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
+
   const handleAccountChange = (accountId: string) => {
     onAccountSelect(accountId)
+
+    if (marginType === 'isolated') {
+      localStorage.setItem(lastUsdcAccountKey, accountId)
+    } else {
+      localStorage.setItem(lastCrossAccountKey, accountId)
+    }
     navigate(
       getRoute(
         getPage(`/perps?accountId=${accountId}`, chainConfig),
@@ -60,7 +88,12 @@ export function MarginTypeSelector({
   const handleMarginTypeChange = (type: 'cross' | 'isolated') => {
     setMarginType(type)
     const accounts = type === 'cross' ? defaultAccounts : usdcAccounts
-    if (accounts.length === 1) {
+    const lastAccountKey = type === 'cross' ? lastCrossAccountKey : lastUsdcAccountKey
+    const lastAccount = localStorage.getItem(lastAccountKey)
+
+    if (lastAccount && accounts.some((acc) => acc.id === lastAccount)) {
+      handleAccountChange(lastAccount)
+    } else if (accounts.length > 0) {
       handleAccountChange(accounts[0].id)
     }
   }
@@ -74,7 +107,9 @@ export function MarginTypeSelector({
     <div className='flex flex-col gap-4 p-4'>
       <div className='flex gap-2'>
         <button
-          onClick={() => handleMarginTypeChange('cross')}
+          onClick={() => {
+            handleMarginTypeChange('cross')
+          }}
           className={classNames(
             'flex-1 py-2 px-4 rounded-lg transition-colors',
             marginType === 'cross'
@@ -85,7 +120,9 @@ export function MarginTypeSelector({
           Cross
         </button>
         <button
-          onClick={() => handleMarginTypeChange('isolated')}
+          onClick={() => {
+            handleMarginTypeChange('isolated')
+          }}
           className={classNames(
             'flex-1 py-2 px-4 rounded-lg transition-colors',
             marginType === 'isolated'
@@ -119,7 +156,7 @@ export function MarginTypeSelector({
       items={[
         {
           title: 'Advanced Margin',
-          renderContent: () => marginContent,
+          renderContent: () => (isAdvancedOpen ? marginContent : null),
           renderSubTitle: () => {
             if (!selectedAccountId) return null
             const accountType = marginType === 'cross' ? 'Default' : 'USDC'
