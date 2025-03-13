@@ -17,6 +17,7 @@ interface Props {
   onAccountSelect: (accountId: string) => void
   defaultAccounts: Account[]
   usdcAccounts: Account[]
+  onReset: () => void
 }
 
 export function MarginTypeSelector({
@@ -24,6 +25,7 @@ export function MarginTypeSelector({
   onAccountSelect,
   defaultAccounts,
   usdcAccounts,
+  onReset,
 }: Props) {
   const [marginType, setMarginType] = useState<'cross' | 'isolated'>('cross')
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false)
@@ -96,6 +98,7 @@ export function MarginTypeSelector({
     } else if (accounts.length > 0) {
       handleAccountChange(accounts[0].id)
     }
+    onReset()
   }
 
   const relevantAccountsOptions: SelectOption[] = relevantAccounts.map((account) => ({

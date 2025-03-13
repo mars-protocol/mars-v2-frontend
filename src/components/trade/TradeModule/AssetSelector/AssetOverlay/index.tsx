@@ -13,7 +13,6 @@ import PairsList from 'components/trade/TradeModule/AssetSelector/PairsList'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useFilteredAssets from 'hooks/assets/useFilteredAssets'
-import { useAllPerpsParamsSC } from 'hooks/perps/usePerpsParams'
 
 interface Props {
   state: OverlayState
@@ -39,22 +38,8 @@ function MarketSubheadLine(props: { title: string }) {
 export default function AssetOverlay(props: Props) {
   const [loading, setLoading] = useState<boolean>(true)
   const account = useCurrentAccount()
-  const { data: perpsParams } = useAllPerpsParamsSC()
 
-  // Filter assets based on USDC account type and liquidation threshold
-  const filteredBuyAssets = useMemo(() => {
-    if (account?.kind === 'usdc')
-      return props.buyAssets.filter((asset) => {
-        const assetParams = perpsParams?.find((param) => param.denom === asset.denom)
-        return assetParams?.liquidation_threshold_usdc?.is_enabled === true
-      })
-    return props.buyAssets.filter((asset) => {
-      const assetParams = perpsParams?.find((param) => param.denom === asset.denom)
-      return assetParams?.liquidation_threshold.is_enabled === true
-    })
-  }, [account?.kind, props.buyAssets, perpsParams])
-
-  const { assets, searchString, onChangeSearch } = useFilteredAssets(filteredBuyAssets)
+  const { assets, searchString, onChangeSearch } = useFilteredAssets(props.buyAssets)
   const whitelistedAssets = useDepositEnabledAssets()
   const stableAssets = useMemo(
     () => whitelistedAssets.filter((asset) => asset.isStable),
