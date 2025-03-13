@@ -17,7 +17,7 @@ interface Props {
   onAccountSelect: (accountId: string) => void
   defaultAccounts: Account[]
   usdcAccounts: Account[]
-  onReset?: () => void
+  onReset: () => void
 }
 
 export function MarginTypeSelector({
@@ -98,7 +98,7 @@ export function MarginTypeSelector({
     } else if (accounts.length > 0) {
       handleAccountChange(accounts[0].id)
     }
-    onReset?.()
+    onReset()
   }
 
   const relevantAccountsOptions: SelectOption[] = relevantAccounts.map((account) => ({
