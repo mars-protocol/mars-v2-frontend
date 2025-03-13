@@ -232,6 +232,7 @@ export function PerpsModule() {
             onAccountSelect={setSelectedAccountId}
             defaultAccounts={defaultAccounts}
             usdcAccounts={usdcAccounts}
+            onReset={reset}
           />
         )}
         <OrderTypeSelector
