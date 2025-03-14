@@ -9,6 +9,7 @@ import useAccounts from 'hooks/accounts/useAccounts'
 import { ReactElement, useMemo } from 'react'
 import useStore from 'store'
 import { isAccountEmpty } from 'utils/accounts'
+import { PerpsHedge } from './PerpsHedge'
 
 interface Props {
   account: Account
@@ -119,6 +120,19 @@ export default function useAccordionItems(props: Props) {
         title: 'Borrow',
         renderSubTitle: getBorrowingsSubTitle,
         isOpen: isOpen[1],
+        toggleOpen: (index: number) => toggleOpen(index),
+      },
+      {
+        renderContent: () => (
+          <PerpsHedge
+            lpAddress={farm.denoms.lp}
+            depositCoins={depositCoins}
+            borrowCoins={borrowCoins}
+          />
+        ),
+        title: 'Hedge',
+        renderSubTitle: () => null,
+        isOpen: isOpen[2],
         toggleOpen: (index: number) => toggleOpen(index),
       },
     ]

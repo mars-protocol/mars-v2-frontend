@@ -18,10 +18,10 @@ export const useExecutionState = ({
   warningMessages: string[]
   isStopOrder: boolean
   stopPrice: BigNumber
-  stopTradeDirection: TradeDirection
+  stopTradeDirection?: TradeDirection
   perpsAsset: Asset
   isLimitOrder: boolean
-  limitPriceInfo: CallOut | undefined
+  limitPriceInfo?: CallOut | undefined
   limitPrice: BigNumber
 }) => {
   const isDisabledExecution = useMemo(() => {

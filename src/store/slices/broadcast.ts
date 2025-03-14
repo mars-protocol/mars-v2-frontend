@@ -486,6 +486,86 @@ export default function createBroadcastSlice(
       get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
+    depositLpAndHedge: async (options: {
+      accountId: string
+      lpActions: Action[]
+      depositCoins: BNCoin[]
+      borrowCoins: BNCoin[]
+      perpCoin: BNCoin
+      autolend: boolean
+      baseDenom: string
+    }) => {
+      try {
+        const actions: Action[] = []
+
+        if (options.borrowCoins.length > 0) {
+          options.borrowCoins.forEach((coin) => {
+            if (!coin.amount.isZero()) {
+              actions.push({
+                borrow: coin.toCoin(),
+              })
+            }
+          })
+        }
+
+        const userSlippage = localStorage.getItem(LocalStorageKeys.SLIPPAGE)
+        const parsedSlippage = userSlippage ? Number(JSON.parse(userSlippage)) : 0.01
+        const safeSlippage = parsedSlippage > 0.2 ? '0.2' : parsedSlippage.toString()
+
+        const processedLpActions = options.lpActions.map((action) => {
+          if ('provide_liquidity' in action && action.provide_liquidity.slippage) {
+            return {
+              provide_liquidity: {
+                ...action.provide_liquidity,
+                slippage: safeSlippage,
+              },
+            }
+          }
+          return action
+        })
+
+        actions.push(...processedLpActions)
+
+        if (!options.perpCoin.amount.isZero()) {
+          actions.push({
+            execute_perp_order: {
+              denom: options.perpCoin.denom,
+              order_size: options.perpCoin.amount.toString() as any,
+              reduce_only: false,
+            },
+          })
+        }
+
+        if (options.autolend) {
+          actions.push({
+            lend: {
+              denom: options.baseDenom,
+              amount: 'account_balance',
+            },
+          })
+        }
+
+        const msg: CreditManagerExecuteMsg = {
+          update_credit_account: {
+            account_id: options.accountId,
+            actions,
+          },
+        }
+
+        const cmContract = get().chainConfig.contracts.creditManager
+
+        const response = get().executeMsg({
+          messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+        })
+
+        get().handleTransaction({ response })
+
+        return response.then((response) => !!response.result)
+      } catch (error) {
+        console.error('Error in depositLpAndHedge:', error)
+        return false
+      }
+    },
     withdrawFromAstroLps: async (options: {
       accountId: string
       astroLps: DepositedAstroLp[]

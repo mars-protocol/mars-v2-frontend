@@ -49,7 +49,12 @@ export default function FarmModalContent(props: Props) {
   const assets = useWhitelistedAssets()
   const [displayCurrency] = useDisplayCurrency()
   const hlsToggleCount = isDeposited ? 3 : 4
-  const [isOpen, toggleOpen] = useIsOpenArray(type === 'high_leverage' ? hlsToggleCount : 2, false)
+  const [isOpen, toggleOpen] = useIsOpenArray(type === 'high_leverage' ? hlsToggleCount : 4, false)
+
+  const handleToggleOpen = (index: number) => {
+    toggleOpen(index)
+  }
+
   const [isCustomRatio, setIsCustomRatio] = useState(false)
   const [depositCoins, setDepositCoins] = useState<BNCoin[]>([])
   const [borrowCoins, setBorrowCoins] = useState<BNCoin[]>([])
@@ -230,7 +235,7 @@ export default function FarmModalContent(props: Props) {
     secondaryAsset,
     selectedAccount,
     setSelectedAccount,
-    toggleOpen,
+    toggleOpen: handleToggleOpen,
     totalValue,
     type,
     isDeposited,

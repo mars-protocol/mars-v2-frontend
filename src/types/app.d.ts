@@ -1048,6 +1048,15 @@ interface BroadcastSlice {
     borrowings: BNCoin[]
     kind: import('types/generated/mars-rover-health-types/MarsRoverHealthTypes.types').AccountKind
   }) => Promise<boolean>
+  depositLpAndHedge: (options: {
+    accountId: string
+    lpActions: Action[]
+    depositCoins: BNCoin[]
+    borrowCoins: BNCoin[]
+    perpCoin: BNCoin
+    autolend: boolean
+    baseDenom: string
+  }) => Promise<boolean>
   execute: (contract: string, msg: ExecuteMsg, funds: Coin[]) => Promise<BroadcastResult>
   executeMsg: (options: {
     messages: MsgExecuteContract[]

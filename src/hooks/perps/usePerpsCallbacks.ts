@@ -5,19 +5,19 @@ import { OrderType } from 'types/enums'
 
 interface PerpsCallbacksProps {
   updateAmount: (amount: BigNumber) => void
-  setLimitPrice: (price: BigNumber) => void
-  setStopPrice: (price: BigNumber) => void
-  setTradeDirection: (direction: TradeDirection) => void
-  setStopTradeDirection: (direction: TradeDirection) => void
-  setSelectedOrderType: (type: OrderType) => void
-  setIsReduceOnly: (value: boolean) => void
-  setIsMaxSelected: (value: boolean) => void
+  setLimitPrice?: (price: BigNumber) => void
+  setStopPrice?: (price: BigNumber) => void
+  setTradeDirection?: (direction: TradeDirection) => void
+  setStopTradeDirection?: (direction: TradeDirection) => void
+  setSelectedOrderType?: (type: OrderType) => void
+  setIsReduceOnly?: (value: boolean) => void
+  setIsMaxSelected?: (value: boolean) => void
   updateLeverage: (leverage: number) => void
   simulatePerps: (position: any, isAutoLend: boolean) => void
   currentPerpPosition: any
   isAutoLendEnabledForCurrentAccount: boolean
   isStopOrder: boolean
-  stopTradeDirection: TradeDirection
+  stopTradeDirection?: TradeDirection
   tradeDirection: TradeDirection
   maxLeverage: number
 }
@@ -41,7 +41,7 @@ export const usePerpsCallbacks = ({
   maxLeverage,
 }: PerpsCallbacksProps) => {
   const reset = useCallback(() => {
-    setLimitPrice(BN_ZERO)
+    setLimitPrice?.(BN_ZERO)
     updateAmount(BN_ZERO)
     updateLeverage(0)
   }, [updateAmount, setLimitPrice, updateLeverage])
@@ -49,10 +49,10 @@ export const usePerpsCallbacks = ({
   const onChangeTradeDirection = useCallback(
     (newTradeDirection: TradeDirection) => {
       updateAmount(BN_ZERO)
-      setTradeDirection(newTradeDirection)
+      setTradeDirection?.(newTradeDirection)
       updateLeverage(0)
-      setLimitPrice(BN_ZERO)
-      setIsReduceOnly(false)
+      setLimitPrice?.(BN_ZERO)
+      setIsReduceOnly?.(false)
     },
     [updateAmount, setLimitPrice, setTradeDirection, setIsReduceOnly, updateLeverage],
   )
@@ -60,10 +60,10 @@ export const usePerpsCallbacks = ({
   const onChangeOrderType = useCallback(
     (orderType: OrderType) => {
       updateAmount(BN_ZERO)
-      setLimitPrice(BN_ZERO)
-      setStopPrice(BN_ZERO)
-      setSelectedOrderType(orderType)
-      setIsReduceOnly(false)
+      setLimitPrice?.(BN_ZERO)
+      setStopPrice?.(BN_ZERO)
+      setSelectedOrderType?.(orderType)
+      setIsReduceOnly?.(false)
       simulatePerps(currentPerpPosition, isAutoLendEnabledForCurrentAccount)
     },
     [
@@ -80,10 +80,10 @@ export const usePerpsCallbacks = ({
 
   const onChangeStopTradeDirection = useCallback(
     (newDirection: TradeDirection) => {
-      setStopTradeDirection(newDirection)
+      setStopTradeDirection?.(newDirection)
       updateAmount(BN_ZERO)
-      setStopPrice(BN_ZERO)
-      setIsReduceOnly(false)
+      setStopPrice?.(BN_ZERO)
+      setIsReduceOnly?.(false)
     },
     [updateAmount, setStopPrice, setStopTradeDirection, setIsReduceOnly],
   )
@@ -103,9 +103,9 @@ export const usePerpsCallbacks = ({
     (newLeverage: number) => {
       updateLeverage(newLeverage)
       if (newLeverage === maxLeverage) {
-        setIsMaxSelected(true)
+        setIsMaxSelected?.(true)
       } else {
-        setIsMaxSelected(false)
+        setIsMaxSelected?.(false)
       }
     },
     [updateLeverage, maxLeverage, setIsMaxSelected],

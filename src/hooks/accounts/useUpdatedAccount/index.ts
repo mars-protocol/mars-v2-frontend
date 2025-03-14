@@ -300,6 +300,82 @@ export function useUpdatedAccount(account?: Account) {
     [account, assets, availableAstroLps],
   )
 
+  const simulateHedge = useCallback(
+    (address: string, coins: BNCoin[], borrowCoins: BNCoin[]) => {
+      if (!account) return
+      const astroLp = availableAstroLps.find((astroLp) => astroLp.denoms.lp === address)
+      if (!astroLp) return
+
+      const totalDeposits: BNCoin[] = []
+      const totalLends: BNCoin[] = []
+
+      coins.forEach((coin) => {
+        const { deposit, lend } = getDepositAndLendCoinsToSpend(coin, account)
+        totalDeposits.push(deposit)
+        totalLends.push(lend)
+      })
+
+      removeDeposits(totalDeposits)
+      removeLends(totalLends)
+      addDebts(borrowCoins)
+
+      const coinsValue = getValueFromBNCoins(coins, assets)
+      const borrowValue = getValueFromBNCoins(borrowCoins, assets)
+      const totalValue = coinsValue.plus(borrowValue)
+      const shares = getAstroLpSharesFromCoinsValue(astroLp, totalValue, assets)
+
+      addStakedAstroLps([BNCoin.fromDenomAndBigNumber(address, shares)])
+
+      const primaryAsset = assets.find(byDenom(astroLp.denoms.primary))
+      const secondaryAsset = assets.find(byDenom(astroLp.denoms.secondary))
+
+      if (!primaryAsset || !secondaryAsset) return
+
+      const unstableAsset = primaryAsset.isStable ? secondaryAsset : primaryAsset
+      const baseDenom =
+        account.perps && account.perps.length > 0 ? account.perps[0].baseDenom : 'uusdc'
+
+      const halfValue = totalValue.div(2)
+
+      if (unstableAsset.isPerpsEnabled) {
+        const shortAmount = halfValue
+          .div(unstableAsset.price?.amount ?? 1)
+          .shiftedBy(unstableAsset.decimals)
+          .integerValue()
+
+        const negativeShortAmount = shortAmount.negated()
+
+        const shortPosition: PerpsPosition = {
+          denom: unstableAsset.denom,
+          baseDenom: baseDenom,
+          tradeDirection: 'short',
+          amount: negativeShortAmount,
+          type: 'market',
+          entryPrice: unstableAsset.price?.amount ?? BN_ZERO,
+          currentPrice: unstableAsset.price?.amount ?? BN_ZERO,
+          pnl: {
+            net: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
+            realized: {
+              net: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
+              price: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
+              funding: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
+              fees: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
+            },
+            unrealized: {
+              net: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
+              price: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
+              funding: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
+              fees: BNCoin.fromDenomAndBigNumber(baseDenom, BN_ZERO),
+            },
+          },
+        }
+
+        setUpdatedPerpPosition(shortPosition)
+      }
+    },
+    [account, assets, availableAstroLps, setUpdatedPerpPosition],
+  )
+
   const resetPerpPosition = useCallback(() => {
     addDeposits([])
     removeLends([])
@@ -456,7 +532,13 @@ export function useUpdatedAccount(account?: Account) {
     setLeverage(calculateAccountLeverage(accountCopy, assets).toNumber())
     useStore.setState({ updatedAccount: accountCopy })
 
-    return () => useStore.setState({ updatedAccount: undefined })
+    return () => {
+      // Only clear updatedAccount if there's no active perps position
+      // This prevents clearing simulations when we have no deposits/borrows but a valid perps position
+      if (!updatedPerpPosition) {
+        useStore.setState({ updatedAccount: undefined })
+      }
+    }
   }, [
     account,
     addedDebts,
@@ -515,5 +597,6 @@ export function useUpdatedAccount(account?: Account) {
     simulatePerpsVaultDeposit,
     simulatePerpsVaultUnlock,
     simulateUnstakeAstroLp,
+    simulateHedge,
   }
 }
