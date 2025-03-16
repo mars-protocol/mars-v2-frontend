@@ -3,7 +3,6 @@ import { useCallback, useMemo } from 'react'
 import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 import Button from 'components/common/Button'
 import { ArrowDownLine, ArrowUpLine, TrashBin } from 'components/common/Icons'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
@@ -60,6 +59,7 @@ export default function ManageAccount(props: Props) {
                 return
               }
               useStore.setState({ fundAndWithdrawModal: 'fund' })
+              navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, account.id))
             }}
           />
           <Button
