@@ -3,13 +3,12 @@ import { useCallback, useMemo } from 'react'
 import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 import Button from 'components/common/Button'
 import { ArrowDownLine, ArrowUpLine, TrashBin } from 'components/common/Icons'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { calculateAccountBalanceValue } from 'utils/accounts'
 import { getPage, getRoute } from 'utils/route'
-import useAssets from 'hooks/assets/useAssets'
 
 interface Props {
   account: Account
@@ -60,6 +59,7 @@ export default function ManageAccount(props: Props) {
                 return
               }
               useStore.setState({ fundAndWithdrawModal: 'fund' })
+              navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, account.id))
             }}
           />
           <Button
@@ -67,8 +67,8 @@ export default function ManageAccount(props: Props) {
             leftIcon={<ArrowDownLine />}
             text='Withdraw'
             onClick={() => {
-              useStore.setState({ fundAndWithdrawModal: 'withdraw' })
               navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, account.id))
+              useStore.setState({ fundAndWithdrawModal: 'withdraw' })
             }}
             disabled={!positionBalance || positionBalance.isLessThanOrEqualTo(0)}
           />
