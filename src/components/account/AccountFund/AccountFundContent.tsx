@@ -1,6 +1,5 @@
 import { RouteResponse } from '@skip-go/client'
 import classNames from 'classnames'
-import WalletBridges from 'components/Wallet/WalletBridges'
 import AccountFundingAssets from 'components/account/AccountFund/AccountFundingAssets'
 import EVMAccountSection from 'components/account/AccountFund/EVMAccountSection'
 import Button from 'components/common/Button'
@@ -32,6 +31,7 @@ import { chainNameToUSDCAttributes } from 'utils/fetchUSDCBalance'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
 import BridgeRouteVisualizer from './BridgeContent/BridgeRouteVisualizer'
+import AccountCreateFirst from 'components/account/AccountCreateFirst'
 
 interface Props {
   account?: Account
@@ -214,7 +214,24 @@ export default function AccountFundContent(props: Props) {
       const isNewAccount = hasNoAccounts || isCreateAccount
       const hasEvmAssets = evmAssets.length > 0
 
-      if (isNewAccount && hasEvmAssets) {
+      // First handle EVM assets if present
+      if (hasEvmAssets) {
+        for (const evmAsset of evmAssets) {
+          if (isBridgeInProgress) {
+            continue
+          }
+
+          const success = await handleSkipTransfer(evmAsset, MINIMUM_USDC)
+          if (!success) {
+            setShowMinimumUSDCValueOverlay(true)
+            setIsConfirming(false)
+            return
+          }
+        }
+      }
+
+      // After bridge is complete, handle account creation and non-EVM assets
+      if (isNewAccount) {
         const mintResult = await createAccount('default', shouldAutoLend)
         if (!mintResult) {
           throw new Error('Failed to create credit account')
@@ -237,18 +254,6 @@ export default function AccountFundContent(props: Props) {
         const depositResult = await deposit(depositObject)
         if (isNewAccount || (!isNewAccount && !hasEvmAssets)) {
           accountId = depositResult ?? accountId
-        }
-      }
-
-      for (const evmAsset of evmAssets) {
-        if (isBridgeInProgress) {
-          continue
-        }
-
-        const success = await handleSkipTransfer(evmAsset, MINIMUM_USDC)
-        if (!success) {
-          setShowMinimumUSDCValueOverlay(true)
-          break
         }
       }
 
@@ -302,7 +307,7 @@ export default function AccountFundContent(props: Props) {
 
   useEffect(() => {
     if (BN(baseBalance).isZero()) {
-      useStore.setState({ focusComponent: { component: <WalletBridges /> } })
+      useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
     }
   }, [baseBalance])
 

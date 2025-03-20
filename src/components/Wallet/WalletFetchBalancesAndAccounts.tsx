@@ -4,7 +4,6 @@ import { useLocation, useNavigate, useParams, useSearchParams } from 'react-rout
 import AccountCreateFirst from 'components/account/AccountCreateFirst'
 import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
-import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useBaseAsset from 'hooks/assets/useBaseAsset'
@@ -43,8 +42,8 @@ function Content() {
   )
 
   if (isLoadingAccounts || isLoadingBalances) return <FetchLoading />
-  if (BN(baseBalance).isZero()) return <WalletBridges />
-  if (accountIds && accountIds.length === 0 && !isV1) return <AccountCreateFirst />
+  if (BN(baseBalance).isZero() || (accountIds && accountIds.length === 0 && !isV1))
+    return <AccountCreateFirst />
   if (!isLoadingAccounts && !isLoadingBalances && accountIds)
     return <FetchedBalances accountIds={accountIds} isV1={isV1} address={address} />
   return <FetchLoading />

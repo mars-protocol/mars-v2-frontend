@@ -1,20 +1,5 @@
 export const BRIDGES: Bridge[] = [
   {
-    name: 'TFM Bridge',
-    url: 'https://app.tfm.com/bridge?chainFrom=&chainTo=',
-    image: '/images/bridges/tfm.png',
-  },
-  {
-    name: 'Gravity bridge',
-    url: 'https://bridge.blockscape.network',
-    image: '/images/bridges/gravity.png',
-  },
-  {
-    name: 'Satellite by Axelar',
-    url: 'https://satellite.money',
-    image: '/images/bridges/satellite.png',
-  },
-  {
     name: 'Skip Go',
     url: 'https://go.skip.build/',
     image: '/images/bridges/skip.png',

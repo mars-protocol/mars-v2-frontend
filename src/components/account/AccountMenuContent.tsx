@@ -8,7 +8,6 @@ import Button from 'components/common/Button'
 import { Account, Plus, PlusCircled } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
-import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useToggle from 'hooks/common/useToggle'
@@ -49,7 +48,7 @@ export default function AccountMenuContent(props: Props) {
   const handleCreateAccountClick = useCallback(() => {
     setShowMenu(!showMenu)
     if (!hasFundsForTxFee && !hasCreditAccounts) {
-      useStore.setState({ focusComponent: { component: <WalletBridges /> } })
+      useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
       return
     }
     if (!hasCreditAccounts) {
