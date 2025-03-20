@@ -5,6 +5,7 @@ import useStore from 'store'
 import { generateExecutionMessage } from 'store/slices/broadcast'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
+import { calculateUsdcFeeReserve } from 'utils/feeToken'
 
 export function useHandleBridgeCompletion() {
   const account = useCurrentAccount()
@@ -20,7 +21,15 @@ export function useHandleBridgeCompletion() {
     if (!rowData?.skipBridgeId) return
 
     try {
-      const coin = BNCoin.fromDenomAndBigNumber(chainConfig.stables[0], BN(rowData.amount))
+      const { depositAmount } = calculateUsdcFeeReserve(rowData.amount)
+
+      if (BN(depositAmount).isZero()) {
+        removeSkipBridge(rowData.skipBridgeId)
+        return
+      }
+
+      const coin = BNCoin.fromDenomAndBigNumber(chainConfig.stables[0], BN(depositAmount))
+
       const store = useStore.getState()
       const response = store.executeMsg({
         messages: [

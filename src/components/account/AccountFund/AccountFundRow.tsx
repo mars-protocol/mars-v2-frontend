@@ -64,6 +64,7 @@ export default function AccountFundRow(props: Props) {
         disabled={props.isConfirming}
         warningMessages={[]}
         chainName={chainName}
+        deductFee={true}
       />
 
       {isEVMAsset && props.routeResponse && (

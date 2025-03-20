@@ -15,6 +15,7 @@ import { TextLink } from 'components/common/TextLink'
 import Modal from 'components/Modals/Modal'
 import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
 import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
+import FeeTokenDisplay from 'components/Wallet/FeeTokenDisplay'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
@@ -298,7 +299,7 @@ export default function SettingsModal() {
       ),
       title: 'Are you sure you want to restore to default?',
       content:
-        'Once you reset to default settings you can’t revert it, and will result in the permanent loss of your current settings',
+        "Once you reset to default settings you can't revert it, and will result in the permanent loss of your current settings",
       positiveButton: {
         text: 'Yes',
         icon: <Enter />,
@@ -432,6 +433,20 @@ export default function SettingsModal() {
           containerClassName='justify-end'
         />
       </SettingsOptions>
+
+      {/* Fee Token Selection */}
+      <SettingsOptions
+        label='Gas Fee Token'
+        description='Select which token to use for transaction fees. By default, NTRN is used when available.'
+        className='pb-6'
+      >
+        <div className='flex justify-end w-full'>
+          <div className='w-60 relative'>
+            <FeeTokenDisplay isInSettings={true} className='w-full' />
+          </div>
+        </div>
+      </SettingsOptions>
+
       <SettingsOptions
         label='Slippage tolerance'
         description='Some vaults require token swaps. The transaction will fail if the price of the swap asset changes unfavourably by more than this percentage'

@@ -28,6 +28,7 @@ interface Props {
   onClose: () => void
   onChange: (value: BigNumber) => void
   onAction: (value: BigNumber, isMax: boolean) => void
+  deductFee?: boolean
 }
 
 export default function AssetAmountSelectActionModal(props: Props) {
@@ -42,6 +43,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
     onClose,
     onChange,
     onAction,
+    deductFee,
   } = props
   const [amount, setAmount] = useState(BN_ZERO)
   const updatedAccount = useStore((s) => s.updatedAccount)
@@ -125,6 +127,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
             hasSelect
             maxText='Max'
             warningMessages={[]}
+            deductFee={deductFee}
           />
           <Divider />
           <Button

@@ -5,6 +5,7 @@ import { BN } from 'utils/helpers'
 import useStore from 'store'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import { useEvmBridge } from './useEvmBridge'
+import { calculateUsdcFeeReserve, isUsdcFeeToken } from 'utils/feeToken'
 
 interface UseSkipBridgeProps {
   chainConfig: ChainConfig
@@ -117,6 +118,21 @@ export function useSkipBridge({
           return false
         }
 
+        const isUsdc =
+          selectedAsset.coin.denom.includes('usdc') || selectedAsset.coin.denom.includes('uusdc')
+        const usdcAsFeeToken = isUsdcFeeToken()
+
+        let bridgeAmount = selectedAsset.coin.amount.toString()
+        if (isUsdc && usdcAsFeeToken) {
+          const { depositAmount } = calculateUsdcFeeReserve(bridgeAmount)
+          bridgeAmount = depositAmount
+
+          if (BN(depositAmount).isLessThanOrEqualTo(0)) {
+            setIsBridgeInProgress(false)
+            return false
+          }
+        }
+
         let osmosisAddress = ''
         try {
           if (window.keplr) {
@@ -152,7 +168,17 @@ export function useSkipBridge({
           console.error('Failed to get Neutron address:', error)
         }
 
-        const route = await fetchSkipRoute(selectedAsset)
+        // Create a new WrappedBNCoin with the adjusted amount if necessary
+        const adjustedAsset =
+          isUsdc && usdcAsFeeToken
+            ? WrappedBNCoin.fromDenomAndBigNumber(
+                selectedAsset.coin.denom,
+                BN(bridgeAmount),
+                selectedAsset.chain,
+              )
+            : selectedAsset
+
+        const route = await fetchSkipRoute(adjustedAsset)
         const amountOut = route.amountOut
 
         const userAddresses = route.requiredChainAddresses.map((chainID: string) => {

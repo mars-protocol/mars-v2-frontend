@@ -28,6 +28,7 @@ import checkPythUpdateEnabled from 'utils/checkPythUpdateEnabled'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
+import { getTransactionFeeToken } from 'utils/feeToken'
 
 export function generateExecutionMessage(
   sender: string | undefined = '',
@@ -1068,8 +1069,9 @@ export default function createBroadcastSlice(
         const isV1 = get().isV1
         const isLedger = client?.connectedWallet?.account.isLedger
         const memo = isLedger ? '' : isV1 ? 'MPv1' : 'MPv2'
+        const chainConfig = get().chainConfig
 
-        const gasPrice = await getGasPrice(get().chainConfig)
+        const gasPrice = await getGasPrice(chainConfig)
         if (!client)
           return { result: undefined, error: 'No client detected. Please reconnect your wallet.' }
         if ((checkPythUpdateEnabled() || options.isPythUpdate) && !isLedger) {
@@ -1077,6 +1079,14 @@ export default function createBroadcastSlice(
           options.messages.unshift(pythUpdateMsg)
         }
         const feeObject = await getEstimatedFee(options.messages)
+
+        // Get the fee token to use for this transaction
+        const balances = get().balances
+        const usdcDenom = chainConfig.stables[0]
+        const nativeDenom = chainConfig.defaultCurrency.coinMinimalDenom
+
+        const feeCurrency = getTransactionFeeToken(balances, usdcDenom, nativeDenom)
+
         if (feeObject.fee) {
           const broadcastOptions = {
             messages: options.messages,
@@ -1088,6 +1098,7 @@ export default function createBroadcastSlice(
             overrides: {
               gasPrice,
               gasAdjustment: DEFAULT_GAS_MULTIPLIER,
+              ...(feeCurrency ? { feeCurrency } : {}),
             },
           }
           const result = await client.broadcast(broadcastOptions)

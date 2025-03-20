@@ -74,6 +74,7 @@ export default function Deposit(props: Props) {
       onAction={handleClick}
       onChange={handleAmountChange}
       checkForCampaign
+      deductFee={true}
     />
   )
 }

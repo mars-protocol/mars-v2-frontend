@@ -76,6 +76,7 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
       onClose={close}
       onAction={handleAction}
       onChange={handleAmountChange}
+      deductFee={isLendAction}
     />
   )
 }
