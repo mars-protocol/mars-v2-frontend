@@ -32,6 +32,9 @@ import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
 import BridgeRouteVisualizer from './BridgeContent/BridgeRouteVisualizer'
 import AccountCreateFirst from 'components/account/AccountCreateFirst'
+import { calculateUsdcFeeReserve } from 'utils/feeToken'
+import { getCurrentFeeToken } from 'hooks/wallet/useFeeToken'
+import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   account?: Account
@@ -245,8 +248,23 @@ export default function AccountFundContent(props: Props) {
       }
 
       if (nonEvmAssets.length > 0) {
+        const processedAssets = nonEvmAssets.map((wrappedCoin) => {
+          const selectedFeeToken = getCurrentFeeToken()
+          if (!selectedFeeToken) return wrappedCoin.coin
+
+          const isUsdcFeeToken =
+            selectedFeeToken.coinMinimalDenom.includes('usdc') ||
+            selectedFeeToken.coinMinimalDenom.includes('uusdc')
+
+          if (isUsdcFeeToken && wrappedCoin.coin.denom === selectedFeeToken.coinMinimalDenom) {
+            const { depositAmount } = calculateUsdcFeeReserve(wrappedCoin.coin.amount.toString())
+            return BNCoin.fromDenomAndBigNumber(wrappedCoin.coin.denom, BN(depositAmount))
+          }
+          return wrappedCoin.coin
+        })
+
         const depositObject = {
-          coins: nonEvmAssets.map((wrappedCoin) => wrappedCoin.coin),
+          coins: processedAssets,
           lend: shouldAutoLend,
           isAutoLend: shouldAutoLend,
           ...(!isNewAccount && { accountId }),

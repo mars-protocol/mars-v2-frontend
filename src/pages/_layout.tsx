@@ -16,12 +16,14 @@ import useAccountId from 'hooks/accounts/useAccountId'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import { useSkipBridgeStatus } from 'hooks/localStorage/useSkipBridgeStatus'
 import { Suspense, useEffect } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useLocation } from 'react-router-dom'
 import useStore from 'store'
 import { SWRConfig } from 'swr'
 import { debugSWR } from 'utils/middleware'
+import SkipBridgeModal from 'components/Modals/SkipBridgeModal'
 
 interface Props {
   focusComponent: FocusComponent | null
@@ -70,6 +72,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     location.pathname === '/' ||
     (location.pathname.includes('perps') && !location.pathname.includes('perps-vault'))
   const accountId = useAccountId()
+  const { shouldShowSkipBridgeModal } = useSkipBridgeStatus()
 
   useEffect(() => {
     if (!window) return
@@ -104,6 +107,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <PageMetadata />
             <Background />
             <Header />
+            {shouldShowSkipBridgeModal && <SkipBridgeModal />}
             <main
               className={classNames(
                 'md:min-h-[calc(100dvh-81px)]',

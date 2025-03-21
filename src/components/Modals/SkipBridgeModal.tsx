@@ -6,12 +6,24 @@ import { ExternalLink } from 'components/common/Icons'
 import { useSkipBridgeStatus } from 'hooks/localStorage/useSkipBridgeStatus'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
-import { MINIMUM_USDC } from 'utils/constants'
+import { MIN_USDC_FEE_AMOUNT } from 'utils/feeToken'
+import Button from 'components/common/Button'
+import { useNavigate } from 'react-router-dom'
+import { getPage, getRoute } from 'utils/route'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
+import { useState, useEffect } from 'react'
 
 export default function SkipBridgeModal() {
-  const { isPendingTransaction, skipBridges } = useSkipBridgeStatus()
-
-  if (!isPendingTransaction) return null
+  const { skipBridges, hasCompletedBridge, clearSkipBridges } = useSkipBridgeStatus()
+  const navigate = useNavigate()
+  const chainConfig = useChainConfig()
+  const address = useStore((s) => s.address)
+  const deposit = useStore((s) => s.deposit)
+  const [isCompleting, setIsCompleting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [isDepositComplete, setIsDepositComplete] = useState(false)
+  const [hasAttemptedDeposit, setHasAttemptedDeposit] = useState(false)
 
   const completedBridges = skipBridges.filter((bridge) => bridge.status === 'STATE_COMPLETED')
   const pendingBridges = skipBridges.filter((bridge) => bridge.status === 'STATE_PENDING')
@@ -19,7 +31,118 @@ export default function SkipBridgeModal() {
     (acc, bridge) => acc.plus(bridge.amount),
     BN(0),
   )
-  const hasEnoughForAccount = totalBridgedAmount.isGreaterThan(MINIMUM_USDC)
+
+  const handleCompleteTransaction = async () => {
+    if (!address || isCompleting) return
+
+    setIsCompleting(true)
+    setError(null)
+    setHasAttemptedDeposit(true)
+    try {
+      const depositAmount = totalBridgedAmount.minus(MIN_USDC_FEE_AMOUNT)
+      if (depositAmount.isGreaterThan(0)) {
+        const depositCoin = WrappedBNCoin.fromDenomAndBigNumber(
+          chainConfig.stables[0],
+          depositAmount,
+        )
+        const depositObject = {
+          coins: [depositCoin.coin],
+          lend: true,
+          isAutoLend: true,
+          overrides: {
+            feeCurrency: {
+              coinDenom: 'USDC',
+              coinMinimalDenom: chainConfig.stables[0],
+              coinDecimals: 6,
+            },
+          },
+        }
+        const accountId = await deposit(depositObject)
+        if (accountId) {
+          useStore.setState((state) => ({
+            ...state,
+            selectedAccountId: accountId,
+            accountId: accountId,
+            currentAccount: null,
+          }))
+          setIsDepositComplete(true)
+
+          const { pathname } = window.location
+          const searchParams = new URLSearchParams(window.location.search)
+          navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, accountId))
+        }
+      }
+    } catch (error) {
+      console.error('Failed to complete transaction:', error)
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Failed to complete transaction. Please try again.',
+      )
+      setIsDepositComplete(false)
+    } finally {
+      setIsCompleting(false)
+    }
+  }
+
+  const handleConfirmAndClose = () => {
+    if (!isDepositComplete) return
+
+    clearSkipBridges()
+    useStore.setState((state) => ({
+      ...state,
+      walletAssetsModal: null,
+      focusComponent: null,
+      fundAndWithdrawModal: null,
+      selectedAccountId: null,
+      accountId: null,
+      currentAccount: null,
+    }))
+  }
+
+  useEffect(() => {
+    if (isDepositComplete) {
+      handleConfirmAndClose()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDepositComplete])
+
+  const getButtonConfig = () => {
+    if (isDepositComplete) {
+      return {
+        text: 'Close',
+        onClick: handleConfirmAndClose,
+        color: 'secondary' as const,
+        showProgressIndicator: false,
+        disabled: false,
+      }
+    }
+
+    if (isCompleting) {
+      return {
+        text: 'Completing Transaction...',
+        onClick: handleCompleteTransaction,
+        showProgressIndicator: true,
+        disabled: true,
+      }
+    }
+
+    if (error || hasAttemptedDeposit) {
+      return {
+        text: 'Try Again',
+        onClick: handleCompleteTransaction,
+        showProgressIndicator: false,
+        disabled: false,
+      }
+    }
+
+    return {
+      text: 'Complete Transaction',
+      onClick: handleCompleteTransaction,
+      showProgressIndicator: false,
+      disabled: false,
+    }
+  }
 
   return (
     <Modal
@@ -33,13 +156,35 @@ export default function SkipBridgeModal() {
               <SkipBridgeModalGraphic />
             </div>
           </div>
-          <h3 className='font-bold mb-4'>Bridge Transaction in Progress</h3>
+          <h3 className='font-bold mb-4'>
+            {isDepositComplete
+              ? 'Deposit Complete!'
+              : pendingBridges.length > 0
+                ? 'Bridge Transaction in Progress'
+                : 'Bridge Complete'}
+          </h3>
           <Text tag='p' className='text-center opacity-60'>
-            Your bridge transaction is still processing. Please check back later. <br />
-            The app's functionality is limited until the transaction completes
+            {isDepositComplete
+              ? 'Your USDC has been successfully deposited.'
+              : pendingBridges.length > 0
+                ? "Your bridge transaction is still processing. Please check back later. The app's functionality is limited until the transaction completes."
+                : 'Your USDC has been successfully bridged.'}
           </Text>
+
+          {error && (
+            <Text tag='p' className='text-red-500 mb-4'>
+              {error}
+            </Text>
+          )}
+
+          <div className='mt-6 flex flex-col items-center'>
+            {completedBridges.length > 0 && !pendingBridges.length && !isDepositComplete && (
+              <Button className='w-full' color='primary' {...getButtonConfig()} />
+            )}
+          </div>
+
           {pendingBridges.map((bridge) => (
-            <div className='flex items-center justify-center my-4' key={bridge.id}>
+            <div className='flex items-center justify-center my-4' key={bridge.txHash}>
               <Link target='_blank' href={bridge.explorerLink} className='flex items-center'>
                 <Text tag='p' className='text-center'>
                   Track your transaction
@@ -50,16 +195,6 @@ export default function SkipBridgeModal() {
               </Link>
             </div>
           ))}
-          {completedBridges.length > 0 && hasEnoughForAccount && (
-            <div className='mt-6'>
-              <button
-                onClick={() => useStore.setState({ fundAndWithdrawModal: 'fund' })}
-                className='bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors'
-              >
-                Create and Fund Account Now
-              </button>
-            </div>
-          )}
         </div>
       }
     />
