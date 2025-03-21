@@ -37,12 +37,10 @@ export function useSkipBridgeStatus() {
     const bridges: SkipBridgeTransaction[] = JSON.parse(skipBridgesString)
     setSkipBridges(bridges)
 
-    // Always check balances if we have bridges and wallet balances
     if (bridges.length > 0 && walletBalances) {
       try {
         const updatedBridges = await Promise.all(
           bridges.map(async (bridge) => {
-            // Check if the wallet has the expected balance from the bridge
             const walletBalance = (walletBalances as Coin[]).find(
               (coin) => coin.denom === bridge.denom,
             )?.amount
@@ -55,13 +53,10 @@ export function useSkipBridgeStatus() {
             return bridge
           }),
         )
-
-        // Update bridges if any have been completed
         if (JSON.stringify(updatedBridges) !== JSON.stringify(bridges)) {
           localStorage.setItem('skipBridges', JSON.stringify(updatedBridges))
           setSkipBridges(updatedBridges)
 
-          // Check if we have any completed bridges with enough USDC
           const completedBridges = updatedBridges.filter(
             (bridge) => bridge.status === 'STATE_COMPLETED',
           )
@@ -79,7 +74,7 @@ export function useSkipBridgeStatus() {
 
   useEffect(() => {
     checkTransactionStatus()
-    const intervalId = setInterval(checkTransactionStatus, 5000) // Check every 5 seconds
+    const intervalId = setInterval(checkTransactionStatus, 5000)
     return () => clearInterval(intervalId)
   }, [checkTransactionStatus])
 
@@ -89,7 +84,6 @@ export function useSkipBridgeStatus() {
     setHasCompletedBridge(false)
   }, [])
 
-  // Show modal if there are any bridges in localStorage
   const shouldShowSkipBridgeModal = skipBridges.length > 0
 
   return {

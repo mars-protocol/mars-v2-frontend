@@ -217,7 +217,6 @@ export default function AccountFundContent(props: Props) {
       const isNewAccount = hasNoAccounts || isCreateAccount
       const hasEvmAssets = evmAssets.length > 0
 
-      // First handle EVM assets if present
       if (hasEvmAssets) {
         for (const evmAsset of evmAssets) {
           if (isBridgeInProgress) {
@@ -233,7 +232,6 @@ export default function AccountFundContent(props: Props) {
         }
       }
 
-      // After bridge is complete, handle account creation and non-EVM assets
       if (isNewAccount) {
         const mintResult = await createAccount('default', shouldAutoLend)
         if (!mintResult) {

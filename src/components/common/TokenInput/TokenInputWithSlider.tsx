@@ -28,12 +28,6 @@ interface Props {
   }
   warningMessages: string[]
   chainName?: string
-  /**
-   * Whether to deduct estimated gas fees from the max amount when the token is used as a fee token.
-   * This should be set to true for deposit operations to ensure users don't run out of funds for gas.
-   * For withdraw operations, this should be left as false (default) to allow withdrawing the full amount.
-   * @default false
-   */
   deductFee?: boolean
 }
 
@@ -41,11 +35,9 @@ export default function TokenInputWithSlider(props: Props) {
   const [amount, setAmount] = useState(props.amount)
   const [percentage, setPercentage] = useState(0)
 
-  // Check if this token is being used as fee token
   const currentFeeToken = getCurrentFeeToken()
   const isCurrentFeeToken = currentFeeToken?.coinMinimalDenom === props.asset.denom
 
-  // Calculate adjusted max amount (deducting fee reserve if needed)
   const adjustedMax = useMemo(() => {
     if (props.deductFee === true && isCurrentFeeToken) {
       return deductFeeFromMax(props.max, props.asset.denom, props.asset.decimals)

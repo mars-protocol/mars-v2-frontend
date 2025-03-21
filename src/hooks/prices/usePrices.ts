@@ -1,46 +1,12 @@
 import useSWR from 'swr'
 import { FETCH_TIMEOUT } from 'constants/query'
 import { fetchWithTimeout } from 'utils/fetch'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import { pythEndpoints } from 'constants/pyth'
 import { BN } from 'utils/helpers'
 import useStore from 'store'
 import { logApiError } from 'utils/error'
 
-interface PriceData {
-  denom: string
-  amount: string
-}
-
-interface PricesResponse {
-  prices: PriceData[]
-}
-
-interface GasPrice {
-  denom: string
-  amount: string
-}
-
-interface GasPricesResponse {
-  prices: GasPrice[]
-}
-
-interface PythPriceData {
-  id: string
-  price: {
-    price: string
-    conf: string
-    expo: number
-  }
-}
-
-/**
- * Hook to fetch token prices from the API
- * @returns SWR response with prices data
- */
 export default function usePrices() {
-  const chainConfig = useChainConfig()
-  // Fix the store access to handle possible null cases safely
   const assetsFromStore = useStore((s) => s?.assets) || []
 
   return useSWR<PricesResponse>(

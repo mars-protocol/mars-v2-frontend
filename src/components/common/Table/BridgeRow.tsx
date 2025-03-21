@@ -21,13 +21,11 @@ export function BridgeRow<T>({ row, spacingClassName, type }: BridgeRowProps<T>)
   const { feeToken } = useFeeToken()
   const usdcAsFeeToken = isUsdcFeeToken()
 
-  // Generate appropriate tooltip message based on fee token
   const getTooltipMessage = () => {
     if (usdcAsFeeToken) {
       return 'A small amount of USDC (0.15 USDC) will be kept in your wallet for gas fees since USDC is your current fee token. The actual deposit amount will be less than the displayed amount.'
     }
 
-    // For NTRN or other tokens
     return `A small amount of ${feeToken?.coinDenom || 'gas token'} will be kept in your wallet for transaction fees. The actual deposit amount may be less than the displayed amount.`
   }
 

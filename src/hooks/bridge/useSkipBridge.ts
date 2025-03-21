@@ -168,7 +168,6 @@ export function useSkipBridge({
           console.error('Failed to get Neutron address:', error)
         }
 
-        // Create a new WrappedBNCoin with the adjusted amount if necessary
         const adjustedAsset =
           isUsdc && usdcAsFeeToken
             ? WrappedBNCoin.fromDenomAndBigNumber(
