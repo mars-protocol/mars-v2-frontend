@@ -21,14 +21,15 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     setIsServer(false)
   }, [])
-  if (isServer) return null
 
   return (
     <>
       <DefaultPageHead />
+      !isServer && (
       <div suppressHydrationWarning>
         {typeof window === 'undefined' ? null : <PageComponent {...pageProps} />}
       </div>
+      )
     </>
   )
 }
