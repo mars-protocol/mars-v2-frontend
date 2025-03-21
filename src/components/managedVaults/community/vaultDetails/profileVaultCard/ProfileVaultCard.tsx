@@ -27,12 +27,11 @@ interface Props {
   details: ExtendedManagedVaultDetails
   wallet?: string
   onDelete: () => void
-  onEdit: (show: boolean) => void
   isOwner: boolean
 }
 
 export default function ProfileVaultCard(props: Props) {
-  const { details, isOwner, wallet, onDelete, onEdit } = props
+  const { details, isOwner, wallet, onDelete } = props
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(details.base_tokens_denom)) as Asset
   const { vaultOwnerInfo, isLoading } = useManagedVaultOwnerInfo(wallet)
@@ -170,19 +169,7 @@ export default function ProfileVaultCard(props: Props) {
         <Divider />
 
         <div className='space-y-4'>
-          <div className='flex justify-between items-center'>
-            <Text size='sm'>Description</Text>
-            {isOwner && (
-              <Button
-                onClick={() => onEdit(true)}
-                variant='transparent'
-                color='quaternary'
-                className='!p-0 text-xs'
-                textClassNames='text-secondary hover:text-primary'
-                text='Edit'
-              />
-            )}
-          </div>
+          <Text size='sm'>Description</Text>
           <Text size='xs' className='text-white/60'>
             {details.description}
           </Text>
