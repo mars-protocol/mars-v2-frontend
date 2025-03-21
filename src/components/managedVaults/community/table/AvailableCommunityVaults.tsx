@@ -4,6 +4,7 @@ import Text from 'components/common/Text'
 import useCommunityVaultsColumns from 'components/managedVaults/community/table/useCommunityVaultsColumns'
 import useManagedVaults from 'hooks/managedVaults/useManagedVaults'
 import useStore from 'store'
+
 interface Props {
   title: string
   data: ManagedVaultsData[]
@@ -22,7 +23,8 @@ export default function AvailableCommunityVaults() {
     )
   }
 
-  const noVaultsAvailable = !data?.ownedVaults?.length && !data?.availableVaults?.length
+  const noVaultsAvailable =
+    !data.ownedVaults.length && !data.depositedVaults.length && !data.availableVaults.length
   if (!isLoading && noVaultsAvailable) {
     return (
       <Text size='lg' className='text-center w-full p-8 text-white/60'>
@@ -34,13 +36,12 @@ export default function AvailableCommunityVaults() {
   return (
     <>
       {address && (
-        <VaultTable title='My Vaults' data={data?.ownedVaults ?? []} isLoading={isLoading} />
+        <>
+          <VaultTable title='My Vaults' data={data.ownedVaults} isLoading={isLoading} />
+          <VaultTable title='My Deposits' data={data.depositedVaults} isLoading={isLoading} />
+        </>
       )}
-      <VaultTable
-        title='Available Vaults'
-        data={data?.availableVaults ?? []}
-        isLoading={isLoading}
-      />
+      <VaultTable title='Available Vaults' data={data.availableVaults} isLoading={isLoading} />
     </>
   )
 }
