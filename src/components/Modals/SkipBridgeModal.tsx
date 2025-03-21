@@ -6,13 +6,15 @@ import { ExternalLink } from 'components/common/Icons'
 import { useSkipBridgeStatus } from 'hooks/localStorage/useSkipBridgeStatus'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
-import { MIN_USDC_FEE_AMOUNT } from 'utils/feeToken'
+import { isUsdcFeeToken, MIN_USDC_FEE_AMOUNT } from 'utils/feeToken'
 import Button from 'components/common/Button'
 import { useNavigate } from 'react-router-dom'
 import { getPage, getRoute } from 'utils/route'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { useFeeToken } from 'hooks/wallet/useFeeToken'
+import { Tooltip } from 'components/common/Tooltip'
 
 export default function SkipBridgeModal() {
   const { skipBridges, hasCompletedBridge, clearSkipBridges } = useSkipBridgeStatus()
@@ -20,6 +22,7 @@ export default function SkipBridgeModal() {
   const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
   const deposit = useStore((s) => s.deposit)
+  const { setFeeToken } = useFeeToken()
   const [isCompleting, setIsCompleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isDepositComplete, setIsDepositComplete] = useState(false)
@@ -31,6 +34,16 @@ export default function SkipBridgeModal() {
     (acc, bridge) => acc.plus(bridge.amount),
     BN(0),
   )
+
+  useEffect(() => {
+    if (completedBridges.length > 0 && !pendingBridges.length) {
+      setFeeToken({
+        coinDenom: 'USDC',
+        coinMinimalDenom: chainConfig.stables[0],
+        coinDecimals: 6,
+      })
+    }
+  }, [completedBridges.length, pendingBridges.length, chainConfig.stables, setFeeToken])
 
   const handleCompleteTransaction = async () => {
     if (!address || isCompleting) return
@@ -163,13 +176,20 @@ export default function SkipBridgeModal() {
                 ? 'Bridge Transaction in Progress'
                 : 'Bridge Complete'}
           </h3>
-          <Text tag='p' className='text-center opacity-60'>
-            {isDepositComplete
-              ? 'Your USDC has been successfully deposited.'
-              : pendingBridges.length > 0
-                ? "Your bridge transaction is still processing. Please check back later. The app's functionality is limited until the transaction completes."
-                : 'Your USDC has been successfully bridged.'}
-          </Text>
+          <div className='flex items-center justify-center gap-1'>
+            <Text tag='p' className='text-center opacity-60'>
+              {isDepositComplete
+                ? 'Your USDC has been successfully deposited.'
+                : pendingBridges.length > 0
+                  ? "Your bridge transaction is still processing. Please check back later. The app's functionality is limited until the transaction completes."
+                  : 'Your USDC has been successfully bridged.'}
+            </Text>
+
+            <Tooltip
+              type='info'
+              content='0.15 USDC will be kept in your wallet for gas fees since USDC is your current fee token.'
+            />
+          </div>
 
           {error && (
             <Text tag='p' className='text-red-500 mb-4'>

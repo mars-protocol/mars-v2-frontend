@@ -18,6 +18,7 @@ import { deductFeeFromMax } from 'utils/feeToken'
 import { getCurrentFeeToken } from 'hooks/wallet/useFeeToken'
 import { useMemo } from 'react'
 import { Tooltip } from 'components/common/Tooltip'
+import { isUsdcFeeToken } from 'utils/feeToken'
 
 interface Props {
   amount: BigNumber
@@ -54,14 +55,28 @@ export default function TokenInput(props: Props) {
   const feeWarningMessages = useMemo(() => {
     const messages = [...props.warningMessages]
 
-    if (isCurrentFeeToken && props.deductFee === true && !props.max.isZero()) {
+    // Don't show gas fee warnings for EVM USDC tokens
+    if (
+      isCurrentFeeToken &&
+      props.deductFee === true &&
+      !props.max.isZero() &&
+      !isUsdcFeeToken() &&
+      !props.chainName
+    ) {
       messages.push(
         `Some ${props.asset.symbol} will be reserved for transaction fees. This token is currently being used for gas fees.`,
       )
     }
 
     return messages
-  }, [props.warningMessages, isCurrentFeeToken, props.deductFee, props.max, props.asset.symbol])
+  }, [
+    props.warningMessages,
+    isCurrentFeeToken,
+    props.deductFee,
+    props.max,
+    props.asset.symbol,
+    props.chainName,
+  ])
 
   function onMaxBtnClick() {
     props.onChange(BN(adjustedMax))
@@ -147,7 +162,7 @@ export default function TokenInput(props: Props) {
                 amount={props.max.toNumber()}
                 options={{ decimals: props.asset.decimals }}
               />
-              {isCurrentFeeToken && props.deductFee === true && (
+              {isCurrentFeeToken && props.deductFee === true && !props.chainName && (
                 <Tooltip
                   type='info'
                   content={`Some ${props.asset.symbol} will be reserved for transaction fees since this token is being used for gas payments.`}
