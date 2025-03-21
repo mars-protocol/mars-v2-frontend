@@ -14,6 +14,18 @@ export default function Document() {
         <meta content='summary_large_image' name='twitter:card' />
         <meta content='@mars_protocol' name='twitter:site' />
         <meta content='@mars_protocol' name='twitter:creator' />
+        <meta
+          property='og:description'
+          content="Trade spot, margin and perps, lend, and earn on the Cosmos' most powerful credit protocol. Featuring cross-collateralization and a single liquidation point."
+        />
+        <meta
+          name='twitter:description'
+          content="Trade spot, margin and perps, lend, and earn on the Cosmos' most powerful credit protocol. Featuring cross-collateralization and a single liquidation point."
+        />
+        <meta
+          name='description'
+          content="Trade spot, margin and perps, lend, and earn on the Cosmos' most powerful credit protocol. Featuring cross-collateralization and a single liquidation point."
+        />
         <meta content='https://app.marsprotocol.io' property='og:url' />
         <meta content='https://app.marsprotocol.io/banner.png' property='og:image' />
         <meta content='Mars Protocol' property='og:site_name' />

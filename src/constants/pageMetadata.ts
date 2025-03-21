@@ -2,7 +2,7 @@ const PAGE_METADATA = {
   main: {
     title: 'Mars Protocol',
     description:
-      "Spot trade, margin trade, lend, and earn on the Cosmos' most powerful credit protocol. Featuring cross-collateralization and a single liquidation point.",
+      "Trade spot, margin and perps, lend, and earn on the Cosmos' most powerful credit protocol. Featuring cross-collateralization and a single liquidation point.",
     keywords:
       'mars protocol, cosmos, credit protocol, crypto trading, margin trading, spot trading, cross-collateralization, defi, mars rovers, decentralized credit accounts, credit accounts',
   },
