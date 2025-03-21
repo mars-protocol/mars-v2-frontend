@@ -76,7 +76,7 @@ export default function Withdrawals(props: Props) {
   )
   const percentage = totalQueuedWithdrawals.isZero()
     ? BN_ZERO
-    : BN(details.base_tokens_amount).dividedBy(totalQueuedWithdrawals).multipliedBy(100)
+    : totalQueuedWithdrawals.dividedBy(BN(details.base_tokens_amount)).multipliedBy(100)
 
   if (!isOwner) {
     return userUnlocksData.length > 0 ? (
@@ -176,13 +176,13 @@ export default function Withdrawals(props: Props) {
               ),
             },
             {
-              description: `% of ${depositAsset.symbol} vs Queued Withdrawal Value`,
+              description: `Queued Withdrawals vs ${depositAsset.symbol} in Vault`,
               value: (() => {
                 return (
                   <div className='flex gap-2'>
-                    {percentage.isLessThan(100) && (
+                    {percentage.isGreaterThan(100) && (
                       <Tooltip
-                        content={`Vault does not have enough ${depositAsset.symbol} to service queued withdrawals. Please free up some. If the ${lockUpPeriod} freeze period has ended and a user initiates a withdraw without spot ${depositAsset.symbol} available in the Vault, the Vault will automatically borrow ${depositAsset.symbol} to service the withdraw.`}
+                        content={`Queued withdrawals exceed the available ${depositAsset.symbol} in the vault. If the ${lockUpPeriod} freeze period has ended and a user initiates a withdraw without spot ${depositAsset.symbol} available in the Vault, the Vault will automatically borrow ${depositAsset.symbol} to service the withdraw.`}
                         type='warning'
                         contentClassName='w-60'
                       >
