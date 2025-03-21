@@ -1,4 +1,4 @@
-import { DEFAULT_GAS_MULTIPLIER, MsgExecuteContract } from '@delphi-labs/shuttle'
+import { DEFAULT_GAS_MULTIPLIER, MsgExecuteContract, NetworkCurrency } from '@delphi-labs/shuttle'
 import moment from 'moment'
 import { isMobile } from 'react-device-detect'
 import { StoreApi } from 'zustand'
@@ -29,6 +29,13 @@ import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
 import { getTransactionFeeToken } from 'utils/feeToken'
+import { getCurrentFeeToken } from 'hooks/wallet/useFeeToken'
+
+interface ExecuteMsgOptions {
+  messages: MsgExecuteContract[]
+  isPythUpdate?: boolean
+  memo?: string
+}
 
 export function generateExecutionMessage(
   sender: string | undefined = '',
@@ -1060,66 +1067,64 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-    executeMsg: async (options: {
-      messages: MsgExecuteContract[]
-      isPythUpdate?: boolean
-    }): Promise<BroadcastResult> => {
+    executeMsg: async (options: ExecuteMsgOptions): Promise<BroadcastResult> => {
       try {
         const client = get().client
-        const isV1 = get().isV1
-        const isLedger = client?.connectedWallet?.account.isLedger
-        const memo = isLedger ? '' : isV1 ? 'MPv1' : 'MPv2'
-        const chainConfig = get().chainConfig
-
-        const gasPrice = await getGasPrice(chainConfig)
-        if (!client)
-          return { result: undefined, error: 'No client detected. Please reconnect your wallet.' }
-        if ((checkPythUpdateEnabled() || options.isPythUpdate) && !isLedger) {
-          const pythUpdateMsg = await get().getPythVaas()
-          options.messages.unshift(pythUpdateMsg)
+        if (!client?.connectedWallet) {
+          throw new Error('No client detected. Please reconnect your wallet.')
         }
-        const feeObject = await getEstimatedFee(options.messages)
 
-        // Get the fee token to use for this transaction
         const balances = get().balances
+        const chainConfig = get().chainConfig
+        if (!chainConfig) {
+          throw new Error('Chain config not found')
+        }
+
         const usdcDenom = chainConfig.stables[0]
         const nativeDenom = chainConfig.defaultCurrency.coinMinimalDenom
 
-        const feeCurrency = getTransactionFeeToken(balances, usdcDenom, nativeDenom)
+        const selectedFeeToken = getCurrentFeeToken()
 
-        if (feeObject.fee) {
-          const broadcastOptions = {
-            messages: options.messages,
-            feeAmount: feeObject.fee.amount[0].amount,
-            gasLimit: feeObject.fee.gas,
-            memo,
-            wallet: client.connectedWallet,
-            mobile: isMobile,
-            overrides: {
-              gasPrice,
-              gasAdjustment: DEFAULT_GAS_MULTIPLIER,
-              ...(feeCurrency ? { feeCurrency } : {}),
-            },
-          }
-          const result = await client.broadcast(broadcastOptions)
-          if (result.hash) {
-            return { result }
-          }
+        const feeCurrency =
+          selectedFeeToken || getTransactionFeeToken(balances, usdcDenom, nativeDenom)
 
-          return {
-            result: undefined,
-            error: 'Transaction failed',
-          }
+        if (!feeCurrency) {
+          throw new Error('No available fee token found')
         }
 
+        const memo = options.memo || ''
+
+        const feeObject = await getEstimatedFee(options.messages)
+
+        if (!feeObject?.fee) {
+          throw new Error(feeObject?.error || 'Failed to estimate fee')
+        }
+
+        const broadcastOptions = {
+          messages: options.messages,
+          feeAmount: feeObject.fee.amount[0].amount,
+          gasLimit: feeObject.fee.gas,
+          memo,
+          wallet: client.connectedWallet,
+          mobile: false,
+          overrides: {
+            feeCurrency,
+            gasAdjustment: DEFAULT_GAS_MULTIPLIER,
+          },
+        }
+
+        const result = await client.broadcast(broadcastOptions)
+
+        if (result.hash) {
+          return { result }
+        }
+
+        throw new Error('Transaction failed')
+      } catch (error) {
         return {
           result: undefined,
-          error: feeObject.error ?? 'Transaction failed',
+          error: error instanceof Error ? error.message : 'Transaction failed',
         }
-      } catch (error) {
-        const e = error as { message: string }
-        console.error(e)
-        return { result: undefined, error: e.message }
       }
     },
     getPythVaas: async () => {

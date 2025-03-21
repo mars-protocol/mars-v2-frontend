@@ -16,6 +16,7 @@ import useToggle from 'hooks/common/useToggle'
 import AssetImage from 'components/common/assets/AssetImage'
 import useSWR from 'swr'
 import { isNtrnBalanceLow, LOW_NTRN_THRESHOLD } from 'utils/feeToken'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 
 interface FeeTokenDisplayProps {
   className?: string
@@ -123,13 +124,6 @@ export default function FeeTokenDisplay({ className, isInSettings = false }: Fee
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gasPricesData, feeToken, setFeeToken])
 
-  useEffect(() => {
-    if (feeToken && typeof window !== 'undefined') {
-      window.__marsAppState = window.__marsAppState || {}
-      window.__marsAppState.selectedFeeToken = feeToken
-    }
-  }, [feeToken])
-
   const isManuallySelected =
     feeToken && defaultFeeToken && feeToken.coinMinimalDenom !== defaultFeeToken.coinMinimalDenom
 
@@ -184,19 +178,13 @@ export default function FeeTokenDisplay({ className, isInSettings = false }: Fee
 
   const handleSelectToken = (token: NetworkCurrency) => {
     setFeeToken(token)
-
-    if (typeof window !== 'undefined') {
-      window.__marsAppState = window.__marsAppState || {}
-      window.__marsAppState.selectedFeeToken = token
-    }
-
     setShowMenu(false)
   }
 
   const handleResetToDefault = () => {
     if (typeof window !== 'undefined') {
       try {
-        localStorage.removeItem('mars-fee-token')
+        localStorage.removeItem(LocalStorageKeys.MARS_FEE_TOKEN)
       } catch (error) {
         console.error('Failed to remove fee token from localStorage:', error)
       }
@@ -205,18 +193,8 @@ export default function FeeTokenDisplay({ className, isInSettings = false }: Fee
     const bestToken = getBestFeeTokenByGasPrice()
     if (bestToken) {
       setFeeToken(bestToken)
-
-      if (typeof window !== 'undefined') {
-        window.__marsAppState = window.__marsAppState || {}
-        window.__marsAppState.selectedFeeToken = bestToken
-      }
     } else if (defaultFeeToken) {
       setFeeToken(defaultFeeToken)
-
-      if (typeof window !== 'undefined') {
-        window.__marsAppState = window.__marsAppState || {}
-        window.__marsAppState.selectedFeeToken = defaultFeeToken
-      }
     }
     setShowMenu(false)
   }
@@ -227,7 +205,7 @@ export default function FeeTokenDisplay({ className, isInSettings = false }: Fee
         <div ref={dropdownRef} className='relative w-full'>
           <div className='flex justify-between items-center mb-2'>
             <Text className='text-white'>Gas Fee Token</Text>
-            {isNtrnLow && (
+            {isNtrnLow && feeToken.coinMinimalDenom === nativeDenom && (
               <div className='flex items-center'>
                 <ExclamationMarkTriangle className='w-4 h-4 text-warning mr-1' />
                 <Text size='xs' className='text-warning'>
@@ -262,17 +240,12 @@ export default function FeeTokenDisplay({ className, isInSettings = false }: Fee
             />
           </div>
 
-          {isNtrnLow && feeToken.coinMinimalDenom === nativeDenom && (
-            <div className='mt-2 p-2 bg-warning/10 border border-warning/20 rounded text-xs text-warning'>
-              Your NTRN balance is low. For optimal gas fees, maintain at least{' '}
-              {BN(LOW_NTRN_THRESHOLD).shiftedBy(-6).toString()} NTRN.
-            </div>
-          )}
-
           <Text size='xs' className='mt-2 text-white/70'>
             {isManuallySelected
               ? "You've manually selected a fee token. The app will use this token for all transaction fees."
-              : 'Using auto-detect. The app will prioritize NTRN for transaction fees when available.'}
+              : availableFeeTokens.length === 1
+                ? `Auto-detect has selected ${availableFeeTokens[0].token.coinDenom} for transaction fees since it's the only available token`
+                : 'Using auto-detect. The app will prioritize NTRN for transaction fees when available.'}
           </Text>
 
           <Overlay
