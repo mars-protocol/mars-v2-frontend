@@ -12,6 +12,7 @@ import Loading from 'components/common/Loading'
 import ShareBar from 'components/common/ShareBar'
 import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
+import { Tooltip } from 'components/common/Tooltip'
 import FeeTag from 'components/managedVaults/community/vaultDetails/profileVaultCard/FeeTag'
 import InfoRow from 'components/managedVaults/community/vaultDetails/profileVaultCard/InfoRow'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
@@ -199,15 +200,24 @@ export default function ProfileVaultCard(props: Props) {
         )}
 
         {isOwner && (
-          <Button
-            text='Delete Vault'
-            color='secondary'
-            onClick={onDelete}
-            disabled={true}
-            leftIcon={<TrashBin />}
-            iconClassName='w-3'
-            className='w-full'
-          />
+          <Tooltip
+            type='info'
+            content={
+              <Text size='xs'>
+                To delete this vault, all users must first withdraw their funds.
+              </Text>
+            }
+          >
+            <Button
+              text='Delete Vault'
+              color='secondary'
+              disabled={true}
+              onClick={onDelete}
+              leftIcon={<TrashBin />}
+              iconClassName='w-3'
+              className='w-full'
+            />
+          </Tooltip>
         )}
       </div>
     </Card>
