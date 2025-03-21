@@ -132,6 +132,7 @@ export default function Withdrawals(props: Props) {
                   asset={depositAsset}
                   amount={totalQueuedWithdrawals}
                   layout='horizontal'
+                  abbreviated={false}
                 />
               ),
             },
@@ -142,6 +143,7 @@ export default function Withdrawals(props: Props) {
                   asset={depositAsset}
                   amount={BN(details.base_tokens_amount)}
                   layout='horizontal'
+                  abbreviated={false}
                 />
               ),
             },
