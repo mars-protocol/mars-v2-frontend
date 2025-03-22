@@ -32,6 +32,10 @@ export default function useManagedVaults() {
             return {
               ...vault,
               ...details,
+              base_tokens_denom: details.base_token,
+              base_tokens_amount: details.total_base_tokens,
+              vault_tokens_denom: details.vault_token,
+              vault_tokens_amount: details.total_vault_tokens,
               isOwner: owner === address,
             }
           }),
