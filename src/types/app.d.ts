@@ -1904,8 +1904,8 @@ interface ManagedVaultDetails {
 }
 
 interface ManagedVaultMetrics {
-  apr: string
   tvl: string
+  apy: number
 }
 interface PerformanceFeeState {
   accumulated_fee: string

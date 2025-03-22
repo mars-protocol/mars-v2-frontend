@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import BigNumber from 'bignumber.js'
+import Apy, { APY_META } from 'components/earn/lend/Table/Columns/Apy'
 import TVL, { TVL_META } from 'components/earn/farm/common/Table/Columns/TVL'
-import Apr, { APR_META } from 'components/managedVaults/common/table/columns/Apr'
 import Fee, { FEE_META } from 'components/managedVaults/common/table/columns/Fee'
 import FreezePeriod, {
   FREEZE_PERIOD_META,
@@ -16,6 +16,7 @@ import { getRoute } from 'utils/route'
 import Name from 'components/earn/lend/Table/Columns/Name'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import { byDenom } from 'utils/array'
+import { convertAprToApy } from 'utils/parsers'
 
 interface Props {
   isLoading: boolean
@@ -61,8 +62,14 @@ export default function useCommunityVaultsColumns(props: Props) {
         ),
       },
       {
-        ...APR_META,
-        cell: ({ row }) => <Apr value={row.original.apr} isLoading={isLoading} />,
+        ...APY_META,
+        cell: ({ row }) => (
+          <Apy
+            isLoading={isLoading}
+            borrowEnabled={true}
+            apy={convertAprToApy(Number(row.original.apr ?? 0), 365)}
+          />
+        ),
       },
       {
         ...FEE_META,

@@ -82,9 +82,9 @@ export default function ProfileVaultCard(props: Props) {
         <Divider />
 
         <div className='space-y-4'>
-          <InfoRow label='APR'>
+          <InfoRow label='APY'>
             <FormattedNumber
-              amount={Number(details.metrics.apr) || 0}
+              amount={details.metrics.apy || 0}
               options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
               className='text-sm'
             />
