@@ -47,7 +47,10 @@ export default function AvailableCommunityVaults() {
 }
 
 function VaultTable({ title, data, isLoading }: Props) {
-  const columns = useCommunityVaultsColumns({ isLoading })
+  const columns = useCommunityVaultsColumns({
+    isLoading,
+    showPosition: title === 'My Deposits',
+  })
 
   if (!data.length) return null
 
