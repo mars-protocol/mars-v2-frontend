@@ -1,7 +1,7 @@
 import Button from 'components/common/Button'
 import CharacterCount from 'components/common/CharacterCount'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import { ArrowRight } from 'components/common/Icons'
+import { ArrowRight, InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import TextArea from 'components/common/TextArea'
 import { TextLink } from 'components/common/TextLink'
@@ -11,6 +11,7 @@ import VaultInputElement from 'components/managedVaults/community/createVault/Va
 import useAccountId from 'hooks/accounts/useAccountId'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import useAlertDialog from 'hooks/common/useAlertDialog'
 import { useCallback, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
@@ -31,6 +32,7 @@ const options = [
 export default function CreateVault() {
   const selectableAssets = useVaultAssets()
   const chainConfig = useChainConfig()
+  const { open: showAlertDialog } = useAlertDialog()
   const defaultAsset = useMemo(
     () =>
       selectableAssets.find((asset) => asset.denom === chainConfig.stables[0]) ??
@@ -58,44 +60,63 @@ export default function CreateVault() {
   }
 
   const handleMintVaultAddress = useCallback(async () => {
-    try {
-      setIsTxPending(true)
+    showAlertDialog({
+      title: 'Create Vault',
+      icon: <InfoCircle />,
+      content: (
+        <Text className='text-white/60'>
+          Please note that once created, this vault will be immutable. While you can manage it
+          through deposits, withdrawals and other operations, it cannot be deleted.
+        </Text>
+      ),
+      positiveButton: {
+        text: 'Continue',
+        onClick: async () => {
+          try {
+            setIsTxPending(true)
 
-      const feeRate = performanceFee.dividedBy(100).dividedBy(1000).toFixed(5)
+            const feeRate = performanceFee.dividedBy(100).dividedBy(1000).toFixed(5)
 
-      const vaultParams = {
-        title: vaultTitle,
-        description: description,
-        baseToken: selectedAsset.denom,
-        withdrawFreezePeriod: Number(withdrawFreezePeriod) * 3600,
-        enableHls: false,
-        performanceFee: {
-          fee_rate: feeRate,
-          withdrawal_interval: 24 * 3600,
+            const vaultParams = {
+              title: vaultTitle,
+              description: description,
+              baseToken: selectedAsset.denom,
+              withdrawFreezePeriod: Number(withdrawFreezePeriod) * 3600,
+              enableHls: false,
+              performanceFee: {
+                fee_rate: feeRate,
+                withdrawal_interval: 24 * 3600,
+              },
+              vault_token_subdenom: `vault_${selectedAsset.symbol.toLowerCase()}`,
+            }
+
+            const result = await createManagedVault(vaultParams)
+
+            if (!result) return
+
+            if (result.address && accountId) {
+              navigate(
+                getRoute(
+                  getPage(`vaults/${result.address}/mint-account`, chainConfig),
+                  searchParams,
+                  address,
+                  accountId,
+                ),
+              )
+            }
+          } catch (error) {
+            console.error('Failed to create vault:', error)
+          } finally {
+            setIsTxPending(false)
+          }
         },
-        vault_token_subdenom: `vault_${selectedAsset.symbol.toLowerCase()}`,
-      }
-
-      const result = await createManagedVault(vaultParams)
-
-      if (!result) return
-
-      if (result.address && accountId) {
-        navigate(
-          getRoute(
-            getPage(`vaults/${result.address}/mint-account`, chainConfig),
-            searchParams,
-            address,
-            accountId,
-          ),
-        )
-      }
-    } catch (error) {
-      console.error('Failed to create vault:', error)
-    } finally {
-      setIsTxPending(false)
-    }
+      },
+      negativeButton: {
+        text: 'Cancel',
+      },
+    })
   }, [
+    showAlertDialog,
     vaultTitle,
     description,
     selectedAsset,

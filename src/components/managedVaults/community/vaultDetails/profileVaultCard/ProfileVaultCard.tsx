@@ -1,18 +1,16 @@
 import classNames from 'classnames'
 import AssetImage from 'components/common/assets/AssetImage'
-import Button from 'components/common/Button'
 import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
 import { CircularProgress } from 'components/common/CircularProgress'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { ExternalLink, TrashBin, Verified } from 'components/common/Icons'
+import { ExternalLink, Verified } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import ShareBar from 'components/common/ShareBar'
 import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
-import { Tooltip } from 'components/common/Tooltip'
 import FeeTag from 'components/managedVaults/community/vaultDetails/profileVaultCard/FeeTag'
 import InfoRow from 'components/managedVaults/community/vaultDetails/profileVaultCard/InfoRow'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
@@ -27,12 +25,11 @@ import { BN } from 'utils/helpers'
 interface Props {
   details: ExtendedManagedVaultDetails
   wallet?: string
-  onDelete: () => void
   isOwner: boolean
 }
 
 export default function ProfileVaultCard(props: Props) {
-  const { details, isOwner, wallet, onDelete } = props
+  const { details, isOwner, wallet } = props
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(details.base_tokens_denom)) as Asset
   const { vaultOwnerInfo, isLoading } = useManagedVaultOwnerInfo(wallet)
@@ -197,27 +194,6 @@ export default function ProfileVaultCard(props: Props) {
             </TextLink>{' '}
             so that you can populate a profile image, name, and social links.
           </Callout>
-        )}
-
-        {isOwner && (
-          <Tooltip
-            type='info'
-            content={
-              <Text size='xs'>
-                To delete this vault, all users must first withdraw their funds.
-              </Text>
-            }
-          >
-            <Button
-              text='Delete Vault'
-              color='secondary'
-              disabled={true}
-              onClick={onDelete}
-              leftIcon={<TrashBin />}
-              iconClassName='w-3'
-              className='w-full'
-            />
-          </Tooltip>
         )}
       </div>
     </Card>

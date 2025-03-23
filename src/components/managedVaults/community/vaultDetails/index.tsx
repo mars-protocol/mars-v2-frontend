@@ -73,12 +73,7 @@ export function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) 
   return (
     <div className='flex flex-col justify-center gap-4 md:flex-row'>
       <div className='md:w-100'>
-        <ProfileVaultCard
-          details={vaultDetails}
-          isOwner={isOwner}
-          wallet={vaultDetails.owner}
-          onDelete={() => console.log('Delete clicked')}
-        />
+        <ProfileVaultCard details={vaultDetails} isOwner={isOwner} wallet={vaultDetails.owner} />
       </div>
       <FeeAction
         showFeeActionModal={showFeeActionModal}
