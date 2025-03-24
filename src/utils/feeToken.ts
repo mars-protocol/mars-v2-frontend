@@ -14,31 +14,49 @@ export function findBestFeeToken(
   balances: Coin[],
   usdcDenom: string,
   nativeDenom: string,
+  assets?: Asset[],
 ): NetworkCurrency | undefined {
   const nativeBalance = balances.find((coin) => coin.denom === nativeDenom)
-
+  const nativeAsset = assets?.find((asset) => asset.denom === nativeDenom)
   if (nativeBalance && BN(nativeBalance.amount).isGreaterThan(LOW_NTRN_THRESHOLD)) {
     return {
-      coinDenom: nativeDenom === 'untrn' ? 'NTRN' : nativeDenom.toUpperCase(),
+      coinDenom:
+        nativeAsset?.symbol || (nativeDenom === 'untrn' ? 'NTRN' : nativeDenom.toUpperCase()),
       coinMinimalDenom: nativeDenom,
-      coinDecimals: nativeDenom === 'untrn' ? 6 : 18,
+      coinDecimals: nativeAsset?.decimals || (nativeDenom === 'untrn' ? 6 : 18),
     }
   }
 
   const usdcBalance = balances.find((coin) => coin.denom === usdcDenom)
+  const usdcAsset = assets?.find((asset) => asset.denom === usdcDenom)
   if (usdcBalance && BN(usdcBalance.amount).isGreaterThan(0)) {
     return {
       coinDenom: 'USDC',
       coinMinimalDenom: usdcDenom,
-      coinDecimals: 6,
+      coinDecimals: usdcAsset?.decimals || 6,
+    }
+  }
+
+  const otherBalance = balances.find((coin) => {
+    if (coin.denom === nativeDenom || coin.denom === usdcDenom) return false
+    return BN(coin.amount).isGreaterThan(0)
+  })
+
+  if (otherBalance) {
+    const otherAsset = assets?.find((asset) => asset.denom === otherBalance.denom)
+    return {
+      coinDenom: otherAsset?.symbol || otherBalance.denom.toUpperCase(),
+      coinMinimalDenom: otherBalance.denom,
+      coinDecimals: otherAsset?.decimals || 18,
     }
   }
 
   if (nativeBalance && BN(nativeBalance.amount).isGreaterThan(0)) {
     return {
-      coinDenom: nativeDenom === 'untrn' ? 'NTRN' : nativeDenom.toUpperCase(),
+      coinDenom:
+        nativeAsset?.symbol || (nativeDenom === 'untrn' ? 'NTRN' : nativeDenom.toUpperCase()),
       coinMinimalDenom: nativeDenom,
-      coinDecimals: nativeDenom === 'untrn' ? 6 : 18,
+      coinDecimals: nativeAsset?.decimals || (nativeDenom === 'untrn' ? 6 : 18),
     }
   }
 

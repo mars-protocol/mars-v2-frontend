@@ -17,6 +17,7 @@ import AssetImage from 'components/common/assets/AssetImage'
 import useSWR from 'swr'
 import { isNtrnBalanceLow, LOW_NTRN_THRESHOLD } from 'utils/feeToken'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useAssets from 'hooks/assets/useAssets'
 
 interface FeeTokenDisplayProps {
   className?: string
@@ -43,6 +44,7 @@ export default function FeeTokenDisplay({ className, isInSettings = false }: Fee
   const { data: walletBalances = [] } = useWalletBalances(address)
   const chainConfig = useChainConfig()
   const defaultFeeToken = useBestFeeToken()
+  const { data: assets } = useAssets()
 
   const settingsModalOpen = useStore((s) => s?.settingsModal) || false
 
@@ -75,23 +77,26 @@ export default function FeeTokenDisplay({ className, isInSettings = false }: Fee
 
     const nativeBalance = walletBalances.find((coin) => coin.denom === nativeDenom)
     const nativeGasPrice = gasPricesData.prices.find((price) => price.denom === nativeDenom)
+    const nativeAsset = assets?.find((asset) => asset.denom === nativeDenom)
 
     if (nativeBalance && BN(nativeBalance.amount).isGreaterThan(0) && nativeGasPrice) {
       return {
-        coinDenom: nativeDenom === 'untrn' ? 'NTRN' : nativeDenom.toUpperCase(),
+        coinDenom:
+          nativeAsset?.symbol || (nativeDenom === 'untrn' ? 'NTRN' : nativeDenom.toUpperCase()),
         coinMinimalDenom: nativeDenom,
-        coinDecimals: nativeDenom === 'untrn' ? 6 : 18,
+        coinDecimals: nativeAsset?.decimals || (nativeDenom === 'untrn' ? 6 : 18),
       }
     }
 
     const usdcDenom = chainConfig.stables[0]
     const usdcBalance = walletBalances.find((coin) => coin.denom === usdcDenom)
+    const usdcAsset = assets?.find((asset) => asset.denom === usdcDenom)
 
     if (usdcBalance && BN(usdcBalance.amount).isGreaterThan(0)) {
       return {
         coinDenom: 'USDC',
         coinMinimalDenom: usdcDenom,
-        coinDecimals: 6,
+        coinDecimals: usdcAsset?.decimals || 6,
       }
     }
 
@@ -145,12 +150,14 @@ export default function FeeTokenDisplay({ className, isInSettings = false }: Fee
   const availableFeeTokens: { token: NetworkCurrency; balance: string; gasPrice?: string }[] = []
 
   const nativeGasPrice = gasPricesData?.prices.find((price) => price.denom === nativeDenom)?.amount
+  const nativeAsset = assets?.find((asset) => asset.denom === nativeDenom)
   if (nativeBalance && BN(nativeBalance.amount).isGreaterThan(0)) {
     availableFeeTokens.push({
       token: {
-        coinDenom: nativeDenom === 'untrn' ? 'NTRN' : nativeDenom.toUpperCase(),
+        coinDenom:
+          nativeAsset?.symbol || (nativeDenom === 'untrn' ? 'NTRN' : nativeDenom.toUpperCase()),
         coinMinimalDenom: nativeDenom,
-        coinDecimals: nativeDenom === 'untrn' ? 6 : 18,
+        coinDecimals: nativeAsset?.decimals || (nativeDenom === 'untrn' ? 6 : 18),
       },
       balance: nativeBalance.amount,
       gasPrice: nativeGasPrice,
@@ -159,17 +166,55 @@ export default function FeeTokenDisplay({ className, isInSettings = false }: Fee
 
   const usdcDenom = chainConfig.stables[0]
   const usdcBalance = walletBalances.find((coin) => coin.denom === usdcDenom)
+  const usdcAsset = assets?.find((asset) => asset.denom === usdcDenom)
   if (usdcBalance && BN(usdcBalance.amount).isGreaterThan(0)) {
     const usdcGasPrice = gasPricesData?.prices.find((price) => price.denom === usdcDenom)?.amount
     availableFeeTokens.push({
       token: {
         coinDenom: 'USDC',
         coinMinimalDenom: usdcDenom,
-        coinDecimals: 6,
+        coinDecimals: usdcAsset?.decimals || 6,
       },
       balance: usdcBalance.amount,
       gasPrice: usdcGasPrice,
     })
+  }
+
+  gasPricesData?.prices.forEach((price) => {
+    if (price.denom === nativeDenom || price.denom === usdcDenom) return
+
+    const balance = walletBalances.find((coin) => coin.denom === price.denom)
+    const asset = assets?.find((a) => a.denom === price.denom)
+    if (!asset) return
+    if (balance && BN(balance.amount).isGreaterThan(0)) {
+      availableFeeTokens.push({
+        token: {
+          coinDenom: asset?.symbol || price.denom.toUpperCase(),
+          coinMinimalDenom: price.denom,
+          coinDecimals: asset.decimals,
+        },
+        balance: balance.amount,
+        gasPrice: price.amount,
+      })
+    }
+  })
+
+  if (availableFeeTokens.length === 0) {
+    return (
+      <div className={classNames({ relative: true, [className ?? '']: true })}>
+        <div ref={dropdownRef} className='relative w-full'>
+          <div className='flex justify-between items-center mb-2'>
+            <Text className='text-white'>Gas Fee Token</Text>
+          </div>
+          <div className='p-3 border border-white/20 rounded bg-white/5'>
+            <Text size='xs' className='text-white/50'>
+              No tokens available for fees. Please ensure you have sufficient balance of NTRN or
+              USDC.
+            </Text>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   const getAssetFromDenom = (denom: string) => {
@@ -260,41 +305,48 @@ export default function FeeTokenDisplay({ className, isInSettings = false }: Fee
                 </Text>
               </div>
               <div className='max-h-48 overflow-y-auto'>
-                {availableFeeTokens.map((item) => (
-                  <div
-                    key={item.token.coinMinimalDenom}
-                    className={classNames(
-                      'flex justify-between items-center p-2 hover:bg-white/5 cursor-pointer',
-                      feeToken.coinMinimalDenom === item.token.coinMinimalDenom && 'bg-white/10',
-                    )}
-                    onClick={() => handleSelectToken(item.token)}
-                  >
-                    <div className='flex items-center'>
-                      <AssetImage
-                        asset={getAssetFromDenom(item.token.coinMinimalDenom)}
-                        className='w-4 h-4 mr-2'
-                      />
-                      <Text size='xs' className='text-white'>
-                        {item.token.coinDenom}
-                      </Text>
-                      {feeToken.coinMinimalDenom === item.token.coinMinimalDenom && (
-                        <Check className='w-3 h-3 text-primary ml-1' />
+                {availableFeeTokens.map((item) => {
+                  const asset = getAssetFromDenom(item.token.coinMinimalDenom)
+                  return (
+                    <div
+                      key={item.token.coinMinimalDenom}
+                      className={classNames(
+                        'flex justify-between items-center p-2 hover:bg-white/5 cursor-pointer',
+                        feeToken.coinMinimalDenom === item.token.coinMinimalDenom && 'bg-white/10',
                       )}
-                    </div>
-                    <div className='flex flex-col items-end'>
-                      <FormattedNumber
-                        amount={BN(item.balance).shiftedBy(-item.token.coinDecimals).toNumber()}
-                        options={{ maxDecimals: 6 }}
-                        className='text-xs text-white/70'
-                      />
-                      {item.gasPrice && (
-                        <Text size='xs' className='text-white/50'>
-                          Gas: {parseFloat(item.gasPrice).toFixed(6)}
+                      onClick={() => handleSelectToken(item.token)}
+                    >
+                      <div className='flex items-center'>
+                        <AssetImage
+                          asset={getAssetFromDenom(item.token.coinMinimalDenom)}
+                          className='w-4 h-4 mr-2'
+                        />
+                        <Text size='xs' className='text-white'>
+                          {item.token.coinDenom}
                         </Text>
-                      )}
+                        {feeToken.coinMinimalDenom === item.token.coinMinimalDenom && (
+                          <Check className='w-3 h-3 text-primary ml-1' />
+                        )}
+                      </div>
+                      <div className='flex flex-col items-end'>
+                        <FormattedNumber
+                          amount={BN(item.balance).shiftedBy(-item.token.coinDecimals).toNumber()}
+                          options={{ maxDecimals: 6 }}
+                          className='text-xs text-white/70'
+                        />
+                        {item.gasPrice && (
+                          <Text size='xs' className='text-white/50'>
+                            Gas:{' '}
+                            <FormattedNumber
+                              amount={parseFloat(item.gasPrice)}
+                              options={{ maxDecimals: asset?.decimals }}
+                            />
+                          </Text>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
                 {isManuallySelected && (
                   <div
                     className='flex justify-between items-center p-2 hover:bg-white/5 cursor-pointer border-t border-white/10'
@@ -362,41 +414,48 @@ export default function FeeTokenDisplay({ className, isInSettings = false }: Fee
           </Text>
         </div>
         <div className='max-h-48 overflow-y-auto'>
-          {availableFeeTokens.map((item) => (
-            <div
-              key={item.token.coinMinimalDenom}
-              className={classNames(
-                'flex justify-between items-center p-2 hover:bg-white/5 cursor-pointer',
-                feeToken.coinMinimalDenom === item.token.coinMinimalDenom && 'bg-white/10',
-              )}
-              onClick={() => handleSelectToken(item.token)}
-            >
-              <div className='flex items-center'>
-                <AssetImage
-                  asset={getAssetFromDenom(item.token.coinMinimalDenom)}
-                  className='w-4 h-4 mr-2'
-                />
-                <Text size='xs' className='text-white'>
-                  {item.token.coinDenom}
-                </Text>
-                {feeToken.coinMinimalDenom === item.token.coinMinimalDenom && (
-                  <Check className='w-3 h-3 text-primary ml-1' />
+          {availableFeeTokens.map((item) => {
+            const asset = getAssetFromDenom(item.token.coinMinimalDenom)
+            return (
+              <div
+                key={item.token.coinMinimalDenom}
+                className={classNames(
+                  'flex justify-between items-center p-2 hover:bg-white/5 cursor-pointer',
+                  feeToken.coinMinimalDenom === item.token.coinMinimalDenom && 'bg-white/10',
                 )}
-              </div>
-              <div className='flex flex-col items-end'>
-                <FormattedNumber
-                  amount={BN(item.balance).shiftedBy(-item.token.coinDecimals).toNumber()}
-                  options={{ maxDecimals: 6 }}
-                  className='text-xs text-white/70'
-                />
-                {item.gasPrice && (
-                  <Text size='xs' className='text-white/50'>
-                    Gas: {parseFloat(item.gasPrice).toFixed(6)}
+                onClick={() => handleSelectToken(item.token)}
+              >
+                <div className='flex items-center'>
+                  <AssetImage
+                    asset={getAssetFromDenom(item.token.coinMinimalDenom)}
+                    className='w-4 h-4 mr-2'
+                  />
+                  <Text size='xs' className='text-white'>
+                    {item.token.coinDenom}
                   </Text>
-                )}
+                  {feeToken.coinMinimalDenom === item.token.coinMinimalDenom && (
+                    <Check className='w-3 h-3 text-primary ml-1' />
+                  )}
+                </div>
+                <div className='flex flex-col items-end'>
+                  <FormattedNumber
+                    amount={BN(item.balance).shiftedBy(-item.token.coinDecimals).toNumber()}
+                    options={{ maxDecimals: 6 }}
+                    className='text-xs text-white/70'
+                  />
+                  {item.gasPrice && (
+                    <Text size='xs' className='text-white/50'>
+                      Gas:{' '}
+                      <FormattedNumber
+                        amount={parseFloat(item.gasPrice)}
+                        options={{ maxDecimals: asset?.decimals }}
+                      />
+                    </Text>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
           {isManuallySelected && (
             <div
               className='flex justify-between items-center p-2 hover:bg-white/5 cursor-pointer border-t border-white/10'
