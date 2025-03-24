@@ -98,7 +98,7 @@ async function fetchPythPrices(assets: Asset[]): Promise<PricesResponse> {
 }
 
 async function fetchFeeMarketPrices(): Promise<PricesResponse> {
-  const feeMarketUrl = `${process.env.NEXT_PUBLIC_NEUTRON_RPC}/feemarket/v1/gas_prices`
+  const feeMarketUrl = `${process.env.NEXT_PUBLIC_NEUTRON_REST}/feemarket/v1/gas_prices`
   try {
     const response = await fetchWithTimeout(feeMarketUrl, FETCH_TIMEOUT)
 

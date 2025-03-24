@@ -32,7 +32,7 @@ interface GasPricesResponse {
   prices: GasPrice[]
 }
 
-const FEE_MARKET_API_ROUTE = `${process.env.NEXT_PUBLIC_NEUTRON_RPC}/feemarket/v1/gas_prices`
+const FEE_MARKET_API_ROUTE = `${process.env.NEXT_PUBLIC_NEUTRON_REST}/feemarket/v1/gas_prices`
 
 export default function FeeTokenDisplay({ className, isInSettings = false }: FeeTokenDisplayProps) {
   const { feeToken, setFeeToken } = useFeeToken()
