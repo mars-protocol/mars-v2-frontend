@@ -17,7 +17,7 @@ import { useFeeToken } from 'hooks/wallet/useFeeToken'
 import { Tooltip } from 'components/common/Tooltip'
 
 export default function SkipBridgeModal() {
-  const { skipBridges, hasCompletedBridge, clearSkipBridges } = useSkipBridgeStatus()
+  const { skipBridges, clearSkipBridges } = useSkipBridgeStatus()
   const navigate = useNavigate()
   const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
@@ -165,7 +165,7 @@ export default function SkipBridgeModal() {
       content={
         <div className='p-4 text-center'>
           <div className='flex justify-center'>
-            <div className='mb-[-24px]'>
+            <div className='mb-[-196px]'>
               <SkipBridgeModalGraphic />
             </div>
           </div>
