@@ -55,7 +55,6 @@ export default function TokenInput(props: Props) {
   const feeWarningMessages = useMemo(() => {
     const messages = [...props.warningMessages]
 
-    // Don't show gas fee warnings for EVM USDC tokens
     if (
       isCurrentFeeToken &&
       props.deductFee === true &&
