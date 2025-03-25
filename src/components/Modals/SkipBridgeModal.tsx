@@ -1,20 +1,18 @@
 import Modal from 'components/Modals/Modal'
-import SkipBridgeModalGraphic from 'components/common/Icons/SkipBridgeModalGraphic.svg'
-import Text from 'components/common/Text'
-import Link from 'next/link'
-import { ExternalLink } from 'components/common/Icons'
-import { useSkipBridgeStatus } from 'hooks/localStorage/useSkipBridgeStatus'
-import useStore from 'store'
-import { BN } from 'utils/helpers'
-import { isUsdcFeeToken, MIN_USDC_FEE_AMOUNT } from 'utils/feeToken'
 import Button from 'components/common/Button'
-import { useNavigate } from 'react-router-dom'
-import { getPage, getRoute } from 'utils/route'
+import { Bridge, ExternalLink } from 'components/common/Icons'
+import Text from 'components/common/Text'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
-import { useEffect, useState } from 'react'
+import { useSkipBridgeStatus } from 'hooks/localStorage/useSkipBridgeStatus'
 import { useFeeToken } from 'hooks/wallet/useFeeToken'
-import { Tooltip } from 'components/common/Tooltip'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import useStore from 'store'
+import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
+import { MIN_FEE_AMOUNT } from 'utils/feeToken'
+import { BN } from 'utils/helpers'
+import { getPage, getRoute } from 'utils/route'
 
 export default function SkipBridgeModal() {
   const { skipBridges, clearSkipBridges } = useSkipBridgeStatus()
@@ -52,7 +50,7 @@ export default function SkipBridgeModal() {
     setError(null)
     setHasAttemptedDeposit(true)
     try {
-      const depositAmount = totalBridgedAmount.minus(MIN_USDC_FEE_AMOUNT)
+      const depositAmount = totalBridgedAmount.minus(MIN_FEE_AMOUNT)
       if (depositAmount.isGreaterThan(0)) {
         const depositCoin = WrappedBNCoin.fromDenomAndBigNumber(
           chainConfig.stables[0],
@@ -157,16 +155,23 @@ export default function SkipBridgeModal() {
     }
   }
 
+  useEffect(() => {
+    useStore.setState({
+      focusComponent: null,
+    })
+  })
+
   return (
     <Modal
       header={null}
       onClose={() => {}}
       hideCloseBtn={true}
+      modalClassName='max-w-modal-sm'
       content={
         <div className='p-4 text-center'>
           <div className='flex justify-center'>
-            <div className='mb-[-196px]'>
-              <SkipBridgeModalGraphic />
+            <div className='m-4 w-20 h-20'>
+              <Bridge />
             </div>
           </div>
           <h3 className='font-bold mb-4'>
@@ -184,11 +189,6 @@ export default function SkipBridgeModal() {
                   ? "Your bridge transaction is still processing. Please check back later. The app's functionality is limited until the transaction completes."
                   : 'Your USDC has been successfully bridged.'}
             </Text>
-
-            <Tooltip
-              type='info'
-              content='0.15 USDC will be kept in your wallet for gas fees since USDC is your current fee token.'
-            />
           </div>
 
           {error && (

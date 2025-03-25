@@ -1,7 +1,7 @@
 import { NetworkCurrency } from '@delphi-labs/shuttle'
-import { useEffect, useState } from 'react'
-import useBestFeeToken from 'hooks/prices/useBestFeeToken'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import useBestFeeToken from 'hooks/prices/useBestFeeToken'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 export function useFeeToken() {
   const defaultFeeToken = useBestFeeToken()
@@ -21,16 +21,18 @@ export function useFeeToken() {
 
   const feeToken = selectedFeeToken || defaultFeeToken
 
-  const setFeeToken = (token: NetworkCurrency) => {
+  const setFeeToken = useCallback((token: NetworkCurrency) => {
     setSelectedFeeToken(token)
     try {
       localStorage.setItem(LocalStorageKeys.MARS_FEE_TOKEN, JSON.stringify(token))
     } catch (error) {
       console.error('Failed to save fee token to localStorage:', error)
     }
-  }
+  }, [])
 
-  return { feeToken, setFeeToken }
+  return useMemo(() => {
+    return { feeToken, setFeeToken }
+  }, [feeToken, setFeeToken])
 }
 
 export function getCurrentFeeToken(): NetworkCurrency | undefined {

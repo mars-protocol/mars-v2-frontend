@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SkipClient, TxStatusResponse } from '@skip-go/client'
-import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
-import { BN } from 'utils/helpers'
-import useStore from 'store'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
-import { useEvmBridge } from './useEvmBridge'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import useStore from 'store'
+import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 import { calculateUsdcFeeReserve, isUsdcFeeToken } from 'utils/feeToken'
+import { BN } from 'utils/helpers'
+import { useEvmBridge } from './useEvmBridge'
 
 interface UseSkipBridgeProps {
   chainConfig: ChainConfig
@@ -124,7 +124,7 @@ export function useSkipBridge({
 
         let bridgeAmount = selectedAsset.coin.amount.toString()
         if (isUsdc && usdcAsFeeToken) {
-          const { depositAmount } = calculateUsdcFeeReserve(bridgeAmount)
+          const { depositAmount } = calculateUsdcFeeReserve(bridgeAmount, chainConfig)
           bridgeAmount = depositAmount
 
           if (BN(depositAmount).isLessThanOrEqualTo(0)) {
@@ -281,7 +281,7 @@ export function useSkipBridge({
       isBridgeInProgress,
       refreshBalances,
       fetchSkipRoute,
-      chainConfig.stables,
+      chainConfig,
     ],
   )
 
@@ -293,37 +293,37 @@ export function useSkipBridge({
     })
   }, [])
 
+  const checkTransactionStatus = useCallback(async () => {
+    try {
+      await Promise.all(
+        skipBridges
+          .filter((bridge) => bridge.status === 'STATE_PENDING')
+          .map(async (bridge) => {
+            const response = await fetch(
+              `https://api.skip.build/v2/tx/status?chain_id=${bridge.chainID}&tx_hash=${bridge.txHash}`,
+            )
+            const skipStatus = await response.json()
+
+            if (skipStatus.status === 'STATE_COMPLETED') {
+              updateSkipBridges({
+                ...bridge,
+                status: 'STATE_COMPLETED',
+              })
+              refreshBalances()
+            }
+          }),
+      )
+    } catch (error) {
+      console.error('Failed to fetch Skip status:', error)
+    }
+  }, [skipBridges, updateSkipBridges, refreshBalances])
+
   useEffect(() => {
     if (skipBridges.some((b) => b.status === 'STATE_PENDING')) {
-      const checkTransactionStatus = async () => {
-        try {
-          await Promise.all(
-            skipBridges
-              .filter((bridge) => bridge.status === 'STATE_PENDING')
-              .map(async (bridge) => {
-                const response = await fetch(
-                  `https://api.skip.build/v2/tx/status?chain_id=${bridge.chainID}&tx_hash=${bridge.txHash}`,
-                )
-                const skipStatus = await response.json()
-
-                if (skipStatus.status === 'STATE_COMPLETED') {
-                  updateSkipBridges({
-                    ...bridge,
-                    status: 'STATE_COMPLETED',
-                  })
-                  refreshBalances()
-                }
-              }),
-          )
-        } catch (error) {
-          console.error('Failed to fetch Skip status:', error)
-        }
-      }
-
       const intervalId = setInterval(checkTransactionStatus, 10000)
       return () => clearInterval(intervalId)
     }
-  }, [skipBridges, updateSkipBridges, refreshBalances])
+  }, [skipBridges, updateSkipBridges, refreshBalances, checkTransactionStatus])
 
   const fetchBridgeLogos = async ({ chainIDs }: { chainIDs: string[] }) => {
     try {

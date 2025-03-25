@@ -1,14 +1,9 @@
 import { NetworkCurrency } from '@delphi-labs/shuttle'
-import { BN } from './helpers'
 import { getCurrentFeeToken } from 'hooks/wallet/useFeeToken'
+import { BN } from './helpers'
 
-export const MIN_USDC_FEE_AMOUNT = '150000'
-
-export const MIN_NTRN_FEE_AMOUNT = '100000'
-
+export const MIN_FEE_AMOUNT = '150000'
 export const LOW_NTRN_THRESHOLD = '250000'
-
-export const DEFAULT_MIN_FEE_AMOUNT = '100000'
 
 export function findBestFeeToken(
   balances: Coin[],
@@ -63,13 +58,11 @@ export function findBestFeeToken(
   return undefined
 }
 
-export function calculateUsdcFeeReserve(bridgeAmount: string) {
+export function calculateUsdcFeeReserve(bridgeAmount: string, chainConfig: ChainConfig) {
   const totalAmount = BN(bridgeAmount)
 
   const selectedFeeToken = getCurrentFeeToken()
-  const isUsdcFeeToken =
-    selectedFeeToken?.coinMinimalDenom.includes('usdc') ||
-    selectedFeeToken?.coinMinimalDenom.includes('uusdc')
+  const isUsdcFeeToken = selectedFeeToken?.coinMinimalDenom === chainConfig.stables[0]
 
   if (!isUsdcFeeToken) {
     return {
@@ -78,7 +71,7 @@ export function calculateUsdcFeeReserve(bridgeAmount: string) {
     }
   }
 
-  if (totalAmount.isLessThanOrEqualTo(MIN_USDC_FEE_AMOUNT)) {
+  if (totalAmount.isLessThanOrEqualTo(MIN_FEE_AMOUNT)) {
     return {
       keepAmount: totalAmount.toString(),
       depositAmount: '0',
@@ -86,8 +79,8 @@ export function calculateUsdcFeeReserve(bridgeAmount: string) {
   }
 
   return {
-    keepAmount: MIN_USDC_FEE_AMOUNT,
-    depositAmount: totalAmount.minus(MIN_USDC_FEE_AMOUNT).toString(),
+    keepAmount: MIN_FEE_AMOUNT,
+    depositAmount: totalAmount.minus(MIN_FEE_AMOUNT).toString(),
   }
 }
 
@@ -118,7 +111,7 @@ export function getTransactionFeeToken(
   return findBestFeeToken(balances, usdcDenom, nativeDenom)
 }
 
-export function isNtrnBalanceLow(balances: Coin[], nativeDenom: string): boolean {
+export function isFeeBalanceLow(balances: Coin[], nativeDenom: string): boolean {
   const nativeBalance = balances.find((coin) => coin.denom === nativeDenom)
   return !nativeBalance || BN(nativeBalance.amount).isLessThanOrEqualTo(LOW_NTRN_THRESHOLD)
 }
@@ -137,12 +130,10 @@ export function deductFeeFromMax(
   let feeReserveAmount: string
 
   if (tokenDenom.includes('usdc') || tokenDenom.includes('uusdc')) {
-    feeReserveAmount = MIN_USDC_FEE_AMOUNT
-  } else if (tokenDenom === 'untrn') {
-    feeReserveAmount = MIN_NTRN_FEE_AMOUNT
+    feeReserveAmount = MIN_FEE_AMOUNT
   } else {
     const decimalAdjustment = tokenDecimals / 6
-    feeReserveAmount = BN(DEFAULT_MIN_FEE_AMOUNT).multipliedBy(decimalAdjustment).toFixed(0)
+    feeReserveAmount = BN(MIN_FEE_AMOUNT).multipliedBy(decimalAdjustment).toFixed(0)
   }
 
   if (maxAmount.isLessThanOrEqualTo(feeReserveAmount)) {

@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useMemo } from 'react'
+import { Suspense, useEffect } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import AccountCreateFirst from 'components/account/AccountCreateFirst'
@@ -6,12 +6,8 @@ import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
-import useBaseAsset from 'hooks/assets/useBaseAsset'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
-import { byDenom } from 'utils/array'
-import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
 
 function FetchLoading() {
@@ -33,18 +29,9 @@ function Content() {
     true,
     true,
   )
-  const { data: walletBalances, isLoading: isLoadingBalances } = useWalletBalances(address)
-  const baseAsset = useBaseAsset()
-
-  const baseBalance = useMemo(
-    () => walletBalances.find(byDenom(baseAsset.denom))?.amount ?? '0',
-    [walletBalances, baseAsset],
-  )
-
-  if (isLoadingAccounts || isLoadingBalances) return <FetchLoading />
-  if (BN(baseBalance).isZero() || (accountIds && accountIds.length === 0 && !isV1))
-    return <AccountCreateFirst />
-  if (!isLoadingAccounts && !isLoadingBalances && accountIds)
+  if (isLoadingAccounts) return <FetchLoading />
+  if (accountIds && accountIds.length === 0 && !isV1) return <AccountCreateFirst />
+  if (!isLoadingAccounts && accountIds)
     return <FetchedBalances accountIds={accountIds} isV1={isV1} address={address} />
   return <FetchLoading />
 }

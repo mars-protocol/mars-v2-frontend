@@ -13,9 +13,9 @@ import Text from 'components/common/Text'
 import TextInput from 'components/common/TextInput'
 import { TextLink } from 'components/common/TextLink'
 import Modal from 'components/Modals/Modal'
+import FeeTokenSelect from 'components/Modals/Settings/FeeTokenSelect'
 import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
 import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
-import FeeTokenDisplay from 'components/Wallet/FeeTokenDisplay'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
@@ -105,7 +105,7 @@ export default function SettingsModal() {
               <AssetImage asset={asset} className='w-4 h-4' />
             )}
             <Text size='sm' className='leading-4'>
-              {asset.name}
+              {asset.symbol === '$' ? 'US Dollar' : asset.symbol}
             </Text>
           </div>
         ),
@@ -437,14 +437,10 @@ export default function SettingsModal() {
       {/* Fee Token Selection */}
       <SettingsOptions
         label='Gas Fee Token'
-        description='Select which token to use for transaction fees. By default, NTRN is used when available.'
+        description={`Select which token to use for transaction fees. By default, ${chainConfig.defaultCurrency.coinDenom} is used when available.`}
         className='pb-6'
       >
-        <div className='flex justify-end w-full'>
-          <div className='w-60 relative'>
-            <FeeTokenDisplay isInSettings={true} className='w-full' />
-          </div>
-        </div>
+        <FeeTokenSelect />
       </SettingsOptions>
 
       <SettingsOptions

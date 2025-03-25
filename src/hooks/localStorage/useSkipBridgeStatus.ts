@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import useAccountIds from 'hooks/accounts/useAccountIds'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
-import { BN } from 'utils/helpers'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import useStore from 'store'
+import { BN } from 'utils/helpers'
 
 type SkipBridgeTransaction = {
   asset: string
@@ -24,6 +25,8 @@ export function useSkipBridgeStatus() {
   const [skipBridges, setSkipBridges] = useState<SkipBridgeTransaction[]>([])
   const [hasCompletedBridge, setHasCompletedBridge] = useState(false)
   const address = useStore((s) => s.address)
+  const { data: accountIds } = useAccountIds(address)
+
   const { data: walletBalances } = useWalletBalances(address)
 
   const checkTransactionStatus = useCallback(async () => {
@@ -84,7 +87,10 @@ export function useSkipBridgeStatus() {
     setHasCompletedBridge(false)
   }, [])
 
-  const shouldShowSkipBridgeModal = skipBridges.length > 0
+  const shouldShowSkipBridgeModal = useMemo(
+    () => address && skipBridges.length > 0 && accountIds && accountIds.length === 0,
+    [address, skipBridges.length, accountIds],
+  )
 
   return {
     skipBridges,

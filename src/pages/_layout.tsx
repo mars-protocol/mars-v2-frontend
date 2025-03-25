@@ -1,6 +1,8 @@
+import { NetworkCurrency } from '@delphi-labs/shuttle'
 import { Analytics } from '@vercel/analytics/react'
 import classNames from 'classnames'
 import ModalsContainer from 'components/Modals/ModalsContainer'
+import SkipBridgeModal from 'components/Modals/SkipBridgeModal'
 import AccountDetails from 'components/account/AccountDetails'
 import Background from 'components/common/Background'
 import { CircularProgress } from 'components/common/CircularProgress'
@@ -13,6 +15,8 @@ import Header from 'components/header/Header'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAccountId from 'hooks/accounts/useAccountId'
+import useAccountIds from 'hooks/accounts/useAccountIds'
+import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -24,12 +28,8 @@ import { isMobile } from 'react-device-detect'
 import { useLocation } from 'react-router-dom'
 import useStore from 'store'
 import { SWRConfig } from 'swr'
-import { debugSWR } from 'utils/middleware'
-import SkipBridgeModal from 'components/Modals/SkipBridgeModal'
 import { BN } from 'utils/helpers'
-import { NetworkCurrency } from '@delphi-labs/shuttle'
-import useAssets from 'hooks/assets/useAssets'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import { debugSWR } from 'utils/middleware'
 
 interface Props {
   focusComponent: FocusComponent | null
@@ -78,6 +78,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     location.pathname === '/' ||
     (location.pathname.includes('perps') && !location.pathname.includes('perps-vault'))
   const accountId = useAccountId()
+  const { data: accountIds } = useAccountIds(address)
+  const hasCreditAccounts = !!accountIds?.length
   const { shouldShowSkipBridgeModal } = useSkipBridgeStatus()
   const { data: gasPricesData } = useGasPrices()
   const { data: walletBalances = [] } = useWalletBalances(address)
@@ -196,6 +198,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   address &&
                   isFullWidth &&
                   accountId &&
+                  hasCreditAccounts &&
                   (accountDetailsExpanded && !isMobile ? 'md:pr-102' : 'md:pr-24'),
                 !reduceMotion && isFullWidth && 'transition-all duration-500',
                 'justify-center',

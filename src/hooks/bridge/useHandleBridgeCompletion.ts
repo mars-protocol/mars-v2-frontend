@@ -1,16 +1,18 @@
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
-import { generateExecutionMessage } from 'store/slices/broadcast'
 import { BNCoin } from 'types/classes/BNCoin'
-import { BN } from 'utils/helpers'
 import { calculateUsdcFeeReserve } from 'utils/feeToken'
+import { BN } from 'utils/helpers'
 
 export function useHandleBridgeCompletion() {
   const account = useCurrentAccount()
   const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
+  const deposit = useStore((s) => s.deposit)
+  const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
 
   const { removeSkipBridge } = useSkipBridge({
     chainConfig,
@@ -21,7 +23,7 @@ export function useHandleBridgeCompletion() {
     if (!rowData?.skipBridgeId) return
 
     try {
-      const { depositAmount } = calculateUsdcFeeReserve(rowData.amount)
+      const { depositAmount } = calculateUsdcFeeReserve(rowData.amount, chainConfig)
 
       if (BN(depositAmount).isZero()) {
         removeSkipBridge(rowData.skipBridgeId)
@@ -30,34 +32,14 @@ export function useHandleBridgeCompletion() {
 
       const coin = BNCoin.fromDenomAndBigNumber(chainConfig.stables[0], BN(depositAmount))
 
-      const store = useStore.getState()
-      const response = store.executeMsg({
-        messages: [
-          generateExecutionMessage(
-            store.address,
-            store.chainConfig.contracts.creditManager,
-            {
-              update_credit_account: {
-                ...(account?.id ? { account_id: account.id } : {}),
-                actions: [{ deposit: coin.toCoin() }],
-              },
-            },
-            [coin.toCoin()],
-          ),
-        ],
+      if (!account) return
+      const result = await deposit({
+        accountId: account?.id,
+        coins: [coin],
+        lend: isAutoLendEnabledForCurrentAccount,
+        isAutoLend: isAutoLendEnabledForCurrentAccount,
       })
-
-      store.handleTransaction({ response })
-
-      const result = await response
-      if (result.result) {
-        removeSkipBridge(rowData.skipBridgeId)
-      }
-      if (result.error) {
-        if (result.error?.includes('spendable balance') && result.error?.includes('is smaller')) {
-          removeSkipBridge(rowData.skipBridgeId)
-        }
-      }
+      removeSkipBridge(rowData.skipBridgeId)
     } catch (error: any) {
       console.error('Transaction error:', error)
     }
