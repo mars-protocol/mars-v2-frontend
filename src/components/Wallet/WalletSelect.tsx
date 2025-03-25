@@ -118,7 +118,7 @@ export default function WalletSelect(props: Props) {
         setQRCodeUrl(urls.qrCodeUrl)
       }
     } catch (error) {
-      if (error instanceof Error) {
+      if (error instanceof Error && !recentWallet) {
         setError({ title: 'Failed to connect to wallet', message: error.message })
       }
     }
