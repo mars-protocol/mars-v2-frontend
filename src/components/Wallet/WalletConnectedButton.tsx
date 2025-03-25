@@ -2,7 +2,7 @@ import { useShuttle } from '@delphi-labs/shuttle-react'
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { resolvePrimaryDomainByAddress } from 'ibc-domains-sdk'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useClipboard from 'react-use-clipboard'
@@ -17,14 +17,17 @@ import { Check, Copy, ExternalLink, Wallet } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
+import useAssets from 'hooks/assets/useAssets'
 import useBaseAsset from 'hooks/assets/useBaseAsset'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
+import { getCurrentFeeToken } from 'hooks/wallet/useFeeToken'
 import useICNSDomain from 'hooks/wallet/useICNSDomain'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
 import { ChainInfoID, NETWORK } from 'types/enums'
+import { byDenom } from 'utils/array'
 import { truncate } from 'utils/formatters'
 import { getPage, getRoute } from 'utils/route'
 
@@ -45,7 +48,8 @@ export default function WalletConnectedButton() {
   const { data: icnsData, isLoading: isLoadingICNS } = useICNSDomain(address)
   const navigate = useNavigate()
   const { pathname } = useLocation()
-
+  const currentFeeToken = getCurrentFeeToken()
+  const { data: assets } = useAssets()
   // ---------------
   // LOCAL STATE
   // ---------------
@@ -113,14 +117,28 @@ export default function WalletConnectedButton() {
     }
   }, [icnsData?.primary_name, isLoadingICNS, address])
 
+  const feeToken = useMemo(
+    () => assets.find(byDenom(currentFeeToken?.coinMinimalDenom ?? baseAsset.denom)) ?? assets[0],
+    [assets, currentFeeToken, baseAsset.denom],
+  )
+
   useEffect(() => {
     const newAmount = BigNumber(
-      walletBalances.find((coin: Coin) => coin.denom === baseAsset.denom)?.amount ?? 0,
-    ).shiftedBy(-baseAsset.decimals)
+      walletBalances.find((coin: Coin) => coin.denom === feeToken.denom)?.amount ?? 0,
+    ).shiftedBy(-feeToken.decimals)
     if (walletAmount.isEqualTo(newAmount)) return
     setWalletAmount(newAmount)
     useStore.setState({ balances: walletBalances })
-  }, [walletBalances, baseAsset.denom, baseAsset.decimals, walletAmount])
+  }, [
+    walletBalances,
+    baseAsset.denom,
+    baseAsset.decimals,
+    walletAmount,
+    currentFeeToken,
+    assets,
+    feeToken.denom,
+    feeToken.decimals,
+  ])
 
   return (
     <div className='relative'>
@@ -157,7 +175,7 @@ export default function WalletConnectedButton() {
           ) : (
             <FormattedNumber
               amount={walletAmount.toNumber()}
-              options={{ suffix: ` ${baseAsset.symbol}`, abbreviated: true }}
+              options={{ suffix: ` ${feeToken.symbol}`, abbreviated: true }}
             />
           )}
         </div>
@@ -173,11 +191,12 @@ export default function WalletConnectedButton() {
         <div className='flex max-w-screen-full w-[440px] flex-wrap p-6'>
           <div className='flex items-start w-full mb-4 flex-0 flex-nowrap'>
             <div className='flex flex-1 w-auto'>
-              <div className='mr-2 flex h-[31px] items-end text-base-caps'>{baseAsset.symbol}</div>
+              <div className='mr-2 flex h-[31px] items-end text-base-caps'>{feeToken.symbol}</div>
               <div className='flex flex-wrap justify-end flex-0'>
                 <FormattedNumber
                   className='flex items-end h-[31px] text-2xl !leading-5'
                   amount={walletAmount.toNumber()}
+                  options={{ maxDecimals: feeToken.decimals }}
                 />
               </div>
             </div>

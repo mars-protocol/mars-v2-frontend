@@ -667,14 +667,23 @@ function getMutationKeyFromTransactionCoinType(
       mutationKeys.push(`chains/${chainConfig.id}/perps/market-states`)
       break
     case 'borrow':
-    case 'deposit':
-    case 'deposit_from_wallet':
     case 'lend':
     case 'reclaim':
     case 'swap':
     case 'repay':
       mutationKeys.push(
         `chains/${chainConfig.id}/wallets/##ADDRESS##/balances`,
+        `chains/${chainConfig.id}/markets/depositCap`,
+        `chains/${chainConfig.id}/markets`,
+        `chains/${chainConfig.id}/markets/info`,
+      )
+      break
+    case 'deposit':
+    case 'deposit_from_wallet':
+      mutationKeys.push(
+        `chains/${chainConfig.id}/wallets/##ADDRESS##/balances`,
+        `chains/${chainConfig.id}/wallets/##ADDRESS##/account-ids`,
+        `chains/${chainConfig.id}/accounts/default`,
         `chains/${chainConfig.id}/markets/depositCap`,
         `chains/${chainConfig.id}/markets`,
         `chains/${chainConfig.id}/markets/info`,

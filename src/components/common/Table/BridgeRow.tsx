@@ -1,4 +1,4 @@
-import { flexRender, Row as TanstackRow, Table as TanstackTable } from '@tanstack/react-table'
+import { flexRender, Row as TanstackRow } from '@tanstack/react-table'
 import classNames from 'classnames'
 import Button from 'components/common/Button'
 import { CircularProgress } from 'components/common/CircularProgress'
@@ -38,16 +38,18 @@ export function BridgeRow<T>({ row, spacingClassName, type }: BridgeRowProps<T>)
       <td colSpan={row.getVisibleCells().length} className='absolute inset-0'>
         <div className='absolute inset-0 flex items-center justify-center'>
           {(row.original as any)?.bridgeStatus === 'STATE_COMPLETED' ? (
-            <Button
-              size='xs'
-              color='secondary'
-              onClick={(e) => {
-                e.stopPropagation()
-                handleBridgeCompletion(row.original as any)
-              }}
-            >
-              Complete Transaction
-            </Button>
+            <div className='flex items-center gap-1'>
+              <Button
+                size='xs'
+                color='secondary'
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleBridgeCompletion(row.original as any)
+                }}
+              >
+                Complete Transaction
+              </Button>
+            </div>
           ) : (
             <div className='flex items-center justify-center gap-2'>
               <CircularProgress size={10} />

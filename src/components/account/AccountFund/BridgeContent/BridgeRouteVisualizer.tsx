@@ -1,8 +1,8 @@
 import { CircularProgress } from 'components/common/CircularProgress'
 import { ArrowRight, Bridge } from 'components/common/Icons'
-import Image, { StaticImageData } from 'next/image'
-import { Tooltip } from 'components/common/Tooltip'
 import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
+import Image from 'next/image'
 
 interface BridgeRouteVisualizerProps {
   bridges: BridgeInfo[]
@@ -31,13 +31,7 @@ export default function BridgeRouteVisualizer({
       {evmChainLogo && (
         <Tooltip type='info' content={<Text size='xs'>{capitalizeFirstLetter(originChain)}</Text>}>
           <div>
-            <Image
-              src={evmChainLogo}
-              width={24}
-              height={24}
-              alt='EVM Chain'
-              className='rounded-full'
-            />
+            <Image src={evmChainLogo} width={24} height={24} alt='EVM Chain' />
           </div>
         </Tooltip>
       )}

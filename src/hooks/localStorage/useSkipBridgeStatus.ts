@@ -1,4 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import useAccountIds from 'hooks/accounts/useAccountIds'
+import useWalletBalances from 'hooks/wallet/useWalletBalances'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import useStore from 'store'
+import { BN } from 'utils/helpers'
 
 type SkipBridgeTransaction = {
   asset: string
@@ -11,68 +15,87 @@ type SkipBridgeTransaction = {
   id: string
 }
 
+type Coin = {
+  denom: string
+  amount: string
+  chainName?: string
+}
+
 export function useSkipBridgeStatus() {
-  const [isPendingTransaction, setIsPendingTransaction] = useState(false)
   const [skipBridges, setSkipBridges] = useState<SkipBridgeTransaction[]>([])
+  const [hasCompletedBridge, setHasCompletedBridge] = useState(false)
+  const address = useStore((s) => s.address)
+  const { data: accountIds } = useAccountIds(address)
+
+  const { data: walletBalances } = useWalletBalances(address)
 
   const checkTransactionStatus = useCallback(async () => {
     const skipBridgesString = localStorage.getItem('skipBridges')
     if (!skipBridgesString) {
-      setIsPendingTransaction(false)
       setSkipBridges([])
+      setHasCompletedBridge(false)
       return
     }
 
     const bridges: SkipBridgeTransaction[] = JSON.parse(skipBridgesString)
-    const hasPendingTransactions = bridges.some((bridge) => bridge.status === 'STATE_PENDING')
-
-    setIsPendingTransaction(hasPendingTransactions)
     setSkipBridges(bridges)
 
-    if (hasPendingTransactions) {
+    if (bridges.length > 0 && walletBalances) {
       try {
-        await Promise.all(
-          bridges
-            .filter((bridge) => bridge.status === 'STATE_PENDING')
-            .map(async (bridge) => {
-              const response = await fetch(
-                `https://api.skip.build/v2/tx/status?chain_id=${bridge.chainID}&tx_hash=${bridge.txHash}`,
-              )
-              const skipStatus = await response.json()
-
-              if (skipStatus.status === 'STATE_COMPLETED') {
-                const updatedBridges = bridges.map((b) =>
-                  b.id === bridge.id ? { ...b, status: 'STATE_COMPLETED' } : b,
-                )
-                localStorage.setItem('skipBridges', JSON.stringify(updatedBridges))
-                setSkipBridges(updatedBridges)
-
-                const stillHasPending = updatedBridges.some((b) => b.status === 'STATE_PENDING')
-                setIsPendingTransaction(stillHasPending)
+        const updatedBridges = await Promise.all(
+          bridges.map(async (bridge) => {
+            const walletBalance = (walletBalances as Coin[]).find(
+              (coin) => coin.denom === bridge.denom,
+            )?.amount
+            if (walletBalance && BN(walletBalance).isGreaterThanOrEqualTo(bridge.amount)) {
+              return {
+                ...bridge,
+                status: 'STATE_COMPLETED',
               }
-            }),
+            }
+            return bridge
+          }),
         )
+        if (JSON.stringify(updatedBridges) !== JSON.stringify(bridges)) {
+          localStorage.setItem('skipBridges', JSON.stringify(updatedBridges))
+          setSkipBridges(updatedBridges)
+
+          const completedBridges = updatedBridges.filter(
+            (bridge) => bridge.status === 'STATE_COMPLETED',
+          )
+          const totalBridgedAmount = completedBridges.reduce(
+            (acc, bridge) => acc.plus(bridge.amount),
+            BN(0),
+          )
+          setHasCompletedBridge(totalBridgedAmount.isGreaterThan(0))
+        }
       } catch (error) {
-        console.error('Failed to fetch Skip status:', error)
+        console.error('Failed to check wallet balances:', error)
       }
     }
-  }, [])
+  }, [walletBalances])
 
   useEffect(() => {
     checkTransactionStatus()
-    const intervalId = setInterval(checkTransactionStatus, 10000)
+    const intervalId = setInterval(checkTransactionStatus, 5000)
     return () => clearInterval(intervalId)
   }, [checkTransactionStatus])
 
   const clearSkipBridges = useCallback(() => {
     localStorage.removeItem('skipBridges')
     setSkipBridges([])
-    setIsPendingTransaction(false)
+    setHasCompletedBridge(false)
   }, [])
 
+  const shouldShowSkipBridgeModal = useMemo(
+    () => address && skipBridges.length > 0 && accountIds && accountIds.length === 0,
+    [address, skipBridges.length, accountIds],
+  )
+
   return {
-    isPendingTransaction,
     skipBridges,
     clearSkipBridges,
+    shouldShowSkipBridgeModal,
+    hasCompletedBridge,
   }
 }

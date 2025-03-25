@@ -1,6 +1,5 @@
 import { RouteResponse } from '@skip-go/client'
 import classNames from 'classnames'
-import WalletBridges from 'components/Wallet/WalletBridges'
 import AccountFundingAssets from 'components/account/AccountFund/AccountFundingAssets'
 import EVMAccountSection from 'components/account/AccountFund/EVMAccountSection'
 import Button from 'components/common/Button'
@@ -11,7 +10,6 @@ import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
 import useAccounts from 'hooks/accounts/useAccounts'
-import useBaseAsset from 'hooks/assets/useBaseAsset'
 import { useFundingAssets } from 'hooks/assets/useFundingAssets'
 import { useUSDCBalances } from 'hooks/assets/useUSDCBalances'
 import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
@@ -19,15 +17,17 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import { useDepositCapCalculations } from 'hooks/markets/useDepositCapCalculations'
 import useAutoLend from 'hooks/wallet/useAutoLend'
+import { getCurrentFeeToken } from 'hooks/wallet/useFeeToken'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import { useWeb3WalletConnection } from 'hooks/wallet/useWeb3WalletConnections'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
 import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
-import { byDenom } from 'utils/array'
 import { getChainLogoByName } from 'utils/chainLogos'
 import { MINIMUM_USDC } from 'utils/constants'
+import { calculateUsdcFeeReserve } from 'utils/feeToken'
 import { chainNameToUSDCAttributes } from 'utils/fetchUSDCBalance'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
@@ -54,7 +54,6 @@ export default function AccountFundContent(props: Props) {
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const [isAutoLendEnabledGlobal] = useEnableAutoLendGlobal()
   const { data: walletBalances } = useWalletBalances(props.address)
-  const baseAsset = useBaseAsset()
   const { isCreateAccount = false } = props
 
   const { usdcBalances } = useUSDCBalances(walletBalances)
@@ -74,11 +73,6 @@ export default function AccountFundContent(props: Props) {
     fundingAssets.length > 0 && fundingAssets.every((a) => a.coin.amount.isGreaterThan(0))
   const balances = walletBalances.map((coin) => WrappedBNCoin.fromCoin(coin))
   const navigate = useNavigate()
-
-  const baseBalance = useMemo(
-    () => walletBalances.find(byDenom(baseAsset.denom))?.amount ?? '0',
-    [walletBalances, baseAsset],
-  )
 
   const chainConfig = useChainConfig()
 
@@ -214,22 +208,42 @@ export default function AccountFundContent(props: Props) {
       const isNewAccount = hasNoAccounts || isCreateAccount
       const hasEvmAssets = evmAssets.length > 0
 
-      if (isNewAccount && hasEvmAssets) {
-        const mintResult = await createAccount('default', shouldAutoLend)
-        if (!mintResult) {
-          throw new Error('Failed to create credit account')
+      if (hasEvmAssets) {
+        for (const evmAsset of evmAssets) {
+          if (isBridgeInProgress) {
+            continue
+          }
+
+          const success = await handleSkipTransfer(evmAsset, MINIMUM_USDC)
+          if (!success) {
+            setShowMinimumUSDCValueOverlay(true)
+            setIsConfirming(false)
+            return
+          }
         }
-        accountId = mintResult
-        useStore.setState((state) => ({
-          ...state,
-          selectedAccountId: accountId,
-          accountId: accountId,
-        }))
       }
 
       if (nonEvmAssets.length > 0) {
+        const processedAssets = nonEvmAssets.map((wrappedCoin) => {
+          const selectedFeeToken = getCurrentFeeToken()
+          if (!selectedFeeToken) return wrappedCoin.coin
+
+          const isUsdcFeeToken =
+            selectedFeeToken.coinMinimalDenom.includes('usdc') ||
+            selectedFeeToken.coinMinimalDenom.includes('uusdc')
+
+          if (isUsdcFeeToken && wrappedCoin.coin.denom === selectedFeeToken.coinMinimalDenom) {
+            const { depositAmount } = calculateUsdcFeeReserve(
+              wrappedCoin.coin.amount.toString(),
+              chainConfig,
+            )
+            return BNCoin.fromDenomAndBigNumber(wrappedCoin.coin.denom, BN(depositAmount))
+          }
+          return wrappedCoin.coin
+        })
+
         const depositObject = {
-          coins: nonEvmAssets.map((wrappedCoin) => wrappedCoin.coin),
+          coins: processedAssets,
           lend: shouldAutoLend,
           isAutoLend: shouldAutoLend,
           ...(!isNewAccount && { accountId }),
@@ -237,18 +251,6 @@ export default function AccountFundContent(props: Props) {
         const depositResult = await deposit(depositObject)
         if (isNewAccount || (!isNewAccount && !hasEvmAssets)) {
           accountId = depositResult ?? accountId
-        }
-      }
-
-      for (const evmAsset of evmAssets) {
-        if (isBridgeInProgress) {
-          continue
-        }
-
-        const success = await handleSkipTransfer(evmAsset, MINIMUM_USDC)
-        if (!success) {
-          setShowMinimumUSDCValueOverlay(true)
-          break
         }
       }
 
@@ -295,16 +297,9 @@ export default function AccountFundContent(props: Props) {
     chainConfig,
     isBridgeInProgress,
     isConfirming,
-    createAccount,
     hasNoAccounts,
     isCreateAccount,
   ])
-
-  useEffect(() => {
-    if (BN(baseBalance).isZero()) {
-      useStore.setState({ focusComponent: { component: <WalletBridges /> } })
-    }
-  }, [baseBalance])
 
   useEffect(() => {
     if (!isConnected) {
@@ -430,7 +425,7 @@ export default function AccountFundContent(props: Props) {
         />
         <Button
           className='w-full mt-4'
-          text='Fund account'
+          text='Fund Account'
           disabled={
             !hasFundingAssets ||
             depositCapReachedCoins.length > 0 ||

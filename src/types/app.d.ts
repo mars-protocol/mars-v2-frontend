@@ -1821,3 +1821,30 @@ interface PerpsTradingFee {
     closing: BigNumber
   }
 }
+
+interface PriceData {
+  denom: string
+  amount: string
+}
+
+interface PricesResponse {
+  prices: PriceData[]
+}
+
+interface GasPrice {
+  denom: string
+  amount: string
+}
+
+interface GasPricesResponse {
+  prices: GasPrice[]
+}
+
+interface PythPriceData {
+  id: string
+  price: {
+    price: string
+    conf: string
+    expo: number
+  }
+}
