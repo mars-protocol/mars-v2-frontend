@@ -14,27 +14,16 @@ import Button from 'components/common/Button'
 import Overlay from 'components/common/Overlay'
 import useToggle from 'hooks/common/useToggle'
 import AssetImage from 'components/common/assets/AssetImage'
-import useSWR from 'swr'
 import { isNtrnBalanceLow, LOW_NTRN_THRESHOLD } from 'utils/feeToken'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAssets from 'hooks/assets/useAssets'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import useGasPrices from 'hooks/prices/useGasPrices'
 
 interface FeeTokenDisplayProps {
   className?: string
   isInSettings?: boolean
 }
-
-interface GasPrice {
-  denom: string
-  amount: string
-}
-
-interface GasPricesResponse {
-  prices: GasPrice[]
-}
-
-const FEE_MARKET_API_ROUTE = `${process.env.NEXT_PUBLIC_NEUTRON_REST}/feemarket/v1/gas_prices`
 
 export default function FeeTokenDisplay({ className, isInSettings = false }: FeeTokenDisplayProps) {
   const { feeToken, setFeeToken } = useFeeToken()
@@ -46,6 +35,7 @@ export default function FeeTokenDisplay({ className, isInSettings = false }: Fee
   const chainConfig = useChainConfig()
   const defaultFeeToken = useBestFeeToken()
   const { data: assets } = useAssets()
+  const { data: gasPricesData } = useGasPrices()
 
   const settingsModalOpen = useStore((s) => s?.settingsModal) || false
 
@@ -55,29 +45,6 @@ export default function FeeTokenDisplay({ className, isInSettings = false }: Fee
     }
   }, [settingsModalOpen, isInSettings, setShowMenu])
 
-  const { data: gasPricesData } = useSWR<GasPricesResponse>(
-    FEE_MARKET_API_ROUTE,
-    async (url) => {
-      if (chainConfig.isOsmosis) {
-        return {
-          prices: [
-            {
-              denom: 'uosmo',
-              amount: '0.002500000000000000',
-            },
-          ],
-        }
-      }
-
-      const response = await fetch(url)
-      if (!response.ok) {
-        throw new Error('Failed to fetch gas prices')
-      }
-      return response.json()
-    },
-    { refreshInterval: 60000 },
-  )
-
   const nativeDenom = chainConfig.defaultCurrency.coinMinimalDenom
   const isNtrnLow = isNtrnBalanceLow(walletBalances, nativeDenom)
 
@@ -86,6 +53,15 @@ export default function FeeTokenDisplay({ className, isInSettings = false }: Fee
 
   const getBestFeeTokenByGasPrice = () => {
     if (!gasPricesData || !walletBalances.length) return null
+
+    if (chainConfig.isOsmosis) {
+      const nativeAsset = assets?.find((asset) => asset.denom === 'uosmo')
+      return {
+        coinDenom: 'OSMO',
+        coinMinimalDenom: 'uosmo',
+        coinDecimals: nativeAsset?.decimals || 6,
+      }
+    }
 
     const nativeBalance = walletBalances.find((coin) => coin.denom === nativeDenom)
     const nativeGasPrice = gasPricesData.prices.find((price) => price.denom === nativeDenom)
