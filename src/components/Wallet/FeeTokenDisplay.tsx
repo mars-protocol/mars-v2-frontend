@@ -58,6 +58,17 @@ export default function FeeTokenDisplay({ className, isInSettings = false }: Fee
   const { data: gasPricesData } = useSWR<GasPricesResponse>(
     FEE_MARKET_API_ROUTE,
     async (url) => {
+      if (chainConfig.isOsmosis) {
+        return {
+          prices: [
+            {
+              denom: 'uosmo',
+              amount: '0.002500000000000000',
+            },
+          ],
+        }
+      }
+
       const response = await fetch(url)
       if (!response.ok) {
         throw new Error('Failed to fetch gas prices')
