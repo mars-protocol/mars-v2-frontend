@@ -18,6 +18,7 @@ import useSWR from 'swr'
 import { isNtrnBalanceLow, LOW_NTRN_THRESHOLD } from 'utils/feeToken'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAssets from 'hooks/assets/useAssets'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 
 interface FeeTokenDisplayProps {
   className?: string
@@ -334,12 +335,14 @@ export default function FeeTokenDisplay({ className, isInSettings = false }: Fee
                           options={{ maxDecimals: 6 }}
                           className='text-xs text-white/70'
                         />
-                        {item.gasPrice && (
+                        {item.gasPrice && asset && (
                           <Text size='xs' className='text-white/50'>
                             Gas:{' '}
                             <FormattedNumber
-                              amount={parseFloat(item.gasPrice)}
-                              options={{ maxDecimals: asset?.decimals }}
+                              amount={BN(item.gasPrice)
+                                .shiftedBy(PRICE_ORACLE_DECIMALS - asset.decimals)
+                                .toNumber()}
+                              options={{ maxDecimals: 10 }}
                             />
                           </Text>
                         )}
@@ -443,12 +446,14 @@ export default function FeeTokenDisplay({ className, isInSettings = false }: Fee
                     options={{ maxDecimals: 6 }}
                     className='text-xs text-white/70'
                   />
-                  {item.gasPrice && (
+                  {item.gasPrice && asset && (
                     <Text size='xs' className='text-white/50'>
                       Gas:{' '}
                       <FormattedNumber
-                        amount={parseFloat(item.gasPrice)}
-                        options={{ maxDecimals: asset?.decimals }}
+                        amount={BN(item.gasPrice)
+                          .shiftedBy(PRICE_ORACLE_DECIMALS - asset.decimals)
+                          .toNumber()}
+                        options={{ maxDecimals: Math.min(10, asset.decimals) }}
                       />
                     </Text>
                   )}
