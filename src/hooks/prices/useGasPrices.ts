@@ -1,5 +1,6 @@
 import useSWR from 'swr'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import { logApiError } from 'utils/error'
 
 interface GasPrice {
   denom: string
@@ -29,12 +30,29 @@ export default function useGasPrices() {
         }
       }
 
-      const response = await fetch(url)
-      if (!response.ok) {
-        throw new Error('Failed to fetch gas prices')
+      try {
+        const response = await fetch(url)
+        if (!response.ok) {
+          throw new Error(`Failed to fetch gas prices: ${response.status} ${response.statusText}`)
+        }
+        return response.json()
+      } catch (error) {
+        logApiError(url, error, 'Failed to fetch gas prices')
+        return {
+          prices: [
+            {
+              denom: chainConfig.defaultCurrency.coinMinimalDenom,
+              amount: chainConfig.gasPrice,
+            },
+          ],
+        }
       }
-      return response.json()
     },
-    { refreshInterval: 60000 },
+    {
+      refreshInterval: 60000,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+      dedupingInterval: 5000,
+    },
   )
 }
