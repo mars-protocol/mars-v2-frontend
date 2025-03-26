@@ -761,6 +761,7 @@ function getMutationKeyFromTransactionCoinType(
     case 'repay':
       mutationKeys.push(
         `chains/${chainConfig.id}/wallets/##ADDRESS##/balances`,
+        `chains/${chainConfig.id}/v1/user/##ADDRESS##`,
         `chains/${chainConfig.id}/markets/depositCap`,
         `chains/${chainConfig.id}/markets`,
         `chains/${chainConfig.id}/markets/info`,
@@ -769,6 +770,7 @@ function getMutationKeyFromTransactionCoinType(
     case 'withdraw':
       mutationKeys.push(
         `chains/${chainConfig.id}/wallets/##ADDRESS##/balances`,
+        `chains/${chainConfig.id}/v1/user/##ADDRESS##`,
         `chains/${chainConfig.id}/accounts/##ACCOUNTORWALLET##/staked-astro-lp-rewards`,
         `chains/${chainConfig.id}/vaults`,
       )
