@@ -23,7 +23,7 @@ export function useSkipBridge({
   const { getEvmSigner, switchEvmChain } = useEvmBridge()
   const [isBridgeInProgress, setIsBridgeInProgress] = useState(false)
   const [skipBridges, setSkipBridges] = useState<SkipBridgeTransaction[]>(() => {
-    const savedSkipBridges = localStorage.getItem('skipBridges')
+    const savedSkipBridges = localStorage.getItem(`${chainConfig.id}/skipBridges`)
     return savedSkipBridges && savedSkipBridges !== 'undefined' ? JSON.parse(savedSkipBridges) : []
   })
 
@@ -31,7 +31,7 @@ export function useSkipBridge({
 
   const updateSkipBridges = useCallback(
     (newTransaction: SkipBridgeTransaction) => {
-      const currentBridges = localStorage.getItem('skipBridges')
+      const currentBridges = localStorage.getItem(`${chainConfig.id}/skipBridges`)
       const parsedBridges = currentBridges ? JSON.parse(currentBridges) : []
       const updatedBridges = parsedBridges.find(
         (b: SkipBridgeTransaction) => b.id === newTransaction.id,
@@ -41,7 +41,7 @@ export function useSkipBridge({
           )
         : [...parsedBridges, newTransaction]
 
-      localStorage.setItem('skipBridges', JSON.stringify(updatedBridges))
+      localStorage.setItem(`${chainConfig.id}/skipBridges`, JSON.stringify(updatedBridges))
 
       setSkipBridges(updatedBridges)
 
@@ -52,7 +52,7 @@ export function useSkipBridge({
 
       refreshBalances()
     },
-    [refreshBalances],
+    [chainConfig.id, refreshBalances],
   )
 
   const skipClient = useMemo(
@@ -285,13 +285,16 @@ export function useSkipBridge({
     ],
   )
 
-  const removeSkipBridge = useCallback((id: string) => {
-    setSkipBridges((prev) => {
-      const updated = prev.filter((b) => b.id !== id)
-      localStorage.setItem('skipBridges', JSON.stringify(updated))
-      return updated
-    })
-  }, [])
+  const removeSkipBridge = useCallback(
+    (id: string) => {
+      setSkipBridges((prev) => {
+        const updated = prev.filter((b) => b.id !== id)
+        localStorage.setItem(`${chainConfig.id}/skipBridges`, JSON.stringify(updated))
+        return updated
+      })
+    },
+    [chainConfig.id],
+  )
 
   const checkTransactionStatus = useCallback(async () => {
     try {

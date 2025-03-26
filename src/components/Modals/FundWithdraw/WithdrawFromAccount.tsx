@@ -9,13 +9,13 @@ import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSli
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useAssets from 'hooks/assets/useAssets'
-import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useToggle from 'hooks/common/useToggle'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { cloneAccount, getMergedBalancesForAsset, removeDepositsAndLends } from 'utils/accounts'
+import { cloneAccount, removeDepositsAndLends } from 'utils/accounts'
 import { byDenom } from 'utils/array'
+import { mergeBNCoinArrays } from 'utils/helpers'
 
 interface Props {
   account: Account
@@ -24,8 +24,8 @@ interface Props {
 export default function WithdrawFromAccount(props: Props) {
   const { account } = props
   const { data: assets } = useAssets()
-  const defaultAsset =
-    assets.find(byDenom(account.deposits[0]?.denom || account.lends[0]?.denom)) ?? assets[0]
+  const balances = mergeBNCoinArrays(account.deposits, account.lends)
+  const defaultAsset = assets.find(byDenom(balances[0]?.denom)) ?? assets[0]
   const withdraw = useStore((s) => s.withdraw)
   const [withdrawWithBorrowing, setWithdrawWithBorrowing] = useToggle()
   const [currentAsset, setCurrentAsset] = useState<Asset>(defaultAsset)
@@ -35,8 +35,7 @@ export default function WithdrawFromAccount(props: Props) {
   const accountClone = cloneAccount(account)
   const borrowAccount = removeDepositsAndLends(accountClone, currentAsset.denom)
   const { computeMaxBorrowAmount } = useHealthComputer(borrowAccount)
-  const marketEnabledAssets = useTradeEnabledAssets()
-  const balances = getMergedBalancesForAsset(account, marketEnabledAssets)
+
   const accountDeposit = account.deposits.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO
   const accountLent = account.lends.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO
   const shouldReclaim = amount.isGreaterThan(accountDeposit) && !accountLent.isZero()

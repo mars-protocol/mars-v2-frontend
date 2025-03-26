@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import Slider from 'components/common/Slider'
 import TokenInput from 'components/common/TokenInput/index'

@@ -66,11 +66,11 @@ export default function AccountBalancesTable(props: Props) {
   })
 
   useEffect(() => {
-    const skipBridgesString = localStorage.getItem('skipBridges')
+    const skipBridgesString = localStorage.getItem(`${chainConfig.id}/skipBridges`)
     if (skipBridgesString) {
       forceUpdate({})
     }
-  }, [skipBridges, forceUpdate])
+  }, [skipBridges, forceUpdate, chainConfig.id])
 
   if (accountBalanceData.length === 0 && currentBridges.length === 0) {
     return (

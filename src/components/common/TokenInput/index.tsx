@@ -43,7 +43,7 @@ export default function TokenInput(props: Props) {
 
   const currentFeeToken = getCurrentFeeToken()
   const isCurrentFeeToken = currentFeeToken?.coinMinimalDenom === props.asset.denom
-  const deductFee = isCurrentFeeToken && props.deductFee === true ? MIN_FEE_AMOUNT : 0
+  const deductFee = isCurrentFeeToken && props.deductFee ? MIN_FEE_AMOUNT : 0
 
   const adjustedMax = useMemo(() => {
     return Math.max(props.max.minus(deductFee).toNumber(), 0)

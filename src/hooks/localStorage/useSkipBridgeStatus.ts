@@ -1,4 +1,5 @@
 import useAccountIds from 'hooks/accounts/useAccountIds'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import useStore from 'store'
@@ -26,11 +27,12 @@ export function useSkipBridgeStatus() {
   const [hasCompletedBridge, setHasCompletedBridge] = useState(false)
   const address = useStore((s) => s.address)
   const { data: accountIds } = useAccountIds(address)
+  const chainConfig = useChainConfig()
 
   const { data: walletBalances } = useWalletBalances(address)
 
   const checkTransactionStatus = useCallback(async () => {
-    const skipBridgesString = localStorage.getItem('skipBridges')
+    const skipBridgesString = localStorage.getItem(`${chainConfig.id}/skipBridges`)
     if (!skipBridgesString) {
       setSkipBridges([])
       setHasCompletedBridge(false)
@@ -57,7 +59,7 @@ export function useSkipBridgeStatus() {
           }),
         )
         if (JSON.stringify(updatedBridges) !== JSON.stringify(bridges)) {
-          localStorage.setItem('skipBridges', JSON.stringify(updatedBridges))
+          localStorage.setItem(`${chainConfig.id}/skipBridges`, JSON.stringify(updatedBridges))
           setSkipBridges(updatedBridges)
 
           const completedBridges = updatedBridges.filter(
@@ -73,7 +75,7 @@ export function useSkipBridgeStatus() {
         console.error('Failed to check wallet balances:', error)
       }
     }
-  }, [walletBalances])
+  }, [walletBalances, chainConfig.id])
 
   useEffect(() => {
     checkTransactionStatus()
@@ -82,10 +84,10 @@ export function useSkipBridgeStatus() {
   }, [checkTransactionStatus])
 
   const clearSkipBridges = useCallback(() => {
-    localStorage.removeItem('skipBridges')
+    localStorage.removeItem(`${chainConfig.id}/skipBridges`)
     setSkipBridges([])
     setHasCompletedBridge(false)
-  }, [])
+  }, [chainConfig.id])
 
   const shouldShowSkipBridgeModal = useMemo(
     () => address && skipBridges.length > 0 && accountIds && accountIds.length === 0,

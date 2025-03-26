@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react'
-import { BN } from 'utils/helpers'
-import { demagnify } from 'utils/formatters'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import { useMemo, useState } from 'react'
+import { demagnify } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 interface UseSkipBridgeDataProps {
   accountBalanceData: AccountBalanceRow[]
@@ -34,7 +34,7 @@ export function useSkipBridgeData({ accountBalanceData, chainConfig }: UseSkipBr
       skipBridgeId: undefined,
     }))
 
-    const skipBridgesString = localStorage.getItem('skipBridges')
+    const skipBridgesString = localStorage.getItem(`${chainConfig.id}/skipBridges`)
     const currentBridges = skipBridgesString ? JSON.parse(skipBridgesString) : []
 
     if (currentBridges.length > 0) {
@@ -58,12 +58,12 @@ export function useSkipBridgeData({ accountBalanceData, chainConfig }: UseSkipBr
     }
 
     return assets
-  }, [sortedAccountBalanceData, chainConfig.stables])
+  }, [sortedAccountBalanceData, chainConfig.id, chainConfig.stables])
 
   const currentBridges = useMemo(() => {
-    const skipBridgesString = localStorage.getItem('skipBridges')
+    const skipBridgesString = localStorage.getItem(`${chainConfig.id}/skipBridges`)
     return skipBridgesString ? JSON.parse(skipBridgesString) : []
-  }, [])
+  }, [chainConfig.id])
 
   return {
     dynamicAssets,

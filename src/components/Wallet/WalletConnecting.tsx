@@ -131,6 +131,7 @@ export default function WalletConnecting(props: Props) {
       broadcast,
       sign,
       simulate,
+      recentWallet,
       disconnect,
     ],
   )
