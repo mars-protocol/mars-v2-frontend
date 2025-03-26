@@ -75,7 +75,7 @@ export default function CreateVault() {
           try {
             setIsTxPending(true)
 
-            const feeRate = performanceFee.dividedBy(100).dividedBy(1000).toFixed(5)
+            const feeRate = performanceFee.shiftedBy(-6).decimalPlaces(5).toString()
 
             const vaultParams = {
               title: vaultTitle,
