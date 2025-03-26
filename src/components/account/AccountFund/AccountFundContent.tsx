@@ -10,6 +10,7 @@ import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
 import useAccounts from 'hooks/accounts/useAccounts'
+import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import { useFundingAssets } from 'hooks/assets/useFundingAssets'
 import { useUSDCBalances } from 'hooks/assets/useUSDCBalances'
 import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
@@ -45,8 +46,6 @@ interface Props {
 
 export default function AccountFundContent(props: Props) {
   const deposit = useStore((s) => s.deposit)
-  const createAccount = useStore((s) => s.createAccount)
-
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
   const [isConfirming, setIsConfirming] = useState(false)
   const [currentEVMAssetValue, setCurrentEVMAssetValue] = useState<BigNumber>(BN_ZERO)
@@ -55,7 +54,7 @@ export default function AccountFundContent(props: Props) {
   const [isAutoLendEnabledGlobal] = useEnableAutoLendGlobal()
   const { data: walletBalances } = useWalletBalances(props.address)
   const { isCreateAccount = false } = props
-
+  const { simulateDeposits } = useUpdatedAccount(props.account)
   const { usdcBalances } = useUSDCBalances(walletBalances)
   const selectedDenoms = useMemo(() => {
     return (
@@ -99,6 +98,11 @@ export default function AccountFundContent(props: Props) {
   const evmAsset = fundingAssets.find(
     (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
   )
+
+  useEffect(() => {
+    const depositAssets = fundingAssets.map((asset) => asset.coin)
+    simulateDeposits(isAutoLendEnabledForCurrentAccount ? 'lend' : 'deposit', depositAssets)
+  }, [fundingAssets, isAutoLendEnabledForCurrentAccount, simulateDeposits])
 
   const isEVMAssetLessThanMinimumUSDC = evmAsset?.coin.amount.isLessThan(MINIMUM_USDC)
   const updateEVMAssetValue = useCallback(() => {

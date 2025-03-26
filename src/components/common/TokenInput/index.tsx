@@ -8,17 +8,16 @@ import { InfoCircle, TrashBin } from 'components/common/Icons'
 import NumberInput from 'components/common/NumberInput'
 import Select from 'components/common/Select'
 import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
 import WarningMessages from 'components/common/WarningMessages'
 import AssetImage from 'components/common/assets/AssetImage'
 import useAssets from 'hooks/assets/useAssets'
 import useBaseAsset from 'hooks/assets/useBaseAsset'
-import { BNCoin } from 'types/classes/BNCoin'
-import { BN } from 'utils/helpers'
-import { deductFeeFromMax } from 'utils/feeToken'
 import { getCurrentFeeToken } from 'hooks/wallet/useFeeToken'
 import { useMemo } from 'react'
-import { Tooltip } from 'components/common/Tooltip'
-import { isUsdcFeeToken } from 'utils/feeToken'
+import { BNCoin } from 'types/classes/BNCoin'
+import { MIN_FEE_AMOUNT } from 'utils/feeToken'
+import { BN } from 'utils/helpers'
 
 interface Props {
   amount: BigNumber
@@ -44,38 +43,11 @@ export default function TokenInput(props: Props) {
 
   const currentFeeToken = getCurrentFeeToken()
   const isCurrentFeeToken = currentFeeToken?.coinMinimalDenom === props.asset.denom
+  const deductFee = isCurrentFeeToken && props.deductFee === true ? MIN_FEE_AMOUNT : 0
 
   const adjustedMax = useMemo(() => {
-    if (props.deductFee === true && isCurrentFeeToken) {
-      return deductFeeFromMax(props.max, props.asset.denom, props.asset.decimals)
-    }
-    return props.max
-  }, [props.max, props.asset.denom, props.asset.decimals, isCurrentFeeToken, props.deductFee])
-
-  const feeWarningMessages = useMemo(() => {
-    const messages = [...props.warningMessages]
-
-    if (
-      isCurrentFeeToken &&
-      props.deductFee === true &&
-      !props.max.isZero() &&
-      !isUsdcFeeToken() &&
-      !props.chainName
-    ) {
-      messages.push(
-        `Some ${props.asset.symbol} will be reserved for transaction fees. This token is currently being used for gas fees.`,
-      )
-    }
-
-    return messages
-  }, [
-    props.warningMessages,
-    isCurrentFeeToken,
-    props.deductFee,
-    props.max,
-    props.asset.symbol,
-    props.chainName,
-  ])
+    return Math.max(props.max.minus(deductFee).toNumber(), 0)
+  }, [deductFee, props.max])
 
   function onMaxBtnClick() {
     props.onChange(BN(adjustedMax))
@@ -98,7 +70,7 @@ export default function TokenInput(props: Props) {
         data-testid='token-input-wrapper'
         className={classNames(
           'relative isolate z-40 box-content flex h-11 w-full rounded-sm border bg-white/5',
-          feeWarningMessages.length ? 'border-warning' : 'border-white/20',
+          props.warningMessages.length ? 'border-warning' : 'border-white/20',
         )}
       >
         {props.hasSelect && props.balances ? (
@@ -136,7 +108,7 @@ export default function TokenInput(props: Props) {
           maxDecimals={props.asset.decimals}
           onChange={props.onChange}
           amount={props.amount}
-          max={adjustedMax}
+          max={BN(adjustedMax)}
           className='flex-1 p-3 border-none'
         />
         {props.onDelete && (
@@ -146,7 +118,7 @@ export default function TokenInput(props: Props) {
             </div>
           </div>
         )}
-        <WarningMessages messages={feeWarningMessages} />
+        <WarningMessages messages={props.warningMessages} />
       </div>
 
       <div className='flex'>
@@ -158,7 +130,7 @@ export default function TokenInput(props: Props) {
               </Text>
               <FormattedNumber
                 className='mr-1 text-xs text-white/50'
-                amount={props.max.toNumber()}
+                amount={adjustedMax}
                 options={{ decimals: props.asset.decimals }}
               />
               {isCurrentFeeToken && props.deductFee === true && !props.chainName && (
@@ -166,11 +138,8 @@ export default function TokenInput(props: Props) {
                   type='info'
                   content={`Some ${props.asset.symbol} will be reserved for transaction fees since this token is being used for gas payments.`}
                 >
-                  <span className='flex items-center mr-1'>
-                    <Text size='xs' className='text-warning mr-1'>
-                      (-fee)
-                    </Text>
-                    <InfoCircle className='w-3 h-3 text-warning/70' />
+                  <span className='flex items-center mr-1 group hover:cursor-help'>
+                    <InfoCircle className='w-3 h-3 text-white/50 group-hover:text-white' />
                   </span>
                 </Tooltip>
               )}
