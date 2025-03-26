@@ -7,6 +7,7 @@ import getManagedVaults from 'api/managedVaults/getManagedVaults'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import useSWR from 'swr'
+import { convertAprToApy } from 'utils/parsers'
 
 export function useManagedVaultDetails(vaultAddress?: string) {
   const chainConfig = useChainConfig()
@@ -78,7 +79,10 @@ export function useManagedVaultDetails(vaultAddress?: string) {
     performance_fee_config: details.performance_fee_config,
     share_price: details.share_price,
     owner: ownerAddress,
-    metrics: metrics ?? { apr: '0', tvl: '0' },
+    metrics: {
+      tvl: metrics?.tvl ?? '0',
+      apy: convertAprToApy(Number(metrics?.apr ?? 0), 365),
+    },
     performance_fee_state: performanceFeeState ?? {
       accumulated_fee: '0',
       accumulated_pnl: '0',

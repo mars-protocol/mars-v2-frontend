@@ -1,13 +1,12 @@
 import classNames from 'classnames'
 import AssetImage from 'components/common/assets/AssetImage'
-import Button from 'components/common/Button'
 import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
 import { CircularProgress } from 'components/common/CircularProgress'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { ExternalLink, TrashBin, Verified } from 'components/common/Icons'
+import { ExternalLink, Verified } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import ShareBar from 'components/common/ShareBar'
 import Text from 'components/common/Text'
@@ -26,13 +25,11 @@ import { BN } from 'utils/helpers'
 interface Props {
   details: ExtendedManagedVaultDetails
   wallet?: string
-  onDelete: () => void
-  onEdit: (show: boolean) => void
   isOwner: boolean
 }
 
 export default function ProfileVaultCard(props: Props) {
-  const { details, isOwner, wallet, onDelete, onEdit } = props
+  const { details, isOwner, wallet } = props
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(details.base_tokens_denom)) as Asset
   const { vaultOwnerInfo, isLoading } = useManagedVaultOwnerInfo(wallet)
@@ -82,9 +79,9 @@ export default function ProfileVaultCard(props: Props) {
         <Divider />
 
         <div className='space-y-4'>
-          <InfoRow label='APR'>
+          <InfoRow label='APY'>
             <FormattedNumber
-              amount={Number(details.metrics.apr) || 0}
+              amount={details.metrics.apy || 0}
               options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
               className='text-sm'
             />
@@ -170,19 +167,7 @@ export default function ProfileVaultCard(props: Props) {
         <Divider />
 
         <div className='space-y-4'>
-          <div className='flex justify-between items-center'>
-            <Text size='sm'>Description</Text>
-            {isOwner && (
-              <Button
-                onClick={() => onEdit(true)}
-                variant='transparent'
-                color='quaternary'
-                className='!p-0 text-xs'
-                textClassNames='text-secondary hover:text-primary'
-                text='Edit'
-              />
-            )}
-          </div>
+          <Text size='sm'>Description</Text>
           <Text size='xs' className='text-white/60'>
             {details.description}
           </Text>
@@ -209,18 +194,6 @@ export default function ProfileVaultCard(props: Props) {
             </TextLink>{' '}
             so that you can populate a profile image, name, and social links.
           </Callout>
-        )}
-
-        {isOwner && (
-          <Button
-            text='Delete Vault'
-            color='secondary'
-            onClick={onDelete}
-            disabled={true}
-            leftIcon={<TrashBin />}
-            iconClassName='w-3'
-            className='w-full'
-          />
         )}
       </div>
     </Card>

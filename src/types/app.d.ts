@@ -1865,6 +1865,10 @@ interface ManagedVaultsData extends ManagedVaultDetailsResponse {
   tvl: string
   apr: string
   isOwner?: boolean
+  base_tokens_denom: string
+  base_tokens_amount: string
+  vault_tokens_denom: string
+  vault_tokens_amount: string
 }
 
 interface ManagedVaultsResponse {
@@ -1904,8 +1908,8 @@ interface ManagedVaultDetails {
 }
 
 interface ManagedVaultMetrics {
-  apr: string
   tvl: string
+  apy: number
 }
 interface PerformanceFeeState {
   accumulated_fee: string

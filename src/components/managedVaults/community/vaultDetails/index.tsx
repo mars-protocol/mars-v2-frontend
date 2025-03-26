@@ -1,5 +1,4 @@
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import EditDescription from 'components/managedVaults/community/vaultDetails/common/Overlays/EditDescription'
 import FeeAction from 'components/managedVaults/community/vaultDetails/common/Overlays/FeeAction'
 import NavigationBackButton from 'components/common/Button/NavigationBackButton'
 import PositionInfo from 'components/managedVaults/community/vaultDetails/common/PositionInfo'
@@ -51,7 +50,6 @@ export default function VaultDetails() {
 export function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
   const { details: vaultDetails, isOwner, isLoading } = useManagedVaultDetails(vaultAddress)
 
-  const [showEditDescriptionModal, setShowEditDescriptionModal] = useToggle()
   const [showFeeActionModal, setShowFeeActionModal] = useToggle()
   const [showActionModal, setShowActionModal] = useToggle()
   const [modalType, setModalType] = useState<'deposit' | 'unlock' | null>(null)
@@ -75,21 +73,8 @@ export function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) 
   return (
     <div className='flex flex-col justify-center gap-4 md:flex-row'>
       <div className='md:w-100'>
-        <ProfileVaultCard
-          details={vaultDetails}
-          isOwner={isOwner}
-          wallet={vaultDetails.owner}
-          onDelete={() => console.log('Delete clicked')}
-          onEdit={() => setShowEditDescriptionModal(true)}
-        />
+        <ProfileVaultCard details={vaultDetails} isOwner={isOwner} wallet={vaultDetails.owner} />
       </div>
-
-      <EditDescription
-        showEditDescriptionModal={showEditDescriptionModal}
-        setShowEditDescriptionModal={setShowEditDescriptionModal}
-        description={vaultDetails?.description ?? ''}
-      />
-
       <FeeAction
         showFeeActionModal={showFeeActionModal}
         setShowFeeActionModal={setShowFeeActionModal}

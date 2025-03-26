@@ -100,20 +100,20 @@ export default function VaultsCommunityIntro() {
 const INFO_ITEMS = [
   {
     icon: <Account />,
-    title: 'Create a vault',
+    title: 'Create a managed vault',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum arcu enim, cursus vel nulla quis, euismod molestie est.',
+      'Design your own vault by setting up assets, strategies, and risk parameters that others can invest in.',
   },
   {
     icon: <HandCoins />,
-    title: 'Manage funds',
+    title: 'Implement strategies',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum arcu enim, cursus vel nulla quis, euismod molestie est.',
+      'Choose from various strategies including lending, borrowing, or perpetuals to optimize returns for your vault participants.',
   },
   {
     icon: <Wallet />,
-    title: 'Earn with performance fees',
+    title: 'Earn management fees',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum arcu enim, cursus vel nulla quis, euismod molestie est.',
+      'Set your fee structure and withdrawal periods to generate revenue as your vault performs well for investors.',
   },
 ]

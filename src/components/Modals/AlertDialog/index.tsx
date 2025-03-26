@@ -54,12 +54,8 @@ function AlertDialog(props: Props) {
         header ? (
           header
         ) : (
-          <div className='flex flex-col'>
-            {icon && (
-              <div className='grid w-12 h-12 mb-4 rounded-sm place-items-center bg-white/5'>
-                {icon}
-              </div>
-            )}
+          <div className='flex items-center gap-4'>
+            {icon && <div className='w-10 h-10'>{icon}</div>}
             <Text size='2xl' className={titleClassName}>
               {title ?? ''}
             </Text>

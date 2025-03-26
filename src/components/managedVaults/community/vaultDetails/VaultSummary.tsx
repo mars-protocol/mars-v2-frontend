@@ -93,7 +93,7 @@ export default function VaultSummary(props: Props) {
                 ),
               },
               {
-                description: 'Net APY',
+                description: "Current Positions' APY",
                 value: (
                   <FormattedNumber
                     amount={Number(apy)}
