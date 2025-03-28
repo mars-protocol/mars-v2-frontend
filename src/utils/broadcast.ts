@@ -1,7 +1,7 @@
-import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
+import { getCreditManagerQueryClient, getManagedVaultDetails } from 'api/cosmwasm-client'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
-import { removeEmptyCoins } from 'utils/accounts'
+import { checkAccountKind, removeEmptyCoins } from 'utils/accounts'
 import { trackAction } from 'utils/analytics'
 import { getAssetSymbolByDenom } from 'utils/assets'
 import { beautifyErrorMessage } from 'utils/generateToast'
@@ -49,23 +49,39 @@ export async function analizeTransaction(
   if (accountId) {
     const creditManagerQueryClient = await getCreditManagerQueryClient(chainConfig)
     accountKind = (await creditManagerQueryClient.accountKind({ accountId: accountId })) as any
-    if (accountKind) {
+    const accountType = checkAccountKind(accountKind as AccountKind)
+
+    if (accountType === 'fund_manager') {
+      const vaultAddress = (accountKind as any).fund_manager.vault_addr
+
+      try {
+        const vaultDetails = await getManagedVaultDetails(chainConfig, vaultAddress)
+        target = vaultDetails ? `Vault ${vaultDetails.title}` : `Managed Vault ${accountId}`
+      } catch (error) {
+        console.error('Error getting vault name:', error)
+        target = `Managed Vault ${accountId}`
+      }
+    } else {
       target =
-        accountKind === 'high_levered_strategy'
+        accountType === 'high_levered_strategy'
           ? `Hls Account ${accountId}`
           : `Account ${accountId}`
-
-      // Track new account creation
-      const newAccountId = getSingleValueFromBroadcastResult(result.result, 'wasm', 'token_id')
-      if (newAccountId) {
-        trackAction(
-          accountKind === 'high_levered_strategy' ? 'Mint HLS Account' : 'Mint Credit Account',
-          [],
-          assets,
-        )
-      }
+    }
+    // Track new account creation
+    const newAccountId = getSingleValueFromBroadcastResult(result.result, 'wasm', 'token_id')
+    if (newAccountId) {
+      trackAction(
+        accountType === 'high_levered_strategy'
+          ? 'Mint HLS Account'
+          : accountType === 'fund_manager'
+            ? 'Mint Vault Account'
+            : 'Mint Credit Account',
+        [],
+        assets,
+      )
     }
   }
+
   const isHls = accountKind === 'high_levered_strategy'
 
   // Fetch all coins from the BroadcastResult
