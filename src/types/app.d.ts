@@ -1840,6 +1840,7 @@ type TrackActionType =
   | 'Claim Rewards'
   | 'Mint HLS Account'
   | 'Mint Credit Account'
+  | 'Mint Vault Account'
   | 'Create Limit Order'
   | 'Cancel Limit Order'
   | 'Deposit Into Vault'

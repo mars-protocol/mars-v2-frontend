@@ -17,7 +17,7 @@ export default function MintVaultAccount() {
   const address = useStore((s) => s.address)
   const chainConfig = useChainConfig()
   const navigate = useNavigate()
-  const { isOwner } = useManagedVaultDetails(vaultAddress)
+  const { isOwner, isLoading } = useManagedVaultDetails(vaultAddress)
 
   const handleCreateVault = useCallback(async () => {
     if (!vaultAddress || !address || !isOwner) return
@@ -62,7 +62,7 @@ export default function MintVaultAccount() {
           </div>
           <div className='space-y-2 text-center'>
             <Text size='base'>Create Vault Account</Text>
-            {!isOwner ? (
+            {!isLoading && !isOwner ? (
               <Text size='sm' className='text-error'>
                 Only the vault creator can mint this account.
               </Text>
@@ -81,7 +81,7 @@ export default function MintVaultAccount() {
           className='w-full md:w-70'
           text='Create Vault Account (2/2)'
           showProgressIndicator={isTxPending}
-          disabled={isTxPending || !isOwner}
+          disabled={isTxPending || !isOwner || isLoading}
         />
       </div>
     </CreateVaultContent>
