@@ -4,6 +4,7 @@ import { Bridge, ExternalLink } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { useSkipBridgeStatus } from 'hooks/localStorage/useSkipBridgeStatus'
+import { getFeeToken } from 'hooks/wallet/useInitFeeToken'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -29,13 +30,14 @@ export default function SkipBridgeModal() {
     (acc, bridge) => acc.plus(bridge.amount),
     BN(0),
   )
+  const feeToken = getFeeToken(chainConfig.id)
 
   const handleCompleteTransaction = async () => {
     if (!address || isCompleting) return
-
     setIsCompleting(true)
     setError(null)
     setHasAttemptedDeposit(true)
+
     try {
       const depositAmount = totalBridgedAmount.minus(MIN_FEE_AMOUNT)
       if (depositAmount.isGreaterThan(0)) {
@@ -48,11 +50,7 @@ export default function SkipBridgeModal() {
           lend: true,
           isAutoLend: true,
           overrides: {
-            feeCurrency: {
-              coinDenom: 'USDC',
-              coinMinimalDenom: chainConfig.stables[0],
-              coinDecimals: 6,
-            },
+            feeCurrency: feeToken,
           },
         }
         const accountId = await deposit(depositObject)
