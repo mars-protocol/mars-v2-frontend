@@ -218,7 +218,8 @@ export default function AccountFundContent(props: Props) {
             continue
           }
 
-          const success = await handleSkipTransfer(evmAsset, MINIMUM_USDC)
+          const success = await handleSkipTransfer(evmAsset, MINIMUM_USDC, isNewAccount)
+
           if (!success) {
             setShowMinimumUSDCValueOverlay(true)
             setIsConfirming(false)

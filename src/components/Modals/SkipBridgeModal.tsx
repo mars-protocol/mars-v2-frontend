@@ -25,7 +25,6 @@ export default function SkipBridgeModal() {
   const [error, setError] = useState<string | null>(null)
   const [isDepositComplete, setIsDepositComplete] = useState(false)
   const [hasAttemptedDeposit, setHasAttemptedDeposit] = useState(false)
-
   const completedBridges = skipBridges.filter((bridge) => bridge.status === 'STATE_COMPLETED')
   const pendingBridges = skipBridges.filter((bridge) => bridge.status === 'STATE_PENDING')
   const totalBridgedAmount = completedBridges.reduce(
@@ -73,14 +72,15 @@ export default function SkipBridgeModal() {
           useStore.setState((state) => ({
             ...state,
             selectedAccountId: accountId,
-            accountId: accountId,
-            currentAccount: null,
+            accountId,
           }))
           setIsDepositComplete(true)
 
           const { pathname } = window.location
           const searchParams = new URLSearchParams(window.location.search)
-          navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, accountId))
+          navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, accountId), {
+            flushSync: true,
+          })
         }
       }
     } catch (error) {

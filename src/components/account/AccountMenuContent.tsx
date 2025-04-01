@@ -1,8 +1,9 @@
 import classNames from 'classnames'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { isMobile } from 'react-device-detect'
 
 import AccountCreateFirst from 'components/account/AccountCreateFirst'
+import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 import AccountList from 'components/account/AccountList'
 import Button from 'components/common/Button'
 import { Account, Plus, PlusCircled } from 'components/common/Icons'
@@ -13,7 +14,6 @@ import useAccountIds from 'hooks/accounts/useAccountIds'
 import useToggle from 'hooks/common/useToggle'
 import useHasFundsForTxFee from 'hooks/wallet/useHasFundsForTxFee'
 import useStore from 'store'
-import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 
 interface Props {
   className?: string
@@ -30,7 +30,10 @@ export default function AccountMenuContent(props: Props) {
   const hasFundsForTxFee = useHasFundsForTxFee()
 
   const hasCreditAccounts = !!accountIds?.length
-  const isAccountSelected = hasCreditAccounts && accountId && accountIds.includes(accountId)
+  const isAccountSelected = useMemo(
+    () => hasCreditAccounts && accountId && accountIds.includes(accountId),
+    [hasCreditAccounts, accountId, accountIds],
+  )
 
   const performCreateAccount = useCallback(() => {
     setShowMenu(false)
@@ -47,11 +50,7 @@ export default function AccountMenuContent(props: Props) {
 
   const handleCreateAccountClick = useCallback(() => {
     setShowMenu(!showMenu)
-    if (!hasFundsForTxFee && !hasCreditAccounts) {
-      useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
-      return
-    }
-    if (!hasCreditAccounts) {
+    if ((!hasFundsForTxFee && !hasCreditAccounts) || !hasCreditAccounts) {
       useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
       return
     }

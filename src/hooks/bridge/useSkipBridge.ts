@@ -103,7 +103,7 @@ export function useSkipBridge({
   )
 
   const handleSkipTransfer = useCallback(
-    async (selectedAsset: WrappedBNCoin, minimumAmount: number) => {
+    async (selectedAsset: WrappedBNCoin, minimumAmount: number, isNewAccount: boolean) => {
       if (isBridgeInProgress) return
       if (!cosmosAddress || !evmAddress || !selectedAsset) {
         console.error('Missing required data for transfer')
@@ -207,14 +207,11 @@ export function useSkipBridge({
                 amount: BN(amountOut),
                 status: 'STATE_PENDING',
               })
-
-              useStore.setState((state) => ({
-                ...state,
-                fundAndWithdrawModal: null,
-                walletAssetsModal: null,
-                focusComponent: null,
-              }))
-
+              if (!isNewAccount) {
+                useStore.setState({
+                  fundAndWithdrawModal: null,
+                })
+              }
               refreshBalances()
             },
             onTransactionCompleted: async (

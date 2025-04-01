@@ -1,10 +1,10 @@
 import { RouteResponse } from '@skip-go/client'
-import { useCallback, useEffect, useState } from 'react'
-import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
-import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
-import { chainNameToUSDCAttributes } from 'utils/fetchUSDCBalance'
-import { MINIMUM_USDC } from 'utils/constants'
 import { BN_ZERO } from 'constants/math'
+import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
+import { useCallback, useEffect, useState } from 'react'
+import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
+import { MINIMUM_USDC } from 'utils/constants'
+import { chainNameToUSDCAttributes } from 'utils/fetchUSDCBalance'
 
 interface UseBridgeRouteProps {
   chainConfig: any
@@ -28,13 +28,12 @@ export function useBridgeRoute({
   const [previousEVMAmount, setPreviousEVMAmount] = useState<BigNumber>(BN_ZERO)
   const [showMinimumUSDCValueOverlay, setShowMinimumUSDCValueOverlay] = useState(false)
 
-  const { isBridgeInProgress, handleSkipTransfer, fetchSkipRoute, fetchBridgeLogos } =
-    useSkipBridge({
-      chainConfig,
-      cosmosAddress,
-      evmAddress,
-      goFast,
-    })
+  const { isBridgeInProgress, fetchSkipRoute, fetchBridgeLogos } = useSkipBridge({
+    chainConfig,
+    cosmosAddress,
+    evmAddress,
+    goFast,
+  })
 
   const evmAsset = fundingAssets.find(
     (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
@@ -133,7 +132,6 @@ export function useBridgeRoute({
     setShowMinimumUSDCValueOverlay,
     isEVMAssetLessThanMinimumUSDC,
     isBridgeInProgress,
-    handleSkipTransfer,
     updateEVMAssetValue,
   }
 }
