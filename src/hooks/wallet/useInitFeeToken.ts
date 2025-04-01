@@ -40,14 +40,20 @@ export default function useInitFeeToken() {
   }, [assets, chainConfig, gasPricesData, walletBalances])
 
   return useMemo(() => {
-    if (
-      !walletAddress ||
-      !gasPricesData ||
-      !walletBalances ||
-      walletBalances.length === 0 ||
-      availableFeeTokens.length === 0
-    )
-      return false
+    if (!gasPricesData || !walletAddress) return false
+    if (availableFeeTokens.length === 0) {
+      const stableToken = getAvailableFeeTokens(
+        walletBalances,
+        gasPricesData?.prices,
+        chainConfig,
+        assets,
+        true,
+      )[0]?.token
+      if (stableToken) {
+        setFeeToken(stableToken, chainConfig.id)
+        return true
+      }
+    }
 
     const feeToken = getFeeToken(chainConfig.id)
     if (!feeToken) {
@@ -80,20 +86,6 @@ export default function useInitFeeToken() {
     ) {
       setFeeToken(currentToken, chainConfig.id)
       return true
-    }
-
-    if (availableFeeTokens.length === 0) {
-      const stableToken = getAvailableFeeTokens(
-        walletBalances,
-        gasPricesData?.prices,
-        chainConfig,
-        assets,
-        true,
-      )[0]?.token
-      if (stableToken) {
-        setFeeToken(stableToken, chainConfig.id)
-        return true
-      }
     }
 
     return !!feeToken
