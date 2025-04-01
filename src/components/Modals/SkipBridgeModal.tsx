@@ -2,18 +2,14 @@ import Modal from 'components/Modals/Modal'
 import Button from 'components/common/Button'
 import { Bridge, ExternalLink } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { useSkipBridgeStatus } from 'hooks/localStorage/useSkipBridgeStatus'
-import useGasPrices from 'hooks/prices/useGasPrices'
-import { setFeeToken } from 'hooks/wallet/useInitFeeToken'
-import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useStore from 'store'
 import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
-import { getAvailableFeeTokens, MIN_FEE_AMOUNT } from 'utils/feeToken'
+import { MIN_FEE_AMOUNT } from 'utils/feeToken'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
 
@@ -23,9 +19,6 @@ export default function SkipBridgeModal() {
   const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
   const deposit = useStore((s) => s.deposit)
-  const { data: walletBalances } = useWalletBalances(address)
-  const { data: gasPricesData } = useGasPrices()
-  const { data: assets } = useAssets()
   const [isCompleting, setIsCompleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isDepositComplete, setIsDepositComplete] = useState(false)
@@ -36,26 +29,6 @@ export default function SkipBridgeModal() {
     (acc, bridge) => acc.plus(bridge.amount),
     BN(0),
   )
-
-  const availableFeeTokens = useMemo(() => {
-    if (!gasPricesData || !walletBalances || !assets) return []
-    return getAvailableFeeTokens(walletBalances, gasPricesData.prices, chainConfig, assets, true)
-  }, [assets, chainConfig, gasPricesData, walletBalances])
-
-  useEffect(() => {
-    const stableFeeToken = availableFeeTokens.find(
-      (token) => token.token.coinMinimalDenom === chainConfig.stables[0],
-    )?.token
-    if (completedBridges.length > 0 && !pendingBridges.length && stableFeeToken) {
-      setFeeToken(stableFeeToken, chainConfig.id)
-    }
-  }, [
-    completedBridges.length,
-    pendingBridges.length,
-    chainConfig.stables,
-    availableFeeTokens,
-    chainConfig.id,
-  ])
 
   const handleCompleteTransaction = async () => {
     if (!address || isCompleting) return
