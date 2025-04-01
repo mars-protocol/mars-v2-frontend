@@ -770,7 +770,7 @@ function getMutationKeyFromTransactionCoinType(
       mutationKeys.push(
         `chains/${chainConfig.id}/wallets/##ADDRESS##/balances`,
         `chains/${chainConfig.id}/wallets/##ADDRESS##/account-ids`,
-        `chains/${chainConfig.id}/accounts/default`,
+        `chains/${chainConfig.id}/wallets/##ADDRESS##/account-ids-without-hls`,
         `chains/${chainConfig.id}/markets/depositCap`,
         `chains/${chainConfig.id}/markets`,
         `chains/${chainConfig.id}/markets/info`,

@@ -12,7 +12,6 @@ import Text from 'components/common/Text'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useToggle from 'hooks/common/useToggle'
-import useHasFundsForTxFee from 'hooks/wallet/useHasFundsForTxFee'
 import useStore from 'store'
 
 interface Props {
@@ -27,11 +26,10 @@ export default function AccountMenuContent(props: Props) {
   const { data: accountIds } = useAccountIds(address, true, true)
   const accountId = useAccountId()
   const [showMenu, setShowMenu] = useToggle()
-  const hasFundsForTxFee = useHasFundsForTxFee()
 
-  const hasCreditAccounts = !!accountIds?.length
+  const hasCreditAccounts = useMemo(() => !!accountIds?.length, [accountIds])
   const isAccountSelected = useMemo(
-    () => hasCreditAccounts && accountId && accountIds.includes(accountId),
+    () => hasCreditAccounts && accountId && accountIds && accountIds.includes(accountId),
     [hasCreditAccounts, accountId, accountIds],
   )
 
@@ -50,11 +48,11 @@ export default function AccountMenuContent(props: Props) {
 
   const handleCreateAccountClick = useCallback(() => {
     setShowMenu(!showMenu)
-    if ((!hasFundsForTxFee && !hasCreditAccounts) || !hasCreditAccounts) {
+    if (!hasCreditAccounts || !hasCreditAccounts) {
       useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
       return
     }
-  }, [hasFundsForTxFee, hasCreditAccounts, setShowMenu, showMenu])
+  }, [hasCreditAccounts, setShowMenu, showMenu])
 
   if (!address) return null
 

@@ -40,7 +40,8 @@ export function useSkipBridgeStatus() {
     }
 
     const bridges: SkipBridgeTransaction[] = JSON.parse(skipBridgesString)
-    setSkipBridges(bridges)
+    if (skipBridges.length !== bridges.length || skipBridges[0].status !== bridges[0].status)
+      setSkipBridges(bridges)
 
     if (bridges.length > 0 && walletBalances) {
       try {
