@@ -19,6 +19,7 @@ export async function generateToast(
     chainConfig,
     result,
     address,
+    assets,
     perpsBaseDenom,
   )
   const accountId = getCreditAccountIdFromBroadcastResult(result)
@@ -98,6 +99,7 @@ export async function generateToast(
           target,
           chainConfig,
           assets,
+          accountId,
         )
         toast.content.push(...contentsAndKeys.content)
         mutationKeys.push(...contentsAndKeys.mutationKeys)

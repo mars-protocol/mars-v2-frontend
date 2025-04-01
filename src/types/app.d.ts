@@ -876,8 +876,8 @@ interface ButtonProps {
   variant?: 'solid' | 'transparent' | 'round' | 'rounded'
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
   onMouseOver?: (e: React.MouseEvent<HTMLButtonElement>) => void
-  leftIcon?: ReactElement
-  rightIcon?: ReactElement
+  leftIcon?: import('react').ReactElement
+  rightIcon?: import('react').ReactElement
   iconClassName?: string
   hasSubmenu?: boolean
   hasFocus?: boolean
@@ -1315,20 +1315,20 @@ interface ModalSlice {
 
 interface AlertDialogButton {
   text?: string
-  icon?: ReactElement
+  icon?: import('react').ReactElement
   isAsync?: boolean
   onClick?: () => Promise<void> | void
   disabled?: boolean
 }
 
 interface AlertDialogConfig {
-  icon?: ReactElement
-  header?: ReactElement
+  icon?: import('react').ReactElement
+  header?: import('react').ReactElement
   checkbox?: {
     text: string
     onClick: (isChecked: boolean) => void
   }
-  content: ReactElement | string
+  content: import('react').ReactElement | string
   negativeButton?: AlertDialogButton
   positiveButton?: AlertDialogButton
   title?: string
@@ -1831,13 +1831,8 @@ interface PricesResponse {
   prices: PriceData[]
 }
 
-interface GasPrice {
-  denom: string
-  amount: string
-}
-
 interface GasPricesResponse {
-  prices: GasPrice[]
+  prices: Coin[]
 }
 
 interface PythPriceData {
@@ -1848,3 +1843,32 @@ interface PythPriceData {
     expo: number
   }
 }
+
+type TrackActionType =
+  | 'Swap'
+  | 'Lend'
+  | 'Unlend'
+  | 'Borrow'
+  | 'Repay'
+  | 'Withdraw'
+  | 'Deposit'
+  | 'Deposit and Lend'
+  | 'Provide LP'
+  | 'Withdraw LP'
+  | 'Open Long'
+  | 'Open Short'
+  | 'Close Long'
+  | 'Close Short'
+  | 'Increase Long'
+  | 'Decrease Long'
+  | 'Increase Short'
+  | 'Decrease Short'
+  | 'Switch Position to Long'
+  | 'Switch Position to Short'
+  | 'Claim Rewards'
+  | 'Mint HLS Account'
+  | 'Mint Credit Account'
+  | 'Create Limit Order'
+  | 'Cancel Limit Order'
+  | 'Deposit Into Vault'
+  | 'Deposit Into Perps Vault'

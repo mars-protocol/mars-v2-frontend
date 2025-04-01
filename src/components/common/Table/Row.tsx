@@ -1,9 +1,9 @@
 import { flexRender, Row as TanstackRow, Table as TanstackTable } from '@tanstack/react-table'
 import classNames from 'classnames'
+import { BridgeRow } from 'components/common/Table/BridgeRow'
 import { Tooltip } from 'components/common/Tooltip'
 import { LEFT_ALIGNED_ROWS } from 'constants/table'
 import { ReactElement } from 'react'
-import { BridgeRow } from 'components/common/Table/BridgeRow'
 
 interface Props<T> {
   row: TanstackRow<T>

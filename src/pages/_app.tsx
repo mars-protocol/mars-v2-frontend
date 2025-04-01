@@ -1,7 +1,6 @@
 import { AppProps } from 'next/app'
 import { useEffect, useState } from 'react'
 
-import DefaultPageHead from 'components/common/DefaultPageHead'
 import init from 'utils/health_computer'
 
 import 'react-toastify/dist/ReactToastify.css'
@@ -21,14 +20,12 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     setIsServer(false)
   }, [])
+
   if (isServer) return null
 
   return (
-    <>
-      <DefaultPageHead />
-      <div suppressHydrationWarning>
-        {typeof window === 'undefined' ? null : <PageComponent {...pageProps} />}
-      </div>
-    </>
+    <div suppressHydrationWarning>
+      {typeof window === 'undefined' ? null : <PageComponent {...pageProps} />}
+    </div>
   )
 }
