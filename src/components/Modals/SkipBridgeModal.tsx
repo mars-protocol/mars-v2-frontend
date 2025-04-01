@@ -39,7 +39,7 @@ export default function SkipBridgeModal() {
 
   const availableFeeTokens = useMemo(() => {
     if (!gasPricesData || !walletBalances || !assets) return []
-    return getAvailableFeeTokens(walletBalances, gasPricesData.prices, chainConfig, assets)
+    return getAvailableFeeTokens(walletBalances, gasPricesData.prices, chainConfig, assets, true)
   }, [assets, chainConfig, gasPricesData, walletBalances])
 
   useEffect(() => {

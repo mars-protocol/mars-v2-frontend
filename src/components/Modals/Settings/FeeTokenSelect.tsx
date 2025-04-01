@@ -27,7 +27,10 @@ export default function FeeTokenSelect() {
         (coin) => coin.denom === feeToken.coinMinimalDenom,
       )
 
-      if (!currentTokenBalance || BN(currentTokenBalance.amount).isLessThanOrEqualTo(0)) {
+      if (
+        (!currentTokenBalance || BN(currentTokenBalance.amount).isLessThanOrEqualTo(0)) &&
+        feeToken.coinMinimalDenom !== chainConfig.stables[0]
+      ) {
         const bestToken = findBestFeeToken(
           walletBalances,
           gasPricesData.prices,

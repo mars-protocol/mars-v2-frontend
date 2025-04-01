@@ -25,6 +25,7 @@ export function getAvailableFeeTokens(
   gasPrices: Coin[],
   chainConfig: ChainConfig,
   assets: Asset[],
+  forceStable: boolean = false,
 ): AvailableFeeTokens[] {
   const availableTokens: { token: NetworkCurrency; balance: string; gasPrice?: string }[] = []
   const nativeCurrency = chainConfig.defaultCurrency
@@ -42,10 +43,14 @@ export function getAvailableFeeTokens(
   const stableBalance = balances.find((coin) => coin.denom === stableDenom)
   const stableAsset = assets?.find((asset) => asset.denom === stableDenom)
   const stableGasPrice = gasPrices.find((price) => price.denom === stableDenom)
-  if (stableAsset && stableBalance && BN(stableBalance.amount).isGreaterThan(0) && stableGasPrice) {
+  if (
+    stableAsset &&
+    stableGasPrice &&
+    ((stableBalance && BN(stableBalance.amount).isGreaterThan(0)) || forceStable)
+  ) {
     availableTokens.push({
       token: getNetworkCurrency(stableDenom, stableAsset, stableGasPrice),
-      balance: stableBalance.amount,
+      balance: stableBalance?.amount || '0',
     })
   }
 

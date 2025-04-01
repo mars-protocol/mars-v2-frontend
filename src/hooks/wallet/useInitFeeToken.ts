@@ -69,6 +69,7 @@ export default function useInitFeeToken() {
       !currentTokenBalance ||
       BN(currentTokenBalance.amount).isLessThanOrEqualTo(0)
     ) {
+      if (feeToken.coinMinimalDenom === chainConfig.stables[0]) return true
       if (availableFeeTokens.length > 0) {
         console.log('setting fee token because of no balance', availableFeeTokens[0].token)
         setFeeToken(availableFeeTokens[0].token, chainConfig.id)
