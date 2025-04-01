@@ -230,7 +230,7 @@ export default function AccountFundContent(props: Props) {
 
       if (nonEvmAssets.length > 0) {
         const processedAssets = nonEvmAssets.map((wrappedCoin) => {
-          const selectedFeeToken = getCurrentFeeToken()
+          const selectedFeeToken = getCurrentFeeToken(chainConfig)
           if (!selectedFeeToken) return wrappedCoin.coin
 
           const isUsdcFeeToken =

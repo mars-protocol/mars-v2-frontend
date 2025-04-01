@@ -120,7 +120,7 @@ export function useSkipBridge({
 
         const isUsdc =
           selectedAsset.coin.denom.includes('usdc') || selectedAsset.coin.denom.includes('uusdc')
-        const usdcAsFeeToken = isUsdcFeeToken()
+        const usdcAsFeeToken = isUsdcFeeToken(chainConfig)
 
         let bridgeAmount = selectedAsset.coin.amount.toString()
         if (isUsdc && usdcAsFeeToken) {

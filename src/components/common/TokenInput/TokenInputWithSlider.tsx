@@ -3,10 +3,10 @@ import { useEffect, useMemo, useState } from 'react'
 import Slider from 'components/common/Slider'
 import TokenInput from 'components/common/TokenInput/index'
 import { BN_ZERO } from 'constants/math'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { BNCoin } from 'types/classes/BNCoin'
+import { deductFeeFromMax, getCurrentFeeToken } from 'utils/feeToken'
 import { BN } from 'utils/helpers'
-import { deductFeeFromMax } from 'utils/feeToken'
-import { getCurrentFeeToken } from 'hooks/wallet/useFeeToken'
 
 interface Props {
   amount: BigNumber
@@ -34,16 +34,24 @@ interface Props {
 export default function TokenInputWithSlider(props: Props) {
   const [amount, setAmount] = useState(props.amount)
   const [percentage, setPercentage] = useState(0)
+  const chainConfig = useChainConfig()
 
-  const currentFeeToken = getCurrentFeeToken()
+  const currentFeeToken = getCurrentFeeToken(chainConfig)
   const isCurrentFeeToken = currentFeeToken?.coinMinimalDenom === props.asset.denom
 
   const adjustedMax = useMemo(() => {
     if (props.deductFee === true && isCurrentFeeToken) {
-      return deductFeeFromMax(props.max, props.asset.denom, props.asset.decimals)
+      return deductFeeFromMax(props.max, props.asset.denom, props.asset.decimals, chainConfig)
     }
     return props.max
-  }, [props.max, props.asset.denom, props.asset.decimals, isCurrentFeeToken, props.deductFee])
+  }, [
+    props.max,
+    props.asset.denom,
+    props.asset.decimals,
+    isCurrentFeeToken,
+    props.deductFee,
+    chainConfig,
+  ])
 
   function onChangeSlider(percentage: number) {
     const newAmount = BN(percentage).dividedBy(100).multipliedBy(adjustedMax).integerValue()

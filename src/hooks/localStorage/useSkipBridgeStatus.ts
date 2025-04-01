@@ -34,8 +34,8 @@ export function useSkipBridgeStatus() {
   const checkTransactionStatus = useCallback(async () => {
     const skipBridgesString = localStorage.getItem(`${chainConfig.id}/skipBridges`)
     if (!skipBridgesString) {
-      setSkipBridges([])
-      setHasCompletedBridge(false)
+      if (skipBridges && skipBridges.length !== 0) setSkipBridges([])
+      if (hasCompletedBridge) setHasCompletedBridge(false)
       return
     }
 

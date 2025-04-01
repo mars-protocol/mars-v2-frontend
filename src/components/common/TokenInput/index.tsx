@@ -13,10 +13,10 @@ import WarningMessages from 'components/common/WarningMessages'
 import AssetImage from 'components/common/assets/AssetImage'
 import useAssets from 'hooks/assets/useAssets'
 import useBaseAsset from 'hooks/assets/useBaseAsset'
-import { getCurrentFeeToken } from 'hooks/wallet/useFeeToken'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
-import { MIN_FEE_AMOUNT } from 'utils/feeToken'
+import { getCurrentFeeToken, MIN_FEE_AMOUNT } from 'utils/feeToken'
 import { BN } from 'utils/helpers'
 
 interface Props {
@@ -39,9 +39,10 @@ interface Props {
 
 export default function TokenInput(props: Props) {
   const baseAsset = useBaseAsset()
+  const chainConfig = useChainConfig()
   const { data: assets } = useAssets()
 
-  const currentFeeToken = getCurrentFeeToken()
+  const currentFeeToken = getCurrentFeeToken(chainConfig)
   const isCurrentFeeToken = currentFeeToken?.coinMinimalDenom === props.asset.denom
   const deductFee = isCurrentFeeToken && props.deductFee ? MIN_FEE_AMOUNT : 0
 

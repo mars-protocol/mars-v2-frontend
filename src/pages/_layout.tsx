@@ -1,4 +1,3 @@
-import { NetworkCurrency } from '@delphi-labs/shuttle'
 import { Analytics } from '@vercel/analytics/react'
 import classNames from 'classnames'
 import ModalsContainer from 'components/Modals/ModalsContainer'
@@ -16,19 +15,15 @@ import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountIds from 'hooks/accounts/useAccountIds'
-import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { useSkipBridgeStatus } from 'hooks/localStorage/useSkipBridgeStatus'
-import useGasPrices from 'hooks/prices/useGasPrices'
-import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import { Suspense, useEffect } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useLocation } from 'react-router-dom'
 import useStore from 'store'
 import { SWRConfig } from 'swr'
-import { BN } from 'utils/helpers'
 import { debugSWR } from 'utils/middleware'
 
 interface Props {
@@ -81,9 +76,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const { data: accountIds } = useAccountIds(address)
   const hasCreditAccounts = !!accountIds?.length
   const { shouldShowSkipBridgeModal } = useSkipBridgeStatus()
-  const { data: gasPricesData } = useGasPrices()
-  const { data: walletBalances = [] } = useWalletBalances(address)
-  const { data: assets } = useAssets()
 
   useEffect(() => {
     if (!window) return
@@ -98,73 +90,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       setCurrentChainId(chainConfig.id)
     }
   }, [chainConfig.id, currentChainId, setCurrentChainId])
-
-  useEffect(() => {
-    if (!gasPricesData || !walletBalances.length || !assets) return
-
-    const getBestFeeTokenByGasPrice = () => {
-      if (chainConfig.isOsmosis) {
-        const nativeAsset = assets?.find((asset) => asset.denom === 'uosmo')
-        return {
-          coinDenom: 'OSMO',
-          coinMinimalDenom: 'uosmo',
-          coinDecimals: nativeAsset?.decimals || 6,
-        }
-      }
-
-      const nativeDenom = chainConfig.defaultCurrency.coinMinimalDenom
-      const nativeBalance = walletBalances.find((coin) => coin.denom === nativeDenom)
-      const nativeGasPrice = gasPricesData.prices.find((price) => price.denom === nativeDenom)
-      const nativeAsset = assets?.find((asset) => asset.denom === nativeDenom)
-
-      if (nativeBalance && BN(nativeBalance.amount).isGreaterThan(0) && nativeGasPrice) {
-        return {
-          coinDenom:
-            nativeAsset?.symbol || (nativeDenom === 'untrn' ? 'NTRN' : nativeDenom.toUpperCase()),
-          coinMinimalDenom: nativeDenom,
-          coinDecimals: nativeAsset?.decimals || (nativeDenom === 'untrn' ? 6 : 18),
-        }
-      }
-
-      const usdcDenom = chainConfig.stables[0]
-      const usdcBalance = walletBalances.find((coin) => coin.denom === usdcDenom)
-      const usdcAsset = assets?.find((asset) => asset.denom === usdcDenom)
-
-      if (usdcBalance && BN(usdcBalance.amount).isGreaterThan(0)) {
-        return {
-          coinDenom: 'USDC',
-          coinMinimalDenom: usdcDenom,
-          coinDecimals: usdcAsset?.decimals || 6,
-        }
-      }
-
-      return null
-    }
-
-    try {
-      const savedToken = localStorage.getItem(LocalStorageKeys.MARS_FEE_TOKEN)
-      if (savedToken) {
-        const parsedToken = JSON.parse(savedToken) as NetworkCurrency
-        const currentTokenBalance = walletBalances.find(
-          (coin) => coin.denom === parsedToken.coinMinimalDenom,
-        )
-
-        if (!currentTokenBalance || BN(currentTokenBalance.amount).isLessThanOrEqualTo(0)) {
-          const bestToken = getBestFeeTokenByGasPrice()
-          if (bestToken) {
-            localStorage.setItem(LocalStorageKeys.MARS_FEE_TOKEN, JSON.stringify(bestToken))
-          }
-        }
-      } else {
-        const bestToken = getBestFeeTokenByGasPrice()
-        if (bestToken) {
-          localStorage.setItem(LocalStorageKeys.MARS_FEE_TOKEN, JSON.stringify(bestToken))
-        }
-      }
-    } catch (error) {
-      console.error('Failed to update fee token:', error)
-    }
-  }, [chainConfig, gasPricesData, walletBalances, assets])
 
   return (
     <>

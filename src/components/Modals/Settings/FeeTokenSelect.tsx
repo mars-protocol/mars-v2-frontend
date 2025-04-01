@@ -1,18 +1,15 @@
-import { NetworkCurrency } from '@delphi-labs/shuttle'
 import AssetImage from 'components/common/assets/AssetImage'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Select from 'components/common/Select'
 import Text from 'components/common/Text'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import useBestFeeToken from 'hooks/prices/useBestFeeToken'
 import useGasPrices from 'hooks/prices/useGasPrices'
-import { useFeeToken } from 'hooks/wallet/useFeeToken'
+import useFeeToken from 'hooks/wallet/useFeeToken'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import useStore from 'store'
-import { isFeeBalanceLow } from 'utils/feeToken'
+import { findBestFeeToken, getAvailableFeeTokens } from 'utils/feeToken'
 import { BN } from 'utils/helpers'
 
 export default function FeeTokenSelect() {
@@ -20,153 +17,40 @@ export default function FeeTokenSelect() {
   const address = useStore((s) => s.address)
   const { data: walletBalances } = useWalletBalances(address)
   const chainConfig = useChainConfig()
-  const defaultFeeToken = useBestFeeToken()
   const { data: assets } = useAssets()
   const { data: gasPricesData } = useGasPrices()
 
-  const nativeDenom = chainConfig.defaultCurrency.coinMinimalDenom
-  const isLowBalance = isFeeBalanceLow(walletBalances, nativeDenom)
-
-  const nativeBalance = walletBalances.find((coin) => coin.denom === nativeDenom)
-  const nativeBalanceAmount = nativeBalance ? BN(nativeBalance.amount) : BN(0)
-
-  const getBestFeeTokenByGasPrice = useCallback(() => {
-    if (!gasPricesData || !walletBalances.length) return null
-
-    if (chainConfig.isOsmosis) {
-      return {
-        coinMinimalDenom: 'uosmo',
-        coinDenom: 'OSMO',
-        coinDecimals: 6,
-      }
-    }
-
-    const nativeBalance = walletBalances.find((coin) => coin.denom === nativeDenom)
-    const nativeGasPrice = gasPricesData.prices.find((price) => price.denom === nativeDenom)
-    const nativeAsset = assets?.find((asset) => asset.denom === nativeDenom)
-
-    if (
-      nativeAsset &&
-      nativeBalance &&
-      BN(nativeBalance.amount).isGreaterThan(0) &&
-      nativeGasPrice
-    ) {
-      return {
-        coinMinimalDenom: nativeAsset.denom,
-        coinDenom: nativeAsset.symbol,
-        coinDecimals: nativeAsset.decimals,
-      }
-    }
-
-    const usdcDenom = chainConfig.stables[0]
-    const usdcBalance = walletBalances.find((coin) => coin.denom === usdcDenom)
-    const usdcAsset = assets?.find((asset) => asset.denom === usdcDenom)
-
-    if (usdcBalance && BN(usdcBalance.amount).isGreaterThan(0)) {
-      return {
-        coinMinimalDenom: usdcDenom,
-        coinDenom: 'USDC',
-        coinDecimals: usdcAsset?.decimals || 6,
-      }
-    }
-
-    return null
-  }, [
-    gasPricesData,
-    walletBalances,
-    chainConfig.isOsmosis,
-    chainConfig.stables,
-    assets,
-    nativeDenom,
-  ])
-
   useEffect(() => {
+    if (!gasPricesData) return
     if (feeToken && walletBalances.length > 0) {
       const currentTokenBalance = walletBalances.find(
         (coin) => coin.denom === feeToken.coinMinimalDenom,
       )
 
       if (!currentTokenBalance || BN(currentTokenBalance.amount).isLessThanOrEqualTo(0)) {
-        const bestToken = getBestFeeTokenByGasPrice()
+        const bestToken = findBestFeeToken(
+          walletBalances,
+          gasPricesData.prices,
+          chainConfig,
+          assets,
+        )
         if (bestToken && bestToken.coinMinimalDenom !== feeToken.coinMinimalDenom) {
           setFeeToken(bestToken)
         }
       }
     }
-  }, [walletBalances, feeToken, setFeeToken, getBestFeeTokenByGasPrice])
+  }, [walletBalances, feeToken, setFeeToken, gasPricesData, chainConfig, assets])
 
   useEffect(() => {
     if (!feeToken && gasPricesData) {
-      const bestToken = getBestFeeTokenByGasPrice()
-      if (bestToken) {
-        setFeeToken(bestToken)
-      }
+      setFeeToken(findBestFeeToken(walletBalances, gasPricesData.prices, chainConfig, assets))
     }
-  }, [gasPricesData, feeToken, setFeeToken, getBestFeeTokenByGasPrice])
+  }, [gasPricesData, feeToken, setFeeToken, walletBalances, chainConfig, assets])
 
   const availableFeeTokens = useMemo(() => {
-    const availableTokens: { token: NetworkCurrency; balance: string; gasPrice?: string }[] = []
-    const nativeGasPrice = gasPricesData?.prices.find(
-      (price) => price.denom === nativeDenom,
-    )?.amount
-    const nativeAsset = assets?.find((asset) => asset.denom === nativeDenom)
-    if (nativeAsset && nativeBalance && BN(nativeBalance.amount).isGreaterThan(0)) {
-      availableTokens.push({
-        token: {
-          coinDenom: nativeAsset.symbol,
-          coinMinimalDenom: nativeAsset.denom,
-          coinDecimals: nativeAsset.decimals,
-        },
-        balance: nativeBalance.amount,
-        gasPrice: nativeGasPrice,
-      })
-    }
-
-    const usdcDenom = chainConfig.stables[0]
-    const usdcBalance = walletBalances.find((coin) => coin.denom === usdcDenom)
-    const usdcAsset = assets?.find((asset) => asset.denom === usdcDenom)
-    if (usdcAsset && usdcBalance && BN(usdcBalance.amount).isGreaterThan(0)) {
-      const usdcGasPrice = gasPricesData?.prices.find((price) => price.denom === usdcDenom)?.amount
-      availableTokens.push({
-        token: {
-          coinDenom: 'USDC',
-          coinMinimalDenom: usdcDenom,
-          coinDecimals: usdcAsset.decimals,
-        },
-        balance: usdcBalance.amount,
-        gasPrice: usdcGasPrice,
-      })
-    }
-
-    gasPricesData?.prices.forEach((price) => {
-      if (price.denom === nativeDenom || price.denom === usdcDenom) return
-
-      const balance = walletBalances.find((coin) => coin.denom === price.denom)
-      const asset = assets?.find((a) => a.denom === price.denom)
-      if (asset && balance && BN(balance.amount).isGreaterThan(0)) {
-        availableTokens.push({
-          token: {
-            coinDenom: asset.symbol,
-            coinMinimalDenom: asset.denom,
-            coinDecimals: asset.decimals,
-          },
-          balance: balance.amount,
-          gasPrice: price.amount,
-        })
-      }
-    })
-
-    return availableTokens
-      .filter((token) => token.token.coinDecimals === PRICE_ORACLE_DECIMALS)
-      .sort((a, b) => (BN(b.balance).isGreaterThan(BN(a.balance)) ? 1 : -1))
-  }, [
-    assets,
-    chainConfig.stables,
-    gasPricesData?.prices,
-    nativeBalance,
-    nativeDenom,
-    walletBalances,
-  ])
+    if (!gasPricesData?.prices || !chainConfig || !assets) return []
+    return getAvailableFeeTokens(walletBalances, gasPricesData.prices, chainConfig, assets)
+  }, [assets, chainConfig, gasPricesData, walletBalances])
 
   const handleSelectToken = (tokenDenom: string) => {
     const token = availableFeeTokens.find(

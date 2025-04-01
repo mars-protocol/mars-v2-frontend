@@ -124,7 +124,7 @@ const Neutron1: ChainConfig = {
     explorer: 'https://mintscan.io/neutron',
     dexAssets: 'https://neutron-cache-api.onrender.com/neutron-1/tokens',
     dexPools: 'https://neutron-cache-api.onrender.com/neutron-1/pools',
-    gasPrices: '/feemarket/v1/gas_price/untrn',
+    gasPrices: '/feemarket/v1/gas_prices',
     aprs: {
       vaults: '',
       perpsVault: 'https://backend.prod.mars-dev.net/v2/perps_vault?chain=neutron',

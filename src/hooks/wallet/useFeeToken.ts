@@ -1,15 +1,19 @@
 import { NetworkCurrency } from '@delphi-labs/shuttle'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useBestFeeToken from 'hooks/prices/useBestFeeToken'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { getCurrentFeeToken } from 'utils/feeToken'
 
-export function useFeeToken() {
-  const defaultFeeToken = useBestFeeToken()
+export default function useFeeToken() {
+  const chainConfig = useChainConfig()
+  const currentFeeToken = getCurrentFeeToken(chainConfig)
   const [selectedFeeToken, setSelectedFeeToken] = useState<NetworkCurrency | undefined>(undefined)
 
   useEffect(() => {
     try {
-      const savedToken = localStorage.getItem(LocalStorageKeys.MARS_FEE_TOKEN)
+      const savedToken = localStorage.getItem(
+        `${chainConfig.id}/${LocalStorageKeys.MARS_FEE_TOKEN}`,
+      )
       if (savedToken) {
         const parsedToken = JSON.parse(savedToken) as NetworkCurrency
         setSelectedFeeToken(parsedToken)
@@ -17,32 +21,26 @@ export function useFeeToken() {
     } catch (error) {
       console.error('Failed to load fee token from localStorage:', error)
     }
-  }, [])
+  }, [chainConfig.id])
 
-  const feeToken = selectedFeeToken || defaultFeeToken
+  const feeToken = selectedFeeToken || currentFeeToken
 
-  const setFeeToken = useCallback((token: NetworkCurrency) => {
-    setSelectedFeeToken(token)
-    try {
-      localStorage.setItem(LocalStorageKeys.MARS_FEE_TOKEN, JSON.stringify(token))
-    } catch (error) {
-      console.error('Failed to save fee token to localStorage:', error)
-    }
-  }, [])
+  const setFeeToken = useCallback(
+    (token: NetworkCurrency) => {
+      setSelectedFeeToken(token)
+      try {
+        localStorage.setItem(
+          `${chainConfig.id}/${LocalStorageKeys.MARS_FEE_TOKEN}`,
+          JSON.stringify(token),
+        )
+      } catch (error) {
+        console.error('Failed to save fee token to localStorage:', error)
+      }
+    },
+    [chainConfig.id],
+  )
 
   return useMemo(() => {
     return { feeToken, setFeeToken }
   }, [feeToken, setFeeToken])
-}
-
-export function getCurrentFeeToken(): NetworkCurrency | undefined {
-  try {
-    const savedToken = localStorage.getItem(LocalStorageKeys.MARS_FEE_TOKEN)
-    if (savedToken) {
-      return JSON.parse(savedToken) as NetworkCurrency
-    }
-  } catch (error) {
-    console.error('Failed to get fee token from localStorage:', error)
-  }
-  return undefined
 }

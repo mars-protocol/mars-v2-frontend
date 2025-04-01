@@ -116,7 +116,7 @@ const Osmosis1: ChainConfig = {
       'osmosis/gamm/v1beta1/pools/POOL_ID',
     ),
     dexAssets: 'https://neutron-cache-api.onrender.com/osmosis-1/tokens',
-    gasPrices: '/osmosis/txfees/v1beta1/cur_eip_base_fee',
+    gasPrices: 'https://sqs.stage.osmosis.zone/chainregistry/fee_tokens',
     aprs: {
       vaults: 'https://backend.prod.mars-dev.net/v1/vaults/osmosis',
     },

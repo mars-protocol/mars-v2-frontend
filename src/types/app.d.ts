@@ -288,6 +288,11 @@ interface ChainConfig {
     coinMinimalDenom: string
     coinDecimals: number
     coinGeckoId: string
+    gasPriceStep?: {
+      low: number
+      average: number
+      high: number
+    }
   }
   endpoints: {
     rest: string
@@ -1835,6 +1840,18 @@ interface GasPricesResponse {
   prices: Coin[]
 }
 
+interface OsmosisGasPriceResponse {
+  fee_tokens: OsmosisFeeToken[]
+}
+
+interface OsmosisFeeToken {
+  denom: string
+  fixed_min_gas_price: string
+  low_gas_price: string
+  average_gas_price: string
+  high_gas_price: string
+}
+
 interface PythPriceData {
   id: string
   price: {
@@ -1842,6 +1859,11 @@ interface PythPriceData {
     conf: string
     expo: number
   }
+}
+
+interface AvailableFeeTokens {
+  token: NetworkCurrency
+  balance: string
 }
 
 type TrackActionType =

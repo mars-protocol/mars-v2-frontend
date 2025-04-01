@@ -1,9 +1,7 @@
-import { DEFAULT_GAS_MULTIPLIER, MsgExecuteContract, NetworkCurrency } from '@delphi-labs/shuttle'
+import { DEFAULT_GAS_MULTIPLIER, MsgExecuteContract } from '@delphi-labs/shuttle'
 import moment from 'moment'
-import { isMobile } from 'react-device-detect'
 import { StoreApi } from 'zustand'
 
-import getGasPrice from 'api/gasPrice/getGasPrice'
 import getPythPriceData from 'api/prices/getPythPriceData'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -24,12 +22,10 @@ import { byDenom, bySymbol } from 'utils/array'
 import { setAutoLendForAccount } from 'utils/autoLend'
 import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
-import checkPythUpdateEnabled from 'utils/checkPythUpdateEnabled'
+import { getCurrentFeeToken } from 'utils/feeToken'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
-import { getTransactionFeeToken } from 'utils/feeToken'
-import { getCurrentFeeToken } from 'hooks/wallet/useFeeToken'
 
 interface ExecuteMsgOptions {
   messages: MsgExecuteContract[]
@@ -68,13 +64,14 @@ export default function createBroadcastSlice(
       return { fee: undefined, error: 'The client disconnected. Please reload the page!' }
     }
     try {
-      const gasPrice = await getGasPrice(get().chainConfig)
+      const feeCurrency = getCurrentFeeToken(get().chainConfig)
 
       const simulateResult = await get().client?.simulate({
         messages,
         wallet: get().client?.connectedWallet,
         overrides: {
-          gasPrice,
+          feeCurrency,
+          gasPrice: `${feeCurrency.gasPriceStep?.average}${feeCurrency.coinMinimalDenom}`,
           gasAdjustment: DEFAULT_GAS_MULTIPLIER,
         },
       })
@@ -1074,23 +1071,12 @@ export default function createBroadcastSlice(
           throw new Error('No client detected. Please reconnect your wallet.')
         }
 
-        const balances = get().balances
         const chainConfig = get().chainConfig
         if (!chainConfig) {
           throw new Error('Chain config not found')
         }
 
-        const usdcDenom = chainConfig.stables[0]
-        const nativeDenom = chainConfig.defaultCurrency.coinMinimalDenom
-
-        const selectedFeeToken = getCurrentFeeToken()
-
-        const feeCurrency =
-          selectedFeeToken || getTransactionFeeToken(balances, usdcDenom, nativeDenom)
-
-        if (!feeCurrency) {
-          throw new Error('No available fee token found')
-        }
+        const feeCurrency = getCurrentFeeToken(chainConfig)
 
         const memo = options.memo || ''
 

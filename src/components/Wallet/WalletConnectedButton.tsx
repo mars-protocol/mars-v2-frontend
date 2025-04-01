@@ -22,12 +22,12 @@ import useBaseAsset from 'hooks/assets/useBaseAsset'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
-import { getCurrentFeeToken } from 'hooks/wallet/useFeeToken'
 import useICNSDomain from 'hooks/wallet/useICNSDomain'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
 import { ChainInfoID, NETWORK } from 'types/enums'
 import { byDenom } from 'utils/array'
+import { getCurrentFeeToken } from 'utils/feeToken'
 import { truncate } from 'utils/formatters'
 import { getPage, getRoute } from 'utils/route'
 
@@ -48,7 +48,7 @@ export default function WalletConnectedButton() {
   const { data: icnsData, isLoading: isLoadingICNS } = useICNSDomain(address)
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const currentFeeToken = getCurrentFeeToken()
+  const currentFeeToken = getCurrentFeeToken(chainConfig)
   const { data: assets } = useAssets()
   // ---------------
   // LOCAL STATE

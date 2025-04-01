@@ -1,41 +1,50 @@
-import useSWR from 'swr'
+import { DEFAULT_GAS_MULTIPLIER } from '@skip-go/client'
+import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import useSWR from 'swr'
+import { byDenom } from 'utils/array'
 import { logApiError } from 'utils/error'
-
-interface GasPrice {
-  denom: string
-  amount: string
-}
-
-interface GasPricesResponse {
-  prices: GasPrice[]
-}
-
-const FEE_MARKET_API_ROUTE = `${process.env.NEXT_PUBLIC_NEUTRON_REST}/feemarket/v1/gas_prices`
+import { BN } from 'utils/helpers'
+import { getUrl } from 'utils/url'
 
 export default function useGasPrices() {
   const chainConfig = useChainConfig()
+  const { data: assets } = useAssets()
 
+  const apiUrl = chainConfig.isOsmosis
+    ? chainConfig.endpoints.gasPrices
+    : getUrl(chainConfig.endpoints.rest, chainConfig.endpoints.gasPrices)
   return useSWR<GasPricesResponse>(
-    [FEE_MARKET_API_ROUTE, chainConfig.id, chainConfig.isOsmosis],
+    [apiUrl, chainConfig.id, assets],
     async ([url]) => {
-      if (chainConfig.isOsmosis) {
-        return {
-          prices: [
-            {
-              denom: 'uosmo',
-              amount: '0.002500000000000000',
-            },
-          ],
-        }
-      }
-
       try {
         const response = await fetch(url)
-        if (!response.ok) {
-          throw new Error(`Failed to fetch gas prices: ${response.status} ${response.statusText}`)
+        const gasPrices = [] as Coin[]
+
+        if (chainConfig.isOsmosis) {
+          const data = (await response.json()) as OsmosisGasPriceResponse
+          data.fee_tokens.forEach((feeToken) => {
+            if (assets.find(byDenom(feeToken.denom))) {
+              gasPrices.push({
+                denom: feeToken.denom,
+                amount: BN(feeToken.low_gas_price).times(DEFAULT_GAS_MULTIPLIER).toString(),
+              })
+            }
+          })
+          return {
+            prices: gasPrices,
+          }
+        } else {
+          const data = (await response.json()) as GasPricesResponse
+          data.prices.forEach((price) => {
+            if (assets.find(byDenom(price.denom))) {
+              gasPrices.push(price)
+            }
+          })
+          return {
+            prices: gasPrices,
+          }
         }
-        return response.json()
       } catch (error) {
         logApiError(url, error, 'Failed to fetch gas prices')
         return {
