@@ -2,15 +2,18 @@ import Modal from 'components/Modals/Modal'
 import Button from 'components/common/Button'
 import { Bridge, ExternalLink } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { useSkipBridgeStatus } from 'hooks/localStorage/useSkipBridgeStatus'
-import { useFeeToken } from 'hooks/wallet/useFeeToken'
+import useGasPrices from 'hooks/prices/useGasPrices'
+import useFeeToken from 'hooks/wallet/useFeeToken'
+import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useStore from 'store'
 import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
-import { MIN_FEE_AMOUNT } from 'utils/feeToken'
+import { getAvailableFeeTokens, MIN_FEE_AMOUNT } from 'utils/feeToken'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
 
@@ -20,6 +23,9 @@ export default function SkipBridgeModal() {
   const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
   const deposit = useStore((s) => s.deposit)
+  const { data: walletBalances } = useWalletBalances(address)
+  const { data: gasPricesData } = useGasPrices()
+  const { data: assets } = useAssets()
   const { setFeeToken } = useFeeToken()
   const [isCompleting, setIsCompleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -32,15 +38,25 @@ export default function SkipBridgeModal() {
     BN(0),
   )
 
+  const availableFeeTokens = useMemo(() => {
+    if (!gasPricesData || !walletBalances || !assets) return []
+    return getAvailableFeeTokens(walletBalances, gasPricesData.prices, chainConfig, assets)
+  }, [assets, chainConfig, gasPricesData, walletBalances])
+
   useEffect(() => {
-    if (completedBridges.length > 0 && !pendingBridges.length) {
-      setFeeToken({
-        coinDenom: 'USDC',
-        coinMinimalDenom: chainConfig.stables[0],
-        coinDecimals: 6,
-      })
+    const stableFeeToken = availableFeeTokens.find(
+      (token) => token.token.coinMinimalDenom === chainConfig.stables[0],
+    )?.token
+    if (completedBridges.length > 0 && !pendingBridges.length && stableFeeToken) {
+      setFeeToken(stableFeeToken)
     }
-  }, [completedBridges.length, pendingBridges.length, chainConfig.stables, setFeeToken])
+  }, [
+    completedBridges.length,
+    pendingBridges.length,
+    chainConfig.stables,
+    setFeeToken,
+    availableFeeTokens,
+  ])
 
   const handleCompleteTransaction = async () => {
     if (!address || isCompleting) return
