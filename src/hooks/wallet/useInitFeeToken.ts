@@ -51,7 +51,6 @@ export default function useInitFeeToken() {
 
     const feeToken = getFeeToken(chainConfig.id)
     if (!feeToken) {
-      console.log('setting fee token because of no fee token', availableFeeTokens[0].token)
       setFeeToken(availableFeeTokens[0].token, chainConfig.id)
       return true
     }
@@ -69,9 +68,7 @@ export default function useInitFeeToken() {
       !currentTokenBalance ||
       BN(currentTokenBalance.amount).isLessThanOrEqualTo(0)
     ) {
-      if (feeToken.coinMinimalDenom === chainConfig.stables[0]) return true
       if (availableFeeTokens.length > 0) {
-        console.log('setting fee token because of no balance', availableFeeTokens[0].token)
         setFeeToken(availableFeeTokens[0].token, chainConfig.id)
         return true
       }
@@ -81,11 +78,24 @@ export default function useInitFeeToken() {
       currentToken.coinMinimalDenom !== feeToken.coinMinimalDenom ||
       currentToken.gasPriceStep?.average !== feeToken.gasPriceStep?.average
     ) {
-      console.log('setting fee token because of gas price step', currentToken)
       setFeeToken(currentToken, chainConfig.id)
       return true
     }
 
+    if (availableFeeTokens.length === 0) {
+      const stableToken = getAvailableFeeTokens(
+        walletBalances,
+        gasPricesData?.prices,
+        chainConfig,
+        assets,
+        true,
+      )[0]?.token
+      if (stableToken) {
+        setFeeToken(stableToken, chainConfig.id)
+        return true
+      }
+    }
+
     return !!feeToken
-  }, [availableFeeTokens, chainConfig, gasPricesData, walletAddress, walletBalances])
+  }, [assets, availableFeeTokens, chainConfig, gasPricesData, walletAddress, walletBalances])
 }
