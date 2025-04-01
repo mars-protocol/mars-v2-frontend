@@ -304,7 +304,7 @@ interface ChainConfig {
     routes: string
     dexAssets: string
     dexPools?: string
-    gasPrices?: string
+    gasPrices: string
     aprs: {
       vaults: string
       perpsVault?: string

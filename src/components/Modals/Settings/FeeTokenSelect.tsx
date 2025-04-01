@@ -5,7 +5,7 @@ import Text from 'components/common/Text'
 import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useGasPrices from 'hooks/prices/useGasPrices'
-import useFeeToken from 'hooks/wallet/useFeeToken'
+import { getFeeToken, setFeeToken } from 'hooks/wallet/useInitFeeToken'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import { useEffect, useMemo } from 'react'
 import useStore from 'store'
@@ -13,12 +13,12 @@ import { findBestFeeToken, getAvailableFeeTokens } from 'utils/feeToken'
 import { BN } from 'utils/helpers'
 
 export default function FeeTokenSelect() {
-  const { feeToken, setFeeToken } = useFeeToken()
   const address = useStore((s) => s.address)
   const { data: walletBalances } = useWalletBalances(address)
   const chainConfig = useChainConfig()
   const { data: assets } = useAssets()
   const { data: gasPricesData } = useGasPrices()
+  const feeToken = useMemo(() => getFeeToken(chainConfig.id), [chainConfig.id])
 
   useEffect(() => {
     if (!gasPricesData) return
@@ -35,17 +35,20 @@ export default function FeeTokenSelect() {
           assets,
         )
         if (bestToken && bestToken.coinMinimalDenom !== feeToken.coinMinimalDenom) {
-          setFeeToken(bestToken)
+          setFeeToken(bestToken, chainConfig.id)
         }
       }
     }
-  }, [walletBalances, feeToken, setFeeToken, gasPricesData, chainConfig, assets])
+  }, [walletBalances, feeToken, gasPricesData, chainConfig, assets])
 
   useEffect(() => {
     if (!feeToken && gasPricesData) {
-      setFeeToken(findBestFeeToken(walletBalances, gasPricesData.prices, chainConfig, assets))
+      setFeeToken(
+        findBestFeeToken(walletBalances, gasPricesData.prices, chainConfig, assets),
+        chainConfig.id,
+      )
     }
-  }, [gasPricesData, feeToken, setFeeToken, walletBalances, chainConfig, assets])
+  }, [gasPricesData, feeToken, walletBalances, chainConfig, assets])
 
   const availableFeeTokens = useMemo(() => {
     if (!gasPricesData?.prices || !chainConfig || !assets) return []
@@ -57,7 +60,8 @@ export default function FeeTokenSelect() {
       (feeToken) => feeToken.token.coinMinimalDenom === tokenDenom,
     )?.token
 
-    if (token && token.coinMinimalDenom !== feeToken?.coinMinimalDenom) setFeeToken(token)
+    if (token && token.coinMinimalDenom !== feeToken?.coinMinimalDenom)
+      setFeeToken(token, chainConfig.id)
   }
 
   const feeTokenOptions = useMemo(() => {

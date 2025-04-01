@@ -6,7 +6,7 @@ import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { useSkipBridgeStatus } from 'hooks/localStorage/useSkipBridgeStatus'
 import useGasPrices from 'hooks/prices/useGasPrices'
-import useFeeToken from 'hooks/wallet/useFeeToken'
+import { setFeeToken } from 'hooks/wallet/useInitFeeToken'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
@@ -26,7 +26,6 @@ export default function SkipBridgeModal() {
   const { data: walletBalances } = useWalletBalances(address)
   const { data: gasPricesData } = useGasPrices()
   const { data: assets } = useAssets()
-  const { setFeeToken } = useFeeToken()
   const [isCompleting, setIsCompleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isDepositComplete, setIsDepositComplete] = useState(false)
@@ -48,14 +47,14 @@ export default function SkipBridgeModal() {
       (token) => token.token.coinMinimalDenom === chainConfig.stables[0],
     )?.token
     if (completedBridges.length > 0 && !pendingBridges.length && stableFeeToken) {
-      setFeeToken(stableFeeToken)
+      setFeeToken(stableFeeToken, chainConfig.id)
     }
   }, [
     completedBridges.length,
     pendingBridges.length,
     chainConfig.stables,
-    setFeeToken,
     availableFeeTokens,
+    chainConfig.id,
   ])
 
   const handleCompleteTransaction = async () => {

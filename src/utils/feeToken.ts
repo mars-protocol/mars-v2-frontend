@@ -64,7 +64,18 @@ export function getAvailableFeeTokens(
 
   return availableTokens
     .filter((token) => token.token.coinDecimals === PRICE_ORACLE_DECIMALS)
-    .sort((a, b) => (BN(b.balance).isGreaterThan(BN(a.balance)) ? 1 : -1))
+    .sort((a, b) => {
+      // First priority: native currency
+      if (a.token.coinMinimalDenom === nativeCurrency.coinMinimalDenom) return -1
+      if (b.token.coinMinimalDenom === nativeCurrency.coinMinimalDenom) return 1
+
+      // Second priority: stable denom
+      if (a.token.coinMinimalDenom === stableDenom) return -1
+      if (b.token.coinMinimalDenom === stableDenom) return 1
+
+      // Third priority: balance comparison (higher balance first)
+      return BN(b.balance).isGreaterThan(BN(a.balance)) ? 1 : -1
+    })
 }
 
 export function findBestFeeToken(

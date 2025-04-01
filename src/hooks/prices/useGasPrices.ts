@@ -10,15 +10,15 @@ import { getUrl } from 'utils/url'
 export default function useGasPrices() {
   const chainConfig = useChainConfig()
   const { data: assets } = useAssets()
-
   const apiUrl = chainConfig.isOsmosis
     ? chainConfig.endpoints.gasPrices
     : getUrl(chainConfig.endpoints.rest, chainConfig.endpoints.gasPrices)
+
   return useSWR<GasPricesResponse>(
-    [apiUrl, chainConfig.id, assets],
-    async ([url]) => {
+    apiUrl && assets && `chains/${chainConfig.id}/getGasPrices`,
+    async () => {
       try {
-        const response = await fetch(url)
+        const response = await fetch(apiUrl)
         const gasPrices = [] as Coin[]
 
         if (chainConfig.isOsmosis) {
@@ -46,7 +46,7 @@ export default function useGasPrices() {
           }
         }
       } catch (error) {
-        logApiError(url, error, 'Failed to fetch gas prices')
+        logApiError(apiUrl, error, 'Failed to fetch gas prices')
         return {
           prices: [
             {
