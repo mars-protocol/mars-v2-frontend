@@ -1284,7 +1284,7 @@ interface FetchError {
 }
 
 interface FocusComponent {
-  component: import('react').ReactElement | null
+  component: ReactElement | null
   onClose?: () => void
 }
 
@@ -1821,7 +1821,6 @@ interface PerpsTradingFee {
     closing: BigNumber
   }
 }
-
 interface PriceData {
   denom: string
   amount: string
@@ -1848,3 +1847,32 @@ interface PythPriceData {
     expo: number
   }
 }
+
+type TrackActionType =
+  | 'Swap'
+  | 'Lend'
+  | 'Unlend'
+  | 'Borrow'
+  | 'Repay'
+  | 'Withdraw'
+  | 'Deposit'
+  | 'Deposit and Lend'
+  | 'Provide LP'
+  | 'Withdraw LP'
+  | 'Open Long'
+  | 'Open Short'
+  | 'Close Long'
+  | 'Close Short'
+  | 'Increase Long'
+  | 'Decrease Long'
+  | 'Increase Short'
+  | 'Decrease Short'
+  | 'Switch Position to Long'
+  | 'Switch Position to Short'
+  | 'Claim Rewards'
+  | 'Mint HLS Account'
+  | 'Mint Credit Account'
+  | 'Create Limit Order'
+  | 'Cancel Limit Order'
+  | 'Deposit Into Vault'
+  | 'Deposit Into Perps Vault'

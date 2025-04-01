@@ -60,7 +60,10 @@ export function getAstroLpSharesFromCoinsValue(
   const astroLpAsset = assets.find(byDenom(astroLp.denoms.lp))
   if (!astroLpAsset || !astroLpAsset.price) return BN_ZERO
 
-  return coinsValue.dividedBy(astroLpAsset.price.amount).shiftedBy(astroLpAsset.decimals)
+  return coinsValue
+    .dividedBy(astroLpAsset.price.amount)
+    .shiftedBy(astroLpAsset.decimals)
+    .decimalPlaces(0)
 }
 
 export function getAstroLpCoinsFromShares(

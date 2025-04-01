@@ -8,10 +8,7 @@ export default async function getGasPrice(chainConfig: ChainConfig) {
 
   if (!endpoints.gasPrices) return gasPrice
 
-  const uri =
-    id === ChainInfoID.Osmosis1
-      ? new URL(endpoints.gasPrices)
-      : new URL(endpoints.gasPrices, endpoints.rest)
+  const uri = new URL(endpoints.gasPrices, endpoints.rest)
 
   try {
     const response = await fetchWithTimeout(uri.toString(), FETCH_TIMEOUT)
