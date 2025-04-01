@@ -12,7 +12,7 @@ import useGasPrices from 'hooks/prices/useGasPrices'
 import useFeeToken from 'hooks/wallet/useFeeToken'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
-import { findBestFeeToken } from 'utils/feeToken'
+import { getAvailableFeeTokens } from 'utils/feeToken'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
 
@@ -80,12 +80,22 @@ function FetchedBalances({
     )
 
     if (!currentTokenBalance || BN(currentTokenBalance.amount).isLessThanOrEqualTo(0)) {
-      const bestToken = findBestFeeToken(walletBalances, gasPricesData.prices, chainConfig, assets)
+      const availableFeeTokens = getAvailableFeeTokens(
+        walletBalances,
+        gasPricesData.prices,
+        chainConfig,
+        assets,
+      )
+      const currentToken = availableFeeTokens.find(
+        (token) => token.token.coinMinimalDenom === feeToken.coinMinimalDenom,
+      )?.token
+
+      if (!currentToken && availableFeeTokens.length > 0) setFeeToken(availableFeeTokens[0].token)
       if (
-        bestToken.coinMinimalDenom !== feeToken.coinMinimalDenom ||
-        bestToken.gasPriceStep?.average !== feeToken.gasPriceStep?.average
+        currentToken.coinMinimalDenom !== feeToken.coinMinimalDenom ||
+        currentToken.gasPriceStep?.average !== feeToken.gasPriceStep?.average
       ) {
-        setFeeToken(bestToken)
+        setFeeToken(currentToken)
       }
     }
 

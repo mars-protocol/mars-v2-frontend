@@ -1,10 +1,10 @@
-import useSWR from 'swr'
-import { FETCH_TIMEOUT } from 'constants/query'
-import { fetchWithTimeout } from 'utils/fetch'
 import { pythEndpoints } from 'constants/pyth'
-import { BN } from 'utils/helpers'
+import { FETCH_TIMEOUT } from 'constants/query'
 import useStore from 'store'
+import useSWR from 'swr'
 import { logApiError } from 'utils/error'
+import { fetchWithTimeout } from 'utils/fetch'
+import { BN } from 'utils/helpers'
 
 export default function usePrices() {
   const assetsFromStore = useStore((s) => s?.assets) || []
@@ -73,7 +73,7 @@ async function fetchPythPrices(assets: Asset[]): Promise<PricesResponse> {
       pythResponse = await response.json()
     }
 
-    const prices: PriceData[] = []
+    const prices: Coin[] = []
 
     assets.forEach((asset) => {
       if (!asset) return

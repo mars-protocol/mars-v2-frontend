@@ -75,7 +75,7 @@ export function useSkipBridgeStatus() {
         console.error('Failed to check wallet balances:', error)
       }
     }
-  }, [walletBalances, chainConfig.id])
+  }, [chainConfig.id, walletBalances, skipBridges, hasCompletedBridge])
 
   useEffect(() => {
     checkTransactionStatus()

@@ -1826,17 +1826,9 @@ interface PerpsTradingFee {
     closing: BigNumber
   }
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> 68a4107a81ef0b9b778639d96bf7508f10d86702
-interface PriceData {
-  denom: string
-  amount: string
-}
 
 interface PricesResponse {
-  prices: PriceData[]
+  prices: Coin[]
 }
 
 interface GasPricesResponse {
