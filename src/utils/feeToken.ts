@@ -32,6 +32,7 @@ export function getAvailableFeeTokens(
   const nativeBalance = balances.find((coin) => coin.denom === nativeCurrency.coinMinimalDenom)
   const nativeGasPrice = gasPrices.find((price) => price.denom === nativeCurrency.coinMinimalDenom)
   const nativeAsset = assets?.find((asset) => asset.denom === nativeCurrency.coinMinimalDenom)
+
   if (nativeAsset && nativeBalance && BN(nativeBalance.amount).isGreaterThan(0) && nativeGasPrice) {
     availableTokens.push({
       token: getNetworkCurrency(nativeCurrency.coinMinimalDenom, nativeAsset, nativeGasPrice),

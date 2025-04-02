@@ -71,7 +71,7 @@ export default function createBroadcastSlice(
         wallet: get().client?.connectedWallet,
         overrides: {
           feeCurrency,
-          gasPrice: `${feeCurrency.gasPriceStep?.average}${feeCurrency.coinMinimalDenom}`,
+          gasPrice: `${feeCurrency.gasPriceStep.average}${feeCurrency.coinMinimalDenom}`,
           gasAdjustment: DEFAULT_GAS_MULTIPLIER,
         },
       })

@@ -3,16 +3,12 @@ import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useSWR from 'swr'
 import { byDenom } from 'utils/array'
-import { logApiError } from 'utils/error'
 import { BN } from 'utils/helpers'
-import { getUrl } from 'utils/url'
 
 export default function useGasPrices() {
   const chainConfig = useChainConfig()
   const { data: assets } = useAssets()
-  const apiUrl = chainConfig.isOsmosis
-    ? chainConfig.endpoints.gasPrices
-    : getUrl(chainConfig.endpoints.rest, chainConfig.endpoints.gasPrices)
+  const apiUrl = chainConfig.endpoints.gasPrices
 
   return useSWR<GasPricesResponse>(
     apiUrl && assets && `chains/${chainConfig.id}/getGasPrices`,
@@ -46,12 +42,11 @@ export default function useGasPrices() {
           }
         }
       } catch (error) {
-        logApiError(apiUrl, error, 'Failed to fetch gas prices')
         return {
           prices: [
             {
               denom: chainConfig.defaultCurrency.coinMinimalDenom,
-              amount: chainConfig.gasPrice,
+              amount: chainConfig.defaultCurrency.gasPriceStep.average.toString(),
             },
           ],
         }

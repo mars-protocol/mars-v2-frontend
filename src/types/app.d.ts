@@ -288,7 +288,7 @@ interface ChainConfig {
     coinMinimalDenom: string
     coinDecimals: number
     coinGeckoId: string
-    gasPriceStep?: {
+    gasPriceStep: {
       low: number
       average: number
       high: number
@@ -313,7 +313,6 @@ interface ChainConfig {
   dexName: string
   explorerName: string
   features: ('ibc-transfer' | 'ibc-go')[]
-  gasPrice: string
   id: import('types/enums').ChainInfoID
   name: string
   network: 'mainnet' | 'testnet'

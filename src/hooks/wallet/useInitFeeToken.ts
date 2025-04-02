@@ -57,7 +57,8 @@ export default function useInitFeeToken() {
 
     const feeToken = getFeeToken(chainConfig.id)
     if (!feeToken) {
-      setFeeToken(availableFeeTokens[0].token, chainConfig.id)
+      if (availableFeeTokens.length === 0) setFeeToken(chainConfig.defaultCurrency, chainConfig.id)
+      else setFeeToken(availableFeeTokens[0].token, chainConfig.id)
       return true
     }
 
@@ -78,14 +79,14 @@ export default function useInitFeeToken() {
         setFeeToken(availableFeeTokens[0].token, chainConfig.id)
         return true
       }
-    }
-
-    if (
-      currentToken.coinMinimalDenom !== feeToken.coinMinimalDenom ||
-      currentToken.gasPriceStep?.average !== feeToken.gasPriceStep?.average
-    ) {
-      setFeeToken(currentToken, chainConfig.id)
-      return true
+    } else {
+      if (
+        currentToken.coinMinimalDenom !== feeToken.coinMinimalDenom ||
+        currentToken.gasPriceStep.average !== feeToken.gasPriceStep.average
+      ) {
+        setFeeToken(currentToken, chainConfig.id)
+        return true
+      }
     }
 
     return !!feeToken
