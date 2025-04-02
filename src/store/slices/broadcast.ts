@@ -814,10 +814,12 @@ export default function createBroadcastSlice(
           },
         })
 
+      const comparison =
+        options.comparison || (options.tradeDirection === 'long' ? 'less_than' : 'greater_than')
       const triggerConditions: Condition[] = [
         {
           oracle_price: {
-            comparison: options.tradeDirection === 'long' ? 'less_than' : 'greater_than',
+            comparison,
             denom: options.coin.denom,
             price: options.price.toString(),
           },
@@ -902,10 +904,13 @@ export default function createBroadcastSlice(
             },
           })
 
+        const comparison =
+          order.comparison || (order.tradeDirection === 'long' ? 'less_than' : 'greater_than')
+
         const triggerConditions: Condition[] = [
           {
             oracle_price: {
-              comparison: order.tradeDirection === 'long' ? 'less_than' : 'greater_than',
+              comparison,
               denom: order.coin.denom,
               price: order.price.toString(),
             },
