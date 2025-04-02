@@ -1,4 +1,3 @@
-import { NetworkCurrency } from '@delphi-labs/shuttle'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { BN } from './helpers'

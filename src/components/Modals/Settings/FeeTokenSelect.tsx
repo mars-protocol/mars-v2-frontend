@@ -1,4 +1,3 @@
-import { NetworkCurrency } from '@delphi-labs/shuttle'
 import AssetImage from 'components/common/assets/AssetImage'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Select from 'components/common/Select'

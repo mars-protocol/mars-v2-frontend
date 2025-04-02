@@ -265,6 +265,18 @@ interface Bridge {
   image: string
 }
 
+type NetworkCurrency = {
+  coinDenom: string
+  coinMinimalDenom: string
+  coinDecimals: number
+  coinGeckoId?: string
+  gasPriceStep: {
+    low: number
+    average: number
+    high: number
+  }
+}
+
 interface ChainConfig {
   isOsmosis: boolean
   lp?: Asset[]
@@ -283,17 +295,7 @@ interface ChainConfig {
     creditManager: string
     pyth: string
   }
-  defaultCurrency: {
-    coinDenom: string
-    coinMinimalDenom: string
-    coinDecimals: number
-    coinGeckoId: string
-    gasPriceStep: {
-      low: number
-      average: number
-      high: number
-    }
-  }
+  defaultCurrency: NetworkCurrency
   endpoints: {
     rest: string
     rpc: string
@@ -799,7 +801,7 @@ interface WalletClient {
       rest?: string
       gasAdjustment?: number
       gasPrice?: string
-      feeCurrency?: import('@delphi-labs/shuttle').NetworkCurrency
+      feeCurrency?: NetworkCurrency
     }
   }) => Promise<import('@delphi-labs/shuttle').BroadcastResult>
   simulate: (options: {
@@ -810,7 +812,7 @@ interface WalletClient {
       rest?: string
       gasAdjustment?: number
       gasPrice?: string
-      feeCurrency?: import('@delphi-labs/shuttle').NetworkCurrency
+      feeCurrency?: NetworkCurrency
     }
   }) => Promise<import('@delphi-labs/shuttle').SimulateResult>
 }

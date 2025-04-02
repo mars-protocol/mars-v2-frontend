@@ -1,4 +1,3 @@
-import { NetworkCurrency } from '@delphi-labs/shuttle'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
