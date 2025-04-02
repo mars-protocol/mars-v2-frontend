@@ -1,3 +1,4 @@
+import { NetworkCurrency } from '@delphi-labs/shuttle'
 import AssetImage from 'components/common/assets/AssetImage'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Select from 'components/common/Select'
@@ -7,7 +8,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useGasPrices from 'hooks/prices/useGasPrices'
 import { getFeeToken, setFeeToken } from 'hooks/wallet/useInitFeeToken'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import useStore from 'store'
 import { findBestFeeToken, getAvailableFeeTokens } from 'utils/feeToken'
 import { BN } from 'utils/helpers'
@@ -19,6 +20,7 @@ export default function FeeTokenSelect() {
   const { data: assets } = useAssets()
   const { data: gasPricesData } = useGasPrices()
   const feeToken = useMemo(() => getFeeToken(chainConfig.id), [chainConfig.id])
+  const [currentFeeToken, setCurrentFeeToken] = useState<NetworkCurrency | undefined>(feeToken)
 
   useEffect(() => {
     if (!gasPricesData) return
@@ -63,8 +65,10 @@ export default function FeeTokenSelect() {
       (feeToken) => feeToken.token.coinMinimalDenom === tokenDenom,
     )?.token
 
-    if (token && token.coinMinimalDenom !== feeToken?.coinMinimalDenom)
+    if (token && token.coinMinimalDenom !== feeToken?.coinMinimalDenom) {
+      setCurrentFeeToken(token)
       setFeeToken(token, chainConfig.id)
+    }
   }
 
   const feeTokenOptions = useMemo(() => {
@@ -96,7 +100,7 @@ export default function FeeTokenSelect() {
   return (
     <Select
       options={feeTokenOptions}
-      defaultValue={feeToken.coinMinimalDenom}
+      defaultValue={currentFeeToken?.coinMinimalDenom || feeToken.coinMinimalDenom}
       onChange={handleSelectToken}
       className='relative border w-60 rounded-base border-white/10'
       containerClassName='justify-end'
