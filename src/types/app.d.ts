@@ -857,7 +857,7 @@ type DocLinkType = 'wallet' | 'account' | 'terms' | 'fund' | 'hls'
 
 interface DropDownItem {
   icon: import('react').ReactNode
-  onClick: () => void
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void
   text: string
   disabled?: boolean
   disabledTooltip?: string
@@ -1007,6 +1007,7 @@ interface TriggerOrderOptions {
   tradeDirection: TradeDirection
   price: BigNumber
   keeperFee: BNCoin
+  comparison?: TriggerType
 }
 
 interface CreateTriggerOrdersOptions extends TriggerOrderOptions {
@@ -1260,7 +1261,10 @@ interface ModalSlice {
   perpsVaultModal: PerpsVaultModal | null
   settingsModal: boolean
   keeperFeeModal: boolean
-  addSLTPModal: boolean
+  addSLTPModal: {
+    open: boolean
+    parentPosition: PerpPositionRow | null
+  }
   unlockModal: UnlockModal | null
   farmModal: FarmModal | null
   walletAssetsModal: WalletAssetModal | null
