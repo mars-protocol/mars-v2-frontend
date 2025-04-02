@@ -308,7 +308,14 @@ export default function Manage(props: Props) {
         onClick: () => handleCloseClick(),
       },
     ],
-    [handleCloseClick, handleFlipPosition, openPerpsSlTpModal, perpPosition, searchParams],
+    [
+      handleCloseClick,
+      handleFlipPosition,
+      openPerpsSlTpModal,
+      setSearchParams,
+      searchParams,
+      perpPosition,
+    ],
   )
 
   if (props.perpPosition.type === 'limit' || props.perpPosition.type === 'stop')
