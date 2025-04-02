@@ -10,12 +10,12 @@ const CHAIN_ID_MAP: Record<string, number> = {
 }
 
 const CHAIN_ICONS: Record<number, string> = {
-  [mainnet.id]: '/images/chainLogos/rsz_ethereum.jpg',
-  [arbitrum.id]: '/images/chainLogos/rsz_arbitrum.jpg',
-  [base.id]: '/images/chainLogos/rsz_base.jpg',
-  [celo.id]: '/images/chainLogos/rsz_celo.jpg',
-  [optimism.id]: '/images/chainLogos/rsz_optimism.jpg',
-  [polygon.id]: '/images/chainLogos/rsz_polygon.jpg',
+  [mainnet.id]: '/images/chainLogos/ethereum.png',
+  [arbitrum.id]: '/images/chainLogos/arbitrum.png',
+  [base.id]: '/images/chainLogos/base.png',
+  [celo.id]: '/images/chainLogos/celo.png',
+  [optimism.id]: '/images/chainLogos/optimism.png',
+  [polygon.id]: '/images/chainLogos/polygon.png',
 }
 
 export function getChainLogoByName(chainName: string): string | null {
