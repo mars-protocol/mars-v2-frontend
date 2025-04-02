@@ -4,13 +4,11 @@ import AssetAmountInput from 'components/common/AssetAmountInput'
 import Button from 'components/common/Button'
 import { Callout, CalloutType } from 'components/common/Callout'
 import Text from 'components/common/Text'
-import { getDefaultChainSettings } from 'constants/defaultSettings'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useAsset from 'hooks/assets/useAsset'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import useKeeperFee from 'hooks/perps/useKeeperFee'
+import { useCallback, useEffect, useState } from 'react'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
 
@@ -19,23 +17,10 @@ export default function KeeperFeeModal() {
   const creditManagerConfig = useStore((s) => s.creditManagerConfig)
   const USD = useAsset('usd')
   const modal = useStore((s) => s.keeperFeeModal)
-
-  const [keeperFee, setKeeperFee] = useLocalStorage(
-    `${chainConfig.id}/${LocalStorageKeys.PERPS_KEEPER_FEE}`,
-    creditManagerConfig?.keeper_fee_config?.min_fee ??
-      getDefaultChainSettings(chainConfig).keeperFee,
-  )
-
-  const parsedKeeperFee = useMemo(() => {
-    try {
-      return typeof keeperFee === 'string' ? JSON.parse(keeperFee) : keeperFee
-    } catch {
-      return { denom: '', amount: '0' }
-    }
-  }, [keeperFee])
+  const { keeperFee, setKeeperFee } = useKeeperFee()
 
   const [amount, setAmount] = useState(() => {
-    return BN(parsedKeeperFee?.amount ?? '0').shiftedBy(2 - PRICE_ORACLE_DECIMALS)
+    return BN(keeperFee?.amount ?? '0').shiftedBy(2 - PRICE_ORACLE_DECIMALS)
   })
 
   const onClose = useCallback(() => {
@@ -46,17 +31,17 @@ export default function KeeperFeeModal() {
   const isLessThanMin = amount.isLessThan(minKeeperFee?.shiftedBy(2 - PRICE_ORACLE_DECIMALS))
 
   useEffect(() => {
-    if (parsedKeeperFee?.amount) {
-      setAmount(BN(parsedKeeperFee.amount).shiftedBy(2 - PRICE_ORACLE_DECIMALS))
+    if (keeperFee?.amount) {
+      setAmount(BN(keeperFee.amount).shiftedBy(2 - PRICE_ORACLE_DECIMALS))
     }
-  }, [parsedKeeperFee])
+  }, [keeperFee])
 
   const handleActionClick = () => {
-    if (!USD || !parsedKeeperFee.denom) return
+    if (!USD || !keeperFee?.denom) return
 
     setKeeperFee(
       JSON.stringify({
-        denom: parsedKeeperFee.denom,
+        denom: keeperFee.denom,
         amount: amount.shiftedBy(PRICE_ORACLE_DECIMALS - 2).toString(),
       }),
     )

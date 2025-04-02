@@ -13,11 +13,7 @@ import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirectio
 import ConfirmationSummary from 'components/perps/Module/ConfirmationSummary'
 import { ExpectedPrice } from 'components/perps/Module/ExpectedPrice'
 import TradingFee from 'components/perps/Module/TradingFee'
-import {
-  defaultKeeperFeeAmount,
-  defaultKeeperFeeDenom,
-  getDefaultChainSettings,
-} from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
@@ -35,7 +31,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
 import { formatLeverage, getPerpsPriceDecimals } from 'utils/formatters'
-import { BN } from 'utils/helpers'
+import useKeeperFee from 'hooks/perps/useKeeperFee'
 
 type Props = {
   leverage: number
@@ -76,12 +72,7 @@ export default function PerpsSummary(props: Props) {
   const updatedAccount = useStore((s) => s.updatedAccount)
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const chainConfig = useChainConfig()
-  const creditManagerConfig = useStore((s) => s.creditManagerConfig)
-  const [keeperFee] = useLocalStorage(
-    `${chainConfig.id}/${LocalStorageKeys.PERPS_KEEPER_FEE}`,
-    creditManagerConfig?.keeper_fee_config?.min_fee ??
-      getDefaultChainSettings(chainConfig).keeperFee,
-  )
+  const { calculateKeeperFee } = useKeeperFee()
 
   const currentAccount = useCurrentAccount()
   const isLimitOrder = props.orderType === OrderType.LIMIT
@@ -106,14 +97,6 @@ export default function PerpsSummary(props: Props) {
   const feeToken = useMemo(
     () => assets.find(byDenom(perpsConfig?.base_denom ?? '')),
     [assets, perpsConfig?.base_denom],
-  )
-
-  const calculateKeeperFee = useMemo(
-    () =>
-      (isLimitOrder || isStopOrder) && keeperFee?.amount
-        ? BNCoin.fromDenomAndBigNumber(keeperFee.denom, BN(keeperFee.amount))
-        : BNCoin.fromDenomAndBigNumber(defaultKeeperFeeDenom, BN(defaultKeeperFeeAmount)),
-    [isLimitOrder, isStopOrder, keeperFee.amount, keeperFee.denom],
   )
 
   const submitLimitOrder = useSubmitLimitOrder()

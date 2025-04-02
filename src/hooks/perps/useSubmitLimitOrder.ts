@@ -15,7 +15,7 @@ interface LimitOrderParams {
   baseDenom: string
   keeperFee: BNCoin
   isReduceOnly: boolean
-  comparison: 'less_than' | 'greater_than'
+  comparison: TriggerType
 }
 
 export function useSubmitLimitOrder() {
@@ -26,10 +26,12 @@ export function useSubmitLimitOrder() {
   const createMultipleTriggerOrders = useStore((s) => s.createMultipleTriggerOrders)
 
   const submitLimitOrder = useCallback(
-    async (orderOrOrders: LimitOrderParams | LimitOrderParams[]) => {
+    async (singleOrMultipleOrders: LimitOrderParams | LimitOrderParams[]) => {
       if (!currentAccount) return
 
-      const orders = Array.isArray(orderOrOrders) ? orderOrOrders : [orderOrOrders]
+      const orders = Array.isArray(singleOrMultipleOrders)
+        ? singleOrMultipleOrders
+        : [singleOrMultipleOrders]
 
       const orderKeeperFee = orders[0].keeperFee
       const totalKeeperFeeAmount = orderKeeperFee.amount.times(orders.length)
