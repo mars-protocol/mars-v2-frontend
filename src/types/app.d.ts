@@ -902,7 +902,7 @@ type DocLinkType = 'wallet' | 'account' | 'terms' | 'fund' | 'hls'
 
 interface DropDownItem {
   icon: import('react').ReactNode
-  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void
+  onClick: (e?: React.MouseEvent<HTMLButtonElement>) => void
   text: string
   disabled?: boolean
   disabledTooltip?: string
