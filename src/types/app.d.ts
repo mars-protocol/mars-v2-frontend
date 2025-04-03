@@ -21,6 +21,11 @@ type ActionCoin = import('types/generated/mars-credit-manager/MarsCreditManager.
 type Action = import('types/generated/mars-credit-manager/MarsCreditManager.types').Action
 type BNCoin = import('types/classes/BNCoin').BNCoin
 
+type ExecutePerpOrderType =
+  import('types/generated/mars-credit-manager/MarsCreditManager.types').ExecutePerpOrderType
+type CreateTriggerOrderType =
+  import('types/generated/mars-credit-manager/MarsCreditManager.types').CreateTriggerOrderType
+
 type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp' | 'market' | 'limit' | 'stop'
 type TableType = 'balances' | 'strategies' | 'perps'
 type AccountKind = import('types/generated/mars-credit-manager/MarsCreditManager.types').AccountKind
@@ -1008,6 +1013,8 @@ interface TriggerOrderOptions {
   price: BigNumber
   keeperFee: BNCoin
   comparison?: TriggerType
+  orderType?: CreateTriggerOrderType
+  parentOrderId?: string
 }
 
 interface CreateTriggerOrdersOptions extends TriggerOrderOptions {
@@ -1061,6 +1068,7 @@ interface BroadcastSlice {
     reduceOnly?: boolean
     autolend: boolean
     baseDenom: string
+    orderType?: ExecutePerpOrderType
   }) => Promise<boolean>
   closePerpPosition: (options: {
     accountId: string
