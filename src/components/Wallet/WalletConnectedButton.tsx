@@ -157,17 +157,22 @@ export default function WalletConnectedButton() {
         </span>
         <div
           className={classNames(
-            'relative ml-2 flex h-full items-center pl-2 number',
-            'before:content-[" "] before:absolute before:bottom-1.5 before:left-0 before:top-0.5 before:h-[calc(100%-4px)] before:border-l before:border-white/20',
+            'relative  flex h-full items-center number',
+            walletAmount.isGreaterThan(0) &&
+              'ml-2 pl-2 before:content-[" "] before:absolute before:bottom-1.5 before:left-0 before:top-0.5 before:h-[calc(100%-4px)] before:border-l before:border-white/20',
           )}
         >
           {isLoading ? (
             <CircularProgress size={12} />
           ) : (
-            <FormattedNumber
-              amount={walletAmount.toNumber()}
-              options={{ suffix: ` ${feeTokenAsset.symbol}`, abbreviated: true }}
-            />
+            <>
+              {walletAmount.isGreaterThan(0) && (
+                <FormattedNumber
+                  amount={walletAmount.toNumber()}
+                  options={{ suffix: ` ${feeTokenAsset.symbol}`, abbreviated: true }}
+                />
+              )}
+            </>
           )}
         </div>
       </Button>
