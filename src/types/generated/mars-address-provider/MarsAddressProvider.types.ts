@@ -27,6 +27,7 @@ export type MarsAddressType =
   | 'swapper'
   | 'astroport_incentives'
   | 'perps'
+  | 'health'
 export type OwnerUpdate =
   | {
       propose_new_owner: {
