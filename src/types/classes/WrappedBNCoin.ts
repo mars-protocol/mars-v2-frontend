@@ -1,4 +1,4 @@
-import { BNCoin } from './BNCoin'
+import { BNCoin } from 'types/classes/BNCoin'
 
 export class WrappedBNCoin {
   public coin: BNCoin

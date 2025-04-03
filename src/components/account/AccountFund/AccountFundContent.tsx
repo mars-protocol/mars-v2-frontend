@@ -1,6 +1,7 @@
 import { RouteResponse } from '@skip-go/client'
 import classNames from 'classnames'
 import AccountFundingAssets from 'components/account/AccountFund/AccountFundingAssets'
+import BridgeRouteVisualizer from 'components/account/AccountFund/BridgeContent/BridgeRouteVisualizer'
 import EVMAccountSection from 'components/account/AccountFund/EVMAccountSection'
 import Button from 'components/common/Button'
 import { Callout, CalloutType } from 'components/common/Callout'
@@ -31,7 +32,6 @@ import { calculateUsdcFeeReserve, getCurrentFeeToken } from 'utils/feeToken'
 import { chainNameToUSDCAttributes } from 'utils/fetchUSDCBalance'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
-import BridgeRouteVisualizer from './BridgeContent/BridgeRouteVisualizer'
 
 interface Props {
   account?: Account

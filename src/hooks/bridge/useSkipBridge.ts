@@ -1,11 +1,11 @@
 import { SkipClient, TxStatusResponse } from '@skip-go/client'
+import { useEvmBridge } from 'hooks/bridge/useEvmBridge'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import useStore from 'store'
 import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 import { calculateUsdcFeeReserve, isUsdcFeeToken } from 'utils/feeToken'
 import { BN } from 'utils/helpers'
-import { useEvmBridge } from './useEvmBridge'
 
 interface UseSkipBridgeProps {
   chainConfig: ChainConfig
