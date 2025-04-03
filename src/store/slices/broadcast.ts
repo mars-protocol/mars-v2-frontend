@@ -817,10 +817,10 @@ export default function createBroadcastSlice(
         },
       ]
 
-      if (options.orderType === 'child' && options.parentOrderId) {
+      if (options.orderType === 'child') {
         triggerConditions.push({
           trigger_order_executed: {
-            trigger_order_id: options.parentOrderId,
+            trigger_order_id: options.parentOrderId || '',
           },
         })
       }
@@ -917,10 +917,10 @@ export default function createBroadcastSlice(
           },
         ]
 
-        if (order.orderType === 'child' && order.parentOrderId) {
+        if (order.orderType === 'child') {
           triggerConditions.push({
             trigger_order_executed: {
-              trigger_order_id: order.parentOrderId,
+              trigger_order_id: order.parentOrderId || '',
             },
           })
         }
