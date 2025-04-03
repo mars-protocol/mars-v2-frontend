@@ -826,6 +826,14 @@ export default function createBroadcastSlice(
         },
       ]
 
+      if (options.orderType === 'child' && options.parentOrderId) {
+        triggerConditions.push({
+          trigger_order_executed: {
+            trigger_order_id: options.parentOrderId,
+          },
+        })
+      }
+
       const actions: Action[] = []
 
       if (!options.keeperFeeFromLends.amount.isZero()) {
@@ -848,6 +856,7 @@ export default function createBroadcastSlice(
           keeper_fee: options.keeperFee.toCoin(),
           actions: triggerActions,
           conditions: triggerConditions,
+          order_type: options.orderType || 'default',
         },
       })
 
@@ -917,11 +926,20 @@ export default function createBroadcastSlice(
           },
         ]
 
+        if (order.orderType === 'child' && order.parentOrderId) {
+          triggerConditions.push({
+            trigger_order_executed: {
+              trigger_order_id: order.parentOrderId,
+            },
+          })
+        }
+
         actions.push({
           create_trigger_order: {
             keeper_fee: order.keeperFee.toCoin(),
             actions: triggerActions,
             conditions: triggerConditions,
+            order_type: order.orderType || 'default',
           },
         })
       })
@@ -949,6 +967,7 @@ export default function createBroadcastSlice(
       reduceOnly?: boolean
       autolend: boolean
       baseDenom: string
+      orderType?: ExecutePerpOrderType
     }) => {
       const actions: Action[] = [
         {
@@ -956,6 +975,7 @@ export default function createBroadcastSlice(
             denom: options.coin.denom,
             order_size: options.coin.amount.toString() as any,
             reduce_only: options.reduceOnly,
+            ...(options.orderType ? { order_type: options.orderType } : {}),
           },
         },
       ]

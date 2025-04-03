@@ -16,6 +16,8 @@ interface LimitOrderParams {
   keeperFee: BNCoin
   isReduceOnly: boolean
   comparison: TriggerType
+  orderType?: CreateTriggerOrderType
+  parentOrderId?: string
 }
 
 export function useSubmitLimitOrder() {
@@ -76,6 +78,8 @@ export function useSubmitLimitOrder() {
           keeperFee,
           isReduceOnly,
           comparison,
+          orderType,
+          parentOrderId,
         }) => {
           const decimalAdjustment = asset.decimals - PRICE_ORACLE_DECIMALS
           const adjustedLimitPrice = limitPrice.shiftedBy(-decimalAdjustment)
@@ -90,6 +94,8 @@ export function useSubmitLimitOrder() {
             price: adjustedLimitPrice,
             isReduceOnly,
             comparison,
+            orderType,
+            parentOrderId,
           }
         },
       )

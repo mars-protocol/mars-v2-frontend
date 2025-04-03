@@ -9,7 +9,6 @@ import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAssets from 'hooks/assets/useAssets'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
-import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import usePerpsConfig from 'hooks/perps/usePerpsConfig'
 import usePriceValidation from 'hooks/perps/usePriceValidation'
 import { useSubmitLimitOrder } from 'hooks/perps/useSubmitLimitOrder'
@@ -97,6 +96,8 @@ export default function PerpsSlTpModal() {
         limitPrice: stopLossPrice,
         tradeDirection: isShort ? 'short' : ('long' as TradeDirection),
         comparison: isShort ? 'greater_than' : ('less_than' as TriggerType),
+        orderType: 'child' as CreateTriggerOrderType,
+        parentOrderId: parentPosition?.orderId,
         baseDenom: feeToken.denom,
         keeperFee: calculateKeeperFee,
         isReduceOnly: true,
@@ -112,6 +113,8 @@ export default function PerpsSlTpModal() {
         limitPrice: takeProfitPrice,
         tradeDirection: isShort ? 'short' : ('long' as TradeDirection),
         comparison: isShort ? 'less_than' : ('greater_than' as TriggerType),
+        orderType: 'child' as CreateTriggerOrderType,
+        parentOrderId: parentPosition?.orderId,
         baseDenom: feeToken.denom,
         keeperFee: calculateKeeperFee,
         isReduceOnly: true,
@@ -133,6 +136,7 @@ export default function PerpsSlTpModal() {
   }, [
     currentAccount,
     perpsAsset,
+    parentPosition,
     feeToken,
     showStopLoss,
     stopLossPrice,
