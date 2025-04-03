@@ -1802,7 +1802,7 @@ interface ExceutePerpsOrder {
     denom: string
     order_size: SignedUint
     reduce_only?: boolean | null
-    order_type: 'stop_loss' | 'take_profit'
+    order_type?: 'stop_loss' | 'take_profit' | null
   }
 }
 

@@ -19,6 +19,7 @@ export interface InstantiateMsg {
   incentives: IncentivesUnchecked
   keeper_fee_config: KeeperFeeConfig
   max_slippage: Decimal
+  max_trigger_orders: number
   max_unlocking_positions: Uint128
   oracle: OracleBaseForString
   owner: string
@@ -139,7 +140,13 @@ export type Action =
       execute_perp_order: {
         denom: string
         order_size: Int128
+        order_type?: ExecutePerpOrderType | null
         reduce_only?: boolean | null
+      }
+    }
+  | {
+      close_perp_position: {
+        denom: string
       }
     }
   | {
@@ -147,6 +154,7 @@ export type Action =
         actions: Action[]
         conditions: Condition[]
         keeper_fee: Coin
+        order_type?: CreateTriggerOrderType | null
       }
     }
   | {
@@ -230,6 +238,7 @@ export type ActionAmount =
       exact: Uint128
     }
 export type Int128 = string
+export type ExecutePerpOrderType = 'default' | 'parent'
 export type Condition =
   | {
       oracle_price: {
@@ -252,7 +261,13 @@ export type Condition =
         threshold: Decimal
       }
     }
+  | {
+      trigger_order_executed: {
+        trigger_order_id: string
+      }
+    }
 export type Comparison = 'greater_than' | 'less_than'
+export type CreateTriggerOrderType = 'default' | 'parent' | 'child'
 export type LiquidateRequestForVaultBaseForString =
   | {
       deposit: string
@@ -435,6 +450,12 @@ export type CallbackMsg =
       }
     }
   | {
+      close_perp_position: {
+        account_id: string
+        denom: string
+      }
+    }
+  | {
       request_vault_unlock: {
         account_id: string
         amount: Uint128
@@ -536,6 +557,7 @@ export type HealthState =
   | 'healthy'
   | {
       unhealthy: {
+        liquidation_health_factor: Decimal
         max_ltv_health_factor: Decimal
       }
     }
@@ -591,6 +613,7 @@ export interface ConfigUpdates {
   incentives?: IncentivesUnchecked | null
   keeper_fee_config?: KeeperFeeConfig | null
   max_slippage?: Decimal | null
+  max_trigger_orders?: number | null
   max_unlocking_positions?: Uint128 | null
   oracle?: OracleBaseForString | null
   params?: ParamsBaseForString | null
@@ -602,8 +625,7 @@ export interface ConfigUpdates {
   zapper?: ZapperBaseForString | null
 }
 export interface NftConfigUpdates {
-  credit_manager_contract_addr?: string | null
-  health_contract_addr?: string | null
+  address_provider_contract_addr?: string | null
   max_value_for_burn?: Uint128 | null
 }
 export interface VaultBaseForAddr {

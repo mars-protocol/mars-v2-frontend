@@ -54,11 +54,13 @@ export interface AssetParamsBaseForAddr {
   credit_manager: CmSettingsForAddr
   denom: string
   deposit_cap: Uint128
+  interest_rate_model: InterestRateModel
   liquidation_bonus: LiquidationBonus
   liquidation_threshold: Decimal
   max_loan_to_value: Decimal
   protocol_liquidation_fee: Decimal
   red_bank: RedBankSettings
+  reserve_factor: Decimal
 }
 export interface CmSettingsForAddr {
   hls?: HlsParamsBaseForAddr | null
@@ -69,6 +71,12 @@ export interface HlsParamsBaseForAddr {
   correlations: HlsAssetTypeForAddr[]
   liquidation_threshold: Decimal
   max_loan_to_value: Decimal
+}
+export interface InterestRateModel {
+  base: Decimal
+  optimal_utilization_rate: Decimal
+  slope_1: Decimal
+  slope_2: Decimal
 }
 export interface LiquidationBonus {
   max_lb: Decimal
