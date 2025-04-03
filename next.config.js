@@ -53,9 +53,20 @@ const nextConfig = {
   },
   async rewrites() {
     return [
+      // {
+      //   source: '/api/:path*',
+      //   destination: '/api/:path*',
+      // },
       {
-        source: '/:any*',
+        source: '/:path*',
         destination: '/',
+        has: [
+          {
+            type: 'header',
+            key: 'User-Agent',
+            value: '(^(?!facebook|twitter|linkedin|bot|crawl|spider).*$)',
+          },
+        ],
       },
     ]
   },

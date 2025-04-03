@@ -28,6 +28,7 @@
     "@tanstack/react-table": "^8.21.2",
     "@tippyjs/react": "^4.2.6",
     "@vercel/analytics": "^1.5.0",
+    "@vercel/og": "^0.6.5",
     "axios": "^1.7.9",
     "bignumber.js": "^9.1.2",
     "classnames": "^2.5.1",
