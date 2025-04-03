@@ -358,16 +358,14 @@ export function PerpsModule() {
                 {message}
               </Callout>
             ))}
-            {currentPerpPosition && (isLimitOrder || isStopOrder) && (
-              <ReduceOnlySwitch
-                isReduceOnly={isReduceOnly}
-                setIsReduceOnly={setIsReduceOnly}
-                isStopOrder={isStopOrder}
-                reduceOnlyWarning={reduceOnlyWarning}
-              />
-            )}
           </div>
           <div className='flex flex-wrap w-full gap-4 mt-4'>
+            <ReduceOnlySwitch
+              isReduceOnly={isReduceOnly}
+              setIsReduceOnly={setIsReduceOnly}
+              isStopOrder={isStopOrder}
+              reduceOnlyWarning={reduceOnlyWarning}
+            />
             {(isLimitOrder || isStopOrder) && <KeeperFee />}
             <PerpsSummary
               amount={amount}
