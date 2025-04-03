@@ -29,66 +29,96 @@ export function getFeeToken(chainConfigId: ChainConfig['id']) {
 
 export default function useInitFeeToken() {
   const walletAddress = useStore((s) => s.address)
-  const { data: walletBalances } = useWalletBalances(walletAddress)
+  const { data: walletBalances, isLoading: isLoadingBalances } = useWalletBalances(walletAddress)
   const { data: assets } = useAssets()
-  const { data: gasPricesData } = useGasPrices()
+  const { data: gasPrices } = useGasPrices()
   const chainConfig = useChainConfig()
+
   const availableFeeTokens = useMemo(() => {
-    if (!gasPricesData) return []
-    return getAvailableFeeTokens(walletBalances, gasPricesData?.prices, chainConfig, assets)
-  }, [assets, chainConfig, gasPricesData, walletBalances])
+    if (!gasPrices || !walletBalances) return []
+    return getAvailableFeeTokens(walletBalances, gasPrices?.prices, chainConfig, assets)
+  }, [assets, chainConfig, gasPrices, walletBalances])
 
   return useMemo(() => {
-    if (!gasPricesData || !walletAddress) return false
-    if (availableFeeTokens.length === 0) {
-      const stableToken = getAvailableFeeTokens(
-        walletBalances,
-        gasPricesData?.prices,
-        chainConfig,
-        assets,
-        true,
-      )[0]?.token
-      if (stableToken) {
-        setFeeToken(stableToken, chainConfig.id)
-        return true
-      }
+    // Don't do anything without a wallet address
+    if (!walletAddress) return false
+
+    // Wait for data to be loaded
+    if (isLoadingBalances || walletBalances === undefined || gasPrices === undefined) return false
+
+    // Helper function to check token balance
+    const hasTokenBalance = (denom: string) => {
+      const balance = walletBalances.find((coin) => coin.denom === denom)
+      const hasBalance = balance && BN(balance.amount).isGreaterThan(0)
+
+      return hasBalance
     }
 
+    // Helper functions for identifying token types
+    const isStableToken = (denom: string) => chainConfig.stables.includes(denom)
+    const isNativeToken = (denom: string) => denom === chainConfig.defaultCurrency.coinMinimalDenom
+
+    // Helper functions for setting tokens with priority
+    const trySetNativeToken = () => {
+      const nativeToken = chainConfig.defaultCurrency
+      if (hasTokenBalance(nativeToken.coinMinimalDenom)) {
+        setFeeToken(nativeToken, chainConfig.id)
+        return true
+      }
+      return false
+    }
+
+    const trySetStableToken = () => {
+      // Filter available tokens for stable tokens with balance
+      const stableTokens = availableFeeTokens.filter((t) => isStableToken(t.token.coinMinimalDenom))
+
+      if (stableTokens.length > 0) {
+        setFeeToken(stableTokens[0].token, chainConfig.id)
+        return true
+      }
+      return false
+    }
+
+    const trySetOtherToken = () => {
+      // Filter for tokens that are not native and not stable but have balance
+      const otherTokens = availableFeeTokens.filter(
+        (t) => !isNativeToken(t.token.coinMinimalDenom) && !isStableToken(t.token.coinMinimalDenom),
+      )
+
+      if (otherTokens.length > 0) {
+        setFeeToken(otherTokens[0].token, chainConfig.id)
+        return true
+      }
+      return false
+    }
+
+    // Get current fee token
     const feeToken = getFeeToken(chainConfig.id)
-    if (!feeToken) {
-      if (availableFeeTokens.length === 0) setFeeToken(chainConfig.defaultCurrency, chainConfig.id)
-      else setFeeToken(availableFeeTokens[0].token, chainConfig.id)
-      return true
+
+    // Check if any token can be used as fee token
+    const hasAnyFeeToken = availableFeeTokens.length > 0
+
+    // Case 1: No fee token set but we have balances
+    if (!feeToken && hasAnyFeeToken) {
+      return (
+        trySetNativeToken() ||
+        trySetStableToken() ||
+        trySetOtherToken() ||
+        (setFeeToken(chainConfig.defaultCurrency, chainConfig.id), true)
+      )
     }
 
-    const currentToken = availableFeeTokens.find(
-      (token) => token.token.coinMinimalDenom === feeToken.coinMinimalDenom,
-    )?.token
-
-    const currentTokenBalance = walletBalances.find(
-      (coin) => coin.denom === feeToken.coinMinimalDenom,
-    )
-
-    if (
-      !currentToken ||
-      !currentTokenBalance ||
-      BN(currentTokenBalance.amount).isLessThanOrEqualTo(0)
-    ) {
-      if (availableFeeTokens.length > 0) {
-        setFeeToken(availableFeeTokens[0].token, chainConfig.id)
-        return true
-      }
+    // Case 2: Fee token set but it no longer has balance
+    if (feeToken && !hasTokenBalance(feeToken.coinMinimalDenom) && hasAnyFeeToken) {
+      return (
+        trySetNativeToken() ||
+        trySetStableToken() ||
+        trySetOtherToken() ||
+        (setFeeToken(chainConfig.defaultCurrency, chainConfig.id), true)
+      )
     }
 
-    if (
-      currentToken &&
-      (currentToken.coinMinimalDenom !== feeToken.coinMinimalDenom ||
-        currentToken.gasPriceStep.average !== feeToken.gasPriceStep.average)
-    ) {
-      setFeeToken(currentToken, chainConfig.id)
-      return true
-    }
-
-    return !!feeToken
-  }, [assets, availableFeeTokens, chainConfig, gasPricesData, walletAddress, walletBalances])
+    // No changes needed
+    return true
+  }, [availableFeeTokens, chainConfig, gasPrices, isLoadingBalances, walletAddress, walletBalances])
 }

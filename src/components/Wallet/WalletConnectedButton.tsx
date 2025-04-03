@@ -18,19 +18,17 @@ import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
 import useAssets from 'hooks/assets/useAssets'
-import useBaseAsset from 'hooks/assets/useBaseAsset'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useICNSDomain from 'hooks/wallet/useICNSDomain'
+import { getFeeToken } from 'hooks/wallet/useInitFeeToken'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
 import { ChainInfoID, NETWORK } from 'types/enums'
 import { byDenom } from 'utils/array'
-import { getCurrentFeeToken } from 'utils/feeToken'
 import { truncate } from 'utils/formatters'
 import { getPage, getRoute } from 'utils/route'
-
 export default function WalletConnectedButton() {
   // ---------------
   // EXTERNAL HOOKS
@@ -43,13 +41,20 @@ export default function WalletConnectedButton() {
   const focusComponent = useStore((s) => s.focusComponent)
   const network = useStore((s) => s.client?.connectedWallet.network)
   const chainConfig = useChainConfig()
-  const baseAsset = useBaseAsset()
   const { data: walletBalances, isLoading } = useWalletBalances(address)
   const { data: icnsData, isLoading: isLoadingICNS } = useICNSDomain(address)
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const currentFeeToken = getCurrentFeeToken(chainConfig)
+  const feeToken = getFeeToken(chainConfig.id)
+  const fallBackFeeToken = useMemo(() => chainConfig.defaultCurrency, [chainConfig.defaultCurrency])
+  const currentFeeToken = useMemo(() => feeToken ?? fallBackFeeToken, [feeToken, fallBackFeeToken])
   const { data: assets } = useAssets()
+
+  const feeTokenAsset = useMemo(
+    () => assets.find((asset) => asset.denom === currentFeeToken.coinMinimalDenom) ?? assets[0],
+    [assets, currentFeeToken],
+  )
+
   // ---------------
   // LOCAL STATE
   // ---------------
@@ -117,28 +122,14 @@ export default function WalletConnectedButton() {
     }
   }, [icnsData?.primary_name, isLoadingICNS, address])
 
-  const feeToken = useMemo(
-    () => assets.find(byDenom(currentFeeToken?.coinMinimalDenom ?? baseAsset.denom)) ?? assets[0],
-    [assets, currentFeeToken, baseAsset.denom],
-  )
-
   useEffect(() => {
     const newAmount = BigNumber(
-      walletBalances.find((coin: Coin) => coin.denom === feeToken.denom)?.amount ?? 0,
-    ).shiftedBy(-feeToken.decimals)
+      walletBalances.find(byDenom(feeTokenAsset.denom))?.amount ?? 0,
+    ).shiftedBy(-feeTokenAsset.decimals)
     if (walletAmount.isEqualTo(newAmount)) return
     setWalletAmount(newAmount)
     useStore.setState({ balances: walletBalances })
-  }, [
-    walletBalances,
-    baseAsset.denom,
-    baseAsset.decimals,
-    walletAmount,
-    currentFeeToken,
-    assets,
-    feeToken.denom,
-    feeToken.decimals,
-  ])
+  }, [feeTokenAsset.decimals, feeTokenAsset.denom, walletAmount, walletBalances])
 
   return (
     <div className='relative'>
@@ -175,7 +166,7 @@ export default function WalletConnectedButton() {
           ) : (
             <FormattedNumber
               amount={walletAmount.toNumber()}
-              options={{ suffix: ` ${feeToken.symbol}`, abbreviated: true }}
+              options={{ suffix: ` ${feeTokenAsset.symbol}`, abbreviated: true }}
             />
           )}
         </div>
@@ -191,12 +182,14 @@ export default function WalletConnectedButton() {
         <div className='flex max-w-screen-full w-[440px] flex-wrap p-6'>
           <div className='flex items-start w-full mb-4 flex-0 flex-nowrap'>
             <div className='flex flex-1 w-auto'>
-              <div className='mr-2 flex h-[31px] items-end text-base-caps'>{feeToken.symbol}</div>
+              <div className='mr-2 flex h-[31px] items-end text-base-caps'>
+                {feeTokenAsset.symbol}
+              </div>
               <div className='flex flex-wrap justify-end flex-0'>
                 <FormattedNumber
                   className='flex items-end h-[31px] text-2xl !leading-5'
                   amount={walletAmount.toNumber()}
-                  options={{ maxDecimals: feeToken.decimals }}
+                  options={{ maxDecimals: feeTokenAsset.decimals }}
                 />
               </div>
             </div>

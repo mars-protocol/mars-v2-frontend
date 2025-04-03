@@ -9,6 +9,7 @@ import { getFeeToken, setFeeToken } from 'hooks/wallet/useInitFeeToken'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import { useEffect, useMemo, useState } from 'react'
 import useStore from 'store'
+import { mutate } from 'swr'
 import { findBestFeeToken, getAvailableFeeTokens } from 'utils/feeToken'
 import { BN } from 'utils/helpers'
 
@@ -59,7 +60,7 @@ export default function FeeTokenSelect() {
     return getAvailableFeeTokens(walletBalances, gasPricesData.prices, chainConfig, assets)
   }, [assets, chainConfig, gasPricesData, walletBalances])
 
-  const handleSelectToken = (tokenDenom: string) => {
+  const handleSelectToken = async (tokenDenom: string) => {
     const token = availableFeeTokens.find(
       (feeToken) => feeToken.token.coinMinimalDenom === tokenDenom,
     )?.token
@@ -67,6 +68,7 @@ export default function FeeTokenSelect() {
     if (token && token.coinMinimalDenom !== feeToken?.coinMinimalDenom) {
       setCurrentFeeToken(token)
       setFeeToken(token, chainConfig.id)
+      await mutate(`chains/${chainConfig.id}/wallets/${address}/balances`)
     }
   }
 
