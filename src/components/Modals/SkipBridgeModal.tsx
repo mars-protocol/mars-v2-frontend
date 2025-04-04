@@ -172,7 +172,7 @@ export default function SkipBridgeModal() {
               {isDepositComplete
                 ? 'Your USDC has been successfully deposited.'
                 : pendingBridges.length > 0
-                  ? "Your bridge transaction is still processing. Please check back later. The app's functionality is limited until the transaction completes."
+                  ? 'Please wait for the transaction to complete.'
                   : 'Your USDC has been successfully bridged.'}
             </Text>
           </div>
