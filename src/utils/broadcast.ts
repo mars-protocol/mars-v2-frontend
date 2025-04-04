@@ -42,17 +42,22 @@ export async function analizeTransaction(
   txCoinGroups: GroupedTransactionCoin[]
 }> {
   let target = 'Red Bank'
-  let accountKind = 'default'
+  let accountKind: AccountKind = 'default'
 
   const accountId = getCreditAccountIdFromBroadcastResult(result)
 
   if (accountId) {
     const creditManagerQueryClient = await getCreditManagerQueryClient(chainConfig)
-    accountKind = (await creditManagerQueryClient.accountKind({ accountId: accountId })) as any
-    const accountType = checkAccountKind(accountKind as AccountKind)
+    accountKind = (await creditManagerQueryClient.accountKind({
+      accountId: accountId,
+    })) as AccountKind
+    const accountType = checkAccountKind(accountKind)
 
     if (accountType === 'fund_manager') {
-      const vaultAddress = (accountKind as any).fund_manager.vault_addr
+      const vaultAddress =
+        typeof accountKind === 'object' && 'fund_manager' in accountKind
+          ? accountKind.fund_manager.vault_addr
+          : ''
 
       try {
         const vaultDetails = await getManagedVaultDetails(chainConfig, vaultAddress)
@@ -61,12 +66,12 @@ export async function analizeTransaction(
         console.error('Error getting vault title:', error)
         target = `Managed Vault ${accountId}`
       }
+    } else if (accountType === 'high_levered_strategy') {
+      target = `Hls Account ${accountId}`
     } else {
-      target =
-        accountType === 'high_levered_strategy'
-          ? `Hls Account ${accountId}`
-          : `Account ${accountId}`
+      target = `Account ${accountId}`
     }
+
     // Track new account creation
     const newAccountId = getSingleValueFromBroadcastResult(result.result, 'wasm', 'token_id')
     if (newAccountId) {
