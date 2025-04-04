@@ -1,7 +1,7 @@
-import { Or } from './Or'
+import { Or } from 'components/perps/Module/Or'
 import Text from 'components/common/Text'
 import LeverageSlider from 'components/common/LeverageSlider'
-import { LeverageButtons } from './LeverageButtons'
+import { LeverageButtons } from 'components/perps/Module/LeverageButtons'
 import { BigNumber } from 'bignumber.js'
 
 interface LeverageSectionProps {

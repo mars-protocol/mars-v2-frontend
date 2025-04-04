@@ -4,11 +4,12 @@ import WithdrawFromAccount from 'components/Modals/FundWithdraw/WithdrawFromAcco
 interface Props {
   account?: Account
   isFunding: boolean
+  onConnectWallet: () => Promise<boolean>
 }
 
 export default function FundWithdrawModalContent(props: Props) {
-  const { account, isFunding } = props
+  const { account, isFunding, onConnectWallet } = props
   if (!account) return null
-  if (isFunding) return <FundAccount account={account} />
+  if (isFunding) return <FundAccount account={account} onConnectWallet={onConnectWallet} />
   return <WithdrawFromAccount account={account} />
 }

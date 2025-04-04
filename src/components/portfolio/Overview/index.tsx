@@ -9,7 +9,6 @@ import { PlusCircled } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import PortfolioCard from 'components/portfolio/Card'
 import ConnectInfo from 'components/portfolio/Overview/ConnectInfo'
-import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useHasFundsForTxFee from 'hooks/wallet/useHasFundsForTxFee'
 import useStore from 'store'
@@ -22,7 +21,7 @@ export default function AccountSummary() {
 
   const handleCreateAccountClick = useCallback(() => {
     if (!hasFundsForTxFee) {
-      useStore.setState({ focusComponent: { component: <WalletBridges /> } })
+      useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
       return
     }
 

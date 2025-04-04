@@ -1,7 +1,7 @@
 import Image from 'next/image'
 
 interface Props {
-  asset: Asset
+  asset?: Asset
   className?: string
 }
 
@@ -18,7 +18,7 @@ export function LogoUknown() {
 }
 
 export default function AssetImage(props: Props) {
-  if (props.asset.logo)
+  if (props.asset?.logo)
     return (
       <div className={props.className}>
         <Image

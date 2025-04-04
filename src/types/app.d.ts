@@ -6,6 +6,7 @@ interface ICNSReadOnlyInterface {
 type Coin = {
   denom: string
   amount: string
+  chainName?: string
 }
 
 type StdFee = {
@@ -21,9 +22,40 @@ type ActionCoin = import('types/generated/mars-credit-manager/MarsCreditManager.
 type Action = import('types/generated/mars-credit-manager/MarsCreditManager.types').Action
 type BNCoin = import('types/classes/BNCoin').BNCoin
 
-type PositionType = 'deposit' | 'borrow' | 'lend' | 'vault' | 'perp' | 'market' | 'limit' | 'stop'
+type PositionType =
+  | 'deposit'
+  | 'borrow'
+  | 'lend'
+  | 'vault'
+  | 'perp'
+  | 'bridge'
+  | 'market'
+  | 'limit'
+  | 'stop'
 type TableType = 'balances' | 'strategies' | 'perps'
 type AccountKind = import('types/generated/mars-credit-manager/MarsCreditManager.types').AccountKind
+
+interface BridgeInfo {
+  id: string
+  name: string
+  logo_uri: string
+}
+
+interface SkipTransactionInfo {
+  txHash: string
+  chainID: string
+  explorerLink: string
+}
+
+interface SkipBridgeTransaction {
+  txHash: string
+  chainID: string
+  explorerLink: string
+  status: StatusState
+  denom: string
+  amount: BigNumber
+  id: string
+}
 
 interface Account {
   id: string
@@ -49,7 +81,11 @@ interface AccountChange extends Account {
 
 interface AccountBalanceRow {
   amount: BigNumber
+  bridgeStatus?: string
+  skipBridgeId?: string
+  isWhitelisted?: boolean
   apy?: number | null
+  skipTxHash?: string
   denom: string
   size: number
   symbol: string
@@ -118,6 +154,7 @@ interface Asset extends AssetMetaData {
   name: string
   decimals: number
   symbol: string
+  chainName?: string | ChainInfoID
 }
 
 interface AssetMetaData {
@@ -228,6 +265,18 @@ interface Bridge {
   image: string
 }
 
+type NetworkCurrency = {
+  coinDenom: string
+  coinMinimalDenom: string
+  coinDecimals: number
+  coinGeckoId?: string
+  gasPriceStep: {
+    low: number
+    average: number
+    high: number
+  }
+}
+
 interface ChainConfig {
   isOsmosis: boolean
   lp?: Asset[]
@@ -246,12 +295,7 @@ interface ChainConfig {
     creditManager: string
     pyth: string
   }
-  defaultCurrency: {
-    coinDenom: string
-    coinMinimalDenom: string
-    coinDecimals: number
-    coinGeckoId: string
-  }
+  defaultCurrency: NetworkCurrency
   endpoints: {
     rest: string
     rpc: string
@@ -262,7 +306,7 @@ interface ChainConfig {
     routes: string
     dexAssets: string
     dexPools?: string
-    gasPrices?: string
+    gasPrices: string
     aprs: {
       vaults: string
       perpsVault?: string
@@ -271,7 +315,6 @@ interface ChainConfig {
   dexName: string
   explorerName: string
   features: ('ibc-transfer' | 'ibc-go')[]
-  gasPrice: string
   id: import('types/enums').ChainInfoID
   name: string
   network: 'mainnet' | 'testnet'
@@ -280,6 +323,8 @@ interface ChainConfig {
   perps: boolean
   farm: boolean
   anyAsset: boolean
+  evmAssetSupport: boolean
+  campaignAssets?: AssetCampaignInfo[]
   slinky: boolean
 }
 
@@ -756,7 +801,7 @@ interface WalletClient {
       rest?: string
       gasAdjustment?: number
       gasPrice?: string
-      feeCurrency?: import('@delphi-labs/shuttle').NetworkCurrency
+      feeCurrency?: NetworkCurrency
     }
   }) => Promise<import('@delphi-labs/shuttle').BroadcastResult>
   simulate: (options: {
@@ -767,7 +812,7 @@ interface WalletClient {
       rest?: string
       gasAdjustment?: number
       gasPrice?: string
-      feeCurrency?: import('@delphi-labs/shuttle').NetworkCurrency
+      feeCurrency?: NetworkCurrency
     }
   }) => Promise<import('@delphi-labs/shuttle').SimulateResult>
 }
@@ -837,8 +882,8 @@ interface ButtonProps {
   variant?: 'solid' | 'transparent' | 'round' | 'rounded'
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
   onMouseOver?: (e: React.MouseEvent<HTMLButtonElement>) => void
-  leftIcon?: ReactElement
-  rightIcon?: ReactElement
+  leftIcon?: import('react').ReactElement
+  rightIcon?: import('react').ReactElement
   iconClassName?: string
   hasSubmenu?: boolean
   hasFocus?: boolean
@@ -1040,7 +1085,12 @@ interface BroadcastSlice {
     isAutoLendEnabled: boolean,
   ) => Promise<string | null>
   deleteAccount: (options: { accountId: string; lends: BNCoin[] }) => Promise<boolean>
-  deposit: (options: { accountId: string; coins: BNCoin[]; lend: boolean }) => Promise<boolean>
+  deposit: (options: {
+    accountId?: string
+    coins: BNCoin[]
+    lend: boolean
+    isAutoLend?: boolean
+  }) => Promise<string | null>
   depositIntoFarm: (options: {
     accountId: string
     actions: Action[]
@@ -1240,7 +1290,7 @@ interface FetchError {
 }
 
 interface FocusComponent {
-  component: ReactElement | null
+  component: import('react').ReactElement | null
   onClose?: () => void
 }
 
@@ -1271,20 +1321,20 @@ interface ModalSlice {
 
 interface AlertDialogButton {
   text?: string
-  icon?: ReactElement
+  icon?: import('react').ReactElement
   isAsync?: boolean
   onClick?: () => Promise<void> | void
   disabled?: boolean
 }
 
 interface AlertDialogConfig {
-  icon?: ReactElement
-  header?: ReactElement
+  icon?: import('react').ReactElement
+  header?: import('react').ReactElement
   checkbox?: {
     text: string
     onClick: (isChecked: boolean) => void
   }
-  content: ReactElement | string
+  content: import('react').ReactElement | string
   negativeButton?: AlertDialogButton
   positiveButton?: AlertDialogButton
   title?: string
@@ -1776,6 +1826,40 @@ interface PerpsTradingFee {
     opening: BigNumber
     closing: BigNumber
   }
+}
+
+interface PricesResponse {
+  prices: Coin[]
+}
+
+interface GasPricesResponse {
+  prices: Coin[]
+}
+
+interface OsmosisGasPriceResponse {
+  fee_tokens: OsmosisFeeToken[]
+}
+
+interface OsmosisFeeToken {
+  denom: string
+  fixed_min_gas_price: string
+  low_gas_price: string
+  average_gas_price: string
+  high_gas_price: string
+}
+
+interface PythPriceData {
+  id: string
+  price: {
+    price: string
+    conf: string
+    expo: number
+  }
+}
+
+interface AvailableFeeTokens {
+  token: NetworkCurrency
+  balance: string
 }
 
 type TrackActionType =

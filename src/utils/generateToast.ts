@@ -139,7 +139,9 @@ export function beautifyErrorMessage(error: string) {
   if (error.includes('OI reached'))
     return 'You can not execute this perp order, since it would exceed the maximum Open Interest for this market.'
 
-  if (error === 'Transaction failed: Request rejected') return 'Transaction rejected by user'
+  if (error.includes('spendable balance'))
+    return 'Looks like you already completed the bridging transaction. Or you spent some of the bridged USDC already.'
 
+  if (error === 'Transaction failed: Request rejected') return 'Transaction rejected by user'
   return `Transaction failed: ${error}`
 }

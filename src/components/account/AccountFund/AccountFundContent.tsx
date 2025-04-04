@@ -1,198 +1,449 @@
+import { RouteResponse } from '@skip-go/client'
 import classNames from 'classnames'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-
-import WalletBridges from 'components/Wallet/WalletBridges'
-import AccountFundRow from 'components/account/AccountFund/AccountFundRow'
+import AccountFundingAssets from 'components/account/AccountFund/AccountFundingAssets'
+import BridgeRouteVisualizer from 'components/account/AccountFund/BridgeContent/BridgeRouteVisualizer'
+import EVMAccountSection from 'components/account/AccountFund/EVMAccountSection'
 import Button from 'components/common/Button'
+import { Callout, CalloutType } from 'components/common/Callout'
 import DepositCapMessage from 'components/common/DepositCapMessage'
 import { ArrowRight, Plus } from 'components/common/Icons'
 import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
+import useAccounts from 'hooks/accounts/useAccounts'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import useBaseAsset from 'hooks/assets/useBaseAsset'
-import useMarkets from 'hooks/markets/useMarkets'
+import { useFundingAssets } from 'hooks/assets/useFundingAssets'
+import { useUSDCBalances } from 'hooks/assets/useUSDCBalances'
+import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
+import { useDepositCapCalculations } from 'hooks/markets/useDepositCapCalculations'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
+import { useWeb3WalletConnection } from 'hooks/wallet/useWeb3WalletConnections'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from 'utils/array'
-import { getCapLeftWithBuffer } from 'utils/generic'
+import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
+import { getChainLogoByName } from 'utils/chainLogos'
+import { MINIMUM_USDC } from 'utils/constants'
+import { calculateUsdcFeeReserve, getCurrentFeeToken } from 'utils/feeToken'
+import { chainNameToUSDCAttributes } from 'utils/fetchUSDCBalance'
 import { BN } from 'utils/helpers'
+import { getPage, getRoute } from 'utils/route'
 
 interface Props {
   account?: Account
-  address: string
+  address?: string
   accountId: string
   isFullPage?: boolean
+  onConnectWallet: () => Promise<boolean>
+  hasExistingAccount?: boolean
+  isCreateAccount?: boolean
 }
 
 export default function AccountFundContent(props: Props) {
   const deposit = useStore((s) => s.deposit)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
   const [isConfirming, setIsConfirming] = useState(false)
-  const { autoLendEnabledAccountIds } = useAutoLend()
-  const isLending = autoLendEnabledAccountIds.includes(props.accountId)
-  const [fundingAssets, setFundingAssets] = useState<BNCoin[]>([])
-  const markets = useMarkets()
-
+  const [currentEVMAssetValue, setCurrentEVMAssetValue] = useState<BigNumber>(BN_ZERO)
+  const [previousEVMAmount, setPreviousEVMAmount] = useState<BigNumber>(BN_ZERO)
+  const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
+  const [isAutoLendEnabledGlobal] = useEnableAutoLendGlobal()
   const { data: walletBalances } = useWalletBalances(props.address)
+  const { isCreateAccount = false } = props
   const { simulateDeposits } = useUpdatedAccount(props.account)
-  const baseAsset = useBaseAsset()
-
+  const { usdcBalances } = useUSDCBalances(walletBalances)
+  const selectedDenoms = useMemo(() => {
+    return (
+      walletAssetModal?.selectedDenoms?.map((denom) => {
+        const [baseDenom, chain] = denom.split(':')
+        return chain ? `${baseDenom}:${chain}` : baseDenom
+      }) ?? []
+    )
+  }, [walletAssetModal?.selectedDenoms])
+  const { fundingAssets, updateFundingAssets, setFundingAssets } = useFundingAssets(selectedDenoms)
+  const { depositCapReachedCoins } = useDepositCapCalculations(fundingAssets)
+  const { isConnected, address: evmAddress, handleDisconnectWallet } = useWeb3WalletConnection()
   const hasAssetSelected = fundingAssets.length > 0
   const hasFundingAssets =
-    fundingAssets.length > 0 && fundingAssets.every((a) => a.toCoin().amount !== '0')
-  const balances = walletBalances.map((coin) => new BNCoin(coin))
+    fundingAssets.length > 0 && fundingAssets.every((a) => a.coin.amount.isGreaterThan(0))
+  const balances = walletBalances.map((coin) => WrappedBNCoin.fromCoin(coin))
+  const navigate = useNavigate()
 
-  const selectedDenoms = useMemo(() => {
-    return walletAssetModal?.selectedDenoms ?? []
-  }, [walletAssetModal?.selectedDenoms])
+  const chainConfig = useChainConfig()
 
-  const baseBalance = useMemo(
-    () => walletBalances.find(byDenom(baseAsset.denom))?.amount ?? '0',
-    [walletBalances, baseAsset],
+  const [goFast, setGoFast] = useState(true)
+
+  const accounts = useAccounts('default', props.address)
+  const hasNoAccounts = accounts.data?.length < 1
+  const [currentRoute, setCurrentRoute] = useState<RouteResponse | undefined>(undefined)
+  const [routeError, setRouteError] = useState<string | null>(null)
+
+  const [bridges, setBridges] = useState<BridgeInfo[]>([])
+
+  const { isBridgeInProgress, handleSkipTransfer, fetchSkipRoute, fetchBridgeLogos } =
+    useSkipBridge({
+      chainConfig,
+      cosmosAddress: props.address,
+      evmAddress,
+      goFast,
+    })
+
+  const [showMinimumUSDCValueOverlay, setShowMinimumUSDCValueOverlay] = useState(false)
+
+  const [isLoadingRoute, setIsLoadingRoute] = useState(false)
+  const evmAsset = fundingAssets.find(
+    (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
   )
 
-  const handleSelectAssetsClick = useCallback(() => {
-    useStore.setState({
-      walletAssetsModal: {
-        isOpen: true,
-        selectedDenoms,
-        isBorrow: false,
-      },
-    })
-  }, [selectedDenoms])
+  useEffect(() => {
+    const depositAssets = fundingAssets.map((asset) => asset.coin)
+    simulateDeposits(isAutoLendEnabledForCurrentAccount ? 'lend' : 'deposit', depositAssets)
+  }, [fundingAssets, isAutoLendEnabledForCurrentAccount, simulateDeposits])
+
+  const isEVMAssetLessThanMinimumUSDC = evmAsset?.coin.amount.isLessThan(MINIMUM_USDC)
+  const updateEVMAssetValue = useCallback(() => {
+    if (evmAsset) {
+      setCurrentEVMAssetValue(evmAsset.coin.amount)
+    } else {
+      setCurrentEVMAssetValue(BN_ZERO)
+    }
+  }, [evmAsset])
+
+  useEffect(() => {
+    updateEVMAssetValue()
+  }, [fundingAssets, updateEVMAssetValue])
+
+  useEffect(() => {
+    const evmAsset = fundingAssets.find(
+      (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
+    )
+
+    if (evmAsset && !evmAsset.coin.amount.isZero()) {
+      setPreviousEVMAmount(evmAsset.coin.amount)
+    }
+
+    const amountToCheck = evmAsset ? evmAsset.coin.amount : previousEVMAmount
+
+    setShowMinimumUSDCValueOverlay(
+      evmAsset !== undefined && !amountToCheck.isZero() && amountToCheck.isLessThan(MINIMUM_USDC),
+    )
+  }, [previousEVMAmount, fundingAssets, currentEVMAssetValue, handleSkipTransfer])
+
+  const fetchRouteForEVMAsset = useCallback(async () => {
+    const evmAsset = fundingAssets.find(
+      (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
+    )
+
+    if (!evmAsset || evmAsset.coin.amount.isZero()) {
+      setCurrentRoute(undefined)
+      setRouteError(null)
+      return
+    }
+
+    if (isLoadingRoute) return
+
+    setIsLoadingRoute(true)
+    setRouteError(null)
+    try {
+      const route = await fetchSkipRoute(evmAsset)
+      const bridgeLogos = await fetchBridgeLogos({ chainIDs: route.chainIDs })
+      setBridges(bridgeLogos)
+      setCurrentRoute(route)
+    } catch (error) {
+      console.error('Failed to fetch route:', error)
+      setCurrentRoute(undefined)
+      if (error instanceof Error && error.message.includes('no routes found')) {
+        setRouteError(
+          'No available routes found for this transfer. Please try again later or choose a different asset.',
+        )
+      } else {
+        setRouteError('Failed to fetch route. Please try again later.')
+      }
+    } finally {
+      setIsLoadingRoute(false)
+    }
+  }, [fetchSkipRoute, fundingAssets, isLoadingRoute, fetchBridgeLogos])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const evmAsset = fundingAssets.find(
+        (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
+      )
+
+      if (
+        evmAsset &&
+        !evmAsset.coin.amount.isZero() &&
+        !isEVMAssetLessThanMinimumUSDC &&
+        !showMinimumUSDCValueOverlay
+      ) {
+        fetchRouteForEVMAsset()
+      } else {
+        setCurrentRoute(undefined)
+        setRouteError(null)
+      }
+    }, 500)
+
+    return () => clearTimeout(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [goFast, currentEVMAssetValue, showMinimumUSDCValueOverlay])
 
   const handleClick = useCallback(async () => {
-    if (!props.accountId) return
+    if (isConfirming) return
 
-    const depositObject = {
-      accountId: props.accountId,
-      coins: fundingAssets,
-      lend: isLending,
-    }
+    setIsConfirming(true)
+    try {
+      const shouldAutoLend =
+        hasNoAccounts || !props.hasExistingAccount
+          ? isAutoLendEnabledGlobal
+          : isAutoLendEnabledForCurrentAccount
 
-    if (props.isFullPage) {
-      setIsConfirming(true)
-      const result = await deposit(depositObject)
-      setIsConfirming(false)
-      if (result)
-        useStore.setState({
+      const evmAssets = fundingAssets.filter(
+        (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
+      )
+      const nonEvmAssets = fundingAssets.filter(
+        (asset) => !asset.chain || !chainNameToUSDCAttributes[asset.chain],
+      )
+
+      let accountId = props.accountId
+      const isNewAccount = hasNoAccounts || isCreateAccount
+      const hasEvmAssets = evmAssets.length > 0
+
+      if (hasEvmAssets) {
+        for (const evmAsset of evmAssets) {
+          if (isBridgeInProgress) {
+            continue
+          }
+
+          const success = await handleSkipTransfer(evmAsset, MINIMUM_USDC, isNewAccount)
+
+          if (!success) {
+            setShowMinimumUSDCValueOverlay(true)
+            setIsConfirming(false)
+            return
+          }
+        }
+      }
+
+      if (nonEvmAssets.length > 0) {
+        const processedAssets = nonEvmAssets.map((wrappedCoin) => {
+          const selectedFeeToken = getCurrentFeeToken(chainConfig)
+          if (!selectedFeeToken) return wrappedCoin.coin
+
+          const isUsdcFeeToken =
+            selectedFeeToken.coinMinimalDenom.includes('usdc') ||
+            selectedFeeToken.coinMinimalDenom.includes('uusdc')
+
+          if (isUsdcFeeToken && wrappedCoin.coin.denom === selectedFeeToken.coinMinimalDenom) {
+            const { depositAmount } = calculateUsdcFeeReserve(
+              wrappedCoin.coin.amount.toString(),
+              chainConfig,
+            )
+            return BNCoin.fromDenomAndBigNumber(wrappedCoin.coin.denom, BN(depositAmount))
+          }
+          return wrappedCoin.coin
+        })
+
+        const depositObject = {
+          coins: processedAssets,
+          lend: shouldAutoLend,
+          isAutoLend: shouldAutoLend,
+          ...(!isNewAccount && { accountId }),
+        }
+        const depositResult = await deposit(depositObject)
+        if (isNewAccount || (!isNewAccount && !hasEvmAssets)) {
+          accountId = depositResult ?? accountId
+        }
+      }
+
+      useStore.setState((state) => ({
+        ...state,
+        selectedAccountId: accountId,
+        accountId: accountId,
+        currentAccount: null,
+      }))
+
+      const { pathname } = window.location
+      const searchParams = new URLSearchParams(window.location.search)
+      navigate(getRoute(getPage(pathname, chainConfig), searchParams, props.address, accountId))
+
+      if (props.isFullPage) {
+        useStore.setState((state) => ({
+          ...state,
           walletAssetsModal: null,
           focusComponent: null,
-        })
-    } else {
-      deposit(depositObject)
-      useStore.setState({ fundAndWithdrawModal: null, walletAssetsModal: null })
+        }))
+      } else {
+        useStore.setState((state) => ({
+          ...state,
+          fundAndWithdrawModal: null,
+          walletAssetsModal: null,
+        }))
+      }
+    } catch (error) {
+      console.error('Transaction failed:', error)
+    } finally {
+      setIsConfirming(false)
     }
-  }, [props.accountId, deposit, fundingAssets, isLending, props.isFullPage])
+  }, [
+    props.accountId,
+    props.address,
+    props.isFullPage,
+    props.hasExistingAccount,
+    deposit,
+    fundingAssets,
+    isAutoLendEnabledForCurrentAccount,
+    isAutoLendEnabledGlobal,
+    navigate,
+    handleSkipTransfer,
+    chainConfig,
+    isBridgeInProgress,
+    isConfirming,
+    hasNoAccounts,
+    isCreateAccount,
+  ])
 
   useEffect(() => {
-    if (BN(baseBalance).isZero()) {
-      useStore.setState({ focusComponent: { component: <WalletBridges /> } })
+    if (!isConnected) {
+      setFundingAssets((prevAssets) => prevAssets.filter((asset) => !asset.chain))
     }
-  }, [baseBalance])
+  }, [isConnected, setFundingAssets])
 
-  useEffect(() => {
-    const currentSelectedDenom = fundingAssets.map((asset) => asset.denom)
-
-    if (
-      selectedDenoms.every((denom) => currentSelectedDenom.includes(denom)) &&
-      selectedDenoms.length === currentSelectedDenom.length
-    )
-      return
-
-    const newFundingAssets = selectedDenoms.map((denom) =>
-      BNCoin.fromDenomAndBigNumber(denom, BN(fundingAssets.find(byDenom(denom))?.amount ?? '0')),
-    )
-
-    setFundingAssets(newFundingAssets)
-  }, [selectedDenoms, fundingAssets])
-
-  const updateFundingAssets = useCallback(
-    (amount: BigNumber, denom: string) => {
-      setFundingAssets((fundingAssets) => {
-        const updateIdx = fundingAssets.findIndex(byDenom(denom))
-        if (updateIdx === -1) return fundingAssets
-
-        fundingAssets[updateIdx].amount = amount
-        simulateDeposits(isLending ? 'lend' : 'deposit', fundingAssets)
-        return [...fundingAssets]
-      })
-    },
-    [isLending, simulateDeposits],
-  )
-
-  const depositCapReachedCoins = useMemo(() => {
-    const depositCapReachedCoins: BNCoin[] = []
-    fundingAssets.forEach((asset) => {
-      const marketAsset = markets.find((market) => market.asset.denom === asset.denom)
-      if (!marketAsset || !marketAsset.cap) return
-
-      const capLeft = getCapLeftWithBuffer(marketAsset.cap)
-
-      if (asset.amount.isLessThanOrEqualTo(capLeft)) return
-
-      depositCapReachedCoins.push(BNCoin.fromDenomAndBigNumber(asset.denom, capLeft))
-    })
-    return depositCapReachedCoins
-  }, [fundingAssets, markets])
+  const combinedBalances = useMemo(() => {
+    if (!isConnected) {
+      return balances
+    }
+    return [...balances, ...usdcBalances]
+  }, [balances, usdcBalances, isConnected])
 
   return (
     <>
       <div>
         {!hasAssetSelected && <Text>Please select an asset.</Text>}
-        {fundingAssets.map((coin) => {
-          return (
-            <div
-              key={coin.denom}
-              className={classNames(
-                'w-full mb-4',
-                props.isFullPage && 'w-full p-4 border rounded-base border-white/20 bg-white/5',
-              )}
-            >
-              <AccountFundRow
-                denom={coin.denom}
-                balances={balances}
-                amount={coin.amount ?? BN_ZERO}
-                isConfirming={isConfirming}
-                updateFundingAssets={updateFundingAssets}
-              />
-            </div>
-          )
-        })}
-
+        <AccountFundingAssets
+          fundingAssets={fundingAssets}
+          combinedBalances={combinedBalances}
+          isConfirming={isConfirming}
+          updateFundingAssets={updateFundingAssets}
+          isFullPage={props.isFullPage}
+          onChange={updateEVMAssetValue}
+          routeResponse={currentRoute}
+        />
+        {!isEVMAssetLessThanMinimumUSDC && routeError && (
+          <Callout type={CalloutType.WARNING} className='mt-4'>
+            {routeError}
+          </Callout>
+        )}
+        {showMinimumUSDCValueOverlay && (
+          <Callout type={CalloutType.WARNING} className='mt-4'>
+            You need to deposit at least 1.00 USDC, when bridging from an EVM chain.
+          </Callout>
+        )}
         <Button
           className='w-full mt-4'
           text='Select Assets'
           color='tertiary'
           rightIcon={<Plus />}
           iconClassName='w-3'
-          onClick={handleSelectAssetsClick}
+          onClick={() => {
+            useStore.setState({
+              walletAssetsModal: {
+                isOpen: true,
+                selectedDenoms,
+                isBorrow: false,
+              },
+            })
+          }}
           disabled={isConfirming}
         />
-        <DepositCapMessage
-          action='fund'
-          coins={depositCapReachedCoins}
-          className='py-2 pr-4 mt-4'
-          showIcon
-        />
+        {chainConfig.evmAssetSupport && (
+          <>
+            <EVMAccountSection
+              isConnected={isConnected}
+              isConfirming={isConfirming}
+              handleConnectWallet={props.onConnectWallet}
+              handleDisconnectWallet={handleDisconnectWallet}
+              hasEVMAssetSelected={evmAsset !== undefined}
+            />
+            {currentRoute && (
+              <div className='flex flex-col pt-4 mt-4 border-t border-white/10'>
+                <div className='flex flex-row justify-between items-center gap-2'>
+                  <Text className='mr-2 text-white/70' size='sm'>
+                    Route Preference
+                  </Text>
+                  <div className='flex gap-2'>
+                    <button
+                      onClick={() => setGoFast(true)}
+                      className={classNames(
+                        'flex-1 px-4 py-2 rounded text-sm transition-colors duration-200',
+                        goFast
+                          ? 'bg-white/10 text-white'
+                          : 'bg-transparent text-white/60 hover:text-white hover:bg-white/5',
+                      )}
+                    >
+                      Fastest
+                    </button>
+                    <button
+                      onClick={() => setGoFast(false)}
+                      className={classNames(
+                        'flex-1 px-4 py-2 rounded text-sm transition-colors duration-200',
+                        !goFast
+                          ? 'bg-white/10 text-white'
+                          : 'bg-transparent text-white/60 hover:text-white hover:bg-white/5',
+                      )}
+                    >
+                      Cheapest
+                    </button>
+                  </div>
+                </div>
+
+                <div className='mt-4 flex flex-row justify-between gap-2'>
+                  <Text className='mr-2 text-white/70' size='sm'>
+                    Route
+                  </Text>
+                  <BridgeRouteVisualizer
+                    isLoading={isLoadingRoute}
+                    bridges={bridges}
+                    originChain={fundingAssets.find((asset) => asset.chain)?.chain || ''}
+                    evmChainLogo={getChainLogoByName(
+                      fundingAssets.find((asset) => asset.chain)?.chain || '',
+                    )}
+                  />
+                </div>
+              </div>
+            )}
+            <DepositCapMessage
+              action='fund'
+              coins={depositCapReachedCoins}
+              className='py-2 pr-4 mt-4'
+              showIcon
+            />
+          </>
+        )}
         <SwitchAutoLend
           className='pt-4 mt-4 border border-transparent border-t-white/10'
           accountId={props.accountId}
+          isNewAccount={props.isCreateAccount}
+        />
+        <Button
+          className='w-full mt-4'
+          text='Fund Account'
+          disabled={
+            !hasFundingAssets ||
+            depositCapReachedCoins.length > 0 ||
+            isBridgeInProgress ||
+            showMinimumUSDCValueOverlay ||
+            isLoadingRoute
+          }
+          showProgressIndicator={isConfirming || isLoadingRoute}
+          onClick={handleClick}
+          color={props.isFullPage ? 'tertiary' : undefined}
+          size={props.isFullPage ? 'lg' : undefined}
+          rightIcon={props.isFullPage ? undefined : <ArrowRight />}
         />
       </div>
-      <Button
-        className='w-full mt-4'
-        text='Fund account'
-        disabled={!hasFundingAssets || depositCapReachedCoins.length > 0}
-        showProgressIndicator={isConfirming}
-        onClick={handleClick}
-        color={props.isFullPage ? 'tertiary' : undefined}
-        size={props.isFullPage ? 'lg' : undefined}
-        rightIcon={props.isFullPage ? undefined : <ArrowRight />}
-      />
     </>
   )
 }

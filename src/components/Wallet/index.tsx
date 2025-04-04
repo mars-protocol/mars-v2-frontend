@@ -7,7 +7,7 @@ import WalletConnecting from 'components/Wallet/WalletConnecting'
 import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useStore from 'store'
 
-export default function Wallet() {
+export default function Wallet({ initiated }: { initiated: boolean }) {
   const { disconnectWallet } = useShuttle()
   const currentWallet = useCurrentWallet()
   const address = useStore((s) => s.address)
@@ -36,5 +36,5 @@ export default function Wallet() {
     })
   }, [currentWallet, address, disconnectWallet])
 
-  return address ? <WalletConnectedButton /> : <WalletConnectButton />
+  return address && initiated ? <WalletConnectedButton /> : <WalletConnectButton />
 }

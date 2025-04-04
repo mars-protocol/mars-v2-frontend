@@ -4,15 +4,19 @@ import Button from 'components/common/Button'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import DoubleLogo from 'components/common/DoubleLogo'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { TrashBin } from 'components/common/Icons'
+import { InfoCircle, TrashBin } from 'components/common/Icons'
 import NumberInput from 'components/common/NumberInput'
 import Select from 'components/common/Select'
 import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
 import WarningMessages from 'components/common/WarningMessages'
 import AssetImage from 'components/common/assets/AssetImage'
 import useAssets from 'hooks/assets/useAssets'
 import useBaseAsset from 'hooks/assets/useBaseAsset'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
+import { getCurrentFeeToken, MIN_FEE_AMOUNT } from 'utils/feeToken'
 import { BN } from 'utils/helpers'
 
 interface Props {
@@ -29,13 +33,25 @@ interface Props {
   onChangeAsset?: (asset: Asset) => void
   onDelete?: () => void
   warningMessages: string[]
+  chainName?: string
+  deductFee?: boolean
 }
 
 export default function TokenInput(props: Props) {
   const baseAsset = useBaseAsset()
+  const chainConfig = useChainConfig()
   const { data: assets } = useAssets()
+
+  const currentFeeToken = getCurrentFeeToken(chainConfig)
+  const isCurrentFeeToken = currentFeeToken?.coinMinimalDenom === props.asset.denom
+  const deductFee = isCurrentFeeToken && props.deductFee ? MIN_FEE_AMOUNT : 0
+
+  const adjustedMax = useMemo(() => {
+    return Math.max(props.max.minus(deductFee).toNumber(), 0)
+  }, [deductFee, props.max])
+
   function onMaxBtnClick() {
-    props.onChange(BN(props.max))
+    props.onChange(BN(adjustedMax))
   }
 
   function onChangeAsset(denom: string) {
@@ -77,7 +93,14 @@ export default function TokenInput(props: Props) {
             ) : (
               <AssetImage asset={props.asset} className='w-5 h-5' />
             )}
-            <Text>{props.asset.symbol}</Text>
+            <div className='flex flex-col'>
+              <Text>{props.asset.symbol}</Text>
+              {props.chainName && (
+                <Text size='xs' className='text-white/50'>
+                  {props.chainName}
+                </Text>
+              )}
+            </div>
           </div>
         )}
         <NumberInput
@@ -86,7 +109,7 @@ export default function TokenInput(props: Props) {
           maxDecimals={props.asset.decimals}
           onChange={props.onChange}
           amount={props.amount}
-          max={props.max}
+          max={BN(adjustedMax)}
           className='flex-1 p-3 border-none'
         />
         {props.onDelete && (
@@ -108,9 +131,19 @@ export default function TokenInput(props: Props) {
               </Text>
               <FormattedNumber
                 className='mr-1 text-xs text-white/50'
-                amount={props.max.toNumber()}
+                amount={adjustedMax}
                 options={{ decimals: props.asset.decimals }}
               />
+              {isCurrentFeeToken && props.deductFee === true && !props.chainName && (
+                <Tooltip
+                  type='info'
+                  content={`Some ${props.asset.symbol} will be reserved for transaction fees since this token is being used for gas payments.`}
+                >
+                  <span className='flex items-center mr-1 group hover:cursor-help'>
+                    <InfoCircle className='w-3 h-3 text-white/50 group-hover:text-white' />
+                  </span>
+                </Tooltip>
+              )}
               <Button
                 dataTestId='token-input-max-button'
                 color='tertiary'

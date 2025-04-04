@@ -98,14 +98,18 @@ export default function WalletConnecting(props: Props) {
               focusComponent: {
                 component: (
                   <WalletSelect
-                    error={{
-                      title: 'Failed to connect to wallet',
-                      message: mapErrorMessages(
-                        extensionProviderId,
-                        error.message,
-                        chainConfig.name,
-                      ),
-                    }}
+                    error={
+                      !recentWallet
+                        ? {
+                            title: 'Failed to connect to wallet',
+                            message: mapErrorMessages(
+                              extensionProviderId,
+                              error.message,
+                              chainConfig.name,
+                            ),
+                          }
+                        : undefined
+                    }
                   />
                 ),
                 onClose: () => {
@@ -127,6 +131,7 @@ export default function WalletConnecting(props: Props) {
       broadcast,
       sign,
       simulate,
+      recentWallet,
       disconnect,
     ],
   )
@@ -191,10 +196,18 @@ export default function WalletConnecting(props: Props) {
               focusComponent: {
                 component: (
                   <WalletSelect
-                    error={{
-                      title: 'Failed to connect to wallet',
-                      message: mapErrorMessages(mobileProviderId, error.message, chainConfig.name),
-                    }}
+                    error={
+                      !recentWallet
+                        ? {
+                            title: 'Failed to connect to wallet',
+                            message: mapErrorMessages(
+                              mobileProviderId,
+                              error.message,
+                              chainConfig.name,
+                            ),
+                          }
+                        : undefined
+                    }
                   />
                 ),
                 onClose: () => {

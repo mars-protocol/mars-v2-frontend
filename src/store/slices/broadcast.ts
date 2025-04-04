@@ -1,11 +1,8 @@
 import { DEFAULT_GAS_MULTIPLIER, MsgExecuteContract } from '@delphi-labs/shuttle'
 import moment from 'moment'
-import { isMobile } from 'react-device-detect'
 import { StoreApi } from 'zustand'
 
-import getGasPrice from 'api/gasPrice/getGasPrice'
 import getPythPriceData from 'api/prices/getPythPriceData'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { ExecuteMsg as AccountNftExecuteMsg } from 'types/generated/mars-account-nft/MarsAccountNft.types'
@@ -22,14 +19,21 @@ import { ExecuteMsg as IncentivesExecuteMsg } from 'types/generated/mars-incenti
 import { ExecuteMsg as PerpsExecuteMsg } from 'types/generated/mars-perps/MarsPerps.types'
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
 import { byDenom, bySymbol } from 'utils/array'
+import { setAutoLendForAccount } from 'utils/autoLend'
 import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
-import checkPythUpdateEnabled from 'utils/checkPythUpdateEnabled'
+import { getCurrentFeeToken } from 'utils/feeToken'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
 
-function generateExecutionMessage(
+interface ExecuteMsgOptions {
+  messages: MsgExecuteContract[]
+  isPythUpdate?: boolean
+  memo?: string
+}
+
+export function generateExecutionMessage(
   sender: string | undefined = '',
   contract: string,
   msg:
@@ -60,13 +64,14 @@ export default function createBroadcastSlice(
       return { fee: undefined, error: 'The client disconnected. Please reload the page!' }
     }
     try {
-      const gasPrice = await getGasPrice(get().chainConfig)
+      const feeCurrency = getCurrentFeeToken(get().chainConfig)
 
       const simulateResult = await get().client?.simulate({
         messages,
         wallet: get().client?.connectedWallet,
         overrides: {
-          gasPrice,
+          feeCurrency,
+          gasPrice: `${feeCurrency.gasPriceStep.average}${feeCurrency.coinMinimalDenom}`,
           gasAdjustment: DEFAULT_GAS_MULTIPLIER,
         },
       })
@@ -207,21 +212,11 @@ export default function createBroadcastSlice(
       )
 
       if (accountId && isAutoLendEnabled) {
-        const setOfAccountIds = new Set(
-          localStorage.getItem(
-            `${get().chainConfig.id}/${LocalStorageKeys.AUTO_LEND_ENABLED_ACCOUNT_IDS}`,
-          ) ?? [],
-        )
-        setOfAccountIds.add(accountId)
-        localStorage.setItem(
-          `${get().chainConfig.id}/${LocalStorageKeys.AUTO_LEND_ENABLED_ACCOUNT_IDS}`,
-          typeof setOfAccountIds === 'string'
-            ? (setOfAccountIds as string)
-            : JSON.stringify(Array.from(setOfAccountIds)),
-        )
+        setAutoLendForAccount(get().chainConfig.id, accountId)
       }
       return accountId
     },
+
     deleteAccount: async (options: { accountId: string; lends: BNCoin[] }) => {
       const reclaimMsg = options.lends.map((coin) => {
         return {
@@ -346,10 +341,15 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-    deposit: async (options: { accountId: string; coins: BNCoin[]; lend: boolean }) => {
+    deposit: async (options: {
+      accountId?: string
+      coins: BNCoin[]
+      lend: boolean
+      isAutoLend?: boolean
+    }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
-          account_id: options.accountId,
+          ...(options.accountId ? { account_id: options.accountId } : {}),
           actions: options.coins.map((coin) => ({
             deposit: coin.toCoin(),
           })),
@@ -370,7 +370,17 @@ export default function createBroadcastSlice(
       })
       get().handleTransaction({ response })
 
-      return response.then((response) => !!response.result)
+      const accountId = await response.then((response) =>
+        response.result
+          ? getSingleValueFromBroadcastResult(response.result, 'wasm', 'token_id')
+          : null,
+      )
+
+      if (accountId && options.isAutoLend) {
+        setAutoLendForAccount(get().chainConfig.id, accountId)
+      }
+
+      return accountId
     },
     unlock: async (options: { accountId: string; vault: DepositedVault; amount: string }) => {
       const msg: CreditManagerExecuteMsg = {
@@ -395,7 +405,6 @@ export default function createBroadcastSlice(
       get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
-
     withdrawFromVaults: async (options: {
       accountId: string
       vaults: DepositedVault[]
@@ -1055,56 +1064,53 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-    executeMsg: async (options: {
-      messages: MsgExecuteContract[]
-      isPythUpdate?: boolean
-    }): Promise<BroadcastResult> => {
+    executeMsg: async (options: ExecuteMsgOptions): Promise<BroadcastResult> => {
       try {
         const client = get().client
-        const isV1 = get().isV1
-        const isLedger = client?.connectedWallet?.account.isLedger
-        const memo = isLedger ? '' : isV1 ? 'MPv1' : 'MPv2'
-
-        const gasPrice = await getGasPrice(get().chainConfig)
-        if (!client)
-          return { result: undefined, error: 'No client detected. Please reconnect your wallet.' }
-        if ((checkPythUpdateEnabled() || options.isPythUpdate) && !isLedger) {
-          const pythUpdateMsg = await get().getPythVaas()
-          options.messages.unshift(pythUpdateMsg)
+        if (!client?.connectedWallet) {
+          throw new Error('No client detected. Please reconnect your wallet.')
         }
+
+        const chainConfig = get().chainConfig
+        if (!chainConfig) {
+          throw new Error('Chain config not found')
+        }
+
+        const feeCurrency = getCurrentFeeToken(chainConfig)
+
+        const memo = options.memo || ''
+
         const feeObject = await getEstimatedFee(options.messages)
-        if (feeObject.fee) {
-          const broadcastOptions = {
-            messages: options.messages,
-            feeAmount: feeObject.fee.amount[0].amount,
-            gasLimit: feeObject.fee.gas,
-            memo,
-            wallet: client.connectedWallet,
-            mobile: isMobile,
-            overrides: {
-              gasPrice,
-              gasAdjustment: DEFAULT_GAS_MULTIPLIER,
-            },
-          }
-          const result = await client.broadcast(broadcastOptions)
-          if (result.hash) {
-            return { result }
-          }
 
-          return {
-            result: undefined,
-            error: 'Transaction failed',
-          }
+        if (!feeObject?.fee) {
+          throw new Error(feeObject?.error || 'Failed to estimate fee')
         }
 
+        const broadcastOptions = {
+          messages: options.messages,
+          feeAmount: feeObject.fee.amount[0].amount,
+          gasLimit: feeObject.fee.gas,
+          memo,
+          wallet: client.connectedWallet,
+          mobile: false,
+          overrides: {
+            feeCurrency,
+            gasAdjustment: DEFAULT_GAS_MULTIPLIER,
+          },
+        }
+
+        const result = await client.broadcast(broadcastOptions)
+
+        if (result.hash) {
+          return { result }
+        }
+
+        throw new Error('Transaction failed')
+      } catch (error) {
         return {
           result: undefined,
-          error: feeObject.error ?? 'Transaction failed',
+          error: error instanceof Error ? error.message : 'Transaction failed',
         }
-      } catch (error) {
-        const e = error as { message: string }
-        console.log(e)
-        return { result: undefined, error: e.message }
       }
     },
     getPythVaas: async () => {

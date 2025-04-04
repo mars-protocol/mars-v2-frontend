@@ -103,6 +103,11 @@ const Osmosis1: ChainConfig = {
     coinMinimalDenom: 'uosmo',
     coinDecimals: 6,
     coinGeckoId: 'osmosis',
+    gasPriceStep: {
+      low: 0.0025,
+      average: 0.0025,
+      high: 0.0025,
+    },
   },
   endpoints: {
     rpc: process.env.NEXT_PUBLIC_OSMOSIS_RPC ?? 'https://osmosis-rpc.polkachu.com',
@@ -116,7 +121,7 @@ const Osmosis1: ChainConfig = {
       'osmosis/gamm/v1beta1/pools/POOL_ID',
     ),
     dexAssets: 'https://neutron-cache-api.onrender.com/osmosis-1/tokens',
-    gasPrices: '/osmosis/txfees/v1beta1/cur_eip_base_fee',
+    gasPrices: 'https://sqs.app.osmosis.zone/chainregistry/fee_tokens',
     aprs: {
       vaults: 'https://backend.prod.mars-dev.net/v1/vaults/osmosis',
     },
@@ -124,7 +129,6 @@ const Osmosis1: ChainConfig = {
   dexName: 'Osmosis Dex',
   explorerName: 'Mintscan',
   features: ['ibc-transfer', 'ibc-go'],
-  gasPrice: '0.003uosmo',
   name: 'Osmosis',
   network: NETWORK.MAINNET,
   vaults: VAULTS_META_DATA,
@@ -132,6 +136,7 @@ const Osmosis1: ChainConfig = {
   perps: false,
   farm: true,
   anyAsset: true,
+  evmAssetSupport: true,
   slinky: false,
 }
 
