@@ -6,6 +6,7 @@ import useStore from 'store'
 import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 import { calculateUsdcFeeReserve, isUsdcFeeToken } from 'utils/feeToken'
 import { BN } from 'utils/helpers'
+import { convertToSkipAddresses } from 'utils/wallet'
 
 interface UseSkipBridgeProps {
   chainConfig: ChainConfig
@@ -133,40 +134,7 @@ export function useSkipBridge({
           }
         }
 
-        let osmosisAddress = ''
-        try {
-          if (window.keplr) {
-            await window.keplr.enable('osmosis-1')
-            const key = await window.keplr.getKey('osmosis-1')
-            osmosisAddress = key.bech32Address
-          }
-        } catch (error) {
-          console.error('Failed to get Osmosis address:', error)
-          setIsBridgeInProgress(false)
-          return false
-        }
-
-        let nobleAddress = ''
-        try {
-          if (window.keplr) {
-            await window.keplr.enable('noble-1')
-            const key = await window.keplr.getKey('noble-1')
-            nobleAddress = key.bech32Address
-          }
-        } catch (error) {
-          console.error('Failed to get Noble address:', error)
-        }
-
-        let neutronAddress = ''
-        try {
-          if (window.keplr) {
-            await window.keplr.enable('neutron-1')
-            const key = await window.keplr.getKey('neutron-1')
-            neutronAddress = key.bech32Address
-          }
-        } catch (error) {
-          console.error('Failed to get Neutron address:', error)
-        }
+        const skipAddresses = convertToSkipAddresses(cosmosAddress)
 
         const adjustedAsset =
           isUsdc && usdcAsFeeToken
@@ -182,11 +150,11 @@ export function useSkipBridge({
 
         const userAddresses = route.requiredChainAddresses.map((chainID: string) => {
           if (chainID === 'neutron-1') {
-            return { chainID, address: neutronAddress || cosmosAddress }
+            return { chainID, address: skipAddresses ? skipAddresses['neutron-1'] : cosmosAddress }
           } else if (chainID === 'osmosis-1') {
-            return { chainID, address: osmosisAddress || cosmosAddress }
+            return { chainID, address: skipAddresses ? skipAddresses['osmosis-1'] : cosmosAddress }
           } else if (chainID === 'noble-1') {
-            return { chainID, address: nobleAddress || cosmosAddress }
+            return { chainID, address: skipAddresses ? skipAddresses['noble-1'] : cosmosAddress }
           } else {
             return { chainID, address: evmAddress }
           }
