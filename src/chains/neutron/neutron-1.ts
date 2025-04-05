@@ -1,6 +1,7 @@
 import { Bech32Address } from '@keplr-wallet/cosmos'
 
 import { ChainInfoID, NETWORK } from 'types/enums'
+import { getUrl } from 'utils/url'
 
 const Neutron1: ChainConfig = {
   id: ChainInfoID.Neutron1,
@@ -124,7 +125,10 @@ const Neutron1: ChainConfig = {
     explorer: 'https://mintscan.io/neutron',
     dexAssets: 'https://neutron-cache-api.onrender.com/neutron-1/tokens',
     dexPools: 'https://neutron-cache-api.onrender.com/neutron-1/pools',
-    gasPrices: '/feemarket/v1/gas_price/untrn',
+    gasPrices: getUrl(
+      process.env.NEXT_PUBLIC_NEUTRON_REST ?? 'https://rest-lb.neutron.org',
+      '/feemarket/v1/gas_prices',
+    ),
     managedVaults: 'https://backend.prod.mars-dev.net/v2/managed_vaults?chain=neutron',
     aprs: {
       vaults: '',
@@ -141,13 +145,18 @@ const Neutron1: ChainConfig = {
     coinMinimalDenom: 'untrn',
     coinDecimals: 6,
     coinGeckoId: 'neutron',
+    gasPriceStep: {
+      low: 0.0053,
+      average: 0.0053,
+      high: 0.0053,
+    },
   },
   features: ['ibc-transfer', 'ibc-go'],
-  gasPrice: '0.015untrn',
   hls: true,
   perps: true,
   farm: true,
   anyAsset: true,
+  evmAssetSupport: true,
   slinky: true,
   managedVaults: false,
 }

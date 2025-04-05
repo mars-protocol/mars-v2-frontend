@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 import containerQueries from '@tailwindcss/container-queries'
-import plugin from 'tailwindcss/plugin'
 import scrollbarHide from 'tailwind-scrollbar-hide'
+import plugin from 'tailwindcss/plugin'
 
 module.exports = {
   content: ['./src/pages/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
@@ -345,6 +345,7 @@ module.exports = {
         18: '72px',
         24: '96px',
         35: '140px',
+        50: '200px',
         70: '280px',
         74: '296px',
         80: '320px',

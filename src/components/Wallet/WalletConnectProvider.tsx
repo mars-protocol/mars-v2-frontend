@@ -14,9 +14,11 @@ import {
   XDEFICosmosExtensionProvider,
 } from '@delphi-labs/shuttle'
 import { ShuttleProvider } from '@delphi-labs/shuttle-react'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
+import { State } from 'wagmi'
 
 import chains from 'chains'
+import AppKitProvider from 'components/Wallet/AppKitProvider'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { DAODAO_ORIGINS, WALLETS } from 'constants/wallets'
 import { WalletID } from 'types/enums'
@@ -89,14 +91,26 @@ const extensionProviders: WalletExtensionProvider[] = [
 ]
 
 export const WalletConnectProvider: FC<Props> = ({ children }) => {
+  const [initialState, setInitialState] = useState<State | undefined>(undefined)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const storedState = localStorage.getItem('wagmi.state')
+    if (!storedState) return
+    setInitialState(JSON.parse(storedState))
+  }, [])
+
   return (
-    <ShuttleProvider
-      walletConnectProjectId={process.env.NEXT_PUBLIC_WALLET_CONNECT_ID}
-      mobileProviders={mobileProviders}
-      extensionProviders={extensionProviders}
-      persistent
-    >
-      {children}
-    </ShuttleProvider>
+    <AppKitProvider initialState={initialState}>
+      <ShuttleProvider
+        walletConnectProjectId={process.env.NEXT_PUBLIC_WALLET_CONNECT_ID}
+        mobileProviders={mobileProviders}
+        extensionProviders={extensionProviders}
+        persistent
+      >
+        {children}
+      </ShuttleProvider>
+    </AppKitProvider>
   )
 }

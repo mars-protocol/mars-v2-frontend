@@ -1,6 +1,7 @@
 import { Analytics } from '@vercel/analytics/react'
 import classNames from 'classnames'
 import ModalsContainer from 'components/Modals/ModalsContainer'
+import SkipBridgeModal from 'components/Modals/SkipBridgeModal'
 import AccountDetails from 'components/account/AccountDetails'
 import Background from 'components/common/Background'
 import { CircularProgress } from 'components/common/CircularProgress'
@@ -13,9 +14,11 @@ import Header from 'components/header/Header'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAccountId from 'hooks/accounts/useAccountId'
+import useAccountIds from 'hooks/accounts/useAccountIds'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import { useSkipBridgeStatus } from 'hooks/localStorage/useSkipBridgeStatus'
 import { Suspense, useEffect } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useLocation } from 'react-router-dom'
@@ -70,6 +73,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     location.pathname === '/' ||
     (location.pathname.includes('perps') && !location.pathname.includes('perps-vault'))
   const accountId = useAccountId()
+  const { data: accountIds } = useAccountIds(address)
+  const hasCreditAccounts = !!accountIds?.length
+  const { shouldShowSkipBridgeModal } = useSkipBridgeStatus()
 
   useEffect(() => {
     if (!window) return
@@ -86,54 +92,59 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }, [chainConfig.id, currentChainId, setCurrentChainId])
 
   return (
-    <ErrorBoundary errorStore={errorStore}>
-      <SWRConfig value={{ use: [debugSWR] }}>
-        <Suspense
-          fallback={
-            <div className='flex items-center justify-center w-full h-screen-full'>
-              <div className='flex flex-wrap justify-center w-full gap-4'>
-                <CircularProgress size={60} />
-                <Text className='w-full text-center' size='2xl'>
-                  Fetching on-chain data...
-                </Text>
+    <>
+      <ErrorBoundary errorStore={errorStore}>
+        <SWRConfig value={{ use: [debugSWR] }}>
+          <Suspense
+            fallback={
+              <div className='flex items-center justify-center w-full h-screen-full'>
+                <div className='flex flex-wrap justify-center w-full gap-4'>
+                  <CircularProgress size={60} />
+                  <Text className='w-full text-center' size='2xl'>
+                    Fetching on-chain data...
+                  </Text>
+                </div>
               </div>
-            </div>
-          }
-        >
-          <PageMetadata />
-          <Background />
-          <Header />
-          <main
-            className={classNames(
-              'md:min-h-[calc(100dvh-81px)]',
-              'mt-[73px]',
-              'flex',
-              'min-h-screen-full w-full relative',
-              'gap-4 p-2 pb-20',
-              'md:gap-6 md:px-4 md:py-6',
-              !focusComponent &&
-                address &&
-                isFullWidth &&
-                accountId &&
-                (accountDetailsExpanded && !isMobile ? 'md:pr-102' : 'md:pr-24'),
-              !reduceMotion && isFullWidth && 'transition-all duration-500',
-              'justify-center',
-              focusComponent && 'items-center',
-              isMobile && 'items-start transition-all duration-500',
-              mobileNavExpanded && isMobile && '-ml-full',
-            )}
+            }
           >
-            <PageContainer focusComponent={focusComponent} fullWidth={isFullWidth}>
-              {children}
-            </PageContainer>
-            {!isMobile && <AccountDetails className='hidden md:flex' />}
-          </main>
-          <Footer />
-          <Analytics />
-          <ModalsContainer />
-          <Toaster />
-        </Suspense>
-      </SWRConfig>
-    </ErrorBoundary>
+            <PageMetadata />
+            <Background />
+            <Header />
+            {shouldShowSkipBridgeModal && <SkipBridgeModal />}
+            <main
+              className={classNames(
+                'md:min-h-[calc(100dvh-81px)]',
+                'mt-[73px]',
+                'flex',
+                'min-h-screen-full w-full relative',
+                'gap-4 p-2 pb-20',
+                'md:gap-6 md:px-4 md:py-6',
+                !focusComponent &&
+                  address &&
+                  isFullWidth &&
+                  accountId &&
+                  hasCreditAccounts &&
+                  (accountDetailsExpanded && !isMobile ? 'md:pr-102' : 'md:pr-24'),
+                !reduceMotion && isFullWidth && 'transition-all duration-500',
+                'justify-center',
+                focusComponent && 'items-center',
+                isMobile && 'items-start transition-all duration-500',
+                mobileNavExpanded && isMobile && '-ml-full',
+              )}
+            >
+              <PageContainer focusComponent={focusComponent} fullWidth={isFullWidth}>
+                {children}
+              </PageContainer>
+              {!isMobile && <AccountDetails className='hidden md:flex' />}
+            </main>
+            <Footer />
+
+            <Analytics />
+            <ModalsContainer />
+            <Toaster />
+          </Suspense>
+        </SWRConfig>
+      </ErrorBoundary>
+    </>
   )
 }

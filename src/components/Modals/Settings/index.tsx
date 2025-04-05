@@ -13,6 +13,7 @@ import Text from 'components/common/Text'
 import TextInput from 'components/common/TextInput'
 import { TextLink } from 'components/common/TextLink'
 import Modal from 'components/Modals/Modal'
+import FeeTokenSelect from 'components/Modals/Settings/FeeTokenSelect'
 import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
 import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
@@ -104,7 +105,7 @@ export default function SettingsModal() {
               <AssetImage asset={asset} className='w-4 h-4' />
             )}
             <Text size='sm' className='leading-4'>
-              {asset.name}
+              {asset.symbol === '$' ? 'US Dollar' : asset.symbol}
             </Text>
           </div>
         ),
@@ -298,7 +299,7 @@ export default function SettingsModal() {
       ),
       title: 'Are you sure you want to restore to default?',
       content:
-        'Once you reset to default settings you can’t revert it, and will result in the permanent loss of your current settings',
+        "Once you reset to default settings you can't revert it, and will result in the permanent loss of your current settings",
       positiveButton: {
         text: 'Yes',
         icon: <Enter />,
@@ -432,6 +433,16 @@ export default function SettingsModal() {
           containerClassName='justify-end'
         />
       </SettingsOptions>
+
+      {/* Fee Token Selection */}
+      <SettingsOptions
+        label='Gas Fee Token'
+        description={`Select which token to use for transaction fees. By default, ${chainConfig.defaultCurrency.coinDenom} is used when available.`}
+        className='pb-6'
+      >
+        <FeeTokenSelect />
+      </SettingsOptions>
+
       <SettingsOptions
         label='Slippage tolerance'
         description='Some vaults require token swaps. The transaction will fail if the price of the swap asset changes unfavourably by more than this percentage'

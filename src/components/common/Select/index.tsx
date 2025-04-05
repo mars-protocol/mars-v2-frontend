@@ -1,12 +1,12 @@
 import classNames from 'classnames'
 import { useCallback, useEffect, useState } from 'react'
 
+import { CircularProgress } from 'components/common/CircularProgress'
 import { ChevronDown } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Option from 'components/common/Select/Option'
 import Text from 'components/common/Text'
 import useToggle from 'hooks/common/useToggle'
-import { CircularProgress } from 'components/common/CircularProgress'
 
 interface Props {
   options: SelectOption[]

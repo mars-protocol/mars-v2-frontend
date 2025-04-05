@@ -2,7 +2,7 @@ import { useShuttle } from '@delphi-labs/shuttle-react'
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { resolvePrimaryDomainByAddress } from 'ibc-domains-sdk'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useClipboard from 'react-use-clipboard'
@@ -17,17 +17,18 @@ import { Check, Copy, ExternalLink, Wallet } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
-import useBaseAsset from 'hooks/assets/useBaseAsset'
+import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useICNSDomain from 'hooks/wallet/useICNSDomain'
+import { getFeeToken } from 'hooks/wallet/useInitFeeToken'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
 import { ChainInfoID, NETWORK } from 'types/enums'
+import { byDenom } from 'utils/array'
 import { truncate } from 'utils/formatters'
 import { getPage, getRoute } from 'utils/route'
-
 export default function WalletConnectedButton() {
   // ---------------
   // EXTERNAL HOOKS
@@ -40,11 +41,19 @@ export default function WalletConnectedButton() {
   const focusComponent = useStore((s) => s.focusComponent)
   const network = useStore((s) => s.client?.connectedWallet.network)
   const chainConfig = useChainConfig()
-  const baseAsset = useBaseAsset()
   const { data: walletBalances, isLoading } = useWalletBalances(address)
   const { data: icnsData, isLoading: isLoadingICNS } = useICNSDomain(address)
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const feeToken = getFeeToken(chainConfig.id)
+  const fallBackFeeToken = useMemo(() => chainConfig.defaultCurrency, [chainConfig.defaultCurrency])
+  const currentFeeToken = useMemo(() => feeToken ?? fallBackFeeToken, [feeToken, fallBackFeeToken])
+  const { data: assets } = useAssets()
+
+  const feeTokenAsset = useMemo(
+    () => assets.find((asset) => asset.denom === currentFeeToken.coinMinimalDenom) ?? assets[0],
+    [assets, currentFeeToken],
+  )
 
   // ---------------
   // LOCAL STATE
@@ -115,12 +124,12 @@ export default function WalletConnectedButton() {
 
   useEffect(() => {
     const newAmount = BigNumber(
-      walletBalances.find((coin: Coin) => coin.denom === baseAsset.denom)?.amount ?? 0,
-    ).shiftedBy(-baseAsset.decimals)
+      walletBalances.find(byDenom(feeTokenAsset.denom))?.amount ?? 0,
+    ).shiftedBy(-feeTokenAsset.decimals)
     if (walletAmount.isEqualTo(newAmount)) return
     setWalletAmount(newAmount)
     useStore.setState({ balances: walletBalances })
-  }, [walletBalances, baseAsset.denom, baseAsset.decimals, walletAmount])
+  }, [feeTokenAsset.decimals, feeTokenAsset.denom, walletAmount, walletBalances])
 
   return (
     <div className='relative'>
@@ -148,17 +157,22 @@ export default function WalletConnectedButton() {
         </span>
         <div
           className={classNames(
-            'relative ml-2 flex h-full items-center pl-2 number',
-            'before:content-[" "] before:absolute before:bottom-1.5 before:left-0 before:top-0.5 before:h-[calc(100%-4px)] before:border-l before:border-white/20',
+            'relative  flex h-full items-center number',
+            walletAmount.isGreaterThan(0) &&
+              'ml-2 pl-2 before:content-[" "] before:absolute before:bottom-1.5 before:left-0 before:top-0.5 before:h-[calc(100%-4px)] before:border-l before:border-white/20',
           )}
         >
           {isLoading ? (
             <CircularProgress size={12} />
           ) : (
-            <FormattedNumber
-              amount={walletAmount.toNumber()}
-              options={{ suffix: ` ${baseAsset.symbol}`, abbreviated: true }}
-            />
+            <>
+              {walletAmount.isGreaterThan(0) && (
+                <FormattedNumber
+                  amount={walletAmount.toNumber()}
+                  options={{ suffix: ` ${feeTokenAsset.symbol}`, abbreviated: true }}
+                />
+              )}
+            </>
           )}
         </div>
       </Button>
@@ -173,11 +187,14 @@ export default function WalletConnectedButton() {
         <div className='flex max-w-screen-full w-[440px] flex-wrap p-6'>
           <div className='flex items-start w-full mb-4 flex-0 flex-nowrap'>
             <div className='flex flex-1 w-auto'>
-              <div className='mr-2 flex h-[31px] items-end text-base-caps'>{baseAsset.symbol}</div>
+              <div className='mr-2 flex h-[31px] items-end text-base-caps'>
+                {feeTokenAsset.symbol}
+              </div>
               <div className='flex flex-wrap justify-end flex-0'>
                 <FormattedNumber
                   className='flex items-end h-[31px] text-2xl !leading-5'
                   amount={walletAmount.toNumber()}
+                  options={{ maxDecimals: feeTokenAsset.decimals }}
                 />
               </div>
             </div>
