@@ -1,4 +1,4 @@
-import { ColumnDef } from '@tanstack/react-table'
+import { ColumnDef, Row } from '@tanstack/react-table'
 import BigNumber from 'bignumber.js'
 import TVL, { TVL_META } from 'components/earn/farm/common/Table/Columns/TVL'
 import Apy, { APY_META } from 'components/earn/lend/Table/Columns/Apy'
@@ -7,16 +7,31 @@ import FreezePeriod, {
   FREEZE_PERIOD_META,
 } from 'components/managedVaults/common/table/columns/FreezePeriod'
 import Title, { TITLE_META } from 'components/managedVaults/common/table/columns/Title'
-import Deposit, { DEPOSIT_META } from 'components/managedVaults/official/table/column/Deposit'
-import { useMemo } from 'react'
+import Details, { DETAILS_META } from 'components/managedVaults/community/table/column/Details'
+
+import { useCallback, useMemo } from 'react'
 import { convertAprToApy } from 'utils/parsers'
+import { getRoute } from 'utils/route'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import useStore from 'store'
 
 interface Props {
   isLoading: boolean
 }
 
 export default function useOfficialVaultsColumns(props: Props) {
+  // todo: temporary solution (same as community vaults)
   const { isLoading } = props
+  const address = useStore((s) => s.address)
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
+
+  const handleVaultDetails = useCallback(
+    (vaultAddress: string) => {
+      navigate(getRoute(`vaults/${vaultAddress}/details` as Page, searchParams, address))
+    },
+    [address, navigate, searchParams],
+  )
 
   return useMemo<ColumnDef<ManagedVaultsData>[]>(
     () => [
@@ -51,10 +66,15 @@ export default function useOfficialVaultsColumns(props: Props) {
         ),
       },
       {
-        ...DEPOSIT_META,
-        cell: () => <Deposit isLoading={isLoading} />,
+        ...DETAILS_META,
+        cell: ({ row }: { row: Row<ManagedVaultsData> }) => (
+          <Details
+            isLoading={isLoading}
+            handleVaultDetails={() => handleVaultDetails(row.original.vault_address)}
+          />
+        ),
       },
     ],
-    [isLoading],
+    [isLoading, handleVaultDetails],
   )
 }
