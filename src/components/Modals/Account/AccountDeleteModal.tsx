@@ -48,7 +48,7 @@ function AccountDeleteModal(props: Props) {
     const isDeleted = await deleteAccount(options)
 
     if (isDeleted) {
-      const remainingAccounts = await getAccountIds(chainChonfig, urlAddress)
+      const remainingAccounts = await getAccountIds(chainConfig, urlAddress)
 
       if (remainingAccounts.length > 0) {
         const firstAccountId = remainingAccounts[0].id

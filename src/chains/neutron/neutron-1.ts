@@ -128,8 +128,8 @@ const Neutron1: ChainConfig = {
     gasPrices: getUrl(
       process.env.NEXT_PUBLIC_NEUTRON_REST ?? 'https://rest-lb.neutron.org',
       '/feemarket/v1/gas_prices',
-    managedVaults: 'https://backend.prod.mars-dev.net/v2/managed_vaults?chain=neutron',
     ),
+    managedVaults: 'https://backend.prod.mars-dev.net/v2/managed_vaults?chain=neutron',
     aprs: {
       vaults: '',
       perpsVault: 'https://backend.prod.mars-dev.net/v2/perps_vault?chain=neutron',
