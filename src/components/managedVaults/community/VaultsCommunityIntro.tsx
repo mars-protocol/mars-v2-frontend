@@ -77,12 +77,7 @@ export default function VaultsCommunityIntro() {
         </>
       }
     >
-      <ActionButton
-        text='Create Vault'
-        color='primary'
-        leftIcon={<Plus />}
-        onClick={handleOnClick}
-      />
+      <Button text='Create Vault' color='primary' leftIcon={<Plus />} onClick={handleOnClick} />
       <Button
         text='Learn more'
         leftIcon={<PlusSquared />}

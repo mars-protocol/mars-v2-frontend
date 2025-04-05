@@ -64,6 +64,7 @@ export default function AccountsOverview(props: Props) {
   let title = 'Credit Accounts'
   if (kind === 'high_levered_strategy') title = 'High Leverage Strategy Accounts'
   if (kind === 'fund_manager') title = 'Vault Accounts'
+  if (!accountIds || accountIds.length === 0) return null
 
   return (
     <div className='w-full mt-4'>
