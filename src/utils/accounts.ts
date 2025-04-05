@@ -8,7 +8,7 @@ import { MarketResponse } from 'types/generated/mars-perps/MarsPerps.types'
 import { Positions } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import { byDenom } from 'utils/array'
 import { getCoinValue } from 'utils/formatters'
-import { BN } from 'utils/helpers'
+import { BN, mergeBNCoinArrays } from 'utils/helpers'
 import { convertAprToApy } from 'utils/parsers'
 
 export const calculateAccountBalanceValue = (

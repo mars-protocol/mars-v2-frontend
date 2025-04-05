@@ -1,10 +1,12 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import SearchBar from 'components/common/SearchBar'
 import AssetsSelect from 'components/Modals/AssetsSelect'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import { useSelectedDenoms } from 'hooks/assets/useSelectedDenoms'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import { useWeb3WalletConnection } from 'hooks/wallet/useWeb3WalletConnections'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { handleUnknownAsset } from 'utils/assets'
@@ -20,13 +22,21 @@ export default function WalletAssetsModalContent(props: Props) {
   const allChainAssets = useDepositEnabledAssets()
   const chainConfig = useChainConfig()
   const enableAnyAsset = chainConfig.anyAsset
+  const { isConnected } = useWeb3WalletConnection()
 
   const assetsInWallet = useMemo(() => {
     const knownAssetsInWallet: Asset[] = []
     const unknownAssetsInWallet: Asset[] = []
     balances.forEach((coin) => {
+      if (coin.amount === '0') return
+
       const asset = allChainAssets.find(byDenom(coin.denom))
-      if (asset) knownAssetsInWallet.push(asset)
+      if (asset) {
+        knownAssetsInWallet.push({
+          ...asset,
+          chainName: coin.chainName,
+        })
+      }
       if (!asset && enableAnyAsset) {
         const unknownAsset = handleUnknownAsset(coin)
         if (unknownAsset.symbol === 'SHARE') return
@@ -40,37 +50,38 @@ export default function WalletAssetsModalContent(props: Props) {
   const filteredAssets: Asset[] = useMemo(() => {
     return assetsInWallet.filter(
       (asset) =>
+        !asset.isDeprecated &&
         (asset.name.toLowerCase().includes(searchString.toLowerCase()) ||
           asset.denom.toLowerCase().includes(searchString.toLowerCase()) ||
-          asset.symbol.toLowerCase().includes(searchString.toLowerCase())) &&
-        !asset.isDeprecated,
+          asset.symbol.toLowerCase().includes(searchString.toLowerCase()) ||
+          asset?.chainName?.toLowerCase().includes(searchString.toLowerCase())),
     )
   }, [assetsInWallet, searchString])
 
-  const currentSelectedDenom = useStore((s) => s.walletAssetsModal?.selectedDenoms ?? [])
-  const [selectedDenoms, setSelectedDenoms] = useState<string[]>(
-    currentSelectedDenom.filter((denom) => filteredAssets.findIndex(byDenom(denom)) || []),
-  )
-
-  const onChangeSelect = useCallback(
-    (denoms: string[]) => {
-      setSelectedDenoms(denoms)
-      onChangeDenoms(denoms)
-    },
-    [onChangeDenoms],
+  const { selectedDenoms, onChangeSelect } = useSelectedDenoms(
+    filteredAssets,
+    onChangeDenoms,
+    isConnected,
   )
 
   const depositEnabledAssets = useDepositEnabledAssets()
   const whitelistedAssets = useWhitelistedAssets()
 
+  const evmAssets = useMemo(
+    () => filteredAssets.filter((asset) => asset.chainName),
+    [filteredAssets],
+  )
+
   const collateralAssets = useMemo(
     () =>
       whitelistedAssets.filter((asset) =>
-        filteredAssets.some((filteredAsset) => filteredAsset.denom === asset.denom),
+        filteredAssets.some(
+          (filteredAsset) =>
+            filteredAsset.denom === asset.denom && filteredAsset.chainName === asset.chainName,
+        ),
       ),
     [whitelistedAssets, filteredAssets],
   )
-
   const nonCollateralAssets = useMemo(
     () =>
       depositEnabledAssets.filter(
@@ -93,7 +104,7 @@ export default function WalletAssetsModalContent(props: Props) {
       </div>
       <div className='h-full md:max-h-[446px] overflow-y-scroll scrollbar-hide'>
         <AssetsSelect
-          assets={collateralAssets}
+          assets={[...collateralAssets, ...evmAssets]}
           onChangeSelected={onChangeSelect}
           selectedDenoms={selectedDenoms}
           nonCollateralTableAssets={nonCollateralAssets}
