@@ -10,22 +10,38 @@ const underlineClasses =
 interface Props {
   tabs: Tab[]
   activeTabIdx: number
+  className?: string
+  disableNavigation?: boolean
+  onTabChange?: (index: number) => void
 }
 
 export default function Tab(props: Props) {
+  const { tabs, activeTabIdx, className, onTabChange, disableNavigation } = props
   const accountId = useAccountId()
   const { address } = useParams()
   const [searchParams] = useSearchParams()
 
+  const handleClick = (index: number) => {
+    if (disableNavigation && onTabChange) {
+      onTabChange(index)
+    }
+  }
+
   return (
-    <div className='relative w-full'>
-      {props.tabs.map((tab, index) => (
+    <div className={classNames('relative w-full', className)}>
+      {tabs.map((tab, index) => (
         <NavLink
           key={tab.page}
           to={getRoute(tab.page, searchParams, address, accountId)}
+          onClick={(e) => {
+            if (disableNavigation) {
+              e.preventDefault()
+              handleClick(index)
+            }
+          }}
           className={classNames(
-            props.activeTabIdx === index ? underlineClasses : 'text-white/40',
-            'relative mr-8 text-xl ',
+            activeTabIdx === index ? underlineClasses : 'text-white/40',
+            'relative mr-8 text-xl',
           )}
         >
           {tab.name}

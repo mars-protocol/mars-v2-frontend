@@ -19,3 +19,8 @@ export const VAULTS_TABS: Tab[] = [
   { page: 'vaults', name: 'Official Vaults' },
   { page: 'vaults-community', name: 'Community Vaults' },
 ]
+
+export const VAULT_DETAILS_TABS: Tab[] = [
+  { page: 'vaults/{vaultId}/details', name: 'Vault Overview' },
+  { page: 'vaults/{vaultId}/details', name: 'Historical Data' },
+]
