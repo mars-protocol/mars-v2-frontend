@@ -21,6 +21,6 @@ export const VAULTS_TABS: Tab[] = [
 ]
 
 export const VAULT_DETAILS_TABS: Tab[] = [
-  { page: 'vaults/{vaultId}/details', name: 'Vault Overview' },
-  { page: 'vaults/{vaultId}/details', name: 'Historical Data' },
+  { page: 'vaults/{vaultId}/details', name: 'Overview' },
+  { page: 'vaults/{vaultId}/details', name: 'Performance' },
 ]
