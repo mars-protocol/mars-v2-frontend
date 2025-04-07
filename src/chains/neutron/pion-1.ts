@@ -55,7 +55,7 @@ const Pion1: ChainConfig = {
     },
   },
   features: ['ibc-transfer', 'ibc-go'],
-  vaultCodeId: '8778',
+  vaultCodeId: '11495',
   hls: false,
   perps: true,
   farm: true,
