@@ -12,6 +12,9 @@ import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { useState } from 'react'
+import AssetImage from 'components/common/assets/AssetImage'
+import { byDenom } from 'utils/array'
+import useVaultAssets from 'hooks/assets/useVaultAssets'
 
 interface Props {
   vaultDetails: any
@@ -27,6 +30,9 @@ export default function VaultOverview(props: Props) {
   const [modalType, setModalType] = useState<'deposit' | 'unlock'>('deposit')
   const [modalFeeType, setModalFeeType] = useState<'edit' | 'withdraw'>('edit')
 
+  const vaultAssets = useVaultAssets()
+  const depositAsset = vaultAssets.find(byDenom(vaultDetails.base_tokens_denom)) as Asset
+
   const handleActionModal = (type: 'deposit' | 'unlock') => {
     setModalType(type)
     setShowActionModal(true)
@@ -40,14 +46,20 @@ export default function VaultOverview(props: Props) {
   return (
     <div className='flex flex-col justify-center gap-4 md:flex-row'>
       <div className='md:w-100'>
-        <ProfileVaultCard details={vaultDetails} isOwner={isOwner} wallet={vaultDetails.owner} />
+        <ProfileVaultCard
+          details={vaultDetails}
+          depositAsset={depositAsset}
+          isOwner={isOwner}
+          wallet={vaultDetails.owner}
+        />
       </div>
       <FeeAction
         showFeeActionModal={showFeeActionModal}
         setShowFeeActionModal={setShowFeeActionModal}
         type={modalFeeType}
         vaultAddress={vaultAddress}
-        accumulatedFee={vaultDetails.performance_fee_state.accumulated_fee}
+        depositAsset={depositAsset}
+        vaultDetails={vaultDetails}
       />
 
       <VaultAction
@@ -68,13 +80,16 @@ export default function VaultOverview(props: Props) {
               return (
                 <PositionInfo
                   value={
-                    <DisplayCurrency
-                      coin={BNCoin.fromDenomAndBigNumber(
-                        vaultDetails.base_tokens_denom,
-                        BN(vaultDetails.performance_fee_state.accumulated_fee),
-                      )}
-                      className='text-2xl'
-                    />
+                    <>
+                      <AssetImage asset={depositAsset} className='w-5 h-5' />
+                      <DisplayCurrency
+                        coin={BNCoin.fromDenomAndBigNumber(
+                          vaultDetails.base_tokens_denom,
+                          BN(vaultDetails.performance_fee_state.accumulated_fee),
+                        )}
+                        className='text-2xl  !text-end'
+                      />
+                    </>
                   }
                   subtitle={
                     <FormattedNumber

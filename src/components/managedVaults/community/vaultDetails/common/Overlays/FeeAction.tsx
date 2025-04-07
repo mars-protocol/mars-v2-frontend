@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import AssetImage from 'components/common/assets/AssetImage'
 import Button from 'components/common/Button'
 import EscButton from 'components/common/Button/EscButton'
 import { Callout, CalloutType } from 'components/common/Callout'
@@ -6,7 +7,6 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
 import PerformanceFee from 'components/managedVaults/community/createVault/PerformanceFee'
-import { ORACLE_DENOM } from 'constants/oracle'
 import { useState } from 'react'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -17,13 +17,22 @@ interface Props {
   setShowFeeActionModal: (show: boolean) => void
   type: 'edit' | 'withdraw'
   vaultAddress: string
-  accumulatedFee: string
+  vaultDetails: any
+  depositAsset: Asset
 }
 
 export default function FeeAction(props: Props) {
-  const { showFeeActionModal, setShowFeeActionModal, type, vaultAddress, accumulatedFee } = props
+  const {
+    showFeeActionModal,
+    setShowFeeActionModal,
+    type,
+    vaultAddress,
+    vaultDetails,
+    depositAsset,
+  } = props
+  const feeRate = BN(vaultDetails.performance_fee_config.fee_rate).shiftedBy(5)
   const [isTxPending, setIsTxPending] = useState(false)
-  const [performanceFee, setPerformanceFee] = useState<BigNumber>(BN(1))
+  const [performanceFee, setPerformanceFee] = useState<BigNumber>(feeRate)
   const handlePerformanceFeeAction = useStore((s) => s.handlePerformanceFeeAction)
 
   const isEdit = type === 'edit'
@@ -31,7 +40,7 @@ export default function FeeAction(props: Props) {
   const handleFeeAction = async () => {
     if (!vaultAddress) return
 
-    if (isEdit && BN(accumulatedFee).isZero()) {
+    if (isEdit && BN(vaultDetails.performance_fee_state.accumulated_fee).isZero()) {
       console.error('Cannot edit fee when there are no accumulated fees')
       return
     }
@@ -80,7 +89,7 @@ export default function FeeAction(props: Props) {
           <Text size='xs' className='text-white/50 mb-2'>
             {isEdit
               ? 'You may update your performance fee.'
-              : 'We’ll require you to authorise a transaction in your wallet in order to begin.'}
+              : 'We’ll require you to authorise a transaction in your wallet in order to proceed.'}
           </Text>
         </div>
 
@@ -88,10 +97,16 @@ export default function FeeAction(props: Props) {
           <PerformanceFee value={performanceFee} onChange={setPerformanceFee} />
         ) : (
           <div className='text-center'>
-            <DisplayCurrency
-              coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, BN(accumulatedFee))}
-              className='text-4xl'
-            />
+            <div className='flex items-center justify-center gap-2'>
+              <AssetImage asset={depositAsset} className='w-7 h-7' />
+              <DisplayCurrency
+                coin={BNCoin.fromDenomAndBigNumber(
+                  vaultDetails.base_tokens_denom,
+                  BN(vaultDetails.performance_fee_state.accumulated_fee),
+                )}
+                className='text-4xl'
+              />
+            </div>
             <Text size='sm' className='text-white/50'>
               Available for withdrawal.
             </Text>
