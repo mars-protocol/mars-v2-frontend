@@ -41,7 +41,7 @@ export default function Tab(props: Props) {
           }}
           className={classNames(
             activeTabIdx === index ? underlineClasses : 'text-white/40',
-            'relative mr-8 text-xl',
+            'relative mr-8 text-xl cursor-pointer',
           )}
         >
           {tab.name}

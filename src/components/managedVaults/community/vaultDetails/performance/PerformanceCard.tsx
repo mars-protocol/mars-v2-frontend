@@ -6,21 +6,20 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
 interface Props {
-  vaultAddress: string
+  vaultDetails: ExtendedManagedVaultDetails
 }
 
-export default function VaultHistoricalData(props: Props) {
-  const { vaultAddress } = props
-
+export default function PerformanceCard(props: Props) {
+  const { vaultDetails } = props
   const metrics = [
     {
-      value: 212321,
+      value: vaultDetails.base_tokens_amount,
       label: 'TVL',
       isCurrency: true,
       formatOptions: { maxDecimals: 2, minDecimals: 2, abbreviated: true },
     },
     {
-      value: 212321,
+      value: 212343443321,
       label: 'Volume (30d)',
       isCurrency: true,
       formatOptions: { maxDecimals: 2, minDecimals: 2, abbreviated: true },
@@ -36,7 +35,7 @@ export default function VaultHistoricalData(props: Props) {
       },
     },
     {
-      value: 32,
+      value: vaultDetails.metrics.apy,
       label: 'APY',
       formatOptions: { maxDecimals: 2, minDecimals: 2, suffix: '%' },
     },
@@ -46,21 +45,23 @@ export default function VaultHistoricalData(props: Props) {
       formatOptions: { maxDecimals: 0, minDecimals: 0, suffix: ' days' },
     },
   ]
-
   return (
-    <div className='flex flex-wrap md:flex-nowrap items-center justify-center gap-2'>
+    <>
       {metrics.map((metric, index) => {
         return (
           <Card className='text-center py-3 w-[calc(50%-0.5rem)] md:w-45 bg-white/5' key={index}>
             {metric.isCurrency ? (
               <DisplayCurrency
-                coin={BNCoin.fromDenomAndBigNumber('usd', BN(metric.value))}
+                coin={BNCoin.fromDenomAndBigNumber(
+                  vaultDetails.base_tokens_denom,
+                  BN(metric.value),
+                )}
                 options={metric.formatOptions}
                 className='text-sm'
               />
             ) : (
               <FormattedNumber
-                amount={metric.value}
+                amount={Number(metric.value)}
                 options={metric.formatOptions}
                 className='text-sm'
               />
@@ -71,6 +72,6 @@ export default function VaultHistoricalData(props: Props) {
           </Card>
         )
       })}
-    </div>
+    </>
   )
 }

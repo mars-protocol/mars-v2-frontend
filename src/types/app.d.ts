@@ -2015,6 +2015,7 @@ interface PerformanceFeeConfig {
 interface ExtendedManagedVaultDetails extends ManagedVaultDetails {
   metrics: ManagedVaultMetrics
   performance_fee_state: PerformanceFeeState
+  owner?: string
 }
 
 interface UserManagedVaultUnlockResponse {

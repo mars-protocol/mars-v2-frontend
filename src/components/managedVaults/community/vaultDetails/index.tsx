@@ -1,8 +1,8 @@
 import NavigationBackButton from 'components/common/Button/NavigationBackButton'
 import Tab from 'components/earn/Tab'
 import Text from 'components/common/Text'
-import VaultHistoricalData from 'components/managedVaults/community/vaultDetails/VaultHistoricalData'
-import VaultOverview from 'components/managedVaults/community/vaultDetails/VaultOverview'
+import VaultPerformance from 'components/managedVaults/community/vaultDetails/performance/VaultPerformance'
+import VaultOverview from 'components/managedVaults/community/vaultDetails/overview/VaultOverview'
 import { CircularProgress } from 'components/common/CircularProgress'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 import { useParams } from 'react-router-dom'
@@ -57,7 +57,7 @@ export function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) 
       {activeTabIdx === 0 ? (
         <VaultOverview vaultDetails={vaultDetails} isOwner={isOwner} vaultAddress={vaultAddress} />
       ) : (
-        <VaultHistoricalData vaultAddress={vaultAddress} />
+        <VaultPerformance vaultDetails={vaultDetails} vaultAddress={vaultAddress} />
       )}
     </div>
   )

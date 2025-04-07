@@ -4,9 +4,9 @@ import PositionInfo from 'components/managedVaults/community/vaultDetails/common
 import ProfileVaultCard from 'components/managedVaults/community/vaultDetails/profileVaultCard/ProfileVaultCard'
 import useToggle from 'hooks/common/useToggle'
 import VaultAction from 'components/managedVaults/community/vaultDetails/common/Overlays/VaultAction'
-import VaultPosition from 'components/managedVaults/community/vaultDetails/VaultPosition'
-import VaultSummary from 'components/managedVaults/community/vaultDetails/VaultSummary'
-import Withdrawals from 'components/managedVaults/community/vaultDetails/Withdrawals'
+import VaultPosition from 'components/managedVaults/community/vaultDetails/overview/VaultPosition'
+import VaultSummary from 'components/managedVaults/community/vaultDetails/overview/VaultSummary'
+import Withdrawals from 'components/managedVaults/community/vaultDetails/overview/Withdrawals'
 import { ArrowDownLine } from 'components/common/Icons'
 import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -17,7 +17,7 @@ import { byDenom } from 'utils/array'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 
 interface Props {
-  vaultDetails: any
+  vaultDetails: ExtendedManagedVaultDetails
   isOwner: boolean
   vaultAddress: string
 }
