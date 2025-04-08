@@ -37,7 +37,6 @@ function IntroBackground(props: { bg: Props['bg'] }) {
         </div>
       )
     case 'farm':
-    case 'vaults-community':
       return (
         <div className='absolute top-0 right-0 block w-140 opacity-5'>
           <GridLandscape />
