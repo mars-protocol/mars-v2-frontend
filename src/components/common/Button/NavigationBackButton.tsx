@@ -11,7 +11,7 @@ export default function NavigationBackButton() {
 
   return (
     <Button
-      onClick={() => navigate(getRoute('vaults-community', searchParams, address))}
+      onClick={() => navigate(getRoute('vaults', searchParams, address))}
       variant='transparent'
       color='quaternary'
       className='text-white/60 hover:text-white'
