@@ -15,6 +15,7 @@ export default function VaultPerformance(props: Props) {
         <PerformanceCard vaultDetails={vaultDetails} />
       </div>
       <PerformanceChart />
+      <PerformanceChart />
     </section>
   )
 }

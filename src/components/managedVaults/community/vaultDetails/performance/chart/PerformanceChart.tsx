@@ -30,6 +30,14 @@ function generateDummyData() {
   return data
 }
 
+const lines = [
+  {
+    dataKey: 'tvl',
+    color: '#8884d8',
+    name: 'TVL',
+  },
+]
+
 export default function PerformanceChart(props: Props) {
   const loading = false
   const data = generateDummyData()
@@ -41,7 +49,7 @@ export default function PerformanceChart(props: Props) {
       {data === null || loading ? (
         <PerformanceChartLoading height={'h-80'} />
       ) : (
-        <PerformanceChartBody data={data} height={height} timeframe={timeframe} />
+        <PerformanceChartBody data={data} lines={lines} height={height} timeframe={timeframe} />
       )}
     </PerformanceChartWrapper>
   )
