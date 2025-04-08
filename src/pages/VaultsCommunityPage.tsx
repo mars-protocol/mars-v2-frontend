@@ -1,10 +1,8 @@
 import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
 import { ArrowRight } from 'components/common/Icons'
-import Tab from 'components/earn/Tab'
 import VaultsCommunityIntro from 'components/managedVaults/community/VaultsCommunityIntro'
 import AvailableCommunityVaults from 'components/managedVaults/community/table/AvailableCommunityVaults'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import { VAULTS_TABS } from 'constants/pages'
 import { INFO_ITEMS } from 'constants/warningDialog'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -26,6 +24,12 @@ export default function VaultsCommunityPage() {
   const address = useStore((s) => s.address)
   const accountId = useAccountId()
   const { open: showAlertDialog, close } = useAlertDialog()
+
+  useEffect(() => {
+    if (!chainConfig.managedVaults) {
+      navigate(getRoute(getPage('trade', chainConfig), searchParams, address, accountId))
+    }
+  }, [accountId, address, chainConfig, chainConfig.managedVaults, navigate, searchParams])
 
   const showDialog = useCallback(() => {
     if (!showVaultWarning) return
@@ -71,7 +75,6 @@ export default function VaultsCommunityPage() {
 
   return (
     <div className='flex flex-wrap w-full gap-6'>
-      <Tab tabs={VAULTS_TABS} activeTabIdx={1} />
       <VaultsCommunityIntro />
       <AvailableCommunityVaults />
     </div>

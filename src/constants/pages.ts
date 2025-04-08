@@ -14,8 +14,3 @@ export const HLS_TABS: Tab[] = [
   { page: 'hls-staking', name: 'Staking' },
   { page: 'hls-farm', name: 'Farm' },
 ]
-
-export const VAULTS_TABS: Tab[] = [
-  { page: 'vaults', name: 'Official Vaults' },
-  { page: 'vaults-community', name: 'Community Vaults' },
-]

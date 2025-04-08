@@ -18,7 +18,6 @@ import PortfolioPage from 'pages/PortfolioPage'
 import TradePage from 'pages/TradePage'
 import V1Page from 'pages/V1Page'
 import VaultsCommunityPage from 'pages/VaultsCommunityPage'
-import VaultsOfficialPage from 'pages/VaultsOfficialPage'
 
 export default function Routes() {
   const chainConfig = useChainConfig()
@@ -51,14 +50,13 @@ export default function Routes() {
         />
 
         <Route path='/vaults'>
-          <Route path='' element={<VaultsOfficialPage />} />
+          <Route path='' element={<VaultsCommunityPage />} />
           <Route path='create' element={<CreateVault />} />
           <Route path=':vaultAddress'>
             <Route path='details' element={<VaultDetails />} />
             <Route path='mint-account' element={<MintVaultAccount />} />
           </Route>
         </Route>
-        <Route path='/vaults-community' element={<VaultsCommunityPage />} />
 
         <Route path='/wallets/:address'>
           <Route path='' element={<TradePage />} />
@@ -81,9 +79,8 @@ export default function Routes() {
               <Route path='mint-account' element={<MintVaultAccount />} />
             </Route>
             <Route path='create' element={<CreateVault />} />
-            <Route path='' element={<VaultsOfficialPage />} />
+            <Route path='' element={<VaultsCommunityPage />} />
           </Route>
-          <Route path='vaults-community' element={<VaultsCommunityPage />} />
 
           <Route path='portfolio/:accountId'>
             <Route path='' element={<PortfolioAccountPage />} />
