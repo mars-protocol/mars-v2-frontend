@@ -79,7 +79,7 @@ export default function Withdrawals(props: Props) {
     : totalQueuedWithdrawals.dividedBy(BN(details.base_tokens_amount)).multipliedBy(100)
 
   if (!isOwner) {
-    return userUnlocksData.length > 0 ? (
+    return (
       <div className='w-full max-h-75'>
         <Table
           title={
@@ -98,9 +98,18 @@ export default function Withdrawals(props: Props) {
           initialSorting={[{ id: 'initiated', desc: true }]}
           tableBodyClassName='bg-white/5'
           spacingClassName='p-3'
+          titleComponent={
+            userUnlocksData.length === 0 ? (
+              <div className='h-50 flex items-center justify-center'>
+                <Text size='sm' className='text-white/50'>
+                  You have no pending withdrawals.
+                </Text>
+              </div>
+            ) : undefined
+          }
         />
       </div>
-    ) : null
+    )
   }
 
   const tabs: CardTab[] = [
