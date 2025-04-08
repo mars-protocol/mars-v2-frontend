@@ -8,6 +8,7 @@ import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetai
 import { useParams } from 'react-router-dom'
 import { useState } from 'react'
 import { VAULT_DETAILS_TABS } from 'constants/pages'
+import useStore from 'store'
 
 function VaultLoadingState() {
   return (
@@ -20,24 +21,46 @@ function VaultLoadingState() {
   )
 }
 
-export default function VaultDetails() {
-  const { vaultAddress } = useParams<{ vaultAddress: string }>()
+interface Props {
+  vaultAddress?: string
+}
+
+export default function VaultDetails(props: Props) {
+  const { vaultAddress: propVaultAddress } = props
+  const { vaultAddress: urlVaultAddress } = useParams<{ vaultAddress: string }>()
+  const [activeTabIdx, setActiveTabIdx] = useState<number>(0)
+  const focusComponent = useStore((s) => s.focusComponent)
+
+  const vaultAddress = propVaultAddress || urlVaultAddress
 
   if (!vaultAddress) return <VaultLoadingState />
 
   return (
-    <div className='container mx-auto'>
-      <div className='flex items-center mb-6'>
-        <NavigationBackButton />
+    <section className='container mx-auto'>
+      <div className='flex mb-6 w-full'>
+        {!focusComponent && <NavigationBackButton />}
+        <div className='ml-auto'>
+          <Tab
+            tabs={VAULT_DETAILS_TABS}
+            activeTabIdx={activeTabIdx}
+            onTabChange={setActiveTabIdx}
+            disableNavigation
+          />
+        </div>
       </div>
-      <VaultDetailsContent vaultAddress={vaultAddress} />
-    </div>
+      <VaultDetailsContent vaultAddress={vaultAddress} activeTabIdx={activeTabIdx} />
+    </section>
   )
 }
 
-export function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
+export function VaultDetailsContent({
+  vaultAddress,
+  activeTabIdx,
+}: {
+  vaultAddress: string
+  activeTabIdx: number
+}) {
   const { details: vaultDetails, isOwner, isLoading } = useManagedVaultDetails(vaultAddress)
-  const [activeTabIdx, setActiveTabIdx] = useState<number>(0)
 
   if (isOwner === undefined || !vaultDetails || isLoading) {
     return <VaultLoadingState />
@@ -46,19 +69,12 @@ export function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) 
   if (!vaultDetails) return null
 
   return (
-    <div className='flex flex-col gap-4'>
-      <Tab
-        tabs={VAULT_DETAILS_TABS}
-        activeTabIdx={activeTabIdx}
-        onTabChange={setActiveTabIdx}
-        disableNavigation
-        className='flex justify-end'
-      />
+    <>
       {activeTabIdx === 0 ? (
         <VaultOverview vaultDetails={vaultDetails} isOwner={isOwner} vaultAddress={vaultAddress} />
       ) : (
         <VaultPerformance vaultDetails={vaultDetails} vaultAddress={vaultAddress} />
       )}
-    </div>
+    </>
   )
 }

@@ -1,7 +1,7 @@
 import Card from 'components/common/Card'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import Text from 'components/common/Text'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
@@ -35,7 +35,8 @@ export default function PerformanceCard(props: Props) {
       },
     },
     {
-      value: vaultDetails.metrics.apy,
+      value: 22,
+      // value: vaultDetails.metrics.apy,
       label: 'APY',
       formatOptions: { maxDecimals: 2, minDecimals: 2, suffix: '%' },
     },
@@ -46,32 +47,29 @@ export default function PerformanceCard(props: Props) {
     },
   ]
   return (
-    <>
-      {metrics.map((metric, index) => {
-        return (
-          <Card className='text-center py-3 w-[calc(50%-0.5rem)] md:w-45 bg-white/5' key={index}>
-            {metric.isCurrency ? (
-              <DisplayCurrency
-                coin={BNCoin.fromDenomAndBigNumber(
-                  vaultDetails.base_tokens_denom,
-                  BN(metric.value),
-                )}
-                options={metric.formatOptions}
-                className='text-sm'
-              />
-            ) : (
-              <FormattedNumber
-                amount={Number(metric.value)}
-                options={metric.formatOptions}
-                className='text-sm'
-              />
-            )}
-            <Text size='xs' className='pt-1 text-white/40'>
-              {metric.label}
-            </Text>
-          </Card>
-        )
-      })}
-    </>
+    <div className='flex flex-col gap-1 w-full'>
+      <div className='flex gap-1'>
+        {metrics.map((metric, index) => {
+          const value = metric.isCurrency ? (
+            <DisplayCurrency
+              coin={BNCoin.fromDenomAndBigNumber(vaultDetails.base_tokens_denom, BN(metric.value))}
+              options={metric.formatOptions}
+              className='text-sm'
+            />
+          ) : (
+            <FormattedNumber
+              amount={Number(metric.value)}
+              options={metric.formatOptions}
+              className='text-sm'
+            />
+          )
+          return (
+            <Card className='text-center py-3 w-[calc(50%-0.5rem)] md:w-45 bg-white/5' key={index}>
+              <TitleAndSubCell title={value} sub={metric.label} className='text-sm' />
+            </Card>
+          )
+        })}
+      </div>
+    </div>
   )
 }
