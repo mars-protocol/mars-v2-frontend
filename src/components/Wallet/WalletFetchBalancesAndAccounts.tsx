@@ -28,13 +28,7 @@ function Content() {
   const { pathname } = useLocation()
 
   if (isLoadingAccounts) return <FetchLoading />
-  if (
-    accountIds &&
-    accountIds.length === 0 &&
-    !isV1 &&
-    !pathname.includes('/vaults') &&
-    !pathname.includes('/vaults-community')
-  )
+  if (accountIds && accountIds.length === 0 && !isV1 && !pathname.includes('/vaults'))
     return <AccountCreateFirst />
   if (!isLoadingAccounts && accountIds)
     return <FetchedBalances accountIds={accountIds} isV1={isV1} address={address} />

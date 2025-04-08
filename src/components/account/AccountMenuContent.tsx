@@ -61,11 +61,7 @@ export default function AccountMenuContent(props: Props) {
 
   const handleCreateAccountClick = useCallback(() => {
     setShowMenu(!showMenu)
-    if (
-      !hasCreditAccounts &&
-      !pathname.includes('/vaults') &&
-      !pathname.includes('/vaults-community')
-    ) {
+    if (!hasCreditAccounts && !pathname.includes('/vaults')) {
       useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
       return
     }

@@ -68,7 +68,7 @@ export default function VaultsCommunityIntro() {
 
   return (
     <Intro
-      bg='vaults-community'
+      bg='vaults'
       text={
         <>
           <span className='text-white'>User generated vaults </span> is a strategy where users
@@ -77,12 +77,7 @@ export default function VaultsCommunityIntro() {
         </>
       }
     >
-      <ActionButton
-        text='Create Vault'
-        color='primary'
-        leftIcon={<Plus />}
-        onClick={handleOnClick}
-      />
+      <Button text='Create Vault' color='primary' leftIcon={<Plus />} onClick={handleOnClick} />
       <Button
         text='Learn more'
         leftIcon={<PlusSquared />}

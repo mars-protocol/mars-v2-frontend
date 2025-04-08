@@ -42,7 +42,6 @@ export function getPage(pathname: string, chainConfig: ChainConfig): Page {
     'hls-staking',
     'execute',
     'vaults',
-    'vaults-community',
     'vaults/create',
     'vaults/{vaultId}/mint-account',
     'vaults/{vaultId}/details',
