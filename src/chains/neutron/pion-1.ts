@@ -24,9 +24,9 @@ const Pion1: ChainConfig = {
   },
   endpoints: {
     routes: 'https://testnet.astroport.fi/api/routes',
-    rpc: process.env.NEXT_PUBLIC_NEUTRON_TEST_RPC ?? 'https://rpc-palvus.pion-1.ntrn.tech',
+    rpc: process.env.NEXT_PUBLIC_NEUTRON_TEST_RPC ?? 'https://rpc-lb-pion.ntrn.tech',
     fallbackRpc: 'https://rpc-falcron.pion-1.ntrn.tech',
-    rest: process.env.NEXT_PUBLIC_NEUTRON_TEST_REST ?? 'https://rest-palvus.pion-1.ntrn.tech',
+    rest: process.env.NEXT_PUBLIC_NEUTRON_TEST_REST ?? 'https://rest-lb-pion.ntrn.tech',
     swap: 'https://testnet-neutron.astroport.fi/swap',
     explorer: 'https://www.mintscan.io/neutron-testnet',
     dexAssets: 'https://neutron-cache-api.onrender.com/pion-1/tokens',
