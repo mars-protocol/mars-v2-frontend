@@ -467,7 +467,6 @@ type Page =
   | 'hls-farm'
   | 'hls-staking'
   | 'vaults'
-  | 'vaults-community'
   | 'vaults/create'
   | 'vaults/{vaultId}'
   | 'vaults/{vaultId}/mint-account'

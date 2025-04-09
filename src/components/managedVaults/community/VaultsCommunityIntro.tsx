@@ -68,7 +68,7 @@ export default function VaultsCommunityIntro() {
 
   return (
     <Intro
-      bg='vaults-community'
+      bg='vaults'
       text={
         <>
           <span className='text-white'>User generated vaults </span> is a strategy where users
