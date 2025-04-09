@@ -826,10 +826,10 @@ export default function createBroadcastSlice(
         },
       ]
 
-      if (options.orderType === 'child') {
+      if (options.orderType === 'child' && options.parentOrderId) {
         triggerConditions.push({
           trigger_order_executed: {
-            trigger_order_id: options.parentOrderId || '',
+            trigger_order_id: options.parentOrderId,
           },
         })
       }
@@ -896,6 +896,7 @@ export default function createBroadcastSlice(
       }
 
       options.orders.forEach((order) => {
+        console.log('order', order)
         const triggerActions: Action[] = [
           {
             execute_perp_order: {
@@ -926,10 +927,10 @@ export default function createBroadcastSlice(
           },
         ]
 
-        if (order.orderType === 'child') {
+        if (order.orderType === 'child' && order.parentOrderId) {
           triggerConditions.push({
             trigger_order_executed: {
-              trigger_order_id: order.parentOrderId || '',
+              trigger_order_id: order.parentOrderId,
             },
           })
         }
