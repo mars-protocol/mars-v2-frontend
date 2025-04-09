@@ -1,15 +1,15 @@
+import AssetImage from 'components/common/assets/AssetImage'
 import DisplayCurrency from 'components/common/DisplayCurrency'
+import Loading from 'components/common/Loading'
+import useStore from 'store'
+import PositionInfo from 'components/managedVaults/community/vaultDetails/common/PositionInfo'
+import Text from 'components/common/Text'
+import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { LockUnlocked } from 'components/common/Icons'
-import Text from 'components/common/Text'
-import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
-import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
-import { BN } from 'utils/helpers'
-import PositionInfo from 'components/managedVaults/community/vaultDetails/common/PositionInfo'
 import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVaultConvertToTokens'
-import Loading from 'components/common/Loading'
-import AssetImage from 'components/common/assets/AssetImage'
+import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
 
 interface Props {
   details: ExtendedManagedVaultDetails

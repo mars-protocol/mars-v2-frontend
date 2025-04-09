@@ -1,6 +1,7 @@
 import NavigationBackButton from 'components/common/Button/NavigationBackButton'
 import Tab from 'components/earn/Tab'
 import Text from 'components/common/Text'
+import useStore from 'store'
 import VaultPerformance from 'components/managedVaults/community/vaultDetails/performance/VaultPerformance'
 import VaultOverview from 'components/managedVaults/community/vaultDetails/overview/VaultOverview'
 import { CircularProgress } from 'components/common/CircularProgress'
@@ -8,7 +9,6 @@ import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetai
 import { useParams } from 'react-router-dom'
 import { useState } from 'react'
 import { VAULT_DETAILS_TABS } from 'constants/pages'
-import useStore from 'store'
 
 function VaultLoadingState() {
   return (

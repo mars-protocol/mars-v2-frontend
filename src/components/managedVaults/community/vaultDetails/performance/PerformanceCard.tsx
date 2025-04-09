@@ -47,29 +47,27 @@ export default function PerformanceCard(props: Props) {
     },
   ]
   return (
-    <div className='flex flex-col gap-1 w-full'>
-      <div className='flex gap-1'>
-        {metrics.map((metric, index) => {
-          const value = metric.isCurrency ? (
-            <DisplayCurrency
-              coin={BNCoin.fromDenomAndBigNumber(vaultDetails.base_tokens_denom, BN(metric.value))}
-              options={metric.formatOptions}
-              className='text-sm'
-            />
-          ) : (
-            <FormattedNumber
-              amount={Number(metric.value)}
-              options={metric.formatOptions}
-              className='text-sm'
-            />
-          )
-          return (
-            <Card className='text-center py-3 w-[calc(50%-0.5rem)] md:w-45 bg-white/5' key={index}>
-              <TitleAndSubCell title={value} sub={metric.label} className='text-sm' />
-            </Card>
-          )
-        })}
-      </div>
+    <div className='flex flex-wrap sm:flex-nowrap justify-center gap-1 w-full'>
+      {metrics.map((metric, index) => {
+        const value = metric.isCurrency ? (
+          <DisplayCurrency
+            coin={BNCoin.fromDenomAndBigNumber(vaultDetails.base_tokens_denom, BN(metric.value))}
+            options={metric.formatOptions}
+            className='text-sm'
+          />
+        ) : (
+          <FormattedNumber
+            amount={Number(metric.value)}
+            options={metric.formatOptions}
+            className='text-sm'
+          />
+        )
+        return (
+          <Card className='text-center py-3 w-[calc(50%-0.5rem)] md:w-45 bg-white/5' key={index}>
+            <TitleAndSubCell title={value} sub={metric.label} className='text-sm' />
+          </Card>
+        )
+      })}
     </div>
   )
 }
