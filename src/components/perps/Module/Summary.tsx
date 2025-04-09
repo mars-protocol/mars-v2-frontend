@@ -128,7 +128,7 @@ export default function PerpsSummary(props: Props) {
         tradeDirection: stopTradeDirection,
         baseDenom,
         keeperFee: calculateKeeperFee,
-        isReduceOnly: true,
+        reduceOnly: true,
         comparison,
       })
       return onTxExecuted()
@@ -151,7 +151,7 @@ export default function PerpsSummary(props: Props) {
         baseDenom,
         comparison,
         keeperFee: calculateKeeperFee,
-        isReduceOnly,
+        reduceOnly: isReduceOnly,
       })
       return onTxExecuted()
     }
