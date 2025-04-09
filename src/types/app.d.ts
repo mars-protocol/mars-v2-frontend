@@ -1287,6 +1287,10 @@ interface CommonSlice {
   hlsBorrowAmount: BigNumber | null
   errorStore: ErrorStore
   creditManagerConfig: ConfigResponse | null
+  conditionalTriggerOrders: {
+    tp: string | null
+    sl: string | null
+  }
 }
 
 interface ErrorStore {
@@ -1320,6 +1324,7 @@ interface ModalSlice {
   perpsVaultModal: PerpsVaultModal | null
   settingsModal: boolean
   keeperFeeModal: boolean
+  conditionalTriggersModal: boolean
   addSLTPModal: boolean
   unlockModal: UnlockModal | null
   farmModal: FarmModal | null

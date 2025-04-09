@@ -74,8 +74,6 @@ export default function Manage(props: Props) {
     limitOrders,
   ])
 
-  const isAddSLTPModalOpen = useStore((s) => s.addSLTPModal)
-
   const handleCloseClick = useCallback(() => {
     if (!currentAccount) return
 
@@ -333,7 +331,7 @@ export default function Manage(props: Props) {
 
   return (
     <div className='flex justify-end' onClick={(e) => e.stopPropagation()}>
-      {isAddSLTPModalOpen && <PerpsSlTpModal parentPosition={perpPosition} />}
+      <PerpsSlTpModal parentPosition={perpPosition} />
       <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
     </div>
   )
