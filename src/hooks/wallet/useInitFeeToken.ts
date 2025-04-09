@@ -120,27 +120,20 @@ export default function useInitFeeToken() {
 
     // Case 3: Fee token set and has balance but gas price has changed
     if (feeToken && hasTokenBalance(feeToken.coinMinimalDenom) && hasAnyFeeToken) {
-      // Find the current gas price from the fetched gas prices
-      const currentGasPrice = gasPrices.prices.find(
-        (price) => price.denom === feeToken.coinMinimalDenom,
-      )
+      // Find the current gas token from the available fee tokens
+      const currentGasToken = availableFeeTokens.find(
+        (availableToken) => availableToken.token.coinMinimalDenom === feeToken.coinMinimalDenom,
+      )?.token
 
       // If we have a current gas price and it's different from the stored one
-      if (currentGasPrice) {
+      if (currentGasToken) {
         const storedGasPrice = feeToken.gasPriceStep.average.toString()
-        const fetchedGasPrice = BN(currentGasPrice.amount)
-          .decimalPlaces(feeToken.coinDecimals)
-          .toString()
+        const fetchedGasPrice = currentGasToken.gasPriceStep.average.toString()
 
         // If gas price has changed, update the fee token with the new price
         if (storedGasPrice !== fetchedGasPrice) {
-          // Find the updated token from available fee tokens
-          const updatedToken = availableFeeTokens.find(
-            (t) => t.token.coinMinimalDenom === feeToken.coinMinimalDenom,
-          )
-
-          if (updatedToken) {
-            setFeeToken(updatedToken.token, chainConfig.id)
+          if (currentGasToken) {
+            setFeeToken(currentGasToken, chainConfig.id)
             return true
           }
         }
