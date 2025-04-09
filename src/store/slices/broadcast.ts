@@ -895,8 +895,17 @@ export default function createBroadcastSlice(
         })
       }
 
+      if (options.cancelOrders?.length) {
+        options.cancelOrders.forEach((order) => {
+          actions.push({
+            delete_trigger_order: {
+              trigger_order_id: order.orderId,
+            },
+          })
+        })
+      }
+
       options.orders.forEach((order) => {
-        console.log('order', order)
         const triggerActions: Action[] = [
           {
             execute_perp_order: {

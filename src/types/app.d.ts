@@ -1047,6 +1047,7 @@ interface CreateMultipleTriggerOrdersOptions {
   keeperFeeFromLends: BNCoin
   keeperFeeFromBorrows: BNCoin
   orders: TriggerOrderOptions[]
+  cancelOrders?: { orderId: string }[]
 }
 
 interface TriggerOrderOptions {

@@ -18,6 +18,8 @@ import { useCallback, useMemo, useState } from 'react'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { formatPercent } from 'utils/formatters'
+import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
+import useAutoLend from 'hooks/wallet/useAutoLend'
 
 const perpsPercentage = (price: BigNumber, triggerPrice: BigNumber) => {
   if (!price || triggerPrice.isZero()) return BN_ZERO
@@ -38,6 +40,9 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
 
   const submitLimitOrder = useSubmitLimitOrder()
   const currentAccount = useCurrentAccount()
+  const { data: limitOrders } = usePerpsLimitOrders()
+  const cancelTriggerOrder = useStore((s) => s.cancelTriggerOrder)
+  const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
 
   const { data: perpsConfig } = usePerpsConfig()
   const assets = useDepositEnabledAssets()
@@ -88,6 +93,19 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
     setIsLoading(true)
     try {
       const isShort = currentTradeDirection === 'short'
+
+      // Find existing SL/TP orders for this position
+      const existingOrders =
+        limitOrders?.filter((order) => {
+          const actions = order.order.actions
+          return actions.some(
+            (action) =>
+              'execute_perp_order' in action &&
+              action.execute_perp_order.denom === perpsAsset.denom &&
+              action.execute_perp_order.reduce_only,
+          )
+        }) ?? []
+
       const createStopLossOrder = () => {
         if (!showStopLoss || stopLossPrice.isZero()) return null
 
@@ -126,7 +144,10 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
       )
 
       if (orders.length > 0) {
-        await submitLimitOrder(orders)
+        await submitLimitOrder({
+          orders,
+          cancelOrders: existingOrders.map((order) => ({ orderId: order.order.order_id })),
+        })
       }
 
       onClose()
@@ -146,6 +167,7 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
     onClose,
     currentTradeDirection,
     positionSize,
+    limitOrders,
   ])
 
   const handleRemoveStopLoss = () => {
@@ -293,6 +315,22 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
             impact of the funding rate on the final price.
           </Text>
         </Callout>
+        {limitOrders?.some((order) => {
+          const actions = order.order.actions
+          return actions.some(
+            (action) =>
+              'execute_perp_order' in action &&
+              action.execute_perp_order.denom === perpsAsset?.denom &&
+              action.execute_perp_order.reduce_only,
+          )
+        }) && (
+          <Callout type={CalloutType.WARNING} iconClassName='self-start'>
+            <Text size='sm' className='text-left'>
+              Your existing TP/SL triggers will be removed if you add a new TP/SL trigger on this
+              order.
+            </Text>
+          </Callout>
+        )}
         <Button
           onClick={handleDone}
           text='Done'
