@@ -29,6 +29,8 @@ const perpsPercentage = (price: BigNumber, triggerPrice: BigNumber) => {
 export default function PerpsSlTpModal({ parentPosition }: { parentPosition: PerpPositionRow }) {
   const perpsAsset = parentPosition?.asset
 
+  const modal = useStore((s) => s.addSLTPModal)
+
   const [stopLossPrice, setStopLossPrice] = useState(BN_ZERO)
   const [takeProfitPrice, setTakeProfitPrice] = useState(BN_ZERO)
   const [showStopLoss, setShowStopLoss] = useState(false)
@@ -179,6 +181,8 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
     setShowTakeProfit(false)
     setTakeProfitPrice(BN_ZERO)
   }
+
+  if (!modal) return null
 
   return (
     <Modal
