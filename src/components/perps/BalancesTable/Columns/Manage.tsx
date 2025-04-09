@@ -72,10 +72,7 @@ export default function Manage(props: Props) {
     limitOrders,
   ])
 
-  const isPerpsSlTpModalOpen = useStore((s) => s.addSLTPModal.open)
-  const openPerpsSlTpModal = useCallback((parentPosition: PerpPositionRow) => {
-    useStore.setState({ addSLTPModal: { open: true, parentPosition } })
-  }, [])
+  const isAddSLTPModalOpen = useStore((s) => s.addSLTPModal)
 
   const handleCloseClick = useCallback(() => {
     if (!currentAccount) return
@@ -244,7 +241,7 @@ export default function Manage(props: Props) {
               icon: <Shield />,
               text: 'Add Stop Loss',
               onClick: () => {
-                openPerpsSlTpModal(perpPosition)
+                useStore.setState({ addSLTPModal: true })
               },
             },
           ]
@@ -288,7 +285,7 @@ export default function Manage(props: Props) {
               icon: <Shield />,
               text: 'Add Stop Loss',
               onClick: () => {
-                openPerpsSlTpModal(perpPosition)
+                useStore.setState({ addSLTPModal: true })
               },
             },
           ]),
@@ -298,14 +295,7 @@ export default function Manage(props: Props) {
         onClick: () => handleCloseClick(),
       },
     ],
-    [
-      handleCloseClick,
-      handleFlipPosition,
-      openPerpsSlTpModal,
-      perpPosition,
-      searchParams,
-      setSearchParams,
-    ],
+    [handleCloseClick, handleFlipPosition, perpPosition, searchParams, setSearchParams],
   )
 
   if (props.perpPosition.type === 'limit' || props.perpPosition.type === 'stop')
@@ -333,7 +323,7 @@ export default function Manage(props: Props) {
 
   return (
     <div className='flex justify-end' onClick={(e) => e.stopPropagation()}>
-      {isPerpsSlTpModalOpen && <PerpsSlTpModal />}
+      {isAddSLTPModalOpen && <PerpsSlTpModal parentPosition={perpPosition} />}
       <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
     </div>
   )

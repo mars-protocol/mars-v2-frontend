@@ -24,14 +24,14 @@ const perpsPercentage = (price: BigNumber, triggerPrice: BigNumber) => {
   return triggerPrice.minus(price).dividedBy(price).multipliedBy(100)
 }
 
-export default function PerpsSlTpModal() {
-  const { parentPosition } = useStore((state) => state.addSLTPModal)
+export default function PerpsSlTpModal({ parentPosition }: { parentPosition: PerpPositionRow }) {
   const perpsAsset = parentPosition?.asset
 
   const [stopLossPrice, setStopLossPrice] = useState(BN_ZERO)
   const [takeProfitPrice, setTakeProfitPrice] = useState(BN_ZERO)
   const [showStopLoss, setShowStopLoss] = useState(false)
   const [showTakeProfit, setShowTakeProfit] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const { data: allAssets } = useAssets()
   const USD = allAssets.find(byDenom('usd'))
@@ -61,7 +61,7 @@ export default function PerpsSlTpModal() {
   )
 
   const onClose = useCallback(() => {
-    useStore.setState({ addSLTPModal: { open: false, parentPosition: null } })
+    useStore.setState({ addSLTPModal: false })
   }, [])
 
   const currentTradeDirection = useMemo(() => {
@@ -85,58 +85,57 @@ export default function PerpsSlTpModal() {
 
   const handleDone = useCallback(async () => {
     if (!currentAccount || !perpsAsset || !feeToken) return
-    const isShort = currentTradeDirection === 'short'
+    setIsLoading(true)
+    try {
+      const isShort = currentTradeDirection === 'short'
+      const createStopLossOrder = () => {
+        if (!showStopLoss || stopLossPrice.isZero()) return null
 
-    const createStopLossOrder = () => {
-      if (!showStopLoss || stopLossPrice.isZero()) return null
-
-      return {
-        asset: perpsAsset,
-        orderSize: isShort ? positionSize : positionSize.negated(),
-        limitPrice: stopLossPrice,
-        tradeDirection: isShort ? 'short' : ('long' as TradeDirection),
-        comparison: isShort ? 'greater_than' : ('less_than' as TriggerType),
-        orderType: 'child' as CreateTriggerOrderType,
-        parentOrderId: parentPosition?.orderId,
-        baseDenom: feeToken.denom,
-        keeperFee: calculateKeeperFee,
-        isReduceOnly: true,
+        return {
+          asset: perpsAsset,
+          orderSize: isShort ? positionSize : positionSize.negated(),
+          limitPrice: stopLossPrice,
+          tradeDirection: isShort ? 'short' : ('long' as TradeDirection),
+          comparison: isShort ? 'greater_than' : ('less_than' as TriggerType),
+          baseDenom: feeToken.denom,
+          keeperFee: calculateKeeperFee,
+          reduceOnly: true,
+        }
       }
-    }
 
-    const createTakeProfitOrder = () => {
-      if (!showTakeProfit || takeProfitPrice.isZero()) return null
+      const createTakeProfitOrder = () => {
+        if (!showTakeProfit || takeProfitPrice.isZero()) return null
 
-      return {
-        asset: perpsAsset,
-        orderSize: isShort ? positionSize : positionSize.negated(),
-        limitPrice: takeProfitPrice,
-        tradeDirection: isShort ? 'short' : ('long' as TradeDirection),
-        comparison: isShort ? 'less_than' : ('greater_than' as TriggerType),
-        orderType: 'child' as CreateTriggerOrderType,
-        parentOrderId: parentPosition?.orderId,
-        baseDenom: feeToken.denom,
-        keeperFee: calculateKeeperFee,
-        isReduceOnly: true,
+        return {
+          asset: perpsAsset,
+          orderSize: isShort ? positionSize : positionSize.negated(),
+          limitPrice: takeProfitPrice,
+          tradeDirection: isShort ? 'short' : ('long' as TradeDirection),
+          comparison: isShort ? 'less_than' : ('greater_than' as TriggerType),
+          baseDenom: feeToken.denom,
+          keeperFee: calculateKeeperFee,
+          reduceOnly: true,
+        }
       }
+
+      const stopLossOrder = createStopLossOrder()
+      const takeProfitOrder = createTakeProfitOrder()
+
+      const orders = [stopLossOrder, takeProfitOrder].filter(
+        (order): order is NonNullable<typeof order> => order !== null,
+      )
+
+      if (orders.length > 0) {
+        await submitLimitOrder(orders)
+      }
+
+      onClose()
+    } finally {
+      setIsLoading(false)
     }
-
-    const stopLossOrder = createStopLossOrder()
-    const takeProfitOrder = createTakeProfitOrder()
-
-    const orders = [stopLossOrder, takeProfitOrder].filter(
-      (order): order is NonNullable<typeof order> => order !== null,
-    )
-
-    if (orders.length > 0) {
-      await submitLimitOrder(orders)
-    }
-
-    onClose()
   }, [
     currentAccount,
     perpsAsset,
-    parentPosition,
     feeToken,
     showStopLoss,
     stopLossPrice,
@@ -299,7 +298,8 @@ export default function PerpsSlTpModal() {
           text='Done'
           color='tertiary'
           className='w-full mt-4'
-          disabled={!isValid}
+          disabled={!isValid || isLoading}
+          showProgressIndicator={isLoading}
         />
       </div>
     </Modal>

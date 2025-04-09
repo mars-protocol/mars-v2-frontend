@@ -1319,10 +1319,7 @@ interface ModalSlice {
   perpsVaultModal: PerpsVaultModal | null
   settingsModal: boolean
   keeperFeeModal: boolean
-  addSLTPModal: {
-    open: boolean
-    parentPosition: PerpPositionRow | null
-  }
+  addSLTPModal: boolean
   unlockModal: UnlockModal | null
   farmModal: FarmModal | null
   walletAssetsModal: WalletAssetModal | null
