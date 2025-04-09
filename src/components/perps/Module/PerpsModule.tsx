@@ -12,7 +12,7 @@ import KeeperFee from 'components/perps/Module/KeeperFee'
 import { LeverageSection } from 'components/perps/Module/LeverageSection'
 import PerpsTradeDirectionSelector from 'components/perps/Module/PerpsTradeDirectionSelector'
 import { LimitPriceSection, StopPriceSection } from 'components/perps/Module/PriceInputs'
-import { ReduceOnlySwitch } from 'components/perps/Module/ReduceOnlySwitch'
+import { PerpsOrderOptions } from 'components/perps/Module/PerpsOrderOptions'
 import PerpsSummary from 'components/perps/Module/Summary'
 import AssetSelectorPerps from 'components/trade/TradeModule/AssetSelector/AssetSelectorPerps'
 
@@ -360,7 +360,7 @@ export function PerpsModule() {
             ))}
           </div>
           <div className='flex flex-wrap w-full gap-4 mt-4'>
-            <ReduceOnlySwitch
+            <PerpsOrderOptions
               isReduceOnly={isReduceOnly}
               setIsReduceOnly={setIsReduceOnly}
               isStopOrder={isStopOrder}
