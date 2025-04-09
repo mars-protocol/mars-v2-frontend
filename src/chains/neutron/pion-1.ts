@@ -6,11 +6,11 @@ const Pion1: ChainConfig = {
   id: ChainInfoID.Pion1,
   isOsmosis: false,
   name: 'Neutron Testnet',
-  stables: ['factory/neutron1ke0vqqzyymlp5esr8gjwuzh94ysnpvj8er5hm7/UUSDC'],
+  stables: ['ibc/4C19E7EC06C1AB2EC2D70C6855FEB6D48E9CE174913991DA0A517D21978E7E42'],
   campaignAssets: [],
   defaultTradingPair: {
     buy: 'untrn',
-    sell: 'factory/neutron1ke0vqqzyymlp5esr8gjwuzh94ysnpvj8er5hm7/UUSDC',
+    sell: 'ibc/4C19E7EC06C1AB2EC2D70C6855FEB6D48E9CE174913991DA0A517D21978E7E42',
   },
   contracts: {
     redBank: 'neutron1h3t6xaq7xelevnrhg6flayeq73uu4cds06954qtavmx2xtvzlgxqfmgrmn',
