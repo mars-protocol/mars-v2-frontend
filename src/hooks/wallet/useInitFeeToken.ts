@@ -132,10 +132,8 @@ export default function useInitFeeToken() {
 
         // If gas price has changed, update the fee token with the new price
         if (storedGasPrice !== fetchedGasPrice) {
-          if (currentGasToken) {
-            setFeeToken(currentGasToken, chainConfig.id)
-            return true
-          }
+          setFeeToken(currentGasToken, chainConfig.id)
+          return true
         }
       }
     }
