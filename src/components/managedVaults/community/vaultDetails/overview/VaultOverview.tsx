@@ -80,16 +80,16 @@ export default function VaultOverview(props: Props) {
               return (
                 <PositionInfo
                   value={
-                    <>
+                    <div className='flex items-center gap-1'>
                       <AssetImage asset={depositAsset} className='w-5 h-5' />
                       <DisplayCurrency
                         coin={BNCoin.fromDenomAndBigNumber(
                           vaultDetails.base_tokens_denom,
                           BN(vaultDetails.performance_fee_state.accumulated_fee),
                         )}
-                        className='text-2xl  !text-end'
+                        className='text-2xl'
                       />
-                    </>
+                    </div>
                   }
                   subtitle={
                     <FormattedNumber
@@ -126,6 +126,7 @@ export default function VaultOverview(props: Props) {
               vaultAddress={vaultAddress}
               onDeposit={() => handleActionModal('deposit')}
               onWithdraw={() => handleActionModal('unlock')}
+              depositAsset={depositAsset}
             />
           )}
 
