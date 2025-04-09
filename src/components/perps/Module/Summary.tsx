@@ -161,7 +161,6 @@ export default function PerpsSummary(props: Props) {
       autolend: isAutoLendEnabledForCurrentAccount,
       baseDenom,
       reduceOnly: isReduceOnly,
-      orderType: 'parent' as ExecutePerpOrderType,
     }
 
     await executePerpOrder(perpOrderParams)

@@ -14,7 +14,7 @@ interface LimitOrderParams {
   tradeDirection: TradeDirection
   baseDenom: string
   keeperFee: BNCoin
-  isReduceOnly: boolean
+  reduceOnly: boolean
   comparison: TriggerType
   orderType?: CreateTriggerOrderType
   parentOrderId?: string
@@ -76,7 +76,7 @@ export function useSubmitLimitOrder() {
           tradeDirection,
           baseDenom,
           keeperFee,
-          isReduceOnly,
+          reduceOnly,
           comparison,
           orderType,
           parentOrderId,
@@ -92,7 +92,7 @@ export function useSubmitLimitOrder() {
             keeperFee,
             tradeDirection,
             price: adjustedLimitPrice,
-            isReduceOnly,
+            reduceOnly,
             comparison,
             orderType,
             parentOrderId,
