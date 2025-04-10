@@ -1,10 +1,8 @@
 import { ColumnDef, Row } from '@tanstack/react-table'
 import Apy, { APY_META } from 'components/earn/lend/Table/Columns/Apy'
-import TVL, { TVL_META } from 'components/earn/farm/common/Table/Columns/TVL'
+import { TVL_META } from 'components/earn/farm/common/Table/Columns/TVL'
 import Fee, { FEE_META } from 'components/managedVaults/common/table/columns/Fee'
-import FreezePeriod, {
-  FREEZE_PERIOD_META,
-} from 'components/managedVaults/common/table/columns/FreezePeriod'
+
 import Title, { TITLE_META } from 'components/managedVaults/common/table/columns/Title'
 import Details, { DETAILS_META } from 'components/managedVaults/community/table/column/Details'
 import MyPosition, {
@@ -14,11 +12,13 @@ import { useCallback, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { getRoute } from 'utils/route'
-import Name from 'components/earn/lend/Table/Columns/Name'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import { byDenom } from 'utils/array'
 import { convertAprToApy } from 'utils/parsers'
 import { BN } from 'utils/helpers'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { BNCoin } from 'types/classes/BNCoin'
+import AssetImage from 'components/common/assets/AssetImage'
 
 interface Props {
   isLoading: boolean
@@ -47,15 +47,6 @@ export default function useCommunityVaultsColumns(props: Props) {
           <Title value={row.original} isLoading={isLoading} />
         ),
       },
-      {
-        header: 'Deposit Asset',
-        id: 'symbol',
-        meta: { className: 'min-w-30' },
-        cell: ({ row }: { row: Row<ManagedVaultsData> }) => {
-          const asset = vaultAssets.find(byDenom(row.original.base_tokens_denom))
-          return asset && <Name asset={asset} />
-        },
-      },
       ...(showPosition
         ? [
             {
@@ -68,12 +59,19 @@ export default function useCommunityVaultsColumns(props: Props) {
         : []),
       {
         ...TVL_META,
-        cell: ({ row }: { row: Row<ManagedVaultsData> }) => (
-          <TVL
-            amount={BN(row.original.base_tokens_amount)}
-            denom={row.original.base_tokens_denom}
-          />
-        ),
+        cell: ({ row }: { row: Row<ManagedVaultsData> }) => {
+          const asset = vaultAssets.find(byDenom(row.original.base_tokens_denom))
+          const coin = BNCoin.fromDenomAndBigNumber(
+            row.original.base_tokens_denom,
+            BN(row.original.base_tokens_amount),
+          )
+          return (
+            <div className='flex items-center justify-end gap-2'>
+              {asset && <AssetImage asset={asset} className='w-6 h-6' />}
+              <DisplayCurrency coin={coin} className='text-xs' />
+            </div>
+          )
+        },
       },
       {
         ...APY_META,
@@ -89,12 +87,6 @@ export default function useCommunityVaultsColumns(props: Props) {
         ...FEE_META,
         cell: ({ row }: { row: Row<ManagedVaultsData> }) => (
           <Fee value={row.original.fee_rate} isLoading={isLoading} />
-        ),
-      },
-      {
-        ...FREEZE_PERIOD_META,
-        cell: ({ row }: { row: Row<ManagedVaultsData> }) => (
-          <FreezePeriod value={row.original.cooldown_period} isLoading={isLoading} />
         ),
       },
       {
