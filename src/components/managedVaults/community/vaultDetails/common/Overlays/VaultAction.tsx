@@ -77,6 +77,7 @@ export default function VaultAction(props: Props) {
     vaultDetails.base_tokens_denom,
   ])
 
+  // TODO: temporary UI for freeze period in minutes, will be updated
   const withdrawalPeriod =
     moment.duration(vaultDetails.cooldown_period, 'seconds').as('days') < 1
       ? formatLockupPeriod(
