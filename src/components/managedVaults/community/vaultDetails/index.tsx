@@ -122,13 +122,18 @@ export function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) 
                     />
                   }
                   primaryButton={{
+                    text: 'Deposit',
+                    onClick: () => handleActionModal('deposit'),
+                  }}
+                  secondaryButton={{
                     text: 'Edit Fee',
                     color: 'secondary',
                     onClick: () => handleFeeActionModal('edit'),
                     disabled: !hasAccumulatedFees,
                   }}
-                  secondaryButton={{
+                  tertiaryButton={{
                     text: 'Withdraw',
+                    color: 'secondary',
                     onClick: () => handleFeeActionModal('withdraw'),
                     rightIcon: <ArrowDownLine />,
                     disabled: !hasAccumulatedFees,
