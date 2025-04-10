@@ -1,16 +1,17 @@
 import PerformanceChartWrapper from 'components/managedVaults/community/vaultDetails/performance/chart/PerformanceChartWrapper'
-import PerformanceChartLoading from './PerformanceChartLoading'
-import PerformanceChartBody from './PerformanceChartBody'
+import PerformanceChartLoading from 'components/managedVaults/community/vaultDetails/performance/chart/PerformanceChartLoading'
+import PerformanceChartBody from 'components/managedVaults/community/vaultDetails/performance/chart/PerformanceChartBody'
 import moment from 'moment'
+import { useState } from 'react'
 
 interface Props {}
 
 // temp solution for now
-function generateDummyData() {
+function generateDummyData(timeframe: string) {
   const data = []
-  const startDate = moment().subtract(7, 'days')
+  const days = timeframe === '7d' ? 7 : timeframe === '30d' ? 30 : 90
+  const startDate = moment().subtract(days, 'days')
   const endDate = moment()
-  const days = endDate.diff(startDate, 'days')
 
   let baseTvl = 20
   let baseApy = 15
@@ -50,10 +51,10 @@ const apyLine = {
 }
 
 export default function PerformanceChart(props: Props) {
+  const [timeframe, setTimeframe] = useState('7d')
   const loading = false
-  const data = generateDummyData()
+  const data = generateDummyData(timeframe)
   const height = 'h-80'
-  const timeframe = '7d'
 
   return (
     <PerformanceChartWrapper
@@ -93,6 +94,8 @@ export default function PerformanceChart(props: Props) {
           ),
         },
       ]}
+      timeframe={timeframe}
+      setTimeframe={setTimeframe}
     />
   )
 }

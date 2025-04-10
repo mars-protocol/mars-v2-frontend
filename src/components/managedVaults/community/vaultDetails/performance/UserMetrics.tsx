@@ -1,5 +1,4 @@
 import AssetImage from 'components/common/assets/AssetImage'
-import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import useStore from 'store'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
@@ -34,69 +33,58 @@ export default function UserMetrics(props: Props) {
 
   const metrics = [
     {
-      value: userVaultTokensAmount ? (
-        <div className='flex items-center justify-center gap-1'>
-          <AssetImage asset={depositAsset} className='w-5 h-5' />
-          <DisplayCurrency
-            coin={BNCoin.fromDenomAndBigNumber(depositAsset.denom, BN(userVaultTokensAmount))}
-            className='text-base'
-          />
-        </div>
-      ) : (
-        '0'
-      ),
+      value: userVaultTokensAmount || 0,
       label: 'My Current Balance',
+      isCurrency: true,
+      formatOptions: { maxDecimals: 2, minDecimals: 2 },
     },
     {
-      value: (
-        <DisplayCurrency
-          coin={BNCoin.fromDenomAndBigNumber(depositAsset.denom, BN(223231333))}
-          className='text-base'
-        />
-      ),
+      value: 223231333,
       label: 'Total Earnings',
+      isCurrency: true,
+      formatOptions: { maxDecimals: 2, minDecimals: 2 },
     },
     {
-      value: (
-        <FormattedNumber
-          amount={Number(222)}
-          options={{
-            maxDecimals: 2,
-            minDecimals: 2,
-            suffix: '%',
-          }}
-          className={classNames('text-base', sharePercentage > 0 ? 'text-profit' : 'text-loss')}
-        />
-      ),
+      value: 222,
       label: 'ROI',
+      formatOptions: { maxDecimals: 2, minDecimals: 2, suffix: '%' },
     },
     {
-      value: (
-        <FormattedNumber
-          amount={Number(sharePercentage)}
-          options={{
-            maxDecimals: 2,
-            minDecimals: 2,
-            suffix: '%',
-          }}
-          className='text-base'
-        />
-      ),
+      value: sharePercentage,
       label: 'Vault Shares',
-      suffix: '%',
+      formatOptions: { maxDecimals: 2, minDecimals: 2, suffix: '%' },
     },
   ]
 
   return (
     <div className='grid grid-cols-2 sm:flex justify-center gap-4 w-full'>
-      {metrics.map((metric, index) => (
-        <div key={index} className='relative text-center py-4 sm:flex-1'>
-          <TitleAndSubCell title={metric.value} sub={metric.label} />
-          {index < metrics.length - 1 && (
-            <div className='hidden sm:block absolute right-0 top-1/2 h-8 w-[1px] bg-white/10 -translate-y-1/2' />
-          )}
-        </div>
-      ))}
+      {metrics.map((metric, index) => {
+        const value = metric.isCurrency ? (
+          <div className='flex items-center justify-center gap-1'>
+            <AssetImage asset={depositAsset} className='w-5 h-5' />
+            <DisplayCurrency
+              coin={BNCoin.fromDenomAndBigNumber(depositAsset.denom, BN(metric.value))}
+              options={metric.formatOptions}
+              className='text-base'
+            />
+          </div>
+        ) : (
+          <FormattedNumber
+            amount={Number(metric.value)}
+            options={metric.formatOptions}
+            className='text-base'
+          />
+        )
+
+        return (
+          <div key={index} className='relative text-center py-4 sm:flex-1'>
+            <TitleAndSubCell title={value} sub={metric.label} />
+            {index < metrics.length - 1 && (
+              <div className='hidden sm:block absolute right-0 top-1/2 h-8 w-[1px] bg-white/10 -translate-y-1/2' />
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }
