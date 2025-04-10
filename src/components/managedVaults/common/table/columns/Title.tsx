@@ -7,7 +7,7 @@ import { FALLBACK_AVATAR } from 'constants/managedVaults'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 
 export const TITLE_META = {
-  accessorKey: 'name',
+  accessorKey: 'title',
   header: 'Vault Title',
   meta: { className: 'max-w-60' },
 }
@@ -26,7 +26,7 @@ export default function Title(props: Props) {
     vaultDetails?.owner,
   )
 
-  if (isLoading || isDetailsLoading || isOwnerInfoLoading) return <Loading />
+  if (isLoading || isDetailsLoading || isOwnerInfoLoading) return <Loading className='h-4 w-35' />
 
   const hasCustomAvatar = vaultOwnerInfo.avatar && vaultOwnerInfo.avatar.url !== FALLBACK_AVATAR
 
