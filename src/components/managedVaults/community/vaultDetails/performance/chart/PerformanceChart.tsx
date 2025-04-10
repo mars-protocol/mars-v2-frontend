@@ -12,31 +12,42 @@ function generateDummyData() {
   const endDate = moment()
   const days = endDate.diff(startDate, 'days')
 
-  let baseTvl = 50
+  let baseTvl = 20
+  let baseApy = 15
 
   for (let i = 0; i <= days; i++) {
     const date = moment(startDate).add(i, 'days')
-    const variation = (Math.random() - 0.5) * 5
-    const tvl = baseTvl + variation
+    const tvlVariation = (Math.random() - 0.3) * 2
+    const apyVariation = (Math.random() - 0.3) * 5
+    const tvl = baseTvl + tvlVariation
+    const apy = baseApy + apyVariation
 
     data.push({
       date: date.format('YYYY-MM-DD'),
       tvl: tvl,
+      apy: apy,
     })
 
-    baseTvl += 0.5
+    baseTvl += 5.7
+    baseApy += 2
   }
 
   return data
 }
 
-const lines = [
-  {
-    dataKey: 'tvl',
-    color: '#8884d8',
-    name: 'TVL',
-  },
-]
+const tvlLine = {
+  dataKey: 'tvl',
+  color: '#8884d8',
+  name: 'Total Value',
+  valueFormatter: (value: number) => `$${value.toFixed(2)}`,
+}
+
+const apyLine = {
+  dataKey: 'apy',
+  color: '#82ca9d',
+  name: 'APY',
+  valueFormatter: (value: number) => `${value.toFixed(2)}%`,
+}
 
 export default function PerformanceChart(props: Props) {
   const loading = false
@@ -45,12 +56,43 @@ export default function PerformanceChart(props: Props) {
   const timeframe = '7d'
 
   return (
-    <PerformanceChartWrapper title={'TVL Chart'}>
-      {data === null || loading ? (
-        <PerformanceChartLoading height={'h-80'} />
-      ) : (
-        <PerformanceChartBody data={data} lines={lines} height={height} timeframe={timeframe} />
-      )}
-    </PerformanceChartWrapper>
+    <PerformanceChartWrapper
+      charts={[
+        {
+          title: 'Vault Balance',
+          content: (
+            <>
+              {data === null || loading ? (
+                <PerformanceChartLoading height={height} />
+              ) : (
+                <PerformanceChartBody
+                  data={data}
+                  lines={[tvlLine]}
+                  height={height}
+                  timeframe={timeframe}
+                />
+              )}
+            </>
+          ),
+        },
+        {
+          title: 'APY',
+          content: (
+            <>
+              {data === null || loading ? (
+                <PerformanceChartLoading height={height} />
+              ) : (
+                <PerformanceChartBody
+                  data={data}
+                  lines={[apyLine]}
+                  height={height}
+                  timeframe={timeframe}
+                />
+              )}
+            </>
+          ),
+        },
+      ]}
+    />
   )
 }
