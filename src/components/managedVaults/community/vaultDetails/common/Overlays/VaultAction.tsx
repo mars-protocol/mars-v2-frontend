@@ -77,10 +77,16 @@ export default function VaultAction(props: Props) {
     vaultDetails.base_tokens_denom,
   ])
 
-  const withdrawalPeriod = formatLockupPeriod(
-    moment.duration(vaultDetails.cooldown_period, 'seconds').as('days'),
-    'days',
-  )
+  const withdrawalPeriod =
+    moment.duration(vaultDetails.cooldown_period, 'seconds').as('days') < 1
+      ? formatLockupPeriod(
+          moment.duration(vaultDetails.cooldown_period, 'seconds').as('minutes'),
+          'minutes',
+        )
+      : formatLockupPeriod(
+          moment.duration(vaultDetails.cooldown_period, 'seconds').as('days'),
+          'days',
+        )
 
   const handleAmountChange = (newAmount: BigNumber) => {
     setAmount(newAmount)
