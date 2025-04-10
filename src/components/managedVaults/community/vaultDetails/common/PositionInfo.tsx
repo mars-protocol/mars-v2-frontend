@@ -10,11 +10,12 @@ interface Props {
   subtitle: React.ReactNode
   primaryButton: ButtonProps
   secondaryButton: ButtonProps
+  tertiaryButton?: ButtonProps
   isOwner: boolean
 }
 
 export default function PositionInfo(props: Props) {
-  const { value, subtitle, primaryButton, secondaryButton, isOwner } = props
+  const { value, subtitle, primaryButton, secondaryButton, tertiaryButton, isOwner } = props
   const address = useStore((s) => s.address)
 
   return (
@@ -36,13 +37,16 @@ export default function PositionInfo(props: Props) {
         </div>
 
         <div className='flex flex-col md:flex-row gap-2'>
-          <div className='flex flex-col md:flex-row gap-2 w-full'>
+          <div className='flex flex-col gap-2 w-full'>
             {!address ? (
               <WalletConnectButton {...primaryButton} />
             ) : (
               <>
-                <Button {...primaryButton} />
-                <Button {...secondaryButton} />
+                <Button {...primaryButton} className='w-full' />
+                <div className='flex flex-col md:flex-row gap-2'>
+                  <Button {...secondaryButton} />
+                  {tertiaryButton && <Button {...tertiaryButton} />}
+                </div>
               </>
             )}
           </div>
