@@ -20,16 +20,13 @@ export default function useAssets() {
 
 async function mapPricesToAllAssets(assets: Asset[], chainConfig: ChainConfig) {
   const prices = await getPrices(chainConfig, assets)
-  //TODO: REMOVE HARD UNIL FILTER
-  return assets
-    .filter((asset) => asset.denom !== 'perps/unil')
-    .map((asset) => {
-      return {
-        ...asset,
-        price:
-          asset.denom === 'usd'
-            ? BNCoin.fromCoin({ denom: 'usd', amount: '1' })
-            : (prices.find((price) => price.denom === asset.denom) ?? asset.price),
-      }
-    })
+  return assets.map((asset) => {
+    return {
+      ...asset,
+      price:
+        asset.denom === 'usd'
+          ? BNCoin.fromCoin({ denom: 'usd', amount: '1' })
+          : (prices.find((price) => price.denom === asset.denom) ?? asset.price),
+    }
+  })
 }
