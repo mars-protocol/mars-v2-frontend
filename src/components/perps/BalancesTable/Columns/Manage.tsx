@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 
 import ActionButton from 'components/common/Button/ActionButton'
 import DropDownButton from 'components/common/Button/DropDownButton'
-import { Check, Cross, Edit, SwapIcon } from 'components/common/Icons'
+import { Check, Cross, Edit, Shield, SwapIcon } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import PerpsSlTpModal from 'components/Modals/PerpsSlTpModal'
 import CloseLabel from 'components/perps/BalancesTable/Columns/CloseLabel'
@@ -73,8 +73,6 @@ export default function Manage(props: Props) {
     perpPosition,
     limitOrders,
   ])
-
-  const isPerpsSlTpModalOpen = useStore((s) => s.addSLTPModal)
 
   const handleCloseClick = useCallback(() => {
     if (!currentAccount) return
@@ -263,12 +261,13 @@ export default function Manage(props: Props) {
     () => [
       ...(searchParams.get(SearchParams.PERPS_MARKET) === perpPosition.asset.denom
         ? [
-            // Remove SL/TP for the moment
-            // {
-            //   icon: <Shield />,
-            //   text: 'Add Stop Loss',
-            //   onClick: openPerpsSlTpModal,
-            // },
+            {
+              icon: <Shield />,
+              text: 'Add Stop Loss',
+              onClick: () => {
+                useStore.setState({ addSLTPModal: true })
+              },
+            },
           ]
         : [
             {
@@ -282,11 +281,13 @@ export default function Manage(props: Props) {
                 })
               },
             },
-            // {
-            //   icon: <Shield />,
-            //   text: 'Add Stop Loss',
-            //   onClick: openPerpsSlTpModal,
-            // },
+            {
+              icon: <Shield />,
+              text: 'Add Stop Loss',
+              onClick: () => {
+                useStore.setState({ addSLTPModal: true })
+              },
+            },
           ]),
       {
         icon: <SwapIcon />,
@@ -302,7 +303,7 @@ export default function Manage(props: Props) {
         onClick: () => handleCloseClick(),
       },
     ],
-    [handleCloseClick, handleFlipPosition, perpPosition, searchParams, setSearchParams],
+    [handleCloseClick, handleFlipPosition, setSearchParams, searchParams, perpPosition],
   )
 
   if (props.perpPosition.type === 'limit' || props.perpPosition.type === 'stop')
@@ -329,8 +330,8 @@ export default function Manage(props: Props) {
     )
 
   return (
-    <div className='flex justify-end'>
-      {isPerpsSlTpModalOpen && <PerpsSlTpModal />}
+    <div className='flex justify-end' onClick={(e) => e.stopPropagation()}>
+      <PerpsSlTpModal parentPosition={perpPosition} />
       <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
     </div>
   )

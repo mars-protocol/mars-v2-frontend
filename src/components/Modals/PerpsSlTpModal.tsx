@@ -5,80 +5,66 @@ import { Callout, CalloutType } from 'components/common/Callout'
 import Divider from 'components/common/Divider'
 import { TrashBin } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import { getDefaultChainSettings } from 'constants/defaultSettings'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAssets from 'hooks/assets/useAssets'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import usePerpsConfig from 'hooks/perps/usePerpsConfig'
+import usePriceValidation from 'hooks/perps/usePriceValidation'
 import { useSubmitLimitOrder } from 'hooks/perps/useSubmitLimitOrder'
 import usePrice from 'hooks/prices/usePrice'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import useKeeperFee from 'hooks/perps/useKeeperFee'
+import { useCallback, useMemo, useState } from 'react'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { formatPercent, magnify } from 'utils/formatters'
-import { BN } from 'utils/helpers'
+import { formatPercent } from 'utils/formatters'
+import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
+import useAutoLend from 'hooks/wallet/useAutoLend'
 
-export default function PerpsSlTpModal() {
+const perpsPercentage = (price: BigNumber, triggerPrice: BigNumber) => {
+  if (!price || triggerPrice.isZero()) return BN_ZERO
+  return triggerPrice.minus(price).dividedBy(price).multipliedBy(100)
+}
+
+export default function PerpsSlTpModal({ parentPosition }: { parentPosition: PerpPositionRow }) {
+  const perpsAsset = parentPosition?.asset
+
+  const modal = useStore((s) => s.addSLTPModal)
+
   const [stopLossPrice, setStopLossPrice] = useState(BN_ZERO)
   const [takeProfitPrice, setTakeProfitPrice] = useState(BN_ZERO)
   const [showStopLoss, setShowStopLoss] = useState(false)
   const [showTakeProfit, setShowTakeProfit] = useState(false)
-
-  const [stopLossError, setStopLossError] = useState<string | null>(null)
-  const [takeProfitError, setTakeProfitError] = useState<string | null>(null)
-  const [isFormValid, setIsFormValid] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const { data: allAssets } = useAssets()
   const USD = allAssets.find(byDenom('usd'))
 
   const submitLimitOrder = useSubmitLimitOrder()
   const currentAccount = useCurrentAccount()
-  const { perpsAsset } = usePerpsAsset()
+  const { data: limitOrders } = usePerpsLimitOrders()
+  const cancelTriggerOrder = useStore((s) => s.cancelTriggerOrder)
+  const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
+
   const { data: perpsConfig } = usePerpsConfig()
   const assets = useDepositEnabledAssets()
-  const chainConfig = useChainConfig()
-  const currentPrice = usePrice(perpsAsset?.denom)
+  const currentPrice = usePrice(perpsAsset?.denom ?? '')
+  const { calculateKeeperFee } = useKeeperFee()
 
   const assetName = useMemo(() => perpsAsset?.symbol || 'the asset', [perpsAsset])
 
-  const stopLossPercentage = useMemo(() => {
-    if (!currentPrice || stopLossPrice.isZero()) return BN_ZERO
-    return stopLossPrice.minus(currentPrice).dividedBy(currentPrice).multipliedBy(100)
-  }, [currentPrice, stopLossPrice])
-
-  const takeProfitPercentage = useMemo(() => {
-    if (!currentPrice || takeProfitPrice.isZero()) return BN_ZERO
-    return takeProfitPrice.minus(currentPrice).dividedBy(currentPrice).multipliedBy(100)
-  }, [currentPrice, takeProfitPrice])
-
-  const creditManagerConfig = useStore((s) => s.creditManagerConfig)
-
-  const [keeperFee, setKeeperFee] = useLocalStorage(
-    `${chainConfig.id}/${LocalStorageKeys.PERPS_KEEPER_FEE}`,
-    creditManagerConfig?.keeper_fee_config?.min_fee ??
-      getDefaultChainSettings(chainConfig).keeperFee,
+  const stopLossPercentage = useMemo(
+    () => perpsPercentage(currentPrice, stopLossPrice),
+    [currentPrice, stopLossPrice],
+  )
+  const takeProfitPercentage = useMemo(
+    () => perpsPercentage(currentPrice, takeProfitPrice),
+    [currentPrice, takeProfitPrice],
   )
 
   const feeToken = useMemo(
     () => assets.find(byDenom(perpsConfig?.base_denom ?? '')),
     [assets, perpsConfig?.base_denom],
-  )
-
-  const calculateKeeperFee = useMemo(
-    () =>
-      feeToken
-        ? BNCoin.fromDenomAndBigNumber(
-            feeToken.denom,
-            magnify(BN(keeperFee.amount).toNumber(), feeToken),
-          )
-        : undefined,
-    [feeToken, keeperFee.amount],
   )
 
   const onClose = useCallback(() => {
@@ -95,137 +81,81 @@ export default function PerpsSlTpModal() {
     return currentAccount?.perps.find((p) => p.denom === perpsAsset?.denom)?.amount ?? BN_ZERO
   }, [currentAccount, perpsAsset])
 
-  const validatePrices = useCallback(() => {
-    if (!currentPrice) return
-
-    let isValid = true
-
-    if (showStopLoss && !stopLossPrice.isZero()) {
-      if (currentTradeDirection === 'long') {
-        if (stopLossPrice.isGreaterThanOrEqualTo(currentPrice)) {
-          setStopLossError(
-            'Stop Loss price must be lower than the current price for long positions',
-          )
-          isValid = false
-        } else {
-          setStopLossError(null)
-        }
-      } else {
-        if (stopLossPrice.isLessThanOrEqualTo(currentPrice)) {
-          setStopLossError(
-            'Stop Loss price must be higher than the current price for short positions',
-          )
-          isValid = false
-        } else {
-          setStopLossError(null)
-        }
-      }
-    } else {
-      setStopLossError(null)
-    }
-
-    if (showTakeProfit && !takeProfitPrice.isZero()) {
-      if (currentTradeDirection === 'long') {
-        if (takeProfitPrice.isLessThanOrEqualTo(currentPrice)) {
-          setTakeProfitError(
-            'Take Profit price must be higher than the current price for long positions',
-          )
-          isValid = false
-        } else {
-          setTakeProfitError(null)
-        }
-      } else {
-        if (takeProfitPrice.isGreaterThanOrEqualTo(currentPrice)) {
-          setTakeProfitError(
-            'Take Profit price must be lower than the current price for short positions',
-          )
-          isValid = false
-        } else {
-          setTakeProfitError(null)
-        }
-      }
-    } else {
-      setTakeProfitError(null)
-    }
-
-    const isAnyTriggerSet =
-      (showStopLoss && !stopLossPrice.isZero()) || (showTakeProfit && !takeProfitPrice.isZero())
-
-    setIsFormValid(isValid && isAnyTriggerSet)
-  }, [
+  const { isValid, stopLossError, takeProfitError } = usePriceValidation({
     currentPrice,
     currentTradeDirection,
     showStopLoss,
     stopLossPrice,
     showTakeProfit,
     takeProfitPrice,
-  ])
-
-  useEffect(() => {
-    validatePrices()
-  }, [validatePrices])
+  })
 
   const handleDone = useCallback(async () => {
     if (!currentAccount || !perpsAsset || !feeToken) return
+    setIsLoading(true)
+    try {
+      const isShort = currentTradeDirection === 'short'
 
-    const createOrders = async () => {
-      const orders = []
+      // Find existing SL/TP orders for this position
+      const existingOrders =
+        limitOrders?.filter((order) => {
+          const actions = order.order.actions
+          return actions.some(
+            (action) =>
+              'execute_perp_order' in action &&
+              action.execute_perp_order.denom === perpsAsset.denom &&
+              action.execute_perp_order.reduce_only,
+          )
+        }) ?? []
 
-      if (showStopLoss && !stopLossPrice.isZero()) {
-        let tradeDirection: 'long' | 'short'
-        let comparison: 'less_than' | 'greater_than'
+      const createStopLossOrder = () => {
+        if (!showStopLoss || stopLossPrice.isZero()) return null
 
-        if (currentTradeDirection === 'short') {
-          tradeDirection = 'short'
-          comparison = 'less_than'
-        } else {
-          tradeDirection = 'long'
-          comparison = 'greater_than'
-        }
-
-        orders.push({
+        return {
           asset: perpsAsset,
-          orderSize: positionSize.abs(),
+          orderSize: isShort ? positionSize : positionSize.negated(),
           limitPrice: stopLossPrice,
-          tradeDirection,
+          tradeDirection: isShort ? 'short' : ('long' as TradeDirection),
+          comparison: isShort ? 'greater_than' : ('less_than' as TriggerType),
           baseDenom: feeToken.denom,
-          keeperFee: calculateKeeperFee ?? BNCoin.fromDenomAndBigNumber(feeToken.denom, BN_ZERO),
-          isReduceOnly: true,
-          comparison,
-        })
-      }
-
-      if (showTakeProfit && !takeProfitPrice.isZero()) {
-        let tradeDirection: 'long' | 'short'
-        let comparison: 'less_than' | 'greater_than'
-
-        if (currentTradeDirection === 'short') {
-          tradeDirection = 'long'
-          comparison = 'greater_than'
-        } else {
-          tradeDirection = 'short'
-          comparison = 'less_than'
+          keeperFee: calculateKeeperFee,
+          reduceOnly: true,
         }
-
-        orders.push({
-          asset: perpsAsset,
-          orderSize: positionSize.abs(),
-          limitPrice: takeProfitPrice,
-          tradeDirection,
-          baseDenom: feeToken.denom,
-          keeperFee: calculateKeeperFee ?? BNCoin.fromDenomAndBigNumber(feeToken.denom, BN_ZERO),
-          isReduceOnly: true,
-          comparison,
-        })
       }
+
+      const createTakeProfitOrder = () => {
+        if (!showTakeProfit || takeProfitPrice.isZero()) return null
+
+        return {
+          asset: perpsAsset,
+          orderSize: isShort ? positionSize : positionSize.negated(),
+          limitPrice: takeProfitPrice,
+          tradeDirection: isShort ? 'short' : ('long' as TradeDirection),
+          comparison: isShort ? 'less_than' : ('greater_than' as TriggerType),
+          baseDenom: feeToken.denom,
+          keeperFee: calculateKeeperFee,
+          reduceOnly: true,
+        }
+      }
+
+      const stopLossOrder = createStopLossOrder()
+      const takeProfitOrder = createTakeProfitOrder()
+
+      const orders = [stopLossOrder, takeProfitOrder].filter(
+        (order): order is NonNullable<typeof order> => order !== null,
+      )
 
       if (orders.length > 0) {
-        await submitLimitOrder(orders)
+        await submitLimitOrder({
+          orders,
+          cancelOrders: existingOrders.map((order) => ({ orderId: order.order.order_id })),
+        })
       }
-    }
 
-    await createOrders()
-    onClose()
+      onClose()
+    } finally {
+      setIsLoading(false)
+    }
   }, [
     currentAccount,
     perpsAsset,
@@ -239,15 +169,8 @@ export default function PerpsSlTpModal() {
     onClose,
     currentTradeDirection,
     positionSize,
+    limitOrders,
   ])
-
-  const handleAddStopLoss = () => {
-    setShowStopLoss(true)
-  }
-
-  const handleAddTakeProfit = () => {
-    setShowTakeProfit(true)
-  }
 
   const handleRemoveStopLoss = () => {
     setShowStopLoss(false)
@@ -258,6 +181,8 @@ export default function PerpsSlTpModal() {
     setShowTakeProfit(false)
     setTakeProfitPrice(BN_ZERO)
   }
+
+  if (!modal) return null
 
   return (
     <Modal
@@ -275,7 +200,7 @@ export default function PerpsSlTpModal() {
             </Text>
             <div className='flex items-center gap-2'>
               <AssetAmountInput
-                asset={USD}
+                asset={{ ...USD, decimals: 0 }}
                 amount={stopLossPrice}
                 setAmount={setStopLossPrice}
                 disabled={false}
@@ -305,7 +230,7 @@ export default function PerpsSlTpModal() {
               text='Remove trigger'
               color='secondary'
               leftIcon={<TrashBin className='self-center w-4 h-4 text-error' />}
-              variant='solid'
+              variant='transparent'
               textClassNames='text-error items-center'
               className='items-center self-start text-sm'
             />
@@ -313,7 +238,7 @@ export default function PerpsSlTpModal() {
         )}
         {!showStopLoss && (
           <Button
-            onClick={handleAddStopLoss}
+            onClick={() => setShowStopLoss(true)}
             text='Add Stop Loss Trigger'
             color='tertiary'
             className='w-full'
@@ -336,7 +261,7 @@ export default function PerpsSlTpModal() {
             </Text>
             <div className='flex items-center gap-2'>
               <AssetAmountInput
-                asset={USD}
+                asset={{ ...USD, decimals: 0 }}
                 amount={takeProfitPrice}
                 setAmount={setTakeProfitPrice}
                 disabled={false}
@@ -374,7 +299,7 @@ export default function PerpsSlTpModal() {
         )}
         {!showTakeProfit && (
           <Button
-            onClick={handleAddTakeProfit}
+            onClick={() => setShowTakeProfit(true)}
             text='Add Take Profit Trigger'
             color='tertiary'
             className='w-full'
@@ -394,12 +319,29 @@ export default function PerpsSlTpModal() {
             impact of the funding rate on the final price.
           </Text>
         </Callout>
+        {limitOrders?.some((order) => {
+          const actions = order.order.actions
+          return actions.some(
+            (action) =>
+              'execute_perp_order' in action &&
+              action.execute_perp_order.denom === perpsAsset?.denom &&
+              action.execute_perp_order.reduce_only,
+          )
+        }) && (
+          <Callout type={CalloutType.WARNING} iconClassName='self-start'>
+            <Text size='sm' className='text-left'>
+              Your existing TP/SL triggers will be removed if you add a new TP/SL trigger on this
+              order.
+            </Text>
+          </Callout>
+        )}
         <Button
           onClick={handleDone}
           text='Done'
           color='tertiary'
           className='w-full mt-4'
-          disabled={!isFormValid}
+          disabled={!isValid || isLoading}
+          showProgressIndicator={isLoading}
         />
       </div>
     </Modal>

@@ -814,15 +814,25 @@ export default function createBroadcastSlice(
           },
         })
 
+      const comparison =
+        options.comparison || (options.tradeDirection === 'long' ? 'less_than' : 'greater_than')
       const triggerConditions: Condition[] = [
         {
           oracle_price: {
-            comparison: options.tradeDirection === 'long' ? 'less_than' : 'greater_than',
+            comparison,
             denom: options.coin.denom,
             price: options.price.toString(),
           },
         },
       ]
+
+      if (options.orderType === 'child' && options.parentOrderId) {
+        triggerConditions.push({
+          trigger_order_executed: {
+            trigger_order_id: options.parentOrderId,
+          },
+        })
+      }
 
       const actions: Action[] = []
 
@@ -846,6 +856,7 @@ export default function createBroadcastSlice(
           keeper_fee: options.keeperFee.toCoin(),
           actions: triggerActions,
           conditions: triggerConditions,
+          order_type: options.orderType || 'default',
         },
       })
 
@@ -884,6 +895,16 @@ export default function createBroadcastSlice(
         })
       }
 
+      if (options.cancelOrders?.length) {
+        options.cancelOrders.forEach((order) => {
+          actions.push({
+            delete_trigger_order: {
+              trigger_order_id: order.orderId,
+            },
+          })
+        })
+      }
+
       options.orders.forEach((order) => {
         const triggerActions: Action[] = [
           {
@@ -902,21 +923,33 @@ export default function createBroadcastSlice(
             },
           })
 
+        const comparison =
+          order.comparison || (order.tradeDirection === 'long' ? 'less_than' : 'greater_than')
+
         const triggerConditions: Condition[] = [
           {
             oracle_price: {
-              comparison: order.tradeDirection === 'long' ? 'less_than' : 'greater_than',
+              comparison,
               denom: order.coin.denom,
               price: order.price.toString(),
             },
           },
         ]
 
+        if (order.orderType === 'child' && order.parentOrderId) {
+          triggerConditions.push({
+            trigger_order_executed: {
+              trigger_order_id: order.parentOrderId,
+            },
+          })
+        }
+
         actions.push({
           create_trigger_order: {
             keeper_fee: order.keeperFee.toCoin(),
             actions: triggerActions,
             conditions: triggerConditions,
+            order_type: order.orderType || 'default',
           },
         })
       })
@@ -944,6 +977,7 @@ export default function createBroadcastSlice(
       reduceOnly?: boolean
       autolend: boolean
       baseDenom: string
+      orderType?: ExecutePerpOrderType
     }) => {
       const actions: Action[] = [
         {
@@ -951,6 +985,7 @@ export default function createBroadcastSlice(
             denom: options.coin.denom,
             order_size: options.coin.amount.toString() as any,
             reduce_only: options.reduceOnly,
+            ...(options.orderType ? { order_type: options.orderType } : {}),
           },
         },
       ]

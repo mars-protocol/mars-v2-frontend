@@ -25,6 +25,7 @@ import {
   AssetParamsBaseForString,
   CmSettingsForString,
   HlsParamsBaseForString,
+  InterestRateModel,
   LiquidationBonus,
   RedBankSettings,
   VaultConfigBaseForString,

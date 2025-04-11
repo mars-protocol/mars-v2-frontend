@@ -22,8 +22,8 @@ export function Status({ type, hasStopLoss, hasTakeProfit, showIndicators }: Pro
       <Text size='xs' className='capitalize'>
         {displayStatus}
       </Text>
-      {/* {showIndicators && (hasStopLoss || hasTakeProfit) && (
-        <div className='flex items-center justify-center gap-1 mt-1'>
+      {showIndicators && (hasStopLoss || hasTakeProfit) && (
+        <div className='flex items-center justify-center gap-1 mt-1 '>
           {hasStopLoss && (
             <span className='px-1 text-xs rounded bg-white/10 text-white/60'>SL</span>
           )}
@@ -31,7 +31,7 @@ export function Status({ type, hasStopLoss, hasTakeProfit, showIndicators }: Pro
             <span className='px-1 text-xs rounded bg-white/10 text-white/60'>TP</span>
           )}
         </div>
-      )} */}
+      )}
     </div>
   )
 }

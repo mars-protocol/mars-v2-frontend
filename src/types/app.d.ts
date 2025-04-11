@@ -32,6 +32,11 @@ type PositionType =
   | 'market'
   | 'limit'
   | 'stop'
+type ExecutePerpOrderType =
+  import('types/generated/mars-credit-manager/MarsCreditManager.types').ExecutePerpOrderType
+type CreateTriggerOrderType =
+  import('types/generated/mars-credit-manager/MarsCreditManager.types').CreateTriggerOrderType
+
 type TableType = 'balances' | 'strategies' | 'perps'
 type AccountKind = import('types/generated/mars-credit-manager/MarsCreditManager.types').AccountKind
 
@@ -902,7 +907,7 @@ type DocLinkType = 'wallet' | 'account' | 'terms' | 'fund' | 'hls'
 
 interface DropDownItem {
   icon: import('react').ReactNode
-  onClick: () => void
+  onClick: (e?: React.MouseEvent<HTMLButtonElement>) => void
   text: string
   disabled?: boolean
   disabledTooltip?: string
@@ -1042,6 +1047,7 @@ interface CreateMultipleTriggerOrdersOptions {
   keeperFeeFromLends: BNCoin
   keeperFeeFromBorrows: BNCoin
   orders: TriggerOrderOptions[]
+  cancelOrders?: { orderId: string }[]
 }
 
 interface TriggerOrderOptions {
@@ -1052,6 +1058,9 @@ interface TriggerOrderOptions {
   tradeDirection: TradeDirection
   price: BigNumber
   keeperFee: BNCoin
+  comparison?: TriggerType
+  orderType?: CreateTriggerOrderType
+  parentOrderId?: string
 }
 
 interface CreateTriggerOrdersOptions extends TriggerOrderOptions {
@@ -1110,6 +1119,7 @@ interface BroadcastSlice {
     reduceOnly?: boolean
     autolend: boolean
     baseDenom: string
+    orderType?: ExecutePerpOrderType
   }) => Promise<boolean>
   closePerpPosition: (options: {
     accountId: string
@@ -1277,6 +1287,10 @@ interface CommonSlice {
   hlsBorrowAmount: BigNumber | null
   errorStore: ErrorStore
   creditManagerConfig: ConfigResponse | null
+  conditionalTriggerOrders: {
+    tp: string | null
+    sl: string | null
+  }
 }
 
 interface ErrorStore {
@@ -1310,6 +1324,7 @@ interface ModalSlice {
   perpsVaultModal: PerpsVaultModal | null
   settingsModal: boolean
   keeperFeeModal: boolean
+  conditionalTriggersModal: boolean
   addSLTPModal: boolean
   unlockModal: UnlockModal | null
   farmModal: FarmModal | null
@@ -1796,7 +1811,7 @@ interface ExceutePerpsOrder {
     denom: string
     order_size: SignedUint
     reduce_only?: boolean | null
-    order_type: 'stop_loss' | 'take_profit'
+    order_type?: 'stop_loss' | 'take_profit' | null
   }
 }
 

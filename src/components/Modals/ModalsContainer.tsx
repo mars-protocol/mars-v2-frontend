@@ -11,6 +11,7 @@ import {
   HlsModal,
   KeeperFeeModal,
   LendAndReclaimModalController,
+  PerpsConditionalTriggersModal,
   PerpsVaultModal,
   SettingsModal,
   UnlockModal,
@@ -44,6 +45,7 @@ export default function ModalsContainer() {
       <V1DepositAndWithdraw />
       <V1BorrowAndRepay />
       <KeeperFeeModal />
+      <PerpsConditionalTriggersModal />
     </>
   )
 }
