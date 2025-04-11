@@ -107,6 +107,7 @@ export function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) 
               handleFeeActionModal={handleFeeActionModal}
               handleActionModal={handleActionModal}
               vaultAddress={vaultAddress}
+              depositAsset={depositAsset}
             />
           ) : (
             // user vault position
@@ -116,6 +117,7 @@ export function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) 
               vaultAddress={vaultAddress}
               onDeposit={() => handleActionModal('deposit')}
               onWithdraw={() => handleActionModal('unlock')}
+              depositAsset={depositAsset}
             />
           )}
 

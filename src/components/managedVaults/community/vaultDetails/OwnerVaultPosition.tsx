@@ -6,6 +6,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 import React from 'react'
 import VaultPosition from 'components/managedVaults/community/vaultDetails/VaultPosition'
+import AssetImage from 'components/common/assets/AssetImage'
 
 interface Props {
   vaultDetails: ExtendedManagedVaultDetails
@@ -13,23 +14,34 @@ interface Props {
   handleFeeActionModal: (type: 'edit' | 'withdraw') => void
   handleActionModal: (type: 'deposit' | 'unlock') => void
   vaultAddress: string
+  depositAsset: Asset
 }
 
 export default function OwnerVaultPosition(props: Props) {
-  const { vaultDetails, isOwner, handleFeeActionModal, handleActionModal, vaultAddress } = props
+  const {
+    vaultDetails,
+    isOwner,
+    handleFeeActionModal,
+    handleActionModal,
+    vaultAddress,
+    depositAsset,
+  } = props
   const hasAccumulatedFees = Number(vaultDetails.performance_fee_state.accumulated_fee) > 0
 
   return (
     <div className='flex flex-col md:flex-row gap-2 w-full'>
       <PositionInfo
         value={
-          <DisplayCurrency
-            coin={BNCoin.fromDenomAndBigNumber(
-              vaultDetails.base_tokens_denom,
-              BN(vaultDetails.performance_fee_state.accumulated_fee),
-            )}
-            className='text-2xl'
-          />
+          <div className='flex items-center gap-1'>
+            <AssetImage asset={depositAsset} className='w-5 h-5' />
+            <DisplayCurrency
+              coin={BNCoin.fromDenomAndBigNumber(
+                vaultDetails.base_tokens_denom,
+                BN(vaultDetails.performance_fee_state.accumulated_fee),
+              )}
+              className='text-2xl'
+            />
+          </div>
         }
         subtitle={
           <FormattedNumber
@@ -64,6 +76,7 @@ export default function OwnerVaultPosition(props: Props) {
         vaultAddress={vaultAddress}
         onDeposit={() => handleActionModal('deposit')}
         onWithdraw={() => handleActionModal('unlock')}
+        depositAsset={depositAsset}
       />
     </div>
   )
