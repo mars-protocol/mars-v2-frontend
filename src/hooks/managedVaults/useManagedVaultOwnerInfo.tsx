@@ -32,7 +32,7 @@ export default function useManagedVaultOwnerInfo(address?: string): VaultOwnerIn
   const chainConfig = useChainConfig()
 
   return useMemo(() => {
-    const avatar = stargazeInfo ? stargazeInfo.media.visualAssets.lg : defaultAvatar
+    const avatar = stargazeInfo?.media?.visualAssets?.lg || defaultAvatar
     const walletLinkTarget = stargazeInfo
       ? `https://www.stargaze.zone/p/${stargazeInfo.associatedAddr}/names/${stargazeInfo.name}`
       : `${chainConfig.endpoints.explorer}/address/${address}`
@@ -42,7 +42,7 @@ export default function useManagedVaultOwnerInfo(address?: string): VaultOwnerIn
       : `View on ${chainConfig.explorerName}`
 
     const socials = [] as StargazeSocial[]
-    stargazeInfo?.records.forEach((record) => {
+    stargazeInfo?.records?.forEach((record) => {
       switch (record.name) {
         case 'twitter':
           socials.push({
