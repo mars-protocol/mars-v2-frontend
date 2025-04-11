@@ -1,23 +1,23 @@
-import classNames from 'classnames'
 import AssetImage from 'components/common/assets/AssetImage'
 import Button from 'components/common/Button'
-import EscButton from 'components/common/Button/EscButton'
-import { Callout, CalloutType } from 'components/common/Callout'
+import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
+import EscButton from 'components/common/Button/EscButton'
 import Overlay from 'components/common/Overlay'
-import Text from 'components/common/Text'
 import PerformanceFee from 'components/managedVaults/community/createVault/PerformanceFee'
-import { useState } from 'react'
+import Text from 'components/common/Text'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
+import { Callout, CalloutType } from 'components/common/Callout'
+import { useState } from 'react'
 
 interface Props {
   showFeeActionModal: boolean
   setShowFeeActionModal: (show: boolean) => void
   type: 'edit' | 'withdraw'
   vaultAddress: string
-  vaultDetails: any
+  vaultDetails: ExtendedManagedVaultDetails
   depositAsset: Asset
 }
 

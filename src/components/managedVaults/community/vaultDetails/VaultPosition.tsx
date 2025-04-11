@@ -74,6 +74,7 @@ export default function VaultPosition(props: Props) {
         disabled: !userVaultTokensAmount,
       }}
       isOwner={isOwner}
+      type='depositPosition'
     />
   )
 }
