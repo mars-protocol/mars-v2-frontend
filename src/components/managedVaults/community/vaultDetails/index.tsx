@@ -1,22 +1,19 @@
-import DisplayCurrency from 'components/common/DisplayCurrency'
 import FeeAction from 'components/managedVaults/community/vaultDetails/common/Overlays/FeeAction'
 import NavigationBackButton from 'components/common/Button/NavigationBackButton'
-import PositionInfo from 'components/managedVaults/community/vaultDetails/common/PositionInfo'
 import ProfileVaultCard from 'components/managedVaults/community/vaultDetails/profileVaultCard/ProfileVaultCard'
+import OwnerVaultPosition from 'components/managedVaults/community/vaultDetails/OwnerVaultPosition'
 import Text from 'components/common/Text'
 import useToggle from 'hooks/common/useToggle'
-import VaultAction from 'components/managedVaults/community/vaultDetails/common/Overlays/VaultAction'
+import useVaultAssets from 'hooks/assets/useVaultAssets'
 import VaultPosition from 'components/managedVaults/community/vaultDetails/VaultPosition'
+import VaultAction from 'components/managedVaults/community/vaultDetails/common/Overlays/VaultAction'
 import VaultSummary from 'components/managedVaults/community/vaultDetails/VaultSummary'
 import Withdrawals from 'components/managedVaults/community/vaultDetails/Withdrawals'
-import { ArrowDownLine } from 'components/common/Icons'
-import { BN } from 'utils/helpers'
-import { BNCoin } from 'types/classes/BNCoin'
 import { CircularProgress } from 'components/common/CircularProgress'
-import { FormattedNumber } from 'components/common/FormattedNumber'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 import { useParams } from 'react-router-dom'
 import { useState } from 'react'
+import { byDenom } from 'utils/array'
 
 function VaultLoadingState() {
   return (
@@ -52,12 +49,16 @@ export function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) 
 
   const [showFeeActionModal, setShowFeeActionModal] = useToggle()
   const [showActionModal, setShowActionModal] = useToggle()
-  const [modalType, setModalType] = useState<'deposit' | 'unlock' | null>(null)
-  const [modalFeeType, setModalFeeType] = useState<'edit' | 'withdraw' | null>(null)
+  const [modalType, setModalType] = useState<'deposit' | 'unlock'>('deposit')
+  const [modalFeeType, setModalFeeType] = useState<'edit' | 'withdraw'>('edit')
+  const vaultAssets = useVaultAssets()
 
   if (isOwner === undefined || !vaultDetails || isLoading) {
     return <VaultLoadingState />
   }
+
+  const depositAsset = vaultAssets.find(byDenom(vaultDetails.base_tokens_denom)) as Asset
+
   const handleActionModal = (type: 'deposit' | 'unlock') => {
     setModalType(type)
     setShowActionModal(true)
@@ -73,14 +74,20 @@ export function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) 
   return (
     <div className='flex flex-col justify-center gap-4 md:flex-row'>
       <div className='md:w-100'>
-        <ProfileVaultCard details={vaultDetails} isOwner={isOwner} wallet={vaultDetails.owner} />
+        <ProfileVaultCard
+          details={vaultDetails}
+          depositAsset={depositAsset}
+          isOwner={isOwner}
+          wallet={vaultDetails.owner}
+        />
       </div>
       <FeeAction
         showFeeActionModal={showFeeActionModal}
         setShowFeeActionModal={setShowFeeActionModal}
-        type={modalFeeType || 'edit'}
-        vaultAddress={vaultAddress!}
-        accumulatedFee={vaultDetails.performance_fee_state.accumulated_fee}
+        type={modalFeeType}
+        vaultAddress={vaultAddress}
+        depositAsset={depositAsset}
+        vaultDetails={vaultDetails}
       />
 
       <VaultAction
@@ -94,61 +101,23 @@ export function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) 
       <div className='md:w-180'>
         <div className='relative flex flex-wrap justify-center w-full gap-4'>
           {isOwner ? (
-            (() => {
-              const hasAccumulatedFees =
-                Number(vaultDetails.performance_fee_state.accumulated_fee) > 0
-
-              return (
-                <PositionInfo
-                  value={
-                    <DisplayCurrency
-                      coin={BNCoin.fromDenomAndBigNumber(
-                        vaultDetails.base_tokens_denom,
-                        BN(vaultDetails.performance_fee_state.accumulated_fee),
-                      )}
-                      className='text-2xl'
-                    />
-                  }
-                  subtitle={
-                    <FormattedNumber
-                      amount={Number(vaultDetails?.performance_fee_config.fee_rate ?? 0) * 100000}
-                      options={{
-                        suffix: '%',
-                        minDecimals: 0,
-                        maxDecimals: 0,
-                        abbreviated: false,
-                      }}
-                      className='text-xs text-white/60'
-                    />
-                  }
-                  primaryButton={{
-                    text: 'Deposit',
-                    onClick: () => handleActionModal('deposit'),
-                  }}
-                  secondaryButton={{
-                    text: 'Edit Fee',
-                    color: 'secondary',
-                    onClick: () => handleFeeActionModal('edit'),
-                    disabled: !hasAccumulatedFees,
-                  }}
-                  tertiaryButton={{
-                    text: 'Withdraw',
-                    color: 'secondary',
-                    onClick: () => handleFeeActionModal('withdraw'),
-                    rightIcon: <ArrowDownLine />,
-                    disabled: !hasAccumulatedFees,
-                  }}
-                  isOwner={isOwner}
-                />
-              )
-            })()
+            <OwnerVaultPosition
+              vaultDetails={vaultDetails}
+              isOwner={isOwner}
+              handleFeeActionModal={handleFeeActionModal}
+              handleActionModal={handleActionModal}
+              vaultAddress={vaultAddress}
+              depositAsset={depositAsset}
+            />
           ) : (
+            // user vault position
             <VaultPosition
               details={vaultDetails}
               isOwner={isOwner}
               vaultAddress={vaultAddress}
               onDeposit={() => handleActionModal('deposit')}
               onWithdraw={() => handleActionModal('unlock')}
+              depositAsset={depositAsset}
             />
           )}
 
