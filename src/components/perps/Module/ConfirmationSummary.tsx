@@ -11,6 +11,8 @@ import PnLDisplay from 'components/common/PnLDisplay'
 import Text from 'components/common/Text'
 import { ExpectedPrice } from 'components/perps/Module/ExpectedPrice'
 import TradingFee from 'components/perps/Module/TradingFee'
+import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
+import CloseLabel from 'components/perps/BalancesTable/Columns/CloseLabel'
 import { BN_ZERO } from 'constants/math'
 import useAccount from 'hooks/accounts/useAccount'
 import useAsset from 'hooks/assets/useAsset'
@@ -42,13 +44,74 @@ const FEE_LABELS: Record<keyof PnlAmounts, string> = {
   pnl: 'Total PnL',
 }
 
-function getActionLabel(prevAmount: BigNumber, newAmount: BigNumber): string {
-  if (prevAmount.isZero()) return 'Open new position'
-  if (newAmount.isZero()) return 'Close position'
-  if (prevAmount.isPositive() && newAmount.isNegative()) return 'Flip position from long to short'
-  if (prevAmount.isNegative() && newAmount.isPositive()) return 'Flip position from short to long'
+interface ActionLabelProps {
+  text: string
+  tradeDirection?: TradeDirection
+  isLimitOrder?: boolean
+  showCloseLabel?: boolean
+}
 
-  return 'Update existing position'
+function ActionLabel({ text, tradeDirection, isLimitOrder, showCloseLabel }: ActionLabelProps) {
+  return (
+    <div className='flex items-center gap-2'>
+      <Text>{text}</Text>
+      {showCloseLabel ? (
+        <CloseLabel className='capitalize !text-sm' />
+      ) : tradeDirection ? (
+        <TradeDirection
+          tradeDirection={tradeDirection}
+          type={isLimitOrder ? 'limit' : 'stop'}
+          className='capitalize !text-sm'
+        />
+      ) : null}
+    </div>
+  )
+}
+
+function getActionLabel(
+  prevAmount: BigNumber,
+  newAmount: BigNumber,
+  tradeDirection: TradeDirection,
+  isLimitOrder: boolean,
+): React.ReactNode {
+  if (prevAmount.isZero())
+    return (
+      <ActionLabel
+        text='Open new position'
+        tradeDirection={tradeDirection}
+        isLimitOrder={isLimitOrder}
+      />
+    )
+
+  if (newAmount.isZero()) return <ActionLabel text='Close position' showCloseLabel />
+
+  if (prevAmount.isPositive() && newAmount.isNegative()) {
+    return (
+      <ActionLabel
+        text='Flip position from long to short'
+        tradeDirection={'short' as TradeDirection}
+        isLimitOrder={isLimitOrder}
+      />
+    )
+  }
+
+  if (prevAmount.isNegative() && newAmount.isPositive()) {
+    return (
+      <ActionLabel
+        text='Flip position from short to long'
+        tradeDirection={'long' as TradeDirection}
+        isLimitOrder={isLimitOrder}
+      />
+    )
+  }
+
+  return (
+    <ActionLabel
+      text='Update existing position'
+      tradeDirection={tradeDirection}
+      isLimitOrder={isLimitOrder}
+    />
+  )
 }
 
 function getFeeLabel(unrealizedPnL: BigNumber, limitPrice?: BigNumber): string {
@@ -151,7 +214,12 @@ export default function ConfirmationSummary(props: Props) {
       </div>
     )
 
-  const action = getActionLabel(previousAmount, newAmount)
+  const action = getActionLabel(
+    previousAmount,
+    newAmount,
+    tradeDirection as TradeDirection,
+    limitPrice !== undefined,
+  )
   const feeLabel = getFeeLabel(BN((position?.unrealized_pnl.pnl as any) ?? 0), limitPrice)
 
   return (
