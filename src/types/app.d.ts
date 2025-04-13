@@ -2069,3 +2069,29 @@ interface Image {
   width: number
   height: number
 }
+
+interface DataPoint {
+  date: string
+  value: string
+}
+
+interface HistoricalVaultData {
+  vault_address: string
+  tvl: DataPoint[]
+  apr: DataPoint[]
+  share_price: DataPoint[]
+}
+
+interface HistoricalManagedVaultsResponse {
+  data: HistoricalVaultData[]
+  page: number
+  limit: number
+  total: number
+}
+
+interface HistoricalVaultChartData {
+  tvl: number
+  apy: number
+  sharePrice: number
+  date: string
+}

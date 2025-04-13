@@ -1,25 +1,6 @@
 import { FETCH_TIMEOUT } from 'constants/query'
 import { fetchWithTimeout } from 'utils/fetch'
 
-interface DataPoint {
-  date: string
-  value: string
-}
-
-interface HistoricalVaultData {
-  vault_address: string
-  tvl: DataPoint[]
-  apr: DataPoint[]
-  share_price: DataPoint[]
-}
-
-interface HistoricalManagedVaultsResponse {
-  data: HistoricalVaultData[]
-  page: number
-  limit: number
-  total: number
-}
-
 export default async function getHistoricalManagedVaults(
   chainConfig: ChainConfig,
   duration: number,
@@ -38,7 +19,7 @@ export default async function getHistoricalManagedVaults(
 
     const response = await fetchWithTimeout(url, FETCH_TIMEOUT)
     const data = await response.json()
-    console.log(data, 'datadatadata')
+
     return data as HistoricalManagedVaultsResponse
   } catch (error) {
     console.error('Could not fetch historical vaults data.', error)

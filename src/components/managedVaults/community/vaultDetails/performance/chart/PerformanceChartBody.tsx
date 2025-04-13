@@ -27,14 +27,12 @@ interface LineConfig {
   name: string
   isPercentage?: boolean
   isCurrency?: boolean
-  strokeDasharray?: string
 }
 
 interface Props {
-  data: any[]
+  data: HistoricalVaultChartData[]
   lines: LineConfig[]
   height?: string
-  timeframe?: number
 }
 
 const TooltipContent = ({ payload, lines }: { payload: any[]; lines: LineConfig[] }) => {
@@ -48,32 +46,28 @@ const TooltipContent = ({ payload, lines }: { payload: any[]; lines: LineConfig[
     }
     uniqueEntries.set(item.name, true)
 
-    const value = typeof item.value === 'string' ? parseFloat(item.value) : item.value
-
     return (
       <div key={index} className='flex items-center gap-1'>
         <Circle className='fill-current h-2 w-2' color={item.color} />
         <Text size='xs'>{item.name}: </Text>
         {lineConfig?.isPercentage ? (
           <FormattedNumber
-            amount={value}
+            amount={item.value}
             options={{ maxDecimals: 2, minDecimals: 2, suffix: '%' }}
             className='text-xs'
           />
-        ) : lineConfig?.name === 'Share Price' ? (
-          <FormattedNumber
-            amount={value}
-            options={{
-              maxDecimals: 6,
-              minDecimals: 2,
-              prefix: '$',
-              abbreviated: false,
-            }}
+        ) : lineConfig?.isCurrency ? (
+          <DisplayCurrency
+            coin={BNCoin.fromDenomAndBigNumber(
+              'usd',
+              BN(item.value).shiftedBy(-PRICE_ORACLE_DECIMALS),
+            )}
+            options={{ maxDecimals: 2, minDecimals: 2 }}
             className='text-xs'
           />
         ) : (
           <DisplayCurrency
-            coin={BNCoin.fromDenomAndBigNumber('usd', BN(value).shiftedBy(-PRICE_ORACLE_DECIMALS))}
+            coin={BNCoin.fromDenomAndBigNumber('usd', BN(item.value))}
             options={{ maxDecimals: 2, minDecimals: 2 }}
             className='text-xs'
           />
@@ -84,7 +78,7 @@ const TooltipContent = ({ payload, lines }: { payload: any[]; lines: LineConfig[
 }
 
 export default function PerformanceChartBody(props: Props) {
-  const { data, lines, height = 'h-65', timeframe = 30 } = props
+  const { data, lines, height = 'h-80' } = props
 
   return (
     <div className={classNames('-ml-6', height)}>
@@ -133,7 +127,7 @@ export default function PerformanceChartBody(props: Props) {
             dataKey='date'
             dy={10}
             stroke='rgba(255, 255, 255, 0.4)'
-            padding={{ left: 10, right: 15 }}
+            padding={{ left: 5, right: 15 }}
             tickFormatter={(value) => moment(value).format('DD MMM')}
             interval={data.length > 10 ? Math.floor(data.length / 7) : 0}
           />
@@ -152,20 +146,19 @@ export default function PerformanceChartBody(props: Props) {
                   abbreviated: true,
                 })
               }
-              if (lines[0]?.name === 'Share Price') {
-                return formatValue(value, {
+              if (lines[0]?.isCurrency) {
+                const adjustedValue = BN(value).shiftedBy(-PRICE_ORACLE_DECIMALS).toNumber()
+                return formatValue(adjustedValue, {
                   minDecimals: 2,
                   maxDecimals: 2,
                   prefix: '$',
-                  abbreviated: false,
+                  abbreviated: true,
                 })
               }
-              const adjustedValue = BN(value).shiftedBy(-PRICE_ORACLE_DECIMALS).toNumber()
-              return formatValue(adjustedValue, {
-                minDecimals: 0,
+              return formatValue(value, {
+                minDecimals: 2,
                 maxDecimals: 2,
                 prefix: '$',
-                abbreviated: true,
               })
             }}
           />

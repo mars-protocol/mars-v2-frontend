@@ -26,69 +26,43 @@ const sharePriceLine = {
   dataKey: 'sharePrice',
   color: '#ffc658',
   name: 'Share Price',
-  isCurrency: true,
 }
 
-export default function PerformanceChart({ vaultAddress }: Props) {
+export default function PerformanceChart(props: Props) {
+  const { vaultAddress } = props
   const [timeframe, setTimeframe] = useState(30)
   const { data, isLoading } = useHistoricalVaultData(vaultAddress, timeframe)
+
   const height = 'h-80'
+  const charts = [
+    {
+      title: 'Vault Balance',
+      lines: [tvlLine],
+    },
+    {
+      title: 'APY',
+      lines: [apyLine],
+    },
+    {
+      title: 'Share Price',
+      lines: [sharePriceLine],
+    },
+  ]
 
   return (
     <PerformanceChartWrapper
-      charts={[
-        {
-          title: 'Vault Balance',
-          content: (
-            <>
-              {!data || isLoading ? (
-                <PerformanceChartLoading height={height} />
-              ) : (
-                <PerformanceChartBody
-                  data={data}
-                  lines={[tvlLine]}
-                  height={height}
-                  timeframe={timeframe}
-                />
-              )}
-            </>
-          ),
-        },
-        {
-          title: 'APY',
-          content: (
-            <>
-              {!data || isLoading ? (
-                <PerformanceChartLoading height={height} />
-              ) : (
-                <PerformanceChartBody
-                  data={data}
-                  lines={[apyLine]}
-                  height={height}
-                  timeframe={timeframe}
-                />
-              )}
-            </>
-          ),
-        },
-        {
-          title: 'Share Price',
-          content: (
-            <>
-              {!data || isLoading ? (
-                <PerformanceChartLoading height={height} />
-              ) : (
-                <PerformanceChartBody
-                  data={data}
-                  lines={[sharePriceLine]}
-                  height={height}
-                  timeframe={timeframe}
-                />
-              )}
-            </>
-          ),
-        },
-      ]}
+      charts={charts.map((chart) => ({
+        title: chart.title,
+        content: (
+          <>
+            {!data || isLoading ? (
+              <PerformanceChartLoading height={height} />
+            ) : (
+              <PerformanceChartBody data={data} lines={chart.lines} height={height} />
+            )}
+          </>
+        ),
+      }))}
       timeframe={timeframe}
       setTimeframe={setTimeframe}
     />

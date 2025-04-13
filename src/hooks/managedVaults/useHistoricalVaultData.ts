@@ -29,7 +29,7 @@ export default function useHistoricalVaultData(vaultAddress: string, timeframe: 
         }
       })
 
-      return transformedData
+      return transformedData as HistoricalVaultChartData[]
     },
     {
       revalidateOnFocus: false,
