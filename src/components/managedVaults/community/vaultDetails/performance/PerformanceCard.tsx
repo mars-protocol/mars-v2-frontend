@@ -16,7 +16,7 @@ export default function PerformanceCard(props: Props) {
       value: vaultDetails.base_tokens_amount,
       label: 'TVL',
       isCurrency: true,
-      formatOptions: { maxDecimals: 2, minDecimals: 2, abbreviated: true },
+      formatOptions: { maxDecimals: 2, minDecimals: 2, abbreviated: false },
     },
     {
       value: 212343443321,
@@ -35,10 +35,9 @@ export default function PerformanceCard(props: Props) {
       },
     },
     {
-      value: 22,
-      // value: vaultDetails.metrics.apy,
+      value: vaultDetails.metrics.apy,
       label: 'APY',
-      formatOptions: { maxDecimals: 2, minDecimals: 2, suffix: '%' },
+      formatOptions: { maxDecimals: 2, minDecimals: 2, suffix: '%', abbreviated: true },
     },
     {
       value: 45,

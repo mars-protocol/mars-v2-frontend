@@ -149,9 +149,8 @@ export default function ProfileVaultCard(props: Props) {
             <InfoRow label='Contact'>
               <div className='flex items-center gap-4'>
                 {vaultOwnerInfo.socials.map((social, index) => (
-                  <div className='flex w-4'>
+                  <div className='flex w-4' key={index}>
                     <TextLink
-                      key={index}
                       href={social.link}
                       target='_blank'
                       className={'underline hover:no-underline hover:text-white relative'}

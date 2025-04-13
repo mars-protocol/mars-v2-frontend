@@ -3,6 +3,7 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -17,12 +18,15 @@ import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
 import ChartTooltip from 'components/managedVaults/community/vaultDetails/performance/chart/tooltip/ChartTooltip'
 import classNames from 'classnames'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import { formatValue } from 'utils/formatters'
 
 interface LineConfig {
   dataKey: string
   color: string
   name: string
   isPercentage?: boolean
+  isCurrency?: boolean
   strokeDasharray?: string
 }
 
@@ -30,7 +34,7 @@ interface Props {
   data: any[]
   lines: LineConfig[]
   height?: string
-  timeframe?: string
+  timeframe?: number
 }
 
 const TooltipContent = ({ payload, lines }: { payload: any[]; lines: LineConfig[] }) => {
@@ -52,15 +56,26 @@ const TooltipContent = ({ payload, lines }: { payload: any[]; lines: LineConfig[
         <Text size='xs'>{item.name}: </Text>
         {lineConfig?.isPercentage ? (
           <FormattedNumber
-            amount={value * 100}
-            options={{ maxDecimals: 3, minDecimals: 0, suffix: '%' }}
+            amount={value}
+            options={{ maxDecimals: 2, minDecimals: 2, suffix: '%' }}
+            className='text-xs'
+          />
+        ) : lineConfig?.name === 'Share Price' ? (
+          <FormattedNumber
+            amount={value}
+            options={{
+              maxDecimals: 6,
+              minDecimals: 2,
+              prefix: '$',
+              abbreviated: false,
+            }}
             className='text-xs'
           />
         ) : (
           <DisplayCurrency
-            coin={BNCoin.fromDenomAndBigNumber('usd', BN(value))}
+            coin={BNCoin.fromDenomAndBigNumber('usd', BN(value).shiftedBy(-PRICE_ORACLE_DECIMALS))}
+            options={{ maxDecimals: 2, minDecimals: 2 }}
             className='text-xs'
-            showSignPrefix
           />
         )}
       </div>
@@ -69,7 +84,7 @@ const TooltipContent = ({ payload, lines }: { payload: any[]; lines: LineConfig[
 }
 
 export default function PerformanceChartBody(props: Props) {
-  const { data, lines, height = 'h-65', timeframe = '' } = props
+  const { data, lines, height = 'h-65', timeframe = 30 } = props
 
   return (
     <div className={classNames('-ml-6', height)}>
@@ -116,9 +131,44 @@ export default function PerformanceChartBody(props: Props) {
             tickLine={false}
             fontSize={10}
             dataKey='date'
+            dy={10}
+            stroke='rgba(255, 255, 255, 0.4)'
+            padding={{ left: 10, right: 15 }}
             tickFormatter={(value) => moment(value).format('DD MMM')}
+            interval={data.length > 10 ? Math.floor(data.length / 7) : 0}
           />
-          <YAxis axisLine={false} tickLine={false} fontSize={10} tickCount={6} />
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            fontSize={8}
+            tickCount={8}
+            stroke='rgba(255, 255, 255, 0.4)'
+            tickFormatter={(value) => {
+              if (lines[0]?.isPercentage) {
+                return formatValue(value, {
+                  minDecimals: 0,
+                  maxDecimals: 0,
+                  suffix: '%',
+                  abbreviated: true,
+                })
+              }
+              if (lines[0]?.name === 'Share Price') {
+                return formatValue(value, {
+                  minDecimals: 2,
+                  maxDecimals: 2,
+                  prefix: '$',
+                  abbreviated: false,
+                })
+              }
+              const adjustedValue = BN(value).shiftedBy(-PRICE_ORACLE_DECIMALS).toNumber()
+              return formatValue(adjustedValue, {
+                minDecimals: 0,
+                maxDecimals: 2,
+                prefix: '$',
+                abbreviated: true,
+              })
+            }}
+          />
           <Tooltip
             content={
               <ChartTooltip
@@ -130,6 +180,7 @@ export default function PerformanceChartBody(props: Props) {
             }
           />
           <CartesianGrid opacity={0.06} vertical={false} />
+          <ReferenceLine y={0} stroke='rgba(255, 255, 255, 0.1)' strokeWidth={1} />
         </AreaChart>
       </ResponsiveContainer>
     </div>

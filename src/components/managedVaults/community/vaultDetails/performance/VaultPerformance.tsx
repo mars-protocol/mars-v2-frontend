@@ -28,7 +28,7 @@ export default function VaultPerformance(props: Props) {
       <div className='flex flex-wrap gap-4'>
         {hasPosition && <UserMetrics vaultAddress={vaultAddress} vaultDetails={vaultDetails} />}
         <PerformanceCard vaultDetails={vaultDetails} />
-        <PerformanceChart />
+        <PerformanceChart vaultAddress={vaultAddress} />
       </div>
     </div>
   )

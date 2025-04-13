@@ -32,7 +32,7 @@ export default function PerformanceChartLoading(props: Props) {
     LocalStorageKeys.REDUCE_MOTION,
     getDefaultChainSettings(chainConfig).reduceMotion,
   )
-  const height = props.height ?? 'h-100'
+  const height = props.height ?? 'h-80'
   const loadingData = createLoadingData()
 
   return (
@@ -54,7 +54,8 @@ export default function PerformanceChartLoading(props: Props) {
             </linearGradient>
           </defs>
           <CartesianGrid
-            horizontal={false}
+            horizontal={true}
+            vertical={false}
             stroke='rgba(255,255,255,0.2)'
             strokeDasharray='6 3'
             syncWithTicks={true}

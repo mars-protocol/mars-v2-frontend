@@ -3,13 +3,13 @@ import Button from 'components/common/Button'
 
 export type TimeframeOption = {
   label: string
-  value: string
+  value: number
 }
 
 interface Props {
   timeframe: TimeframeOption[]
-  selectedTimeframe: string
-  setSelectedTimeframe: (timeframe: string) => void
+  selectedTimeframe: number
+  setSelectedTimeframe: (timeframe: number) => void
   className?: string
   size?: 'xs' | 'sm'
 }

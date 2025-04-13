@@ -1,59 +1,37 @@
 import PerformanceChartWrapper from 'components/managedVaults/community/vaultDetails/performance/chart/PerformanceChartWrapper'
 import PerformanceChartLoading from 'components/managedVaults/community/vaultDetails/performance/chart/PerformanceChartLoading'
 import PerformanceChartBody from 'components/managedVaults/community/vaultDetails/performance/chart/PerformanceChartBody'
-import moment from 'moment'
 import { useState } from 'react'
+import useHistoricalVaultData from 'hooks/managedVaults/useHistoricalVaultData'
 
-interface Props {}
-
-// temp solution for now
-function generateDummyData(timeframe: string) {
-  const data = []
-  const days = timeframe === '7d' ? 7 : timeframe === '30d' ? 30 : 90
-  const startDate = moment().subtract(days, 'days')
-  const endDate = moment()
-
-  let baseTvl = 20
-  let baseApy = 15
-
-  for (let i = 0; i <= days; i++) {
-    const date = moment(startDate).add(i, 'days')
-    const tvlVariation = (Math.random() - 0.3) * 2
-    const apyVariation = (Math.random() - 0.3) * 5
-    const tvl = baseTvl + tvlVariation
-    const apy = baseApy + apyVariation
-
-    data.push({
-      date: date.format('YYYY-MM-DD'),
-      tvl: tvl,
-      apy: apy,
-    })
-
-    baseTvl += 5.7
-    baseApy += 2
-  }
-
-  return data
+interface Props {
+  vaultAddress: string
 }
 
 const tvlLine = {
   dataKey: 'tvl',
   color: '#8884d8',
   name: 'Total Value',
-  valueFormatter: (value: number) => `$${value.toFixed(2)}`,
+  isCurrency: true,
 }
 
 const apyLine = {
   dataKey: 'apy',
   color: '#82ca9d',
   name: 'APY',
-  valueFormatter: (value: number) => `${value.toFixed(2)}%`,
+  isPercentage: true,
 }
 
-export default function PerformanceChart(props: Props) {
-  const [timeframe, setTimeframe] = useState('7d')
-  const loading = false
-  const data = generateDummyData(timeframe)
+const sharePriceLine = {
+  dataKey: 'sharePrice',
+  color: '#ffc658',
+  name: 'Share Price',
+  isCurrency: true,
+}
+
+export default function PerformanceChart({ vaultAddress }: Props) {
+  const [timeframe, setTimeframe] = useState(30)
+  const { data, isLoading } = useHistoricalVaultData(vaultAddress, timeframe)
   const height = 'h-80'
 
   return (
@@ -63,7 +41,7 @@ export default function PerformanceChart(props: Props) {
           title: 'Vault Balance',
           content: (
             <>
-              {data === null || loading ? (
+              {!data || isLoading ? (
                 <PerformanceChartLoading height={height} />
               ) : (
                 <PerformanceChartBody
@@ -80,12 +58,29 @@ export default function PerformanceChart(props: Props) {
           title: 'APY',
           content: (
             <>
-              {data === null || loading ? (
+              {!data || isLoading ? (
                 <PerformanceChartLoading height={height} />
               ) : (
                 <PerformanceChartBody
                   data={data}
                   lines={[apyLine]}
+                  height={height}
+                  timeframe={timeframe}
+                />
+              )}
+            </>
+          ),
+        },
+        {
+          title: 'Share Price',
+          content: (
+            <>
+              {!data || isLoading ? (
+                <PerformanceChartLoading height={height} />
+              ) : (
+                <PerformanceChartBody
+                  data={data}
+                  lines={[sharePriceLine]}
                   height={height}
                   timeframe={timeframe}
                 />

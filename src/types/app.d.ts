@@ -308,6 +308,7 @@ interface ChainConfig {
     dexPools?: string
     gasPrices: string
     managedVaults?: string
+    historicalManagedVaults?: string
     aprs: {
       vaults: string
       perpsVault?: string
