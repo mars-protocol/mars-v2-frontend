@@ -19,13 +19,13 @@ export default function PerformanceCard(props: Props) {
       formatOptions: { maxDecimals: 2, minDecimals: 2, abbreviated: false },
     },
     {
-      value: 212343443321,
+      value: 0,
       label: 'Volume (30d)',
       isCurrency: true,
-      formatOptions: { maxDecimals: 2, minDecimals: 2, abbreviated: true },
+      formatOptions: { maxDecimals: 2, minDecimals: 2 },
     },
     {
-      value: 3,
+      value: 0,
       label: 'Max Daily Drawdown',
       formatOptions: {
         maxDecimals: 2,
@@ -40,7 +40,7 @@ export default function PerformanceCard(props: Props) {
       formatOptions: { maxDecimals: 2, minDecimals: 2, suffix: '%', abbreviated: true },
     },
     {
-      value: 45,
+      value: 0,
       label: 'Vault Age',
       formatOptions: { maxDecimals: 0, minDecimals: 0, suffix: ' days' },
     },

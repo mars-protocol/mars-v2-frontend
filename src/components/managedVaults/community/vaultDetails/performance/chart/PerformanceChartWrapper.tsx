@@ -25,7 +25,7 @@ export default function PerformanceChartWrapper(props: Props) {
   const tabs = charts.map((chart) => ({
     title: chart.title,
     renderContent: () => (
-      <div className='flex flex-col gap-1 px-2 pb-3'>
+      <div className='flex flex-col gap-1 px-2 pb-3 min-h-80'>
         <div className='flex justify-end px-4'>
           <TimeframeSelector
             timeframe={timeframeOptions}

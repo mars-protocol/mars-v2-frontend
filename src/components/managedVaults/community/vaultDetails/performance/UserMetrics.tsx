@@ -39,13 +39,13 @@ export default function UserMetrics(props: Props) {
       formatOptions: { maxDecimals: 2, minDecimals: 2 },
     },
     {
-      value: 223231333,
+      value: 0,
       label: 'Total Earnings',
       isCurrency: true,
       formatOptions: { maxDecimals: 2, minDecimals: 2 },
     },
     {
-      value: 222,
+      value: 0,
       label: 'ROI',
       formatOptions: { maxDecimals: 2, minDecimals: 2, suffix: '%' },
     },
