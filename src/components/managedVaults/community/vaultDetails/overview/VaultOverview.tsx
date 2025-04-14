@@ -1,19 +1,13 @@
-import AssetImage from 'components/common/assets/AssetImage'
-import DisplayCurrency from 'components/common/DisplayCurrency'
 import FeeAction from 'components/managedVaults/community/vaultDetails/common/Overlays/FeeAction'
-import PositionInfo from 'components/managedVaults/community/vaultDetails/common/PositionInfo'
 import ProfileVaultCard from 'components/managedVaults/community/vaultDetails/profileVaultCard/ProfileVaultCard'
+import OwnerVaultPosition from 'components/managedVaults/community/vaultDetails/OwnerVaultPosition'
 import useToggle from 'hooks/common/useToggle'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import VaultAction from 'components/managedVaults/community/vaultDetails/common/Overlays/VaultAction'
 import VaultPosition from 'components/managedVaults/community/vaultDetails/overview/VaultPosition'
 import VaultSummary from 'components/managedVaults/community/vaultDetails/overview/VaultSummary'
 import Withdrawals from 'components/managedVaults/community/vaultDetails/overview/Withdrawals'
-import { ArrowDownLine } from 'components/common/Icons'
-import { BN } from 'utils/helpers'
-import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { FormattedNumber } from 'components/common/FormattedNumber'
 import { useState } from 'react'
 
 interface Props {
@@ -66,60 +60,23 @@ export default function VaultOverview(props: Props) {
         showActionModal={showActionModal}
         setShowActionModal={setShowActionModal}
         vaultDetails={vaultDetails}
-        vaultAddress={vaultAddress}
-        type={modalType}
+        vaultAddress={vaultAddress!}
+        type={modalType || 'deposit'}
       />
 
       <div className='md:w-180'>
         <div className='relative flex flex-wrap justify-center w-full gap-4'>
           {isOwner ? (
-            (() => {
-              const hasAccumulatedFees =
-                Number(vaultDetails.performance_fee_state.accumulated_fee) > 0
-
-              return (
-                <PositionInfo
-                  value={
-                    <div className='flex items-center gap-1'>
-                      <AssetImage asset={depositAsset} className='w-5 h-5' />
-                      <DisplayCurrency
-                        coin={BNCoin.fromDenomAndBigNumber(
-                          vaultDetails.base_tokens_denom,
-                          BN(vaultDetails.performance_fee_state.accumulated_fee),
-                        )}
-                        className='text-2xl'
-                      />
-                    </div>
-                  }
-                  subtitle={
-                    <FormattedNumber
-                      amount={Number(vaultDetails?.performance_fee_config.fee_rate ?? 0) * 100000}
-                      options={{
-                        suffix: '%',
-                        minDecimals: 0,
-                        maxDecimals: 0,
-                        abbreviated: false,
-                      }}
-                      className='text-xs text-white/60'
-                    />
-                  }
-                  primaryButton={{
-                    text: 'Edit Fee',
-                    color: 'secondary',
-                    onClick: () => handleFeeActionModal('edit'),
-                    disabled: !hasAccumulatedFees,
-                  }}
-                  secondaryButton={{
-                    text: 'Withdraw',
-                    onClick: () => handleFeeActionModal('withdraw'),
-                    rightIcon: <ArrowDownLine />,
-                    disabled: !hasAccumulatedFees,
-                  }}
-                  isOwner={isOwner}
-                />
-              )
-            })()
+            <OwnerVaultPosition
+              vaultDetails={vaultDetails}
+              isOwner={isOwner}
+              handleFeeActionModal={handleFeeActionModal}
+              handleActionModal={handleActionModal}
+              vaultAddress={vaultAddress}
+              depositAsset={depositAsset}
+            />
           ) : (
+            // user vault position
             <VaultPosition
               details={vaultDetails}
               isOwner={isOwner}
@@ -130,7 +87,7 @@ export default function VaultOverview(props: Props) {
             />
           )}
 
-          <Withdrawals details={vaultDetails} isOwner={isOwner} vaultAddress={vaultAddress} />
+          <Withdrawals details={vaultDetails} isOwner={isOwner} vaultAddress={vaultAddress!} />
           <VaultSummary details={vaultDetails} />
         </div>
       </div>

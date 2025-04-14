@@ -5,7 +5,7 @@ import PositionInfo from 'components/managedVaults/community/vaultDetails/common
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 import React from 'react'
-import VaultPosition from 'components/managedVaults/community/vaultDetails/VaultPosition'
+import VaultPosition from 'components/managedVaults/community/vaultDetails/overview/VaultPosition'
 import AssetImage from 'components/common/assets/AssetImage'
 
 interface Props {
