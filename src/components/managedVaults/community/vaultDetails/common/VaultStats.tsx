@@ -14,7 +14,7 @@ interface Props {
 export default function VaultStats(props: Props) {
   const { stats } = props
   return (
-    <div className='bg-white/5 p-3 space-y-3 text-white/60'>
+    <div className='p-3 space-y-3 text-white/60'>
       {stats.map((stat, index) => (
         <React.Fragment key={index}>
           <div className='flex justify-between items-center'>

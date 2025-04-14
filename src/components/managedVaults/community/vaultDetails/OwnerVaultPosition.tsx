@@ -1,6 +1,6 @@
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { ArrowDownLine, Edit } from 'components/common/Icons'
+import { AccountArrowDown, Edit } from 'components/common/Icons'
 import PositionInfo from 'components/managedVaults/community/vaultDetails/common/PositionInfo'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
@@ -64,7 +64,7 @@ export default function OwnerVaultPosition(props: Props) {
         secondaryButton={{
           color: 'secondary',
           onClick: () => handleFeeActionModal('withdraw'),
-          rightIcon: <ArrowDownLine />,
+          rightIcon: <AccountArrowDown />,
           disabled: !hasAccumulatedFees,
         }}
         isOwner={isOwner}
