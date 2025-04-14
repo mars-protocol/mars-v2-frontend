@@ -10,55 +10,64 @@ interface Props {
   subtitle: React.ReactNode
   primaryButton: ButtonProps
   secondaryButton: ButtonProps
-  tertiaryButton?: ButtonProps
   isOwner: boolean
+  type?: 'performanceFee' | 'depositPosition'
 }
 
 export default function PositionInfo(props: Props) {
-  const { value, subtitle, primaryButton, secondaryButton, tertiaryButton, isOwner } = props
+  const {
+    value,
+    subtitle,
+    primaryButton,
+    secondaryButton,
+    isOwner,
+    type = 'performanceFee',
+  } = props
   const address = useStore((s) => s.address)
+
+  const title = type === 'performanceFee' ? 'Performance Fee' : 'My Position'
+  const showFeeInfo = type === 'performanceFee' && isOwner
+  const showVaultPercentage = type === 'depositPosition' && isOwner
 
   return (
     <Card className='bg-white/5 w-full'>
       <div className='flex justify-between items-center p-5'>
         <div className='flex flex-col gap-1'>
           <Text size='xs' className='text-white/50'>
-            {isOwner ? 'Performance Fee' : 'My Position'}
+            {title}
           </Text>
-          <div className='flex flex-col md:flex-row items-baseline md:gap-2'>
+          <div className='flex md:flex-row items-baseline gap-1'>
             {value}
-            {subtitle}
+            {!showVaultPercentage && subtitle}
           </div>
-          {isOwner && (
+          {showFeeInfo && (
             <Text size='xs' className='text-white/50'>
               Available for withdrawal.
             </Text>
           )}
+          {showVaultPercentage && (
+            <Text size='xs' className='text-white/50'>
+              {subtitle}
+            </Text>
+          )}
         </div>
 
-        <div className='flex flex-col md:flex-row gap-2'>
-          <div className='flex flex-col gap-2 w-full'>
-            {!address ? (
-              <WalletConnectButton {...primaryButton} />
-            ) : (
-              <>
-                <Button {...primaryButton} className='w-full' />
-                <div className='flex flex-col md:flex-row gap-2'>
-                  <Button {...secondaryButton} />
-                  {tertiaryButton && <Button {...tertiaryButton} />}
-                </div>
-              </>
-            )}
-          </div>
+        <div className='flex flex-col gap-2'>
+          {!address ? (
+            <WalletConnectButton {...primaryButton} />
+          ) : isOwner ? (
+            <div className='flex flex-col gap-2'>
+              <Button {...primaryButton} />
+              <Button {...secondaryButton} />
+            </div>
+          ) : (
+            <div className='flex gap-2'>
+              <Button {...primaryButton} />
+              <Button {...secondaryButton} />
+            </div>
+          )}
         </div>
       </div>
-      {isOwner && (
-        <div className='bg-black/20 p-2 w-full'>
-          <Text size='xs' className='text-white/30 text-center'>
-            Performance fees can be edited when you withdraw.
-          </Text>
-        </div>
-      )}
     </Card>
   )
 }

@@ -16,7 +16,7 @@ interface Props {
   disabled: boolean
 }
 
-export default function Withdraw(props: Props) {
+export default function WithdrawButton(props: Props) {
   const { amount, vaultAddress, vaultTokenDenom, disabled } = props
   const address = useStore((s) => s.address)
   const [isConfirming, setIsConfirming] = useState(false)
