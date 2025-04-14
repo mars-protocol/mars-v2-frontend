@@ -4,13 +4,36 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
+import useHistoricalVaultData from 'hooks/managedVaults/useHistoricalVaultData'
 
 interface Props {
   vaultDetails: ExtendedManagedVaultDetails
+  vaultAddress: string
 }
 
 export default function PerformanceCard(props: Props) {
-  const { vaultDetails } = props
+  const { vaultDetails, vaultAddress } = props
+  const { data: historicalData } = useHistoricalVaultData(vaultAddress, 90)
+
+  const calculateMaxDrawdown = (data: HistoricalVaultChartData[]) => {
+    if (!data || data.length <= 1) return 0
+
+    let peak = data[0].sharePrice
+    let maxDrawdown = 0
+
+    for (let i = 1; i < data.length; i++) {
+      const point = data[i]
+      if (point.sharePrice > peak) {
+        peak = point.sharePrice
+      } else {
+        const drawdown = ((peak - point.sharePrice) / peak) * 100
+        maxDrawdown = Math.max(maxDrawdown, drawdown)
+      }
+    }
+    return maxDrawdown
+  }
+
+  const maxDrawdown = historicalData ? calculateMaxDrawdown(historicalData) : 0
   const metrics = [
     {
       value: vaultDetails.base_tokens_amount,
@@ -25,8 +48,8 @@ export default function PerformanceCard(props: Props) {
       formatOptions: { maxDecimals: 2, minDecimals: 2 },
     },
     {
-      value: 0,
-      label: 'Max Daily Drawdown',
+      value: maxDrawdown,
+      label: 'Max 90d Drawdown',
       formatOptions: {
         maxDecimals: 2,
         minDecimals: 2,
