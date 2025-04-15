@@ -1,10 +1,8 @@
 import Button from 'components/common/Button'
-import ActionButton from 'components/common/Button/ActionButton'
 import { Account, ArrowRight, HandCoins, Plus, PlusSquared, Wallet } from 'components/common/Icons'
 import Intro from 'components/common/Intro'
 import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useAccountId from 'hooks/accounts/useAccountId'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -20,16 +18,18 @@ export default function VaultsCommunityIntro() {
     true,
   )
   const { open: showAlertDialog, close } = useAlertDialog()
-  const accountId = useAccountId()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
   const chainConfig = useChainConfig()
 
   const openCreateVaultOverlay = useCallback(() => {
-    if (accountId)
-      navigate(getRoute(getPage('vaults/create', chainConfig), searchParams, address, accountId))
-  }, [accountId, navigate, chainConfig, searchParams, address])
+    if (!address) {
+      console.error('Wallet address is required to create a vault')
+      return
+    }
+    navigate(getRoute(getPage('vaults/create', chainConfig), searchParams, address))
+  }, [address, navigate, chainConfig, searchParams])
 
   const handleOnClick = useCallback(() => {
     if (!showVaultInformation) {
