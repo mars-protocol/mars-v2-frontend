@@ -53,7 +53,7 @@ interface ActionLabelProps {
 
 function ActionLabel({ text, tradeDirection, isLimitOrder, showCloseLabel }: ActionLabelProps) {
   return (
-    <div className='flex items-center gap-2'>
+    <div className='flex justify-between items-center'>
       <Text>{text}</Text>
       {showCloseLabel ? (
         <CloseLabel className='capitalize !text-sm' />

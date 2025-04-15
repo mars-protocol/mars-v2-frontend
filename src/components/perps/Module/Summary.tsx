@@ -220,7 +220,7 @@ export default function PerpsSummary(props: Props) {
     [isNewPosition, previousAmount, newAmount],
   )
 
-  const { open: openAlertDialog, close } = useAlertDialog()
+  const { open: openAlertDialog } = useAlertDialog()
 
   const handleOnClick = useCallback(() => {
     if (!currentAccount) return
@@ -245,20 +245,16 @@ export default function PerpsSummary(props: Props) {
         />
       ),
       positiveButton: {
-        text: 'Confirm',
-        icon: <Check />,
+        text: 'Continue',
+        icon: <ArrowRight />,
         onClick: onConfirm,
-      },
-      negativeButton: {
-        text: 'Cancel',
-        onClick: () => {
-          close()
-        },
       },
       checkbox: {
         text: 'Hide summary in the future',
         onClick: (isChecked: boolean) => setShowSummary(!isChecked),
       },
+      isSingleButtonLayout: true,
+      showCloseButton: true,
     })
   }, [
     currentAccount,
@@ -271,7 +267,6 @@ export default function PerpsSummary(props: Props) {
     limitPrice,
     calculateKeeperFee,
     onConfirm,
-    close,
     setShowSummary,
   ])
 
