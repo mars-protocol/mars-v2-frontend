@@ -5,6 +5,7 @@ import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 import useHistoricalVaultData from 'hooks/managedVaults/useHistoricalVaultData'
+import { useMemo } from 'react'
 
 interface Props {
   vaultDetails: ExtendedManagedVaultDetails
@@ -16,24 +17,26 @@ export default function PerformanceCard(props: Props) {
   const { data: historicalData } = useHistoricalVaultData(vaultAddress, 90)
 
   const calculateMaxDrawdown = (data: HistoricalVaultChartData[]) => {
-    if (!data || data.length <= 1) return 0
+    if (!data?.length) return 0
 
-    let peak = data[0].sharePrice
+    // Find first non-zero price to start from
+    const firstNonZeroIndex = data.findIndex((point) => point.sharePrice > 0)
+    let peak = data[firstNonZeroIndex].sharePrice
     let maxDrawdown = 0
 
-    for (let i = 1; i < data.length; i++) {
-      const point = data[i]
-      if (point.sharePrice > peak) {
-        peak = point.sharePrice
+    for (let i = firstNonZeroIndex + 1; i < data.length; i++) {
+      const currentPrice = data[i].sharePrice
+      if (currentPrice > peak) {
+        peak = currentPrice
       } else {
-        const drawdown = ((peak - point.sharePrice) / peak) * 100
+        const drawdown = ((peak - currentPrice) / peak) * 100
         maxDrawdown = Math.max(maxDrawdown, drawdown)
       }
     }
     return maxDrawdown
   }
 
-  const maxDrawdown = historicalData ? calculateMaxDrawdown(historicalData) : 0
+  const maxDrawdown = useMemo(() => calculateMaxDrawdown(historicalData || []), [historicalData])
   const metrics = [
     {
       value: vaultDetails.base_tokens_amount,
