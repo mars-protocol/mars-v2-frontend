@@ -129,7 +129,7 @@ export default function PerformanceChartBody(props: Props) {
             stroke='rgba(255, 255, 255, 0.4)'
             padding={{ left: 5, right: 15 }}
             tickFormatter={(value) => moment(value).format('DD MMM')}
-            interval={data.length > 10 ? Math.floor(data.length / 7) : 0}
+            interval={data.length > 10 ? Math.floor(data.length / 8) : 0}
           />
           <YAxis
             axisLine={false}

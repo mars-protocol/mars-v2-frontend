@@ -15,25 +15,36 @@ export default function useHistoricalVaultData(vaultAddress: string, timeframe: 
       if (!response.data.length) return []
 
       const vaultData = response.data[0]
+      const initialSharePrice =
+        vaultData.share_price.find((point) => Number(point?.value) > 0)?.value ?? '1'
 
-      const initialSharePrice = Number(vaultData.share_price[0].value)
-      const transformedData = vaultData.tvl.map((point, index) => {
-        const currentSharePrice = Number(vaultData.share_price[index].value)
-        const normalizedSharePrice = currentSharePrice / initialSharePrice
+      const transformedData = vaultData.tvl
+        .map((point, index) => {
+          // Skipping points with missing data
+          if (!point?.value || !vaultData.share_price[index]?.value) {
+            return null
+          }
 
-        return {
-          date: point.date,
-          tvl: Number(point.value),
-          apy: convertAprToApy(Number(vaultData.apr[index].value), 365),
-          sharePrice: normalizedSharePrice,
-        }
-      })
+          const currentSharePrice = Number(vaultData.share_price[index].value)
+          const normalizedSharePrice =
+            currentSharePrice > 0 ? currentSharePrice / Number(initialSharePrice) : 0
+
+          return {
+            date: point.date,
+            tvl: Number(point.value),
+            apy:
+              vaultData.apr && vaultData.apr[index]?.value
+                ? convertAprToApy(Number(vaultData.apr[index].value), 365)
+                : 0,
+            sharePrice: normalizedSharePrice,
+          }
+        })
+        .filter(Boolean)
 
       return transformedData as HistoricalVaultChartData[]
     },
     {
       revalidateOnFocus: false,
-      refreshInterval: 10_000,
       suspense: false,
     },
   )

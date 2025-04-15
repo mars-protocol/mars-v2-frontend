@@ -67,7 +67,9 @@ export default function PerformanceChart(props: Props) {
     if (error || !hasData) {
       return (
         <Text size='sm' className='text-center text-white/60'>
-          Failed to load chart data. Please try again later.
+          {error
+            ? 'Failed to load chart data. Please try again later.'
+            : 'No data available, come back later.'}
         </Text>
       )
     }
