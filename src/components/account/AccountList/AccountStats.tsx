@@ -1,14 +1,14 @@
 import { useCallback, useMemo } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 import Skeleton from 'components/account/AccountList/Skeleton'
 import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import Button from 'components/common/Button'
-import { ArrowDownLine, ArrowUpLine, TrashBin } from 'components/common/Icons'
+import { ArrowDownLine, ArrowUpLine, ThreeDots, TrashBin } from 'components/common/Icons'
 import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import { BN_ZERO } from 'constants/math'
-import { ORACLE_DENOM } from 'constants/oracle'
 import useAssets from 'hooks/assets/useAssets'
 import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
@@ -16,9 +16,9 @@ import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountApy, calculateAccountBalanceValue, checkAccountKind } from 'utils/accounts'
 import { mergeBNCoinArrays } from 'utils/helpers'
+import { getRoute } from 'utils/route'
 
 interface Props {
   account: Account
@@ -28,6 +28,9 @@ interface Props {
 
 export default function AccountStats(props: Props) {
   const { account, isActive, setShowMenu } = props
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const address = useStore((s) => s.address)
   const isVault = checkAccountKind(account.kind) === 'fund_manager'
   const { data: assets } = useAssets()
   const { data: vaultAprs } = useVaultAprs()
@@ -39,12 +42,6 @@ export default function AccountStats(props: Props) {
     [account, assets],
   )
   const { health, healthFactor } = useHealthComputer(account)
-  const accountBalanceValue = useMemo(
-    () => (!account ? BN_ZERO : calculateAccountBalanceValue(account, assets)),
-    [account, assets],
-  )
-
-  const coin = BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalanceValue)
   const data = useBorrowMarketAssetsTableData()
   const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
 
@@ -88,6 +85,15 @@ export default function AccountStats(props: Props) {
     useStore.setState({ accountDeleteModal: account })
   }, [account])
 
+  const navigateToVaultDetails = useCallback(() => {
+    if (!account) return
+    const vaultAddress =
+      typeof account.kind === 'object' && 'fund_manager' in account.kind
+        ? account.kind.fund_manager.vault_addr
+        : ''
+    navigate(getRoute(`vaults/${vaultAddress}/details` as Page, searchParams, address))
+  }, [account, navigate, searchParams, address])
+
   return (
     <div className='w-full p-4'>
       <Skeleton
@@ -100,7 +106,15 @@ export default function AccountStats(props: Props) {
       />
       {isActive && setShowMenu && (
         <div className='grid grid-flow-row grid-cols-2 gap-4 pt-4'>
-          {!isVault && (
+          {isVault ? (
+            <Button
+              className='w-full col-span-2'
+              color='tertiary'
+              leftIcon={<ThreeDots />}
+              text='Details'
+              onClick={navigateToVaultDetails}
+            />
+          ) : (
             <>
               <Button
                 className='w-full'
