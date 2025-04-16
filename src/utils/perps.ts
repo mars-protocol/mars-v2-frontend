@@ -53,11 +53,16 @@ export const convertTriggerOrderResponseToPerpPosition = (
 ) => {
   const zeroCoin = BNCoin.fromDenomAndBigNumber(perpsConfig.base_denom, BN_ZERO)
   const limitOrderAction = limitOrder.order.actions[0] as ExceutePerpsOrder | undefined
-  const limitOrderCondition = limitOrder.order.conditions[0] as TriggerCondition | undefined
 
-  if (!limitOrderAction || !limitOrderCondition) return
+  if (!limitOrderAction) return
   const perpOrder = limitOrderAction.execute_perp_order
-  const perpTrigger = limitOrderCondition.oracle_price
+
+  const oraclePriceCondition = limitOrder.order.conditions.find(
+    (condition) => 'oracle_price' in condition,
+  ) as TriggerCondition | undefined
+
+  const perpTrigger = oraclePriceCondition?.oracle_price
+
   const asset = perpAssets.find(byDenom(perpOrder.denom))!
   const amount = BN(perpOrder.order_size)
   if (!asset) return
@@ -67,6 +72,9 @@ export const convertTriggerOrderResponseToPerpPosition = (
     : 'short'
 
   const liquidationPrice = computeLiquidationPrice(perpOrder.denom, 'perp')
+
+  const orderType = isStopOrder(perpOrder, perpTrigger)
+
   return {
     orderId: limitOrder.order.order_id,
     asset,
@@ -74,7 +82,7 @@ export const convertTriggerOrderResponseToPerpPosition = (
     baseDenom: perpsConfig.base_denom,
     tradeDirection,
     amount: amount.abs(),
-    type: isStopOrder(perpOrder, perpTrigger),
+    type: orderType,
     reduce_only: perpOrder.reduce_only ?? false,
     pnl: {
       net: BNCoin.fromCoin(limitOrder.order.keeper_fee).negated(),
@@ -91,7 +99,7 @@ export const convertTriggerOrderResponseToPerpPosition = (
         price: zeroCoin,
       },
     },
-    entryPrice: BN(perpTrigger.price),
+    entryPrice: perpTrigger ? BN(perpTrigger.price) : BN_ZERO,
     currentPrice: BN(asset.price?.amount ?? 0).shiftedBy(-asset.decimals + PRICE_ORACLE_DECIMALS),
     liquidationPrice: liquidationPrice !== null ? BN(liquidationPrice) : BN_ONE,
     leverage: 1,

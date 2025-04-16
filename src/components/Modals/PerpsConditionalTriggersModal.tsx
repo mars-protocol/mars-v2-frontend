@@ -56,6 +56,11 @@ export default function PerpsConditionalTriggersModal() {
     )
   }, [currentAccount, perpsAsset])
 
+  const assetSymbol = useMemo(
+    () => perpsAsset?.perpsAsset.symbol || perpsAsset?.perpsAsset.denom || '',
+    [perpsAsset],
+  )
+
   useEffect(() => {
     setTakeProfitPrice(BN_ZERO)
     setStopLossPrice(BN_ZERO)
@@ -74,11 +79,21 @@ export default function PerpsConditionalTriggersModal() {
     if (!currentAccount || !perpsAsset) return
     setIsLoading(true)
     try {
+      const triggerOrders: { tp: string | null; sl: string | null } = {
+        tp: null,
+        sl: null,
+      }
+
+      if (!takeProfitPrice.isZero()) {
+        triggerOrders.tp = takeProfitPrice.toString()
+      }
+
+      if (!stopLossPrice.isZero()) {
+        triggerOrders.sl = stopLossPrice.toString()
+      }
+
       useStore.setState({
-        conditionalTriggerOrders: {
-          tp: takeProfitPrice.toString(),
-          sl: stopLossPrice.toString(),
-        },
+        conditionalTriggerOrders: triggerOrders,
       })
       onClose()
     } finally {
@@ -100,6 +115,7 @@ export default function PerpsConditionalTriggersModal() {
         <div className='flex flex-col gap-4'>
           <Text size='lg' className='text-left'>
             Take Profit
+            <span className='ml-2 text-xs px-2 py-0.5 bg-white/10 rounded'>{assetSymbol}</span>
           </Text>
           {USD && (
             <div className='flex items-center gap-2'>
@@ -132,9 +148,18 @@ export default function PerpsConditionalTriggersModal() {
           )}
         </div>
 
+        <div className='flex items-center w-full gap-4 my-2'>
+          <div className='flex-1 h-px bg-white/10'></div>
+          <Text size='sm' className='text-white/60 px-4'>
+            AND / OR
+          </Text>
+          <div className='flex-1 h-px bg-white/10'></div>
+        </div>
+
         <div className='flex flex-col gap-4'>
           <Text size='lg' className='text-left'>
             Stop Loss
+            <span className='ml-2 text-xs px-2 py-0.5 bg-white/10 rounded'>{assetSymbol}</span>
           </Text>
           {USD && (
             <div className='flex items-center gap-2'>
@@ -169,9 +194,11 @@ export default function PerpsConditionalTriggersModal() {
 
         <Callout type={CalloutType.INFO} iconClassName='self-start'>
           <Text size='sm' className='text-left'>
-            The prices listed here are 'Spot Price Triggers', which means they initiate your
+            The prices listed here are 'Spot Price Triggers,' which means they initiate your
             transaction. The actual 'Fill Price' at which your transaction is completed may vary due
-            to the Funding Rate.
+            to the Funding Rate. This could result in a better fill price if the funding rate is
+            favorable, or a less advantageous price if it is not. Always consider the potential
+            impact of the funding rate on the final price.
           </Text>
         </Callout>
 
@@ -195,7 +222,7 @@ export default function PerpsConditionalTriggersModal() {
         <Button
           onClick={handleAddTriggers}
           text='Add Triggers'
-          color='tertiary'
+          color='primary'
           className='w-full mt-4'
           disabled={!isValid || isLoading}
           showProgressIndicator={isLoading}

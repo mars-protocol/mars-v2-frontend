@@ -32,6 +32,7 @@ import { OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
 import { formatLeverage, getPerpsPriceDecimals } from 'utils/formatters'
 import useKeeperFee from 'hooks/perps/useKeeperFee'
+import { useSubmitParentOrderWithChildren } from 'hooks/perps/useSubmitParentOrderWithChildren'
 
 type Props = {
   leverage: number
@@ -50,6 +51,7 @@ type Props = {
   baseDenom: string
   isReduceOnly: boolean
   validateReduceOnlyOrder: () => boolean
+  conditionalTriggers: { sl: string | null; tp: string | null }
 }
 
 export default function PerpsSummary(props: Props) {
@@ -66,6 +68,7 @@ export default function PerpsSummary(props: Props) {
     limitPrice,
     stopPrice,
     isReduceOnly,
+    conditionalTriggers,
     validateReduceOnlyOrder,
   } = props
   const account = useCurrentAccount()
@@ -100,6 +103,7 @@ export default function PerpsSummary(props: Props) {
   )
 
   const submitLimitOrder = useSubmitLimitOrder()
+  const submitParentOrderWithChildren = useSubmitParentOrderWithChildren()
 
   const onConfirm = useCallback(async () => {
     if (!currentAccount || !feeToken) return
@@ -107,6 +111,23 @@ export default function PerpsSummary(props: Props) {
     if (isReduceOnly && !validateReduceOnlyOrder()) return
 
     const orderSize = tradeDirection === 'short' && amount.isPositive() ? amount.negated() : amount
+
+    const hasTriggers = !!(conditionalTriggers.tp || conditionalTriggers.sl)
+
+    if (hasTriggers) {
+      await submitParentOrderWithChildren({
+        asset,
+        amount,
+        tradeDirection,
+        baseDenom,
+        orderType: props.orderType,
+        limitPrice: isLimitOrder ? limitPrice : undefined,
+        stopPrice: isStopOrder ? stopPrice : undefined,
+        isReduceOnly,
+        conditionalTriggers,
+      })
+      return onTxExecuted()
+    }
 
     if (isStopOrder && calculateKeeperFee) {
       let comparison: 'less_than' | 'greater_than'
@@ -183,6 +204,9 @@ export default function PerpsSummary(props: Props) {
     executePerpOrder,
     onTxExecuted,
     submitLimitOrder,
+    submitParentOrderWithChildren,
+    conditionalTriggers,
+    props.orderType,
   ])
 
   const isDisabled = useMemo(() => amount.isZero() || disabled, [amount, disabled])

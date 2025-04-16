@@ -60,6 +60,8 @@ export function PerpsModule() {
   const { data: allAssets } = useAssets()
   const { simulatePerps } = useUpdatedAccount(account)
   const perpsVaultModal = useStore((s) => s.perpsVaultModal)
+  const conditionalTriggers = useStore((s) => s.conditionalTriggerOrders)
+
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
 
   const { limitPrice, setLimitPrice, setStopPrice, orderType, stopPrice } = usePerpsOrderForm()
@@ -365,6 +367,7 @@ export function PerpsModule() {
               setIsReduceOnly={setIsReduceOnly}
               isStopOrder={isStopOrder}
               reduceOnlyWarning={reduceOnlyWarning}
+              conditionalTriggers={conditionalTriggers}
             />
             {(isLimitOrder || isStopOrder) && <KeeperFee />}
             <PerpsSummary
@@ -387,6 +390,7 @@ export function PerpsModule() {
               baseDenom={tradingFee?.baseDenom ?? ''}
               isReduceOnly={isReduceOnly}
               validateReduceOnlyOrder={validateReduceOnlyOrder}
+              conditionalTriggers={conditionalTriggers}
             />
           </div>
         </>

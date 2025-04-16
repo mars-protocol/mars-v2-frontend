@@ -2,7 +2,7 @@ import SwitchWithLabel from 'components/common/Switch/SwitchWithLabel'
 import { Callout, CalloutType } from 'components/common/Callout'
 import Text from 'components/common/Text'
 import useStore from 'store'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 
 type PerpsOrderOptionsProps = {
@@ -10,6 +10,7 @@ type PerpsOrderOptionsProps = {
   setIsReduceOnly: (value: boolean) => void
   isStopOrder: boolean
   reduceOnlyWarning: string | null
+  conditionalTriggers: { sl: string | null; tp: string | null }
 }
 
 export const PerpsOrderOptions = ({
@@ -17,9 +18,9 @@ export const PerpsOrderOptions = ({
   setIsReduceOnly,
   isStopOrder,
   reduceOnlyWarning,
+  conditionalTriggers,
 }: PerpsOrderOptionsProps) => {
   const perpsAsset = usePerpsAsset()
-  const conditionalTriggers = useStore((s) => s.conditionalTriggerOrders)
   const handleOpenConditionalTriggers = useCallback(() => {
     useStore.setState({ conditionalTriggersModal: true })
   }, [])
@@ -27,6 +28,10 @@ export const PerpsOrderOptions = ({
   const handleClearTriggers = useCallback(async () => {
     useStore.setState({ conditionalTriggerOrders: { sl: null, tp: null } })
   }, [])
+
+  const hasConditionalTriggers = useMemo(() => {
+    return conditionalTriggers.tp !== null || conditionalTriggers.sl !== null
+  }, [conditionalTriggers.tp, conditionalTriggers.sl])
 
   useEffect(() => {
     handleClearTriggers()
@@ -59,12 +64,16 @@ export const PerpsOrderOptions = ({
               className='text-[#ff5e57] hover:text-[#ff5e57]/80'
               onClick={handleOpenConditionalTriggers}
             >
-              Add
+              {hasConditionalTriggers ? 'Edit' : 'Add'}
             </button>
-            <div className='text-white/10'>|</div>
-            <button className='text-white/50 hover:text-white/70' onClick={handleClearTriggers}>
-              Clear
-            </button>
+            {hasConditionalTriggers && (
+              <>
+                <div className='text-white/10'>|</div>
+                <button className='text-white/50 hover:text-white/70' onClick={handleClearTriggers}>
+                  Clear
+                </button>
+              </>
+            )}
           </div>
         </div>
         {conditionalTriggers.sl && (

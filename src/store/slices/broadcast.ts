@@ -905,6 +905,8 @@ export default function createBroadcastSlice(
         })
       }
 
+      let parentOrderType: 'market' | 'limit' | 'stop' | null = null
+
       options.orders.forEach((order) => {
         const triggerActions: Action[] = [
           {
@@ -912,6 +914,7 @@ export default function createBroadcastSlice(
               denom: order.coin.denom,
               order_size: order.coin.amount.toString() as any,
               reduce_only: order.reduceOnly,
+              ...(order.orderType === 'parent' ? { order_type: 'parent' } : {}),
             },
           },
         ]
@@ -942,6 +945,20 @@ export default function createBroadcastSlice(
               trigger_order_id: order.parentOrderId,
             },
           })
+        }
+
+        if (order.orderType === 'parent') {
+          if (comparison === 'less_than' && order.tradeDirection === 'long') {
+            parentOrderType = 'limit'
+          } else if (comparison === 'greater_than' && order.tradeDirection === 'short') {
+            parentOrderType = 'limit'
+          } else if (comparison === 'less_than' && order.tradeDirection === 'short') {
+            parentOrderType = 'stop'
+          } else if (comparison === 'greater_than' && order.tradeDirection === 'long') {
+            parentOrderType = 'stop'
+          } else {
+            parentOrderType = 'market'
+          }
         }
 
         actions.push({
@@ -978,6 +995,7 @@ export default function createBroadcastSlice(
       autolend: boolean
       baseDenom: string
       orderType?: ExecutePerpOrderType
+      conditionalTriggers?: { sl: string | null; tp: string | null }
     }) => {
       const actions: Action[] = [
         {
@@ -1013,6 +1031,188 @@ export default function createBroadcastSlice(
       get().handleTransaction({ response })
 
       return response.then((response) => !!response.result)
+    },
+    executeParentOrderWithConditionalTriggers: async (options: {
+      accountId: string
+      coin: BNCoin
+      reduceOnly?: boolean
+      autolend: boolean
+      baseDenom: string
+      orderType: ExecutePerpOrderType
+      conditionalTriggers: { sl: string | null; tp: string | null }
+      keeperFee: BNCoin
+      limitPrice?: string
+      stopPrice?: string
+    }) => {
+      const asset = get().assets.find(byDenom(options.coin.denom))
+
+      const keeperFeeConfig = get().creditManagerConfig?.keeper_fee_config?.min_fee
+
+      if (!asset || !keeperFeeConfig) {
+        console.error('Missing required data for parent-child orders:', {
+          hasAsset: !!asset,
+          hasKeeperFeeConfig: !!keeperFeeConfig,
+        })
+        return false
+      }
+
+      const keeperFeeCoin = BNCoin.fromCoin({
+        denom: keeperFeeConfig.denom,
+        amount: keeperFeeConfig.amount,
+      })
+
+      try {
+        const actions: Action[] = []
+        const tradeDirection = options.coin.amount.isNegative() ? 'short' : 'long'
+
+        if (options.orderType === 'parent') {
+          let comparison: 'less_than' | 'greater_than'
+          let price: string
+
+          if (options.limitPrice) {
+            comparison = tradeDirection === 'long' ? 'less_than' : 'greater_than'
+            price = options.limitPrice
+          } else if (options.stopPrice) {
+            comparison = tradeDirection === 'long' ? 'greater_than' : 'less_than'
+            price = options.stopPrice
+          } else {
+            console.error('Missing price for limit/stop order')
+            return false
+          }
+
+          actions.push({
+            create_trigger_order: {
+              keeper_fee: keeperFeeCoin.toCoin(),
+              actions: [
+                {
+                  execute_perp_order: {
+                    denom: options.coin.denom,
+                    order_size: options.coin.amount.toString(),
+                    reduce_only: !!options.reduceOnly,
+                  },
+                },
+              ],
+              conditions: [
+                {
+                  oracle_price: {
+                    comparison,
+                    denom: options.coin.denom,
+                    price,
+                  },
+                },
+              ],
+              order_type: 'parent',
+            },
+          })
+        } else {
+          actions.push({
+            execute_perp_order: {
+              denom: options.coin.denom,
+              order_size: options.coin.amount.toString(),
+              reduce_only: !!options.reduceOnly,
+              order_type: 'parent',
+            },
+          })
+        }
+
+        if (options.autolend) {
+          actions.push({
+            lend: {
+              denom: options.baseDenom,
+              amount: 'account_balance',
+            },
+          })
+        }
+
+        if (options.conditionalTriggers.tp) {
+          const tpPrice = BN(options.conditionalTriggers.tp)
+          const tpComparison = tradeDirection === 'long' ? 'greater_than' : 'less_than'
+
+          actions.push({
+            create_trigger_order: {
+              keeper_fee: keeperFeeCoin.toCoin(),
+              actions: [
+                {
+                  execute_perp_order: {
+                    denom: options.coin.denom,
+                    order_size: options.coin.amount.negated().toString(),
+                    reduce_only: true,
+                  },
+                },
+              ],
+              conditions: [
+                {
+                  trigger_order_executed: {
+                    trigger_order_id: '',
+                  },
+                },
+                {
+                  oracle_price: {
+                    comparison: tpComparison,
+                    denom: options.coin.denom,
+                    price: tpPrice.toString(),
+                  },
+                },
+              ],
+              order_type: 'child',
+            },
+          })
+        }
+
+        if (options.conditionalTriggers.sl) {
+          const slPrice = BN(options.conditionalTriggers.sl)
+          const slComparison = tradeDirection === 'long' ? 'less_than' : 'greater_than'
+
+          actions.push({
+            create_trigger_order: {
+              keeper_fee: keeperFeeCoin.toCoin(),
+              actions: [
+                {
+                  execute_perp_order: {
+                    denom: options.coin.denom,
+                    order_size: options.coin.amount.negated().toString(),
+                    reduce_only: true,
+                  },
+                },
+              ],
+              conditions: [
+                {
+                  trigger_order_executed: {
+                    trigger_order_id: '',
+                  },
+                },
+                {
+                  oracle_price: {
+                    comparison: slComparison,
+                    denom: options.coin.denom,
+                    price: slPrice.toString(),
+                  },
+                },
+              ],
+              order_type: 'child',
+            },
+          })
+        }
+
+        const msg: CreditManagerExecuteMsg = {
+          update_credit_account: {
+            account_id: options.accountId,
+            actions,
+          },
+        }
+
+        const cmContract = get().chainConfig.contracts.creditManager
+
+        const response = get().executeMsg({
+          messages: [generateExecutionMessage(get().address, cmContract, msg, [])],
+        })
+
+        get().handleTransaction({ response })
+        return response.then((response) => !!response.result)
+      } catch (error) {
+        console.error('Error executing parent order with conditional triggers:', error)
+        return false
+      }
     },
     closePerpPosition: async (options: {
       accountId: string
