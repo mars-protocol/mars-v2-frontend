@@ -13,6 +13,7 @@ import TradeDirection, {
 } from 'components/perps/BalancesTable/Columns/TradeDirection'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import usePerpsLimitOrderRows from 'hooks/perps/usePerpsLimitOrdersRows'
+import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 import { demagnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { checkStopLossAndTakeProfit } from 'utils/perps'
@@ -25,6 +26,57 @@ export default function usePerpsBalancesColumns(props: Props) {
   const { isOrderTable } = props
 
   const activeLimitOrders = usePerpsLimitOrderRows()
+  const { data: rawLimitOrders } = usePerpsLimitOrders()
+
+  const parentChildMapping = useMemo(() => {
+    if (!rawLimitOrders) return {}
+
+    const mapping: Record<string, { hasSL: boolean; hasTP: boolean }> = {}
+
+    rawLimitOrders.forEach((order) => {
+      mapping[order.order.order_id] = { hasSL: false, hasTP: false }
+    })
+
+    rawLimitOrders.forEach((order) => {
+      const triggerCondition = order.order.conditions.find((c) => 'trigger_order_executed' in c)
+      if (!triggerCondition || !('trigger_order_executed' in triggerCondition)) return
+
+      const parentId = triggerCondition.trigger_order_executed.trigger_order_id
+      if (!parentId || !mapping[parentId]) return
+
+      const oraclePriceCondition = order.order.conditions.find((c) => 'oracle_price' in c)
+      if (!oraclePriceCondition || !('oracle_price' in oraclePriceCondition)) return
+
+      const perpAction = order.order.actions.find((a) => 'execute_perp_order' in a)
+      if (
+        !perpAction ||
+        !('execute_perp_order' in perpAction) ||
+        !perpAction.execute_perp_order.reduce_only
+      )
+        return
+
+      const parentOrder = rawLimitOrders.find((o) => o.order.order_id === parentId)
+      if (!parentOrder) return
+
+      const parentAction = parentOrder.order.actions.find((a) => 'execute_perp_order' in a)
+      if (!parentAction || !('execute_perp_order' in parentAction)) return
+
+      const isLong = !parentAction.execute_perp_order.order_size.startsWith('-')
+      const comparison = oraclePriceCondition.oracle_price.comparison
+
+      if ((isLong && comparison === 'greater_than') || (!isLong && comparison === 'less_than')) {
+        mapping[parentId].hasTP = true
+      } else if (
+        (isLong && comparison === 'less_than') ||
+        (!isLong && comparison === 'greater_than')
+      ) {
+        mapping[parentId].hasSL = true
+      }
+    })
+
+    return mapping
+  }, [rawLimitOrders])
+
   const staticColumns = useMemo<ColumnDef<PerpPositionRow>[]>(
     () => [
       {
@@ -114,21 +166,32 @@ export default function usePerpsBalancesColumns(props: Props) {
       ...STATUS_META,
       cell: ({ row }) => {
         const position = row.original
-        const { hasStopLoss, hasTakeProfit } = checkStopLossAndTakeProfit(
-          position,
-          activeLimitOrders,
-        )
+
+        let hasStopLoss = false
+        let hasTakeProfit = false
+
+        if (position.orderId && parentChildMapping[position.orderId]) {
+          hasStopLoss = parentChildMapping[position.orderId].hasSL
+          hasTakeProfit = parentChildMapping[position.orderId].hasTP
+        } else {
+          const result = checkStopLossAndTakeProfit(position, activeLimitOrders)
+          hasStopLoss = result.hasStopLoss
+          hasTakeProfit = result.hasTakeProfit
+        }
+
         return (
           <Status
             type={position.type}
             hasStopLoss={hasStopLoss}
             hasTakeProfit={hasTakeProfit}
-            showIndicators={position.type !== 'limit'}
+            showIndicators={
+              position.type === 'market' || (!!position.orderId && (hasStopLoss || hasTakeProfit))
+            }
           />
         )
       },
     }),
-    [activeLimitOrders],
+    [activeLimitOrders, parentChildMapping],
   )
 
   return useMemo(() => {

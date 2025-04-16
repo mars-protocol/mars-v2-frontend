@@ -1121,6 +1121,18 @@ interface BroadcastSlice {
     baseDenom: string
     orderType?: ExecutePerpOrderType
   }) => Promise<boolean>
+  executeParentOrderWithConditionalTriggers: (options: {
+    accountId: string
+    coin: BNCoin
+    reduceOnly?: boolean
+    autolend: boolean
+    baseDenom: string
+    orderType: ExecutePerpOrderType
+    conditionalTriggers: { sl: string | null; tp: string | null }
+    keeperFee: BNCoin
+    limitPrice?: string
+    stopPrice?: string
+  }) => Promise<boolean>
   closePerpPosition: (options: {
     accountId: string
     coin: BNCoin

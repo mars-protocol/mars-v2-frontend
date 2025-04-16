@@ -47,22 +47,11 @@ export default function Manage(props: Props) {
   const closePosition = useCallback(() => {
     if (!currentAccount || !limitOrders) return
 
-    const relevantOrderIds = limitOrders
-      .filter((order) =>
-        order.order.actions.some(
-          (action) =>
-            'execute_perp_order' in action &&
-            action.execute_perp_order.denom === perpPosition.asset.denom,
-        ),
-      )
-      .map((order) => order.order.order_id)
-
     closePerpPosition({
       accountId: currentAccount.id,
       coin: BNCoin.fromDenomAndBigNumber(perpPosition.asset.denom, perpPosition.amount.negated()),
       autolend: isAutoLendEnabledForCurrentAccount,
       baseDenom: perpPosition.baseDenom,
-      orderIds: relevantOrderIds,
     })
   }, [
     currentAccount,
