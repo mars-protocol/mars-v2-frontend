@@ -60,18 +60,19 @@ export const PerpsOrderOptions = ({
           </div>
 
           <div className='flex gap-4'>
-            <button
-              className='text-[#ff5e57] hover:text-[#ff5e57]/80'
-              onClick={handleOpenConditionalTriggers}
-            >
-              {hasConditionalTriggers ? 'Edit' : 'Add'}
-            </button>
+            <div onClick={handleOpenConditionalTriggers}>
+              <Text size='sm' className='text-[#ff5e57] hover:text-[#ff5e57]/80'>
+                {hasConditionalTriggers ? 'Edit' : 'Add'}
+              </Text>
+            </div>
             {hasConditionalTriggers && (
               <>
                 <div className='text-white/10'>|</div>
-                <button className='text-white/50 hover:text-white/70' onClick={handleClearTriggers}>
-                  Clear
-                </button>
+                <div onClick={handleClearTriggers}>
+                  <Text size='sm' className='text-white/50 hover:text-white/70'>
+                    Clear
+                  </Text>
+                </div>
               </>
             )}
           </div>
