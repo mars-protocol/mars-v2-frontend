@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback } from 'react'
 import { BigNumber } from 'bignumber.js'
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
@@ -24,6 +24,7 @@ interface PerpsCallbacksProps {
   perpsAsset: Asset
   setIsAmountInUSD: (value: boolean) => void
   isAmountInUSD: boolean
+  amount: BigNumber
 }
 
 export const usePerpsCallbacks = ({
@@ -46,6 +47,7 @@ export const usePerpsCallbacks = ({
   perpsAsset,
   setIsAmountInUSD,
   isAmountInUSD,
+  amount,
 }: PerpsCallbacksProps) => {
   const reset = useCallback(() => {
     setLimitPrice(BN_ZERO)
@@ -124,20 +126,19 @@ export const usePerpsCallbacks = ({
 
   const handleAmountTypeChange = useCallback(
     (value: string) => {
-      onChangeAmount(BN_ZERO)
-      setIsAmountInUSD(value === 'usd')
+      const isChangingToUSD = value === 'usd'
+
+      const safeAmount = amount || BN_ZERO
+
+      if (safeAmount.isZero() || assetPrice.isZero()) {
+        setIsAmountInUSD(isChangingToUSD)
+        return
+      }
+
+      setIsAmountInUSD(isChangingToUSD)
     },
-    [onChangeAmount, setIsAmountInUSD],
+    [setIsAmountInUSD, amount, assetPrice],
   )
-
-  const previousInputMode = useRef(isAmountInUSD)
-
-  useEffect(() => {
-    if (previousInputMode.current !== isAmountInUSD) {
-      onChangeAmount(BN_ZERO)
-      previousInputMode.current = isAmountInUSD
-    }
-  }, [isAmountInUSD, onChangeAmount])
 
   const handleAmountChange = useCallback(
     (newAmount: BigNumber) => {

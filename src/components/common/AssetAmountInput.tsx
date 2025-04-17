@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, ReactNode } from 'react'
 
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import NumberInput from 'components/common/NumberInput'
@@ -26,6 +26,7 @@ interface Props {
   showCloseButton?: boolean
   isMaxSelected?: boolean
   capMax?: boolean
+  assetSwitch?: ReactNode
 }
 
 export default function AssetAmountInput(props: Props) {
@@ -46,6 +47,7 @@ export default function AssetAmountInput(props: Props) {
     showCloseButton,
     isMaxSelected,
     capMax,
+    assetSwitch,
   } = props
 
   const assetPrice = useMemo(() => {
@@ -94,7 +96,6 @@ export default function AssetAmountInput(props: Props) {
           <NumberInput
             key={isUSD ? 'usd-input' : 'asset-input'}
             asset={asset}
-            amount={amount}
             className='border-none bg-transparent outline-none flex-1 !text-left'
             maxDecimals={isUSD ? 6 : asset.decimals}
             max={capMax ? max : undefined}
@@ -104,8 +105,11 @@ export default function AssetAmountInput(props: Props) {
             onFocus={onFocus}
             onBlur={onBlur}
             isUSD={isUSD}
+            amount={amount}
           />
-          <span>{isUSD ? 'USD' : asset.symbol}</span>
+          <div className='flex items-center'>
+            {assetSwitch ? assetSwitch : <span>{isUSD ? 'USD' : asset.symbol}</span>}
+          </div>
         </div>
         <div className='flex items-center'>
           {maxValue && (

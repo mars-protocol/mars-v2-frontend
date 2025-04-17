@@ -152,6 +152,7 @@ export function PerpsModule() {
     perpsAsset,
     setIsAmountInUSD,
     isAmountInUSD,
+    amount,
   })
 
   const { isDisabledExecution, isDisabledAmountInput } = useExecutionState({
@@ -312,17 +313,8 @@ export function PerpsModule() {
               />
             )}
             <div className='flex flex-col'>
-              <div className='flex justify-between items-center mb-2 gap-24'>
+              <div className='mb-2'>
                 <span>Amount</span>
-                <SwitchWithText
-                  name='amountType'
-                  options={[
-                    { value: 'asset', text: perpsAsset.symbol },
-                    { value: 'usd', text: 'USD' },
-                  ]}
-                  selected={isAmountInUSD ? 'usd' : 'asset'}
-                  onChange={handleAmountTypeChange}
-                />
               </div>
               <AssetAmountInput
                 containerClassName='pb-2'
@@ -345,6 +337,18 @@ export function PerpsModule() {
                 isMaxSelected={isMaxSelected}
                 capMax={false}
                 isUSD={isAmountInUSD}
+                assetSwitch={
+                  <SwitchWithText
+                    name='amountType'
+                    options={[
+                      { value: 'asset', text: perpsAsset.symbol },
+                      { value: 'usd', text: 'USD' },
+                    ]}
+                    selected={isAmountInUSD ? 'usd' : 'asset'}
+                    onChange={handleAmountTypeChange}
+                    toggle={true}
+                  />
+                }
               />
             </div>
             {amount.isGreaterThan(maxAmount) && (
