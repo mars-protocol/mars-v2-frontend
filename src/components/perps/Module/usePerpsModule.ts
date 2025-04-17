@@ -8,7 +8,7 @@ import usePerpPosition from 'hooks/perps/usePerpPosition'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import usePerpsMarket from 'hooks/perps/usePerpsMarket'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { List } from 'types/classes/List'
 import { getAccountNetValue } from 'utils/accounts'
@@ -95,23 +95,6 @@ export default function usePerpsModule(
   ])
 
   const [leverage, setLeverage] = useState<number>(0)
-
-  const calculateLeverage = useMemo(() => {
-    const totalAmount = previousAmount.plus(amount).abs()
-    const newLeverage = totalAmount.isZero()
-      ? 0
-      : getCoinValue(BNCoin.fromDenomAndBigNumber(perpsAsset.denom, totalAmount), [
-          limitPrice
-            ? {
-                ...perpsAsset,
-                price: BNCoin.fromDenomAndBigNumber(perpsAsset.denom, limitPrice),
-              }
-            : perpsAsset,
-        ])
-          .div(accountNetValue)
-          .toNumber()
-    return newLeverage
-  }, [accountNetValue, amount, perpsAsset, previousAmount, limitPrice])
 
   const maxLeverage = useMemo(() => {
     const priceToUse = limitPrice ?? perpsAsset.price?.amount ?? BN_ZERO

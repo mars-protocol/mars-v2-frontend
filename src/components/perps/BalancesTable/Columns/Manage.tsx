@@ -235,41 +235,45 @@ export default function Manage(props: Props) {
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [
-      ...(searchParams.get(SearchParams.PERPS_MARKET) === perpPosition.asset.denom
-        ? [
-            // Remove SL/TP for the moment
-            // {
-            //   icon: <Shield />,
-            //   text: 'Add Stop Loss',
-            //   onClick: openPerpsSlTpModal,
-            // },
-          ]
+      ...(perpPosition.asset.isDeprecated
+        ? []
         : [
+            ...(searchParams.get(SearchParams.PERPS_MARKET) === perpPosition.asset.denom
+              ? [
+                  // Remove SL/TP for the moment
+                  // {
+                  //   icon: <Shield />,
+                  //   text: 'Add Stop Loss',
+                  //   onClick: openPerpsSlTpModal,
+                  // },
+                ]
+              : [
+                  {
+                    icon: <Edit />,
+                    text: 'Edit Position',
+                    onClick: () => {
+                      const params = getSearchParamsObject(searchParams)
+                      setSearchParams({
+                        ...params,
+                        [SearchParams.PERPS_MARKET]: perpPosition.asset.denom,
+                      })
+                    },
+                  },
+                  // {
+                  //   icon: <Shield />,
+                  //   text: 'Add Stop Loss',
+                  //   onClick: openPerpsSlTpModal,
+                  // },
+                ]),
             {
-              icon: <Edit />,
-              text: 'Edit Position',
+              icon: <SwapIcon />,
+              text: 'Flip Direction',
               onClick: () => {
-                const params = getSearchParamsObject(searchParams)
-                setSearchParams({
-                  ...params,
-                  [SearchParams.PERPS_MARKET]: perpPosition.asset.denom,
-                })
+                const newDirection = perpPosition.tradeDirection === 'long' ? 'short' : 'long'
+                handleFlipPosition(newDirection)
               },
             },
-            // {
-            //   icon: <Shield />,
-            //   text: 'Add Stop Loss',
-            //   onClick: openPerpsSlTpModal,
-            // },
           ]),
-      {
-        icon: <SwapIcon />,
-        text: 'Flip Direction',
-        onClick: () => {
-          const newDirection = perpPosition.tradeDirection === 'long' ? 'short' : 'long'
-          handleFlipPosition(newDirection)
-        },
-      },
       {
         icon: <Cross width={16} />,
         text: 'Close Position',
