@@ -13,7 +13,7 @@ import { INFO_ITEMS } from 'constants/warningDialog'
 import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 
-export const MANAGE_META = {
+export const DETAILS_META = {
   accessorKey: 'details',
   header: '',
   enableSorting: false,
@@ -25,7 +25,7 @@ interface Props {
   vault: ManagedVaultsData
 }
 
-export default function Manage(props: Props) {
+export default function Details(props: Props) {
   const { isLoading, vault } = props
   const address = useStore((s) => s.address)
   const [searchParams] = useSearchParams()
@@ -75,15 +75,18 @@ export default function Manage(props: Props) {
     })
   }, [handleVaultDetails, showVaultWarning, showAlertDialog, setShowVaultWarning, close])
 
-  const ITEMS = [
+  const ITEMS: DropDownItem[] = [
     {
       icon: <LineChart />,
-      text: 'Trade',
+      text: 'Manage Vault',
       onClick: handleTrade,
+      disabledTooltip:
+        "Opens the trading interface with the vault's account pre-selected. Use this to manage your vault's assets.",
+      tooltipType: 'info',
     },
     {
       icon: <ThreeDots />,
-      text: 'Vault Details',
+      text: 'Vault Info',
       onClick: handleVaultDetails,
     },
   ]
@@ -93,9 +96,9 @@ export default function Manage(props: Props) {
   return (
     <div className='flex items-center justify-end'>
       {vault.isOwner ? (
-        <DropDownButton items={ITEMS} color='tertiary' text='Manage' />
+        <DropDownButton items={ITEMS} color='tertiary' text='Details' />
       ) : (
-        <Button onClick={handleOnClick} color='tertiary' text='Details' />
+        <Button onClick={handleOnClick} color='tertiary' text='Vault Info' />
       )}
     </div>
   )

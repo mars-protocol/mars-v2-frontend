@@ -24,6 +24,7 @@ import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
+import { Tooltip } from 'components/common/Tooltip'
 
 interface Props {
   details: ExtendedManagedVaultDetails
@@ -218,9 +219,15 @@ export default function ProfileVaultCard(props: Props) {
           </Callout>
         )}
         {isOwner && (
-          <Button onClick={handleManageVault} className='w-full'>
-            Manage Vault
-          </Button>
+          <Tooltip
+            type='info'
+            content="Opens the trading interface with your vault's account pre-selected. Use this to manage your vault's assets."
+            contentClassName='max-w-[350px]'
+          >
+            <Button onClick={handleManageVault} className='w-full'>
+              Manage Vault
+            </Button>
+          </Tooltip>
         )}
       </div>
     </Card>

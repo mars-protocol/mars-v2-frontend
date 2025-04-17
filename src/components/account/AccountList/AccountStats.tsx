@@ -111,7 +111,7 @@ export default function AccountStats(props: Props) {
               className='w-full col-span-2'
               color='tertiary'
               leftIcon={<ThreeDots />}
-              text='Details'
+              text='Vault Info'
               onClick={navigateToVaultDetails}
             />
           ) : (

@@ -6,7 +6,7 @@ import MyPosition, {
   MY_POSITION_META,
 } from 'components/managedVaults/community/table/column/MyPosition'
 import TVL, { TVL_META } from 'components/managedVaults/community/table/column/TVL'
-import Manage, { MANAGE_META } from 'components/managedVaults/community/table/column/Manage'
+import Details, { DETAILS_META } from 'components/managedVaults/community/table/column/Details'
 import { useMemo } from 'react'
 import { convertAprToApy } from 'utils/parsers'
 
@@ -60,9 +60,9 @@ export default function useCommunityVaultsColumns(props: Props) {
         ),
       },
       {
-        ...MANAGE_META,
+        ...DETAILS_META,
         cell: ({ row }: { row: Row<ManagedVaultsData> }) => (
-          <Manage isLoading={isLoading} vault={row.original} />
+          <Details isLoading={isLoading} vault={row.original} />
         ),
       },
     ]
