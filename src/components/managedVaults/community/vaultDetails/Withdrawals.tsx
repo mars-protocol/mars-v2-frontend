@@ -182,11 +182,9 @@ export default function Withdrawals(props: Props) {
                       )}
                     />
                     {isValidWithdrawal && (
-                      <>
-                        <span className="text-white/50 before:content-['|'] before:mr-1.5 before:text-white/10">
-                          Since {withdrawalDate.format('DD.MM.YY')}
-                        </span>
-                      </>
+                      <span className="text-white/50 before:content-['|'] before:mr-1.5 before:text-white/10">
+                        Since {withdrawalDate.format('DD.MM.YY')}
+                      </span>
                     )}
                   </div>
                 ),

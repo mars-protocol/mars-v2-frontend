@@ -1,10 +1,8 @@
 import Button from 'components/common/Button'
-import ActionButton from 'components/common/Button/ActionButton'
 import { Account, ArrowRight, HandCoins, Plus, PlusSquared, Wallet } from 'components/common/Icons'
 import Intro from 'components/common/Intro'
 import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useAccountId from 'hooks/accounts/useAccountId'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -13,6 +11,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { DocURL } from 'types/enums'
 import { getPage, getRoute } from 'utils/route'
+import WalletSelect from 'components/Wallet/WalletSelect'
 
 export default function VaultsCommunityIntro() {
   const [showVaultInformation, setShowVaultInformation] = useLocalStorage<boolean>(
@@ -20,16 +19,19 @@ export default function VaultsCommunityIntro() {
     true,
   )
   const { open: showAlertDialog, close } = useAlertDialog()
-  const accountId = useAccountId()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
   const chainConfig = useChainConfig()
+  const showTutorial = useStore((s) => s.tutorial)
 
   const openCreateVaultOverlay = useCallback(() => {
-    if (accountId)
-      navigate(getRoute(getPage('vaults/create', chainConfig), searchParams, address, accountId))
-  }, [accountId, navigate, chainConfig, searchParams, address])
+    if (!address) {
+      useStore.setState({ focusComponent: { component: <WalletSelect /> } })
+      return
+    }
+    navigate(getRoute(getPage('vaults/create', chainConfig), searchParams, address))
+  }, [address, navigate, chainConfig, searchParams])
 
   const handleOnClick = useCallback(() => {
     if (!showVaultInformation) {
@@ -69,25 +71,34 @@ export default function VaultsCommunityIntro() {
   return (
     <Intro
       bg='vaults'
+      isCompact={!showTutorial}
       text={
-        <>
-          <span className='text-white'>User generated vaults </span> is a strategy where users
-          borrow funds to increase their yield farming position, aiming to earn more in rewards than
-          the cost of the borrowed assets.
-        </>
+        showTutorial ? (
+          <>
+            <span className='text-white'>User generated vaults </span> is a strategy where users
+            borrow funds to increase their yield farming position, aiming to earn more in rewards
+            than the cost of the borrowed assets.
+          </>
+        ) : (
+          <>
+            <span className='text-white'>Become a Vault Manager</span> and create your own strategy.
+            Earn management fees from users who deposit into your vault.
+          </>
+        )
       }
     >
       <Button text='Create Vault' color='primary' leftIcon={<Plus />} onClick={handleOnClick} />
-      <Button
-        text='Learn more'
-        leftIcon={<PlusSquared />}
-        onClick={(e) => {
-          e.preventDefault()
-          // TODO: add docs URL
-          window.open(DocURL.DOCS_URL, '_blank')
-        }}
-        color='secondary'
-      />
+      {showTutorial && (
+        <Button
+          text='Learn more'
+          leftIcon={<PlusSquared />}
+          onClick={(e) => {
+            e.preventDefault()
+            window.open(DocURL.VAULT_TUTORIAL, '_blank')
+          }}
+          color='secondary'
+        />
+      )}
     </Intro>
   )
 }

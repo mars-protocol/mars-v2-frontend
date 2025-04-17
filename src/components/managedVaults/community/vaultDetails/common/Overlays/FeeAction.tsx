@@ -11,6 +11,10 @@ import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { useState } from 'react'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { MAX_AMOUNT_DECIMALS } from 'constants/math'
+import { demagnify } from 'utils/formatters'
 
 interface Props {
   showFeeActionModal: boolean
@@ -83,13 +87,13 @@ export default function FeeAction(props: Props) {
       >
         <div className='border-b border-white/10'>
           <div className='flex items-center justify-between'>
-            <Text>{isEdit ? 'Edit Performance Fee' : 'Withdraw your Performance Fee'}</Text>
+            <Text>{isEdit ? 'Edit Performance Fee' : 'Withdrawable Performance Fee'}</Text>
             <EscButton onClick={() => setShowFeeActionModal(false)} enableKeyPress />
           </div>
-          <Text size='xs' className='text-white/50 mb-2'>
+          <Text size='xs' className='text-white/50 mb-4 mt-2'>
             {isEdit
               ? 'You may update your performance fee.'
-              : 'We’ll require you to authorise a transaction in your wallet in order to proceed.'}
+              : 'Congratulations, you can withdraw the accrued perfomance fee!'}
           </Text>
         </div>
 
@@ -97,19 +101,32 @@ export default function FeeAction(props: Props) {
           <PerformanceFee value={performanceFee} onChange={setPerformanceFee} />
         ) : (
           <div className='text-center'>
-            <div className='flex items-center justify-center gap-2'>
-              <AssetImage asset={depositAsset} className='w-7 h-7' />
-              <DisplayCurrency
-                coin={BNCoin.fromDenomAndBigNumber(
-                  vaultDetails.base_tokens_denom,
-                  BN(vaultDetails.performance_fee_state.accumulated_fee),
-                )}
-                className='text-4xl'
+            <div className='flex items-center justify-center gap-1'>
+              <AssetImage asset={depositAsset} className='w-10 h-10' />
+              <TitleAndSubCell
+                title={
+                  <DisplayCurrency
+                    coin={BNCoin.fromDenomAndBigNumber(
+                      vaultDetails.base_tokens_denom,
+                      BN(vaultDetails.performance_fee_state.accumulated_fee),
+                    )}
+                    className='text-xl'
+                  />
+                }
+                sub={
+                  <FormattedNumber
+                    amount={demagnify(
+                      vaultDetails.performance_fee_state.accumulated_fee,
+                      depositAsset,
+                    )}
+                    options={{
+                      minDecimals: 2,
+                      maxDecimals: MAX_AMOUNT_DECIMALS,
+                    }}
+                  />
+                }
               />
             </div>
-            <Text size='sm' className='text-white/50'>
-              Available for withdrawal.
-            </Text>
           </div>
         )}
 
@@ -119,15 +136,22 @@ export default function FeeAction(props: Props) {
           </Callout>
         )}
 
-        <Button
-          onClick={handleFeeAction}
-          color={isEdit ? 'tertiary' : 'primary'}
-          size='md'
-          className='w-full'
-          text={isEdit ? 'Update Fees' : 'Withdraw'}
-          disabled={isTxPending}
-          showProgressIndicator={isTxPending}
-        />
+        <div className='flex flex-col gap-2'>
+          {!isEdit && (
+            <Callout type={CalloutType.INFO}>
+              Performance fees can only be withdrawn once every 30 days.
+            </Callout>
+          )}
+          <Button
+            onClick={handleFeeAction}
+            color={isEdit ? 'tertiary' : 'primary'}
+            size='md'
+            className='w-full'
+            text={isEdit ? 'Update Fees' : 'Withdraw'}
+            disabled={isTxPending}
+            showProgressIndicator={isTxPending}
+          />
+        </div>
       </div>
     </Overlay>
   )
