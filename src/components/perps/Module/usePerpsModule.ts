@@ -160,6 +160,7 @@ export default function usePerpsModule(
         .times(newLeverage)
         .dividedBy(priceToUse)
         .shiftedBy(perpsAsset.decimals)
+
       const finalAmount = BigNumber.min(newAmount, maxAmount).integerValue()
 
       setAmount(tradeDirection === 'long' ? finalAmount : finalAmount.negated())
