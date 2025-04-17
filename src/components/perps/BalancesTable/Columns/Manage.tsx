@@ -226,7 +226,7 @@ export default function Manage(props: Props) {
         ? [
             {
               icon: <Shield />,
-              text: 'Add Stop Loss',
+              text: 'Add SL/TP',
               onClick: () => {
                 useStore.setState({ addSLTPModal: true })
               },
@@ -270,7 +270,7 @@ export default function Manage(props: Props) {
             },
             {
               icon: <Shield />,
-              text: 'Add Stop Loss',
+              text: 'Add SL/TP',
               onClick: () => {
                 useStore.setState({ addSLTPModal: true })
               },
