@@ -114,7 +114,9 @@ async function fetchSortAndMapAllAssets(
 
     const currentAssetPerpsParams = perpsParams ? perpsParams.find(byDenom(asset.denom)) : undefined
 
-    const isDeprecated = deprecatedAssets.includes(asset.denom)
+    const isDeprecated = currentAssetPerpsParams
+      ? !currentAssetPerpsParams.enabled
+      : deprecatedAssets.includes(asset.denom)
     const isAnyAssetAndNoPool = chainConfig.anyAsset && !currentAssetPoolInfo
     const isDepositEnabled = isDeprecated ? false : currentAssetParams?.red_bank.deposit_enabled
     const isTradeEnabled = isDeprecated

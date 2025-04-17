@@ -3,11 +3,9 @@ import { useSearchParams } from 'react-router-dom'
 
 import ActionButton from 'components/common/Button/ActionButton'
 import DropDownButton from 'components/common/Button/DropDownButton'
-import { Check, Cross, Edit, SwapIcon } from 'components/common/Icons'
+import { ArrowRight, Cross, Edit, SwapIcon } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import PerpsSlTpModal from 'components/Modals/PerpsSlTpModal'
-import CloseLabel from 'components/perps/BalancesTable/Columns/CloseLabel'
-import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirection'
 import ConfirmationSummary from 'components/perps/Module/ConfirmationSummary'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -89,11 +87,7 @@ export default function Manage(props: Props) {
 
     if (!showSummary && hasOpenOrders) {
       openAlertDialog({
-        header: (
-          <div className='flex items-center justify-between w-full'>
-            <Text size='2xl'>Warning</Text>
-          </div>
-        ),
+        header: <Text size='2xl'>Warning</Text>,
         content: (
           <Text>
             Closing this position will also cancel all related limit orders. Do you want to
@@ -102,13 +96,14 @@ export default function Manage(props: Props) {
         ),
         positiveButton: {
           text: 'Continue',
-          icon: <Check />,
+          icon: <ArrowRight />,
           onClick: closePosition,
         },
         negativeButton: {
           text: 'Cancel',
           onClick: close,
         },
+        showCloseButton: true,
       })
       return
     }
@@ -119,12 +114,7 @@ export default function Manage(props: Props) {
     }
 
     openAlertDialog({
-      header: (
-        <div className='flex items-center justify-between w-full'>
-          <Text size='2xl'>Order Summary</Text>
-          <CloseLabel className='capitalize !text-sm' />
-        </div>
-      ),
+      header: <Text size='2xl'>Order Summary</Text>,
       content: (
         <ConfirmationSummary
           amount={perpPosition.amount.negated()}
@@ -135,19 +125,15 @@ export default function Manage(props: Props) {
       ),
       positiveButton: {
         text: 'Confirm',
-        icon: <Check />,
+        icon: <ArrowRight />,
         onClick: closePosition,
-      },
-      negativeButton: {
-        text: 'Cancel',
-        onClick: () => {
-          close()
-        },
       },
       checkbox: {
         text: 'Hide summary in the future',
         onClick: (isChecked: boolean) => setShowSummary(!isChecked),
       },
+      isSingleButtonLayout: true,
+      showCloseButton: true,
     })
   }, [
     close,
@@ -185,11 +171,7 @@ export default function Manage(props: Props) {
 
       if (!showSummary && hasOpenOrders) {
         openAlertDialog({
-          header: (
-            <div className='flex items-center justify-between w-full'>
-              <Text size='2xl'>Warning</Text>
-            </div>
-          ),
+          header: <Text size='2xl'>Warning</Text>,
           content: (
             <Text>
               Flipping this position will also cancel all related limit orders. Do you want to
@@ -198,13 +180,14 @@ export default function Manage(props: Props) {
           ),
           positiveButton: {
             text: 'Continue',
-            icon: <Check />,
+            icon: <ArrowRight />,
             onClick: executeFlip,
           },
           negativeButton: {
             text: 'Cancel',
             onClick: close,
           },
+          showCloseButton: true,
         })
         return
       }
@@ -215,12 +198,7 @@ export default function Manage(props: Props) {
       }
 
       openAlertDialog({
-        header: (
-          <div className='flex items-center justify-between w-full'>
-            <Text size='2xl'>Order Summary</Text>
-            <TradeDirection tradeDirection={newDirection} type='market' />
-          </div>
-        ),
+        header: <Text size='2xl'>Order Summary</Text>,
         content: (
           <ConfirmationSummary
             amount={signedAmount}
@@ -230,20 +208,16 @@ export default function Manage(props: Props) {
           />
         ),
         positiveButton: {
-          text: 'Confirm',
-          icon: <Check />,
+          text: 'Continue',
+          icon: <ArrowRight />,
           onClick: executeFlip,
-        },
-        negativeButton: {
-          text: 'Cancel',
-          onClick: () => {
-            close()
-          },
         },
         checkbox: {
           text: 'Hide summary in the future',
           onClick: (isChecked: boolean) => setShowSummary(!isChecked),
         },
+        isSingleButtonLayout: true,
+        showCloseButton: true,
       })
     },
     [
@@ -261,41 +235,45 @@ export default function Manage(props: Props) {
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [
-      ...(searchParams.get(SearchParams.PERPS_MARKET) === perpPosition.asset.denom
-        ? [
-            // Remove SL/TP for the moment
-            // {
-            //   icon: <Shield />,
-            //   text: 'Add Stop Loss',
-            //   onClick: openPerpsSlTpModal,
-            // },
-          ]
+      ...(perpPosition.asset.isDeprecated
+        ? []
         : [
+            ...(searchParams.get(SearchParams.PERPS_MARKET) === perpPosition.asset.denom
+              ? [
+                  // Remove SL/TP for the moment
+                  // {
+                  //   icon: <Shield />,
+                  //   text: 'Add Stop Loss',
+                  //   onClick: openPerpsSlTpModal,
+                  // },
+                ]
+              : [
+                  {
+                    icon: <Edit />,
+                    text: 'Edit Position',
+                    onClick: () => {
+                      const params = getSearchParamsObject(searchParams)
+                      setSearchParams({
+                        ...params,
+                        [SearchParams.PERPS_MARKET]: perpPosition.asset.denom,
+                      })
+                    },
+                  },
+                  // {
+                  //   icon: <Shield />,
+                  //   text: 'Add Stop Loss',
+                  //   onClick: openPerpsSlTpModal,
+                  // },
+                ]),
             {
-              icon: <Edit />,
-              text: 'Edit Position',
+              icon: <SwapIcon />,
+              text: 'Flip Direction',
               onClick: () => {
-                const params = getSearchParamsObject(searchParams)
-                setSearchParams({
-                  ...params,
-                  [SearchParams.PERPS_MARKET]: perpPosition.asset.denom,
-                })
+                const newDirection = perpPosition.tradeDirection === 'long' ? 'short' : 'long'
+                handleFlipPosition(newDirection)
               },
             },
-            // {
-            //   icon: <Shield />,
-            //   text: 'Add Stop Loss',
-            //   onClick: openPerpsSlTpModal,
-            // },
           ]),
-      {
-        icon: <SwapIcon />,
-        text: 'Flip Direction',
-        onClick: () => {
-          const newDirection = perpPosition.tradeDirection === 'long' ? 'short' : 'long'
-          handleFlipPosition(newDirection)
-        },
-      },
       {
         icon: <Cross width={16} />,
         text: 'Close Position',

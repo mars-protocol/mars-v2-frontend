@@ -23,6 +23,13 @@ const Neutron1: ChainConfig = {
       collateralMultiplier: 5,
       campaignDenom: 'dTIA',
     },
+    {
+      denom: 'factory/neutron1frc0p5czd9uaaymdkug2njz7dc7j65jxukp9apmt9260a8egujkspms2t2/udntrn',
+      campaignIds: ['drop_apy', 'drop'],
+      baseMultiplier: 1,
+      collateralMultiplier: 5,
+      campaignDenom: 'dNTRN',
+    },
     //dATOM-NTRN
     {
       denom:
@@ -71,6 +78,20 @@ const Neutron1: ChainConfig = {
         'factory/neutron1djs222dtwf3pw5h474fm68wc72ter5y4zftd36ugjs5e069hwqaq79pnrt/astroport/share',
       campaignIds: ['drop'],
       baseMultiplier: 20,
+    },
+    //dNTRN-NTRN
+    {
+      denom:
+        'factory/neutron1pd9u7h4vf36vtj5lqlcp4376xf4wktdnhmzqtn8958wyh0nzwsmsavc2dz/astroport/share',
+      campaignIds: ['drop'],
+      baseMultiplier: 10,
+    },
+    //dNTRN-USDC
+    {
+      denom:
+        'factory/neutron1hme8vcsky2xeq4qc4wg3uy9gc47xzga6uqk8plaps8tvutjshuwqajnze6/astroport/share',
+      campaignIds: ['drop'],
+      baseMultiplier: 50,
     },
     {
       denom: 'ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C',

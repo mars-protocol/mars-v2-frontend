@@ -96,7 +96,8 @@ export default function AssetOverlay(props: Props) {
       account.perps?.find((perp) => perp.denom === assets.denom),
     )
     const availablePerpsMarkets = assets.filter(
-      (assets) => !activePerpsPositions.find((perp) => perp.denom === assets.denom),
+      (assets) =>
+        !activePerpsPositions.some((perp) => perp.denom === assets.denom) && !assets.isDeprecated,
     )
 
     return [activePerpsPositions, availablePerpsMarkets]
