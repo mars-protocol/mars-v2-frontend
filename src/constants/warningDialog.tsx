@@ -1,21 +1,21 @@
-import { CrossCircled, Flag, TrashBin } from 'components/common/Icons'
+import { CrossCircled, ExclamationMarkTriangle, Flag } from 'components/common/Icons'
 
 export const INFO_ITEMS = [
   {
     icon: <CrossCircled />,
-    title: 'Community vaults are not moderated ',
+    title: 'Community vaults are user-created',
     description:
-      'Community vaults are created by users and not reviewed by the Mars Protocol team.',
+      'These vaults are created by community members and not directly managed by the Mars Protocol team.',
   },
   {
     icon: <Flag />,
-    title: 'Your funds may be at risk',
+    title: 'Understand the risks',
     description:
-      "By depositing, you're trusting another user's investment strategy with your funds.",
+      "When depositing into community vaults, you're entrusting your funds to another user's investment strategy.",
   },
   {
-    icon: <TrashBin />,
+    icon: <ExclamationMarkTriangle />,
     title: 'Profitability is not guaranteed',
-    description: 'Past performance of community vaults does not guarantee future returns.',
+    description: 'As with any investment, past performance does not guarantee future returns.',
   },
 ]

@@ -35,7 +35,7 @@ export default function VaultsCommunityPage() {
     if (!showVaultWarning) return
 
     showAlertDialog({
-      title: "You're entering dangerous territory",
+      title: 'Please be aware of the following',
       content: <AlertDialogItems items={INFO_ITEMS} />,
       positiveButton: {
         text: 'Continue',
