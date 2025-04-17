@@ -96,15 +96,24 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
     try {
       const isShort = currentTradeDirection === 'short'
 
-      // Find existing SL/TP orders for this position
       const existingOrders =
         limitOrders?.filter((order) => {
           const actions = order.order.actions
-          return actions.some(
-            (action) =>
-              'execute_perp_order' in action &&
-              action.execute_perp_order.denom === perpsAsset.denom &&
-              action.execute_perp_order.reduce_only,
+          return (
+            actions.some(
+              (action) =>
+                'execute_perp_order' in action &&
+                action.execute_perp_order.denom === perpsAsset.denom &&
+                action.execute_perp_order.reduce_only,
+            ) &&
+            !order.order.conditions.some((condition) => 'trigger_order_executed' in condition) &&
+            !limitOrders.some((otherOrder) =>
+              otherOrder.order.conditions.some(
+                (condition) =>
+                  'trigger_order_executed' in condition &&
+                  condition.trigger_order_executed.trigger_order_id === order.order.order_id,
+              ),
+            )
           )
         }) ?? []
 

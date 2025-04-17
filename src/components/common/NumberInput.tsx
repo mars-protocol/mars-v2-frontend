@@ -2,7 +2,6 @@ import classNames from 'classnames'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 
 import { BN_ZERO } from 'constants/math'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { formatValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
@@ -37,20 +36,16 @@ export default function NumberInput(props: Props) {
   const [isEditing, setIsEditing] = useState(false)
 
   useEffect(() => {
-    if (isEditing) return
+    if (props.isUSD || isEditing) return
 
-    let newFormattedAmount = ''
-    if (!props.amount.isZero()) {
-      if (props.isUSD) {
-        newFormattedAmount = props.amount.shiftedBy(-PRICE_ORACLE_DECIMALS).toString()
-      } else {
-        newFormattedAmount = formatValue(props.amount.shiftedBy(-props.asset.decimals).toNumber(), {
+    const newFormattedAmount = props.amount.isZero()
+      ? ''
+      : formatValue(props.amount.toNumber(), {
+          decimals: props.asset.decimals,
           minDecimals: 0,
           maxDecimals: props.maxDecimals,
           thousandSeparator: false,
         })
-      }
-    }
 
     if (formattedAmount !== newFormattedAmount) {
       setFormattedAmount(newFormattedAmount)
@@ -84,16 +79,10 @@ export default function NumberInput(props: Props) {
     if (/^\d*\.?\d*$/.test(newValue)) {
       let newAmount = BN(newValue || '0')
 
-      if (props.max) {
-        const maxForDisplay = props.isUSD
-          ? props.max.shiftedBy(-PRICE_ORACLE_DECIMALS)
-          : props.max.shiftedBy(-props.asset.decimals)
-
-        if (newAmount.isGreaterThan(maxForDisplay)) {
-          newAmount = maxForDisplay
-          newValue = newAmount.toString()
-          cursorPosition = newValue.length
-        }
+      if (props.max && newAmount.isGreaterThan(props.max.shiftedBy(-props.asset.decimals))) {
+        newAmount = props.max.shiftedBy(-props.asset.decimals)
+        newValue = newAmount.toString()
+        cursorPosition = newValue.length
       }
 
       setIsEditing(true)
@@ -106,10 +95,8 @@ export default function NumberInput(props: Props) {
         setFormattedAmount('0.')
         props.onChange(BN_ZERO)
       } else {
-        const finalAmount = props.isUSD
-          ? newAmount.shiftedBy(PRICE_ORACLE_DECIMALS) // Shift USD values by PRICE_ORACLE_DECIMALS
-          : newAmount.shiftedBy(props.asset.decimals)
-        props.onChange(finalAmount)
+        const shiftedAmount = newAmount.shiftedBy(props.asset.decimals)
+        props.onChange(shiftedAmount)
       }
     } else {
       cursorRef.current = cursorPosition
@@ -121,12 +108,7 @@ export default function NumberInput(props: Props) {
     if (formattedAmount.endsWith('.')) {
       const newValue = formattedAmount.slice(0, -1)
       setFormattedAmount(newValue)
-
-      if (props.isUSD) {
-        props.onChange(BN(newValue).shiftedBy(PRICE_ORACLE_DECIMALS))
-      } else {
-        props.onChange(BN(newValue).shiftedBy(props.asset.decimals))
-      }
+      props.onChange(BN(newValue).shiftedBy(props.asset.decimals))
     }
     props.onBlur && props.onBlur()
   }
