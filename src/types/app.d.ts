@@ -916,6 +916,7 @@ interface DropDownItem {
   text: string
   disabled?: boolean
   disabledTooltip?: string
+  tooltipType?: string
 }
 
 interface FormattedNumberProps {

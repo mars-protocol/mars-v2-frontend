@@ -9,7 +9,10 @@ export default async function getManagedVaults(chainConfig: ChainConfig) {
 
   try {
     const response = await fetchWithTimeout(chainConfig.endpoints.managedVaults, FETCH_TIMEOUT)
+
+    if (!response.ok) return defaultReturn
     const data = await response.json()
+
     return data as ManagedVaultsResponse
   } catch (error) {
     console.error('Could not fetch managed vaults.', error)

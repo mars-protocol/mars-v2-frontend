@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import AssetImage from 'components/common/assets/AssetImage'
+import Button from 'components/common/Button'
 import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
 import { CircularProgress } from 'components/common/CircularProgress'
@@ -16,9 +17,14 @@ import InfoRow from 'components/managedVaults/community/vaultDetails/profileVaul
 import useManagedVaultOwnerInfo from 'hooks/managedVaults/useManagedVaultOwnerInfo'
 import moment from 'moment'
 import Image from 'next/image'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatLockupPeriod } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import { getPage, getRoute } from 'utils/route'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useStore from 'store'
+import { Tooltip } from 'components/common/Tooltip'
 
 interface Props {
   details: ExtendedManagedVaultDetails
@@ -30,6 +36,16 @@ interface Props {
 export default function ProfileVaultCard(props: Props) {
   const { details, isOwner, wallet, depositAsset } = props
   const { vaultOwnerInfo, isLoading } = useManagedVaultOwnerInfo(wallet)
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const address = useStore((s) => s.address)
+  const chainConfig = useChainConfig()
+
+  const handleManageVault = () => {
+    navigate(
+      getRoute(getPage('perps', chainConfig), searchParams, address, details.vault_account_id),
+    )
+  }
 
   return (
     <Card className='bg-white/5'>
@@ -69,7 +85,7 @@ export default function ProfileVaultCard(props: Props) {
         <div className='flex justify-between items-center'>
           <Text tag='h4'>{details.title}</Text>
           <div className='flex gap-3'>
-            {isOwner || <FeeTag fee={details.performance_fee_config?.fee_rate ?? '0'} />}
+            <FeeTag fee={details.performance_fee_config?.fee_rate ?? '0'} />
           </div>
         </div>
 
@@ -200,6 +216,17 @@ export default function ProfileVaultCard(props: Props) {
             </TextLink>{' '}
             so that you can populate a profile image, name, and social links.
           </Callout>
+        )}
+        {isOwner && (
+          <Tooltip
+            type='info'
+            content='This button redirects you to the Trade page and selects the vault account as your active account.'
+            contentClassName='max-w-[350px]'
+          >
+            <Button onClick={handleManageVault} className='w-full'>
+              Manage Vault
+            </Button>
+          </Tooltip>
         )}
       </div>
     </Card>
