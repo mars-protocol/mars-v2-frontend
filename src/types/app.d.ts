@@ -409,6 +409,7 @@ interface PerpPositionRow extends PerpsPosition {
   hasStopLoss?: boolean
   hasTakeProfit?: boolean
   reduce_only?: boolean
+  isChildOrder?: boolean
 }
 
 interface PerpsPnL {
@@ -1344,6 +1345,7 @@ interface ModalSlice {
   withdrawFromVaultsModal: DepositedVault[] | null
   v1DepositAndWithdrawModal: V1DepositAndWithdrawModal | null
   v1BorrowAndRepayModal: V1BorrowAndRepayModal | null
+  triggerOrdersModal: string | null
 }
 
 interface AlertDialogButton {
@@ -1919,3 +1921,7 @@ type TrackActionType =
   | 'Cancel Limit Order'
   | 'Deposit Into Vault'
   | 'Deposit Into Perps Vault'
+
+type PerpOrderType = ExceutePerpsOrder['execute_perp_order'] | undefined
+
+type TriggerConditionType = TriggerCondition['oracle_price'] | undefined

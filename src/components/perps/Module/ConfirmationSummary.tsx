@@ -183,11 +183,11 @@ export default function ConfirmationSummary(props: Props) {
         .plus(tradingFeeAndPrice.fee.opening)
     tradingFee = tradingFee.negated()
     if (position && limitPrice)
-      tradingFee = BN(position.unrealized_pnl.pnl as any)
-        .minus(position.unrealized_pnl.price_pnl as any)
-        .minus(position.unrealized_pnl.accrued_funding as any)
+      tradingFee = BN(position.unrealized_pnl.pnl)
+        .minus(position.unrealized_pnl.price_pnl)
+        .minus(position.unrealized_pnl.accrued_funding)
     if (position && !limitPrice)
-      tradingFee = BN(position.unrealized_pnl.pnl as any)
+      tradingFee = BN(position.unrealized_pnl.pnl)
         .minus(tradingFeeAndPrice?.fee.closing ?? BN_ZERO)
         .minus(tradingFeeAndPrice?.fee.opening ?? BN_ZERO)
     if (keeperFee) tradingFee = tradingFee.minus(keeperFee.amount)
@@ -220,7 +220,7 @@ export default function ConfirmationSummary(props: Props) {
     tradeDirection as TradeDirection,
     limitPrice !== undefined,
   )
-  const feeLabel = getFeeLabel(BN((position?.unrealized_pnl.pnl as any) ?? 0), limitPrice)
+  const feeLabel = getFeeLabel(BN(position?.unrealized_pnl.pnl ?? 0), limitPrice)
 
   return (
     <div className='flex flex-wrap w-full gap-4'>
@@ -289,9 +289,7 @@ export default function ConfirmationSummary(props: Props) {
           (Object.keys(position.unrealized_pnl) as Array<keyof PnlAmounts>).map((key, index) => {
             const isPnl = key === 'pnl'
             const pnlAmount =
-              isPnl && limitPrice
-                ? totalFeeAndPnLCoin.amount
-                : BN(position.unrealized_pnl[key] as any)
+              isPnl && limitPrice ? totalFeeAndPnLCoin.amount : BN(position.unrealized_pnl[key])
 
             if (
               ((key === 'price_pnl' || key === 'accrued_funding') && limitPrice) ||

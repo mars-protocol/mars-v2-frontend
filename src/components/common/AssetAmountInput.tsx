@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo } from 'react'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import NumberInput from 'components/common/NumberInput'
 import { BN_ZERO } from 'constants/math'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatValue } from 'utils/formatters'
 
@@ -47,10 +48,20 @@ export default function AssetAmountInput(props: Props) {
     capMax,
   } = props
 
+  const assetPrice = useMemo(() => {
+    return asset.price?.amount || BN_ZERO
+  }, [asset.price])
+
   const handleMaxClick = useCallback(() => {
     if (!max || disabled) return
-    setAmount(max)
-  }, [max, setAmount, disabled])
+
+    if (isUSD && !assetPrice.isZero()) {
+      const maxInUSD = max.times(assetPrice).shiftedBy(-asset.decimals + PRICE_ORACLE_DECIMALS)
+      setAmount(maxInUSD)
+    } else {
+      setAmount(max)
+    }
+  }, [max, setAmount, disabled, isUSD, assetPrice, asset.decimals])
 
   const maxValue = useMemo(() => {
     if (!max) return
@@ -65,9 +76,21 @@ export default function AssetAmountInput(props: Props) {
 
   useEffect(() => {
     if (isMaxSelected && max) {
-      setAmount(max)
+      if (isUSD && !assetPrice.isZero()) {
+        const maxInUSD = max.times(assetPrice).shiftedBy(-asset.decimals + PRICE_ORACLE_DECIMALS)
+        setAmount(maxInUSD)
+      } else {
+        setAmount(max)
+      }
     }
-  }, [isMaxSelected, max, setAmount])
+  }, [isMaxSelected, max, setAmount, isUSD, assetPrice, asset.decimals])
+
+  const nativeAssetAmount = useMemo(() => {
+    if (isUSD && !assetPrice.isZero()) {
+      return amount.shiftedBy(asset.decimals - PRICE_ORACLE_DECIMALS).div(assetPrice)
+    }
+    return amount
+  }, [isUSD, amount, assetPrice, asset.decimals])
 
   return (
     <div className={containerClassName}>
@@ -80,6 +103,7 @@ export default function AssetAmountInput(props: Props) {
           )}
         >
           <NumberInput
+            key={isUSD ? 'usd-input' : 'asset-input'}
             asset={asset}
             amount={amount}
             className='border-none bg-transparent outline-none flex-1 !text-left'
@@ -124,7 +148,17 @@ export default function AssetAmountInput(props: Props) {
               </div>
 
               <div className='mt-2 text-xs text-white text-opacity-60'>
-                <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(asset.denom, amount)} />
+                {isUSD ? (
+                  <div>
+                    {formatValue(Number(nativeAssetAmount.shiftedBy(-asset.decimals).toString()), {
+                      abbreviated: false,
+                      maxDecimals: 6,
+                    })}{' '}
+                    {asset.symbol}
+                  </div>
+                ) : (
+                  <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(asset.denom, amount)} />
+                )}
               </div>
             </div>
           )}

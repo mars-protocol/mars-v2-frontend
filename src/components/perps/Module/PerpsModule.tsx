@@ -7,6 +7,7 @@ import Card from 'components/common/Card'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import OrderTypeSelector from 'components/common/OrderTypeSelector'
 import Text from 'components/common/Text'
+import SwitchWithText from 'components/common/Switch/SwitchWithText'
 import { PERPS_ORDER_TYPE_TABS } from 'components/perps/Module/constants'
 import KeeperFee from 'components/perps/Module/KeeperFee'
 import { LeverageSection } from 'components/perps/Module/LeverageSection'
@@ -48,6 +49,7 @@ export function PerpsModule() {
   const [stopTradeDirection, setStopTradeDirection] = useState<TradeDirection>('long')
   const [selectedOrderType, setSelectedOrderType] = useState<OrderType>(OrderType.MARKET)
   const [isReduceOnly, setIsReduceOnly] = useState(false)
+  const [isAmountInUSD, setIsAmountInUSD] = useState(false)
 
   // Derived state
   const isLimitOrder = selectedOrderType === OrderType.LIMIT
@@ -125,8 +127,11 @@ export function PerpsModule() {
     onChangeTradeDirection,
     onChangeOrderType,
     onChangeStopTradeDirection,
-    onChangeAmount,
     onChangeLeverage,
+    handleAmountTypeChange,
+    handleAmountChange,
+    convertToDisplayAmount,
+    convertToDisplayMaxAmount,
   } = usePerpsCallbacks({
     updateAmount,
     setLimitPrice,
@@ -144,6 +149,9 @@ export function PerpsModule() {
     stopTradeDirection,
     tradeDirection,
     maxLeverage,
+    perpsAsset,
+    setIsAmountInUSD,
+    isAmountInUSD,
   })
 
   const { isDisabledExecution, isDisabledAmountInput } = useExecutionState({
@@ -303,25 +311,40 @@ export function PerpsModule() {
                 stopPriceInfo={stopPriceInfo}
               />
             )}
-            <AssetAmountInput
-              containerClassName='pb-2'
-              label='Amount'
-              max={maxAmount}
-              amount={amount.abs()}
-              setAmount={onChangeAmount}
-              asset={perpsAsset}
-              maxButtonLabel='Max:'
-              disabled={isDisabledAmountInput}
-              onClosing={handleClosing}
-              showCloseButton={
-                !!currentPerpPosition &&
-                (isStopOrder
-                  ? currentPerpPosition.tradeDirection !== stopTradeDirection
-                  : currentPerpPosition.tradeDirection !== tradeDirection)
-              }
-              isMaxSelected={isMaxSelected}
-              capMax={false}
-            />
+            <div className='flex flex-col'>
+              <div className='flex justify-between items-center mb-2'>
+                <span>Amount</span>
+                <SwitchWithText
+                  name='amountType'
+                  options={[
+                    { value: 'asset', text: perpsAsset.symbol },
+                    { value: 'usd', text: 'USD' },
+                  ]}
+                  selected={isAmountInUSD ? 'usd' : 'asset'}
+                  onChange={handleAmountTypeChange}
+                  className='w-32'
+                />
+              </div>
+              <AssetAmountInput
+                containerClassName='pb-2'
+                max={convertToDisplayMaxAmount(maxAmount)}
+                amount={convertToDisplayAmount(amount)}
+                setAmount={handleAmountChange}
+                asset={perpsAsset}
+                maxButtonLabel='Max:'
+                disabled={isDisabledAmountInput}
+                onClosing={handleClosing}
+                showCloseButton={
+                  !!currentPerpPosition &&
+                  (isStopOrder
+                    ? currentPerpPosition.tradeDirection !== stopTradeDirection
+                    : currentPerpPosition.tradeDirection !== tradeDirection)
+                }
+                isMaxSelected={isMaxSelected}
+                capMax={false}
+                isUSD={isAmountInUSD}
+              />
+            </div>
             {amount.isGreaterThan(maxAmount) && (
               <Callout type={CalloutType.WARNING}>
                 The entered amount exceeds the maximum allowed.

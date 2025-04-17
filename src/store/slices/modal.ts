@@ -30,5 +30,6 @@ export default function createModalSlice(
     keeperFeeModal: false,
     addSLTPModal: false,
     conditionalTriggersModal: false,
+    triggerOrdersModal: null,
   }
 }
