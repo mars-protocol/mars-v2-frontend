@@ -11,6 +11,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { DocURL } from 'types/enums'
 import { getPage, getRoute } from 'utils/route'
+import WalletSelect from 'components/Wallet/WalletSelect'
 
 export default function VaultsCommunityIntro() {
   const [showVaultInformation, setShowVaultInformation] = useLocalStorage<boolean>(
@@ -26,7 +27,7 @@ export default function VaultsCommunityIntro() {
 
   const openCreateVaultOverlay = useCallback(() => {
     if (!address) {
-      console.error('Wallet address is required to create a vault')
+      useStore.setState({ focusComponent: { component: <WalletSelect /> } })
       return
     }
     navigate(getRoute(getPage('vaults/create', chainConfig), searchParams, address))
