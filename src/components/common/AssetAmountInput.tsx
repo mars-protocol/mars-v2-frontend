@@ -54,14 +54,8 @@ export default function AssetAmountInput(props: Props) {
 
   const handleMaxClick = useCallback(() => {
     if (!max || disabled) return
-
-    if (isUSD && !assetPrice.isZero()) {
-      const maxInUSD = max.times(assetPrice).shiftedBy(-asset.decimals + PRICE_ORACLE_DECIMALS)
-      setAmount(maxInUSD)
-    } else {
-      setAmount(max)
-    }
-  }, [max, setAmount, disabled, isUSD, assetPrice, asset.decimals])
+    setAmount(max)
+  }, [max, setAmount, disabled])
 
   const maxValue = useMemo(() => {
     if (!max) return
@@ -76,14 +70,9 @@ export default function AssetAmountInput(props: Props) {
 
   useEffect(() => {
     if (isMaxSelected && max) {
-      if (isUSD && !assetPrice.isZero()) {
-        const maxInUSD = max.times(assetPrice).shiftedBy(-asset.decimals + PRICE_ORACLE_DECIMALS)
-        setAmount(maxInUSD)
-      } else {
-        setAmount(max)
-      }
+      setAmount(max)
     }
-  }, [isMaxSelected, max, setAmount, isUSD, assetPrice, asset.decimals])
+  }, [isMaxSelected, max, setAmount, isUSD])
 
   const nativeAssetAmount = useMemo(() => {
     if (isUSD && !assetPrice.isZero()) {

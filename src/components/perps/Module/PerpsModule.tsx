@@ -312,7 +312,7 @@ export function PerpsModule() {
               />
             )}
             <div className='flex flex-col'>
-              <div className='flex justify-between items-center mb-2'>
+              <div className='flex justify-between items-center mb-2 gap-24'>
                 <span>Amount</span>
                 <SwitchWithText
                   name='amountType'
@@ -322,12 +322,14 @@ export function PerpsModule() {
                   ]}
                   selected={isAmountInUSD ? 'usd' : 'asset'}
                   onChange={handleAmountTypeChange}
-                  className='w-32'
                 />
               </div>
               <AssetAmountInput
                 containerClassName='pb-2'
-                max={convertToDisplayMaxAmount(maxAmount)}
+                max={(() => {
+                  const calculatedMax = convertToDisplayMaxAmount(maxAmount)
+                  return calculatedMax
+                })()}
                 amount={convertToDisplayAmount(amount)}
                 setAmount={handleAmountChange}
                 asset={perpsAsset}
