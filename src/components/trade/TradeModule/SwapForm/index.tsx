@@ -368,6 +368,7 @@ export default function SwapForm(props: Props) {
             asset={inputAsset}
             maxButtonLabel='Balance:'
             disabled={isConfirming}
+            isUSD={false}
           />
           <Divider />
           <LeverageSlider
