@@ -7,6 +7,7 @@ interface Props {
   sub: string | React.ReactNode
   className?: string
   containerClassName?: string
+  isDeprecated?: boolean
 }
 
 export default function TitleAndSubCell(props: Props) {
@@ -14,6 +15,7 @@ export default function TitleAndSubCell(props: Props) {
     <div className={classNames('flex flex-col gap-0.5', props.containerClassName)}>
       <Text size='xs' className={props.className} tag='span'>
         {props.title}
+        {props.isDeprecated && <span className='text-info ml-1'>(disabled)</span>}
       </Text>
       <Text size='xs' className={classNames('text-white/40', props.className)} tag='span'>
         {props.sub}

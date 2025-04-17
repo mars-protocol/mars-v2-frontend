@@ -78,6 +78,7 @@ export default function AssetSelectorItem(props: Props) {
                 <>
                   <Text size='sm' className='h-5 leading-5 text-left truncate '>
                     {asset.name}
+                    {asset.isDeprecated && <span className='text-info ml-1'>(disabled)</span>}
                   </Text>
                   <AssetSymbol symbol={asset.symbol} />
                 </>
