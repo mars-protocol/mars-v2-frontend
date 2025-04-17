@@ -81,7 +81,6 @@ function AstroLpModal(props: Props) {
           account={currentAccount}
           simulateUnstakeAstroLp={simulateUnstakeAstroLp}
           astroLp={astroLp as DepositedAstroLp}
-          type={type}
         />
       )}
     </Modal>
