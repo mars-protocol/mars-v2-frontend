@@ -160,6 +160,7 @@ export const usePerpsCallbacks = ({
           }
 
           const integerAmount = newAmount.integerValue(BigNumber.ROUND_DOWN)
+
           onChangeAmount(integerAmount)
         }
       } catch (error) {
@@ -179,6 +180,7 @@ export const usePerpsCallbacks = ({
             .times(assetPrice)
             .shiftedBy(-perpsAsset.decimals + PRICE_ORACLE_DECIMALS)
         }
+
         return assetAmount.abs()
       } catch (error) {
         console.error('Error in convertToDisplayAmount:', error)
@@ -196,6 +198,7 @@ export const usePerpsCallbacks = ({
             .times(assetPrice)
             .shiftedBy(-perpsAsset.decimals + PRICE_ORACLE_DECIMALS)
         }
+
         return assetMaxAmount
       } catch (error) {
         console.error('Error in convertToDisplayMaxAmount:', error)
