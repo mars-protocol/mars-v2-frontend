@@ -67,7 +67,7 @@ export function useSubmitParentOrderWithChildren() {
 
       try {
         const perpOrderType: ExecutePerpOrderType =
-          orderType === OrderType.MARKET ? 'default' : 'parent' // Both limit and stop orders need to be 'parent' type
+          orderType === OrderType.MARKET ? 'default' : 'parent'
 
         const params: any = {
           accountId: currentAccount.id,
