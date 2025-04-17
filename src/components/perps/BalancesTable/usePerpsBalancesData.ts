@@ -21,7 +21,7 @@ export default function usePerpsBalancesTable() {
   const { computeLiquidationPrice } = useHealthComputer(currentAccount)
 
   return useMemo<PerpPositionRow[]>(() => {
-    if (!currentAccount || !currentAccount.perps || !perpsConfig) return []
+    if (!currentAccount?.perps || !perpsConfig) return []
 
     const netValue = getAccountNetValue(currentAccount, allAssets)
 

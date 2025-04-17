@@ -21,6 +21,12 @@ const perpsPercentage = (price: BigNumber, triggerPrice: BigNumber) => {
   return triggerPrice.minus(price).dividedBy(price).multipliedBy(100)
 }
 
+const getTextColorClass = (percentage: BigNumber) => {
+  if (percentage.isZero()) return 'text-white'
+  if (percentage.isNegative()) return 'text-error'
+  return 'text-success'
+}
+
 export default function PerpsConditionalTriggersModal() {
   const perpsAsset = usePerpsAsset()
   const modal = useStore((s) => s.conditionalTriggersModal)
@@ -51,7 +57,7 @@ export default function PerpsConditionalTriggersModal() {
 
   const currentTradeDirection = useMemo(() => {
     return (
-      currentAccount?.perps.find((p) => p.denom === perpsAsset?.perpsAsset.denom)?.tradeDirection ||
+      currentAccount?.perps.find((p) => p.denom === perpsAsset?.perpsAsset.denom)?.tradeDirection ??
       'long'
     )
   }, [currentAccount, perpsAsset])
@@ -114,7 +120,7 @@ export default function PerpsConditionalTriggersModal() {
       <div className='flex flex-col gap-4 p-4'>
         <div className='flex flex-col gap-4'>
           <Text size='lg' className='text-left'>
-            Take Profit
+            Take Profit{' '}
             <span className='ml-2 text-xs px-2 py-0.5 bg-white/10 rounded'>{assetSymbol}</span>
           </Text>
           {USD && (
@@ -127,15 +133,7 @@ export default function PerpsConditionalTriggersModal() {
                 isUSD
               />
               <div className='flex flex-row flex-1 py-3 pl-3 pr-2 mt-2 border rounded border-white/20 bg-white/5'>
-                <Text
-                  className={
-                    takeProfitPercentage.isZero()
-                      ? 'text-white'
-                      : takeProfitPercentage.isNegative()
-                        ? 'text-error'
-                        : 'text-success'
-                  }
-                >
+                <Text className={getTextColorClass(takeProfitPercentage)}>
                   {formatPercent(takeProfitPercentage.toNumber())}
                 </Text>
               </div>
@@ -158,7 +156,7 @@ export default function PerpsConditionalTriggersModal() {
 
         <div className='flex flex-col gap-4'>
           <Text size='lg' className='text-left'>
-            Stop Loss
+            Stop Loss{' '}
             <span className='ml-2 text-xs px-2 py-0.5 bg-white/10 rounded'>{assetSymbol}</span>
           </Text>
           {USD && (
@@ -171,15 +169,7 @@ export default function PerpsConditionalTriggersModal() {
                 isUSD
               />
               <div className='flex flex-row flex-1 py-3 pl-3 pr-2 mt-2 border rounded border-white/20 bg-white/5'>
-                <Text
-                  className={
-                    stopLossPercentage.isZero()
-                      ? 'text-white'
-                      : stopLossPercentage.isNegative()
-                        ? 'text-error'
-                        : 'text-success'
-                  }
-                >
+                <Text className={getTextColorClass(stopLossPercentage)}>
                   {formatPercent(stopLossPercentage.toNumber())}
                 </Text>
               </div>

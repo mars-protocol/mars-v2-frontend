@@ -46,7 +46,7 @@ const OrderCard = ({ title, subtitle, rows, headerColor = 'text-amber-500' }: Or
       {Object.entries(rows).map(([key, { label, value, valueColor }]) => (
         <div key={key} className='flex justify-between items-center'>
           <Text className='text-white/60'>{label}</Text>
-          <Text className={valueColor || ''}>{value}</Text>
+          <Text className={valueColor ?? ''}>{value}</Text>
         </div>
       ))}
     </div>
@@ -74,17 +74,21 @@ const ConnectionLines = ({ hasBothOrders }: { hasBothOrders: boolean }) => {
   )
 }
 
-const TriggerOrderText = ({ isLong, isTakeProfit }: { isLong: boolean; isTakeProfit: boolean }) => (
-  <Text className='text-white/60 mb-2'>
-    {isTakeProfit
-      ? isLong
-        ? 'Take profit order - executes when price rises to target'
-        : 'Take profit order - executes when price falls to target'
-      : isLong
-        ? 'Stop loss order - executes when price falls to target'
-        : 'Stop loss order - executes when price rises to target'}
-  </Text>
-)
+const TriggerOrderText = ({ isLong, isTakeProfit }: { isLong: boolean; isTakeProfit: boolean }) => {
+  let message = ''
+
+  if (isTakeProfit) {
+    message = isLong
+      ? 'Take profit order - executes when price rises to target'
+      : 'Take profit order - executes when price falls to target'
+  } else {
+    message = isLong
+      ? 'Stop loss order - executes when price falls to target'
+      : 'Stop loss order - executes when price rises to target'
+  }
+
+  return <Text className='text-white/60 mb-2'>{message}</Text>
+}
 
 const findOraclePriceCondition = (order: TriggerOrderResponse | null) => {
   const condition = order?.order.conditions.find(

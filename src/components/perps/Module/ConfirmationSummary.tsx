@@ -150,8 +150,8 @@ export default function ConfirmationSummary(props: Props) {
   )
   const [newAmount, tradeDirection, isNewPosition, previousAmount, isFlipping] = useMemo(() => {
     if (isLoading || !updatePerpsPosition) return [BN_ZERO, 'long', true, BN_ZERO, false]
-    const positionSize = updatePerpsPosition?.position?.size || '0'
-    const previousAmount = BN(positionSize as string)
+    const positionSize = updatePerpsPosition?.position?.size ?? '0'
+    const previousAmount = BN(positionSize)
     const newAmount = previousAmount.plus(amount)
     const isNewPosition = previousAmount.isZero()
     const previousTradeDirection = previousAmount.isPositive() ? 'long' : 'short'
@@ -167,7 +167,7 @@ export default function ConfirmationSummary(props: Props) {
   const position = useMemo(() => updatePerpsPosition?.position ?? null, [updatePerpsPosition])
 
   const baseDenom = useMemo(
-    () => (position?.base_denom || tradingFeeAndPrice?.baseDenom) ?? 'usd',
+    () => position?.base_denom ?? tradingFeeAndPrice?.baseDenom ?? 'usd',
     [position, tradingFeeAndPrice],
   )
   const feeAsset = useAsset(baseDenom)
@@ -306,7 +306,7 @@ export default function ConfirmationSummary(props: Props) {
               limitPrice,
             )
             return (
-              <SummaryRow label={label} key={index} className={classNames(isPnl && 'font-bold')}>
+              <SummaryRow label={label} key={key} className={classNames(isPnl && 'font-bold')}>
                 {isPnl ? (
                   <PnLDisplay
                     pnlAmount={pnlAmount}

@@ -53,7 +53,7 @@ export function useSubmitParentOrderWithChildren() {
       const orderSize =
         tradeDirection === 'short' && amount.isPositive() ? amount.negated() : amount
 
-      const hasTriggers = !!(conditionalTriggers.tp || conditionalTriggers.sl)
+      const hasTriggers = !!(conditionalTriggers.tp ?? conditionalTriggers.sl)
 
       if (orderType === OrderType.MARKET && !hasTriggers) {
         return executePerpOrder({

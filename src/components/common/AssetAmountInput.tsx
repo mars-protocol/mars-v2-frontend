@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useCallback, useEffect, useMemo, ReactNode } from 'react'
+import { ReactNode, useCallback, useEffect, useMemo } from 'react'
 
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import NumberInput from 'components/common/NumberInput'
@@ -11,12 +11,10 @@ import { formatValue } from 'utils/formatters'
 interface Props {
   label?: string
   max?: BigNumber
-  min?: BigNumber
   asset: Asset
   amount: BigNumber
   disabled?: boolean
   maxButtonLabel?: string
-  amountValueText?: string
   containerClassName?: string
   setAmount: (amount: BigNumber) => void
   onFocus?: () => void
@@ -32,7 +30,6 @@ interface Props {
 export default function AssetAmountInput(props: Props) {
   const {
     max,
-    min,
     label,
     amount,
     asset,
@@ -99,7 +96,6 @@ export default function AssetAmountInput(props: Props) {
             className='border-none bg-transparent outline-none flex-1 !text-left'
             maxDecimals={isUSD ? 2 : asset.decimals}
             max={capMax ? max : undefined}
-            min={min}
             disabled={disabled}
             onChange={setAmount}
             onFocus={onFocus}
@@ -108,7 +104,7 @@ export default function AssetAmountInput(props: Props) {
             amount={amount}
           />
           <div className='flex items-center'>
-            {assetSwitch ? assetSwitch : <span>{isUSD ? 'USD' : asset.symbol}</span>}
+            {assetSwitch ?? <span>{isUSD ? 'USD' : asset.symbol}</span>}
           </div>
         </div>
         <div className='flex items-center'>

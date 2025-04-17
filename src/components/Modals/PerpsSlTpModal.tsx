@@ -19,11 +19,16 @@ import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { formatPercent } from 'utils/formatters'
 import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
-import useAutoLend from 'hooks/wallet/useAutoLend'
 
 const perpsPercentage = (price: BigNumber, triggerPrice: BigNumber) => {
   if (!price || triggerPrice.isZero()) return BN_ZERO
   return triggerPrice.minus(price).dividedBy(price).multipliedBy(100)
+}
+
+const getPercentageTextClass = (percentage: BigNumber) => {
+  if (percentage.isZero()) return 'text-white'
+  if (percentage.isNegative()) return 'text-error'
+  return 'text-success'
 }
 
 export default function PerpsSlTpModal({ parentPosition }: { parentPosition: PerpPositionRow }) {
@@ -43,8 +48,6 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
   const submitLimitOrder = useSubmitLimitOrder()
   const currentAccount = useCurrentAccount()
   const { data: limitOrders } = usePerpsLimitOrders()
-  const cancelTriggerOrder = useStore((s) => s.cancelTriggerOrder)
-  const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
 
   const { data: perpsConfig } = usePerpsConfig()
   const assets = useDepositEnabledAssets()
@@ -73,7 +76,7 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
 
   const currentTradeDirection = useMemo(() => {
     return (
-      currentAccount?.perps.find((p) => p.denom === perpsAsset?.denom)?.tradeDirection || 'long'
+      currentAccount?.perps.find((p) => p.denom === perpsAsset?.denom)?.tradeDirection ?? 'long'
     )
   }, [currentAccount, perpsAsset])
 
@@ -90,62 +93,102 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
     takeProfitPrice,
   })
 
+  const createStopLossOrder = useCallback(() => {
+    if (!showStopLoss || stopLossPrice.isZero() || !perpsAsset || !feeToken) return null
+    const isShort = currentTradeDirection === 'short'
+
+    return {
+      asset: perpsAsset,
+      orderSize: isShort ? positionSize : positionSize.negated(),
+      limitPrice: stopLossPrice,
+      tradeDirection: isShort ? 'short' : ('long' as TradeDirection),
+      comparison: isShort ? 'greater_than' : ('less_than' as TriggerType),
+      baseDenom: feeToken.denom,
+      keeperFee: calculateKeeperFee,
+      reduceOnly: true,
+    }
+  }, [
+    showStopLoss,
+    stopLossPrice,
+    perpsAsset,
+    feeToken,
+    currentTradeDirection,
+    positionSize,
+    calculateKeeperFee,
+  ])
+
+  const createTakeProfitOrder = useCallback(() => {
+    if (!showTakeProfit || takeProfitPrice.isZero() || !perpsAsset || !feeToken) return null
+    const isShort = currentTradeDirection === 'short'
+
+    return {
+      asset: perpsAsset,
+      orderSize: isShort ? positionSize : positionSize.negated(),
+      limitPrice: takeProfitPrice,
+      tradeDirection: isShort ? 'short' : ('long' as TradeDirection),
+      comparison: isShort ? 'less_than' : ('greater_than' as TriggerType),
+      baseDenom: feeToken.denom,
+      keeperFee: calculateKeeperFee,
+      reduceOnly: true,
+    }
+  }, [
+    showTakeProfit,
+    takeProfitPrice,
+    perpsAsset,
+    feeToken,
+    currentTradeDirection,
+    positionSize,
+    calculateKeeperFee,
+  ])
+
+  const filterExistingOrders = useCallback(() => {
+    if (!limitOrders) return []
+
+    const matchingOrders = []
+
+    for (const order of limitOrders) {
+      const hasPerpOrder = order.order.actions.some(
+        (action) =>
+          'execute_perp_order' in action &&
+          action.execute_perp_order.denom === perpsAsset?.denom &&
+          action.execute_perp_order.reduce_only,
+      )
+
+      if (!hasPerpOrder) continue
+
+      const hasTriggerCondition = order.order.conditions.some(
+        (condition) => 'trigger_order_executed' in condition,
+      )
+
+      if (hasTriggerCondition) continue
+
+      let isLinkedFromOther = false
+      for (const otherOrder of limitOrders) {
+        const isLinked = otherOrder.order.conditions.some(
+          (condition) =>
+            'trigger_order_executed' in condition &&
+            condition.trigger_order_executed.trigger_order_id === order.order.order_id,
+        )
+
+        if (isLinked) {
+          isLinkedFromOther = true
+          break
+        }
+      }
+
+      if (!isLinkedFromOther) {
+        matchingOrders.push(order)
+      }
+    }
+
+    return matchingOrders
+  }, [limitOrders, perpsAsset])
+
   const handleDone = useCallback(async () => {
     if (!currentAccount || !perpsAsset || !feeToken) return
     setIsLoading(true)
     try {
-      const isShort = currentTradeDirection === 'short'
-
-      const existingOrders =
-        limitOrders?.filter((order) => {
-          const actions = order.order.actions
-          return (
-            actions.some(
-              (action) =>
-                'execute_perp_order' in action &&
-                action.execute_perp_order.denom === perpsAsset.denom &&
-                action.execute_perp_order.reduce_only,
-            ) &&
-            !order.order.conditions.some((condition) => 'trigger_order_executed' in condition) &&
-            !limitOrders.some((otherOrder) =>
-              otherOrder.order.conditions.some(
-                (condition) =>
-                  'trigger_order_executed' in condition &&
-                  condition.trigger_order_executed.trigger_order_id === order.order.order_id,
-              ),
-            )
-          )
-        }) ?? []
-
-      const createStopLossOrder = () => {
-        if (!showStopLoss || stopLossPrice.isZero()) return null
-
-        return {
-          asset: perpsAsset,
-          orderSize: isShort ? positionSize : positionSize.negated(),
-          limitPrice: stopLossPrice,
-          tradeDirection: isShort ? 'short' : ('long' as TradeDirection),
-          comparison: isShort ? 'greater_than' : ('less_than' as TriggerType),
-          baseDenom: feeToken.denom,
-          keeperFee: calculateKeeperFee,
-          reduceOnly: true,
-        }
-      }
-
-      const createTakeProfitOrder = () => {
-        if (!showTakeProfit || takeProfitPrice.isZero()) return null
-
-        return {
-          asset: perpsAsset,
-          orderSize: isShort ? positionSize : positionSize.negated(),
-          limitPrice: takeProfitPrice,
-          tradeDirection: isShort ? 'short' : ('long' as TradeDirection),
-          comparison: isShort ? 'less_than' : ('greater_than' as TriggerType),
-          baseDenom: feeToken.denom,
-          keeperFee: calculateKeeperFee,
-          reduceOnly: true,
-        }
-      }
+      const existingOrders = filterExistingOrders()
 
       const stopLossOrder = createStopLossOrder()
       const takeProfitOrder = createTakeProfitOrder()
@@ -169,16 +212,11 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
     currentAccount,
     perpsAsset,
     feeToken,
-    showStopLoss,
-    stopLossPrice,
-    showTakeProfit,
-    takeProfitPrice,
-    calculateKeeperFee,
+    filterExistingOrders,
+    createStopLossOrder,
+    createTakeProfitOrder,
     submitLimitOrder,
     onClose,
-    currentTradeDirection,
-    positionSize,
-    limitOrders,
   ])
 
   const handleRemoveStopLoss = () => {
@@ -216,15 +254,7 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
                 isUSD
               />
               <div className='flex flex-row flex-1 py-3 pl-3 pr-2 mt-2 border rounded border-white/20 bg-white/5'>
-                <Text
-                  className={
-                    stopLossPercentage.isZero()
-                      ? 'text-white'
-                      : stopLossPercentage.isNegative()
-                        ? 'text-error'
-                        : 'text-success'
-                  }
-                >
+                <Text className={getPercentageTextClass(stopLossPercentage)}>
                   {formatPercent(stopLossPercentage.toNumber())}
                 </Text>
               </div>
@@ -277,15 +307,7 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
                 isUSD
               />
               <div className='flex flex-row flex-1 py-3 pl-3 pr-2 mt-2 border rounded border-white/20 bg-white/5'>
-                <Text
-                  className={
-                    takeProfitPercentage.isZero()
-                      ? 'text-white'
-                      : takeProfitPercentage.isNegative()
-                        ? 'text-error'
-                        : 'text-success'
-                  }
-                >
+                <Text className={getPercentageTextClass(takeProfitPercentage)}>
                   {formatPercent(takeProfitPercentage.toNumber())}
                 </Text>
               </div>
