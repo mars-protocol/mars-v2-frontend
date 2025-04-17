@@ -23,6 +23,7 @@ export default function Asset(props: Props) {
       <AssetImage asset={asset} className='w-4 h-4' />
       <Text size='xs' className='text-white'>
         {asset.symbol}
+        {type === 'bridge' && <span className='ml-1 text-white/50'>(bridge)</span>}
         {type === 'borrow' && <span className='ml-1 text-loss'>(debt)</span>}
         {type === 'lend' && <span className='ml-1 text-profit'>(lent)</span>}
         {type === 'vault' && <span className='ml-1 text-profit'>(farm)</span>}

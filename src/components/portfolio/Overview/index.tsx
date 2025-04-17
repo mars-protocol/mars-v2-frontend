@@ -1,13 +1,9 @@
-import { useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 
-import AccountCreateFirst from 'components/account/AccountCreateFirst'
 import ConnectInfo from 'components/portfolio/Overview/ConnectInfo'
-import WalletBridges from 'components/Wallet/WalletBridges'
 import useAccountIds from 'hooks/accounts/useAccountIds'
-import useHasFundsForTxFee from 'hooks/wallet/useHasFundsForTxFee'
 import useStore from 'store'
-import AccountsOverview from './AccountsOverview'
+import AccountsOverview from 'components/portfolio/Overview/AccountsOverview'
 
 export default function AccountSummary() {
   const { address: urlAddress } = useParams()

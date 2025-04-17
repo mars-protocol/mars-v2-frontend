@@ -13,12 +13,10 @@ import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
 import FeeTag from 'components/managedVaults/community/vaultDetails/profileVaultCard/FeeTag'
 import InfoRow from 'components/managedVaults/community/vaultDetails/profileVaultCard/InfoRow'
-import useVaultAssets from 'hooks/assets/useVaultAssets'
 import useManagedVaultOwnerInfo from 'hooks/managedVaults/useManagedVaultOwnerInfo'
 import moment from 'moment'
 import Image from 'next/image'
 import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from 'utils/array'
 import { formatLockupPeriod } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
@@ -26,12 +24,11 @@ interface Props {
   details: ExtendedManagedVaultDetails
   wallet?: string
   isOwner: boolean
+  depositAsset: Asset
 }
 
 export default function ProfileVaultCard(props: Props) {
-  const { details, isOwner, wallet } = props
-  const vaultAssets = useVaultAssets()
-  const depositAsset = vaultAssets.find(byDenom(details.base_tokens_denom)) as Asset
+  const { details, isOwner, wallet, depositAsset } = props
   const { vaultOwnerInfo, isLoading } = useManagedVaultOwnerInfo(wallet)
 
   return (
@@ -116,12 +113,22 @@ export default function ProfileVaultCard(props: Props) {
             </div>
           </InfoRow>
           <InfoRow label='Withdrawal Freeze Period'>
-            <Text size='sm'>
-              {formatLockupPeriod(
-                moment.duration(details.cooldown_period, 'seconds').as('days'),
-                'days',
-              )}
-            </Text>
+            {/* TODO: temporary UI for freeze period in minutes */}
+            {moment.duration(details.cooldown_period, 'seconds').as('days') < 1 ? (
+              <Text size='sm'>
+                {formatLockupPeriod(
+                  moment.duration(details.cooldown_period, 'seconds').as('minutes'),
+                  'minutes',
+                )}
+              </Text>
+            ) : (
+              <Text size='sm'>
+                {formatLockupPeriod(
+                  moment.duration(details.cooldown_period, 'seconds').as('days'),
+                  'days',
+                )}
+              </Text>
+            )}
           </InfoRow>
 
           <Divider />

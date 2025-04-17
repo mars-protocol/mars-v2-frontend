@@ -13,6 +13,8 @@ export default function useWalletBalances(address?: string) {
     () => getWalletBalances(chainConfig, address!),
     {
       isPaused: () => !address,
+      refreshInterval: 5000,
+      revalidateOnFocus: true,
       fallbackData: [],
     },
   )

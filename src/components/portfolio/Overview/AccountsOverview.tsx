@@ -9,7 +9,6 @@ import { PlusCircled } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import PortfolioCard from 'components/portfolio/Card'
 import ConnectInfo from 'components/portfolio/Overview/ConnectInfo'
-import WalletBridges from 'components/Wallet/WalletBridges'
 import useHasFundsForTxFee from 'hooks/wallet/useHasFundsForTxFee'
 import useStore from 'store'
 
@@ -29,7 +28,7 @@ export default function AccountsOverview(props: Props) {
 
   const handleCreateAccountClick = useCallback(() => {
     if (!hasFundsForTxFee) {
-      useStore.setState({ focusComponent: { component: <WalletBridges /> } })
+      useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
       return
     }
 
@@ -65,6 +64,7 @@ export default function AccountsOverview(props: Props) {
   let title = 'Credit Accounts'
   if (kind === 'high_levered_strategy') title = 'High Leverage Strategy Accounts'
   if (kind === 'fund_manager') title = 'Vault Accounts'
+  if (!accountIds || accountIds.length === 0) return null
 
   return (
     <div className='w-full mt-4'>

@@ -2,7 +2,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
 
 export const FEE_META = {
-  accessorKey: 'fee',
+  accessorKey: 'fee_rate',
   header: 'Fee',
   meta: { className: 'w-25' },
 }

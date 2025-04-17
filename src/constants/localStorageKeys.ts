@@ -33,4 +33,5 @@ export enum LocalStorageKeys {
   VAULT_DEPOSIT_WARNING = 'vaultDepositWarning',
   VAULT_PAGE_WARNING = 'vaultPageWarning',
   VAULT_COMMUNITY_INFORMATION = 'vaultCommunityInformation',
+  MARS_FEE_TOKEN = 'marsFeeToken',
 }

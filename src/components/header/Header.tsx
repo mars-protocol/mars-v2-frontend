@@ -16,6 +16,7 @@ import RewardsCenter from 'components/header/RewardsCenter'
 import Wallet from 'components/Wallet'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import useInitFeeToken from 'hooks/wallet/useInitFeeToken'
 import useStore from 'store'
 import { DocURL } from 'types/enums'
 
@@ -53,9 +54,7 @@ const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
     label: 'Earn',
   },
   { pages: ['borrow'], label: 'Borrow' },
-  ...(chainConfig.managedVaults
-    ? [{ pages: ['vaults', 'vaults-community'] as Page[], label: 'Vaults' }]
-    : []),
+  ...(chainConfig.managedVaults ? [{ pages: ['vaults'] as Page[], label: 'Vaults' }] : []),
   ...(chainConfig.hls
     ? [{ pages: ['hls-staking', 'hls-farm'] as Page[], label: 'High Leverage' }]
     : []),
@@ -81,6 +80,7 @@ export default function Header() {
   const accountId = useAccountId()
   const isV1 = useStore((s) => s.isV1)
   const showAccountMenu = address && !isHls && !isVaults && !isMobile && !isV1
+  const feeTokenInitiated = useInitFeeToken()
 
   function handleCloseFocusMode() {
     if (focusComponent && focusComponent.onClose) focusComponent.onClose()
@@ -128,7 +128,7 @@ export default function Header() {
               <div className='flex h-5 w-13' />
               {address && (
                 <div className='flex gap-4'>
-                  <Wallet />
+                  <Wallet initiated={feeTokenInitiated} />
                   {!isMobile && <ChainSelect />}
                 </div>
               )}
@@ -142,7 +142,7 @@ export default function Header() {
               {showStaleOracle && <OracleResyncInfo />}
               {showRewardsCenter && <RewardsCenter className='hidden lg:flex' />}
               {showAccountMenu && <AccountMenu className='hidden md:flex' />}
-              <Wallet />
+              <Wallet initiated={feeTokenInitiated} />
               {!isMobile && <ChainSelect className='hidden md:flex' />}
               {isMobile && <MobileNavigationToggle className='md:hidden' />}
               {!isMobile && <Settings className='hidden md:flex' />}

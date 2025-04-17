@@ -9,7 +9,6 @@ import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useMarkets from 'hooks/markets/useMarkets'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from 'utils/array'
 import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
@@ -56,18 +55,35 @@ export default function AssetsSelect(props: Props) {
     { id: isBorrow ? 'asset.borrowRate' : 'value', desc: !isBorrow },
   ])
 
+  const defaultSelected = useMemo(() => {
+    return assets.reduce(
+      (acc, asset, index) => {
+        const assetIdentifier = asset.chainName ? `${asset.denom}:${asset.chainName}` : asset.denom
+
+        if (selectedDenoms?.includes(assetIdentifier)) {
+          acc[index] = true
+        }
+        return acc
+      },
+      {} as { [key: number]: boolean },
+    )
+  }, [selectedDenoms, assets])
+
   const createTableData = useCallback(
     (assets: Asset[]): AssetTableRow[] => {
       return assets.map((asset) => {
-        const balancesForAsset = balances.find(byDenom(asset.denom))
-        const coin = BNCoin.fromDenomAndBigNumber(asset.denom, BN(balancesForAsset?.amount ?? '0'))
+        const balanceData = balances.find(
+          (balance) => balance.denom === asset.denom && balance.chainName === asset.chainName,
+        ) || { amount: '0', chainName: '' }
+        const coin = BNCoin.fromDenomAndBigNumber(asset.denom, BN(balanceData.amount))
         const value = getCoinValue(coin, assets)
         asset.campaigns = isBorrow ? [] : asset.campaigns
         return {
           asset,
-          balance: balancesForAsset?.amount ?? '0',
+          balance: balanceData.amount,
           value,
           market: markets.find((market) => market.asset.denom === asset.denom),
+          chainName: balanceData.chainName || '',
         }
       })
     },
@@ -88,74 +104,61 @@ export default function AssetsSelect(props: Props) {
     return { whitelistedData, nonCollateralData }
   }, [assets, nonCollateralTableAssets, filteredWhitelistedAsset, balances, createTableData])
 
-  const [initialSelected, initialNonCollateralSelected] = useMemo(() => {
-    const selectionState = (
-      selectedDenoms: string[],
-      tableData: AssetTableRow[],
-    ): RowSelectionState => {
-      const selectionState = {} as RowSelectionState
-      tableData.forEach((row, index) => {
-        selectionState[index.toString()] = !!selectedDenoms.includes(row.asset.denom)
-      })
-      return selectionState
-    }
-
-    return [
-      selectionState(
-        selectedDenoms,
-        isAssetTableRowArray(tableData) ? tableData : tableData.whitelistedData,
-      ),
-      selectionState(
-        selectedDenoms,
-        isAssetTableRowArray(tableData) ? [] : tableData.nonCollateralData,
-      ),
-    ]
-  }, [selectedDenoms, tableData])
-
-  const [whitelistedSelected, setWhitelistedSelected] = useState<RowSelectionState>(initialSelected)
+  const [whitelistedSelected, setWhitelistedSelected] = useState<RowSelectionState>(defaultSelected)
   const [nonCollateralSelected, setNonCollateralSelected] = useState<RowSelectionState>(
-    initialNonCollateralSelected,
+    nonCollateralTableAssets?.reduce((acc, _, index) => {
+      const assetIdentifier = nonCollateralTableAssets[index].chainName
+        ? `${nonCollateralTableAssets[index].denom}:${nonCollateralTableAssets[index].chainName}`
+        : nonCollateralTableAssets[index].denom
+
+      acc[index] = selectedDenoms?.includes(assetIdentifier) || false
+      return acc
+    }, {} as RowSelectionState) ?? {},
   )
 
   useEffect(() => {
     let newSelectedDenoms: string[]
 
     if (Array.isArray(tableData)) {
-      newSelectedDenoms = assets
-        .filter((asset) =>
-          tableData.some((row, idx) => row.asset.denom === asset.denom && whitelistedSelected[idx]),
-        )
-        .map((asset) => asset.denom)
-    } else {
-      const filteredWhitelistedAsset = assets.filter((asset) =>
-        tableData.whitelistedData.some(
-          (row, index) => row.asset.denom === asset.denom && whitelistedSelected[index],
-        ),
-      )
-      const nonCollateralAssets =
-        nonCollateralTableAssets?.filter((asset) =>
-          tableData.nonCollateralData.some(
-            (row, index) => row.asset.denom === asset.denom && nonCollateralSelected[index],
-          ),
-        ) || []
+      const selectedAssets = assets.filter((asset, idx) => whitelistedSelected[idx])
 
-      newSelectedDenoms = [...filteredWhitelistedAsset, ...nonCollateralAssets]
+      newSelectedDenoms = selectedAssets.map((asset) =>
+        asset.chainName ? `${asset.denom}:${asset.chainName}` : asset.denom,
+      )
+    } else {
+      const filteredWhitelistedAsset = assets.filter((asset, index) => whitelistedSelected[index])
+      const nonCollateralAssets =
+        nonCollateralTableAssets?.filter((_, index) => nonCollateralSelected[index]) || []
+
+      const allSelectedAssets = [...filteredWhitelistedAsset, ...nonCollateralAssets]
+
+      const selectedEvmAssets = allSelectedAssets.filter((asset) => asset.chainName)
+      if (selectedEvmAssets.length > 1) {
+        console.warn(
+          'Multiple EVM assets selected - this should not happen due to row-level control',
+        )
+      }
+
+      newSelectedDenoms = allSelectedAssets
         .sort((a, b) => a.symbol.localeCompare(b.symbol))
-        .map((asset) => asset.denom)
+        .map((asset) => (asset.chainName ? `${asset.denom}:${asset.chainName}` : asset.denom))
     }
+
     if (
       selectedDenoms.length === newSelectedDenoms.length &&
       newSelectedDenoms.every((denom) => selectedDenoms.includes(denom))
-    )
+    ) {
       return
+    }
+
     onChangeSelected(newSelectedDenoms)
   }, [
     whitelistedSelected,
     nonCollateralSelected,
     tableData,
+    assets,
     selectedDenoms,
     onChangeSelected,
-    assets,
     nonCollateralTableAssets,
   ])
 
@@ -232,12 +235,4 @@ export default function AssetsSelect(props: Props) {
       )}
     </>
   )
-}
-
-function isAssetTableRowArray(
-  tableData:
-    | AssetTableRow[]
-    | { whitelistedData: AssetTableRow[]; nonCollateralData: AssetTableRow[] },
-): tableData is AssetTableRow[] {
-  return !('whitelistedData' in tableData)
 }

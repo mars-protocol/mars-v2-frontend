@@ -9,6 +9,7 @@ import { BN } from 'utils/helpers'
 import PositionInfo from 'components/managedVaults/community/vaultDetails/common/PositionInfo'
 import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVaultConvertToTokens'
 import Loading from 'components/common/Loading'
+import AssetImage from 'components/common/assets/AssetImage'
 
 interface Props {
   details: ExtendedManagedVaultDetails
@@ -16,10 +17,11 @@ interface Props {
   isOwner: boolean
   onDeposit: () => void
   onWithdraw: () => void
+  depositAsset: Asset
 }
 
 export default function VaultPosition(props: Props) {
-  const { details, isOwner, vaultAddress, onDeposit, onWithdraw } = props
+  const { details, isOwner, vaultAddress, onDeposit, onWithdraw, depositAsset } = props
 
   const address = useStore((s) => s.address)
   const { amount: userVaultShares, calculateVaultShare } = useManagedVaultUserShares(
@@ -41,13 +43,16 @@ export default function VaultPosition(props: Props) {
         ) : !userVaultTokensAmount ? (
           <Text>No deposits</Text>
         ) : (
-          <DisplayCurrency
-            coin={BNCoin.fromDenomAndBigNumber(
-              details.base_tokens_denom,
-              BN(userVaultTokensAmount),
-            )}
-            className='text-2xl'
-          />
+          <div className='flex items-center gap-1'>
+            <AssetImage asset={depositAsset} className='w-5 h-5' />
+            <DisplayCurrency
+              coin={BNCoin.fromDenomAndBigNumber(
+                details.base_tokens_denom,
+                BN(userVaultTokensAmount),
+              )}
+              className='text-2xl'
+            />
+          </div>
         )
       }
       subtitle={
@@ -74,6 +79,7 @@ export default function VaultPosition(props: Props) {
         disabled: !userVaultTokensAmount,
       }}
       isOwner={isOwner}
+      type='depositPosition'
     />
   )
 }

@@ -8,7 +8,6 @@ import { BN } from 'utils/helpers'
 
 export const MY_POSITION_META = {
   header: 'My Position',
-  accessorKey: 'myPosition',
   meta: { className: 'min-w-30' },
 }
 

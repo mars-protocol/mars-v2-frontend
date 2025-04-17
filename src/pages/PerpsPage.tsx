@@ -1,21 +1,15 @@
 import { PerpsModule } from 'components/perps/Module/PerpsModule'
 import PerpsBanner from 'components/perps/PerpsBanner'
-import { PerpsTabs } from 'components/perps/PerpsTabs'
 import { PerpsPositions } from 'components/perps/PerpsPositions'
+import { PerpsTabs } from 'components/perps/PerpsTabs'
 import useAccountId from 'hooks/accounts/useAccountId'
-import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import usePerpsVault from 'hooks/perps/usePerpsVault'
 import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
 
 export default function PerpsPage() {
-  const { data: vault } = usePerpsVault()
-  const whitelistedAssets = useWhitelistedAssets()
-  const asset = whitelistedAssets?.find((asset) => asset.denom === vault?.denom)
-
   // If perps is disabled, redirect to trade page
   const chainConfig = useChainConfig()
   const navigate = useNavigate()
@@ -28,8 +22,6 @@ export default function PerpsPage() {
       navigate(getRoute(getPage('trade', chainConfig), searchParams, address, accountId))
     }
   }, [accountId, address, chainConfig, chainConfig.perps, navigate, searchParams])
-
-  if (!asset) return null
 
   return (
     <div className='flex flex-wrap w-full gap-4 md:grid md:grid-cols-chart'>
