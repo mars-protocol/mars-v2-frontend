@@ -45,7 +45,7 @@ export default function usePerpsModule(
   }, [account, allAssets])
 
   const previousTradeDirection = useMemo(
-    () => perpPosition?.tradeDirection || 'long',
+    () => perpPosition?.tradeDirection ?? 'long',
     [perpPosition?.tradeDirection],
   )
 

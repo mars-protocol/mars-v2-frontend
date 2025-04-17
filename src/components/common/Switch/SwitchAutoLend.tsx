@@ -19,12 +19,10 @@ export default function SwitchAutoLend(props: Props) {
   const handleToggle = useCallback(() => {
     if (isNewAccount) {
       setIsAutoLendEnabledGlobal(!isAutoLendEnabledGlobal)
+    } else if (!isAutoLendEnabledForCurrentAccount) {
+      enableAutoLend(accountId)
     } else {
-      if (!isAutoLendEnabledForCurrentAccount) {
-        enableAutoLend(accountId)
-      } else {
-        disableAutoLend(accountId)
-      }
+      disableAutoLend(accountId)
     }
   }, [
     isNewAccount,

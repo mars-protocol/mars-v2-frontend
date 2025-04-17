@@ -99,15 +99,26 @@ export const usePerpsCallbacks = ({
     [updateAmount, setStopPrice, setStopTradeDirection, setIsReduceOnly],
   )
 
+  const changeStopOrderAmount = useCallback(
+    (newAmount: BigNumber) => {
+      updateAmount(stopTradeDirection === 'short' ? newAmount.negated() : newAmount)
+    },
+    [stopTradeDirection, updateAmount],
+  )
+
+  const changeRegularOrderAmount = useCallback(
+    (newAmount: BigNumber) => {
+      updateAmount(tradeDirection === 'short' ? newAmount.negated() : newAmount)
+    },
+    [tradeDirection, updateAmount],
+  )
+
   const onChangeAmount = useCallback(
     (newAmount: BigNumber) => {
-      if (isStopOrder) {
-        updateAmount(stopTradeDirection === 'short' ? newAmount.negated() : newAmount)
-      } else {
-        updateAmount(tradeDirection === 'short' ? newAmount.negated() : newAmount)
-      }
+      const handler = isStopOrder ? changeStopOrderAmount : changeRegularOrderAmount
+      handler(newAmount)
     },
-    [isStopOrder, stopTradeDirection, tradeDirection, updateAmount],
+    [isStopOrder, changeStopOrderAmount, changeRegularOrderAmount],
   )
 
   const onChangeLeverage = useCallback(
@@ -146,6 +157,16 @@ export const usePerpsCallbacks = ({
     [setIsAmountInUSD, amount, assetPrice],
   )
 
+  const getDirectionalAmount = useCallback(
+    (amount: BigNumber) => {
+      if (isStopOrder) {
+        return stopTradeDirection === 'long' ? amount : amount.negated()
+      }
+      return tradeDirection === 'long' ? amount : amount.negated()
+    },
+    [isStopOrder, stopTradeDirection, tradeDirection],
+  )
+
   const handleAmountChange = useCallback(
     (newAmount: BigNumber) => {
       try {
@@ -160,17 +181,8 @@ export const usePerpsCallbacks = ({
             .dividedBy(assetPrice)
             .integerValue(BigNumber.ROUND_DOWN)
 
-          onChangeAmount(
-            isStopOrder
-              ? stopTradeDirection === 'long'
-                ? assetAmount
-                : assetAmount.negated()
-              : tradeDirection === 'long'
-                ? assetAmount
-                : assetAmount.negated(),
-          )
+          onChangeAmount(getDirectionalAmount(assetAmount))
         } else {
-          // Regular asset amount handling
           const integerAmount = newAmount.integerValue(BigNumber.ROUND_DOWN)
           onChangeAmount(integerAmount)
         }
@@ -179,15 +191,7 @@ export const usePerpsCallbacks = ({
         onChangeAmount(BN_ZERO)
       }
     },
-    [
-      isAmountInUSD,
-      assetPrice,
-      perpsAsset.decimals,
-      onChangeAmount,
-      tradeDirection,
-      isStopOrder,
-      stopTradeDirection,
-    ],
+    [isAmountInUSD, assetPrice, perpsAsset.decimals, onChangeAmount, getDirectionalAmount],
   )
 
   const convertToDisplayAmount = useCallback(

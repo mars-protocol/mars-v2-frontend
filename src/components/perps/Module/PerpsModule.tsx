@@ -339,7 +339,6 @@ export function PerpsModule() {
                 isUSD={isAmountInUSD}
                 assetSwitch={
                   <SwitchWithText
-                    name='amountType'
                     options={[
                       { value: 'asset', text: perpsAsset.symbol },
                       { value: 'usd', text: 'USD' },
@@ -356,7 +355,7 @@ export function PerpsModule() {
                 The entered amount exceeds the maximum allowed.
               </Callout>
             )}
-            {perpsAsset && perpsAsset.price && (
+            {perpsAsset?.price && (
               <div className='flex items-center gap-1 pb-2 text-xs text-white/60'>
                 <span>
                   Open Interest left ({isStopOrder ? stopTradeDirection : tradeDirection}):

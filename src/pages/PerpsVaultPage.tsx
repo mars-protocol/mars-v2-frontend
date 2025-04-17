@@ -16,7 +16,7 @@ import { getPage, getRoute } from 'utils/route'
 export default function PerpsVaultPage() {
   const chainConfig = useChainConfig()
   const account = useCurrentAccount()
-  const { data: depositedVaults } = useDepositedVaults(account?.id || '')
+  const { data: depositedVaults } = useDepositedVaults(account?.id ?? '')
 
   const activeVaults = useMemo(() => {
     return depositedVaults.filter((vault) => vault.status === VaultStatus.ACTIVE).length

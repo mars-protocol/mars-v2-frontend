@@ -2,7 +2,6 @@ import classNames from 'classnames'
 import { SortNone } from 'components/common/Icons'
 
 interface Props {
-  name: string
   options: SwitchOption[]
   selected: SwitchOption['value']
   onChange: (value: SwitchOption['value']) => void

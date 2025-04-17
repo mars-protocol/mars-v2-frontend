@@ -26,7 +26,7 @@ interface TooltipProps {
   asset: Asset
 }
 
-function LabelAndValue(props: { label: string; children: ReactNode; className?: string }) {
+function LabelAndValue(props: { label: string; children: ReactNode }) {
   const { label, children } = props
 
   return (

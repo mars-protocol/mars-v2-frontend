@@ -134,12 +134,10 @@ export const validateStopOrderPrice = (
         errorMessage: 'Stop price must be below current price for long positions',
       }
     }
-  } else {
-    if (formattedStopPrice.isGreaterThanOrEqualTo(formattedCurrentPrice)) {
-      return {
-        isValid: false,
-        errorMessage: 'Stop price must be above current price for short positions',
-      }
+  } else if (formattedStopPrice.isGreaterThanOrEqualTo(formattedCurrentPrice)) {
+    return {
+      isValid: false,
+      errorMessage: 'Stop price must be above current price for short positions',
     }
   }
 
