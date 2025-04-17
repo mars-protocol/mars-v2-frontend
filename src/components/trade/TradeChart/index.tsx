@@ -79,10 +79,10 @@ function isAutomaticAddedLine(shapeName: string, shape: any) {
   if (!shapeName || !shape.text || shapeName !== 'horizontal_line') return false
 
   return (
-    shape.text.includes('Limit') ||
-    shape.text.includes('Stop') ||
-    shape.text.includes('Entry') ||
-    shape.text.includes('Liquidation') ||
+    shape.text.includes('Limit') ??
+    shape.text.includes('Stop') ??
+    shape.text.includes('Entry') ??
+    shape.text.includes('Liquidation') ??
     shape.text.includes('Close')
   )
 }
@@ -380,9 +380,7 @@ export default function TradeChart(props: Props) {
     <Card
       title={
         <div className='flex flex-wrap items-center justify-between w-full p-4 bg-white/10'>
-          {props.title ? (
-            props.title
-          ) : (
+          {props.title ?? (
             <Text
               size='lg'
               className='flex items-center w-full font-semibold md:pb-0 md:flex-1 md:w-auto'
