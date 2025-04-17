@@ -285,7 +285,52 @@ export default function Manage(props: Props) {
     [handleCloseClick, handleFlipPosition, perpPosition, searchParams, setSearchParams],
   )
 
-  if (props.perpPosition.type === 'limit' || props.perpPosition.type === 'stop')
+  const hasChildOrders = () => {
+    if (!props.perpPosition.orderId || !limitOrders) return false
+
+    return limitOrders.some((order) =>
+      order.order.conditions.some(
+        (condition) =>
+          'trigger_order_executed' in condition &&
+          condition.trigger_order_executed.trigger_order_id === props.perpPosition.orderId,
+      ),
+    )
+  }
+
+  if (props.perpPosition.type === 'limit' || props.perpPosition.type === 'stop') {
+    if (hasChildOrders()) {
+      return (
+        <div className='flex justify-end gap-2'>
+          <ActionButton
+            text='View'
+            onClick={() => {
+              if (!props.perpPosition.orderId) return
+              useStore.setState({ triggerOrdersModal: props.perpPosition.orderId })
+            }}
+            className='min-w-[105px]'
+            color='primary'
+          />
+          <ActionButton
+            text='Cancel'
+            onClick={async () => {
+              if (!props.perpPosition.orderId || !currentAccount) return
+              setIsConfirming(true)
+              await cancelTriggerOrder({
+                accountId: currentAccount.id,
+                orderId: props.perpPosition.orderId,
+                autolend: isAutoLendEnabledForCurrentAccount,
+                baseDenom: perpPosition.baseDenom,
+              })
+              setIsConfirming(false)
+            }}
+            className='min-w-[105px]'
+            color='tertiary'
+            showProgressIndicator={isConfirming}
+          />
+        </div>
+      )
+    }
+
     return (
       <div className='flex justify-end'>
         <ActionButton
@@ -307,6 +352,7 @@ export default function Manage(props: Props) {
         />
       </div>
     )
+  }
 
   return (
     <div className='flex justify-end' onClick={(e) => e.stopPropagation()}>

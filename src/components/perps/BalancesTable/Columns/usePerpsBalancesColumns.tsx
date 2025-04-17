@@ -82,6 +82,7 @@ export default function usePerpsBalancesColumns(props: Props) {
       {
         ...PERP_NAME_META,
         cell: ({ row }) => <PerpName asset={row.original.asset} />,
+        meta: { className: 'min-w-32 w-32' },
       },
       {
         ...TRADE_DIRECTION_META,
@@ -98,6 +99,7 @@ export default function usePerpsBalancesColumns(props: Props) {
             />
           )
         },
+        meta: { className: 'min-w-28 w-28' },
       },
       {
         ...SIZE_META,
@@ -156,6 +158,7 @@ export default function usePerpsBalancesColumns(props: Props) {
       {
         ...MANAGE_META,
         cell: ({ row }) => <Manage perpPosition={row.original} />,
+        meta: { className: 'w-48 min-w-48' },
       },
     ],
     [isOrderTable],

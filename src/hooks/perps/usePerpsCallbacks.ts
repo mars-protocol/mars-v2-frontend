@@ -1,6 +1,7 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { BigNumber } from 'bignumber.js'
 import { BN_ZERO } from 'constants/math'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { OrderType } from 'types/enums'
 
 interface PerpsCallbacksProps {
@@ -13,13 +14,16 @@ interface PerpsCallbacksProps {
   setIsReduceOnly: (value: boolean) => void
   setIsMaxSelected: (value: boolean) => void
   updateLeverage: (leverage: number) => void
-  simulatePerps: (position: any, isAutoLend: boolean) => void
-  currentPerpPosition: any
+  simulatePerps: (position: PerpsPosition, isAutoLend: boolean) => void
+  currentPerpPosition?: PerpsPosition
   isAutoLendEnabledForCurrentAccount: boolean
   isStopOrder: boolean
   stopTradeDirection: TradeDirection
   tradeDirection: TradeDirection
   maxLeverage: number
+  perpsAsset: Asset
+  setIsAmountInUSD: (value: boolean) => void
+  isAmountInUSD: boolean
 }
 
 export const usePerpsCallbacks = ({
@@ -39,6 +43,9 @@ export const usePerpsCallbacks = ({
   stopTradeDirection,
   tradeDirection,
   maxLeverage,
+  perpsAsset,
+  setIsAmountInUSD,
+  isAmountInUSD,
 }: PerpsCallbacksProps) => {
   const reset = useCallback(() => {
     setLimitPrice(BN_ZERO)
@@ -64,7 +71,9 @@ export const usePerpsCallbacks = ({
       setStopPrice(BN_ZERO)
       setSelectedOrderType(orderType)
       setIsReduceOnly(false)
-      simulatePerps(currentPerpPosition, isAutoLendEnabledForCurrentAccount)
+      if (currentPerpPosition) {
+        simulatePerps(currentPerpPosition, isAutoLendEnabledForCurrentAccount)
+      }
     },
     [
       updateAmount,
@@ -111,12 +120,100 @@ export const usePerpsCallbacks = ({
     [updateLeverage, maxLeverage, setIsMaxSelected],
   )
 
+  const assetPrice = perpsAsset?.price?.amount || BN_ZERO
+
+  const handleAmountTypeChange = useCallback(
+    (value: string) => {
+      onChangeAmount(BN_ZERO)
+      setIsAmountInUSD(value === 'usd')
+    },
+    [onChangeAmount, setIsAmountInUSD],
+  )
+
+  const previousInputMode = useRef(isAmountInUSD)
+
+  useEffect(() => {
+    if (previousInputMode.current !== isAmountInUSD) {
+      onChangeAmount(BN_ZERO)
+      previousInputMode.current = isAmountInUSD
+    }
+  }, [isAmountInUSD, onChangeAmount])
+
+  const handleAmountChange = useCallback(
+    (newAmount: BigNumber) => {
+      try {
+        if (isAmountInUSD && !assetPrice.isZero()) {
+          if (newAmount.isNaN()) {
+            onChangeAmount(BN_ZERO)
+            return
+          }
+
+          const assetAmount = newAmount
+            .shiftedBy(perpsAsset.decimals - PRICE_ORACLE_DECIMALS)
+            .dividedBy(assetPrice)
+            .integerValue(BigNumber.ROUND_DOWN)
+          onChangeAmount(tradeDirection === 'long' ? assetAmount : assetAmount.negated())
+        } else {
+          if (newAmount.isNaN()) {
+            onChangeAmount(BN_ZERO)
+            return
+          }
+
+          const integerAmount = newAmount.integerValue(BigNumber.ROUND_DOWN)
+          onChangeAmount(integerAmount)
+        }
+      } catch (error) {
+        console.error('Error in handleAmountChange:', error)
+        onChangeAmount(BN_ZERO)
+      }
+    },
+    [isAmountInUSD, assetPrice, perpsAsset.decimals, onChangeAmount, tradeDirection],
+  )
+
+  const convertToDisplayAmount = useCallback(
+    (assetAmount: BigNumber) => {
+      try {
+        if (isAmountInUSD && !assetPrice.isZero()) {
+          return assetAmount
+            .abs()
+            .times(assetPrice)
+            .shiftedBy(-perpsAsset.decimals + PRICE_ORACLE_DECIMALS)
+        }
+        return assetAmount.abs()
+      } catch (error) {
+        console.error('Error in convertToDisplayAmount:', error)
+        return BN_ZERO
+      }
+    },
+    [isAmountInUSD, assetPrice, perpsAsset.decimals],
+  )
+
+  const convertToDisplayMaxAmount = useCallback(
+    (assetMaxAmount: BigNumber) => {
+      try {
+        if (isAmountInUSD && !assetPrice.isZero()) {
+          return assetMaxAmount
+            .times(assetPrice)
+            .shiftedBy(-perpsAsset.decimals + PRICE_ORACLE_DECIMALS)
+        }
+        return assetMaxAmount
+      } catch (error) {
+        console.error('Error in convertToDisplayMaxAmount:', error)
+        return BN_ZERO
+      }
+    },
+    [isAmountInUSD, assetPrice, perpsAsset.decimals],
+  )
+
   return {
     reset,
     onChangeTradeDirection,
     onChangeOrderType,
     onChangeStopTradeDirection,
-    onChangeAmount,
     onChangeLeverage,
+    handleAmountTypeChange,
+    handleAmountChange,
+    convertToDisplayAmount,
+    convertToDisplayMaxAmount,
   }
 }

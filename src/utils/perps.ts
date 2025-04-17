@@ -32,15 +32,18 @@ export const checkStopLossAndTakeProfit = (
   return { hasStopLoss, hasTakeProfit }
 }
 
-export const isStopOrder = (perpOrder: any, perpTrigger: any): PositionType => {
-  const isLong = BN(perpOrder.order_size).isGreaterThanOrEqualTo(0)
+export const isStopOrder = (
+  perpOrder: PerpOrderType,
+  perpTrigger: TriggerConditionType,
+): PositionType => {
+  const isLong = BN(perpOrder?.order_size ?? 0).isGreaterThanOrEqualTo(0)
 
   if (isLong) {
-    return perpTrigger.comparison !== 'less_than'
+    return perpTrigger?.comparison !== 'less_than'
       ? ('stop' as PositionType)
       : ('limit' as PositionType)
   }
-  return perpTrigger.comparison !== 'greater_than'
+  return perpTrigger?.comparison !== 'greater_than'
     ? ('stop' as PositionType)
     : ('limit' as PositionType)
 }
@@ -60,6 +63,11 @@ export const convertTriggerOrderResponseToPerpPosition = (
   const oraclePriceCondition = limitOrder.order.conditions.find(
     (condition) => 'oracle_price' in condition,
   ) as TriggerCondition | undefined
+
+  const triggerOrderCondition = limitOrder.order.conditions.find(
+    (condition) => 'trigger_order_executed' in condition,
+  )
+  const isChildOrder = !!triggerOrderCondition && 'trigger_order_executed' in triggerOrderCondition
 
   const perpTrigger = oraclePriceCondition?.oracle_price
 
@@ -84,6 +92,7 @@ export const convertTriggerOrderResponseToPerpPosition = (
     amount: amount.abs(),
     type: orderType,
     reduce_only: perpOrder.reduce_only ?? false,
+    isChildOrder,
     pnl: {
       net: BNCoin.fromCoin(limitOrder.order.keeper_fee).negated(),
       realized: {
