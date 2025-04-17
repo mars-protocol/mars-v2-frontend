@@ -118,8 +118,14 @@ export const usePerpsCallbacks = ({
       } else {
         setIsMaxSelected(false)
       }
+
+      if (isAmountInUSD) {
+        setTimeout(() => {
+          setIsAmountInUSD(true)
+        }, 0)
+      }
     },
-    [updateLeverage, maxLeverage, setIsMaxSelected],
+    [updateLeverage, maxLeverage, setIsMaxSelected, setIsAmountInUSD, isAmountInUSD],
   )
 
   const assetPrice = perpsAsset?.price?.amount || BN_ZERO
@@ -143,25 +149,29 @@ export const usePerpsCallbacks = ({
   const handleAmountChange = useCallback(
     (newAmount: BigNumber) => {
       try {
-        if (isAmountInUSD && !assetPrice.isZero()) {
-          if (newAmount.isNaN()) {
-            onChangeAmount(BN_ZERO)
-            return
-          }
+        if (newAmount.isNaN()) {
+          onChangeAmount(BN_ZERO)
+          return
+        }
 
+        if (isAmountInUSD && !assetPrice.isZero()) {
           const assetAmount = newAmount
             .shiftedBy(perpsAsset.decimals - PRICE_ORACLE_DECIMALS)
             .dividedBy(assetPrice)
             .integerValue(BigNumber.ROUND_DOWN)
-          onChangeAmount(tradeDirection === 'long' ? assetAmount : assetAmount.negated())
+
+          onChangeAmount(
+            isStopOrder
+              ? stopTradeDirection === 'long'
+                ? assetAmount
+                : assetAmount.negated()
+              : tradeDirection === 'long'
+                ? assetAmount
+                : assetAmount.negated(),
+          )
         } else {
-          if (newAmount.isNaN()) {
-            onChangeAmount(BN_ZERO)
-            return
-          }
-
+          // Regular asset amount handling
           const integerAmount = newAmount.integerValue(BigNumber.ROUND_DOWN)
-
           onChangeAmount(integerAmount)
         }
       } catch (error) {
@@ -169,17 +179,27 @@ export const usePerpsCallbacks = ({
         onChangeAmount(BN_ZERO)
       }
     },
-    [isAmountInUSD, assetPrice, perpsAsset.decimals, onChangeAmount, tradeDirection],
+    [
+      isAmountInUSD,
+      assetPrice,
+      perpsAsset.decimals,
+      onChangeAmount,
+      tradeDirection,
+      isStopOrder,
+      stopTradeDirection,
+    ],
   )
 
   const convertToDisplayAmount = useCallback(
     (assetAmount: BigNumber) => {
       try {
         if (isAmountInUSD && !assetPrice.isZero()) {
-          return assetAmount
+          const usdAmount = assetAmount
             .abs()
             .times(assetPrice)
             .shiftedBy(-perpsAsset.decimals + PRICE_ORACLE_DECIMALS)
+
+          return usdAmount
         }
 
         return assetAmount.abs()

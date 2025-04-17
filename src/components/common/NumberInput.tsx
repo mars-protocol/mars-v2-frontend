@@ -36,7 +36,7 @@ export default function NumberInput(props: Props) {
   const [isEditing, setIsEditing] = useState(false)
 
   useEffect(() => {
-    if (props.isUSD || isEditing) return
+    if (isEditing) return
 
     const newFormattedAmount = props.amount.isZero()
       ? ''
