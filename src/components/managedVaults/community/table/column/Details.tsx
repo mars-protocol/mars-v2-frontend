@@ -1,5 +1,5 @@
 import Button from 'components/common/Button'
-import { ArrowRight, LineChart, ThreeDots } from 'components/common/Icons'
+import { ArrowRight, Eye, LineChart } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -85,7 +85,7 @@ export default function Details(props: Props) {
       tooltipType: 'info',
     },
     {
-      icon: <ThreeDots />,
+      icon: <Eye />,
       text: 'Vault Info',
       onClick: handleVaultDetails,
     },

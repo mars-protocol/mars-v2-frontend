@@ -5,7 +5,7 @@ import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullP
 import Skeleton from 'components/account/AccountList/Skeleton'
 import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import Button from 'components/common/Button'
-import { ArrowDownLine, ArrowUpLine, ThreeDots, TrashBin } from 'components/common/Icons'
+import { ArrowDownLine, ArrowUpLine, Eye, TrashBin } from 'components/common/Icons'
 import SwitchAutoLend from 'components/common/Switch/SwitchAutoLend'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import { BN_ZERO } from 'constants/math'
@@ -110,7 +110,7 @@ export default function AccountStats(props: Props) {
             <Button
               className='w-full col-span-2'
               color='tertiary'
-              leftIcon={<ThreeDots />}
+              leftIcon={<Eye />}
               text='Vault Info'
               onClick={navigateToVaultDetails}
             />
