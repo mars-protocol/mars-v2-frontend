@@ -81,7 +81,7 @@ export default function Details(props: Props) {
       text: 'Manage Vault',
       onClick: handleTrade,
       disabledTooltip:
-        "Opens the trading interface with the vault's account pre-selected. Use this to manage your vault's assets.",
+        'This button redirects you to the Trade page and selects the vault account as your active account.',
       tooltipType: 'info',
     },
     {

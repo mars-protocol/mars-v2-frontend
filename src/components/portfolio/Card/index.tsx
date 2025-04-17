@@ -110,7 +110,6 @@ export default function PortfolioCard(props: Props) {
         accountId={props.accountId}
         isCurrent={props.accountId === currentAccountId}
         isHls={account.kind === 'high_levered_strategy'}
-        isVault={isVault}
         vaultTitle={vaultTitle}
       />
     </NavLink>

@@ -221,7 +221,7 @@ export default function ProfileVaultCard(props: Props) {
         {isOwner && (
           <Tooltip
             type='info'
-            content="Opens the trading interface with your vault's account pre-selected. Use this to manage your vault's assets."
+            content='This button redirects you to the Trade page and selects the vault account as your active account.'
             contentClassName='max-w-[350px]'
           >
             <Button onClick={handleManageVault} className='w-full'>

@@ -94,8 +94,7 @@ export default function VaultsCommunityIntro() {
           leftIcon={<PlusSquared />}
           onClick={(e) => {
             e.preventDefault()
-            // TODO: add docs URL
-            window.open(DocURL.DOCS_URL, '_blank')
+            window.open(DocURL.VAULT_TUTORIAL, '_blank')
           }}
           color='secondary'
         />
