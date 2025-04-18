@@ -56,7 +56,7 @@ export const PerpsOrderOptions = ({
         {reduceOnlyWarning && <Callout type={CalloutType.WARNING}>{reduceOnlyWarning}</Callout>}
         <div className={'flex w-full pt-4'}>
           <div className='flex flex-1'>
-            <Text className='mr-2 text-white' size='sm'>
+            <Text className='mr-2 text-white font-bold' size='xs'>
               Conditional Triggers
             </Text>
           </div>
@@ -64,33 +64,33 @@ export const PerpsOrderOptions = ({
           <div className='flex gap-4'>
             <div onClick={handleOpenConditionalTriggers}>
               <Text
-                size='sm'
+                size='xs'
                 className='text-[#ff5e57] hover:text-[#ff5e57]/80 hover:cursor-pointer'
               >
                 {hasConditionalTriggers ? 'Edit' : 'Add'}
               </Text>
             </div>
             {hasConditionalTriggers && (
-              <>
-                <div className='text-white/10'>|</div>
-                <div onClick={handleClearTriggers}>
-                  <Text size='sm' className='text-white/50 hover:text-white hover:cursor-pointer'>
-                    Clear
-                  </Text>
-                </div>
-              </>
+              <div onClick={handleClearTriggers}>
+                <Text
+                  size='xs'
+                  className='pl-4 border-l border-white/20 text-white/50 hover:text-white hover:cursor-pointer '
+                >
+                  Clear
+                </Text>
+              </div>
             )}
           </div>
         </div>
         {conditionalTriggers.sl && (
           <div className={'flex w-full pt-4'}>
             <div className='flex flex-1'>
-              <Text className='mr-2 text-white/50' size='sm'>
+              <Text className='mr-2 text-white/50' size='xs'>
                 Stop Loss
               </Text>
             </div>
 
-            <Text size='sm' className='text-white'>
+            <Text size='xs' className='text-white'>
               {formatValue(Number(conditionalTriggers.sl), {
                 maxDecimals: USD.decimals,
                 minDecimals: USD.decimals,
@@ -100,15 +100,19 @@ export const PerpsOrderOptions = ({
           </div>
         )}
         {conditionalTriggers.tp && (
-          <div className={'flex w-full '}>
+          <div className={'flex w-full pt-2'}>
             <div className='flex flex-1'>
-              <Text className='mr-2 text-white/50' size='sm'>
+              <Text className='mr-2 text-white/50' size='xs'>
                 Take Profit
               </Text>
             </div>
             {conditionalTriggers.tp && (
-              <Text size='sm' className='text-white'>
-                ${conditionalTriggers.tp}
+              <Text size='xs' className='text-white'>
+                {formatValue(Number(conditionalTriggers.tp), {
+                  maxDecimals: USD.decimals,
+                  minDecimals: USD.decimals,
+                  prefix: USD.symbol,
+                })}
               </Text>
             )}
           </div>
