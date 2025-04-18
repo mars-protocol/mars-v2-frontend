@@ -78,7 +78,7 @@ export function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) 
           details={vaultDetails}
           depositAsset={depositAsset}
           isOwner={isOwner}
-          wallet={vaultDetails.owner}
+          wallet={vaultDetails.ownerAddress}
         />
       </div>
       <FeeAction
