@@ -1304,6 +1304,7 @@ interface CommonSlice {
     tp: string | null
     sl: string | null
   }
+  perpsTradeDirection: TradeDirection
 }
 
 interface ErrorStore {

@@ -8,7 +8,6 @@ import Text from 'components/common/Text'
 import USD from 'constants/USDollar'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useAssets from 'hooks/assets/useAssets'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useKeeperFee from 'hooks/perps/useKeeperFee'
 import usePerpsConfig from 'hooks/perps/usePerpsConfig'
@@ -16,7 +15,7 @@ import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 import usePriceValidation from 'hooks/perps/usePriceValidation'
 import { useSubmitLimitOrder } from 'hooks/perps/useSubmitLimitOrder'
 import usePrice from 'hooks/prices/usePrice'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { formatPercent } from 'utils/formatters'
@@ -24,9 +23,11 @@ import BigNumber from 'bignumber.js'
 
 const perpsPercentage = (price: BigNumber, triggerPrice: BigNumber, isShort: boolean = false) => {
   if (!price || triggerPrice.isZero()) return BN_ZERO
+
   if (isShort) {
     return price.minus(triggerPrice).dividedBy(price).multipliedBy(100)
   }
+
   return triggerPrice.minus(price).dividedBy(price).multipliedBy(100)
 }
 
@@ -41,13 +42,18 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
 
   const modal = useStore((s) => s.addSLTPModal)
 
+  useEffect(() => {
+    setStopLossPrice(BN_ZERO)
+    setTakeProfitPrice(BN_ZERO)
+    setShowStopLoss(false)
+    setShowTakeProfit(false)
+  }, [modal])
+
   const [stopLossPrice, setStopLossPrice] = useState(BN_ZERO)
   const [takeProfitPrice, setTakeProfitPrice] = useState(BN_ZERO)
   const [showStopLoss, setShowStopLoss] = useState(false)
   const [showTakeProfit, setShowTakeProfit] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-
-  const { data: allAssets } = useAssets()
 
   const submitLimitOrder = useSubmitLimitOrder()
   const currentAccount = useCurrentAccount()
@@ -252,6 +258,9 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
             <Text size='lg' className='text-left'>
               Take Profit
             </Text>
+            <Text size='xs' className='text-left text-white/60'>
+              {isShort ? 'Trigger when price falls to:' : 'Trigger when price rises to:'}
+            </Text>
             <div className='flex items-center gap-2'>
               <AssetAmountInput
                 asset={{ ...USD, decimals: 0 }}
@@ -292,8 +301,8 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
         )}
         <Text size='sm' className='text-left text-white/60'>
           {currentTradeDirection === 'long'
-            ? `If ${assetName} increases to your specified price, your position will be closed to capture profits.`
-            : `If ${assetName} decreases to your specified price, your position will be closed to capture profits.`}
+            ? `If ${assetName} rises to your specified price, your position will be closed to capture profits.`
+            : `If ${assetName} falls to your specified price, your position will be closed to capture profits.`}
         </Text>
 
         <div className='flex items-center w-full gap-2'>
@@ -308,6 +317,9 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
           <>
             <Text size='lg' className='text-left'>
               Stop Loss
+            </Text>
+            <Text size='xs' className='text-left text-white/60'>
+              {isShort ? 'Trigger when price rises to:' : 'Trigger when price falls to:'}
             </Text>
             <div className='flex items-center gap-2'>
               <AssetAmountInput
