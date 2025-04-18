@@ -60,8 +60,6 @@ export default function AvailableCommunityVaults() {
   const hasNoVaults =
     !data.ownedVaults.length && !data.depositedVaults.length && !data.availableVaults.length
 
-  console.log('data in table', data)
-  console.log('data noVaultsAvailable', hasNoVaults)
   if (hasNoVaults) {
     return (
       <Text size='lg' className='text-center w-full p-8 text-white/60'>

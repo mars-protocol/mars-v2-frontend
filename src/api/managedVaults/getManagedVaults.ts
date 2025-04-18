@@ -24,7 +24,6 @@ export default async function getManagedVaults(chainConfig: ChainConfig, vaultAd
     if (!response.ok) return defaultReturn
     const data = await response.json()
 
-    console.log('datadatadata', data)
     return data as ManagedVaultsResponse
   } catch (error) {
     console.error('Could not fetch managed vaults.', error)

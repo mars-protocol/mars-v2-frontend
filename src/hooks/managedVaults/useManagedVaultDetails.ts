@@ -28,7 +28,7 @@ export function useManagedVaultDetails(vaultAddress?: string) {
     },
     {
       revalidateOnFocus: false,
-      refreshInterval: 10_000,
+      refreshInterval: 60_000,
       suspense: false,
     },
   )

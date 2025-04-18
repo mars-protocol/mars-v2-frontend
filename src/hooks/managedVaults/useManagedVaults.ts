@@ -39,7 +39,6 @@ export default function useManagedVaults() {
             } as ManagedVaultWithDetails
           }),
         )
-        console.log('vaultsWithDetails', vaultsWithDetails)
         return vaultsWithDetails
       } catch (error) {
         console.error('Error fetching vaults:', error)
