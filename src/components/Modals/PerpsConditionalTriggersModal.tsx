@@ -200,14 +200,7 @@ export default function PerpsConditionalTriggersModal() {
               action.execute_perp_order.denom === perpsAsset.perpsAsset.denom &&
               action.execute_perp_order.reduce_only,
           )
-        }) && (
-          <Callout type={CalloutType.WARNING} iconClassName='self-start'>
-            <Text size='sm' className='text-left'>
-              Your existing TP/SL triggers will be removed if you add a new TP/SL trigger on this
-              order.
-            </Text>
-          </Callout>
-        )}
+        })}
 
         <Button
           onClick={handleAddTriggers}
