@@ -180,10 +180,10 @@ export default function PerpsTriggerOrdersModal() {
   const hasTpOrSl = Boolean(tpOrder || slOrder)
   const hasBothOrders = Boolean(tpOrder && slOrder)
 
-  const sideValue = isLong ? 'Buy' : 'Sell'
-  const sideColor = isLong ? 'text-green-500' : 'text-red-500'
-  const childSideValue = isLong ? 'Sell' : 'Buy'
-  const childSideColor = isLong ? 'text-red-500' : 'text-green-500'
+  const sideValue = isLong ? 'Long' : 'Short'
+  const sideColor = isLong ? 'text-success' : 'text-error'
+  const childSideValue = !isLong ? 'Long' : 'Short'
+  const childSideColor = !isLong ? 'text-success' : 'text-error'
 
   const parentOrderId = parentOrder.order.order_id
   const tpOrderId = tpOrder?.order.order_id
@@ -194,7 +194,11 @@ export default function PerpsTriggerOrdersModal() {
     { label: string; value: string | ReactNode; valueColor?: string }
   > = {
     market: { label: 'Market', value: asset.symbol },
-    side: { label: 'Side', value: sideValue, valueColor: sideColor },
+    side: {
+      label: 'Side',
+      value: sideValue,
+      valueColor: sideColor,
+    },
     amount: { label: 'Amount', value: `${displayAmount.toString()} ${asset.symbol}` },
     reduceOnly: { label: 'Reduce Only', value: reduceOnly ? 'True' : 'False' },
   }
@@ -202,7 +206,7 @@ export default function PerpsTriggerOrdersModal() {
   if (parentOraclePriceCondition) {
     parentRows.limitPrice = {
       label: 'Limit Price',
-      value: parentPrice.toString(),
+      value: `$${parentPrice.toString()}`,
     }
   }
 
@@ -210,11 +214,14 @@ export default function PerpsTriggerOrdersModal() {
   const slPrice = findOraclePriceCondition(slOrder)
 
   const createOrderRows = (price: ReturnType<typeof BN>) => ({
-    side: { label: 'Side', value: childSideValue, valueColor: childSideColor },
+    side: {
+      label: 'Side',
+      value: childSideValue,
+      valueColor: childSideColor,
+    },
     amount: { label: 'Amount', value: `${displayAmount.toString()} ${asset.symbol}` },
-    stopPrice: { label: 'Stop Price', value: price.toString() },
+    stopPrice: { label: 'Stop Price', value: `$${price.toString()}` },
     trigger: { label: 'Trigger', value: 'Market Price' },
-    reduceOnly: { label: 'Reduce Only', value: 'True' },
   })
 
   const tpRows = createOrderRows(tpPrice)
