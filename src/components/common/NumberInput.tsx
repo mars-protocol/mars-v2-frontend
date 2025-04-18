@@ -18,7 +18,6 @@ interface Props {
   onBlur?: () => void
   onFocus?: () => void
   onRef?: (ref: React.RefObject<HTMLInputElement | null>) => void
-  isUSD?: boolean
 }
 
 export default function NumberInput({
@@ -34,7 +33,6 @@ export default function NumberInput({
   onBlur,
   onFocus,
   onRef,
-  isUSD,
 }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null)
   const cursorRef = useRef(0)
@@ -68,7 +66,7 @@ export default function NumberInput({
     if (formattedAmount !== newFormattedAmount) {
       setFormattedAmount(newFormattedAmount)
     }
-  }, [amount, asset, isUSD, maxDecimals, formattedAmount, isEditing])
+  }, [amount, asset, maxDecimals, formattedAmount, isEditing])
 
   useEffect(() => {
     if (!onRef) return

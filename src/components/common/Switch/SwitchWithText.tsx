@@ -25,14 +25,14 @@ export default function SwitchWithText(props: Props) {
           if (otherOption) props.onChange(otherOption.value)
         }}
         className={classNames(
-          'inline-flex items-center gap-0.5 px-1.5 py-0.5 text-xs rounded bg-white/5 border border-white/20 cursor-pointer hover:bg-white/10 transition-colors',
+          'inline-flex items-center gap-0.5 p-0 cursor-pointer group',
           props.className,
           props.disabled && 'opacity-50 cursor-not-allowed',
         )}
       >
         <span className='text-white'>{selectedOption?.text}</span>
-        <span className='w-4 text-white'>
-          <SortNone width={16} />
+        <span className='w-5 text-white group-hover:opacity-100 opacity-60'>
+          <SortNone />
         </span>
       </div>
     )
