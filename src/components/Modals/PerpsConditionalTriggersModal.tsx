@@ -16,8 +16,12 @@ import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 import BigNumber from 'bignumber.js'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 
-const perpsPercentage = (price: BigNumber, triggerPrice: BigNumber) => {
+const perpsPercentage = (price: BigNumber, triggerPrice: BigNumber, isShort: boolean = false) => {
   if (!price || triggerPrice.isZero()) return BN_ZERO
+  if (isShort) {
+    return price.minus(triggerPrice).dividedBy(price).multipliedBy(100)
+  }
+
   return triggerPrice.minus(price).dividedBy(price).multipliedBy(100)
 }
 
@@ -42,25 +46,22 @@ export default function PerpsConditionalTriggersModal() {
   const { data: limitOrders } = usePerpsLimitOrders()
   const currentPrice = usePrice(perpsAsset?.perpsAsset.denom ?? '')
 
+  const tradeDirection = useStore((s) => s.perpsTradeDirection)
+  const isShort = tradeDirection === 'short'
+
   const stopLossPercentage = useMemo(
-    () => perpsPercentage(currentPrice, stopLossPrice),
-    [currentPrice, stopLossPrice],
+    () => perpsPercentage(currentPrice, stopLossPrice, isShort),
+    [currentPrice, stopLossPrice, isShort],
   )
+
   const takeProfitPercentage = useMemo(
-    () => perpsPercentage(currentPrice, takeProfitPrice),
-    [currentPrice, takeProfitPrice],
+    () => perpsPercentage(currentPrice, takeProfitPrice, isShort),
+    [currentPrice, takeProfitPrice, isShort],
   )
 
   const onClose = useCallback(() => {
     useStore.setState({ conditionalTriggersModal: false })
   }, [])
-
-  const currentTradeDirection = useMemo(() => {
-    return (
-      currentAccount?.perps.find((p) => p.denom === perpsAsset?.perpsAsset.denom)?.tradeDirection ??
-      'long'
-    )
-  }, [currentAccount, perpsAsset])
 
   const assetSymbol = useMemo(
     () => perpsAsset?.perpsAsset.symbol || perpsAsset?.perpsAsset.denom || '',
@@ -70,16 +71,43 @@ export default function PerpsConditionalTriggersModal() {
   useEffect(() => {
     setTakeProfitPrice(BN_ZERO)
     setStopLossPrice(BN_ZERO)
-  }, [modal])
 
-  const { isValid, stopLossError, takeProfitError } = usePriceValidation({
+    useStore.setState({ perpsTradeDirection: tradeDirection })
+  }, [modal, tradeDirection])
+
+  const { stopLossError, takeProfitError } = usePriceValidation({
     currentPrice,
-    currentTradeDirection,
-    showStopLoss: true,
+    currentTradeDirection: tradeDirection,
+    showStopLoss: !stopLossPrice.isZero(),
     stopLossPrice,
-    showTakeProfit: true,
+    showTakeProfit: !takeProfitPrice.isZero(),
     takeProfitPrice,
   })
+
+  const validatePrices = useMemo(() => {
+    const errors = {
+      tp: '',
+      sl: '',
+    }
+
+    if (!takeProfitError && takeProfitPrice.isGreaterThan(0)) {
+      if (isShort && takeProfitPrice.isGreaterThanOrEqualTo(currentPrice)) {
+        errors.tp = `For short positions, Take Profit price (${takeProfitPrice}) must be lower than current price (${currentPrice.toFixed(4)}).`
+      } else if (!isShort && takeProfitPrice.isLessThanOrEqualTo(currentPrice)) {
+        errors.tp = `For long positions, Take Profit price (${takeProfitPrice}) must be higher than current price (${currentPrice.toFixed(4)}).`
+      }
+    }
+
+    if (!stopLossError && stopLossPrice.isGreaterThan(0)) {
+      if (isShort && stopLossPrice.isLessThanOrEqualTo(currentPrice)) {
+        errors.sl = `For short positions, Stop Loss price (${stopLossPrice}) must be higher than current price (${currentPrice.toFixed(4)}).`
+      } else if (!isShort && stopLossPrice.isGreaterThanOrEqualTo(currentPrice)) {
+        errors.sl = `For long positions, Stop Loss price (${stopLossPrice}) must be lower than current price (${currentPrice.toFixed(4)}).`
+      }
+    }
+
+    return errors
+  }, [takeProfitPrice, stopLossPrice, currentPrice, isShort, takeProfitError, stopLossError])
 
   const handleAddTriggers = useCallback(async () => {
     if (!currentAccount || !perpsAsset) return
@@ -123,6 +151,9 @@ export default function PerpsConditionalTriggersModal() {
             Take Profit{' '}
             <span className='ml-2 text-xs px-2 py-0.5 bg-white/10 rounded'>{assetSymbol}</span>
           </Text>
+          <Text size='xs' className='text-left text-white/60'>
+            {isShort ? 'Trigger when price falls to:' : 'Trigger when price rises to:'}
+          </Text>
           {USD && (
             <div className='flex items-center gap-2'>
               <AssetAmountInput
@@ -144,6 +175,14 @@ export default function PerpsConditionalTriggersModal() {
               {takeProfitError}
             </Callout>
           )}
+          {!takeProfitError && validatePrices.tp && (
+            <Callout type={CalloutType.WARNING} className='mt-2 text-left'>
+              {validatePrices.tp}
+            </Callout>
+          )}
+          <Text size='xs' className='text-left text-white/60'>
+            Position will close at this price, capturing any profits.
+          </Text>
         </div>
 
         <div className='flex items-center w-full gap-4 my-2'>
@@ -158,6 +197,9 @@ export default function PerpsConditionalTriggersModal() {
           <Text size='lg' className='text-left'>
             Stop Loss{' '}
             <span className='ml-2 text-xs px-2 py-0.5 bg-white/10 rounded'>{assetSymbol}</span>
+          </Text>
+          <Text size='xs' className='text-left text-white/60'>
+            {isShort ? 'Trigger when price rises to:' : 'Trigger when price falls to:'}
           </Text>
           {USD && (
             <div className='flex items-center gap-2'>
@@ -180,6 +222,14 @@ export default function PerpsConditionalTriggersModal() {
               {stopLossError}
             </Callout>
           )}
+          {!stopLossError && validatePrices.sl && (
+            <Callout type={CalloutType.WARNING} className='mt-2 text-left'>
+              {validatePrices.sl}
+            </Callout>
+          )}
+          <Text size='xs' className='text-left text-white/60'>
+            Position will close at this price, limiting any losses.
+          </Text>
         </div>
 
         <Callout type={CalloutType.INFO} iconClassName='self-start'>
@@ -207,7 +257,14 @@ export default function PerpsConditionalTriggersModal() {
           text='Add Triggers'
           color='primary'
           className='w-full mt-4'
-          disabled={!isValid || isLoading}
+          disabled={
+            !!takeProfitError ||
+            !!stopLossError ||
+            !!validatePrices.tp ||
+            !!validatePrices.sl ||
+            (takeProfitPrice.isZero() && stopLossPrice.isZero()) ||
+            isLoading
+          }
           showProgressIndicator={isLoading}
         />
       </div>

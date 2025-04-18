@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js'
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { OrderType } from 'types/enums'
+import useStore from 'store'
 
 interface PerpsCallbacksProps {
   updateAmount: (amount: BigNumber) => void
@@ -62,6 +63,10 @@ export const usePerpsCallbacks = ({
       updateLeverage(0)
       setLimitPrice(BN_ZERO)
       setIsReduceOnly(false)
+      useStore.setState({
+        conditionalTriggerOrders: { sl: null, tp: null },
+        perpsTradeDirection: newTradeDirection,
+      })
     },
     [updateAmount, setLimitPrice, setTradeDirection, setIsReduceOnly, updateLeverage],
   )
@@ -73,6 +78,8 @@ export const usePerpsCallbacks = ({
       setStopPrice(BN_ZERO)
       setSelectedOrderType(orderType)
       setIsReduceOnly(false)
+      useStore.setState({ conditionalTriggerOrders: { sl: null, tp: null } })
+
       if (currentPerpPosition) {
         simulatePerps(currentPerpPosition, isAutoLendEnabledForCurrentAccount)
       }
@@ -95,6 +102,7 @@ export const usePerpsCallbacks = ({
       updateAmount(BN_ZERO)
       setStopPrice(BN_ZERO)
       setIsReduceOnly(false)
+      useStore.setState({ conditionalTriggerOrders: { sl: null, tp: null } })
     },
     [updateAmount, setStopPrice, setStopTradeDirection, setIsReduceOnly],
   )

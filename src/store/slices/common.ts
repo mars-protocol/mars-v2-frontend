@@ -29,5 +29,6 @@ export default function createCommonSlice(
       tp: null,
       sl: null,
     },
+    perpsTradeDirection: 'long',
   }
 }
