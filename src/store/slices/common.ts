@@ -25,5 +25,10 @@ export default function createCommonSlice(
     hlsBorrowAmount: null,
     errorStore: { apiError: null, nodeError: null },
     creditManagerConfig: null,
+    conditionalTriggerOrders: {
+      tp: null,
+      sl: null,
+    },
+    perpsTradeDirection: 'long',
   }
 }

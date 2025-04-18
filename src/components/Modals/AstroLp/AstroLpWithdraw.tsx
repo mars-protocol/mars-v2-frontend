@@ -28,7 +28,6 @@ interface Props {
     currentLpRewards: BNCoin[],
     toWallet?: boolean,
   ) => void
-  type: FarmModal['type']
 }
 
 export default function AstroLpWithdraw(props: Props) {

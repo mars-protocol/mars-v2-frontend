@@ -1,7 +1,9 @@
 import { useCallback } from 'react'
-import { BigNumber } from 'bignumber.js'
+import BigNumber from 'bignumber.js'
 import { BN_ZERO } from 'constants/math'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { OrderType } from 'types/enums'
+import useStore from 'store'
 
 interface PerpsCallbacksProps {
   updateAmount: (amount: BigNumber) => void
@@ -13,13 +15,17 @@ interface PerpsCallbacksProps {
   setIsReduceOnly: (value: boolean) => void
   setIsMaxSelected: (value: boolean) => void
   updateLeverage: (leverage: number) => void
-  simulatePerps: (position: any, isAutoLend: boolean) => void
-  currentPerpPosition: any
+  simulatePerps: (position: PerpsPosition, isAutoLend: boolean) => void
+  currentPerpPosition?: PerpsPosition
   isAutoLendEnabledForCurrentAccount: boolean
   isStopOrder: boolean
   stopTradeDirection: TradeDirection
   tradeDirection: TradeDirection
   maxLeverage: number
+  perpsAsset: Asset
+  setIsAmountInUSD: (value: boolean) => void
+  isAmountInUSD: boolean
+  amount: BigNumber
 }
 
 export const usePerpsCallbacks = ({
@@ -39,6 +45,10 @@ export const usePerpsCallbacks = ({
   stopTradeDirection,
   tradeDirection,
   maxLeverage,
+  perpsAsset,
+  setIsAmountInUSD,
+  isAmountInUSD,
+  amount,
 }: PerpsCallbacksProps) => {
   const reset = useCallback(() => {
     setLimitPrice(BN_ZERO)
@@ -53,6 +63,10 @@ export const usePerpsCallbacks = ({
       updateLeverage(0)
       setLimitPrice(BN_ZERO)
       setIsReduceOnly(false)
+      useStore.setState({
+        conditionalTriggerOrders: { sl: null, tp: null },
+        perpsTradeDirection: newTradeDirection,
+      })
     },
     [updateAmount, setLimitPrice, setTradeDirection, setIsReduceOnly, updateLeverage],
   )
@@ -64,7 +78,11 @@ export const usePerpsCallbacks = ({
       setStopPrice(BN_ZERO)
       setSelectedOrderType(orderType)
       setIsReduceOnly(false)
-      simulatePerps(currentPerpPosition, isAutoLendEnabledForCurrentAccount)
+      useStore.setState({ conditionalTriggerOrders: { sl: null, tp: null } })
+
+      if (currentPerpPosition) {
+        simulatePerps(currentPerpPosition, isAutoLendEnabledForCurrentAccount)
+      }
     },
     [
       updateAmount,
@@ -84,19 +102,31 @@ export const usePerpsCallbacks = ({
       updateAmount(BN_ZERO)
       setStopPrice(BN_ZERO)
       setIsReduceOnly(false)
+      useStore.setState({ conditionalTriggerOrders: { sl: null, tp: null } })
     },
     [updateAmount, setStopPrice, setStopTradeDirection, setIsReduceOnly],
   )
 
+  const changeStopOrderAmount = useCallback(
+    (newAmount: BigNumber) => {
+      updateAmount(stopTradeDirection === 'short' ? newAmount.negated() : newAmount)
+    },
+    [stopTradeDirection, updateAmount],
+  )
+
+  const changeRegularOrderAmount = useCallback(
+    (newAmount: BigNumber) => {
+      updateAmount(tradeDirection === 'short' ? newAmount.negated() : newAmount)
+    },
+    [tradeDirection, updateAmount],
+  )
+
   const onChangeAmount = useCallback(
     (newAmount: BigNumber) => {
-      if (isStopOrder) {
-        updateAmount(stopTradeDirection === 'short' ? newAmount.negated() : newAmount)
-      } else {
-        updateAmount(tradeDirection === 'short' ? newAmount.negated() : newAmount)
-      }
+      const handler = isStopOrder ? changeStopOrderAmount : changeRegularOrderAmount
+      handler(newAmount)
     },
-    [isStopOrder, stopTradeDirection, tradeDirection, updateAmount],
+    [isStopOrder, changeStopOrderAmount, changeRegularOrderAmount],
   )
 
   const onChangeLeverage = useCallback(
@@ -107,8 +137,108 @@ export const usePerpsCallbacks = ({
       } else {
         setIsMaxSelected(false)
       }
+
+      if (isAmountInUSD) {
+        setTimeout(() => {
+          setIsAmountInUSD(true)
+        }, 0)
+      }
     },
-    [updateLeverage, maxLeverage, setIsMaxSelected],
+    [updateLeverage, maxLeverage, setIsMaxSelected, setIsAmountInUSD, isAmountInUSD],
+  )
+
+  const assetPrice = perpsAsset?.price?.amount || BN_ZERO
+
+  const handleAmountTypeChange = useCallback(
+    (value: string) => {
+      const isChangingToUSD = value === 'usd'
+
+      const safeAmount = amount || BN_ZERO
+
+      if (safeAmount.isZero() || assetPrice.isZero()) {
+        setIsAmountInUSD(isChangingToUSD)
+        return
+      }
+
+      setIsAmountInUSD(isChangingToUSD)
+    },
+    [setIsAmountInUSD, amount, assetPrice],
+  )
+
+  const getDirectionalAmount = useCallback(
+    (amount: BigNumber) => {
+      if (isStopOrder) {
+        return stopTradeDirection === 'long' ? amount : amount.negated()
+      }
+      return tradeDirection === 'long' ? amount : amount.negated()
+    },
+    [isStopOrder, stopTradeDirection, tradeDirection],
+  )
+
+  const handleAmountChange = useCallback(
+    (newAmount: BigNumber) => {
+      try {
+        if (newAmount.isNaN()) {
+          onChangeAmount(BN_ZERO)
+          return
+        }
+
+        if (isAmountInUSD && !assetPrice.isZero()) {
+          const assetAmount = newAmount
+            .shiftedBy(perpsAsset.decimals - PRICE_ORACLE_DECIMALS)
+            .dividedBy(assetPrice)
+            .integerValue(BigNumber.ROUND_DOWN)
+
+          onChangeAmount(getDirectionalAmount(assetAmount))
+        } else {
+          const integerAmount = newAmount.integerValue(BigNumber.ROUND_DOWN)
+          onChangeAmount(integerAmount)
+        }
+      } catch (error) {
+        console.error('Error in handleAmountChange:', error)
+        onChangeAmount(BN_ZERO)
+      }
+    },
+    [isAmountInUSD, assetPrice, perpsAsset.decimals, onChangeAmount, getDirectionalAmount],
+  )
+
+  const convertToDisplayAmount = useCallback(
+    (assetAmount: BigNumber) => {
+      try {
+        if (isAmountInUSD && !assetPrice.isZero()) {
+          const usdAmount = assetAmount
+            .abs()
+            .times(assetPrice)
+            .shiftedBy(-perpsAsset.decimals + PRICE_ORACLE_DECIMALS)
+
+          return usdAmount
+        }
+
+        return assetAmount.abs()
+      } catch (error) {
+        console.error('Error in convertToDisplayAmount:', error)
+        return BN_ZERO
+      }
+    },
+    [isAmountInUSD, assetPrice, perpsAsset.decimals],
+  )
+
+  const convertToDisplayMaxAmount = useCallback(
+    (assetMaxAmount: BigNumber) => {
+      try {
+        if (isAmountInUSD && !assetPrice.isZero()) {
+          return assetMaxAmount
+            .times(assetPrice)
+            .shiftedBy(-perpsAsset.decimals + PRICE_ORACLE_DECIMALS)
+        }
+
+        return assetMaxAmount
+      } catch (error) {
+        console.error('Error in convertToDisplayMaxAmount:', error)
+        return BN_ZERO
+      }
+    },
+    [isAmountInUSD, assetPrice, perpsAsset.decimals],
   )
 
   return {
@@ -116,7 +246,10 @@ export const usePerpsCallbacks = ({
     onChangeTradeDirection,
     onChangeOrderType,
     onChangeStopTradeDirection,
-    onChangeAmount,
     onChangeLeverage,
+    handleAmountTypeChange,
+    handleAmountChange,
+    convertToDisplayAmount,
+    convertToDisplayMaxAmount,
   }
 }

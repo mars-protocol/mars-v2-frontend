@@ -22,16 +22,7 @@ export type ExecuteMsg =
       }
     }
   | {
-      init_asset: {
-        denom: string
-        params: InitOrUpdateAssetParams
-      }
-    }
-  | {
-      update_asset: {
-        denom: string
-        params: InitOrUpdateAssetParams
-      }
+      update_market_params: MarketParamsUpdate
     }
   | {
       deposit: {
@@ -88,9 +79,15 @@ export type OwnerUpdate =
       }
     }
   | 'clear_emergency_owner'
+export type MarketParamsUpdate = {
+  add_or_update: {
+    params: MarketParams
+  }
+}
 export type Decimal = string
 export type Uint128 = string
-export interface InitOrUpdateAssetParams {
+export interface MarketParams {
+  denom: string
   interest_rate_model?: InterestRateModel | null
   reserve_factor?: Decimal | null
 }

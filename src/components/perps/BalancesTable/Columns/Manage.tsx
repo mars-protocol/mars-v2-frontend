@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 
 import ActionButton from 'components/common/Button/ActionButton'
 import DropDownButton from 'components/common/Button/DropDownButton'
-import { ArrowRight, Cross, Edit, SwapIcon } from 'components/common/Icons'
+import { ArrowRight, Cross, Edit, Shield, SwapIcon } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import PerpsSlTpModal from 'components/Modals/PerpsSlTpModal'
 import ConfirmationSummary from 'components/perps/Module/ConfirmationSummary'
@@ -47,22 +47,11 @@ export default function Manage(props: Props) {
   const closePosition = useCallback(() => {
     if (!currentAccount || !limitOrders) return
 
-    const relevantOrderIds = limitOrders
-      .filter((order) =>
-        order.order.actions.some(
-          (action) =>
-            'execute_perp_order' in action &&
-            action.execute_perp_order.denom === perpPosition.asset.denom,
-        ),
-      )
-      .map((order) => order.order.order_id)
-
     closePerpPosition({
       accountId: currentAccount.id,
       coin: BNCoin.fromDenomAndBigNumber(perpPosition.asset.denom, perpPosition.amount.negated()),
       autolend: isAutoLendEnabledForCurrentAccount,
       baseDenom: perpPosition.baseDenom,
-      orderIds: relevantOrderIds,
     })
   }, [
     currentAccount,
@@ -71,8 +60,6 @@ export default function Manage(props: Props) {
     perpPosition,
     limitOrders,
   ])
-
-  const isPerpsSlTpModalOpen = useStore((s) => s.addSLTPModal)
 
   const handleCloseClick = useCallback(() => {
     if (!currentAccount) return
@@ -236,7 +223,15 @@ export default function Manage(props: Props) {
   const ITEMS: DropDownItem[] = useMemo(
     () => [
       ...(perpPosition.asset.isDeprecated
-        ? []
+        ? [
+            {
+              icon: <Shield />,
+              text: 'Add SL/TP',
+              onClick: () => {
+                useStore.setState({ addSLTPModal: true })
+              },
+            },
+          ]
         : [
             ...(searchParams.get(SearchParams.PERPS_MARKET) === perpPosition.asset.denom
               ? [
@@ -273,6 +268,13 @@ export default function Manage(props: Props) {
                 handleFlipPosition(newDirection)
               },
             },
+            {
+              icon: <Shield />,
+              text: 'Add SL/TP',
+              onClick: () => {
+                useStore.setState({ addSLTPModal: true })
+              },
+            },
           ]),
       {
         icon: <Cross width={16} />,
@@ -283,7 +285,52 @@ export default function Manage(props: Props) {
     [handleCloseClick, handleFlipPosition, perpPosition, searchParams, setSearchParams],
   )
 
-  if (props.perpPosition.type === 'limit' || props.perpPosition.type === 'stop')
+  const hasChildOrders = () => {
+    if (!props.perpPosition.orderId || !limitOrders) return false
+
+    return limitOrders.some((order) =>
+      order.order.conditions.some(
+        (condition) =>
+          'trigger_order_executed' in condition &&
+          condition.trigger_order_executed.trigger_order_id === props.perpPosition.orderId,
+      ),
+    )
+  }
+
+  if (props.perpPosition.type === 'limit' || props.perpPosition.type === 'stop') {
+    if (hasChildOrders()) {
+      return (
+        <div className='flex justify-end gap-2'>
+          <ActionButton
+            text='View'
+            onClick={() => {
+              if (!props.perpPosition.orderId) return
+              useStore.setState({ triggerOrdersModal: props.perpPosition.orderId })
+            }}
+            className='min-w-[105px]'
+            color='primary'
+          />
+          <ActionButton
+            text='Cancel'
+            onClick={async () => {
+              if (!props.perpPosition.orderId || !currentAccount) return
+              setIsConfirming(true)
+              await cancelTriggerOrder({
+                accountId: currentAccount.id,
+                orderId: props.perpPosition.orderId,
+                autolend: isAutoLendEnabledForCurrentAccount,
+                baseDenom: perpPosition.baseDenom,
+              })
+              setIsConfirming(false)
+            }}
+            className='min-w-[105px]'
+            color='tertiary'
+            showProgressIndicator={isConfirming}
+          />
+        </div>
+      )
+    }
+
     return (
       <div className='flex justify-end'>
         <ActionButton
@@ -305,10 +352,11 @@ export default function Manage(props: Props) {
         />
       </div>
     )
+  }
 
   return (
-    <div className='flex justify-end'>
-      {isPerpsSlTpModalOpen && <PerpsSlTpModal />}
+    <div className='flex justify-end' onClick={(e) => e.stopPropagation()}>
+      <PerpsSlTpModal parentPosition={perpPosition} />
       <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
     </div>
   )
