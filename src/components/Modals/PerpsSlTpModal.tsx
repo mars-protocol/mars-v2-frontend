@@ -20,13 +20,17 @@ import { useCallback, useMemo, useState } from 'react'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { formatPercent } from 'utils/formatters'
+import BigNumber from 'bignumber.js'
 
-const perpsPercentage = (price: BigNumber, triggerPrice: BigNumber) => {
+const perpsPercentage = (price: BigNumber, triggerPrice: BigNumber, isShort: boolean = false) => {
   if (!price || triggerPrice.isZero()) return BN_ZERO
+  if (isShort) {
+    return price.minus(triggerPrice).dividedBy(price).multipliedBy(100)
+  }
   return triggerPrice.minus(price).dividedBy(price).multipliedBy(100)
 }
 
-const getPercentageTextClass = (percentage: BigNumber) => {
+const getTextColorClass = (percentage: BigNumber) => {
   if (percentage.isZero()) return 'text-white'
   if (percentage.isNegative()) return 'text-error'
   return 'text-success'
@@ -56,13 +60,22 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
 
   const assetName = useMemo(() => perpsAsset?.symbol || 'the asset', [perpsAsset])
 
+  const currentTradeDirection = useMemo(() => {
+    return (
+      currentAccount?.perps.find((p) => p.denom === perpsAsset?.denom)?.tradeDirection ?? 'long'
+    )
+  }, [currentAccount, perpsAsset])
+
+  const isShort = useMemo(() => currentTradeDirection === 'short', [currentTradeDirection])
+
   const stopLossPercentage = useMemo(
-    () => perpsPercentage(currentPrice, stopLossPrice),
-    [currentPrice, stopLossPrice],
+    () => perpsPercentage(currentPrice, stopLossPrice, isShort),
+    [currentPrice, stopLossPrice, isShort],
   )
+
   const takeProfitPercentage = useMemo(
-    () => perpsPercentage(currentPrice, takeProfitPrice),
-    [currentPrice, takeProfitPrice],
+    () => perpsPercentage(currentPrice, takeProfitPrice, isShort),
+    [currentPrice, takeProfitPrice, isShort],
   )
 
   const feeToken = useMemo(
@@ -73,12 +86,6 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
   const onClose = useCallback(() => {
     useStore.setState({ addSLTPModal: false })
   }, [])
-
-  const currentTradeDirection = useMemo(() => {
-    return (
-      currentAccount?.perps.find((p) => p.denom === perpsAsset?.denom)?.tradeDirection ?? 'long'
-    )
-  }, [currentAccount, perpsAsset])
 
   const positionSize = useMemo(() => {
     return currentAccount?.perps.find((p) => p.denom === perpsAsset?.denom)?.amount ?? BN_ZERO
@@ -245,16 +252,19 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
             <Text size='lg' className='text-left'>
               Stop Loss
             </Text>
+            <Text size='xs' className='text-left text-white/60'>
+              {isShort ? 'Trigger when price goes above:' : 'Trigger when price goes below:'}
+            </Text>
             <div className='flex items-center gap-2'>
               <AssetAmountInput
-                asset={USD}
+                asset={{ ...USD, decimals: 0 }}
                 amount={stopLossPrice}
                 setAmount={setStopLossPrice}
                 disabled={false}
                 isUSD
               />
               <div className='flex flex-row flex-1 py-3 pl-3 pr-2 mt-2 border rounded border-white/20 bg-white/5'>
-                <Text className={getPercentageTextClass(stopLossPercentage)}>
+                <Text className={getTextColorClass(stopLossPercentage)}>
                   {formatPercent(stopLossPercentage.toNumber())}
                 </Text>
               </div>
@@ -284,7 +294,9 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
           />
         )}
         <Text size='sm' className='text-left text-white/60'>
-          {`If ${assetName} falls to your specified price, a market sell will be triggered to prevent any further losses.`}
+          {currentTradeDirection === 'long'
+            ? `If ${assetName} falls to your specified price, a market sell will be triggered to prevent any further losses.`
+            : `If ${assetName} rises to your specified price, a market buy will be triggered to prevent any further losses.`}
         </Text>
         <div className='flex items-center w-full gap-2'>
           <Divider className='w-full' />
@@ -298,16 +310,19 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
             <Text size='lg' className='text-left'>
               Take Profit
             </Text>
+            <Text size='xs' className='text-left text-white/60'>
+              {isShort ? 'Trigger when price goes below:' : 'Trigger when price goes above:'}
+            </Text>
             <div className='flex items-center gap-2'>
               <AssetAmountInput
-                asset={USD}
+                asset={{ ...USD, decimals: 0 }}
                 amount={takeProfitPrice}
                 setAmount={setTakeProfitPrice}
                 disabled={false}
                 isUSD
               />
               <div className='flex flex-row flex-1 py-3 pl-3 pr-2 mt-2 border rounded border-white/20 bg-white/5'>
-                <Text className={getPercentageTextClass(takeProfitPercentage)}>
+                <Text className={getTextColorClass(takeProfitPercentage)}>
                   {formatPercent(takeProfitPercentage.toNumber())}
                 </Text>
               </div>
@@ -337,17 +352,28 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
           />
         )}
         <Text size='sm' className='text-left text-white/60'>
-          {`If ${assetName} increases to your specified price, a market sell will be triggered to capture any
-          profits.`}
+          {currentTradeDirection === 'long'
+            ? `If ${assetName} increases to your specified price, a market sell will be triggered to capture any profits.`
+            : `If ${assetName} decreases to your specified price, a market buy will be triggered to capture any profits.`}
         </Text>
         <Divider />
         <Callout type={CalloutType.INFO} iconClassName='self-start'>
           <Text size='sm' className='text-left'>
             The prices listed here are 'Spot Price Triggers', which means they initiate your
             transaction. The actual 'Fill Price' at which your transaction is completed may vary due
-            to the Funding Rate. This could result in a better fill price if the funding rate is
-            favorable, or a less advantageous price if it is not. Always consider the potential
-            impact of the funding rate on the final price.
+            to the Funding Rate.
+            {currentTradeDirection === 'long' ? (
+              <span>
+                This could result in a better fill price if the funding rate is favorable, or a less
+                advantageous price if it is not.
+              </span>
+            ) : (
+              <span>
+                For short positions, a positive funding rate may result in a better fill price,
+                while a negative funding rate may result in a less advantageous price.
+              </span>
+            )}{' '}
+            Always consider the potential impact of the funding rate on the final price.
           </Text>
         </Callout>
         {limitOrders?.some((order) => {
