@@ -1,9 +1,11 @@
-import SwitchWithLabel from 'components/common/Switch/SwitchWithLabel'
 import { Callout, CalloutType } from 'components/common/Callout'
+import SwitchWithLabel from 'components/common/Switch/SwitchWithLabel'
 import Text from 'components/common/Text'
-import useStore from 'store'
-import { useCallback, useEffect, useMemo } from 'react'
+import USD from 'constants/USDollar'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
+import { useCallback, useEffect, useMemo } from 'react'
+import useStore from 'store'
+import { formatValue } from 'utils/formatters'
 
 type PerpsOrderOptionsProps = {
   isReduceOnly: boolean
@@ -61,7 +63,10 @@ export const PerpsOrderOptions = ({
 
           <div className='flex gap-4'>
             <div onClick={handleOpenConditionalTriggers}>
-              <Text size='sm' className='text-[#ff5e57] hover:text-[#ff5e57]/80'>
+              <Text
+                size='sm'
+                className='text-[#ff5e57] hover:text-[#ff5e57]/80 hover:cursor-pointer'
+              >
                 {hasConditionalTriggers ? 'Edit' : 'Add'}
               </Text>
             </div>
@@ -69,7 +74,7 @@ export const PerpsOrderOptions = ({
               <>
                 <div className='text-white/10'>|</div>
                 <div onClick={handleClearTriggers}>
-                  <Text size='sm' className='text-white/50 hover:text-white/70'>
+                  <Text size='sm' className='text-white/50 hover:text-white hover:cursor-pointer'>
                     Clear
                   </Text>
                 </div>
@@ -86,7 +91,11 @@ export const PerpsOrderOptions = ({
             </div>
 
             <Text size='sm' className='text-white'>
-              ${conditionalTriggers.sl}
+              {formatValue(Number(conditionalTriggers.sl), {
+                maxDecimals: USD.decimals,
+                minDecimals: USD.decimals,
+                prefix: USD.symbol,
+              })}
             </Text>
           </div>
         )}
