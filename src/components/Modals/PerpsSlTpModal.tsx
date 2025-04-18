@@ -5,20 +5,21 @@ import { Callout, CalloutType } from 'components/common/Callout'
 import Divider from 'components/common/Divider'
 import { TrashBin } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import USD from 'constants/USDollar'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAssets from 'hooks/assets/useAssets'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
+import useKeeperFee from 'hooks/perps/useKeeperFee'
 import usePerpsConfig from 'hooks/perps/usePerpsConfig'
+import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 import usePriceValidation from 'hooks/perps/usePriceValidation'
 import { useSubmitLimitOrder } from 'hooks/perps/useSubmitLimitOrder'
 import usePrice from 'hooks/prices/usePrice'
-import useKeeperFee from 'hooks/perps/useKeeperFee'
 import { useCallback, useMemo, useState } from 'react'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { formatPercent } from 'utils/formatters'
-import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 
 const perpsPercentage = (price: BigNumber, triggerPrice: BigNumber) => {
   if (!price || triggerPrice.isZero()) return BN_ZERO
@@ -43,7 +44,6 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
   const [isLoading, setIsLoading] = useState(false)
 
   const { data: allAssets } = useAssets()
-  const USD = allAssets.find(byDenom('usd'))
 
   const submitLimitOrder = useSubmitLimitOrder()
   const currentAccount = useCurrentAccount()
@@ -240,14 +240,14 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
       modalClassName='md:max-w-modal-xs'
     >
       <div className='flex flex-col gap-4 p-4'>
-        {showStopLoss && USD && (
+        {showStopLoss && (
           <>
             <Text size='lg' className='text-left'>
               Stop Loss
             </Text>
             <div className='flex items-center gap-2'>
               <AssetAmountInput
-                asset={{ ...USD, decimals: 0 }}
+                asset={USD}
                 amount={stopLossPrice}
                 setAmount={setStopLossPrice}
                 disabled={false}
@@ -300,7 +300,7 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
             </Text>
             <div className='flex items-center gap-2'>
               <AssetAmountInput
-                asset={{ ...USD, decimals: 0 }}
+                asset={USD}
                 amount={takeProfitPrice}
                 setAmount={setTakeProfitPrice}
                 disabled={false}
