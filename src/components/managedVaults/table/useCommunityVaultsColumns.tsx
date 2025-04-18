@@ -1,12 +1,10 @@
 import { ColumnDef, Row } from '@tanstack/react-table'
 import Apy, { APY_META } from 'components/earn/lend/Table/Columns/Apy'
-import Fee, { FEE_META } from 'components/managedVaults/common/table/columns/Fee'
-import Title, { TITLE_META } from 'components/managedVaults/common/table/columns/Title'
-import MyPosition, {
-  MY_POSITION_META,
-} from 'components/managedVaults/community/table/column/MyPosition'
-import TVL, { TVL_META } from 'components/managedVaults/community/table/column/TVL'
-import Details, { DETAILS_META } from 'components/managedVaults/community/table/column/Details'
+import Fee, { FEE_META } from 'components/managedVaults/table/column/Fee'
+import Title, { TITLE_META } from 'components/managedVaults/table/column/Title'
+import MyPosition, { MY_POSITION_META } from 'components/managedVaults/table/column/MyPosition'
+import TVL, { TVL_META } from 'components/managedVaults/table/column/TVL'
+import Details, { DETAILS_META } from 'components/managedVaults/table/column/Details'
 import { useMemo } from 'react'
 import { convertAprToApy } from 'utils/parsers'
 

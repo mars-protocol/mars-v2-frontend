@@ -4,7 +4,7 @@ import AccountPerpPositionTable from 'components/account/AccountPerpPositionTabl
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import HealthBar from 'components/account/Health/HealthBar'
 import Text from 'components/common/Text'
-import VaultStats from 'components/managedVaults/community/vaultDetails/common/VaultStats'
+import VaultStats from 'components/managedVaults/vaultDetails/common/VaultStats'
 import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import useAccount from 'hooks/accounts/useAccount'

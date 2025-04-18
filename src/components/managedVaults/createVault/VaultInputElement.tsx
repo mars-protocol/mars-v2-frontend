@@ -9,14 +9,12 @@ interface Props {
   value: string
   asset?: Asset
   suffix?: string | React.JSX.Element
-  // TODO: update TS once we know value
-  options?: Array<{ label: string; value: any }>
+  options?: Array<{ label: string; value: string }>
   maxLength?: number
   placeholder?: string
   label?: string
   required?: boolean
-  // update TS once we know value
-  onChange?: (value: any) => void
+  onChange?: (value: string) => void
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 

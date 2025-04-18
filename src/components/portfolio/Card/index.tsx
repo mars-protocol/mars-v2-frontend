@@ -17,7 +17,7 @@ import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { checkAccountKind } from 'utils/accounts'
 import { getRoute } from 'utils/route'
-import { VaultDetailsContent } from 'components/managedVaults/community/vaultDetails'
+import { VaultDetailsContent } from 'components/managedVaults/vaultDetails'
 
 interface Props {
   accountId: string

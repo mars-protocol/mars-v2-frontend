@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import UnlockTime, { UNLOCK_TIME_META } from 'components/earn/farm/common/Table/Columns/UnlockTime'
-import Timestamp from 'components/managedVaults/community/vaultDetails/table/columns/Timestamp'
+import Timestamp from 'components/managedVaults/vaultDetails/table/columns/Timestamp'
 import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'

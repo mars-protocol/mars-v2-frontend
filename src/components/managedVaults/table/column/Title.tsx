@@ -24,7 +24,13 @@ export default function Title(props: Props) {
     vaultDetails?.ownerAddress,
   )
 
-  if (isLoading || isDetailsLoading || isOwnerInfoLoading) return <Loading className='h-4 w-35' />
+  if (isLoading || isDetailsLoading || isOwnerInfoLoading)
+    return (
+      <div className='flex flex-col gap-2 ml-4'>
+        <Loading className='h-4 w-24' />
+        <Loading className='h-4 w-24' />
+      </div>
+    )
 
   return (
     <div className='flex items-center gap-2'>
