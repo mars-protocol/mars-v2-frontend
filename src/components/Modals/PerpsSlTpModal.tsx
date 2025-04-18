@@ -247,71 +247,10 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
       modalClassName='md:max-w-modal-xs'
     >
       <div className='flex flex-col gap-4 p-4'>
-        {showStopLoss && (
-          <>
-            <Text size='lg' className='text-left'>
-              Stop Loss
-            </Text>
-            <Text size='xs' className='text-left text-white/60'>
-              {isShort ? 'Trigger when price goes above:' : 'Trigger when price goes below:'}
-            </Text>
-            <div className='flex items-center gap-2'>
-              <AssetAmountInput
-                asset={{ ...USD, decimals: 0 }}
-                amount={stopLossPrice}
-                setAmount={setStopLossPrice}
-                disabled={false}
-                isUSD
-              />
-              <div className='flex flex-row flex-1 py-3 pl-3 pr-2 mt-2 border rounded border-white/20 bg-white/5'>
-                <Text className={getTextColorClass(stopLossPercentage)}>
-                  {formatPercent(stopLossPercentage.toNumber())}
-                </Text>
-              </div>
-            </div>
-            {stopLossError && (
-              <Callout type={CalloutType.WARNING} className='mt-2 text-left'>
-                {stopLossError}
-              </Callout>
-            )}
-            <Button
-              onClick={handleRemoveStopLoss}
-              text='Remove trigger'
-              color='secondary'
-              leftIcon={<TrashBin className='self-center w-4 h-4 text-error' />}
-              variant='transparent'
-              textClassNames='text-error items-center'
-              className='items-center self-start text-sm'
-            />
-          </>
-        )}
-        {!showStopLoss && (
-          <Button
-            onClick={() => setShowStopLoss(true)}
-            text='Add Stop Loss Trigger'
-            color='tertiary'
-            className='w-full'
-          />
-        )}
-        <Text size='sm' className='text-left text-white/60'>
-          {currentTradeDirection === 'long'
-            ? `If ${assetName} falls to your specified price, a market sell will be triggered to prevent any further losses.`
-            : `If ${assetName} rises to your specified price, a market buy will be triggered to prevent any further losses.`}
-        </Text>
-        <div className='flex items-center w-full gap-2'>
-          <Divider className='w-full' />
-          <Text size='sm' className='w-full px-2 text-center text-white/60'>
-            AND / OR
-          </Text>
-          <Divider className='w-full' />
-        </div>
         {showTakeProfit && USD && (
           <>
             <Text size='lg' className='text-left'>
               Take Profit
-            </Text>
-            <Text size='xs' className='text-left text-white/60'>
-              {isShort ? 'Trigger when price goes below:' : 'Trigger when price goes above:'}
             </Text>
             <div className='flex items-center gap-2'>
               <AssetAmountInput
@@ -353,9 +292,67 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
         )}
         <Text size='sm' className='text-left text-white/60'>
           {currentTradeDirection === 'long'
-            ? `If ${assetName} increases to your specified price, a market sell will be triggered to capture any profits.`
-            : `If ${assetName} decreases to your specified price, a market buy will be triggered to capture any profits.`}
+            ? `If ${assetName} increases to your specified price, your position will be closed to capture profits.`
+            : `If ${assetName} decreases to your specified price, your position will be closed to capture profits.`}
         </Text>
+
+        <div className='flex items-center w-full gap-2'>
+          <Divider className='w-full' />
+          <Text size='sm' className='w-full px-2 text-center text-white/60'>
+            AND / OR
+          </Text>
+          <Divider className='w-full' />
+        </div>
+
+        {showStopLoss && (
+          <>
+            <Text size='lg' className='text-left'>
+              Stop Loss
+            </Text>
+            <div className='flex items-center gap-2'>
+              <AssetAmountInput
+                asset={{ ...USD, decimals: 0 }}
+                amount={stopLossPrice}
+                setAmount={setStopLossPrice}
+                disabled={false}
+                isUSD
+              />
+              <div className='flex flex-row flex-1 py-3 pl-3 pr-2 mt-2 border rounded border-white/20 bg-white/5'>
+                <Text className={getTextColorClass(stopLossPercentage)}>
+                  {formatPercent(stopLossPercentage.toNumber())}
+                </Text>
+              </div>
+            </div>
+            {stopLossError && (
+              <Callout type={CalloutType.WARNING} className='mt-2 text-left'>
+                {stopLossError}
+              </Callout>
+            )}
+            <Button
+              onClick={handleRemoveStopLoss}
+              text='Remove trigger'
+              color='secondary'
+              leftIcon={<TrashBin className='self-center w-4 h-4 text-error' />}
+              variant='transparent'
+              textClassNames='text-error items-center'
+              className='items-center self-start text-sm'
+            />
+          </>
+        )}
+        {!showStopLoss && (
+          <Button
+            onClick={() => setShowStopLoss(true)}
+            text='Add Stop Loss Trigger'
+            color='tertiary'
+            className='w-full'
+          />
+        )}
+        <Text size='sm' className='text-left text-white/60'>
+          {currentTradeDirection === 'long'
+            ? `If ${assetName} falls to your specified price, your position will be closed to limit losses.`
+            : `If ${assetName} rises to your specified price, your position will be closed to limit losses.`}
+        </Text>
+
         <Divider />
         <Callout type={CalloutType.INFO} iconClassName='self-start'>
           <Text size='sm' className='text-left'>
