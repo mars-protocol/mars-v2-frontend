@@ -9,7 +9,7 @@ import useStore from 'store'
 
 interface Props {
   title: string
-  data: ManagedVaultsData[]
+  data: ManagedVaultWithDetails[]
   isLoading: boolean
   hideCard?: boolean
 }
@@ -57,9 +57,12 @@ export default function AvailableCommunityVaults() {
     )
   }
 
-  const noVaultsAvailable =
+  const hasNoVaults =
     !data.ownedVaults.length && !data.depositedVaults.length && !data.availableVaults.length
-  if (!isLoading && noVaultsAvailable) {
+
+  console.log('data in table', data)
+  console.log('data noVaultsAvailable', hasNoVaults)
+  if (hasNoVaults) {
     return (
       <Text size='lg' className='text-center w-full p-8 text-white/60'>
         No community vaults have been created yet

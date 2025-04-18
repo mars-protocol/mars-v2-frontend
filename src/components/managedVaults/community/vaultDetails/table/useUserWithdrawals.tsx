@@ -9,7 +9,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 
 interface Props {
   isLoading: boolean
-  details: ExtendedManagedVaultDetails
+  details: ManagedVaultsData
   depositAsset: Asset
 }
 

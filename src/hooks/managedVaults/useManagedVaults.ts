@@ -1,4 +1,4 @@
-import { getManagedVaultDetails, getManagedVaultOwner } from 'api/cosmwasm-client'
+import { getManagedVaultDetails, getManagedVaultOwnerAddress } from 'api/cosmwasm-client'
 import getManagedVaults from 'api/managedVaults/getManagedVaults'
 import { useManagedVaultDeposits } from 'hooks/managedVaults/useManagedVaultDeposits'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -26,28 +26,32 @@ export default function useManagedVaults() {
             const details = await getManagedVaultDetails(chainConfig, vault.vault_address)
             let owner = null
             if (address) {
-              owner = await getManagedVaultOwner(chainConfig, vault.vault_address)
+              owner = await getManagedVaultOwnerAddress(chainConfig, vault.vault_address)
             }
 
             return {
               ...vault,
-              ...details,
               base_tokens_denom: details.base_token,
               base_tokens_amount: details.total_base_tokens,
               vault_tokens_denom: details.vault_token,
               vault_tokens_amount: details.total_vault_tokens,
               isOwner: owner === address,
-            }
+            } as ManagedVaultWithDetails
           }),
         )
+        console.log('vaultsWithDetails', vaultsWithDetails)
         return vaultsWithDetails
       } catch (error) {
         console.error('Error fetching vaults:', error)
         return []
       }
     },
+    {
+      revalidateOnFocus: false,
+      refreshInterval: 60_000,
+      suspense: false,
+    },
   )
-
   const vaultDeposits = useManagedVaultDeposits(address, vaultsResponse ?? [])
   const result = useMemo(() => {
     if (!vaultsResponse) return FALLBACK_RESULT
@@ -56,12 +60,12 @@ export default function useManagedVaults() {
       ownedVaults: address ? vaultsResponse.filter((vault) => vault.isOwner) : [],
       depositedVaults: address
         ? vaultsResponse.filter(
-            (vault) => !vault.isOwner && vaultDeposits.get(vault.vault_token) === true,
+            (vault) => !vault.isOwner && vaultDeposits.get(vault.vault_tokens_denom) === true,
           )
         : [],
       availableVaults: address
         ? vaultsResponse.filter(
-            (vault) => !vault.isOwner && vaultDeposits.get(vault.vault_token) !== true,
+            (vault) => !vault.isOwner && vaultDeposits.get(vault.vault_tokens_denom) !== true,
           )
         : vaultsResponse,
     }

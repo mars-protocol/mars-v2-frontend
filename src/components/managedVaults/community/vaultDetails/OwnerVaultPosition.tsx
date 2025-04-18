@@ -9,7 +9,7 @@ import VaultPosition from 'components/managedVaults/community/vaultDetails/Vault
 import AssetImage from 'components/common/assets/AssetImage'
 
 interface Props {
-  vaultDetails: ExtendedManagedVaultDetails
+  vaultDetails: ManagedVaultsData
   isOwner: boolean
   handleFeeActionModal: (type: 'edit' | 'withdraw') => void
   handleActionModal: (type: 'deposit' | 'unlock') => void

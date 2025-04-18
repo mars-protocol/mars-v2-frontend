@@ -22,7 +22,7 @@ export const DETAILS_META = {
 
 interface Props {
   isLoading: boolean
-  vault: ManagedVaultsData
+  vault: ManagedVaultWithDetails
 }
 
 export default function Details(props: Props) {
@@ -42,8 +42,8 @@ export default function Details(props: Props) {
   }, [address, navigate, searchParams, vault.vault_address])
 
   const handleTrade = useCallback(() => {
-    navigate(getRoute(getPage('perps', chainConfig), searchParams, address, vault.vault_account_id))
-  }, [address, chainConfig, navigate, searchParams, vault.vault_account_id])
+    navigate(getRoute(getPage('perps', chainConfig), searchParams, address, vault.account_id))
+  }, [address, chainConfig, navigate, searchParams, vault.account_id])
 
   const handleOnClick = useCallback(() => {
     if (!showVaultWarning) {

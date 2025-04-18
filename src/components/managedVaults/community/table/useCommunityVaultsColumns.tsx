@@ -18,11 +18,11 @@ interface Props {
 export default function useCommunityVaultsColumns(props: Props) {
   const { isLoading, showPosition } = props
 
-  return useMemo<ColumnDef<ManagedVaultsData>[]>(() => {
+  return useMemo<ColumnDef<ManagedVaultWithDetails>[]>(() => {
     return [
       {
         ...TITLE_META,
-        cell: ({ row }: { row: Row<ManagedVaultsData> }) => (
+        cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => (
           <Title value={row.original} isLoading={isLoading} />
         ),
       },
@@ -30,7 +30,7 @@ export default function useCommunityVaultsColumns(props: Props) {
         ? [
             {
               ...MY_POSITION_META,
-              cell: ({ row }: { row: Row<ManagedVaultsData> }) => (
+              cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => (
                 <MyPosition vault={row.original} isLoading={isLoading} />
               ),
             },
@@ -38,14 +38,14 @@ export default function useCommunityVaultsColumns(props: Props) {
         : []),
       {
         ...TVL_META,
-        cell: ({ row }: { row: Row<ManagedVaultsData> }) => (
+        cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => (
           <TVL value={row.original} isLoading={isLoading} />
         ),
       },
       {
         ...APY_META,
         accessorKey: 'apr',
-        cell: ({ row }: { row: Row<ManagedVaultsData> }) => (
+        cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => (
           <Apy
             isLoading={isLoading}
             borrowEnabled={true}
@@ -55,13 +55,13 @@ export default function useCommunityVaultsColumns(props: Props) {
       },
       {
         ...FEE_META,
-        cell: ({ row }: { row: Row<ManagedVaultsData> }) => (
+        cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => (
           <Fee value={row.original.fee_rate} isLoading={isLoading} />
         ),
       },
       {
         ...DETAILS_META,
-        cell: ({ row }: { row: Row<ManagedVaultsData> }) => (
+        cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => (
           <Details isLoading={isLoading} vault={row.original} />
         ),
       },

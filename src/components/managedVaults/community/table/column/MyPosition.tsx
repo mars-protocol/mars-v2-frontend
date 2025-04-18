@@ -12,7 +12,7 @@ export const MY_POSITION_META = {
 }
 
 interface Props {
-  vault: ManagedVaultsData
+  vault: ManagedVaultWithDetails
   isLoading: boolean
 }
 

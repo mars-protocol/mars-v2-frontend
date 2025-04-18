@@ -27,7 +27,7 @@ import useStore from 'store'
 import { Tooltip } from 'components/common/Tooltip'
 
 interface Props {
-  details: ExtendedManagedVaultDetails
+  details: ManagedVaultsData
   wallet?: string
   isOwner: boolean
   depositAsset: Asset
@@ -94,7 +94,7 @@ export default function ProfileVaultCard(props: Props) {
         <div className='space-y-4'>
           <InfoRow label='APY'>
             <FormattedNumber
-              amount={details.metrics.apy || 0}
+              amount={details.apy || 0}
               options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
               className='text-sm'
             />

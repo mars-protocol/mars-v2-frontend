@@ -12,7 +12,7 @@ import Loading from 'components/common/Loading'
 import AssetImage from 'components/common/assets/AssetImage'
 
 interface Props {
-  details: ExtendedManagedVaultDetails
+  details: ManagedVaultsData
   vaultAddress: string
   isOwner: boolean
   onDeposit: () => void

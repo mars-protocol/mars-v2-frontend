@@ -18,7 +18,7 @@ import { useMemo } from 'react'
 import { useAccountSummaryStats } from 'hooks/accounts/useAccountSummaryStats'
 
 interface Props {
-  details: ExtendedManagedVaultDetails
+  details: ManagedVaultsData
 }
 
 export default function VaultSummary(props: Props) {

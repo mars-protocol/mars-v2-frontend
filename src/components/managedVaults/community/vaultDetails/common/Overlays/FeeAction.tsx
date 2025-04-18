@@ -21,7 +21,7 @@ interface Props {
   setShowFeeActionModal: (show: boolean) => void
   type: 'edit' | 'withdraw'
   vaultAddress: string
-  vaultDetails: ExtendedManagedVaultDetails
+  vaultDetails: ManagedVaultsData
   depositAsset: Asset
 }
 

@@ -25,7 +25,7 @@ import { useMemo } from 'react'
 import TablePagination from 'components/common/Table/TablePagination'
 
 interface Props {
-  details: ExtendedManagedVaultDetails
+  details: ManagedVaultsData
   isOwner?: boolean
   vaultAddress: string
 }

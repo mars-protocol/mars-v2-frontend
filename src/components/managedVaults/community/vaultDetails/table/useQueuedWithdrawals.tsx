@@ -10,7 +10,7 @@ import { BN } from 'utils/helpers'
 
 interface Props {
   isLoading: boolean
-  details: ExtendedManagedVaultDetails
+  details: ManagedVaultsData
   depositAsset: Asset
 }
 
