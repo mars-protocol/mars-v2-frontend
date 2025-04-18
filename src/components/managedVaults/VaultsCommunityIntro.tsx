@@ -94,7 +94,7 @@ export default function VaultsCommunityIntro() {
           leftIcon={<PlusSquared />}
           onClick={(e) => {
             e.preventDefault()
-            window.open(DocURL.VAULT_TUTORIAL, '_blank')
+            window.open(DocURL.VAULT_TUTORIAL_URL, '_blank')
           }}
           color='secondary'
         />

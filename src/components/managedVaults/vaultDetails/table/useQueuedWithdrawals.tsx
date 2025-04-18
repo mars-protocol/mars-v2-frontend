@@ -1,16 +1,16 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import TVL from 'components/earn/farm/common/Table/Columns/TVL'
-import Info, { INFO_META } from 'components/managedVaults/community/vaultDetails/table/columns/Info'
+import Info, { INFO_META } from 'components/managedVaults/vaultDetails/table/columns/Info'
 import Timestamp, {
   TIMESTAMP_META,
-} from 'components/managedVaults/community/vaultDetails/table/columns/Timestamp'
+} from 'components/managedVaults/vaultDetails/table/columns/Timestamp'
 import { useMemo } from 'react'
 import { BN } from 'utils/helpers'
 
 interface Props {
   isLoading: boolean
-  details: ExtendedManagedVaultDetails
+  details: ManagedVaultsData
   depositAsset: Asset
 }
 

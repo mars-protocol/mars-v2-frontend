@@ -1,15 +1,15 @@
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { AccountArrowDown, Edit } from 'components/common/Icons'
-import PositionInfo from 'components/managedVaults/community/vaultDetails/common/PositionInfo'
+import PositionInfo from 'components/managedVaults/vaultDetails/common/PositionInfo'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 import React from 'react'
-import VaultPosition from 'components/managedVaults/community/vaultDetails/VaultPosition'
+import VaultPosition from 'components/managedVaults/vaultDetails/VaultPosition'
 import AssetImage from 'components/common/assets/AssetImage'
 
 interface Props {
-  vaultDetails: ExtendedManagedVaultDetails
+  vaultDetails: ManagedVaultsData
   isOwner: boolean
   handleFeeActionModal: (type: 'edit' | 'withdraw') => void
   handleActionModal: (type: 'deposit' | 'unlock') => void

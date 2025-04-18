@@ -2,14 +2,14 @@ import { CardWithTabs } from 'components/common/Card/CardWithTabs'
 import { CircularProgress } from 'components/common/CircularProgress'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
-import useCommunityVaultsColumns from 'components/managedVaults/community/table/useCommunityVaultsColumns'
+import useCommunityVaultsColumns from 'components/managedVaults/table/useCommunityVaultsColumns'
 import useManagedVaults from 'hooks/managedVaults/useManagedVaults'
 import { useMemo } from 'react'
 import useStore from 'store'
 
 interface Props {
   title: string
-  data: ManagedVaultsData[]
+  data: ManagedVaultWithDetails[]
   isLoading: boolean
   hideCard?: boolean
 }
@@ -57,9 +57,10 @@ export default function AvailableCommunityVaults() {
     )
   }
 
-  const noVaultsAvailable =
+  const hasNoVaults =
     !data.ownedVaults.length && !data.depositedVaults.length && !data.availableVaults.length
-  if (!isLoading && noVaultsAvailable) {
+
+  if (hasNoVaults) {
     return (
       <Text size='lg' className='text-center w-full p-8 text-white/60'>
         No community vaults have been created yet

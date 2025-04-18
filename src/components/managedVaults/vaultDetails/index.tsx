@@ -1,14 +1,14 @@
-import FeeAction from 'components/managedVaults/community/vaultDetails/common/Overlays/FeeAction'
+import FeeAction from 'components/managedVaults/vaultDetails/common/Overlays/FeeAction'
 import NavigationBackButton from 'components/common/Button/NavigationBackButton'
-import ProfileVaultCard from 'components/managedVaults/community/vaultDetails/profileVaultCard/ProfileVaultCard'
-import OwnerVaultPosition from 'components/managedVaults/community/vaultDetails/OwnerVaultPosition'
+import ProfileVaultCard from 'components/managedVaults/vaultDetails/profileVaultCard/ProfileVaultCard'
+import OwnerVaultPosition from 'components/managedVaults/vaultDetails/OwnerVaultPosition'
 import Text from 'components/common/Text'
 import useToggle from 'hooks/common/useToggle'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
-import VaultPosition from 'components/managedVaults/community/vaultDetails/VaultPosition'
-import VaultAction from 'components/managedVaults/community/vaultDetails/common/Overlays/VaultAction'
-import VaultSummary from 'components/managedVaults/community/vaultDetails/VaultSummary'
-import Withdrawals from 'components/managedVaults/community/vaultDetails/Withdrawals'
+import VaultPosition from 'components/managedVaults/vaultDetails/VaultPosition'
+import VaultAction from 'components/managedVaults/vaultDetails/common/Overlays/VaultAction'
+import VaultSummary from 'components/managedVaults/vaultDetails/VaultSummary'
+import Withdrawals from 'components/managedVaults/vaultDetails/Withdrawals'
 import { CircularProgress } from 'components/common/CircularProgress'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 import { useParams } from 'react-router-dom'
@@ -78,7 +78,7 @@ export function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) 
           details={vaultDetails}
           depositAsset={depositAsset}
           isOwner={isOwner}
-          wallet={vaultDetails.owner}
+          wallet={vaultDetails.ownerAddress}
         />
       </div>
       <FeeAction

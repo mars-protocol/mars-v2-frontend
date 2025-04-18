@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import EscButton from 'components/common/Button/EscButton'
 import Overlay from 'components/common/Overlay'
-import PerformanceFee from 'components/managedVaults/community/createVault/PerformanceFee'
+import PerformanceFee from 'components/managedVaults/createVault/PerformanceFee'
 import Text from 'components/common/Text'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
@@ -21,7 +21,7 @@ interface Props {
   setShowFeeActionModal: (show: boolean) => void
   type: 'edit' | 'withdraw'
   vaultAddress: string
-  vaultDetails: ExtendedManagedVaultDetails
+  vaultDetails: ManagedVaultsData
   depositAsset: Asset
 }
 
@@ -40,6 +40,12 @@ export default function FeeAction(props: Props) {
   const handlePerformanceFeeAction = useStore((s) => s.handlePerformanceFeeAction)
 
   const isEdit = type === 'edit'
+
+  const lastWithdrawalTime = vaultDetails.performance_fee_state.last_withdrawal
+  const currentTime = Math.floor(new Date().getTime() / 1000)
+  const withdrawalInterval = vaultDetails.performance_fee_config.withdrawal_interval
+  const timeSinceLastWithdrawal = currentTime - lastWithdrawalTime
+  const cannotWithdraw = timeSinceLastWithdrawal <= withdrawalInterval
 
   const handleFeeAction = async () => {
     if (!vaultAddress) return
@@ -139,7 +145,14 @@ export default function FeeAction(props: Props) {
         <div className='flex flex-col gap-2'>
           {!isEdit && (
             <Callout type={CalloutType.INFO}>
-              Performance fees can only be withdrawn once every 30 days.
+              Performance fees can only be withdrawn once every{' '}
+              {vaultDetails.performance_fee_config.withdrawal_interval / 3600} hours.
+              {cannotWithdraw && (
+                <div className='mt-2'>
+                  Next withdrawal available in{' '}
+                  {Math.ceil((withdrawalInterval - timeSinceLastWithdrawal) / 3600)} hours.
+                </div>
+              )}
             </Callout>
           )}
           <Button
@@ -148,7 +161,7 @@ export default function FeeAction(props: Props) {
             size='md'
             className='w-full'
             text={isEdit ? 'Update Fees' : 'Withdraw'}
-            disabled={isTxPending}
+            disabled={isTxPending || cannotWithdraw}
             showProgressIndicator={isTxPending}
           />
         </div>

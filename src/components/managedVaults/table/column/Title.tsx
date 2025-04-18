@@ -11,7 +11,7 @@ export const TITLE_META = {
 }
 
 interface Props {
-  value: ManagedVaultsData
+  value: ManagedVaultWithDetails
   isLoading: boolean
 }
 
@@ -21,10 +21,16 @@ export default function Title(props: Props) {
     value.vault_address,
   )
   const { vaultOwnerInfo, isLoading: isOwnerInfoLoading } = useManagedVaultOwnerInfo(
-    vaultDetails?.owner,
+    vaultDetails?.ownerAddress,
   )
 
-  if (isLoading || isDetailsLoading || isOwnerInfoLoading) return <Loading className='h-4 w-35' />
+  if (isLoading || isDetailsLoading || isOwnerInfoLoading)
+    return (
+      <div className='flex flex-col gap-2 ml-4'>
+        <Loading className='h-4 w-24' />
+        <Loading className='h-4 w-24' />
+      </div>
+    )
 
   return (
     <div className='flex items-center gap-2'>
