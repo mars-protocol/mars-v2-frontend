@@ -5,6 +5,7 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import NumberInput from 'components/common/NumberInput'
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import USD from 'constants/USDollar'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatValue } from 'utils/formatters'
 
@@ -94,17 +95,16 @@ export default function AssetAmountInput(props: Props) {
             key={isUSD ? 'usd-input' : 'asset-input'}
             asset={asset}
             className='border-none bg-transparent outline-none flex-1 !text-left'
-            maxDecimals={isUSD ? 2 : asset.decimals}
+            maxDecimals={isUSD ? USD.decimals : asset.decimals}
             max={capMax ? max : undefined}
             disabled={disabled}
             onChange={setAmount}
             onFocus={onFocus}
             onBlur={onBlur}
-            isUSD={isUSD}
             amount={amount}
           />
           <div className='flex items-center'>
-            {assetSwitch ?? <span>{isUSD ? 'USD' : asset.symbol}</span>}
+            {assetSwitch ?? <span>{isUSD ? USD.symbol : asset.symbol}</span>}
           </div>
         </div>
         <div className='flex items-center'>
@@ -135,15 +135,14 @@ export default function AssetAmountInput(props: Props) {
                   </div>
                 )}
               </div>
-
               <div className='mt-2 text-xs text-white text-opacity-60'>
                 {isUSD ? (
                   <div>
                     {formatValue(Number(nativeAssetAmount.shiftedBy(-asset.decimals).toString()), {
                       abbreviated: false,
-                      maxDecimals: 6,
-                    })}{' '}
-                    {asset.symbol}
+                      maxDecimals: asset.decimals,
+                      suffix: ` ${asset.symbol}`,
+                    })}
                   </div>
                 ) : (
                   <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(asset.denom, amount)} />

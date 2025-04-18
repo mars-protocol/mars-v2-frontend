@@ -27,7 +27,7 @@ export default function TableSkeleton(props: Props) {
                     'align-center',
                   )}
                 >
-                  <span className='w-6 h-6 text-white'>
+                  <span className='w-6 h-6 text-white opacity-20'>
                     <SortNone />
                   </span>
                   <Text
