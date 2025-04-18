@@ -20,7 +20,7 @@ export default function KeeperFee() {
         <DisplayCurrency coin={calculateKeeperFee} className='flex text-xs text-white/40' />
         <Button
           text='Edit'
-          className='!py-0 !pr-0 ml-2 text-xs border-l border-white/20 !text-martian-red hover:!text-mars !min-h-0'
+          className='!py-0 !pr-0 ml-2 text-xs border-l border-white/20 !text-martian-red hover:!text-mars !min-h-0 rounded-none'
           variant='transparent'
           color='quaternary'
           onClick={() => useStore.setState({ keeperFeeModal: true })}
