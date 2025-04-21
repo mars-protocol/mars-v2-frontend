@@ -6,6 +6,7 @@ import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import { useCallback, useEffect, useMemo } from 'react'
 import useStore from 'store'
 import { formatValue } from 'utils/formatters'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 
 type PerpsOrderOptionsProps = {
   isReduceOnly: boolean
@@ -13,6 +14,7 @@ type PerpsOrderOptionsProps = {
   isStopOrder: boolean
   reduceOnlyWarning: string | null
   conditionalTriggers: { sl: string | null; tp: string | null }
+  isMarketOrder?: boolean
 }
 
 export const PerpsOrderOptions = ({
@@ -21,8 +23,14 @@ export const PerpsOrderOptions = ({
   isStopOrder,
   reduceOnlyWarning,
   conditionalTriggers,
+  isMarketOrder = false,
 }: PerpsOrderOptionsProps) => {
-  const perpsAsset = usePerpsAsset()
+  const { perpsAsset } = usePerpsAsset()
+  const currentAccount = useCurrentAccount()
+  const currentPerpPosition = currentAccount?.perps.find((p) => p.denom === perpsAsset.denom)
+
+  const showReduceOnly = !!currentPerpPosition || !isMarketOrder
+
   const handleOpenConditionalTriggers = useCallback(() => {
     useStore.setState({ conditionalTriggersModal: true })
   }, [])
@@ -37,24 +45,28 @@ export const PerpsOrderOptions = ({
 
   useEffect(() => {
     handleClearTriggers()
-  }, [handleClearTriggers, perpsAsset.perpsAsset.denom])
+  }, [handleClearTriggers, perpsAsset.denom])
 
   return (
     <div className='flex w-full flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20'>
       <div className='flex flex-col gap-1 px-3 py-4'>
-        <SwitchWithLabel
-          name='reduce-only'
-          label='Reduce Only'
-          value={isReduceOnly}
-          onChange={() => setIsReduceOnly(!isReduceOnly)}
-          tooltip={
-            isStopOrder
-              ? 'Use "Reduce Only" for stop orders to ensure the order only reduces or closes your position.'
-              : 'Use "Reduce Only" for limit orders to decrease your position. It prevents new position creation if the existing one is modified or closed.'
-          }
-        />
-        {reduceOnlyWarning && <Callout type={CalloutType.WARNING}>{reduceOnlyWarning}</Callout>}
-        <div className={'flex w-full pt-4'}>
+        {showReduceOnly && (
+          <>
+            <SwitchWithLabel
+              name='reduce-only'
+              label='Reduce Only'
+              value={isReduceOnly}
+              onChange={() => setIsReduceOnly(!isReduceOnly)}
+              tooltip={
+                isStopOrder
+                  ? 'Use "Reduce Only" for stop orders to ensure the order only reduces or closes your position.'
+                  : 'Use "Reduce Only" for limit orders to decrease your position. It prevents new position creation if the existing one is modified or closed.'
+              }
+            />
+            {reduceOnlyWarning && <Callout type={CalloutType.WARNING}>{reduceOnlyWarning}</Callout>}
+          </>
+        )}
+        <div className={`flex w-full ${showReduceOnly ? 'pt-4' : 'pt-0'}`}>
           <div className='flex flex-1'>
             <Text className='mr-2 text-white font-bold' size='xs'>
               Conditional Triggers

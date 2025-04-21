@@ -62,7 +62,6 @@ export default function PerpsSummary(props: Props) {
     leverage,
     onTxExecuted,
     disabled,
-    previousTradeDirection,
     baseDenom,
     limitPrice,
     stopPrice,

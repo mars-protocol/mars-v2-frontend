@@ -132,6 +132,7 @@ export function PerpsModule() {
     handleAmountChange,
     convertToDisplayAmount,
     convertToDisplayMaxAmount,
+    clearValues,
   } = usePerpsCallbacks({
     updateAmount,
     setLimitPrice,
@@ -401,6 +402,7 @@ export function PerpsModule() {
           isStopOrder={isStopOrder}
           reduceOnlyWarning={reduceOnlyWarning}
           conditionalTriggers={conditionalTriggers}
+          isMarketOrder={selectedOrderType === OrderType.MARKET}
         />
         {(isLimitOrder || isStopOrder) && <KeeperFee />}
         <PerpsSummary
@@ -412,7 +414,7 @@ export function PerpsModule() {
           previousTradeDirection={previousTradeDirection}
           previousLeverage={previousLeverage}
           onTxExecuted={() => {
-            updateAmount(BN_ZERO)
+            clearValues()
             simulatePerps(currentPerpPosition, isAutoLendEnabledForCurrentAccount)
           }}
           disabled={isDisabledExecution}
