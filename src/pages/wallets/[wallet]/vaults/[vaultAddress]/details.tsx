@@ -1,74 +1,45 @@
 import { GetServerSideProps } from 'next'
-import Head from 'next/head'
+import { useRouter } from 'next/router'
+import VaultDetails from 'components/managedVaults/community/vaultDetails'
+import { useEffect, useState } from 'react'
 
-export default function VaultDetailsPage({ vault }: { vault: any }) {
-  console.log('this is the vault', vault)
+export default function VaultDetailsPage() {
+  const router = useRouter()
+  const { vaultAddress } = router.query
+  const [isClient, setIsClient] = useState(false)
 
-  return (
-    <>
-      <Head>
-        {vault && vault.vault_address ? (
-          <>
-            <title>{vault.title || 'Vault'} | Mars Protocol</title>
-            <meta
-              key='og:title'
-              property='og:title'
-              content={`${vault.title || 'Vault'} | Mars Protocol`}
-            />
-            <meta
-              key='og:description'
-              property='og:description'
-              content={vault.description || ''}
-            />
-            <meta key='og:image' property='og:image' content={`/api/og/${vault.vault_address}`} />
-            <meta key='twitter:card' property='twitter:card' content='summary_large_image' />
-            <meta
-              key='twitter:title'
-              property='twitter:title'
-              content={`${vault.title || 'Vault'} | Mars Protocol`}
-            />
-            <meta
-              key='twitter:description'
-              property='twitter:description'
-              content={vault.description || ''}
-            />
-            <meta property='twitter:image' content={`/api/og/${vault.vault_address}`} />
-          </>
-        ) : (
-          <title>Mars Protocol</title>
-        )}
-      </Head>
-    </>
-  )
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  if (!isClient) {
+    return (
+      <div className='flex items-center justify-center min-h-screen'>
+        <div className='flex flex-col items-center gap-4'>
+          <div className='animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900'></div>
+          <p className='text-xl'>Loading vault details...</p>
+        </div>
+      </div>
+    )
+  }
+
+  return <VaultDetails vaultAddress={vaultAddress as string} />
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { vaultAddress } = context.params || {}
   const userAgent = context.req.headers['user-agent'] || ''
   const isCrawler = /facebook|twitter|linkedin|bot|crawl|spider/i.test(userAgent)
 
   if (isCrawler) {
-    try {
-      const response = await fetch(
-        `https://backend.test.mars-dev.net/v2/managed_vaults?chain=neutron&address=${vaultAddress}`,
-      )
-      const data = await response.json()
-
-      if (data?.data?.[0]) {
-        return {
-          props: {
-            vault: data.data[0],
-          },
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching vault data:', error)
+    return {
+      redirect: {
+        destination: `/api/ssr/vaults/${context.params?.vaultAddress}`,
+        permanent: false,
+      },
     }
   }
 
   return {
-    props: {
-      vault: {},
-    },
+    props: {},
   }
 }
