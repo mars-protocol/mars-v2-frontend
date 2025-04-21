@@ -2,6 +2,7 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import VaultDetails from 'components/managedVaults/community/vaultDetails'
 import { useEffect, useState } from 'react'
+import { isbot } from 'isbot'
 
 export default function VaultDetailsPage() {
   const router = useRouter()
@@ -28,7 +29,8 @@ export default function VaultDetailsPage() {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const userAgent = context.req.headers['user-agent'] || ''
-  const isCrawler = /facebook|twitter|linkedin|bot|crawl|spider/i.test(userAgent)
+
+  const isCrawler = isbot(userAgent)
 
   if (isCrawler) {
     return {
