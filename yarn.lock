@@ -3175,10 +3175,10 @@
     "@noble/curves" "~1.7.0"
     "@noble/hashes" "~1.6.0"
 
-"@skip-go/client@^0.16.22":
-  version "0.16.22"
-  resolved "https://registry.yarnpkg.com/@skip-go/client/-/client-0.16.22.tgz#3cadb4322451286511da64c023bffabaf22246c3"
-  integrity sha512-7c0KtzsaD5kK9huk/PLlgNzRrPXGCNB0ibxEM6/bl9LoDdtXz261v3iNMPquV6U4CZ6M5mfot5XrChL2Fi4jng==
+"@skip-go/client@^0.16.30":
+  version "0.16.30"
+  resolved "https://registry.yarnpkg.com/@skip-go/client/-/client-0.16.30.tgz#e62b548bad288e356b55f0cf8e92d0d52e76b90e"
+  integrity sha512-AJpszkNvNesVGvx3GQBX0fc9KfToBJ2emYeKu/svE5pLvYIoqsw6EXNOqEMTV2oVMI0MQ/UEXYuEYZWGi+OD9Q==
   dependencies:
     "@cosmjs/amino" "0.33.1"
     "@cosmjs/cosmwasm-stargate" "0.33.1"
