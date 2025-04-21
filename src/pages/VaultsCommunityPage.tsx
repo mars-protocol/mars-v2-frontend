@@ -1,7 +1,7 @@
 import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
 import { ArrowRight } from 'components/common/Icons'
-import VaultsCommunityIntro from 'components/managedVaults/community/VaultsCommunityIntro'
-import AvailableCommunityVaults from 'components/managedVaults/community/table/AvailableCommunityVaults'
+import VaultsCommunityIntro from 'components/managedVaults/VaultsCommunityIntro'
+import AvailableCommunityVaults from 'components/managedVaults/table/AvailableCommunityVaults'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { INFO_ITEMS } from 'constants/warningDialog'
 import useAccountId from 'hooks/accounts/useAccountId'
@@ -35,7 +35,7 @@ export default function VaultsCommunityPage() {
     if (!showVaultWarning) return
 
     showAlertDialog({
-      title: "You're entering dangerous territory",
+      title: 'Please be aware of the following',
       content: <AlertDialogItems items={INFO_ITEMS} />,
       positiveButton: {
         text: 'Continue',

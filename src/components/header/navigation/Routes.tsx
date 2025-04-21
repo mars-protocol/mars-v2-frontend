@@ -1,8 +1,8 @@
 import { Navigate, Outlet, Route, Routes as RoutesWrapper } from 'react-router-dom'
 
-import CreateVault from 'components/managedVaults/community/createVault/index'
-import MintVaultAccount from 'components/managedVaults/community/createVault/MintVaultAccount'
-import VaultDetails from 'components/managedVaults/community/vaultDetails/index'
+import CreateVault from 'components/managedVaults/createVault/index'
+import MintVaultAccount from 'components/managedVaults/createVault/MintVaultAccount'
+import VaultDetails from 'components/managedVaults/vaultDetails/index'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import Layout from 'pages/_layout'
 import BorrowPage from 'pages/BorrowPage'

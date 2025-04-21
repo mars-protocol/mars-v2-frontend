@@ -4,20 +4,24 @@ import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import EscButton from 'components/common/Button/EscButton'
 import Overlay from 'components/common/Overlay'
-import PerformanceFee from 'components/managedVaults/community/createVault/PerformanceFee'
+import PerformanceFee from 'components/managedVaults/createVault/PerformanceFee'
 import Text from 'components/common/Text'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { useState } from 'react'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { MAX_AMOUNT_DECIMALS } from 'constants/math'
+import { demagnify } from 'utils/formatters'
 
 interface Props {
   showFeeActionModal: boolean
   setShowFeeActionModal: (show: boolean) => void
   type: 'edit' | 'withdraw'
   vaultAddress: string
-  vaultDetails: ExtendedManagedVaultDetails
+  vaultDetails: ManagedVaultsData
   depositAsset: Asset
 }
 
@@ -36,6 +40,12 @@ export default function FeeAction(props: Props) {
   const handlePerformanceFeeAction = useStore((s) => s.handlePerformanceFeeAction)
 
   const isEdit = type === 'edit'
+
+  const lastWithdrawalTime = vaultDetails.performance_fee_state.last_withdrawal
+  const currentTime = Math.floor(new Date().getTime() / 1000)
+  const withdrawalInterval = vaultDetails.performance_fee_config.withdrawal_interval
+  const timeSinceLastWithdrawal = currentTime - lastWithdrawalTime
+  const cannotWithdraw = timeSinceLastWithdrawal <= withdrawalInterval
 
   const handleFeeAction = async () => {
     if (!vaultAddress) return
@@ -83,13 +93,13 @@ export default function FeeAction(props: Props) {
       >
         <div className='border-b border-white/10'>
           <div className='flex items-center justify-between'>
-            <Text>{isEdit ? 'Edit Performance Fee' : 'Withdraw your Performance Fee'}</Text>
+            <Text>{isEdit ? 'Edit Performance Fee' : 'Withdrawable Performance Fee'}</Text>
             <EscButton onClick={() => setShowFeeActionModal(false)} enableKeyPress />
           </div>
-          <Text size='xs' className='text-white/50 mb-2'>
+          <Text size='xs' className='text-white/50 mb-4 mt-2'>
             {isEdit
               ? 'You may update your performance fee.'
-              : 'We’ll require you to authorise a transaction in your wallet in order to proceed.'}
+              : 'Congratulations, you can withdraw the accrued perfomance fee!'}
           </Text>
         </div>
 
@@ -97,19 +107,32 @@ export default function FeeAction(props: Props) {
           <PerformanceFee value={performanceFee} onChange={setPerformanceFee} />
         ) : (
           <div className='text-center'>
-            <div className='flex items-center justify-center gap-2'>
-              <AssetImage asset={depositAsset} className='w-7 h-7' />
-              <DisplayCurrency
-                coin={BNCoin.fromDenomAndBigNumber(
-                  vaultDetails.base_tokens_denom,
-                  BN(vaultDetails.performance_fee_state.accumulated_fee),
-                )}
-                className='text-4xl'
+            <div className='flex items-center justify-center gap-1'>
+              <AssetImage asset={depositAsset} className='w-10 h-10' />
+              <TitleAndSubCell
+                title={
+                  <DisplayCurrency
+                    coin={BNCoin.fromDenomAndBigNumber(
+                      vaultDetails.base_tokens_denom,
+                      BN(vaultDetails.performance_fee_state.accumulated_fee),
+                    )}
+                    className='text-xl'
+                  />
+                }
+                sub={
+                  <FormattedNumber
+                    amount={demagnify(
+                      vaultDetails.performance_fee_state.accumulated_fee,
+                      depositAsset,
+                    )}
+                    options={{
+                      minDecimals: 2,
+                      maxDecimals: MAX_AMOUNT_DECIMALS,
+                    }}
+                  />
+                }
               />
             </div>
-            <Text size='sm' className='text-white/50'>
-              Available for withdrawal.
-            </Text>
           </div>
         )}
 
@@ -119,15 +142,29 @@ export default function FeeAction(props: Props) {
           </Callout>
         )}
 
-        <Button
-          onClick={handleFeeAction}
-          color={isEdit ? 'tertiary' : 'primary'}
-          size='md'
-          className='w-full'
-          text={isEdit ? 'Update Fees' : 'Withdraw'}
-          disabled={isTxPending}
-          showProgressIndicator={isTxPending}
-        />
+        <div className='flex flex-col gap-2'>
+          {!isEdit && (
+            <Callout type={CalloutType.INFO}>
+              Performance fees can only be withdrawn once every{' '}
+              {vaultDetails.performance_fee_config.withdrawal_interval / 3600} hours.
+              {cannotWithdraw && (
+                <div className='mt-2'>
+                  Next withdrawal available in{' '}
+                  {Math.ceil((withdrawalInterval - timeSinceLastWithdrawal) / 3600)} hours.
+                </div>
+              )}
+            </Callout>
+          )}
+          <Button
+            onClick={handleFeeAction}
+            color={isEdit ? 'tertiary' : 'primary'}
+            size='md'
+            className='w-full'
+            text={isEdit ? 'Update Fees' : 'Withdraw'}
+            disabled={isTxPending || cannotWithdraw}
+            showProgressIndicator={isTxPending}
+          />
+        </div>
       </div>
     </Overlay>
   )

@@ -11,7 +11,7 @@ export const TVL_META = {
   accessorKey: 'base_tokens_amount',
   header: 'TVL',
   meta: { className: 'w-30' },
-  sortingFn: (a: Row<ManagedVaultsData>, b: Row<ManagedVaultsData>) => {
+  sortingFn: (a: Row<ManagedVaultWithDetails>, b: Row<ManagedVaultWithDetails>) => {
     const amountA = Number(a.original.base_tokens_amount)
     const amountB = Number(b.original.base_tokens_amount)
     return amountA - amountB
@@ -19,7 +19,7 @@ export const TVL_META = {
 }
 
 interface Props {
-  value: ManagedVaultsData
+  value: ManagedVaultWithDetails
   isLoading: boolean
 }
 

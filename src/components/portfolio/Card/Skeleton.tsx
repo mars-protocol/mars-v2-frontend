@@ -5,6 +5,7 @@ import Card from 'components/common/Card'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import HlsTag from 'components/hls/HlsTag'
+import { Tooltip } from 'components/common/Tooltip'
 
 interface Props {
   stats: { title: React.ReactNode; sub: string }[]
@@ -13,20 +14,21 @@ interface Props {
   accountId: string
   isCurrent?: boolean
   isHls?: boolean
-  isVault?: boolean
   vaultTitle?: string
 }
 
 export default function Skeleton(props: Props) {
-  const { stats, health, healthFactor, accountId, isCurrent, isVault, vaultTitle } = props
+  const { stats, health, healthFactor, accountId, isCurrent, vaultTitle } = props
 
   return (
     <Card className='p-4 bg-white/5'>
       <div className='flex items-center justify-between'>
-        <Text>
-          {vaultTitle}
-          {props.isHls && <HlsTag />}
-        </Text>
+        <Tooltip type='info' content={vaultTitle}>
+          <Text className='truncate max-w-[250px]'>
+            {vaultTitle}
+            {props.isHls && <HlsTag />}
+          </Text>
+        </Tooltip>
         <Text size='xs' className='text-white/60'>
           {isCurrent && '(current)'}
         </Text>

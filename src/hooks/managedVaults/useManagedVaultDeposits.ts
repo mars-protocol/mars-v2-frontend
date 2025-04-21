@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 
 export function useManagedVaultDeposits(
   address: string | undefined,
-  vaults: { vault_token: string; vault_address: string }[],
+  vaults: ManagedVaultWithDetails[],
 ) {
   const { data: walletBalances } = useWalletBalances(address)
 
@@ -13,7 +13,7 @@ export function useManagedVaultDeposits(
       return new Map<string, boolean>()
     }
 
-    const vaultsByToken = new Map(vaults.map((vault) => [vault.vault_token, vault]))
+    const vaultsByToken = new Map(vaults.map((vault) => [vault.vault_tokens_denom, vault]))
     const depositMap = new Map<string, boolean>()
 
     walletBalances.forEach((balance) => {

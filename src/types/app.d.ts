@@ -915,6 +915,7 @@ interface DropDownItem {
   text: string
   disabled?: boolean
   disabledTooltip?: string
+  tooltipType?: string
 }
 
 interface FormattedNumberProps {
@@ -1941,28 +1942,28 @@ interface VaultParams {
   }
   vault_token_subdenom: string
 }
-interface ManagedVaultsData extends ManagedVaultDetailsResponse {
+
+interface ManagedVaultsDataResponse {
   vault_address: string
   account_id: string
+  title: string
+  subtitle: string
+  description: string
   fee_rate: string
   fee: string
   tvl: string
   apr: string
-  isOwner?: boolean
+}
+
+interface ManagedVaultWithDetails extends ManagedVaultsDataResponse {
   base_tokens_denom: string
   base_tokens_amount: string
   vault_tokens_denom: string
   vault_tokens_amount: string
+  isOwner: boolean
 }
 
-interface ManagedVaultsResponse {
-  data: ManagedVaultsData[]
-  page: string
-  limit: string
-  total: string
-}
-
-interface ManagedVaultDetailsResponse {
+interface ManagedVaultSCDetailsResponse {
   base_token: string
   vault_token: string
   title: string
@@ -1976,9 +1977,9 @@ interface ManagedVaultDetailsResponse {
   total_vault_tokens: string
   share_price: number
 }
-interface ManagedVaultDetails {
-  base_tokens_denom: string
-  vault_tokens_denom: string
+
+interface ManagedVaultsData {
+  vault_address: string
   title: string
   subtitle: string | null
   description: string
@@ -1986,15 +1987,17 @@ interface ManagedVaultDetails {
   vault_account_id: string | null
   cooldown_period: number
   performance_fee_config: PerformanceFeeConfig
-  base_tokens_amount: string
-  vault_tokens_amount: string
   share_price: number
-}
-
-interface ManagedVaultMetrics {
+  ownerAddress: string | undefined
   tvl: string
   apy: number
+  performance_fee_state: PerformanceFeeState
+  base_tokens_denom: string
+  base_tokens_amount: string
+  vault_tokens_denom: string
+  vault_tokens_amount: string
 }
+
 interface PerformanceFeeState {
   accumulated_fee: string
   accumulated_pnl: string
@@ -2006,14 +2009,10 @@ interface PerformanceFeeOptions {
   vaultAddress: string
   newFee?: PerformanceFeeConfig | null
 }
+
 interface PerformanceFeeConfig {
   fee_rate: string
   withdrawal_interval: number
-}
-
-interface ExtendedManagedVaultDetails extends ManagedVaultDetails {
-  metrics: ManagedVaultMetrics
-  performance_fee_state: PerformanceFeeState
 }
 
 interface UserManagedVaultUnlockResponse {

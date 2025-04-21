@@ -2,8 +2,6 @@ import Image from 'next/image'
 import Loading from 'components/common/Loading'
 import useManagedVaultOwnerInfo from 'hooks/managedVaults/useManagedVaultOwnerInfo'
 import Text from 'components/common/Text'
-import { Logo } from 'components/common/Icons'
-import { FALLBACK_AVATAR } from 'constants/managedVaults'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 
 export const TITLE_META = {
@@ -13,7 +11,7 @@ export const TITLE_META = {
 }
 
 interface Props {
-  value: ManagedVaultsData
+  value: ManagedVaultWithDetails
   isLoading: boolean
 }
 
@@ -23,27 +21,27 @@ export default function Title(props: Props) {
     value.vault_address,
   )
   const { vaultOwnerInfo, isLoading: isOwnerInfoLoading } = useManagedVaultOwnerInfo(
-    vaultDetails?.owner,
+    vaultDetails?.ownerAddress,
   )
 
-  if (isLoading || isDetailsLoading || isOwnerInfoLoading) return <Loading className='h-4 w-35' />
-
-  const hasCustomAvatar = vaultOwnerInfo.avatar && vaultOwnerInfo.avatar.url !== FALLBACK_AVATAR
+  if (isLoading || isDetailsLoading || isOwnerInfoLoading)
+    return (
+      <div className='flex flex-col gap-2 ml-4'>
+        <Loading className='h-4 w-24' />
+        <Loading className='h-4 w-24' />
+      </div>
+    )
 
   return (
     <div className='flex items-center gap-2'>
       <span className='h-8 w-8'>
-        {hasCustomAvatar ? (
-          <Image
-            src={vaultOwnerInfo.avatar.url}
-            alt={vaultOwnerInfo.name}
-            width={vaultOwnerInfo.avatar.width}
-            height={vaultOwnerInfo.avatar.height}
-            className='rounded-full'
-          />
-        ) : (
-          <Logo />
-        )}
+        <Image
+          src={vaultOwnerInfo.avatar.url}
+          alt={vaultOwnerInfo.name}
+          width={vaultOwnerInfo.avatar.width}
+          height={vaultOwnerInfo.avatar.height}
+          className='rounded-full'
+        />
       </span>
       <div className='flex flex-col gap-0.5'>
         <Text size='xs'>{value.title}</Text>

@@ -1,7 +1,7 @@
 import Button from 'components/common/Button'
 import { ArrowRight, Vault } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import CreateVaultContent from 'components/managedVaults/community/createVault/CreateVaultContent'
+import CreateVaultContent from 'components/managedVaults/createVault/CreateVaultContent'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 import { useCallback, useState } from 'react'

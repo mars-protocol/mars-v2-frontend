@@ -5,11 +5,11 @@ import Loading from 'components/common/Loading'
 import moment from 'moment'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
-import useQueuedWithdrawals from 'components/managedVaults/community/vaultDetails/table/useQueuedWithdrawals'
-import useUserWithdrawals from 'components/managedVaults/community/vaultDetails/table/useUserWithdrawals'
+import useQueuedWithdrawals from 'components/managedVaults/vaultDetails/table/useQueuedWithdrawals'
+import useUserWithdrawals from 'components/managedVaults/vaultDetails/table/useUserWithdrawals'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
-import VaultStats from 'components/managedVaults/community/vaultDetails/common/VaultStats'
-import WithdrawButton from 'components/managedVaults/community/vaultDetails/table/columns/WithdrawButton'
+import VaultStats from 'components/managedVaults/vaultDetails/common/VaultStats'
+import WithdrawButton from 'components/managedVaults/vaultDetails/table/columns/WithdrawButton'
 import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
@@ -25,7 +25,7 @@ import { useMemo } from 'react'
 import TablePagination from 'components/common/Table/TablePagination'
 
 interface Props {
-  details: ExtendedManagedVaultDetails
+  details: ManagedVaultsData
   isOwner?: boolean
   vaultAddress: string
 }
@@ -182,11 +182,9 @@ export default function Withdrawals(props: Props) {
                       )}
                     />
                     {isValidWithdrawal && (
-                      <>
-                        <span className="text-white/50 before:content-['|'] before:mr-1.5 before:text-white/10">
-                          Since {withdrawalDate.format('DD.MM.YY')}
-                        </span>
-                      </>
+                      <span className="text-white/50 before:content-['|'] before:mr-1.5 before:text-white/10">
+                        Since {withdrawalDate.format('DD.MM.YY')}
+                      </span>
                     )}
                   </div>
                 ),

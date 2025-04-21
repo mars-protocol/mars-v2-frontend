@@ -17,7 +17,7 @@ import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { checkAccountKind } from 'utils/accounts'
 import { getRoute } from 'utils/route'
-import { VaultDetailsContent } from 'components/managedVaults/community/vaultDetails'
+import { VaultDetailsContent } from 'components/managedVaults/vaultDetails'
 
 interface Props {
   accountId: string
@@ -110,7 +110,6 @@ export default function PortfolioCard(props: Props) {
         accountId={props.accountId}
         isCurrent={props.accountId === currentAccountId}
         isHls={account.kind === 'high_levered_strategy'}
-        isVault={isVault}
         vaultTitle={vaultTitle}
       />
     </NavLink>

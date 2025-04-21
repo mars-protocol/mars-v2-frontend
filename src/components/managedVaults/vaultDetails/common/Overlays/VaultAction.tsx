@@ -27,7 +27,7 @@ type VaultAction = 'deposit' | 'unlock'
 interface Props {
   showActionModal: boolean
   setShowActionModal: (show: boolean) => void
-  vaultDetails: ExtendedManagedVaultDetails
+  vaultDetails: ManagedVaultsData
   vaultAddress: string
   type: VaultAction
 }
