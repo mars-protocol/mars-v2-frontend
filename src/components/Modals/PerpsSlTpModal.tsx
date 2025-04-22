@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js'
 import Modal from 'components/Modals/Modal'
 import AssetAmountInput from 'components/common/AssetAmountInput'
 import Button from 'components/common/Button'
@@ -19,7 +20,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
 import { formatPercent } from 'utils/formatters'
-import BigNumber from 'bignumber.js'
 
 const perpsPercentage = (price: BigNumber, triggerPrice: BigNumber, isShort: boolean = false) => {
   if (!price || triggerPrice.isZero()) return BN_ZERO
@@ -367,21 +367,23 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
 
         <Divider />
         <Callout type={CalloutType.INFO} iconClassName='self-start'>
-          <Text size='sm' className='text-left'>
+          <Text size='sm'>
             The prices listed here are 'Spot Price Triggers', which means they initiate your
             transaction. The actual 'Fill Price' at which your transaction is completed may vary due
             to the Funding Rate.
-            {currentTradeDirection === 'long' ? (
-              <span>
-                This could result in a better fill price if the funding rate is favorable, or a less
-                advantageous price if it is not.
-              </span>
-            ) : (
-              <span>
-                For short positions, a positive funding rate may result in a better fill price,
-                while a negative funding rate may result in a less advantageous price.
-              </span>
-            )}{' '}
+          </Text>
+          {currentTradeDirection === 'long' ? (
+            <Text size='sm'>
+              This could result in a better fill price if the funding rate is favorable, or a less
+              advantageous price if it is not.
+            </Text>
+          ) : (
+            <Text size='sm'>
+              For short positions, a positive funding rate may result in a better fill price, while
+              a negative funding rate may result in a less advantageous price.
+            </Text>
+          )}
+          <Text size='sm'>
             Always consider the potential impact of the funding rate on the final price.
           </Text>
         </Callout>

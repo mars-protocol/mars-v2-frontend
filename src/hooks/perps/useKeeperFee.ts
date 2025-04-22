@@ -1,15 +1,11 @@
-import { BN } from 'utils/helpers'
-import { BNCoin } from 'types/classes/BNCoin'
-import {
-  defaultKeeperFeeAmount,
-  defaultKeeperFeeDenom,
-  getDefaultChainSettings,
-} from 'constants/defaultSettings'
+import { defaultKeeperFeeAmount, getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useStore from 'store'
 import { useMemo } from 'react'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import { BN } from 'utils/helpers'
 
 export default function useKeeperFee() {
   const chainConfig = useChainConfig()
@@ -33,8 +29,8 @@ export default function useKeeperFee() {
     () =>
       parsedKeeperFee?.amount
         ? BNCoin.fromDenomAndBigNumber(parsedKeeperFee.denom, BN(parsedKeeperFee.amount))
-        : BNCoin.fromDenomAndBigNumber(defaultKeeperFeeDenom, BN(defaultKeeperFeeAmount)),
-    [parsedKeeperFee?.amount, parsedKeeperFee?.denom],
+        : BNCoin.fromDenomAndBigNumber(chainConfig.stables[0], BN(defaultKeeperFeeAmount)),
+    [chainConfig.stables, parsedKeeperFee.amount, parsedKeeperFee.denom],
   )
 
   return {
