@@ -1,9 +1,9 @@
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
 import { PerpsChart } from 'components/perps/PerpsChart'
+import { PerpsInfo } from 'components/perps/PerpsInfo'
 import { PerpsStats } from 'components/perps/PerpsStats'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import { Suspense, useMemo } from 'react'
-import { PerpsInfo } from './PerpsInfo'
 
 export function PerpsTabs() {
   const { perpsAsset } = usePerpsAsset()
