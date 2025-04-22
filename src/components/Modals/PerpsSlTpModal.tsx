@@ -169,27 +169,23 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
 
       if (!hasPerpOrder) continue
 
-      const hasTriggerCondition = order.order.conditions.some(
+      const triggerCondition = order.order.conditions.find(
         (condition) => 'trigger_order_executed' in condition,
       )
 
-      if (hasTriggerCondition) continue
+      const isChildOrder = triggerCondition && 'trigger_order_executed' in triggerCondition
 
-      let isLinkedFromOther = false
-      for (const otherOrder of limitOrders) {
-        const isLinked = otherOrder.order.conditions.some(
-          (condition) =>
-            'trigger_order_executed' in condition &&
-            condition.trigger_order_executed.trigger_order_id === order.order.order_id,
-        )
-
-        if (isLinked) {
-          isLinkedFromOther = true
-          break
-        }
+      if (!isChildOrder) {
+        matchingOrders.push(order)
+        continue
       }
 
-      if (!isLinkedFromOther) {
+      const triggerOrderId = triggerCondition.trigger_order_executed.trigger_order_id
+      const triggerOrderExists = limitOrders.some(
+        (order) => order.order.order_id === triggerOrderId,
+      )
+
+      if (!triggerOrderExists) {
         matchingOrders.push(order)
       }
     }
