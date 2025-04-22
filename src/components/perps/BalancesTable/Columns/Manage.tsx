@@ -5,7 +5,6 @@ import ActionButton from 'components/common/Button/ActionButton'
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { ArrowRight, Cross, Edit, Shield, SwapIcon } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import PerpsSlTpModal from 'components/Modals/PerpsSlTpModal'
 import ConfirmationSummary from 'components/perps/Module/ConfirmationSummary'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -14,6 +13,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
+import useChildOrders from 'hooks/perps/useChildOrders'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -34,6 +34,7 @@ export default function Manage(props: Props) {
   const [searchParams, setSearchParams] = useSearchParams()
   const [isConfirming, setIsConfirming] = useState<boolean>(false)
   const { data: limitOrders } = usePerpsLimitOrders()
+  const { hasChildOrders } = useChildOrders()
   const [showSummary, setShowSummary] = useLocalStorage<boolean>(
     `${chainConfig.id}/${LocalStorageKeys.SHOW_SUMMARY}`,
     getDefaultChainSettings(chainConfig).showSummary,
@@ -226,7 +227,9 @@ export default function Manage(props: Props) {
         ? [
             {
               icon: <Shield />,
-              text: 'Add SL/TP',
+              text: hasChildOrders(limitOrders, perpPosition.asset.denom)
+                ? 'Edit SL/TP'
+                : 'Add SL/TP',
               onClick: () => {
                 useStore.setState({ addSLTPModal: { parentPosition: perpPosition } })
               },
@@ -254,11 +257,6 @@ export default function Manage(props: Props) {
                       })
                     },
                   },
-                  // {
-                  //   icon: <Shield />,
-                  //   text: 'Add Stop Loss',
-                  //   onClick: openPerpsSlTpModal,
-                  // },
                 ]),
             {
               icon: <SwapIcon />,
@@ -270,7 +268,9 @@ export default function Manage(props: Props) {
             },
             {
               icon: <Shield />,
-              text: 'Add SL/TP',
+              text: hasChildOrders(limitOrders, perpPosition.asset.denom)
+                ? 'Edit SL/TP'
+                : 'Add SL/TP',
               onClick: () => {
                 useStore.setState({ addSLTPModal: { parentPosition: perpPosition } })
               },
@@ -282,23 +282,31 @@ export default function Manage(props: Props) {
         onClick: () => handleCloseClick(),
       },
     ],
-    [handleCloseClick, handleFlipPosition, perpPosition, searchParams, setSearchParams],
+    [
+      handleCloseClick,
+      handleFlipPosition,
+      hasChildOrders,
+      limitOrders,
+      perpPosition,
+      searchParams,
+      setSearchParams,
+    ],
   )
 
-  const hasChildOrders = () => {
-    if (!props.perpPosition.orderId || !limitOrders) return false
-
-    return limitOrders.some((order) =>
-      order.order.conditions.some(
-        (condition) =>
-          'trigger_order_executed' in condition &&
-          condition.trigger_order_executed.trigger_order_id === props.perpPosition.orderId,
-      ),
-    )
-  }
-
   if (props.perpPosition.type === 'limit' || props.perpPosition.type === 'stop') {
-    if (hasChildOrders()) {
+    const hasPositionChildOrders = () => {
+      if (!props.perpPosition.orderId || !limitOrders) return false
+
+      return limitOrders.some((order) =>
+        order.order.conditions.some(
+          (condition) =>
+            'trigger_order_executed' in condition &&
+            condition.trigger_order_executed.trigger_order_id === props.perpPosition.orderId,
+        ),
+      )
+    }
+
+    if (hasPositionChildOrders()) {
       return (
         <div className='flex justify-end gap-2'>
           <ActionButton

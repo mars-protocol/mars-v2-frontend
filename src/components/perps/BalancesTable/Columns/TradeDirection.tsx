@@ -35,7 +35,8 @@ function getPositionEffect(
   if (currentPosition.tradeDirection === orderDirection) return 'Increase Position'
 
   if (isReduceOnly) {
-    if (orderAmount.abs().isGreaterThan(currentPosition.amount.abs())) return 'Close Position'
+    if (orderAmount.abs().isGreaterThanOrEqualTo(currentPosition.amount.abs()))
+      return 'Close Position'
     return 'Reduce Position'
   }
 

@@ -15,6 +15,7 @@ import usePerpsConfig from 'hooks/perps/usePerpsConfig'
 import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 import usePriceValidation from 'hooks/perps/usePriceValidation'
 import { useSubmitLimitOrder } from 'hooks/perps/useSubmitLimitOrder'
+import useChildOrders from 'hooks/perps/useChildOrders'
 import usePrice from 'hooks/prices/usePrice'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import useStore from 'store'
@@ -57,6 +58,7 @@ export default function PerpsSlTpModal() {
   const submitLimitOrder = useSubmitLimitOrder()
   const currentAccount = useCurrentAccount()
   const { data: limitOrders } = usePerpsLimitOrders()
+  const { hasChildOrders } = useChildOrders()
 
   const { data: perpsConfig } = usePerpsConfig()
   const assets = useDepositEnabledAssets()
@@ -117,9 +119,9 @@ export default function PerpsSlTpModal() {
 
     return {
       asset: perpsAsset,
-      orderSize: isShort ? positionSize : positionSize.negated(),
+      orderSize: positionSize.negated(),
       limitPrice: stopLossPrice,
-      tradeDirection: isShort ? 'short' : ('long' as TradeDirection),
+      tradeDirection: isShort ? 'long' : ('short' as TradeDirection),
       comparison: isShort ? 'greater_than' : ('less_than' as TriggerType),
       baseDenom: feeToken.denom,
       keeperFee: calculateKeeperFee,
@@ -141,9 +143,9 @@ export default function PerpsSlTpModal() {
 
     return {
       asset: perpsAsset,
-      orderSize: isShort ? positionSize : positionSize.negated(),
+      orderSize: positionSize.negated(),
       limitPrice: takeProfitPrice,
-      tradeDirection: isShort ? 'short' : ('long' as TradeDirection),
+      tradeDirection: isShort ? 'long' : ('short' as TradeDirection),
       comparison: isShort ? 'less_than' : ('greater_than' as TriggerType),
       baseDenom: feeToken.denom,
       keeperFee: calculateKeeperFee,
@@ -248,7 +250,7 @@ export default function PerpsSlTpModal() {
   return (
     <Modal
       onClose={onClose}
-      header='Triggers'
+      header='Add Stop Loss / Take Profit Orders'
       headerClassName='gradient-header px-4 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col'
       modalClassName='md:max-w-modal-xs'
@@ -295,7 +297,11 @@ export default function PerpsSlTpModal() {
         {!showTakeProfit && (
           <Button
             onClick={() => setShowTakeProfit(true)}
-            text='Add Take Profit Trigger'
+            text={
+              hasChildOrders(limitOrders, perpsAsset?.denom)
+                ? 'Add New Take Profit Trigger'
+                : 'Add Take Profit Trigger'
+            }
             color='tertiary'
             className='w-full'
           />
@@ -355,7 +361,11 @@ export default function PerpsSlTpModal() {
         {!showStopLoss && (
           <Button
             onClick={() => setShowStopLoss(true)}
-            text='Add Stop Loss Trigger'
+            text={
+              hasChildOrders(limitOrders, perpsAsset?.denom)
+                ? 'Add New Stop Loss Trigger'
+                : 'Add Stop Loss Trigger'
+            }
             color='tertiary'
             className='w-full'
           />
@@ -388,15 +398,7 @@ export default function PerpsSlTpModal() {
             Always consider the potential impact of the funding rate on the final price.
           </Text>
         </Callout>
-        {limitOrders?.some((order) => {
-          const actions = order.order.actions
-          return actions.some(
-            (action) =>
-              'execute_perp_order' in action &&
-              action.execute_perp_order.denom === perpsAsset?.denom &&
-              action.execute_perp_order.reduce_only,
-          )
-        }) && (
+        {hasChildOrders(limitOrders, perpsAsset?.denom) && (
           <Callout type={CalloutType.WARNING} iconClassName='self-start'>
             <Text size='sm'>
               Your existing TP/SL triggers will be removed if you add a new TP/SL trigger on this
