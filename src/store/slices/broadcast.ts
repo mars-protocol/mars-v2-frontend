@@ -996,6 +996,7 @@ export default function createBroadcastSlice(
       baseDenom: string
       orderType?: ExecutePerpOrderType
       conditionalTriggers?: { sl: string | null; tp: string | null }
+      keeperFee?: BNCoin
     }) => {
       const actions: Action[] = [
         {
@@ -1014,6 +1015,15 @@ export default function createBroadcastSlice(
             amount: 'account_balance',
           },
         })
+
+      if (
+        options.conditionalTriggers &&
+        (options.conditionalTriggers.tp || options.conditionalTriggers.sl) &&
+        !options.keeperFee
+      ) {
+        console.error('Missing required keeper fee for conditional triggers')
+        return false
+      }
 
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
@@ -1046,20 +1056,13 @@ export default function createBroadcastSlice(
     }) => {
       const asset = get().assets.find(byDenom(options.coin.denom))
 
-      const keeperFeeConfig = get().creditManagerConfig?.keeper_fee_config?.min_fee
-
-      if (!asset || !keeperFeeConfig) {
+      if (!asset || !options.keeperFee) {
         console.error('Missing required data for parent-child orders:', {
           hasAsset: !!asset,
-          hasKeeperFeeConfig: !!keeperFeeConfig,
+          hasKeeperFee: !!options.keeperFee,
         })
         return false
       }
-
-      const keeperFeeCoin = BNCoin.fromCoin({
-        denom: keeperFeeConfig.denom,
-        amount: keeperFeeConfig.amount,
-      })
 
       try {
         const actions: Action[] = []
@@ -1082,7 +1085,7 @@ export default function createBroadcastSlice(
 
           actions.push({
             create_trigger_order: {
-              keeper_fee: keeperFeeCoin.toCoin(),
+              keeper_fee: options.keeperFee.toCoin(),
               actions: [
                 {
                   execute_perp_order: {
@@ -1130,7 +1133,7 @@ export default function createBroadcastSlice(
 
           actions.push({
             create_trigger_order: {
-              keeper_fee: keeperFeeCoin.toCoin(),
+              keeper_fee: options.keeperFee.toCoin(),
               actions: [
                 {
                   execute_perp_order: {
@@ -1165,7 +1168,7 @@ export default function createBroadcastSlice(
 
           actions.push({
             create_trigger_order: {
-              keeper_fee: keeperFeeCoin.toCoin(),
+              keeper_fee: options.keeperFee.toCoin(),
               actions: [
                 {
                   execute_perp_order: {

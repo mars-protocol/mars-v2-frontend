@@ -104,7 +104,7 @@ export default function PerpsSummary(props: Props) {
   const submitParentOrderWithChildren = useSubmitParentOrderWithChildren()
 
   const handleTriggerOrder = useCallback(async () => {
-    if (!currentAccount || !feeToken) return false
+    if (!currentAccount || !feeToken || !calculateKeeperFee) return false
 
     await submitParentOrderWithChildren({
       asset,
@@ -133,6 +133,7 @@ export default function PerpsSummary(props: Props) {
     submitParentOrderWithChildren,
     currentAccount,
     feeToken,
+    calculateKeeperFee,
   ])
 
   const handleStopOrder = useCallback(async () => {
@@ -204,6 +205,8 @@ export default function PerpsSummary(props: Props) {
       autolend: isAutoLendEnabledForCurrentAccount,
       baseDenom,
       reduceOnly: isReduceOnly,
+      keeperFee: calculateKeeperFee,
+      conditionalTriggers,
     }
 
     await executePerpOrder(perpOrderParams)
@@ -217,6 +220,8 @@ export default function PerpsSummary(props: Props) {
     baseDenom,
     isReduceOnly,
     executePerpOrder,
+    calculateKeeperFee,
+    conditionalTriggers,
   ])
 
   const onConfirm = useCallback(async () => {

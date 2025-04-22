@@ -75,7 +75,7 @@ export function useSubmitParentOrderWithChildren() {
           reduceOnly: isReduceOnly,
           autolend: isAutoLendEnabledForCurrentAccount,
           baseDenom,
-          keeperFee: keeperFee,
+          keeperFee: keeperFee.calculateKeeperFee,
           orderType: perpOrderType,
           conditionalTriggers,
         }
