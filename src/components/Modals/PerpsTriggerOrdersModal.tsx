@@ -232,9 +232,9 @@ export default function PerpsTriggerOrdersModal() {
       header={<Text size='xl'>Take Profit / Stop Loss</Text>}
       headerClassName='gradient-header px-4 py-2.5 border-b-white/5 border-b'
       onClose={closeModal}
-      className='bg-[#17141C] border border-white/5 rounded-md'
+      className='border border-white/5 rounded-md'
     >
-      <div className='py-6 px-6 bg-[#17141C] max-w-5xl'>
+      <div className='py-6 px-6 max-w-5xl'>
         {hasTpOrSl && (
           <Text className='text-center text-white/60 mb-6'>
             When the parent order is executed, the take profit and stop loss orders are
