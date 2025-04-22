@@ -37,10 +37,9 @@ const getTextColorClass = (percentage: BigNumber) => {
   return 'text-success'
 }
 
-export default function PerpsSlTpModal({ parentPosition }: { parentPosition: PerpPositionRow }) {
-  const perpsAsset = parentPosition?.asset
-
+export default function PerpsSlTpModal() {
   const modal = useStore((s) => s.addSLTPModal)
+  const perpsAsset = modal && 'parentPosition' in modal ? modal.parentPosition?.asset : undefined
 
   useEffect(() => {
     setStopLossPrice(BN_ZERO)
@@ -67,10 +66,13 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
   const assetName = useMemo(() => perpsAsset?.symbol || 'the asset', [perpsAsset])
 
   const currentTradeDirection = useMemo(() => {
+    if (modal && 'parentPosition' in modal) {
+      return modal.parentPosition?.tradeDirection ?? 'long'
+    }
     return (
       currentAccount?.perps.find((p) => p.denom === perpsAsset?.denom)?.tradeDirection ?? 'long'
     )
-  }, [currentAccount, perpsAsset])
+  }, [currentAccount, perpsAsset, modal])
 
   const isShort = useMemo(() => currentTradeDirection === 'short', [currentTradeDirection])
 
@@ -94,8 +96,11 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
   }, [])
 
   const positionSize = useMemo(() => {
+    if (modal && 'parentPosition' in modal) {
+      return modal.parentPosition?.amount ?? BN_ZERO
+    }
     return currentAccount?.perps.find((p) => p.denom === perpsAsset?.denom)?.amount ?? BN_ZERO
-  }, [currentAccount, perpsAsset])
+  }, [currentAccount, perpsAsset, modal])
 
   const { isValid, stopLossError, takeProfitError } = usePriceValidation({
     currentPrice,
@@ -363,23 +368,23 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
 
         <Divider />
         <Callout type={CalloutType.INFO} iconClassName='self-start'>
-          <Text size='sm' className='text-left'>
+          <Text size='sm'>
             The prices listed here are 'Spot Price Triggers', which means they initiate your
             transaction. The actual 'Fill Price' at which your transaction is completed may vary due
             to the Funding Rate.
           </Text>
           {currentTradeDirection === 'long' ? (
-            <Text size='sm' className='text-left'>
+            <Text size='sm'>
               This could result in a better fill price if the funding rate is favorable, or a less
               advantageous price if it is not.
             </Text>
           ) : (
-            <Text size='sm' className='text-left'>
+            <Text size='sm'>
               For short positions, a positive funding rate may result in a better fill price, while
               a negative funding rate may result in a less advantageous price.
             </Text>
           )}
-          <Text size='sm' className='text-left'>
+          <Text size='sm'>
             Always consider the potential impact of the funding rate on the final price.
           </Text>
         </Callout>
@@ -393,7 +398,7 @@ export default function PerpsSlTpModal({ parentPosition }: { parentPosition: Per
           )
         }) && (
           <Callout type={CalloutType.WARNING} iconClassName='self-start'>
-            <Text size='sm' className='text-left'>
+            <Text size='sm'>
               Your existing TP/SL triggers will be removed if you add a new TP/SL trigger on this
               order.
             </Text>

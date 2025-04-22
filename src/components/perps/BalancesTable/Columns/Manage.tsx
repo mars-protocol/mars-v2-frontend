@@ -228,7 +228,7 @@ export default function Manage(props: Props) {
               icon: <Shield />,
               text: 'Add SL/TP',
               onClick: () => {
-                useStore.setState({ addSLTPModal: true })
+                useStore.setState({ addSLTPModal: { parentPosition: perpPosition } })
               },
             },
           ]
@@ -272,7 +272,7 @@ export default function Manage(props: Props) {
               icon: <Shield />,
               text: 'Add SL/TP',
               onClick: () => {
-                useStore.setState({ addSLTPModal: true })
+                useStore.setState({ addSLTPModal: { parentPosition: perpPosition } })
               },
             },
           ]),
@@ -356,7 +356,6 @@ export default function Manage(props: Props) {
 
   return (
     <div className='flex justify-end' onClick={(e) => e.stopPropagation()}>
-      <PerpsSlTpModal parentPosition={perpPosition} />
       <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
     </div>
   )

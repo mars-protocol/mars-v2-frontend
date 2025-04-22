@@ -1339,7 +1339,7 @@ interface ModalSlice {
   settingsModal: boolean
   keeperFeeModal: boolean
   conditionalTriggersModal: boolean
-  addSLTPModal: boolean
+  addSLTPModal: { parentPosition: PerpPositionRow } | false
   unlockModal: UnlockModal | null
   farmModal: FarmModal | null
   walletAssetsModal: WalletAssetModal | null
