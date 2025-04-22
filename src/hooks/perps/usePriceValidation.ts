@@ -16,33 +16,22 @@ interface PriceValidationProps {
   takeProfitPrice: BigNumber
 }
 
-export const validateStopLoss = (
+export const validatePrice = (
   isShort: boolean,
   currentPrice: BigNumber,
-  stopLossPrice: BigNumber,
+  price: BigNumber,
+  orderType: 'Stop Loss' | 'Take Profit',
 ): string | null => {
-  if (!stopLossPrice.isZero()) {
-    if (!isShort && stopLossPrice.isGreaterThanOrEqualTo(currentPrice)) {
-      return 'Stop Loss price must be lower than the current price for long positions'
-    }
-    if (isShort && stopLossPrice.isLessThanOrEqualTo(currentPrice)) {
-      return 'Stop Loss price must be higher than the current price for short positions'
-    }
-  }
-  return null
-}
+  if (!price.isZero()) {
+    const isStopLoss = orderType === 'Stop Loss'
+    const shouldBeLower = (isStopLoss && !isShort) || (!isStopLoss && isShort)
 
-export const validateTakeProfit = (
-  isShort: boolean,
-  currentPrice: BigNumber,
-  takeProfitPrice: BigNumber,
-): string | null => {
-  if (!takeProfitPrice.isZero()) {
-    if (!isShort && takeProfitPrice.isLessThanOrEqualTo(currentPrice)) {
-      return 'Take Profit price must be higher than the current price for long positions'
+    if (shouldBeLower && price.isGreaterThanOrEqualTo(currentPrice)) {
+      return `${orderType} price must be lower than the current price for ${isShort ? 'short' : 'long'} positions`
     }
-    if (isShort && takeProfitPrice.isGreaterThanOrEqualTo(currentPrice)) {
-      return 'Take Profit price must be lower than the current price for short positions'
+
+    if (!shouldBeLower && price.isLessThanOrEqualTo(currentPrice)) {
+      return `${orderType} price must be higher than the current price for ${isShort ? 'short' : 'long'} positions`
     }
   }
   return null
@@ -68,11 +57,11 @@ const usePriceValidation = ({
     }
 
     const stopLossError = showStopLoss
-      ? validateStopLoss(isShort, currentPrice, stopLossPrice)
+      ? validatePrice(isShort, currentPrice, stopLossPrice, 'Stop Loss')
       : null
 
     const takeProfitError = showTakeProfit
-      ? validateTakeProfit(isShort, currentPrice, takeProfitPrice)
+      ? validatePrice(isShort, currentPrice, takeProfitPrice, 'Take Profit')
       : null
 
     const hasValidStopLoss = !stopLossError && showStopLoss && !stopLossPrice.isZero()

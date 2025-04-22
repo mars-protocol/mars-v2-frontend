@@ -905,8 +905,6 @@ export default function createBroadcastSlice(
         })
       }
 
-      let parentOrderType: 'market' | 'limit' | 'stop' | null = null
-
       options.orders.forEach((order) => {
         const triggerActions: Action[] = [
           {
@@ -945,20 +943,6 @@ export default function createBroadcastSlice(
               trigger_order_id: order.parentOrderId,
             },
           })
-        }
-
-        if (order.orderType === 'parent') {
-          if (comparison === 'less_than' && order.tradeDirection === 'long') {
-            parentOrderType = 'limit'
-          } else if (comparison === 'greater_than' && order.tradeDirection === 'short') {
-            parentOrderType = 'limit'
-          } else if (comparison === 'less_than' && order.tradeDirection === 'short') {
-            parentOrderType = 'stop'
-          } else if (comparison === 'greater_than' && order.tradeDirection === 'long') {
-            parentOrderType = 'stop'
-          } else {
-            parentOrderType = 'market'
-          }
         }
 
         actions.push({
