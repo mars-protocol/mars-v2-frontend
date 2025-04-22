@@ -77,7 +77,7 @@ export const PerpsOrderOptions = ({
             <div onClick={handleOpenConditionalTriggers}>
               <Text
                 size='xs'
-                className='text-[#ff5e57] hover:text-[#ff5e57]/80 hover:cursor-pointer'
+                className='text-martian-red hover:text-martian-red/80 hover:cursor-pointer'
               >
                 {hasConditionalTriggers ? 'Edit' : 'Add'}
               </Text>
