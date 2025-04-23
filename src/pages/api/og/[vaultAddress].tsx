@@ -1,8 +1,8 @@
-import { formatValue } from 'utils/formatters'
 import { ImageResponse } from '@vercel/og'
-import { NextRequest } from 'next/server'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import { NextRequest } from 'next/server'
 import { getManagedVaultsUrl } from 'utils/api'
+import { formatValue } from 'utils/edgeFormatters'
 
 export const config = {
   runtime: 'edge',
@@ -27,7 +27,7 @@ export default async function handler(req: NextRequest) {
 
     const vaultInfo = data
     const formattedTVL = vaultInfo.tvl
-      ? formatValue(Number(vaultInfo.tvl), {
+      ? formatValue(vaultInfo.tvl, {
           abbreviated: true,
           prefix: '$',
           decimals: PRICE_ORACLE_DECIMALS,
@@ -162,15 +162,6 @@ export default async function handler(req: NextRequest) {
       {
         width: 1280,
         height: 720,
-        fonts: [
-          {
-            name: 'Inter',
-            data: await fetch(new URL('/src/fonts/Inter-SemiBold.woff', import.meta.url)).then(
-              (res) => res.arrayBuffer(),
-            ),
-            style: 'normal',
-          },
-        ],
       },
     )
   } catch (e: unknown) {
