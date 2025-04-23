@@ -1368,6 +1368,8 @@ interface AlertDialogConfig {
   negativeButton?: AlertDialogButton
   positiveButton?: AlertDialogButton
   title?: string
+  isSingleButtonLayout?: boolean
+  showCloseButton?: boolean
   modalClassName?: string
   titleClassName?: string
 }

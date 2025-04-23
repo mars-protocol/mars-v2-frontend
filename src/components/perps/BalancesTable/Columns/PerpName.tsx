@@ -15,7 +15,11 @@ export function PerpName(props: Props) {
   return (
     <div className='flex gap-3'>
       <AssetImage asset={props.asset} className='w-8 h-8' />
-      <TitleAndSubCell title={props.asset.name} sub={`${props.asset.symbol}-USD`} />
+      <TitleAndSubCell
+        title={props.asset.name}
+        sub={`${props.asset.symbol}-USD`}
+        isDeprecated={props.asset.isDeprecated}
+      />
     </div>
   )
 }

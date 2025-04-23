@@ -1,11 +1,12 @@
 import classNames from 'classnames'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import AssetAmountInput from 'components/common/AssetAmountInput'
 import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import OrderTypeSelector from 'components/common/OrderTypeSelector'
+import Text from 'components/common/Text'
 import { PERPS_ORDER_TYPE_TABS } from 'components/perps/Module/constants'
 import KeeperFee from 'components/perps/Module/KeeperFee'
 import { LeverageSection } from 'components/perps/Module/LeverageSection'
@@ -20,6 +21,7 @@ import useStore from 'store'
 import { OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
 
+import ActionButton from 'components/common/Button/ActionButton'
 import usePerpsModule from 'components/perps/Module/usePerpsModule'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
@@ -30,6 +32,7 @@ import { useLimitPriceInfo } from 'hooks/perps/useLimitPriceInfo'
 import { useOpenInterestLeft } from 'hooks/perps/useOpenInterestLeft'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import { usePerpsCallbacks } from 'hooks/perps/usePerpsCallbacks'
+import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 import { usePerpsOrderForm } from 'hooks/perps/usePerpsOrderForm'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import { usePositionSimulation } from 'hooks/perps/usePositionSimulation'
@@ -37,6 +40,7 @@ import { useReduceOnlyOrder } from 'hooks/perps/useReduceOnlyOrder'
 import { useStopPriceInfo } from 'hooks/perps/useStopPriceInfo'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import useAutoLend from 'hooks/wallet/useAutoLend'
+import { BNCoin } from 'types/classes/BNCoin'
 
 export function PerpsModule() {
   // State declarations
@@ -98,6 +102,12 @@ export function PerpsModule() {
     currentPerpPosition,
     amount,
   )
+
+  // Close position dependencies
+  const currentAccount = useCurrentAccount()
+  const { data: limitOrders } = usePerpsLimitOrders()
+  const closePerpPosition = useStore((s) => s.closePerpPosition)
+
   const handleClosing = useHandleClosing(
     currentPerpPosition,
     isStopOrder,
@@ -187,6 +197,34 @@ export function PerpsModule() {
     validateReduceOnlyOrder()
   }, [validateReduceOnlyOrder, amount, isReduceOnly])
 
+  const closePosition = useCallback(() => {
+    if (!currentAccount || !currentPerpPosition || !limitOrders) return
+
+    const relevantOrderIds = limitOrders
+      .filter((order) =>
+        order.order.actions.some(
+          (action) =>
+            'execute_perp_order' in action && action.execute_perp_order.denom === perpsAsset.denom,
+        ),
+      )
+      .map((order) => order.order.order_id)
+
+    closePerpPosition({
+      accountId: currentAccount.id,
+      coin: BNCoin.fromDenomAndBigNumber(perpsAsset.denom, currentPerpPosition.amount.negated()),
+      autolend: isAutoLendEnabledForCurrentAccount,
+      baseDenom: currentPerpPosition.baseDenom,
+      orderIds: relevantOrderIds,
+    })
+  }, [
+    currentAccount,
+    currentPerpPosition,
+    limitOrders,
+    closePerpPosition,
+    perpsAsset.denom,
+    isAutoLendEnabledForCurrentAccount,
+  ])
+
   if (!perpsAsset) return null
 
   return (
@@ -205,123 +243,156 @@ export function PerpsModule() {
         'relative isolate overflow-hidden rounded-base z-30',
       )}
     >
-      <div className='flex flex-col gap-5'>
-        <OrderTypeSelector
-          orderTabs={PERPS_ORDER_TYPE_TABS}
-          selected={selectedOrderType}
-          onChange={onChangeOrderType}
-        />
-        <PerpsTradeDirectionSelector
-          isStopOrder={isStopOrder}
-          tradeDirection={tradeDirection}
-          stopTradeDirection={stopTradeDirection}
-          onChangeTradeDirection={onChangeTradeDirection}
-          onChangeStopTradeDirection={onChangeStopTradeDirection}
-        />
-        {isLimitOrder && (
-          <LimitPriceSection
-            USD={USD}
-            limitPrice={limitPrice}
-            setLimitPrice={setLimitPrice}
-            limitPriceInfo={limitPriceInfo}
-          />
-        )}
-        {isStopOrder && (
-          <StopPriceSection
-            USD={USD}
-            stopPrice={stopPrice}
-            setStopPrice={setStopPrice}
-            stopPriceInfo={stopPriceInfo}
-          />
-        )}
-        <AssetAmountInput
-          containerClassName='pb-2'
-          label='Amount'
-          max={maxAmount}
-          amount={amount.abs()}
-          setAmount={onChangeAmount}
-          asset={perpsAsset}
-          maxButtonLabel='Max:'
-          disabled={isDisabledAmountInput}
-          onClosing={handleClosing}
-          showCloseButton={
-            !!currentPerpPosition &&
-            (isStopOrder
-              ? currentPerpPosition.tradeDirection !== stopTradeDirection
-              : currentPerpPosition.tradeDirection !== tradeDirection)
-          }
-          isMaxSelected={isMaxSelected}
-          capMax={false}
-        />
-        {amount.isGreaterThan(maxAmount) && (
-          <Callout type={CalloutType.WARNING}>
-            The entered amount exceeds the maximum allowed.
-          </Callout>
-        )}
-        {perpsAsset && perpsAsset.price && (
-          <div className='flex items-center gap-1 pb-2 text-xs text-white/60'>
-            <span>Open Interest left ({isStopOrder ? stopTradeDirection : tradeDirection}):</span>
-            <FormattedNumber
-              amount={
-                tradeDirection === 'short' || stopTradeDirection === 'short'
-                  ? shortOpenInterestLeft.toNumber()
-                  : longOpenInterestLeft.toNumber()
-              }
-              options={{
-                suffix: ` ${perpsAsset.symbol}`,
-                abbreviated: true,
+      {perpsAsset.isDeprecated ? (
+        <>
+          <div className='flex flex-col gap-4'>
+            <Text size='sm' uppercase>
+              Disabled Market
+            </Text>
+            <Text size='xs'>
+              The selected market is currently disabled, and opening new positions is unavailable.
+            </Text>
+            <Text size='xs'>
+              You have an active position in this market. To manage your exposure, you may still
+              close your existing position by using the button below.
+            </Text>
+            <Text size='xs'>Click the button below to close your position.</Text>
+          </div>
+          <div className='flex flex-col gap-4'>
+            <ActionButton
+              text='Close Position'
+              onClick={() => {
+                closePosition()
               }}
             />
+            <Callout type={CalloutType.INFO}>
+              Please note: no new positions can be opened until the market is re-enabled.
+            </Callout>
           </div>
-        )}
-        {!maxAmount.isZero() && !currentPerpPosition && (
-          <LeverageSection
-            maxLeverage={maxLeverage}
-            effectiveLeverage={effectiveLeverage}
-            onChangeLeverage={onChangeLeverage}
-            tradeDirection={tradeDirection}
-            isDisabledAmountInput={isDisabledAmountInput}
-            maxAmount={maxAmount}
-          />
-        )}
-        {warningMessages.value.map((message) => (
-          <Callout key={message} type={CalloutType.WARNING}>
-            {message}
-          </Callout>
-        ))}
-        {currentPerpPosition && (isLimitOrder || isStopOrder) && (
-          <ReduceOnlySwitch
-            isReduceOnly={isReduceOnly}
-            setIsReduceOnly={setIsReduceOnly}
-            isStopOrder={isStopOrder}
-            reduceOnlyWarning={reduceOnlyWarning}
-          />
-        )}
-      </div>
-      <div className='flex flex-wrap w-full gap-4 mt-4'>
-        {(isLimitOrder || isStopOrder) && <KeeperFee />}
-        <PerpsSummary
-          amount={amount}
-          tradeDirection={isStopOrder ? stopTradeDirection : tradeDirection}
-          asset={perpsAsset}
-          leverage={effectiveLeverage}
-          previousAmount={previousAmount}
-          previousTradeDirection={previousTradeDirection}
-          previousLeverage={previousLeverage}
-          hasActivePosition={hasActivePosition}
-          onTxExecuted={() => {
-            updateAmount(BN_ZERO)
-            simulatePerps(currentPerpPosition, isAutoLendEnabledForCurrentAccount)
-          }}
-          disabled={isDisabledExecution}
-          orderType={selectedOrderType}
-          limitPrice={isLimitOrder ? limitPrice : BN_ZERO}
-          stopPrice={isStopOrder ? stopPrice : BN_ZERO}
-          baseDenom={tradingFee?.baseDenom ?? ''}
-          isReduceOnly={isReduceOnly}
-          validateReduceOnlyOrder={validateReduceOnlyOrder}
-        />
-      </div>
+        </>
+      ) : (
+        <>
+          <div className='flex flex-col gap-5'>
+            <OrderTypeSelector
+              orderTabs={PERPS_ORDER_TYPE_TABS}
+              selected={selectedOrderType}
+              onChange={onChangeOrderType}
+            />
+            <PerpsTradeDirectionSelector
+              isStopOrder={isStopOrder}
+              tradeDirection={tradeDirection}
+              stopTradeDirection={stopTradeDirection}
+              onChangeTradeDirection={onChangeTradeDirection}
+              onChangeStopTradeDirection={onChangeStopTradeDirection}
+            />
+            {isLimitOrder && (
+              <LimitPriceSection
+                USD={USD}
+                limitPrice={limitPrice}
+                setLimitPrice={setLimitPrice}
+                limitPriceInfo={limitPriceInfo}
+              />
+            )}
+            {isStopOrder && (
+              <StopPriceSection
+                USD={USD}
+                stopPrice={stopPrice}
+                setStopPrice={setStopPrice}
+                stopPriceInfo={stopPriceInfo}
+              />
+            )}
+            <AssetAmountInput
+              containerClassName='pb-2'
+              label='Amount'
+              max={maxAmount}
+              amount={amount.abs()}
+              setAmount={onChangeAmount}
+              asset={perpsAsset}
+              maxButtonLabel='Max:'
+              disabled={isDisabledAmountInput}
+              onClosing={handleClosing}
+              showCloseButton={
+                !!currentPerpPosition &&
+                (isStopOrder
+                  ? currentPerpPosition.tradeDirection !== stopTradeDirection
+                  : currentPerpPosition.tradeDirection !== tradeDirection)
+              }
+              isMaxSelected={isMaxSelected}
+              capMax={false}
+            />
+            {amount.isGreaterThan(maxAmount) && (
+              <Callout type={CalloutType.WARNING}>
+                The entered amount exceeds the maximum allowed.
+              </Callout>
+            )}
+            {perpsAsset && perpsAsset.price && (
+              <div className='flex items-center gap-1 pb-2 text-xs text-white/60'>
+                <span>
+                  Open Interest left ({isStopOrder ? stopTradeDirection : tradeDirection}):
+                </span>
+                <FormattedNumber
+                  amount={
+                    tradeDirection === 'short' || stopTradeDirection === 'short'
+                      ? shortOpenInterestLeft.toNumber()
+                      : longOpenInterestLeft.toNumber()
+                  }
+                  options={{
+                    suffix: ` ${perpsAsset.symbol}`,
+                    abbreviated: true,
+                  }}
+                />
+              </div>
+            )}
+            {!maxAmount.isZero() && !currentPerpPosition && (
+              <LeverageSection
+                maxLeverage={maxLeverage}
+                effectiveLeverage={effectiveLeverage}
+                onChangeLeverage={onChangeLeverage}
+                tradeDirection={tradeDirection}
+                isDisabledAmountInput={isDisabledAmountInput}
+                maxAmount={maxAmount}
+              />
+            )}
+            {warningMessages.value.map((message) => (
+              <Callout key={message} type={CalloutType.WARNING}>
+                {message}
+              </Callout>
+            ))}
+            {currentPerpPosition && (isLimitOrder || isStopOrder) && (
+              <ReduceOnlySwitch
+                isReduceOnly={isReduceOnly}
+                setIsReduceOnly={setIsReduceOnly}
+                isStopOrder={isStopOrder}
+                reduceOnlyWarning={reduceOnlyWarning}
+              />
+            )}
+          </div>
+          <div className='flex flex-wrap w-full gap-4 mt-4'>
+            {(isLimitOrder || isStopOrder) && <KeeperFee />}
+            <PerpsSummary
+              amount={amount}
+              tradeDirection={isStopOrder ? stopTradeDirection : tradeDirection}
+              asset={perpsAsset}
+              leverage={effectiveLeverage}
+              previousAmount={previousAmount}
+              previousTradeDirection={previousTradeDirection}
+              previousLeverage={previousLeverage}
+              hasActivePosition={hasActivePosition}
+              onTxExecuted={() => {
+                updateAmount(BN_ZERO)
+                simulatePerps(currentPerpPosition, isAutoLendEnabledForCurrentAccount)
+              }}
+              disabled={isDisabledExecution}
+              orderType={selectedOrderType}
+              limitPrice={isLimitOrder ? limitPrice : BN_ZERO}
+              stopPrice={isStopOrder ? stopPrice : BN_ZERO}
+              baseDenom={tradingFee?.baseDenom ?? ''}
+              isReduceOnly={isReduceOnly}
+              validateReduceOnlyOrder={validateReduceOnlyOrder}
+            />
+          </div>
+        </>
+      )}
     </Card>
   )
 }
