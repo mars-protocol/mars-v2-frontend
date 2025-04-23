@@ -2,6 +2,7 @@ import classNames from 'classnames'
 
 import Button from 'components/common/Button'
 import Checkbox from 'components/common/Checkbox'
+import EscButton from 'components/common/Button/EscButton'
 import Text from 'components/common/Text'
 import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
 import Modal from 'components/Modals/Modal'
@@ -30,6 +31,8 @@ function AlertDialog(props: Props) {
     positiveButton,
     checkbox,
     header,
+    isSingleButtonLayout,
+    showCloseButton,
     titleClassName,
     modalClassName,
   } = props.config
@@ -52,7 +55,10 @@ function AlertDialog(props: Props) {
       hideTxLoader
       header={
         header ? (
-          header
+          <div className='flex items-center justify-between w-full'>
+            {header}
+            {showCloseButton && <EscButton onClick={props.close} />}
+          </div>
         ) : (
           <div className='flex items-center gap-4'>
             {icon && <div className='w-10 h-10'>{icon}</div>}
@@ -73,42 +79,67 @@ function AlertDialog(props: Props) {
       ) : (
         content
       )}
-      <div
-        className={classNames(
-          'mt-10 flex justify-between gap-4 md:flex-nowrap flex-wrap',
-          positiveButton && 'flex-row-reverse',
-        )}
-      >
-        <div className='flex flex-row-reverse gap-4'>
+      {isSingleButtonLayout ? (
+        <div className='mt-10 flex flex-col gap-4'>
+          {checkbox && (
+            <div className='flex justify-center'>
+              <Checkbox
+                name='hls-info-toggle'
+                checked={toggle}
+                onChange={handleCheckboxClick}
+                text={checkbox.text}
+              />
+            </div>
+          )}
           {positiveButton && (
             <Button
-              text={positiveButton.text ?? 'Yes'}
-              color='tertiary'
-              className='px-6'
-              rightIcon={positiveButton.icon ?? <YesIcon />}
-              iconClassName='h-4 w-5'
+              text={positiveButton.text ?? 'Continue'}
+              color='primary'
+              className='w-full'
+              rightIcon={positiveButton.icon}
               onClick={() => handleButtonClick(positiveButton)}
               disabled={positiveButton.disabled}
             />
           )}
-          {checkbox && (
-            <Checkbox
-              name='hls-info-toggle'
-              checked={toggle}
-              onChange={handleCheckboxClick}
-              text={checkbox.text}
-            />
-          )}
         </div>
-        <Button
-          text={negativeButton?.text ?? 'No'}
-          color='secondary'
-          className='px-6'
-          rightIcon={negativeButton?.icon ?? <NoIcon />}
-          tabIndex={1}
-          onClick={() => handleButtonClick(negativeButton)}
-        />
-      </div>
+      ) : (
+        <div
+          className={classNames(
+            'mt-10 flex justify-between gap-4 md:flex-nowrap flex-wrap',
+            positiveButton && 'flex-row-reverse',
+          )}
+        >
+          <div className='flex flex-row-reverse gap-4'>
+            {positiveButton && (
+              <Button
+                text={positiveButton.text ?? 'Yes'}
+                color='tertiary'
+                className='px-6'
+                rightIcon={positiveButton.icon ?? <YesIcon />}
+                iconClassName='h-4 w-5'
+                onClick={() => handleButtonClick(positiveButton)}
+                disabled={positiveButton.disabled}
+              />
+            )}
+            {checkbox && (
+              <Checkbox
+                name='hls-info-toggle'
+                checked={toggle}
+                onChange={handleCheckboxClick}
+                text={checkbox.text}
+              />
+            )}
+          </div>
+          <Button
+            text={negativeButton?.text ?? 'No'}
+            color='secondary'
+            className='px-6'
+            rightIcon={negativeButton?.icon ?? <NoIcon />}
+            tabIndex={1}
+            onClick={() => handleButtonClick(negativeButton)}
+          />
+        </div>
+      )}
     </Modal>
   )
 }
