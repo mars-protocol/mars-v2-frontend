@@ -26,8 +26,13 @@ function VaultLoadingState() {
   )
 }
 
-export default function VaultDetails() {
-  const { vaultAddress } = useParams<{ vaultAddress: string }>()
+interface VaultDetailsProps {
+  vaultAddress?: string
+}
+
+export default function VaultDetails({ vaultAddress: propVaultAddress }: VaultDetailsProps) {
+  const { vaultAddress: urlVaultAddress } = useParams<{ vaultAddress: string }>()
+  const vaultAddress = propVaultAddress || urlVaultAddress
 
   if (!vaultAddress) {
     return <VaultLoadingState />
@@ -46,7 +51,6 @@ export default function VaultDetails() {
 
 export function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) {
   const { details: vaultDetails, isOwner, isLoading } = useManagedVaultDetails(vaultAddress)
-
   const [showFeeActionModal, setShowFeeActionModal] = useToggle()
   const [showActionModal, setShowActionModal] = useToggle()
   const [modalType, setModalType] = useState<'deposit' | 'unlock'>('deposit')
@@ -68,8 +72,6 @@ export function VaultDetailsContent({ vaultAddress }: { vaultAddress: string }) 
     setModalFeeType(type)
     setShowFeeActionModal(true)
   }
-
-  if (!vaultDetails) return null
 
   return (
     <div className='flex flex-col justify-center gap-4 md:flex-row'>
