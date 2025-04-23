@@ -185,7 +185,7 @@ const getManagedVaultQueryClient = async (chainConfig: ChainConfig, address: str
     throw error
   }
 }
-const getManagedVaultOwner = async (chainConfig: ChainConfig, address: string) => {
+const getManagedVaultOwnerAddress = async (chainConfig: ChainConfig, address: string) => {
   try {
     const client = await getClient(getUrl(chainConfig.endpoints.rpc))
     const contractInfo = await client.getContract(address)
@@ -202,7 +202,7 @@ const getManagedVaultDetails = async (chainConfig: ChainConfig, vaultAddress: st
     const response = await client.vaultExtension({
       vault_info: {},
     })
-    return response as unknown as ManagedVaultDetailsResponse
+    return response as unknown as ManagedVaultSCDetailsResponse
   } catch (error) {
     setNodeError(getUrl(chainConfig.endpoints.rpc), error)
     throw error
@@ -325,7 +325,7 @@ export {
   getIncentivesQueryClient,
   getManagedVaultAllUnlocks,
   getManagedVaultDetails,
-  getManagedVaultOwner,
+  getManagedVaultOwnerAddress,
   getManagedVaultPerformanceFeeState,
   getManagedVaultQueryClient,
   getManagedVaultUserUnlocks,

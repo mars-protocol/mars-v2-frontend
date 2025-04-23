@@ -1,6 +1,6 @@
 import {
   getManagedVaultDetails,
-  getManagedVaultOwner,
+  getManagedVaultOwnerAddress,
   getManagedVaultPerformanceFeeState,
 } from 'api/cosmwasm-client'
 import getManagedVaults from 'api/managedVaults/getManagedVaults'
@@ -16,19 +16,19 @@ export function useManagedVaultDetails(vaultAddress?: string) {
   const { data: ownerAddress } = useSWR(
     vaultAddress && `chains/${chainConfig.id}/managedVaults/${vaultAddress}/owner`,
     async () => {
-      return await getManagedVaultOwner(chainConfig, vaultAddress ?? '')
+      return await getManagedVaultOwnerAddress(chainConfig, vaultAddress ?? '')
     },
   )
 
-  const { data: metrics, isLoading: isMetricsLoading } = useSWR(
-    vaultAddress && `chains/${chainConfig.id}/managedVaults/${vaultAddress}/metrics`,
+  const { data: managedVaultData, isLoading: isManagedVaultDataLoading } = useSWR(
+    vaultAddress && `chains/${chainConfig.id}/managedVaults/${vaultAddress}/managedVaultData`,
     async () => {
-      const { data } = await getManagedVaults(chainConfig)
-      return data.find((v) => v.vault_address === vaultAddress)
+      const { data } = await getManagedVaults(chainConfig, vaultAddress)
+      return data[0]
     },
     {
       revalidateOnFocus: false,
-      refreshInterval: 10_000,
+      refreshInterval: 60_000,
       suspense: false,
     },
   )
@@ -60,16 +60,17 @@ export function useManagedVaultDetails(vaultAddress?: string) {
   if (!vaultAddress) return { details: undefined, isOwner: false, isLoading: false }
 
   const isOwner = Boolean(address && ownerAddress && ownerAddress === address)
-  const isLoading = isDetailsLoading || isPerformanceFeeLoading || isMetricsLoading
+  const isLoading = isDetailsLoading || isPerformanceFeeLoading || isManagedVaultDataLoading
 
-  if ((isLoading && !ownerAddress) || !details || !performanceFeeState)
+  if ((isLoading && !ownerAddress) || !details || !performanceFeeState || !managedVaultData)
     return {
       details: undefined,
       isOwner: false,
       isLoading: true,
     }
 
-  const transformedDetailsData = {
+  const transformedDetailsData: ManagedVaultsData = {
+    vault_address: vaultAddress,
     title: details.title,
     subtitle: details.subtitle,
     description: details.description,
@@ -78,11 +79,9 @@ export function useManagedVaultDetails(vaultAddress?: string) {
     cooldown_period: details.cooldown_period,
     performance_fee_config: details.performance_fee_config,
     share_price: details.share_price,
-    owner: ownerAddress,
-    metrics: {
-      tvl: metrics?.tvl ?? '0',
-      apy: convertAprToApy(Number(metrics?.apr ?? 0), 365),
-    },
+    ownerAddress,
+    tvl: managedVaultData?.tvl ?? '0',
+    apy: convertAprToApy(Number(managedVaultData?.apr ?? 0), 365),
     performance_fee_state: performanceFeeState ?? {
       accumulated_fee: '0',
       accumulated_pnl: '0',
