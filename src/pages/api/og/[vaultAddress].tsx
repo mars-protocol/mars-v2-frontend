@@ -1,5 +1,8 @@
+import { formatValue } from 'utils/formatters'
 import { ImageResponse } from '@vercel/og'
 import { NextRequest } from 'next/server'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import { getManagedVaultsUrl } from 'utils/api'
 
 export const config = {
   runtime: 'edge',
@@ -19,9 +22,7 @@ export default async function handler(req: NextRequest) {
       return new Response('Missing vault address', { status: 400 })
     }
 
-    const response = await fetch(
-      `https://backend.test.mars-dev.net/v2/managed_vaults?chain=neutron&address=${vaultAddress}`,
-    ).then((res) => res.json())
+    const response = await fetch(getManagedVaultsUrl(vaultAddress)).then((res) => res.json())
     const data = response.data[0]
 
     if (!data) {
@@ -30,7 +31,11 @@ export default async function handler(req: NextRequest) {
 
     const vaultInfo = data
     const formattedTVL = vaultInfo.tvl
-      ? `$${(Number(vaultInfo.tvl) / 1000000).toLocaleString(undefined, { maximumFractionDigits: 2 })}`
+      ? formatValue(Number(vaultInfo.tvl), {
+          abbreviated: true,
+          prefix: '$',
+          decimals: PRICE_ORACLE_DECIMALS,
+        })
       : 'N/A'
 
     // Convert APR to APY with daily compounding
@@ -38,12 +43,8 @@ export default async function handler(req: NextRequest) {
     const apy = apr ? ((1 + apr / 36500) ** 365 - 1) * 100 : null
     const formattedAPY = apy ? `${apy.toFixed(2)}%` : 'N/A'
 
-    const formattedFeeRate = vaultInfo.fee_rate
-      ? `${(Number(vaultInfo.fee_rate) * 100000).toFixed(2)}%`
-      : '0%'
-
     // temporary for local development
-    const imageResponse = await fetch(`${protocol}://${host}/mars_preview.png`)
+    const imageResponse = await fetch(`${protocol}://${host}/vault_preview.png`)
     const contentType = imageResponse.headers.get('content-type') || 'image/png'
     const backgroundImageData = await imageResponse.arrayBuffer()
     const base64Image = Buffer.from(backgroundImageData).toString('base64')
@@ -56,7 +57,7 @@ export default async function handler(req: NextRequest) {
             display: 'flex',
             width: '100%',
             height: '100%',
-            fontFamily: 'Inter',
+            fontFamily: 'Inter, system-ui, sans-serif',
           }}
         >
           <div
@@ -68,7 +69,7 @@ export default async function handler(req: NextRequest) {
               bottom: 0,
               opacity: 1,
               backgroundImage: `url(${imageDataUrl})`,
-              backgroundSize: 'contain',
+              backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
             }}
@@ -78,7 +79,7 @@ export default async function handler(req: NextRequest) {
           <div
             style={{
               position: 'absolute',
-              top: '65%',
+              top: '55%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
               display: 'flex',
@@ -90,9 +91,14 @@ export default async function handler(req: NextRequest) {
           >
             <div
               style={{
-                fontSize: 50,
-                fontWeight: 'bold',
+                fontSize: '76px',
+                fontWeight: 600,
                 color: 'white',
+                textAlign: 'center',
+                maxWidth: '1100px',
+                wordWrap: 'break-word',
+                whiteSpace: 'pre-wrap',
+                fontFamily: 'Inter',
               }}
             >
               {vaultInfo.title || 'Mars Protocol Vault'}
@@ -103,53 +109,70 @@ export default async function handler(req: NextRequest) {
               style={{
                 display: 'flex',
                 flexDirection: 'row',
-                gap: '16px',
-                marginTop: '18px',
+                gap: '200px',
+                marginTop: '5px',
               }}
             >
               <div
                 style={{
                   display: 'flex',
-                  gap: '12px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                  padding: '12px 20px',
-                  borderRadius: '12px',
+                  flexDirection: 'column',
                   alignItems: 'center',
                 }}
               >
-                <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '34px' }}>APY</div>
-                <div style={{ color: 'white', fontSize: '32px', fontWeight: 'bold' }}>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '40px',
+                    fontWeight: 400,
+                    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                    padding: '12px 20px',
+                    borderRadius: '12px',
+                    fontFamily: 'Inter',
+                  }}
+                >
+                  APY
+                </div>
+                <div
+                  style={{
+                    color: 'white',
+                    fontSize: '80px',
+                    fontWeight: 600,
+                    fontFamily: 'Inter',
+                  }}
+                >
                   {formattedAPY}
                 </div>
               </div>
               <div
                 style={{
                   display: 'flex',
-                  gap: '12px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                  padding: '12px 20px',
-                  borderRadius: '12px',
+                  flexDirection: 'column',
                   alignItems: 'center',
                 }}
               >
-                <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '34px' }}>TVL</div>
-                <div style={{ color: 'white', fontSize: '32px', fontWeight: 'bold' }}>
-                  {formattedTVL}
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '40px',
+                    fontWeight: 400,
+                    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                    padding: '12px 20px',
+                    borderRadius: '12px',
+                    fontFamily: 'Inter',
+                  }}
+                >
+                  TVL
                 </div>
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  gap: '12px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                  padding: '12px 20px',
-                  borderRadius: '12px',
-                  alignItems: 'center',
-                }}
-              >
-                <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '34px' }}>Fee Rate</div>
-                <div style={{ color: 'white', fontSize: '32px', fontWeight: 'bold' }}>
-                  {formattedFeeRate}
+                <div
+                  style={{
+                    color: 'white',
+                    fontSize: '80px',
+                    fontWeight: 600,
+                    fontFamily: 'Inter',
+                  }}
+                >
+                  {formattedTVL}
                 </div>
               </div>
             </div>
@@ -157,8 +180,8 @@ export default async function handler(req: NextRequest) {
         </div>
       ),
       {
-        width: 1200,
-        height: 630,
+        width: 1280,
+        height: 720,
       },
     )
   } catch (e: unknown) {

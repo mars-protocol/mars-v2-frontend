@@ -1,12 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next'
+import { getManagedVaultsUrl } from 'utils/api'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { vaultAddress } = req.query
 
   try {
-    const response = await fetch(
-      `https://backend.test.mars-dev.net/v2/managed_vaults?chain=neutron&address=${vaultAddress}`,
-    )
+    const response = await fetch(getManagedVaultsUrl(vaultAddress as string))
     const data = await response.json()
     const vault = data?.data?.[0]
 
