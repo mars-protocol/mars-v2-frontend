@@ -8,6 +8,7 @@ import { TrashBin } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import USD from 'constants/USDollar'
 import { BN_ZERO } from 'constants/math'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useKeeperFee from 'hooks/perps/useKeeperFee'
@@ -25,11 +26,13 @@ import { formatPercent } from 'utils/formatters'
 const perpsPercentage = (price: BigNumber, triggerPrice: BigNumber, isShort: boolean = false) => {
   if (!price || triggerPrice.isZero()) return BN_ZERO
 
+  const normalizedTriggerPrice = triggerPrice.shiftedBy(-PRICE_ORACLE_DECIMALS)
+
   if (isShort) {
-    return price.minus(triggerPrice).dividedBy(price).multipliedBy(100)
+    return price.minus(normalizedTriggerPrice).dividedBy(price).multipliedBy(100)
   }
 
-  return triggerPrice.minus(price).dividedBy(price).multipliedBy(100)
+  return normalizedTriggerPrice.minus(price).dividedBy(price).multipliedBy(100)
 }
 
 const getTextColorClass = (percentage: BigNumber) => {
@@ -266,9 +269,11 @@ export default function PerpsSlTpModal() {
             </Text>
             <div className='flex items-center gap-2'>
               <AssetAmountInput
-                asset={{ ...USD, decimals: 0 }}
-                amount={takeProfitPrice}
-                setAmount={setTakeProfitPrice}
+                asset={{ ...USD, decimals: USD.decimals }}
+                amount={takeProfitPrice.shiftedBy(-(perpsAsset?.decimals ?? 0))}
+                setAmount={(amount) =>
+                  setTakeProfitPrice(amount.shiftedBy(perpsAsset?.decimals ?? 0))
+                }
                 disabled={false}
                 isUSD
               />
@@ -330,9 +335,11 @@ export default function PerpsSlTpModal() {
             </Text>
             <div className='flex items-center gap-2'>
               <AssetAmountInput
-                asset={{ ...USD, decimals: 0 }}
-                amount={stopLossPrice}
-                setAmount={setStopLossPrice}
+                asset={{ ...USD, decimals: USD.decimals }}
+                amount={stopLossPrice.shiftedBy(-(perpsAsset?.decimals ?? 0))}
+                setAmount={(amount) =>
+                  setStopLossPrice(amount.shiftedBy(perpsAsset?.decimals ?? 0))
+                }
                 disabled={false}
                 isUSD
               />

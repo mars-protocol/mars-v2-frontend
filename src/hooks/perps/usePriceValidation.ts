@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import BigNumber from 'bignumber.js'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 
 interface PriceValidationResult {
   isValid: boolean
@@ -46,6 +47,8 @@ const usePriceValidation = ({
   takeProfitPrice,
 }: PriceValidationProps): PriceValidationResult => {
   const isShort = currentTradeDirection === 'short'
+  const normalizedStopLossPrice = stopLossPrice.shiftedBy(-PRICE_ORACLE_DECIMALS)
+  const normalizedTakeProfitPrice = takeProfitPrice.shiftedBy(-PRICE_ORACLE_DECIMALS)
 
   const validationResult = useMemo(() => {
     if (!currentPrice) {
@@ -57,11 +60,11 @@ const usePriceValidation = ({
     }
 
     const stopLossError = showStopLoss
-      ? validatePrice(isShort, currentPrice, stopLossPrice, 'Stop Loss')
+      ? validatePrice(isShort, currentPrice, normalizedStopLossPrice, 'Stop Loss')
       : null
 
     const takeProfitError = showTakeProfit
-      ? validatePrice(isShort, currentPrice, takeProfitPrice, 'Take Profit')
+      ? validatePrice(isShort, currentPrice, normalizedTakeProfitPrice, 'Take Profit')
       : null
 
     const hasValidStopLoss = !stopLossError && showStopLoss && !stopLossPrice.isZero()
@@ -73,7 +76,16 @@ const usePriceValidation = ({
       stopLossError,
       takeProfitError,
     }
-  }, [currentPrice, isShort, showStopLoss, stopLossPrice, showTakeProfit, takeProfitPrice])
+  }, [
+    currentPrice,
+    isShort,
+    showStopLoss,
+    normalizedStopLossPrice,
+    showTakeProfit,
+    normalizedTakeProfitPrice,
+    stopLossPrice,
+    takeProfitPrice,
+  ])
 
   return validationResult
 }

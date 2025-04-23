@@ -7,6 +7,8 @@ import { useCallback, useEffect, useMemo } from 'react'
 import useStore from 'store'
 import { formatValue } from 'utils/formatters'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import BigNumber from 'bignumber.js'
 
 type PerpsOrderOptionsProps = {
   isReduceOnly: boolean
@@ -28,6 +30,16 @@ export const PerpsOrderOptions = ({
   const { perpsAsset } = usePerpsAsset()
   const currentAccount = useCurrentAccount()
   const currentPerpPosition = currentAccount?.perps.find((p) => p.denom === perpsAsset.denom)
+  const normalizedConditionalTriggers = useMemo(() => {
+    return {
+      sl: conditionalTriggers.sl
+        ? new BigNumber(conditionalTriggers.sl).shiftedBy(-PRICE_ORACLE_DECIMALS)
+        : null,
+      tp: conditionalTriggers.tp
+        ? new BigNumber(conditionalTriggers.tp).shiftedBy(-PRICE_ORACLE_DECIMALS)
+        : null,
+    }
+  }, [conditionalTriggers])
 
   const showReduceOnly = !!currentPerpPosition || !isMarketOrder
 
@@ -40,8 +52,8 @@ export const PerpsOrderOptions = ({
   }, [])
 
   const hasConditionalTriggers = useMemo(() => {
-    return conditionalTriggers.tp !== null || conditionalTriggers.sl !== null
-  }, [conditionalTriggers.tp, conditionalTriggers.sl])
+    return normalizedConditionalTriggers.tp !== null || normalizedConditionalTriggers.sl !== null
+  }, [normalizedConditionalTriggers.tp, normalizedConditionalTriggers.sl])
 
   useEffect(() => {
     handleClearTriggers()
@@ -94,7 +106,7 @@ export const PerpsOrderOptions = ({
             )}
           </div>
         </div>
-        {conditionalTriggers.sl && (
+        {normalizedConditionalTriggers.sl && (
           <div className={'flex w-full pt-4'}>
             <div className='flex flex-1'>
               <Text className='mr-2 text-white/50' size='xs'>
@@ -103,25 +115,25 @@ export const PerpsOrderOptions = ({
             </div>
 
             <Text size='xs' className='text-white'>
-              {formatValue(Number(conditionalTriggers.sl), {
-                maxDecimals: USD.decimals,
+              {formatValue(Number(normalizedConditionalTriggers.sl), {
+                maxDecimals: perpsAsset.decimals,
                 minDecimals: USD.decimals,
                 prefix: USD.symbol,
               })}
             </Text>
           </div>
         )}
-        {conditionalTriggers.tp && (
+        {normalizedConditionalTriggers.tp && (
           <div className={'flex w-full pt-2'}>
             <div className='flex flex-1'>
               <Text className='mr-2 text-white/50' size='xs'>
                 Take Profit
               </Text>
             </div>
-            {conditionalTriggers.tp && (
+            {normalizedConditionalTriggers.tp && (
               <Text size='xs' className='text-white'>
-                {formatValue(Number(conditionalTriggers.tp), {
-                  maxDecimals: USD.decimals,
+                {formatValue(Number(normalizedConditionalTriggers.tp), {
+                  maxDecimals: perpsAsset.decimals,
                   minDecimals: USD.decimals,
                   prefix: USD.symbol,
                 })}

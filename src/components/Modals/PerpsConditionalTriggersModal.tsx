@@ -15,14 +15,18 @@ import { formatPercent } from 'utils/formatters'
 import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 import BigNumber from 'bignumber.js'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 
 const perpsPercentage = (price: BigNumber, triggerPrice: BigNumber, isShort: boolean = false) => {
   if (!price || triggerPrice.isZero()) return BN_ZERO
+
+  const normalizedTriggerPrice = triggerPrice.shiftedBy(-PRICE_ORACLE_DECIMALS)
+
   if (isShort) {
-    return price.minus(triggerPrice).dividedBy(price).multipliedBy(100)
+    return price.minus(normalizedTriggerPrice).dividedBy(price).multipliedBy(100)
   }
 
-  return triggerPrice.minus(price).dividedBy(price).multipliedBy(100)
+  return normalizedTriggerPrice.minus(price).dividedBy(price).multipliedBy(100)
 }
 
 const getTextColorClass = (percentage: BigNumber) => {
@@ -132,7 +136,7 @@ export default function PerpsConditionalTriggersModal() {
           {USD && (
             <div className='flex items-center gap-2'>
               <AssetAmountInput
-                asset={{ ...USD, decimals: 0 }}
+                asset={{ ...USD, decimals: perpsAsset?.perpsAsset.decimals || 0 }}
                 amount={takeProfitPrice}
                 setAmount={setTakeProfitPrice}
                 disabled={false}
@@ -174,7 +178,7 @@ export default function PerpsConditionalTriggersModal() {
           {USD && (
             <div className='flex items-center gap-2'>
               <AssetAmountInput
-                asset={{ ...USD, decimals: 0 }}
+                asset={{ ...USD, decimals: perpsAsset?.perpsAsset.decimals || 0 }}
                 amount={stopLossPrice}
                 setAmount={setStopLossPrice}
                 disabled={false}
