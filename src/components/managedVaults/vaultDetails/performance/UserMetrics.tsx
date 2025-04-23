@@ -12,7 +12,7 @@ import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUs
 
 interface Props {
   vaultAddress: string
-  vaultDetails: ExtendedManagedVaultDetails
+  vaultDetails: ManagedVaultsData
 }
 
 export default function UserMetrics(props: Props) {

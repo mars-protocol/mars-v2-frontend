@@ -1,12 +1,12 @@
-import PerformanceCard from 'components/managedVaults/community/vaultDetails/performance/PerformanceCard'
-import PerformanceChart from 'components/managedVaults/community/vaultDetails/performance/chart/PerformanceChart'
-import UserMetrics from 'components/managedVaults/community/vaultDetails/performance/UserMetrics'
+import PerformanceCard from 'components/managedVaults/vaultDetails/performance/PerformanceCard'
+import PerformanceChart from 'components/managedVaults/vaultDetails/performance/chart/PerformanceChart'
+import UserMetrics from 'components/managedVaults/vaultDetails/performance/UserMetrics'
 import useStore from 'store'
 import classNames from 'classnames'
 
 interface Props {
   vaultAddress: string
-  vaultDetails: ExtendedManagedVaultDetails
+  vaultDetails: ManagedVaultsData
 }
 
 export default function VaultPerformance(props: Props) {

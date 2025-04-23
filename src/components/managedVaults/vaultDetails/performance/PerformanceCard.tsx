@@ -8,7 +8,7 @@ import useHistoricalVaultData from 'hooks/managedVaults/useHistoricalVaultData'
 import { useMemo } from 'react'
 
 interface Props {
-  vaultDetails: ExtendedManagedVaultDetails
+  vaultDetails: ManagedVaultsData
   vaultAddress: string
 }
 
@@ -61,7 +61,7 @@ export default function PerformanceCard(props: Props) {
       },
     },
     {
-      value: vaultDetails.metrics.apy,
+      value: vaultDetails.apy,
       label: 'APY',
       formatOptions: { maxDecimals: 2, minDecimals: 2, suffix: '%', abbreviated: true },
     },

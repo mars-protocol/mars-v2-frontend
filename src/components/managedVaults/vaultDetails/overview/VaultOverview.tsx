@@ -1,17 +1,17 @@
-import FeeAction from 'components/managedVaults/community/vaultDetails/common/Overlays/FeeAction'
-import ProfileVaultCard from 'components/managedVaults/community/vaultDetails/profileVaultCard/ProfileVaultCard'
-import OwnerVaultPosition from 'components/managedVaults/community/vaultDetails/OwnerVaultPosition'
+import FeeAction from 'components/managedVaults/vaultDetails/common/Overlays/FeeAction'
+import ProfileVaultCard from 'components/managedVaults/vaultDetails/profileVaultCard/ProfileVaultCard'
+import OwnerVaultPosition from 'components/managedVaults/vaultDetails/overview/OwnerVaultPosition'
 import useToggle from 'hooks/common/useToggle'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
-import VaultAction from 'components/managedVaults/community/vaultDetails/common/Overlays/VaultAction'
-import VaultPosition from 'components/managedVaults/community/vaultDetails/overview/VaultPosition'
-import VaultSummary from 'components/managedVaults/community/vaultDetails/overview/VaultSummary'
-import Withdrawals from 'components/managedVaults/community/vaultDetails/overview/Withdrawals'
+import VaultAction from 'components/managedVaults/vaultDetails/common/Overlays/VaultAction'
+import VaultPosition from 'components/managedVaults/vaultDetails/overview/VaultPosition'
+import VaultSummary from 'components/managedVaults/vaultDetails/overview/VaultSummary'
+import Withdrawals from 'components/managedVaults/vaultDetails/overview/Withdrawals'
 import { byDenom } from 'utils/array'
 import { useState } from 'react'
 
 interface Props {
-  vaultDetails: ExtendedManagedVaultDetails
+  vaultDetails: ManagedVaultsData
   isOwner: boolean
   vaultAddress: string
 }
@@ -44,7 +44,7 @@ export default function VaultOverview(props: Props) {
           details={vaultDetails}
           depositAsset={depositAsset}
           isOwner={isOwner}
-          wallet={vaultDetails.owner}
+          wallet={vaultDetails.ownerAddress}
         />
       </div>
       <FeeAction

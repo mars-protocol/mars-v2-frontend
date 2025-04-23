@@ -1,22 +1,13 @@
 import AssetImage from 'components/common/assets/AssetImage'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Loading from 'components/common/Loading'
-import useStore from 'store'
-import PositionInfo from 'components/managedVaults/community/vaultDetails/common/PositionInfo'
-import Text from 'components/common/Text'
-import { BN } from 'utils/helpers'
-import { BNCoin } from 'types/classes/BNCoin'
-import { FormattedNumber } from 'components/common/FormattedNumber'
-import { LockUnlocked } from 'components/common/Icons'
-<<<<<<<< HEAD:src/components/managedVaults/community/vaultDetails/overview/VaultPosition.tsx
-========
-import Text from 'components/common/Text'
-import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
-import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
-import { BN } from 'utils/helpers'
 import PositionInfo from 'components/managedVaults/vaultDetails/common/PositionInfo'
->>>>>>>> managed-vaults:src/components/managedVaults/vaultDetails/VaultPosition.tsx
+import Text from 'components/common/Text'
+import useStore from 'store'
+import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
+import { LockUnlocked } from 'components/common/Icons'
+import { FormattedNumber } from 'components/common/FormattedNumber'
 import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVaultConvertToTokens'
 import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
 
