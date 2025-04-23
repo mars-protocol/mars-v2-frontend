@@ -10,10 +10,6 @@ export const config = {
 
 export default async function handler(req: NextRequest) {
   try {
-    // temporary for local images:
-    const host = req.headers.get('host') || 'localhost:3000'
-    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https'
-
     const { pathname } = new URL(req.url)
     const segments = pathname.split('/')
     const vaultAddress = segments[segments.length - 1]
@@ -43,12 +39,7 @@ export default async function handler(req: NextRequest) {
     const apy = apr ? ((1 + apr / 36500) ** 365 - 1) * 100 : null
     const formattedAPY = apy ? `${apy.toFixed(2)}%` : 'N/A'
 
-    // temporary for local development
-    const imageResponse = await fetch(`${protocol}://${host}/vault_preview.png`)
-    const contentType = imageResponse.headers.get('content-type') || 'image/png'
-    const backgroundImageData = await imageResponse.arrayBuffer()
-    const base64Image = Buffer.from(backgroundImageData).toString('base64')
-    const imageDataUrl = `data:${contentType};base64,${base64Image}`
+    const imageDataUrl = 'https://app.marsprotocol.io/vaults_banner.png'
 
     return new ImageResponse(
       (
@@ -57,7 +48,6 @@ export default async function handler(req: NextRequest) {
             display: 'flex',
             width: '100%',
             height: '100%',
-            fontFamily: 'Inter, system-ui, sans-serif',
           }}
         >
           <div
@@ -92,13 +82,11 @@ export default async function handler(req: NextRequest) {
             <div
               style={{
                 fontSize: '76px',
-                fontWeight: 600,
                 color: 'white',
                 textAlign: 'center',
                 maxWidth: '1100px',
                 wordWrap: 'break-word',
                 whiteSpace: 'pre-wrap',
-                fontFamily: 'Inter',
               }}
             >
               {vaultInfo.title || 'Mars Protocol Vault'}
@@ -110,7 +98,7 @@ export default async function handler(req: NextRequest) {
                 display: 'flex',
                 flexDirection: 'row',
                 gap: '200px',
-                marginTop: '5px',
+                marginTop: '30px',
               }}
             >
               <div
@@ -124,11 +112,9 @@ export default async function handler(req: NextRequest) {
                   style={{
                     color: 'rgba(255, 255, 255, 0.7)',
                     fontSize: '40px',
-                    fontWeight: 400,
                     backgroundColor: 'rgba(255, 255, 255, 0.15)',
                     padding: '12px 20px',
                     borderRadius: '12px',
-                    fontFamily: 'Inter',
                   }}
                 >
                   APY
@@ -137,8 +123,6 @@ export default async function handler(req: NextRequest) {
                   style={{
                     color: 'white',
                     fontSize: '80px',
-                    fontWeight: 600,
-                    fontFamily: 'Inter',
                   }}
                 >
                   {formattedAPY}
@@ -155,11 +139,9 @@ export default async function handler(req: NextRequest) {
                   style={{
                     color: 'rgba(255, 255, 255, 0.7)',
                     fontSize: '40px',
-                    fontWeight: 400,
                     backgroundColor: 'rgba(255, 255, 255, 0.15)',
                     padding: '12px 20px',
                     borderRadius: '12px',
-                    fontFamily: 'Inter',
                   }}
                 >
                   TVL
@@ -168,8 +150,6 @@ export default async function handler(req: NextRequest) {
                   style={{
                     color: 'white',
                     fontSize: '80px',
-                    fontWeight: 600,
-                    fontFamily: 'Inter',
                   }}
                 >
                   {formattedTVL}
@@ -182,6 +162,15 @@ export default async function handler(req: NextRequest) {
       {
         width: 1280,
         height: 720,
+        fonts: [
+          {
+            name: 'Inter',
+            data: await fetch(new URL('/src/fonts/Inter-SemiBold.woff', import.meta.url)).then(
+              (res) => res.arrayBuffer(),
+            ),
+            style: 'normal',
+          },
+        ],
       },
     )
   } catch (e: unknown) {
