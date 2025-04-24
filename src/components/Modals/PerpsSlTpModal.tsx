@@ -269,11 +269,9 @@ export default function PerpsSlTpModal() {
             </Text>
             <div className='flex items-center gap-2'>
               <AssetAmountInput
-                asset={{ ...USD, decimals: USD.decimals }}
-                amount={takeProfitPrice.shiftedBy(-(perpsAsset?.decimals ?? 0))}
-                setAmount={(amount) =>
-                  setTakeProfitPrice(amount.shiftedBy(perpsAsset?.decimals ?? 0))
-                }
+                asset={{ ...USD, decimals: perpsAsset?.decimals ?? 0 }}
+                amount={takeProfitPrice}
+                setAmount={setTakeProfitPrice}
                 disabled={false}
                 isUSD
               />
@@ -335,11 +333,9 @@ export default function PerpsSlTpModal() {
             </Text>
             <div className='flex items-center gap-2'>
               <AssetAmountInput
-                asset={{ ...USD, decimals: USD.decimals }}
-                amount={stopLossPrice.shiftedBy(-(perpsAsset?.decimals ?? 0))}
-                setAmount={(amount) =>
-                  setStopLossPrice(amount.shiftedBy(perpsAsset?.decimals ?? 0))
-                }
+                asset={{ ...USD, decimals: perpsAsset?.decimals ?? 0 }}
+                amount={stopLossPrice}
+                setAmount={setStopLossPrice}
                 disabled={false}
                 isUSD
               />
