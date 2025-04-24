@@ -6,6 +6,8 @@ import { Callout, CalloutType } from 'components/common/Callout'
 import Divider from 'components/common/Divider'
 import { TrashBin } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import { PercentageButtons } from 'components/perps/Module/PercentageButtons'
+import { PerpsPriceHeader } from 'components/perps/Module/PerpsPriceHeader'
 import USD from 'constants/USDollar'
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
@@ -258,6 +260,12 @@ export default function PerpsSlTpModal() {
       contentClassName='flex flex-col'
       modalClassName='md:max-w-modal-xs'
     >
+      <PerpsPriceHeader
+        currentPrice={currentPrice}
+        assetSymbol={assetName}
+        assetDecimals={perpsAsset?.decimals ?? 0}
+        assetPrice={perpsAsset?.price?.amount}
+      />
       <div className='flex flex-col gap-4 p-4'>
         {showTakeProfit && USD && (
           <>
@@ -281,6 +289,12 @@ export default function PerpsSlTpModal() {
                 </Text>
               </div>
             </div>
+            <PercentageButtons
+              currentPrice={currentPrice}
+              setTargetPrice={setTakeProfitPrice}
+              isShort={isShort}
+              isTakeProfit={true}
+            />
             {takeProfitError && (
               <Callout type={CalloutType.WARNING} className='mt-2 text-left'>
                 {takeProfitError}
@@ -345,6 +359,12 @@ export default function PerpsSlTpModal() {
                 </Text>
               </div>
             </div>
+            <PercentageButtons
+              currentPrice={currentPrice}
+              setTargetPrice={setStopLossPrice}
+              isShort={isShort}
+              isTakeProfit={false}
+            />
             {stopLossError && (
               <Callout type={CalloutType.WARNING} className='mt-2 text-left'>
                 {stopLossError}

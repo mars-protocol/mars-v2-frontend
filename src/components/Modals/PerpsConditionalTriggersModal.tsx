@@ -16,6 +16,8 @@ import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 import BigNumber from 'bignumber.js'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import { PercentageButtons } from 'components/perps/Module/PercentageButtons'
+import { PerpsPriceHeader } from 'components/perps/Module/PerpsPriceHeader'
 
 const perpsPercentage = (price: BigNumber, triggerPrice: BigNumber, isShort: boolean = false) => {
   if (!price || triggerPrice.isZero()) return BN_ZERO
@@ -124,6 +126,12 @@ export default function PerpsConditionalTriggersModal() {
       contentClassName='flex flex-col'
       modalClassName='md:max-w-modal-xs'
     >
+      <PerpsPriceHeader
+        currentPrice={currentPrice}
+        assetSymbol={assetSymbol}
+        assetDecimals={perpsAsset?.perpsAsset.decimals ?? 0}
+        assetPrice={perpsAsset?.perpsAsset.price?.amount}
+      />
       <div className='flex flex-col gap-4 p-4'>
         <div className='flex flex-col gap-4'>
           <Text size='lg' className='text-left'>
@@ -157,6 +165,12 @@ export default function PerpsConditionalTriggersModal() {
           <Text size='xs' className='text-left text-white/60'>
             Position will close at this price, capturing any profits.
           </Text>
+          <PercentageButtons
+            currentPrice={currentPrice}
+            setTargetPrice={setTakeProfitPrice}
+            isShort={isShort}
+            isTakeProfit={true}
+          />
         </div>
 
         <div className='flex items-center w-full gap-4 my-2'>
@@ -199,6 +213,12 @@ export default function PerpsConditionalTriggersModal() {
           <Text size='xs' className='text-left text-white/60'>
             Position will close at this price, limiting any losses.
           </Text>
+          <PercentageButtons
+            currentPrice={currentPrice}
+            setTargetPrice={setStopLossPrice}
+            isShort={isShort}
+            isTakeProfit={false}
+          />
         </div>
 
         <Callout type={CalloutType.INFO} iconClassName='self-start'>
