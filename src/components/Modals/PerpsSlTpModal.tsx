@@ -264,7 +264,6 @@ export default function PerpsSlTpModal() {
         currentPrice={currentPrice}
         assetSymbol={assetName}
         assetDecimals={perpsAsset?.decimals ?? 0}
-        assetPrice={perpsAsset?.price?.amount}
       />
       <div className='flex flex-col gap-4 p-4'>
         {showTakeProfit && USD && (
