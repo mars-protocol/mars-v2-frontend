@@ -25,6 +25,7 @@ import { getPage, getRoute } from 'utils/route'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { Tooltip } from 'components/common/Tooltip'
+import useManagedVaultPnl from 'hooks/managedVaults/useManagedVaultPnl'
 
 interface Props {
   details: ManagedVaultsData
@@ -36,6 +37,7 @@ interface Props {
 export default function ProfileVaultCard(props: Props) {
   const { details, isOwner, wallet, depositAsset } = props
   const { vaultOwnerInfo, isLoading } = useManagedVaultOwnerInfo(wallet)
+  const { data: vaultPnl } = useManagedVaultPnl(details.vault_address)
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
@@ -108,19 +110,23 @@ export default function ProfileVaultCard(props: Props) {
               className='text-sm'
             />
           </InfoRow>
-          <InfoRow label='Accrued PnL'>
-            <DisplayCurrency
-              coin={BNCoin.fromDenomAndBigNumber(
-                details.base_tokens_denom,
-                BN(details.performance_fee_state.accumulated_pnl),
-              )}
-              showSignPrefix
-              className={classNames(
-                'text-sm',
-                BN(details.performance_fee_state.accumulated_pnl).isGreaterThan(0) && 'text-profit',
-                BN(details.performance_fee_state.accumulated_pnl).isLessThan(0) && 'text-loss',
-              )}
-            />
+          <InfoRow label='Total PnL'>
+            {!vaultPnl ? (
+              <Loading className='h-4 w-20' />
+            ) : (
+              <DisplayCurrency
+                coin={BNCoin.fromDenomAndBigNumber(
+                  details.base_tokens_denom,
+                  BN(vaultPnl.total_pnl),
+                )}
+                showSignPrefix
+                className={classNames(
+                  'text-sm',
+                  BN(vaultPnl.total_pnl).isGreaterThan(0) && 'text-profit',
+                  BN(vaultPnl.total_pnl).isLessThan(0) && 'text-loss',
+                )}
+              />
+            )}
           </InfoRow>
           <InfoRow label='Deposit Asset'>
             <div className='flex gap-2 items-center'>
