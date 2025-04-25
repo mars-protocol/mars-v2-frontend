@@ -62,7 +62,7 @@ export function useManagedVaultDetails(vaultAddress?: string) {
   const isOwner = Boolean(address && ownerAddress && ownerAddress === address)
   const isLoading = isDetailsLoading || isPerformanceFeeLoading || isManagedVaultDataLoading
 
-  if ((isLoading && !ownerAddress) || !details || !performanceFeeState || !managedVaultData)
+  if ((isLoading && !ownerAddress) || !details || !performanceFeeState)
     return {
       details: undefined,
       isOwner: false,
