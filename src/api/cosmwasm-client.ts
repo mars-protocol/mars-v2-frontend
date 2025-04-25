@@ -222,7 +222,7 @@ const getManagedVaultPnl = async (chainConfig: ChainConfig, vaultAddress: string
   }
 }
 
-const getManagedVaultUserPnl = async (
+const getManagedVaultUserPosition = async (
   chainConfig: ChainConfig,
   vaultAddress: string,
   userAddress: string,
@@ -234,7 +234,7 @@ const getManagedVaultUserPnl = async (
         user_address: userAddress,
       },
     })
-    return response as unknown as ManagedVaultUserPnlResponse
+    return response as unknown as ManagedVaultUserPositionResponse
   } catch (error) {
     setNodeError(getUrl(chainConfig.endpoints.rpc), error)
     throw error
@@ -358,7 +358,7 @@ export {
   getManagedVaultAllUnlocks,
   getManagedVaultDetails,
   getManagedVaultPnl,
-  getManagedVaultUserPnl,
+  getManagedVaultUserPosition,
   getManagedVaultOwnerAddress,
   getManagedVaultPerformanceFeeState,
   getManagedVaultQueryClient,

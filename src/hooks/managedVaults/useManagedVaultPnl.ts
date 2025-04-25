@@ -8,7 +8,7 @@ export default function useManagedVaultPnl(vaultAddress: string) {
   return useSWR(
     vaultAddress && `chains/${chainConfig.id}/managedVaults/${vaultAddress}/pnl`,
     async () => {
-      return await getManagedVaultPnl(chainConfig, vaultAddress!)
+      return await getManagedVaultPnl(chainConfig, vaultAddress)
     },
     {
       refreshInterval: 10_000,

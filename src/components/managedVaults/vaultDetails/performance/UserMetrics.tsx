@@ -7,7 +7,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { useManagedVaultConvertToBaseTokens } from 'hooks/managedVaults/useManagedVaultConvertToBaseTokens'
-import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
+import useManagedVaultUserPosition from 'hooks/managedVaults/useManagedVaultUserPosition'
 
 interface Props {
   vaultAddress: string
@@ -17,14 +17,16 @@ interface Props {
 
 export default function UserMetrics(props: Props) {
   const { vaultAddress, vaultDetails, userAddress } = props
-  const { amount: userVaultShares, calculateVaultShare } = useManagedVaultUserShares(
+
+  const { data: userPosition, calculateVaultShare } = useManagedVaultUserPosition(
+    vaultAddress,
     userAddress,
-    vaultDetails.vault_tokens_denom,
   )
   const { data: userVaultTokensAmount } = useManagedVaultConvertToBaseTokens(
     vaultAddress,
-    userVaultShares,
+    userPosition?.shares ?? '0',
   )
+
   const sharePercentage = calculateVaultShare(vaultDetails.vault_tokens_amount)
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(vaultDetails.base_tokens_denom)) as Asset

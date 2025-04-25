@@ -2030,7 +2030,7 @@ interface ManagedVaultPnlResponse {
   total_shares: string
 }
 
-interface ManagedVaultUserPnlResponse {
+interface ManagedVaultUserPositionResponse {
   pnl: string
   shares: string
 }
