@@ -25,10 +25,11 @@ export default async function getHlsFarms(
         const poolAsset = assets.find(
           byDenom((correlation as { coin: { denom: string } }).coin.denom),
         )
+
         if (!poolAsset || !poolAsset.isPoolToken) return
 
         const depositCap = depositCaps.find(byDenom(poolAsset.denom))
-        if (!depositCap) return
+        if (!depositCap || (depositCap.amount === '0' && depositCap.cap === '0')) return
 
         const poolAssetHlsParams = assetParams.find(byDenom(poolAsset.denom))?.credit_manager.hls
         if (!poolAssetHlsParams) return
