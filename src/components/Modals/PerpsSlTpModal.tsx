@@ -1,13 +1,11 @@
 import BigNumber from 'bignumber.js'
 import Modal from 'components/Modals/Modal'
-import AssetAmountInput from 'components/common/AssetAmountInput'
 import Button from 'components/common/Button'
 import { Callout, CalloutType } from 'components/common/Callout'
 import Divider from 'components/common/Divider'
-import { TrashBin } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import { PercentageButtons } from 'components/perps/Module/PercentageButtons'
 import { PerpsPriceHeader } from 'components/perps/Module/PerpsPriceHeader'
+import { TriggerSection } from 'components/perps/Module/TriggerSection'
 import USD from 'constants/USDollar'
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
@@ -23,7 +21,6 @@ import usePrice from 'hooks/prices/usePrice'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
-import { formatPercent } from 'utils/formatters'
 
 const perpsPercentage = (price: BigNumber, triggerPrice: BigNumber, isShort: boolean = false) => {
   if (!price || triggerPrice.isZero()) return BN_ZERO
@@ -35,12 +32,6 @@ const perpsPercentage = (price: BigNumber, triggerPrice: BigNumber, isShort: boo
   }
 
   return normalizedTriggerPrice.minus(price).dividedBy(price).multipliedBy(100)
-}
-
-const getTextColorClass = (percentage: BigNumber) => {
-  if (percentage.isZero()) return 'text-white'
-  if (percentage.isNegative()) return 'text-error'
-  return 'text-success'
 }
 
 export default function PerpsSlTpModal() {
@@ -266,67 +257,30 @@ export default function PerpsSlTpModal() {
         assetDecimals={perpsAsset?.decimals ?? 0}
       />
       <div className='flex flex-col gap-4 p-4'>
-        {showTakeProfit && USD && (
-          <>
-            <Text size='lg' className='text-left'>
-              Take Profit
-            </Text>
-            <Text size='xs' className='text-left text-white/60'>
-              {isShort ? 'Trigger when price falls to:' : 'Trigger when price rises to:'}
-            </Text>
-            <div className='flex items-center gap-2'>
-              <AssetAmountInput
-                asset={{ ...USD, decimals: perpsAsset?.decimals ?? 0 }}
-                amount={takeProfitPrice}
-                setAmount={setTakeProfitPrice}
-                disabled={false}
-                isUSD
-              />
-              <div className='flex flex-row flex-1 py-3 pl-3 pr-2 mt-2 border rounded border-white/20 bg-white/5'>
-                <Text className={getTextColorClass(takeProfitPercentage)}>
-                  {formatPercent(takeProfitPercentage.toNumber())}
-                </Text>
-              </div>
-            </div>
-            <PercentageButtons
-              currentPrice={currentPrice}
-              setTargetPrice={setTakeProfitPrice}
-              isShort={isShort}
-              isTakeProfit={true}
-            />
-            {takeProfitError && (
-              <Callout type={CalloutType.WARNING} className='mt-2 text-left'>
-                {takeProfitError}
-              </Callout>
-            )}
-            <Button
-              onClick={handleRemoveTakeProfit}
-              text='Remove trigger'
-              color='secondary'
-              leftIcon={<TrashBin className='self-center w-4 h-4 text-error' />}
-              variant='solid'
-              textClassNames='text-error items-center'
-              className='items-center self-start text-sm'
-            />
-          </>
-        )}
-        {!showTakeProfit && (
-          <Button
-            onClick={() => setShowTakeProfit(true)}
-            text={
-              hasChildOrders(limitOrders, perpsAsset?.denom)
-                ? 'Add New Take Profit Trigger'
-                : 'Add Take Profit Trigger'
-            }
-            color='tertiary'
-            className='w-full'
-          />
-        )}
-        <Text size='sm' className='text-left text-white/60'>
-          {currentTradeDirection === 'long'
-            ? `If ${assetName} rises to your specified price, your position will be closed to capture profits.`
-            : `If ${assetName} falls to your specified price, your position will be closed to capture profits.`}
-        </Text>
+        <TriggerSection
+          title='Take Profit'
+          assetSymbol={assetName}
+          triggerDescription={
+            isShort ? 'Trigger when price falls to:' : 'Trigger when price rises to:'
+          }
+          infoText={
+            isShort
+              ? `If ${assetName} falls to your specified price, your position will be closed to capture profits.`
+              : `If ${assetName} rises to your specified price, your position will be closed to capture profits.`
+          }
+          currentPrice={currentPrice}
+          triggerPrice={takeProfitPrice}
+          setTriggerPrice={setTakeProfitPrice}
+          triggerPercentage={takeProfitPercentage}
+          error={takeProfitError}
+          asset={perpsAsset ? { ...USD, decimals: perpsAsset?.decimals ?? 0 } : undefined}
+          isShort={isShort}
+          isTakeProfit={true}
+          showTrigger={showTakeProfit}
+          setShowTrigger={setShowTakeProfit}
+          handleRemoveTrigger={handleRemoveTakeProfit}
+          hasChildOrders={hasChildOrders(limitOrders, perpsAsset?.denom)}
+        />
 
         <div className='flex items-center w-full gap-2'>
           <Divider className='w-full' />
@@ -336,69 +290,31 @@ export default function PerpsSlTpModal() {
           <Divider className='w-full' />
         </div>
 
-        {showStopLoss && (
-          <>
-            <Text size='lg' className='text-left'>
-              Stop Loss
-            </Text>
-            <Text size='xs' className='text-left text-white/60'>
-              {isShort ? 'Trigger when price rises to:' : 'Trigger when price falls to:'}
-            </Text>
-            <div className='flex items-center gap-2'>
-              <AssetAmountInput
-                asset={{ ...USD, decimals: perpsAsset?.decimals ?? 0 }}
-                amount={stopLossPrice}
-                setAmount={setStopLossPrice}
-                disabled={false}
-                isUSD
-              />
-              <div className='flex flex-row flex-1 py-3 pl-3 pr-2 mt-2 border rounded border-white/20 bg-white/5'>
-                <Text className={getTextColorClass(stopLossPercentage)}>
-                  {formatPercent(stopLossPercentage.toNumber())}
-                </Text>
-              </div>
-            </div>
-            <PercentageButtons
-              currentPrice={currentPrice}
-              setTargetPrice={setStopLossPrice}
-              isShort={isShort}
-              isTakeProfit={false}
-            />
-            {stopLossError && (
-              <Callout type={CalloutType.WARNING} className='mt-2 text-left'>
-                {stopLossError}
-              </Callout>
-            )}
-            <Button
-              onClick={handleRemoveStopLoss}
-              text='Remove trigger'
-              color='secondary'
-              leftIcon={<TrashBin className='self-center w-4 h-4 text-error' />}
-              variant='transparent'
-              textClassNames='text-error items-center'
-              className='items-center self-start text-sm'
-            />
-          </>
-        )}
-        {!showStopLoss && (
-          <Button
-            onClick={() => setShowStopLoss(true)}
-            text={
-              hasChildOrders(limitOrders, perpsAsset?.denom)
-                ? 'Add New Stop Loss Trigger'
-                : 'Add Stop Loss Trigger'
-            }
-            color='tertiary'
-            className='w-full'
-          />
-        )}
-        <Text size='sm' className='text-left text-white/60'>
-          {currentTradeDirection === 'long'
-            ? `If ${assetName} falls to your specified price, your position will be closed to limit losses.`
-            : `If ${assetName} rises to your specified price, your position will be closed to limit losses.`}
-        </Text>
+        <TriggerSection
+          title='Stop Loss'
+          assetSymbol={assetName}
+          triggerDescription={
+            isShort ? 'Trigger when price rises to:' : 'Trigger when price falls to:'
+          }
+          infoText={
+            isShort
+              ? `If ${assetName} rises to your specified price, your position will be closed to limit losses.`
+              : `If ${assetName} falls to your specified price, your position will be closed to limit losses.`
+          }
+          currentPrice={currentPrice}
+          triggerPrice={stopLossPrice}
+          setTriggerPrice={setStopLossPrice}
+          triggerPercentage={stopLossPercentage}
+          error={stopLossError}
+          asset={perpsAsset ? { ...USD, decimals: perpsAsset?.decimals ?? 0 } : undefined}
+          isShort={isShort}
+          isTakeProfit={false}
+          showTrigger={showStopLoss}
+          setShowTrigger={setShowStopLoss}
+          handleRemoveTrigger={handleRemoveStopLoss}
+          hasChildOrders={hasChildOrders(limitOrders, perpsAsset?.denom)}
+        />
 
-        <Divider />
         <Callout type={CalloutType.INFO} iconClassName='self-start'>
           <Text size='sm'>
             The prices listed here are 'Spot Price Triggers', which means they initiate your

@@ -221,30 +221,23 @@ export default function Manage(props: Props) {
     ],
   )
 
+  const getStopLossTakeProfitAction = useMemo(() => {
+    return {
+      icon: <Shield />,
+      text: hasChildOrders(limitOrders, perpPosition.asset.denom) ? 'Edit SL/TP' : 'Add SL/TP',
+      onClick: () => {
+        useStore.setState({ addSLTPModal: { parentPosition: perpPosition } })
+      },
+    }
+  }, [hasChildOrders, limitOrders, perpPosition])
+
   const ITEMS: DropDownItem[] = useMemo(
     () => [
       ...(perpPosition.asset.isDeprecated
-        ? [
-            {
-              icon: <Shield />,
-              text: hasChildOrders(limitOrders, perpPosition.asset.denom)
-                ? 'Edit SL/TP'
-                : 'Add SL/TP',
-              onClick: () => {
-                useStore.setState({ addSLTPModal: { parentPosition: perpPosition } })
-              },
-            },
-          ]
+        ? [getStopLossTakeProfitAction]
         : [
             ...(searchParams.get(SearchParams.PERPS_MARKET) === perpPosition.asset.denom
-              ? [
-                  // Remove SL/TP for the moment
-                  // {
-                  //   icon: <Shield />,
-                  //   text: 'Add Stop Loss',
-                  //   onClick: openPerpsSlTpModal,
-                  // },
-                ]
+              ? []
               : [
                   {
                     icon: <Edit />,
@@ -266,15 +259,7 @@ export default function Manage(props: Props) {
                 handleFlipPosition(newDirection)
               },
             },
-            {
-              icon: <Shield />,
-              text: hasChildOrders(limitOrders, perpPosition.asset.denom)
-                ? 'Edit SL/TP'
-                : 'Add SL/TP',
-              onClick: () => {
-                useStore.setState({ addSLTPModal: { parentPosition: perpPosition } })
-              },
-            },
+            getStopLossTakeProfitAction,
           ]),
       {
         icon: <Cross width={16} />,
@@ -283,10 +268,9 @@ export default function Manage(props: Props) {
       },
     ],
     [
+      getStopLossTakeProfitAction,
       handleCloseClick,
       handleFlipPosition,
-      hasChildOrders,
-      limitOrders,
       perpPosition,
       searchParams,
       setSearchParams,
