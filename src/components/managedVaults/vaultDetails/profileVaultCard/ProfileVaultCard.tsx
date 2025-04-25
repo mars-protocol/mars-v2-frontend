@@ -49,6 +49,14 @@ export default function ProfileVaultCard(props: Props) {
     )
   }
 
+  // temporary fix for the incredibly high APY which is not realistic
+  const formatAPY = (apy: number) => {
+    if (apy > 1000000) {
+      return 1000000
+    }
+    return apy
+  }
+
   return (
     <Card className='bg-white/5'>
       <div className='relative mb-6'>
@@ -96,7 +104,7 @@ export default function ProfileVaultCard(props: Props) {
         <div className='space-y-4'>
           <InfoRow label='APY'>
             <FormattedNumber
-              amount={details.apy || 0}
+              amount={formatAPY(details.apy || 0)}
               options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
               className='text-sm'
             />

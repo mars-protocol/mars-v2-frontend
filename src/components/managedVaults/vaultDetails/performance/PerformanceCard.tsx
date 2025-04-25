@@ -36,6 +36,14 @@ export default function PerformanceCard(props: Props) {
     return maxDrawdown
   }
 
+  // temporary fix for the incredibly high APY which is not realistic
+  const formatAPY = (apy: number) => {
+    if (apy > 1000000) {
+      return 1000000
+    }
+    return apy
+  }
+
   const maxDrawdown = useMemo(() => calculateMaxDrawdown(historicalData || []), [historicalData])
   const metrics = [
     {
@@ -61,7 +69,7 @@ export default function PerformanceCard(props: Props) {
       },
     },
     {
-      value: vaultDetails.apy,
+      value: formatAPY(vaultDetails.apy),
       label: 'APY',
       formatOptions: { maxDecimals: 2, minDecimals: 2, suffix: '%', abbreviated: true },
     },

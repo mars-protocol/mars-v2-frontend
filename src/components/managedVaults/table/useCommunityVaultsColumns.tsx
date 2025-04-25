@@ -16,6 +16,14 @@ interface Props {
 export default function useCommunityVaultsColumns(props: Props) {
   const { isLoading, showPosition } = props
 
+  // temporary fix for the incredibly high APY which is not realistic
+  const formatAPY = (apy: number) => {
+    if (apy > 1000000) {
+      return 1000000
+    }
+    return apy
+  }
+
   return useMemo<ColumnDef<ManagedVaultWithDetails>[]>(() => {
     return [
       {
@@ -47,7 +55,7 @@ export default function useCommunityVaultsColumns(props: Props) {
           <Apy
             isLoading={isLoading}
             borrowEnabled={true}
-            apy={convertAprToApy(Number(row.original.apr ?? 0), 365)}
+            apy={formatAPY(convertAprToApy(Number(row.original.apr ?? 0), 365))}
           />
         ),
       },
