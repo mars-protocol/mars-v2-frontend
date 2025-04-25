@@ -13,7 +13,7 @@ import useAccount from 'hooks/accounts/useAccount'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import { useManagedVaultConvertToShares } from 'hooks/managedVaults/useManagedVaultConvertToShares'
-import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVaultConvertToTokens'
+import { useManagedVaultConvertToBaseTokens } from 'hooks/managedVaults/useManagedVaultConvertToBaseTokens'
 import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import moment from 'moment'
@@ -44,7 +44,7 @@ export default function VaultAction(props: Props) {
     address,
     vaultDetails.vault_tokens_denom,
   )
-  const { data: userVaultTokens, isLoading } = useManagedVaultConvertToTokens(
+  const { data: userVaultTokens, isLoading } = useManagedVaultConvertToBaseTokens(
     vaultAddress,
     userVaultShares,
   )
@@ -66,7 +66,7 @@ export default function VaultAction(props: Props) {
     }, BN_ZERO)
   }, [userUnlocks])
 
-  const { data: unlockedBaseTokens } = useManagedVaultConvertToTokens(
+  const { data: unlockedBaseTokens } = useManagedVaultConvertToBaseTokens(
     vaultAddress,
     totalUnlockedVaultTokens.toString(),
   )

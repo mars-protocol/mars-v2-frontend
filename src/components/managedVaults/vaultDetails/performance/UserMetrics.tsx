@@ -1,29 +1,27 @@
 import AssetImage from 'components/common/assets/AssetImage'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import useStore from 'store'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVaultConvertToTokens'
+import { useManagedVaultConvertToBaseTokens } from 'hooks/managedVaults/useManagedVaultConvertToBaseTokens'
 import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
 
 interface Props {
   vaultAddress: string
   vaultDetails: ManagedVaultsData
+  userAddress: string
 }
 
 export default function UserMetrics(props: Props) {
-  const { vaultAddress, vaultDetails } = props
-  const address = useStore((s) => s.address)
+  const { vaultAddress, vaultDetails, userAddress } = props
   const { amount: userVaultShares, calculateVaultShare } = useManagedVaultUserShares(
-    address,
+    userAddress,
     vaultDetails.vault_tokens_denom,
-    vaultAddress,
   )
-  const { data: userVaultTokensAmount } = useManagedVaultConvertToTokens(
+  const { data: userVaultTokensAmount } = useManagedVaultConvertToBaseTokens(
     vaultAddress,
     userVaultShares,
   )
@@ -66,6 +64,8 @@ export default function UserMetrics(props: Props) {
               coin={BNCoin.fromDenomAndBigNumber(depositAsset.denom, BN(metric.value))}
               options={metric.formatOptions}
               className='text-base'
+              isProfitOrLoss={metric.label === 'Total Earnings'}
+              showSignPrefix={metric.label === 'Total Earnings'}
             />
           </div>
         ) : (

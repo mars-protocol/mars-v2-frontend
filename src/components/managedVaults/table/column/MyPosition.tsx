@@ -1,5 +1,5 @@
 import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
-import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVaultConvertToTokens'
+import { useManagedVaultConvertToBaseTokens } from 'hooks/managedVaults/useManagedVaultConvertToBaseTokens'
 import useStore from 'store'
 import Loading from 'components/common/Loading'
 import DisplayCurrency from 'components/common/DisplayCurrency'
@@ -18,12 +18,8 @@ interface Props {
 
 export default function MyPosition({ vault, isLoading }: Props) {
   const address = useStore((s) => s.address)
-  const { amount: userShares } = useManagedVaultUserShares(
-    address,
-    vault.vault_tokens_denom,
-    vault.vault_address,
-  )
-  const { data: userTokens, isLoading: isLoadingTokens } = useManagedVaultConvertToTokens(
+  const { amount: userShares } = useManagedVaultUserShares(address, vault.vault_tokens_denom)
+  const { data: userTokens, isLoading: isLoadingTokens } = useManagedVaultConvertToBaseTokens(
     vault.vault_address,
     userShares,
   )

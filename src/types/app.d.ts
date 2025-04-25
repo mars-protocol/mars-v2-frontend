@@ -2030,6 +2030,11 @@ interface ManagedVaultPnlResponse {
   total_shares: string
 }
 
+interface ManagedVaultUserPnlResponse {
+  pnl: string
+  shares: string
+}
+
 interface UserManagedVaultUnlockResponse {
   user_address: string
   created_at: number

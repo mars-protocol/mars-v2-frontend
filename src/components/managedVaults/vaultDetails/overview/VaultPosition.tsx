@@ -8,7 +8,7 @@ import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
 import { LockUnlocked } from 'components/common/Icons'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVaultConvertToTokens'
+import { useManagedVaultConvertToBaseTokens } from 'hooks/managedVaults/useManagedVaultConvertToBaseTokens'
 import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
 
 interface Props {
@@ -28,7 +28,7 @@ export default function VaultPosition(props: Props) {
     address,
     details.vault_tokens_denom,
   )
-  const { data: userVaultTokensAmount, isLoading } = useManagedVaultConvertToTokens(
+  const { data: userVaultTokensAmount, isLoading } = useManagedVaultConvertToBaseTokens(
     vaultAddress,
     userVaultShares,
   )

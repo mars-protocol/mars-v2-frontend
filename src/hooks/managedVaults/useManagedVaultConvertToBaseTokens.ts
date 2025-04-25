@@ -3,7 +3,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useSWR from 'swr'
 import { BN } from 'utils/helpers'
 
-export function useManagedVaultConvertToTokens(vaultAddress: string, amount: string) {
+export function useManagedVaultConvertToBaseTokens(vaultAddress: string, amount: string) {
   const chainConfig = useChainConfig()
 
   return useSWR(
