@@ -149,16 +149,21 @@ export default function CreateVault() {
       <form className='flex flex-col flex-grow space-y-6'>
         <div className='flex flex-col gap-8 md:flex-row'>
           <div className='flex-1 space-y-8'>
-            <VaultInputElement
-              type='text'
-              value={vaultTitle}
-              onChange={(value) => setVaultTitle(value)}
-              label='Vault title'
-              placeholder='Enter vault title'
-              required
-            />
-            <PerformanceFee value={performanceFee} onChange={setPerformanceFee} />
-
+            <div className='space-y-4'>
+              <div className='flex flex-col gap-2'>
+                <VaultInputElement
+                  type='text'
+                  value={vaultTitle}
+                  onChange={(value) => setVaultTitle(value)}
+                  label='Vault title'
+                  placeholder='Enter vault title'
+                  maxLength={30}
+                  required
+                />
+                <CharacterCount value={vaultTitle} maxLength={30} size='xs' />
+              </div>
+              <PerformanceFee value={performanceFee} onChange={setPerformanceFee} />
+            </div>
             <VaultInputElement
               type='button'
               value={selectedAsset.symbol}

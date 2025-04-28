@@ -199,7 +199,7 @@ export default function ProfileVaultCard(props: Props) {
 
         <div className='flex justify-between items-center pb-4'>
           <Text size='sm'>Share Vault</Text>
-          <ShareBar text='Vault Details' />
+          <ShareBar text={`Check out '${details.title}' Vault on Mars Protocol!`} />
         </div>
 
         {isOwner && !vaultOwnerInfo.hasStargazeNames && (
