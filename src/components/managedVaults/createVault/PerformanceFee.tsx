@@ -44,7 +44,7 @@ export default function PerformanceFee(props: Props) {
         asset={{ decimals: 0, symbol: '%' }}
         maxDecimals={0}
         min={BN_ZERO}
-        max={BN(50)}
+        max={BN(40)}
         maxLength={2}
         placeholder='Enter fee'
         className='px-4 py-3 rounded-sm bg-white/5 !border-solid border border-white/10 focus:border-white/20 focus:bg-white/10 !text-left'
@@ -61,7 +61,7 @@ export default function PerformanceFee(props: Props) {
         ))}
       </div>
       <Callout type={CalloutType.INFO}>
-        Performance fees are capped at 50%.
+        Performance fees are capped at 40%.
         {/* TODO add link */}
         <TextLink
           href={''}

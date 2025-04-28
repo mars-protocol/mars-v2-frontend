@@ -45,7 +45,7 @@ export default function OwnerVaultPosition(props: Props) {
         }
         subtitle={
           <FormattedNumber
-            amount={Number(vaultDetails?.performance_fee_config.fee_rate ?? 0) * 100000}
+            amount={Number(vaultDetails?.performance_fee_config?.fee_rate ?? 0)}
             options={{
               suffix: '%',
               minDecimals: 0,

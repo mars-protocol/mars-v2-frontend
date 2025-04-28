@@ -74,8 +74,9 @@ export default function CreateVault() {
         onClick: async () => {
           try {
             setIsTxPending(true)
-
-            const feeRate = performanceFee.shiftedBy(-6).decimalPlaces(5).toString()
+            const annualRate = performanceFee.dividedBy(100)
+            const hourlyRate = annualRate.dividedBy(8760)
+            const feeRate = hourlyRate.decimalPlaces(18).toString()
 
             const vaultParams = {
               title: vaultTitle,

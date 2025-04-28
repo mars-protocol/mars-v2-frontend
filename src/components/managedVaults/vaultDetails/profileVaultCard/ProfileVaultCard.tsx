@@ -85,7 +85,7 @@ export default function ProfileVaultCard(props: Props) {
         <div className='flex justify-between items-center'>
           <Text tag='h4'>{details.title}</Text>
           <div className='flex gap-3'>
-            <FeeTag fee={details.performance_fee_config?.fee_rate ?? '0'} />
+            <FeeTag fee={Number(details.performance_fee_config?.fee_rate ?? '0')} />
           </div>
         </div>
 

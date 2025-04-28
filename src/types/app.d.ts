@@ -2014,7 +2014,7 @@ interface PerformanceFeeOptions {
 }
 
 interface PerformanceFeeConfig {
-  fee_rate: string
+  fee_rate: string | number
   withdrawal_interval: number
 }
 

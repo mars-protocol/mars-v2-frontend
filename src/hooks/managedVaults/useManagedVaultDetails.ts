@@ -8,6 +8,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import useSWR from 'swr'
 import { convertAprToApy } from 'utils/parsers'
+import BN from 'bignumber.js'
 
 export function useManagedVaultDetails(vaultAddress?: string) {
   const chainConfig = useChainConfig()
@@ -77,7 +78,12 @@ export function useManagedVaultDetails(vaultAddress?: string) {
     credit_manager: details.credit_manager,
     vault_account_id: details.vault_account_id,
     cooldown_period: details.cooldown_period,
-    performance_fee_config: details.performance_fee_config,
+    performance_fee_config: {
+      ...details.performance_fee_config,
+      fee_rate: Math.round(
+        BN(details.performance_fee_config.fee_rate).multipliedBy(8760).multipliedBy(100).toNumber(),
+      ),
+    },
     share_price: details.share_price,
     ownerAddress,
     tvl: managedVaultData?.tvl ?? '0',
