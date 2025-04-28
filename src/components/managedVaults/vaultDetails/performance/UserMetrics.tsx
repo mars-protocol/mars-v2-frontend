@@ -8,6 +8,7 @@ import { byDenom } from 'utils/array'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { useManagedVaultConvertToBaseTokens } from 'hooks/managedVaults/useManagedVaultConvertToBaseTokens'
 import useManagedVaultUserPosition from 'hooks/managedVaults/useManagedVaultUserPosition'
+import classNames from 'classnames'
 
 interface Props {
   vaultAddress: string
@@ -31,6 +32,13 @@ export default function UserMetrics(props: Props) {
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(vaultDetails.base_tokens_denom)) as Asset
 
+  const calculateROI = (currentBalance: string | number | undefined): number => {
+    if (!userPosition?.pnl || !currentBalance || BN(currentBalance).isZero()) {
+      return 0
+    }
+    return BN(userPosition.pnl).multipliedBy(100).dividedBy(currentBalance).toNumber()
+  }
+
   const metrics = [
     {
       value: userVaultTokensAmount || 0,
@@ -39,15 +47,18 @@ export default function UserMetrics(props: Props) {
       formatOptions: { maxDecimals: 2, minDecimals: 2 },
     },
     {
-      value: 0,
+      value: userPosition?.pnl || 0,
       label: 'Total Earnings',
       isCurrency: true,
       formatOptions: { maxDecimals: 2, minDecimals: 2 },
+      isProfitOrLoss: true,
+      showSignPrefix: true,
     },
     {
-      value: 0,
+      value: calculateROI(userVaultTokensAmount),
       label: 'ROI',
       formatOptions: { maxDecimals: 2, minDecimals: 2, suffix: '%' },
+      isProfitOrLoss: true,
     },
     {
       value: sharePercentage,
@@ -66,15 +77,18 @@ export default function UserMetrics(props: Props) {
               coin={BNCoin.fromDenomAndBigNumber(depositAsset.denom, BN(metric.value))}
               options={metric.formatOptions}
               className='text-base'
-              isProfitOrLoss={metric.label === 'Total Earnings'}
-              showSignPrefix={metric.label === 'Total Earnings'}
+              isProfitOrLoss={metric.isProfitOrLoss}
+              showSignPrefix={metric.showSignPrefix}
             />
           </div>
         ) : (
           <FormattedNumber
             amount={Number(metric.value)}
             options={metric.formatOptions}
-            className='text-base'
+            className={classNames('text-base', {
+              'text-profit': metric.isProfitOrLoss && BN(metric.value).isPositive(),
+              'text-loss': metric.isProfitOrLoss && BN(metric.value).isNegative(),
+            })}
           />
         )
 

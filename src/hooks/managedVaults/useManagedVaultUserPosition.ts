@@ -3,7 +3,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import { getManagedVaultUserPosition } from 'api/cosmwasm-client'
 import { BN } from 'utils/helpers'
 
-const DEFAULT_PNL_RESPONSE = {
+const DEFAULT_USER_POSITION_RESPONSE = {
   pnl: '0',
   shares: '0',
 }
@@ -19,7 +19,7 @@ export default function useManagedVaultUserPosition(
       ? `chains/${chainConfig.id}/managedVaults/${vaultAddress}/userPosition`
       : null,
     async () => {
-      if (!userAddress) return DEFAULT_PNL_RESPONSE
+      if (!userAddress) return DEFAULT_USER_POSITION_RESPONSE
       return await getManagedVaultUserPosition(chainConfig, vaultAddress, userAddress)
     },
     {
@@ -35,9 +35,17 @@ export default function useManagedVaultUserPosition(
     return BN(data.shares).multipliedBy(100).dividedBy(totalVaultTokens).toNumber()
   }
 
+  const calculateROI = (currentBalance: string | number | undefined): number => {
+    if (!data?.pnl || !currentBalance || BN(currentBalance).isZero()) {
+      return 0
+    }
+    return BN(data.pnl).multipliedBy(100).dividedBy(currentBalance).toNumber()
+  }
+
   return {
     data,
     calculateVaultShare,
+    calculateROI,
     ...rest,
   }
 }
