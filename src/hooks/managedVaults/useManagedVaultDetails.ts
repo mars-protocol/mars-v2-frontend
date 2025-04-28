@@ -80,9 +80,11 @@ export function useManagedVaultDetails(vaultAddress?: string) {
     cooldown_period: details.cooldown_period,
     performance_fee_config: {
       ...details.performance_fee_config,
-      fee_rate: Math.round(
-        BN(details.performance_fee_config.fee_rate).multipliedBy(8760).multipliedBy(100).toNumber(),
-      ),
+      fee_rate: BN(details.performance_fee_config.fee_rate)
+        .multipliedBy(8760)
+        .multipliedBy(100)
+        .toNumber()
+        .toString(),
     },
     share_price: details.share_price,
     ownerAddress,
