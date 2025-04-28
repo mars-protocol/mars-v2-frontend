@@ -6,8 +6,7 @@ import VaultPerformance from 'components/managedVaults/vaultDetails/performance/
 import VaultOverview from 'components/managedVaults/vaultDetails/overview/VaultOverview'
 import { CircularProgress } from 'components/common/CircularProgress'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
-import { useParams } from 'react-router-dom'
-import { useState } from 'react'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { VAULT_DETAILS_TABS } from 'constants/pages'
 
 function VaultLoadingState() {
@@ -28,10 +27,21 @@ interface Props {
 export default function VaultDetails(props: Props) {
   const { vaultAddress: propVaultAddress } = props
   const { vaultAddress: urlVaultAddress } = useParams<{ vaultAddress: string }>()
-  const [activeTabIdx, setActiveTabIdx] = useState<number>(0)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeTabIdx = searchParams.get('tab') === 'performance' ? 1 : 0
   const focusComponent = useStore((s) => s.focusComponent)
 
   const vaultAddress = propVaultAddress || urlVaultAddress
+
+  const handleTabChange = (index: number) => {
+    const newParams = new URLSearchParams(searchParams)
+    if (index === 1) {
+      newParams.set('tab', 'performance')
+    } else {
+      newParams.delete('tab')
+    }
+    setSearchParams(newParams)
+  }
 
   if (!vaultAddress) return <VaultLoadingState />
 
@@ -43,7 +53,7 @@ export default function VaultDetails(props: Props) {
           <Tab
             tabs={VAULT_DETAILS_TABS}
             activeTabIdx={activeTabIdx}
-            onTabChange={setActiveTabIdx}
+            onTabChange={handleTabChange}
             disableNavigation
           />
         </div>

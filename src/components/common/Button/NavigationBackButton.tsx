@@ -11,7 +11,11 @@ export default function NavigationBackButton() {
 
   return (
     <Button
-      onClick={() => navigate(getRoute('vaults', searchParams, address))}
+      onClick={() => {
+        const newParams = new URLSearchParams(searchParams)
+        newParams.delete('tab')
+        navigate(getRoute('vaults', newParams, address))
+      }}
       variant='transparent'
       color='quaternary'
       className='text-white/60 hover:text-white'
