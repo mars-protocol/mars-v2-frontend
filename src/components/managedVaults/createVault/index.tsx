@@ -150,7 +150,7 @@ export default function CreateVault() {
       <form className='flex flex-col flex-grow space-y-6'>
         <div className='flex flex-col gap-8 md:flex-row'>
           <div className='flex-1 space-y-8'>
-            <div className='space-y-4'>
+            <div className='space-y-2'>
               <div className='flex flex-col gap-2'>
                 <VaultInputElement
                   type='text'

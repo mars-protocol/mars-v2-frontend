@@ -62,11 +62,7 @@ export default function FeeAction(props: Props) {
         vaultAddress,
         ...(isEdit && {
           newFee: {
-            fee_rate: performanceFee
-              .dividedBy(100) // Convert percentage to decimal
-              .dividedBy(8760) // Convert annual rate to hourly rate
-              .decimalPlaces(18) // Keep enough decimal places for precision
-              .toString(),
+            fee_rate: performanceFee.dividedBy(100).dividedBy(8760).decimalPlaces(18).toString(),
             withdrawal_interval: 24 * 3600,
           },
         }),
