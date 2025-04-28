@@ -21,6 +21,7 @@ export default function PerformanceCard(props: Props) {
 
     // Find first non-zero price to start from
     const firstNonZeroIndex = data.findIndex((point) => point.sharePrice > 0)
+    if (firstNonZeroIndex === -1) return 0
     let peak = data[firstNonZeroIndex].sharePrice
     let maxDrawdown = 0
 
@@ -54,7 +55,7 @@ export default function PerformanceCard(props: Props) {
     },
     {
       value: 0,
-      label: 'Volume (30d)',
+      label: 'Total PnL',
       isCurrency: true,
       formatOptions: { maxDecimals: 2, minDecimals: 2 },
     },
