@@ -95,7 +95,7 @@ export default function ProfileVaultCard(props: Props) {
           <InfoRow label='APY'>
             <FormattedNumber
               amount={details.apy || 0}
-              options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
+              options={{ minDecimals: 2, maxDecimals: 2, suffix: '%', abbreviated: true }}
               className='text-sm'
             />
           </InfoRow>
@@ -165,9 +165,8 @@ export default function ProfileVaultCard(props: Props) {
             <InfoRow label='Contact'>
               <div className='flex items-center gap-4'>
                 {vaultOwnerInfo.socials.map((social, index) => (
-                  <div className='flex w-4'>
+                  <div className='flex w-4' key={index}>
                     <TextLink
-                      key={index}
                       href={social.link}
                       target='_blank'
                       className={'underline hover:no-underline hover:text-white relative'}

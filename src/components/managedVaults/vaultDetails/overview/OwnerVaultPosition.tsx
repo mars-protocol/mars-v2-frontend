@@ -1,12 +1,12 @@
-import DisplayCurrency from 'components/common/DisplayCurrency'
-import { FormattedNumber } from 'components/common/FormattedNumber'
-import { AccountArrowDown, Edit } from 'components/common/Icons'
-import PositionInfo from 'components/managedVaults/vaultDetails/common/PositionInfo'
-import { BNCoin } from 'types/classes/BNCoin'
-import { BN } from 'utils/helpers'
-import React from 'react'
-import VaultPosition from 'components/managedVaults/vaultDetails/VaultPosition'
 import AssetImage from 'components/common/assets/AssetImage'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import React from 'react'
+import PositionInfo from 'components/managedVaults/vaultDetails/common/PositionInfo'
+import VaultPosition from 'components/managedVaults/vaultDetails/overview/VaultPosition'
+import { AccountArrowDown, Edit } from 'components/common/Icons'
+import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
+import { FormattedNumber } from 'components/common/FormattedNumber'
 
 interface Props {
   vaultDetails: ManagedVaultsData

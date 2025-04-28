@@ -1,15 +1,15 @@
-import DisplayCurrency from 'components/common/DisplayCurrency'
-import { FormattedNumber } from 'components/common/FormattedNumber'
-import { LockUnlocked } from 'components/common/Icons'
-import Text from 'components/common/Text'
-import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
-import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
-import { BN } from 'utils/helpers'
-import PositionInfo from 'components/managedVaults/vaultDetails/common/PositionInfo'
-import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVaultConvertToTokens'
-import Loading from 'components/common/Loading'
 import AssetImage from 'components/common/assets/AssetImage'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import Loading from 'components/common/Loading'
+import PositionInfo from 'components/managedVaults/vaultDetails/common/PositionInfo'
+import Text from 'components/common/Text'
+import useStore from 'store'
+import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
+import { LockUnlocked } from 'components/common/Icons'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVaultConvertToTokens'
+import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
 
 interface Props {
   details: ManagedVaultsData
@@ -27,7 +27,6 @@ export default function VaultPosition(props: Props) {
   const { amount: userVaultShares, calculateVaultShare } = useManagedVaultUserShares(
     address,
     details.vault_tokens_denom,
-    vaultAddress,
   )
   const { data: userVaultTokensAmount, isLoading } = useManagedVaultConvertToTokens(
     vaultAddress,

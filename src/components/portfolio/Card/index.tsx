@@ -17,7 +17,7 @@ import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { checkAccountKind } from 'utils/accounts'
 import { getRoute } from 'utils/route'
-import { VaultDetailsContent } from 'components/managedVaults/vaultDetails'
+import VaultDetails from 'components/managedVaults/vaultDetails'
 
 interface Props {
   accountId: string
@@ -83,7 +83,7 @@ export default function PortfolioCard(props: Props) {
       e.preventDefault()
       useStore.setState({
         focusComponent: {
-          component: <VaultDetailsContent vaultAddress={vaultAddress} />,
+          component: <VaultDetails vaultAddress={vaultAddress} />,
           onClose: () => {},
         },
       })

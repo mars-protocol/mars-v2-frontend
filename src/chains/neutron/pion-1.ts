@@ -33,6 +33,8 @@ const Pion1: ChainConfig = {
     dexPools: 'https://neutron-cache-api.onrender.com/pion-1/pools',
     gasPrices: '/feemarket/v1/gas_price/untrn',
     managedVaults: 'https://backend.test.mars-dev.net/v2/managed_vaults?chain=neutron',
+    historicalManagedVaults:
+      'https://backend.test.mars-dev.net/v2/managed_vaults_historical?chain=neutron',
     aprs: {
       vaults: '',
       perpsVault: 'https://backend.test.mars-dev.net/v2/perps_vault?chain=neutron',

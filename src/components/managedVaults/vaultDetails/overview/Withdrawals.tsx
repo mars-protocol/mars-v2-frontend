@@ -256,35 +256,41 @@ export default function Withdrawals(props: Props) {
         </div>
       ),
     },
-    ...(userUnlocksData.length > 0
-      ? [
-          {
-            title: 'My Withdrawals',
-            renderContent: () => (
-              <div className='flex flex-col h-64 bg-white/5'>
-                <div className='flex-1 overflow-auto scrollbar-hide'>
-                  <Table
-                    title='My Withdrawals'
-                    hideCard
-                    columns={userWithdrawalColumns}
-                    data={userUnlocksData}
-                    initialSorting={[{ id: 'initiated', desc: true }]}
-                    spacingClassName='p-3'
-                  />
-                </div>
-                <div className='w-full py-2 px-4 bg-black/15 border-t border-white/10'>
-                  <WithdrawButton
-                    amount={totalUnlockedAmount.toString()}
-                    vaultAddress={vaultAddress}
-                    vaultTokenDenom={details.vault_tokens_denom}
-                    disabled={unlockedPositions.length === 0}
-                  />
-                </div>
+    {
+      title: 'My Withdrawals',
+      renderContent: () => (
+        <div className='flex flex-col h-64 bg-white/5'>
+          <div className='flex-1 overflow-auto scrollbar-hide'>
+            {userUnlocksData.length > 0 ? (
+              <Table
+                title='My Withdrawals'
+                hideCard
+                columns={userWithdrawalColumns}
+                data={userUnlocksData}
+                initialSorting={[{ id: 'initiated', desc: true }]}
+                spacingClassName='p-3'
+              />
+            ) : (
+              <div className='h-full flex items-center justify-center'>
+                <Text size='sm' className='text-white/50'>
+                  You have no pending withdrawals.
+                </Text>
               </div>
-            ),
-          },
-        ]
-      : []),
+            )}
+          </div>
+          {userUnlocksData.length > 0 && (
+            <div className='w-full py-2 px-4 bg-black/15 border-t border-white/10'>
+              <WithdrawButton
+                amount={totalUnlockedAmount.toString()}
+                vaultAddress={vaultAddress}
+                vaultTokenDenom={details.vault_tokens_denom}
+                disabled={unlockedPositions.length === 0}
+              />
+            </div>
+          )}
+        </div>
+      ),
+    },
   ]
   return <CardWithTabs tabs={tabs} textSizeClass='text-base' />
 }

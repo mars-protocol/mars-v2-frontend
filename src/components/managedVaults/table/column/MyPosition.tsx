@@ -18,11 +18,7 @@ interface Props {
 
 export default function MyPosition({ vault, isLoading }: Props) {
   const address = useStore((s) => s.address)
-  const { amount: userShares } = useManagedVaultUserShares(
-    address,
-    vault.vault_tokens_denom,
-    vault.vault_address,
-  )
+  const { amount: userShares } = useManagedVaultUserShares(address, vault.vault_tokens_denom)
   const { data: userTokens, isLoading: isLoadingTokens } = useManagedVaultConvertToTokens(
     vault.vault_address,
     userShares,

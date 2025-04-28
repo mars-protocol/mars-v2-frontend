@@ -308,6 +308,7 @@ interface ChainConfig {
     dexPools?: string
     gasPrices: string
     managedVaults?: string
+    historicalManagedVaults?: string
     aprs: {
       vaults: string
       perpsVault?: string
@@ -2017,6 +2018,12 @@ interface PerformanceFeeConfig {
   withdrawal_interval: number
 }
 
+interface ExtendedManagedVaultDetails extends ManagedVaultDetails {
+  metrics: ManagedVaultMetrics
+  performance_fee_state: PerformanceFeeState
+  owner?: string
+}
+
 interface UserManagedVaultUnlockResponse {
   user_address: string
   created_at: number
@@ -2067,4 +2074,30 @@ interface Image {
   url: string
   width: number
   height: number
+}
+
+interface DataPoint {
+  date: string
+  value: string
+}
+
+interface HistoricalVaultData {
+  vault_address: string
+  tvl: DataPoint[]
+  apr: DataPoint[]
+  share_price: DataPoint[]
+}
+
+interface HistoricalManagedVaultsResponse {
+  data: HistoricalVaultData[]
+  page: number
+  limit: number
+  total: number
+}
+
+interface HistoricalVaultChartData {
+  tvl: number
+  apy: number
+  sharePrice: number
+  date: string
 }

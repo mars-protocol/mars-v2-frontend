@@ -20,7 +20,7 @@ interface Props {
 
 export default function AccountsOverview(props: Props) {
   const { isLoading, accountIds, kind } = props
-  const isDefault = props.kind === 'default'
+  const isDefault = kind === 'default'
   const { address: urlAddress } = useParams()
   const walletAddress = useStore((s) => s.address)
 
