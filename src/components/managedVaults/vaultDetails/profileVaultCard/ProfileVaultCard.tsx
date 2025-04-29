@@ -47,6 +47,12 @@ export default function ProfileVaultCard(props: Props) {
     )
   }
 
+  const vaultTitle = details.title
+  const hasVaultWord = /vault/i.test(vaultTitle)
+  const shareText = hasVaultWord
+    ? `Check out '${vaultTitle}' on Mars Protocol!`
+    : `Check out the '${vaultTitle}' Vault on Mars Protocol!`
+
   return (
     <Card className='bg-white/5'>
       <div className='relative mb-6'>
@@ -199,7 +205,7 @@ export default function ProfileVaultCard(props: Props) {
 
         <div className='flex justify-between items-center pb-4'>
           <Text size='sm'>Share Vault</Text>
-          <ShareBar text={`Check out '${details.title}' Vault on Mars Protocol!`} />
+          <ShareBar text={shareText} />
         </div>
 
         {isOwner && !vaultOwnerInfo.hasStargazeNames && (
