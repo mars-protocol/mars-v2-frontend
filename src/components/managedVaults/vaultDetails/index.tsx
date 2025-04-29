@@ -1,4 +1,4 @@
-import NavigationBackButton from 'components/common/Button/NavigationBackButton'
+import NavigateBackButton from 'components/managedVaults/NavigateBackButton'
 import Tab from 'components/earn/Tab'
 import Text from 'components/common/Text'
 import useStore from 'store'
@@ -48,7 +48,7 @@ export default function VaultDetails(props: Props) {
   return (
     <section className='container mx-auto'>
       <div className='flex mb-6 w-full'>
-        {!focusComponent && <NavigationBackButton />}
+        {!focusComponent && <NavigateBackButton />}
         <div className='ml-auto'>
           <Tab
             tabs={VAULT_DETAILS_TABS}

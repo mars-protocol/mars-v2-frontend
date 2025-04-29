@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { getRoute } from 'utils/route'
 
-export default function NavigationBackButton() {
+export default function NavigateBackButton() {
   const navigate = useNavigate()
   const address = useStore((s) => s.address)
   const [searchParams] = useSearchParams()
