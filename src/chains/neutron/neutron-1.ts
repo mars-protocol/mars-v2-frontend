@@ -173,6 +173,7 @@ const Neutron1: ChainConfig = {
     },
   },
   features: ['ibc-transfer', 'ibc-go'],
+  vaultCodeId: '3488',
   hls: true,
   perps: true,
   farm: true,
