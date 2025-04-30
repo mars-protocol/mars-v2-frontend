@@ -1,21 +1,21 @@
 import classNames from 'classnames'
-import { useCallback, useEffect, useMemo } from 'react'
+import { ReactNode, useCallback, useEffect, useMemo } from 'react'
 
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import NumberInput from 'components/common/NumberInput'
 import { BN_ZERO } from 'constants/math'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import USD from 'constants/USDollar'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatValue } from 'utils/formatters'
 
 interface Props {
   label?: string
   max?: BigNumber
-  min?: BigNumber
   asset: Asset
   amount: BigNumber
   disabled?: boolean
   maxButtonLabel?: string
-  amountValueText?: string
   containerClassName?: string
   setAmount: (amount: BigNumber) => void
   onFocus?: () => void
@@ -25,12 +25,12 @@ interface Props {
   showCloseButton?: boolean
   isMaxSelected?: boolean
   capMax?: boolean
+  assetSwitch?: ReactNode
 }
 
 export default function AssetAmountInput(props: Props) {
   const {
     max,
-    min,
     label,
     amount,
     asset,
@@ -45,7 +45,12 @@ export default function AssetAmountInput(props: Props) {
     showCloseButton,
     isMaxSelected,
     capMax,
+    assetSwitch,
   } = props
+
+  const assetPrice = useMemo(() => {
+    return asset.price?.amount || BN_ZERO
+  }, [asset.price])
 
   const handleMaxClick = useCallback(() => {
     if (!max || disabled) return
@@ -67,7 +72,14 @@ export default function AssetAmountInput(props: Props) {
     if (isMaxSelected && max) {
       setAmount(max)
     }
-  }, [isMaxSelected, max, setAmount])
+  }, [isMaxSelected, max, setAmount, isUSD])
+
+  const nativeAssetAmount = useMemo(() => {
+    if (isUSD && !assetPrice.isZero()) {
+      return amount.shiftedBy(asset.decimals - PRICE_ORACLE_DECIMALS).div(assetPrice)
+    }
+    return amount
+  }, [isUSD, amount, assetPrice, asset.decimals])
 
   return (
     <div className={containerClassName}>
@@ -80,19 +92,20 @@ export default function AssetAmountInput(props: Props) {
           )}
         >
           <NumberInput
+            key={isUSD ? 'usd-input' : 'asset-input'}
             asset={asset}
-            amount={amount}
             className='border-none bg-transparent outline-none flex-1 !text-left'
-            maxDecimals={isUSD ? 6 : asset.decimals}
+            maxDecimals={asset.decimals}
             max={capMax ? max : undefined}
-            min={min}
             disabled={disabled}
             onChange={setAmount}
             onFocus={onFocus}
             onBlur={onBlur}
-            isUSD={isUSD}
+            amount={amount}
           />
-          <span>{isUSD ? 'USD' : asset.symbol}</span>
+          <div className='flex items-center'>
+            {assetSwitch ?? <span>{isUSD ? USD.symbol : asset.symbol}</span>}
+          </div>
         </div>
         <div className='flex items-center'>
           {maxValue && (
@@ -122,9 +135,18 @@ export default function AssetAmountInput(props: Props) {
                   </div>
                 )}
               </div>
-
               <div className='mt-2 text-xs text-white text-opacity-60'>
-                <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(asset.denom, amount)} />
+                {isUSD ? (
+                  <div>
+                    {formatValue(Number(nativeAssetAmount.shiftedBy(-asset.decimals).toString()), {
+                      abbreviated: false,
+                      maxDecimals: asset.decimals,
+                      suffix: ` ${asset.symbol}`,
+                    })}
+                  </div>
+                ) : (
+                  <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(asset.denom, amount)} />
+                )}
               </div>
             </div>
           )}

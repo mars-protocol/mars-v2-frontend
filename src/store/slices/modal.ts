@@ -28,6 +28,8 @@ export default function createModalSlice(
     v1DepositAndWithdrawModal: null,
     v1BorrowAndRepayModal: null,
     keeperFeeModal: false,
-    addSLTPModal: false,
+    addSLTPModal: false as false | { parentPosition: PerpPositionRow },
+    conditionalTriggersModal: false,
+    triggerOrdersModal: null,
   }
 }

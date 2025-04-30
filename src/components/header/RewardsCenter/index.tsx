@@ -74,7 +74,7 @@ export default function RewardsCenter(props: Props) {
   const handleClick = useCallback(async () => {
     setIsConfirming(true)
     await claimRewards({
-      accountId: accountId || '',
+      accountId: accountId ?? '',
       redBankRewards,
       stakedAstroLpRewards,
       lend: isAutoLend,
@@ -145,7 +145,6 @@ export default function RewardsCenter(props: Props) {
               ]}
               selected={rewardsCenterType}
               onChange={(value) => setRewardCenterType(value as RewardsCenterType)}
-              name='rewardsCenterType'
               className='w-full'
             />
           )}

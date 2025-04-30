@@ -14,8 +14,15 @@ interface LimitOrderParams {
   tradeDirection: TradeDirection
   baseDenom: string
   keeperFee: BNCoin
-  isReduceOnly: boolean
-  comparison: 'less_than' | 'greater_than'
+  reduceOnly: boolean
+  comparison: TriggerType
+  orderType?: CreateTriggerOrderType
+  parentOrderId?: string
+}
+
+interface SubmitLimitOrderParams {
+  orders: LimitOrderParams[]
+  cancelOrders?: { orderId: string }[]
 }
 
 export function useSubmitLimitOrder() {
@@ -26,10 +33,15 @@ export function useSubmitLimitOrder() {
   const createMultipleTriggerOrders = useStore((s) => s.createMultipleTriggerOrders)
 
   const submitLimitOrder = useCallback(
-    async (orderOrOrders: LimitOrderParams | LimitOrderParams[]) => {
+    async (params: SubmitLimitOrderParams | LimitOrderParams | LimitOrderParams[]) => {
       if (!currentAccount) return
 
-      const orders = Array.isArray(orderOrOrders) ? orderOrOrders : [orderOrOrders]
+      const orders =
+        Array.isArray(params) || !('orders' in params)
+          ? Array.isArray(params)
+            ? params
+            : [params]
+          : params.orders
 
       const orderKeeperFee = orders[0].keeperFee
       const totalKeeperFeeAmount = orderKeeperFee.amount.times(orders.length)
@@ -72,8 +84,10 @@ export function useSubmitLimitOrder() {
           tradeDirection,
           baseDenom,
           keeperFee,
-          isReduceOnly,
+          reduceOnly,
           comparison,
+          orderType,
+          parentOrderId,
         }) => {
           const decimalAdjustment = asset.decimals - PRICE_ORACLE_DECIMALS
           const adjustedLimitPrice = limitPrice.shiftedBy(-decimalAdjustment)
@@ -86,8 +100,10 @@ export function useSubmitLimitOrder() {
             keeperFee,
             tradeDirection,
             price: adjustedLimitPrice,
-            isReduceOnly,
+            reduceOnly,
             comparison,
+            orderType,
+            parentOrderId,
           }
         },
       )
@@ -104,6 +120,7 @@ export function useSubmitLimitOrder() {
           keeperFeeFromLends,
           keeperFeeFromBorrows,
           orders: triggerOrderParams,
+          cancelOrders: 'cancelOrders' in params ? params.cancelOrders : undefined,
         })
       }
     },

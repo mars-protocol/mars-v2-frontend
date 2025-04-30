@@ -18,3 +18,6 @@ export { default as V1DepositAndWithdraw } from 'components/Modals/v1/V1DepositA
 export { default as VaultModal } from 'components/Modals/Vault'
 export { default as WalletAssets } from 'components/Modals/WalletAssets'
 export { default as WithdrawFromVaultsModal } from 'components/Modals/WithdrawFromVaultsModal'
+export { default as PerpsConditionalTriggersModal } from 'components/Modals/PerpsConditionalTriggersModal'
+export { default as PerpsTriggerOrdersModal } from 'components/Modals/PerpsTriggerOrdersModal'
+export { default as PerpsSlTpModal } from 'components/Modals/PerpsSlTpModal'
