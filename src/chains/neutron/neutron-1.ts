@@ -180,7 +180,7 @@ const Neutron1: ChainConfig = {
   anyAsset: true,
   evmAssetSupport: true,
   slinky: true,
-  managedVaults: false,
+  managedVaults: true,
 }
 
 export default Neutron1
