@@ -34,9 +34,10 @@ export default function FeeAction(props: Props) {
     vaultDetails,
     depositAsset,
   } = props
-  const feeRate = BN(vaultDetails.performance_fee_config.fee_rate).shiftedBy(5)
   const [isTxPending, setIsTxPending] = useState(false)
-  const [performanceFee, setPerformanceFee] = useState<BigNumber>(feeRate)
+  const [performanceFee, setPerformanceFee] = useState<BigNumber>(
+    BN(vaultDetails.performance_fee_config.fee_rate),
+  )
   const handlePerformanceFeeAction = useStore((s) => s.handlePerformanceFeeAction)
 
   const isEdit = type === 'edit'
@@ -61,7 +62,7 @@ export default function FeeAction(props: Props) {
         vaultAddress,
         ...(isEdit && {
           newFee: {
-            fee_rate: performanceFee.dividedBy(100).dividedBy(1000).toFixed(5),
+            fee_rate: performanceFee.dividedBy(100).dividedBy(8760).decimalPlaces(18).toString(),
             withdrawal_interval: 24 * 3600,
           },
         }),

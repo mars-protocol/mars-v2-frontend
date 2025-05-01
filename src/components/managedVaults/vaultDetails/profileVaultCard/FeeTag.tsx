@@ -2,7 +2,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 
 interface Props {
-  fee: string
+  fee: number
 }
 export default function FeeTag(props: Props) {
   const { fee } = props
@@ -10,7 +10,7 @@ export default function FeeTag(props: Props) {
   return (
     <Text tag='span' className='rounded-sm px-2 py-0.5 bg-white/10 text-white/60' size='xs'>
       <FormattedNumber
-        amount={Number(fee) * 100000}
+        amount={fee}
         options={{ minDecimals: 0, maxDecimals: 0, suffix: '% Fee' }}
         className='text-xs'
       />

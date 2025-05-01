@@ -1,4 +1,4 @@
-import NavigationBackButton from 'components/common/Button/NavigationBackButton'
+import NavigateBackButton from 'components/managedVaults/NavigateBackButton'
 import Tab from 'components/earn/Tab'
 import Text from 'components/common/Text'
 import useStore from 'store'
@@ -6,8 +6,7 @@ import VaultPerformance from 'components/managedVaults/vaultDetails/performance/
 import VaultOverview from 'components/managedVaults/vaultDetails/overview/VaultOverview'
 import { CircularProgress } from 'components/common/CircularProgress'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
-import { useParams } from 'react-router-dom'
-import { useState } from 'react'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { VAULT_DETAILS_TABS } from 'constants/pages'
 
 function VaultLoadingState() {
@@ -28,22 +27,33 @@ interface Props {
 export default function VaultDetails(props: Props) {
   const { vaultAddress: propVaultAddress } = props
   const { vaultAddress: urlVaultAddress } = useParams<{ vaultAddress: string }>()
-  const [activeTabIdx, setActiveTabIdx] = useState<number>(0)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeTabIdx = searchParams.get('tab') === 'performance' ? 1 : 0
   const focusComponent = useStore((s) => s.focusComponent)
 
   const vaultAddress = propVaultAddress || urlVaultAddress
+
+  const handleTabChange = (index: number) => {
+    const newParams = new URLSearchParams(searchParams)
+    if (index === 1) {
+      newParams.set('tab', 'performance')
+    } else {
+      newParams.delete('tab')
+    }
+    setSearchParams(newParams)
+  }
 
   if (!vaultAddress) return <VaultLoadingState />
 
   return (
     <section className='container mx-auto'>
       <div className='flex mb-6 w-full'>
-        {!focusComponent && <NavigationBackButton />}
+        {!focusComponent && <NavigateBackButton />}
         <div className='ml-auto'>
           <Tab
             tabs={VAULT_DETAILS_TABS}
             activeTabIdx={activeTabIdx}
-            onTabChange={setActiveTabIdx}
+            onTabChange={handleTabChange}
             disableNavigation
           />
         </div>
