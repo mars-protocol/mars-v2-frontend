@@ -24,7 +24,6 @@ export function useDepositedManagedVaultsFallback() {
           return parts[1]
         })
 
-      console.log('vaultTokens', vaultTokens)
       if (!vaultTokens.length) return []
 
       const vaults = await Promise.all(

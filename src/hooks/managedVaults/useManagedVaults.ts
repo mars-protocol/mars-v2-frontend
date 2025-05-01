@@ -43,7 +43,7 @@ export default function useManagedVaults() {
         return vaultsWithDetails
       } catch (error) {
         console.error('Error fetching vaults:', error)
-        throw error
+        return []
       }
     },
     {
