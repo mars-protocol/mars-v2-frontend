@@ -1,22 +1,23 @@
 import { getManagedVaultDetails, getManagedVaultOwnerAddress } from 'api/cosmwasm-client'
 import getManagedVaults from 'api/managedVaults/getManagedVaults'
 import { useManagedVaultDeposits } from 'hooks/managedVaults/useManagedVaultDeposits'
+import { useDepositedManagedVaultsFallback } from 'hooks/managedVaults/useDepositedManagedVaultsFallback'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import useSWR from 'swr'
 import { useMemo } from 'react'
 
-const FALLBACK_RESULT = {
-  ownedVaults: [],
-  depositedVaults: [],
-  availableVaults: [],
-}
-
 export default function useManagedVaults() {
   const chainConfig = useChainConfig()
   const address = useStore((s) => s.address)
+  const { data: fallbackUserVaults, isLoading: isFallbackLoading } =
+    useDepositedManagedVaultsFallback()
 
-  const { data: vaultsResponse, isLoading } = useSWR(
+  const {
+    data: vaultsResponse,
+    isLoading,
+    error,
+  } = useSWR(
     `chains/${chainConfig.id}/managedVaults`,
     async () => {
       try {
@@ -51,9 +52,16 @@ export default function useManagedVaults() {
       suspense: false,
     },
   )
+
   const vaultDeposits = useManagedVaultDeposits(address, vaultsResponse ?? [])
   const result = useMemo(() => {
-    if (!vaultsResponse) return FALLBACK_RESULT
+    if (error || !vaultsResponse || vaultsResponse.length === 0) {
+      return {
+        ownedVaults: [],
+        depositedVaults: fallbackUserVaults || [],
+        availableVaults: [],
+      }
+    }
 
     return {
       ownedVaults: address ? vaultsResponse.filter((vault) => vault.isOwner) : [],
@@ -68,10 +76,10 @@ export default function useManagedVaults() {
           )
         : vaultsResponse,
     }
-  }, [vaultsResponse, vaultDeposits, address])
+  }, [vaultsResponse, vaultDeposits, address, error, fallbackUserVaults])
 
   return {
     data: result,
-    isLoading,
+    isLoading: isLoading || isFallbackLoading,
   }
 }
