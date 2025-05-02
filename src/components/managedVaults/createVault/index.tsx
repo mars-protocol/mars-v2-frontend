@@ -1,7 +1,7 @@
 import Button from 'components/common/Button'
 import CharacterCount from 'components/common/CharacterCount'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import { ArrowRight, InfoCircle } from 'components/common/Icons'
+import { ArrowRight, ArrowUpLine, InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import TextArea from 'components/common/TextArea'
 import { TextLink } from 'components/common/TextLink'
@@ -19,6 +19,12 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
+import Overlay from 'components/common/Overlay'
+import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
+import { BN_ZERO } from 'constants/math'
+import Card from 'components/common/Card'
+import Divider from 'components/common/Divider'
+import EscButton from 'components/common/Button/EscButton'
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -50,6 +56,9 @@ export default function CreateVault() {
   const navigate = useNavigate()
   const createManagedVault = useStore((s) => s.createManagedVault)
   const selectedDenom = useStore((s) => s.vaultAssetsModal?.selectedDenom) ?? defaultAsset.denom
+  const [amount, setAmount] = useState(BN_ZERO)
+  const [showDepositModal, setShowDepositModal] = useState(false)
+  const createAccount = useStore((s) => s.createAccount)
 
   const selectedAsset = useMemo(() => {
     return selectableAssets.find(byDenom(selectedDenom)) ?? defaultAsset
@@ -96,9 +105,22 @@ export default function CreateVault() {
             if (!result) return
 
             if (result.address && accountId) {
+              const accountKind = {
+                fund_manager: {
+                  vault_addr: result.address,
+                },
+              }
+              const accountId = await createAccount(accountKind, false)
+
+              console.log('accountId', accountId)
+              if (!accountId) {
+                setIsTxPending(false)
+                return
+              }
+
               navigate(
                 getRoute(
-                  getPage(`vaults/${result.address}/mint-account`, chainConfig),
+                  getPage(`vaults/${result.address}/details`, chainConfig),
                   searchParams,
                   address,
                   accountId,
@@ -106,7 +128,7 @@ export default function CreateVault() {
               )
             }
           } catch (error) {
-            console.error('Failed to create vault:', error)
+            console.error('Failed to create and mint vault:', error)
           } finally {
             setIsTxPending(false)
           }
@@ -129,6 +151,7 @@ export default function CreateVault() {
     chainConfig,
     searchParams,
     address,
+    createAccount,
   ])
 
   const handleWithdrawFreezePeriod = useCallback((value: string) => {
@@ -144,6 +167,16 @@ export default function CreateVault() {
       },
     })
   }, [selectableAssets, selectedAsset.denom])
+
+  const handleAmountChange = (newAmount: BigNumber) => {
+    setAmount(newAmount)
+  }
+
+  const handleDepositPopup = useCallback(() => {
+    setShowDepositModal(true)
+  }, [])
+
+  const handleDepositAction = async () => {}
 
   return (
     <CreateVaultContent>
@@ -240,21 +273,18 @@ export default function CreateVault() {
 
         <div className='flex flex-wrap items-center justify-between gap-2 px-4 md:px-0'>
           <div className='space-y-2'>
-            {/* TODO: fetch from contract */}
-            <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber('usd', BN(10))} />
-            <Text size='sm' className='text-white/50'>
-              Vault creation cost.
-              <TextLink
-                //   TODO: add link
-                href=''
-                target='_blank'
-                title='Vault Creation Info'
-                textSize='extraSmall'
-                className='pl-1'
-              >
-                Learn more...
-              </TextLink>
-            </Text>
+            <Button
+              onClick={(e) => {
+                e.preventDefault()
+                handleDepositPopup()
+              }}
+              size='md'
+              rightIcon={<ArrowUpLine />}
+              className='w-full md:w-70'
+              text='Deposit'
+              disabled={isTxPending}
+              showProgressIndicator={isTxPending}
+            />
           </div>
           <Button
             onClick={(e) => {
@@ -264,12 +294,50 @@ export default function CreateVault() {
             size='md'
             rightIcon={<ArrowRight />}
             className='w-full md:w-70'
-            text='Mint Vault Address (1/2)'
+            text='Mint Vault Address'
             disabled={isTxPending || !isFormValid()}
             showProgressIndicator={isTxPending}
           />
         </div>
       </form>
+
+      <Overlay
+        setShow={setShowDepositModal}
+        show={showDepositModal}
+        className='fixed md:absolute top-[40vh] md:top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full md:w-140 h-auto overflow-hidden !bg-body'
+      >
+        <div className='flex items-center justify-between gradient-header py-2.5 px-4'>
+          <Text size='lg'>Deposit</Text>
+          <EscButton onClick={() => setShowDepositModal(false)} enableKeyPress />
+        </div>
+
+        <Divider />
+
+        <div className='p-2 md:p-6 mb-4 w-full h-full max-w-screen-full'>
+          <Card className='p-4 bg-white/5' contentClassName='flex flex-col justify-between gap-4'>
+            <TokenInputWithSlider
+              asset={selectedAsset}
+              onChange={handleAmountChange}
+              amount={amount}
+              max={BN(1000)} //temp
+              disabled={isTxPending}
+              className='w-full'
+              maxText='In Wallet'
+              warningMessages={[]}
+            />
+            <Divider className='my-2' />
+
+            <Button
+              onClick={handleDepositAction}
+              className='w-full'
+              text='Deposit'
+              rightIcon={<ArrowRight />}
+              disabled={amount.isZero() || isTxPending}
+              showProgressIndicator={isTxPending}
+            />
+          </Card>
+        </div>
+      </Overlay>
     </CreateVaultContent>
   )
 }
