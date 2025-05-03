@@ -34,7 +34,7 @@ export default function PerformanceFee(props: Props) {
   }
 
   return (
-    <div className='w-full mb-6 space-y-3'>
+    <div className='w-full mt-2 mb-6 space-y-3'>
       <Text size='xs' className='flex items-center'>
         Specify your performance fee
       </Text>

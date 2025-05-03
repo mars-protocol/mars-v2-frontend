@@ -1,7 +1,6 @@
 import Button from 'components/common/Button'
 import CharacterCount from 'components/common/CharacterCount'
-import DisplayCurrency from 'components/common/DisplayCurrency'
-import { ArrowRight, ArrowUpLine, InfoCircle } from 'components/common/Icons'
+import { ArrowRight, InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import TextArea from 'components/common/TextArea'
 import { TextLink } from 'components/common/TextLink'
@@ -15,16 +14,13 @@ import useAlertDialog from 'hooks/common/useAlertDialog'
 import { useCallback, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
-import Overlay from 'components/common/Overlay'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
-import Card from 'components/common/Card'
-import Divider from 'components/common/Divider'
-import EscButton from 'components/common/Button/EscButton'
+import { Callout } from 'components/common/Callout'
+import { CalloutType } from 'components/common/Callout'
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -36,6 +32,13 @@ const options = [
 ]
 
 export default function CreateVault() {
+  const [withdrawFreezePeriod, setWithdrawFreezePeriod] = useState<string>('24')
+  const [isTxPending, setIsTxPending] = useState<boolean>(false)
+  const [description, setDescription] = useState<string>('')
+  const [vaultTitle, setVaultTitle] = useState<string>('')
+  const [performanceFee, setPerformanceFee] = useState<BigNumber>(BN(1))
+  const [amount, setAmount] = useState(BN_ZERO)
+
   const selectableAssets = useVaultAssets()
   const chainConfig = useChainConfig()
   const { open: showAlertDialog } = useAlertDialog()
@@ -45,20 +48,14 @@ export default function CreateVault() {
       selectableAssets[0],
     [selectableAssets, chainConfig.stables],
   )
-  const [withdrawFreezePeriod, setWithdrawFreezePeriod] = useState<string>('24')
-  const [isTxPending, setIsTxPending] = useState<boolean>(false)
-  const [description, setDescription] = useState<string>('')
-  const [vaultTitle, setVaultTitle] = useState<string>('')
-  const [performanceFee, setPerformanceFee] = useState<BigNumber>(BN(1))
+
   const [searchParams] = useSearchParams()
   const accountId = useAccountId()
-  const address = useStore((s) => s.address)
   const navigate = useNavigate()
+  const address = useStore((s) => s.address)
   const createManagedVault = useStore((s) => s.createManagedVault)
-  const selectedDenom = useStore((s) => s.vaultAssetsModal?.selectedDenom) ?? defaultAsset.denom
-  const [amount, setAmount] = useState(BN_ZERO)
-  const [showDepositModal, setShowDepositModal] = useState(false)
   const createAccount = useStore((s) => s.createAccount)
+  const selectedDenom = useStore((s) => s.vaultAssetsModal?.selectedDenom) ?? defaultAsset.denom
 
   const selectedAsset = useMemo(() => {
     return selectableAssets.find(byDenom(selectedDenom)) ?? defaultAsset
@@ -172,31 +169,22 @@ export default function CreateVault() {
     setAmount(newAmount)
   }
 
-  const handleDepositPopup = useCallback(() => {
-    setShowDepositModal(true)
-  }, [])
-
-  const handleDepositAction = async () => {}
-
   return (
     <CreateVaultContent>
       <form className='flex flex-col flex-grow space-y-6'>
         <div className='flex flex-col gap-8 md:flex-row'>
-          <div className='flex-1 space-y-8'>
-            <div className='space-y-2'>
-              <div className='flex flex-col gap-2'>
-                <VaultInputElement
-                  type='text'
-                  value={vaultTitle}
-                  onChange={(value) => setVaultTitle(value)}
-                  label='Vault title'
-                  placeholder='Enter vault title'
-                  maxLength={30}
-                  required
-                />
-                <CharacterCount value={vaultTitle} maxLength={30} size='xs' />
-              </div>
-              <PerformanceFee value={performanceFee} onChange={setPerformanceFee} />
+          <div className='flex-1 space-y-6'>
+            <div className='flex flex-col gap-2'>
+              <VaultInputElement
+                type='text'
+                value={vaultTitle}
+                onChange={(value) => setVaultTitle(value)}
+                label='Vault title'
+                placeholder='Enter vault title'
+                maxLength={30}
+                required
+              />
+              <CharacterCount value={vaultTitle} maxLength={30} size='xs' />
             </div>
             <VaultInputElement
               type='button'
@@ -210,11 +198,33 @@ export default function CreateVault() {
               suffix={<ArrowRight />}
               required
             />
+            <div className='flex flex-col gap-5 pt-2'>
+              <div className='space-y-3'>
+                <Text size='xs' className='text-white'>
+                  Deposit
+                </Text>
+                <TokenInputWithSlider
+                  asset={selectedAsset}
+                  onChange={handleAmountChange}
+                  amount={amount}
+                  max={BN(1000)} //temp
+                  disabled={isTxPending}
+                  className='w-full text-sm space-y-6'
+                  maxText='In Wallet'
+                  warningMessages={[]}
+                />
+              </div>
+              <Callout type={CalloutType.INFO}>
+                For the vault to be visible to public, you need to deposit a minimum of 50 USD.
+              </Callout>
+            </div>
           </div>
 
           <div className='border border-white/5' />
 
-          <div className='flex-1 space-y-8'>
+          <div className='flex-1 space-y-6'>
+            <PerformanceFee value={performanceFee} onChange={setPerformanceFee} />
+
             <VaultInputElement
               type='dropdown'
               options={options}
@@ -222,7 +232,6 @@ export default function CreateVault() {
               onChange={handleWithdrawFreezePeriod}
               label='Withdraw Freeze Period'
             />
-
             <div>
               <label className='flex items-center text-xs'>
                 Description
@@ -237,9 +246,15 @@ export default function CreateVault() {
                 footer={<CharacterCount value={description} maxLength={240} size='xs' />}
               />
             </div>
+          </div>
+        </div>
 
+        <div className='border border-white/5' />
+
+        <div className='flex flex-wrap items-center justify-between gap-2 px-4 md:px-0'>
+          <div className='max-w-sm'>
             <div className='flex flex-wrap w-full'>
-              <Text size='sm' className='w-full mb-2'>
+              <Text size='sm' className='w-full mb-1'>
                 Details of your vault
               </Text>
               <Text size='xs' className='text-white/50'>
@@ -267,25 +282,6 @@ export default function CreateVault() {
               </Text>
             </div>
           </div>
-        </div>
-
-        <div className='border border-white/5' />
-
-        <div className='flex flex-wrap items-center justify-between gap-2 px-4 md:px-0'>
-          <div className='space-y-2'>
-            <Button
-              onClick={(e) => {
-                e.preventDefault()
-                handleDepositPopup()
-              }}
-              size='md'
-              rightIcon={<ArrowUpLine />}
-              className='w-full md:w-70'
-              text='Deposit'
-              disabled={isTxPending}
-              showProgressIndicator={isTxPending}
-            />
-          </div>
           <Button
             onClick={(e) => {
               e.preventDefault()
@@ -294,50 +290,12 @@ export default function CreateVault() {
             size='md'
             rightIcon={<ArrowRight />}
             className='w-full md:w-70'
-            text='Mint Vault Address'
+            text='Mint Vault Account'
             disabled={isTxPending || !isFormValid()}
             showProgressIndicator={isTxPending}
           />
         </div>
       </form>
-
-      <Overlay
-        setShow={setShowDepositModal}
-        show={showDepositModal}
-        className='fixed md:absolute top-[40vh] md:top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full md:w-140 h-auto overflow-hidden !bg-body'
-      >
-        <div className='flex items-center justify-between gradient-header py-2.5 px-4'>
-          <Text size='lg'>Deposit</Text>
-          <EscButton onClick={() => setShowDepositModal(false)} enableKeyPress />
-        </div>
-
-        <Divider />
-
-        <div className='p-2 md:p-6 mb-4 w-full h-full max-w-screen-full'>
-          <Card className='p-4 bg-white/5' contentClassName='flex flex-col justify-between gap-4'>
-            <TokenInputWithSlider
-              asset={selectedAsset}
-              onChange={handleAmountChange}
-              amount={amount}
-              max={BN(1000)} //temp
-              disabled={isTxPending}
-              className='w-full'
-              maxText='In Wallet'
-              warningMessages={[]}
-            />
-            <Divider className='my-2' />
-
-            <Button
-              onClick={handleDepositAction}
-              className='w-full'
-              text='Deposit'
-              rightIcon={<ArrowRight />}
-              disabled={amount.isZero() || isTxPending}
-              showProgressIndicator={isTxPending}
-            />
-          </Card>
-        </div>
-      </Overlay>
     </CreateVaultContent>
   )
 }
