@@ -1,7 +1,6 @@
 import { Navigate, Outlet, Route, Routes as RoutesWrapper } from 'react-router-dom'
 
 import CreateVault from 'components/managedVaults/createVault/index'
-import MintVaultAccount from 'components/managedVaults/createVault/MintVaultAccount'
 import VaultDetails from 'components/managedVaults/vaultDetails/index'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import Layout from 'pages/_layout'
@@ -54,7 +53,6 @@ export default function Routes() {
           <Route path='create' element={<CreateVault />} />
           <Route path=':vaultAddress'>
             <Route path='details' element={<VaultDetails />} />
-            <Route path='mint-account' element={<MintVaultAccount />} />
           </Route>
         </Route>
 
@@ -76,7 +74,6 @@ export default function Routes() {
           <Route path='vaults'>
             <Route path=':vaultAddress'>
               <Route path='details' element={<VaultDetails />} />
-              <Route path='mint-account' element={<MintVaultAccount />} />
             </Route>
             <Route path='create' element={<CreateVault />} />
             <Route path='' element={<VaultsCommunityPage />} />

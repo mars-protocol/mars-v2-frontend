@@ -470,7 +470,6 @@ type Page =
   | 'vaults'
   | 'vaults/create'
   | 'vaults/{vaultId}'
-  | 'vaults/{vaultId}/mint-account'
   | 'vaults/{vaultId}/details'
   | 'governance'
   | 'execute'

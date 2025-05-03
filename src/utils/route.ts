@@ -43,7 +43,6 @@ export function getPage(pathname: string, chainConfig: ChainConfig): Page {
     'execute',
     'vaults',
     'vaults/create',
-    'vaults/{vaultId}/mint-account',
     'vaults/{vaultId}/details',
     'v1',
   ]
