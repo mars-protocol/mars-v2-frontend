@@ -171,7 +171,7 @@ export default function CreateVault() {
 
   return (
     <CreateVaultContent>
-      <form className='flex flex-col flex-grow space-y-6'>
+      <form className='flex flex-col flex-grow space-y-6' onSubmit={(e) => e.preventDefault()}>
         <div className='flex flex-col gap-8 md:flex-row'>
           <div className='flex-1 space-y-6'>
             <div className='flex flex-col gap-2'>
