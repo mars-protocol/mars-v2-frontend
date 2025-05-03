@@ -21,6 +21,7 @@ import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSli
 import { BN_ZERO } from 'constants/math'
 import { Callout } from 'components/common/Callout'
 import { CalloutType } from 'components/common/Callout'
+import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -64,6 +65,8 @@ export default function CreateVault() {
   const isFormValid = () => {
     return vaultTitle.trim() !== '' && description.trim() !== '' && selectedAsset !== null
   }
+
+  const assetAmountInWallet = BN(useCurrentWalletBalance(selectedAsset.denom)?.amount || '0')
 
   const handleMintVaultAddress = useCallback(async () => {
     showAlertDialog({
@@ -207,7 +210,7 @@ export default function CreateVault() {
                   asset={selectedAsset}
                   onChange={handleAmountChange}
                   amount={amount}
-                  max={BN(1000)} //temp
+                  max={assetAmountInWallet}
                   disabled={isTxPending}
                   className='w-full text-sm space-y-6'
                   maxText='In Wallet'
@@ -283,10 +286,7 @@ export default function CreateVault() {
             </div>
           </div>
           <Button
-            onClick={(e) => {
-              e.preventDefault()
-              handleMintVaultAddress()
-            }}
+            onClick={handleMintVaultAddress}
             size='md'
             rightIcon={<ArrowRight />}
             className='w-full md:w-70'
