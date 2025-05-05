@@ -51,11 +51,11 @@ export default function CreateVault() {
   )
 
   const [searchParams] = useSearchParams()
-  const accountId = useAccountId()
   const navigate = useNavigate()
   const address = useStore((s) => s.address)
   const createManagedVault = useStore((s) => s.createManagedVault)
-  const createAccount = useStore((s) => s.createAccount)
+  const mintVaultAccount = useStore((s) => s.createAccount)
+  const depositInManagedVault = useStore((s) => s.depositInManagedVault)
   const selectedDenom = useStore((s) => s.vaultAssetsModal?.selectedDenom) ?? defaultAsset.denom
 
   const selectedAsset = useMemo(() => {
@@ -68,7 +68,7 @@ export default function CreateVault() {
 
   const assetAmountInWallet = BN(useCurrentWalletBalance(selectedAsset.denom)?.amount || '0')
 
-  const handleMintVaultAddress = useCallback(async () => {
+  const handleCreateVaultAccount = useCallback(async () => {
     showAlertDialog({
       title: 'Create Vault',
       icon: <InfoCircle />,
@@ -104,16 +104,25 @@ export default function CreateVault() {
 
             if (!result) return
 
-            if (result.address && accountId) {
+            if (result.address) {
               const accountKind = {
                 fund_manager: {
                   vault_addr: result.address,
                 },
               }
-              const accountId = await createAccount(accountKind, false)
+              const vaultAccountId = await mintVaultAccount(accountKind, false)
 
-              console.log('accountId', accountId)
-              if (!accountId) {
+              if (!vaultAccountId) {
+                setIsTxPending(false)
+                return
+              }
+
+              const depositResult = await depositInManagedVault({
+                vaultAddress: result.address,
+                amount: amount.toString(),
+              })
+
+              if (!depositResult) {
                 setIsTxPending(false)
                 return
               }
@@ -123,7 +132,7 @@ export default function CreateVault() {
                   getPage(`vaults/${result.address}/details`, chainConfig),
                   searchParams,
                   address,
-                  accountId,
+                  vaultAccountId,
                 ),
               )
             }
@@ -139,19 +148,20 @@ export default function CreateVault() {
       },
     })
   }, [
+    address,
+    amount,
+    chainConfig,
+    createManagedVault,
+    depositInManagedVault,
+    description,
+    mintVaultAccount,
+    navigate,
+    performanceFee,
+    searchParams,
+    selectedAsset,
     showAlertDialog,
     vaultTitle,
-    description,
-    selectedAsset,
     withdrawFreezePeriod,
-    performanceFee,
-    createManagedVault,
-    accountId,
-    navigate,
-    chainConfig,
-    searchParams,
-    address,
-    createAccount,
   ])
 
   const handleWithdrawFreezePeriod = useCallback((value: string) => {
@@ -287,7 +297,7 @@ export default function CreateVault() {
             </div>
           </div>
           <Button
-            onClick={handleMintVaultAddress}
+            onClick={handleCreateVaultAccount}
             size='md'
             rightIcon={<ArrowRight />}
             className='w-full md:w-70'
