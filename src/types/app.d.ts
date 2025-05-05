@@ -1962,6 +1962,7 @@ interface ManagedVaultWithDetails extends ManagedVaultsDataResponse {
   base_tokens_amount: string
   vault_tokens_denom: string
   vault_tokens_amount: string
+  fee_rate: number
   isOwner: boolean
 }
 

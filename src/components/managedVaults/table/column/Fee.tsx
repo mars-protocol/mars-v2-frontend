@@ -8,19 +8,18 @@ export const FEE_META = {
 }
 
 interface Props {
-  value: string
+  value: number
   isLoading: boolean
 }
 
 export default function Fee(props: Props) {
   const { value, isLoading } = props
-  const percentageValue = parseFloat(value) * 100000
 
   if (isLoading) return <Loading />
 
   return (
     <FormattedNumber
-      amount={percentageValue}
+      amount={value}
       options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
       className='text-xs'
     />
