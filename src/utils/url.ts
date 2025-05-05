@@ -3,10 +3,11 @@ export const getUrl = (baseUrl: string, path: string = ''): string => {
 
   if (isPlaceholder) return baseUrl + '/' + path
 
-  const url = new URL(baseUrl.split('?')[0])
+  let url = new URL(baseUrl)
+  if (path !== '') url = new URL(path, url)
 
   if (process.env.NEXT_PUBLIC_API_KEY)
-    return `${url.href}${path}?x-apikey=${process.env.NEXT_PUBLIC_API_KEY}`
+    url.searchParams.append('x-apikey', process.env.NEXT_PUBLIC_API_KEY)
 
-  return url.href + path
+  return url.toString()
 }
