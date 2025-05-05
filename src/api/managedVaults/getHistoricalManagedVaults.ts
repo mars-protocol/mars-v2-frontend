@@ -13,11 +13,13 @@ export default async function getHistoricalManagedVaults(
 
   try {
     const baseUrl = chainConfig.endpoints.historicalManagedVaults
-    if (!baseUrl) return defaultReturn
-
     const url = `${baseUrl}&duration=${duration}&address=${vaultAddress}`
 
     const response = await fetchWithTimeout(url, FETCH_TIMEOUT)
+
+    if (!response.ok) {
+      return defaultReturn
+    }
     const data = await response.json()
 
     return data as HistoricalManagedVaultsResponse
