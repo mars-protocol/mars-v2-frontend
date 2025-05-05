@@ -1,27 +1,27 @@
 import Button from 'components/common/Button'
 import CharacterCount from 'components/common/CharacterCount'
-import { ArrowRight, InfoCircle } from 'components/common/Icons'
-import Text from 'components/common/Text'
-import TextArea from 'components/common/TextArea'
-import { TextLink } from 'components/common/TextLink'
 import CreateVaultContent from 'components/managedVaults/createVault/CreateVaultContent'
 import PerformanceFee from 'components/managedVaults/createVault/PerformanceFee'
-import VaultInputElement from 'components/managedVaults/createVault/VaultInputElement'
-import useAccountId from 'hooks/accounts/useAccountId'
-import useVaultAssets from 'hooks/assets/useVaultAssets'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import useAlertDialog from 'hooks/common/useAlertDialog'
-import { useCallback, useMemo, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import useStore from 'store'
-import { byDenom } from 'utils/array'
-import { BN } from 'utils/helpers'
-import { getPage, getRoute } from 'utils/route'
+import Text from 'components/common/Text'
+import TextArea from 'components/common/TextArea'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
+import useAlertDialog from 'hooks/common/useAlertDialog'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
+import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
+import useStore from 'store'
+import useVaultAssets from 'hooks/assets/useVaultAssets'
+import VaultInputElement from 'components/managedVaults/createVault/VaultInputElement'
+import { ArrowRight, InfoCircle } from 'components/common/Icons'
+import { BN } from 'utils/helpers'
 import { BN_ZERO } from 'constants/math'
+import { byDenom } from 'utils/array'
 import { Callout } from 'components/common/Callout'
 import { CalloutType } from 'components/common/Callout'
-import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
+import { getPage, getRoute } from 'utils/route'
+import { TextLink } from 'components/common/TextLink'
+import { useCallback, useMemo, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -50,6 +50,7 @@ export default function CreateVault() {
     [selectableAssets, chainConfig.stables],
   )
 
+  const { convertAmount } = useDisplayCurrencyPrice()
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const address = useStore((s) => s.address)
@@ -63,7 +64,10 @@ export default function CreateVault() {
   }, [selectableAssets, defaultAsset, selectedDenom])
 
   const isFormValid = () => {
-    return vaultTitle.trim() !== '' && description.trim() !== '' && selectedAsset !== null
+    const usdAmount = convertAmount(selectedAsset, amount)
+    return (
+      vaultTitle.trim() !== '' && description.trim() !== '' && usdAmount.isGreaterThanOrEqualTo(50)
+    )
   }
 
   const assetAmountInWallet = BN(useCurrentWalletBalance(selectedAsset.denom)?.amount || '0')
