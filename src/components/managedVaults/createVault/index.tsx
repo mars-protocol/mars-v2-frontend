@@ -205,6 +205,7 @@ export default function CreateVault() {
               <div className='space-y-3'>
                 <Text size='xs' className='text-white'>
                   Deposit
+                  <span className='ml-1 text-primary'>*</span>
                 </Text>
                 <TokenInputWithSlider
                   asset={selectedAsset}
@@ -218,7 +219,7 @@ export default function CreateVault() {
                 />
               </div>
               <Callout type={CalloutType.INFO}>
-                For the vault to be visible to public, you need to deposit a minimum of 50 USD.
+                A minimum deposit of $50 USD is required to complete your vault creation.
               </Callout>
             </div>
           </div>
@@ -290,7 +291,7 @@ export default function CreateVault() {
             size='md'
             rightIcon={<ArrowRight />}
             className='w-full md:w-70'
-            text='Mint Vault Account'
+            text='Create Vault Account'
             disabled={isTxPending || !isFormValid()}
             showProgressIndicator={isTxPending}
           />
