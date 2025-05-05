@@ -68,18 +68,23 @@ export default function useManagedVaults() {
       }
     }
 
+    // Filter out unfunded vaults (those with zero total_base_tokens)
+    const fundedVaults = vaultsResponse.filter((vault) =>
+      BN(vault.base_tokens_amount).isGreaterThan(0),
+    )
+
     return {
-      ownedVaults: address ? vaultsResponse.filter((vault) => vault.isOwner) : [],
+      ownedVaults: address ? fundedVaults.filter((vault) => vault.isOwner) : [],
       depositedVaults: address
-        ? vaultsResponse.filter(
+        ? fundedVaults.filter(
             (vault) => !vault.isOwner && vaultDeposits.get(vault.vault_tokens_denom) === true,
           )
         : [],
       availableVaults: address
-        ? vaultsResponse.filter(
+        ? fundedVaults.filter(
             (vault) => !vault.isOwner && vaultDeposits.get(vault.vault_tokens_denom) !== true,
           )
-        : vaultsResponse,
+        : fundedVaults,
     }
   }, [vaultsResponse, vaultDeposits, address, error, fallbackUserVaults])
 
