@@ -1,5 +1,6 @@
 import { FETCH_TIMEOUT } from 'constants/query'
 import { fetchWithTimeout } from 'utils/fetch'
+import { getUrl } from 'utils/url'
 
 export default async function getHistoricalManagedVaults(
   chainConfig: ChainConfig,
@@ -12,11 +13,10 @@ export default async function getHistoricalManagedVaults(
   }
 
   try {
-    const baseUrl = chainConfig.endpoints.historicalManagedVaults
-    if (!baseUrl) return defaultReturn
-
-    const url = `${baseUrl}&duration=${duration}&address=${vaultAddress}`
-
+    const url = getUrl(
+      chainConfig.endpoints.historicalManagedVaults,
+      `&duration=${duration}&address=${vaultAddress}`,
+    )
     const response = await fetchWithTimeout(url, FETCH_TIMEOUT)
     const data = await response.json()
 
