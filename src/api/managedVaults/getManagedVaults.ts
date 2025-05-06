@@ -1,5 +1,6 @@
 import { FETCH_TIMEOUT } from 'constants/query'
 import { fetchWithTimeout } from 'utils/fetch'
+import { getUrl } from 'utils/url'
 
 interface ManagedVaultsResponse {
   data: ManagedVaultsDataResponse[]
@@ -16,8 +17,8 @@ export default async function getManagedVaults(chainConfig: ChainConfig, vaultAd
 
   try {
     const url = vaultAddress
-      ? `${chainConfig.endpoints.managedVaults}&address=${vaultAddress}`
-      : chainConfig.endpoints.managedVaults
+      ? getUrl(chainConfig.endpoints.managedVaults, `&address=${vaultAddress}`)
+      : getUrl(chainConfig.endpoints.managedVaults, '')
 
     const response = await fetchWithTimeout(url, FETCH_TIMEOUT)
 
