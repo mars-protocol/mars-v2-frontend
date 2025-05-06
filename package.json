@@ -22,7 +22,7 @@
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.33.1",
     "@delphi-labs/shuttle-react": "^4.2.0",
-    "@keplr-wallet/cosmos": "^0.12.223",
+    "@keplr-wallet/cosmos": "^0.12.230",
     "@next/eslint-plugin-next": "^15.3.1",
     "@skip-go/client": "^0.16.30",
     "@solana/web3.js": "^1.98.2",
