@@ -1,13 +1,13 @@
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import { FETCH_TIMEOUT } from 'constants/query'
 import { convertAstroportAssetsResponse } from 'utils/assets'
 import { setApiError } from 'utils/error'
 import { fetchWithTimeout } from 'utils/fetch'
-import { FETCH_TIMEOUT } from 'constants/query'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
-
+import { getUrl } from 'utils/url'
 type StoredPerpAsset = Omit<AstroportAsset, 'icon'>
 
 export default async function getDexAssets(chainConfig: ChainConfig) {
-  const uri = new URL(chainConfig.endpoints.dexAssets)
+  const uri = getUrl(chainConfig.endpoints.dexAssets, '')
   try {
     const assets = await fetchWithTimeout(uri.toString(), FETCH_TIMEOUT).then(async (res) => {
       const data = (await res.json()) as AstroportAssetsCached
@@ -72,7 +72,7 @@ export default async function getDexAssets(chainConfig: ChainConfig) {
     })
     return assets
   } catch (e) {
-    setApiError(uri.toString(), e)
+    setApiError(uri, e)
     return []
   }
 }

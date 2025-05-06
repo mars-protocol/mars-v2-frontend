@@ -7,6 +7,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
 import { fetchWithTimeout } from 'utils/fetch'
 import { BN } from 'utils/helpers'
+import { getUrl } from 'utils/url'
 
 export default function usePerpsVault() {
   const chainConfig = useChainConfig()
@@ -21,7 +22,7 @@ export default function usePerpsVault() {
       try {
         if (chainConfig.endpoints.aprs.perpsVault) {
           const response = await fetchWithTimeout(
-            chainConfig.endpoints.aprs.perpsVault,
+            getUrl(chainConfig.endpoints.aprs.perpsVault, ''),
             FETCH_TIMEOUT,
           )
           if (response.ok) {
