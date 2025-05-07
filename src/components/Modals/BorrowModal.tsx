@@ -9,16 +9,16 @@ import Card from 'components/common/Card'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { ArrowRight, InfoCircle } from 'components/common/Icons'
+import { ArrowRight, Plus } from 'components/common/Icons'
 import Switch from 'components/common/Switch'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import AssetImage from 'components/common/assets/AssetImage'
+import SwapDetails from 'components/common/SwapDetails/SwapDetails'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
-import { getDepositAndLendCoinsToSpend } from 'hooks/accounts/useUpdatedAccount/functions'
 import useToggle from 'hooks/common/useToggle'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useMarkets from 'hooks/markets/useMarkets'
@@ -30,28 +30,12 @@ import { byDenom } from 'utils/array'
 import { formatPercent } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { getDebtAmountWithInterest } from 'utils/tokens'
+import useSlippage from 'hooks/settings/useSlippage'
+import useSwapRoute, { combinedRepay } from 'hooks/swap/useSwapRoute'
 
 interface Props {
   account: Account
   modal: BorrowModal
-}
-
-function RepayNotAvailable(props: { asset: Asset; repayFromWallet: boolean }) {
-  return (
-    <Card className='w-full'>
-      <div className='flex items-start p-4'>
-        <InfoCircle className='w-6 mr-2 flex-0' />
-        <div className='flex flex-col flex-1 gap-1'>
-          <Text size='sm'>No funds for repay</Text>
-          <Text size='xs' className='text-white/40'>{`Unfortunately you don't have any ${
-            props.asset.symbol
-          } in your ${
-            props.repayFromWallet ? 'Wallet' : 'Credit Account'
-          } to repay the debt.`}</Text>
-        </div>
-      </div>
-    </Card>
-  )
 }
 
 export default function BorrowModalController() {
@@ -68,29 +52,29 @@ export default function BorrowModalController() {
 function BorrowModal(props: Props) {
   const { modal, account } = props
   const [amount, setAmount] = useState(BN_ZERO)
+  const [debtAssetAmount, setDebtAssetAmount] = useState(BN_ZERO)
+  const [swapAssetAmount, setSwapAssetAmount] = useState(BN_ZERO)
   const [borrowToWallet, setBorrowToWallet] = useToggle()
   const [repayFromWallet, setRepayFromWallet] = useToggle()
+  const [isLoading, setIsLoading] = useToggle(false)
+  const [useDebtAsset, setUseDebtAsset] = useState(false)
+  const [selectedSwapAsset, setSelectedSwapAsset] = useState<Asset | null>(null)
   const walletAddress = useStore((s) => s.address)
   const { data: walletBalances } = useWalletBalances(walletAddress)
   const borrow = useStore((s) => s.borrow)
-  const repay = useStore((s) => s.repay)
+  const assets = useStore((s) => s.assets)
   const asset = modal.asset
   const isRepay = modal.isRepay ?? false
   const [max, setMax] = useState(BN_ZERO)
+  const [debtAssetMax, setDebtAssetMax] = useState(BN_ZERO)
+  const [swapAssetMax, setSwapAssetMax] = useState(BN_ZERO)
   const { simulateBorrow, simulateRepay } = useUpdatedAccount(account)
   const apy = modal.marketData.apy.borrow
   const { isAutoLendEnabledForCurrentAccount: isAutoLendEnabled } = useAutoLend()
   const { computeMaxBorrowAmount } = useHealthComputer(account)
   const accountDebt = account.debts.find(byDenom(asset.denom))?.amount ?? BN_ZERO
   const markets = useMarkets()
-
-  const [depositBalance, lendBalance] = useMemo(
-    () => [
-      account.deposits.find(byDenom(asset.denom))?.amount ?? BN_ZERO,
-      account.lends.find(byDenom(asset.denom))?.amount ?? BN_ZERO,
-    ],
-    [account, asset.denom],
-  )
+  const [slippage] = useSlippage()
 
   const accountDebtWithInterest = useMemo(
     () => getDebtAmountWithInterest(accountDebt, apy),
@@ -106,71 +90,304 @@ function BorrowModal(props: Props) {
     return marketAsset.cap.max.isLessThanOrEqualTo(marketCapAfterOverpay)
   }, [markets, asset.denom, accountDebt, accountDebtWithInterest])
 
-  const maxRepayAmount = useMemo(() => {
-    const maxBalance = repayFromWallet
+  const isDifferentAsset = useMemo(
+    () => selectedSwapAsset?.denom !== asset.denom,
+    [selectedSwapAsset?.denom, asset.denom],
+  )
+
+  const { maxDebtAssetAmount, maxSwapAssetAmount, totalRepayable } = useMemo(() => {
+    if (!isRepay)
+      return { maxDebtAssetAmount: BN_ZERO, maxSwapAssetAmount: BN_ZERO, totalRepayable: BN_ZERO }
+
+    const maxDebtBalance = repayFromWallet
       ? BN(walletBalances.find(byDenom(asset.denom))?.amount ?? 0)
-      : depositBalance.plus(lendBalance)
-    return isRepay
-      ? BigNumber.min(maxBalance, overpayExeedsCap ? accountDebt : accountDebtWithInterest)
-      : BN_ZERO
+      : (account.deposits.find(byDenom(asset.denom))?.amount ??
+        BN_ZERO.plus(account.lends.find(byDenom(asset.denom))?.amount ?? BN_ZERO))
+
+    const borrowedAmount = overpayExeedsCap ? accountDebt : accountDebtWithInterest
+    const maxDebtAmount = BigNumber.min(maxDebtBalance, borrowedAmount)
+
+    let maxSwapBalance = BN_ZERO
+    let equivalentSwapAmount = BN_ZERO
+
+    if (selectedSwapAsset) {
+      maxSwapBalance = repayFromWallet
+        ? BN(walletBalances.find(byDenom(selectedSwapAsset.denom))?.amount ?? 0)
+        : (account.deposits.find(byDenom(selectedSwapAsset.denom))?.amount ??
+          BN_ZERO.plus(account.lends.find(byDenom(selectedSwapAsset.denom))?.amount ?? BN_ZERO))
+
+      if (isDifferentAsset) {
+        const debtAsset = markets.find((m) => m.asset.denom === asset.denom)
+        const selectedAssetMarket = markets.find((m) => m.asset.denom === selectedSwapAsset.denom)
+
+        if (debtAsset && selectedAssetMarket) {
+          const debtAssetPrice = debtAsset.asset.price?.amount
+          const selectedAssetPrice = selectedAssetMarket.asset.price?.amount
+
+          if (debtAssetPrice && selectedAssetPrice) {
+            const remainingDebtAmount = borrowedAmount.minus(useDebtAsset ? maxDebtAmount : BN_ZERO)
+
+            if (remainingDebtAmount.lte(0)) {
+              equivalentSwapAmount = BN_ZERO
+            } else {
+              const remainingDebtUSD = remainingDebtAmount
+                .multipliedBy(debtAssetPrice)
+                .shiftedBy(-debtAsset.asset.decimals)
+
+              equivalentSwapAmount = BigNumber.min(
+                maxSwapBalance,
+                remainingDebtUSD
+                  .dividedBy(selectedAssetPrice)
+                  .shiftedBy(selectedSwapAsset.decimals)
+                  .times(1.02)
+                  .integerValue(),
+              )
+            }
+          }
+        }
+      }
+    }
+
+    return {
+      maxDebtAssetAmount: maxDebtAmount,
+      maxSwapAssetAmount: equivalentSwapAmount,
+      totalRepayable: borrowedAmount,
+    }
   }, [
-    depositBalance,
-    lendBalance,
     isRepay,
-    accountDebtWithInterest,
+    repayFromWallet,
+    walletBalances,
+    asset,
+    selectedSwapAsset,
+    account.deposits,
+    account.lends,
+    isDifferentAsset,
     overpayExeedsCap,
     accountDebt,
-    walletBalances,
-    asset.denom,
-    repayFromWallet,
+    accountDebtWithInterest,
+    markets,
+    useDebtAsset,
   ])
+
+  const hasDebtAsset = useMemo(() => {
+    if (!isRepay) return false
+
+    return maxDebtAssetAmount.isGreaterThan(0)
+  }, [isRepay, maxDebtAssetAmount])
+
+  useEffect(() => {
+    if (isRepay) {
+      setDebtAssetMax(maxDebtAssetAmount)
+      setSwapAssetMax(maxSwapAssetAmount)
+    }
+  }, [isRepay, maxDebtAssetAmount, maxSwapAssetAmount])
 
   function resetState() {
     setAmount(BN_ZERO)
+    setDebtAssetAmount(BN_ZERO)
+    setSwapAssetAmount(BN_ZERO)
+    setIsLoading(false)
   }
 
-  function onConfirmClick() {
-    if (!asset) return
-    const { lend } = getDepositAndLendCoinsToSpend(
-      BNCoin.fromDenomAndBigNumber(asset.denom, amount),
-      account,
-    )
-    if (isRepay) {
-      repay({
-        accountId: account.id,
-        coin: BNCoin.fromDenomAndBigNumber(asset.denom, amount),
-        accountBalance: amount.isEqualTo(accountDebtWithInterest),
-        lend: repayFromWallet ? BNCoin.fromDenomAndBigNumber(asset.denom, BN_ZERO) : lend,
-        fromWallet: repayFromWallet,
-      })
-    } else {
-      borrow({
-        accountId: account.id,
-        coin: BNCoin.fromDenomAndBigNumber(asset.denom, amount),
-        borrowToWallet,
-      })
+  const remainingDebt = useMemo(() => {
+    if (!isRepay) return BN_ZERO
+    return BigNumber.max(totalRepayable.minus(debtAssetAmount), BN_ZERO)
+  }, [isRepay, totalRepayable, debtAssetAmount])
+
+  const adjustedSwapAssetMax = useMemo(() => {
+    if (!isRepay || !isDifferentAsset || !selectedSwapAsset) return BN_ZERO
+
+    const remainingDebtAfterDebtAsset = useDebtAsset ? remainingDebt : totalRepayable
+
+    if (remainingDebtAfterDebtAsset.isZero()) return BN_ZERO
+
+    const debtAssetMarket = markets.find((m) => m.asset.denom === asset.denom)
+    const swapAssetMarket = markets.find((m) => m.asset.denom === selectedSwapAsset.denom)
+
+    if (debtAssetMarket?.asset.price && swapAssetMarket?.asset.price) {
+      const debtAssetPrice = debtAssetMarket.asset.price.amount
+      const swapAssetPrice = swapAssetMarket.asset.price.amount
+
+      const equivalentAmount = remainingDebtAfterDebtAsset
+        .multipliedBy(debtAssetPrice)
+        .shiftedBy(-debtAssetMarket.asset.decimals)
+        .dividedBy(swapAssetPrice)
+        .shiftedBy(swapAssetMarket.asset.decimals)
+        .times(1.02)
+        .integerValue()
+
+      const maxBalance = repayFromWallet
+        ? BN(walletBalances.find(byDenom(selectedSwapAsset.denom))?.amount ?? 0)
+        : (account.deposits.find(byDenom(selectedSwapAsset.denom))?.amount ??
+          BN_ZERO.plus(account.lends.find(byDenom(selectedSwapAsset.denom))?.amount ?? BN_ZERO))
+
+      return BigNumber.min(maxBalance, equivalentAmount)
     }
 
-    resetState()
-    useStore.setState({ borrowModal: null })
+    return swapAssetMax
+  }, [
+    isRepay,
+    isDifferentAsset,
+    selectedSwapAsset,
+    useDebtAsset,
+    remainingDebt,
+    totalRepayable,
+    markets,
+    asset.denom,
+    repayFromWallet,
+    walletBalances,
+    account.deposits,
+    account.lends,
+    swapAssetMax,
+  ])
+
+  useEffect(() => {
+    if (isRepay && isDifferentAsset) {
+      if (swapAssetAmount.isGreaterThan(adjustedSwapAssetMax)) {
+        setSwapAssetAmount(adjustedSwapAssetMax)
+      }
+    }
+  }, [isRepay, isDifferentAsset, adjustedSwapAssetMax, swapAssetAmount])
+
+  async function onConfirmClick() {
+    if (!asset) return
+    setIsLoading(true)
+
+    try {
+      let success = false
+
+      if (isRepay) {
+        success = await combinedRepay({
+          accountId: account.id,
+          debtAsset: asset,
+          debtAmount: useDebtAsset ? debtAssetAmount : BN_ZERO,
+          swapAsset: selectedSwapAsset || asset,
+          swapAmount: selectedSwapAsset ? swapAssetAmount : BN_ZERO,
+          fromWallet: repayFromWallet,
+          slippage: slippage ?? 0.005,
+          account: account,
+        })
+      } else {
+        success = await borrow({
+          accountId: account.id,
+          coin: BNCoin.fromDenomAndBigNumber(asset.denom, amount),
+          borrowToWallet,
+        })
+      }
+
+      if (success) {
+        resetState()
+        useStore.setState({ borrowModal: null })
+      } else {
+        setIsLoading(false)
+      }
+    } catch (error) {
+      console.error('Transaction failed:', error)
+      setIsLoading(false)
+    }
   }
 
   function onClose() {
+    if (isLoading) return
     resetState()
     useStore.setState({ borrowModal: null })
   }
+
+  const availableRepaymentAssets = useMemo(() => {
+    if (!isRepay) return []
+
+    const availableAssets: Asset[] = []
+
+    if (repayFromWallet) {
+      const hasDebtAssetBalance = walletBalances.some(
+        (bal) => bal.denom === asset.denom && BN(bal.amount).isGreaterThan(0),
+      )
+
+      if (hasDebtAssetBalance) {
+        availableAssets.push(asset)
+      }
+
+      assets.forEach((a) => {
+        if (a.denom !== asset.denom) {
+          const hasBalance = walletBalances.some(
+            (bal) => bal.denom === a.denom && BN(bal.amount).isGreaterThan(0),
+          )
+          if (hasBalance) {
+            availableAssets.push(a)
+          }
+        }
+      })
+    } else {
+      const debtDeposit = account.deposits.find((dep) => dep.denom === asset.denom)
+      const debtLend = account.lends.find((lend) => lend.denom === asset.denom)
+
+      if (
+        (debtDeposit && debtDeposit.amount.isGreaterThan(0)) ||
+        (debtLend && debtLend.amount.isGreaterThan(0))
+      ) {
+        availableAssets.push(asset)
+      }
+
+      assets.forEach((a) => {
+        if (
+          a.denom !== asset.denom &&
+          !availableAssets.some((existingAsset) => existingAsset.denom === a.denom)
+        ) {
+          const deposit = account.deposits.find((dep) => dep.denom === a.denom)
+          const lend = account.lends.find((lnd) => lnd.denom === a.denom)
+
+          if (
+            (deposit && deposit.amount.isGreaterThan(0)) ||
+            (lend && lend.amount.isGreaterThan(0))
+          ) {
+            availableAssets.push(a)
+          }
+        }
+      })
+    }
+
+    return availableAssets.sort((a, b) => a.symbol.localeCompare(b.symbol))
+  }, [isRepay, repayFromWallet, walletBalances, account.deposits, account.lends, assets, asset])
+
+  const handleDebtAssetChange = useCallback(
+    (newAmount: BigNumber) => {
+      if (debtAssetAmount.isEqualTo(newAmount)) return
+      setDebtAssetAmount(newAmount)
+
+      if (isRepay) {
+        const repayCoin = BNCoin.fromDenomAndBigNumber(asset.denom, newAmount)
+        simulateRepay(repayCoin, repayFromWallet)
+      }
+    },
+    [asset.denom, debtAssetAmount, isRepay, repayFromWallet, simulateRepay],
+  )
+
+  const handleSwapAssetChange = useCallback(
+    (newAmount: BigNumber) => {
+      if (swapAssetAmount.isEqualTo(newAmount)) return
+      setSwapAssetAmount(newAmount)
+
+      if (isRepay && isDifferentAsset && selectedSwapAsset) {
+        const repayCoin = BNCoin.fromDenomAndBigNumber(selectedSwapAsset.denom, newAmount)
+        simulateRepay(repayCoin, repayFromWallet, asset.denom)
+      }
+    },
+    [
+      selectedSwapAsset,
+      swapAssetAmount,
+      isRepay,
+      repayFromWallet,
+      simulateRepay,
+      asset.denom,
+      isDifferentAsset,
+    ],
+  )
 
   const handleChange = useCallback(
     (newAmount: BigNumber) => {
       if (amount.isEqualTo(newAmount)) return
       setAmount(newAmount)
-      if (isRepay) {
-        const repayCoin = BNCoin.fromDenomAndBigNumber(
-          asset.denom,
-          newAmount.isGreaterThan(accountDebt) ? accountDebt : newAmount,
-        )
-        simulateRepay(repayCoin, repayFromWallet)
-      } else {
+      if (!isRepay) {
         const borrowCoin = BNCoin.fromDenomAndBigNumber(
           asset.denom,
           newAmount.isGreaterThan(max) ? max : newAmount,
@@ -179,18 +396,7 @@ function BorrowModal(props: Props) {
         simulateBorrow(target, borrowCoin)
       }
     },
-    [
-      accountDebt,
-      amount,
-      asset.denom,
-      borrowToWallet,
-      isAutoLendEnabled,
-      isRepay,
-      max,
-      repayFromWallet,
-      simulateBorrow,
-      simulateRepay,
-    ],
+    [amount, asset.denom, borrowToWallet, isAutoLendEnabled, isRepay, max, simulateBorrow],
   )
 
   const maxBorrow = useMemo(() => {
@@ -208,16 +414,77 @@ function BorrowModal(props: Props) {
   }, [account, isRepay, maxBorrow, max])
 
   useEffect(() => {
-    if (!isRepay) return
-    if (maxRepayAmount.isEqualTo(max)) return
-    setMax(maxRepayAmount)
-  }, [isRepay, max, maxRepayAmount])
-
-  useEffect(() => {
     if (amount.isLessThanOrEqualTo(max)) return
     handleChange(max)
     setAmount(max)
   }, [amount, max, handleChange])
+
+  const swapRouteDetails = useSwapRoute(
+    selectedSwapAsset?.denom || '',
+    asset.denom,
+    swapAssetAmount,
+    isRepay && isDifferentAsset && !!selectedSwapAsset,
+  )
+
+  const canRepay =
+    isRepay &&
+    ((useDebtAsset && debtAssetAmount.isGreaterThan(0)) ||
+      (selectedSwapAsset && swapAssetAmount.isGreaterThan(0)))
+
+  const accountHasRepaymentAssets = useMemo(() => {
+    return availableRepaymentAssets.length > 0
+  }, [availableRepaymentAssets])
+
+  useEffect(() => {
+    setUseDebtAsset(false)
+    setSelectedSwapAsset(null)
+    setDebtAssetAmount(BN_ZERO)
+    setSwapAssetAmount(BN_ZERO)
+  }, [repayFromWallet])
+
+  useEffect(() => {
+    if (isRepay && account) {
+      const hasDebtAssetInAccount =
+        account.deposits.some(byDenom(asset.denom)) || account.lends.some(byDenom(asset.denom))
+
+      if (hasDebtAssetInAccount) {
+        setUseDebtAsset(true)
+      }
+    }
+  }, [isRepay, account, asset.denom])
+
+  const openAssetSelectionModal = () => {
+    useStore.setState({
+      accountAssetsModal: {
+        debtAsset: asset,
+        account,
+        repayFromWallet,
+        selectedDenoms: [
+          ...(useDebtAsset ? [asset.denom] : []),
+          ...(selectedSwapAsset ? [selectedSwapAsset.denom] : []),
+        ],
+        availableAssets: availableRepaymentAssets.filter((a) => a.denom === asset.denom),
+        swapAssets: availableRepaymentAssets.filter((a) => a.denom !== asset.denom),
+        onSelect: (selectedDenoms: string[]) => {
+          const useSelectedDebtAsset = selectedDenoms.includes(asset.denom)
+
+          let swapAsset: Asset | null = null
+          for (const denom of selectedDenoms) {
+            if (denom !== asset.denom) {
+              swapAsset = assets.find((a) => a.denom === denom) || null
+              break
+            }
+          }
+
+          setUseDebtAsset(useSelectedDebtAsset)
+          setSelectedSwapAsset(swapAsset)
+
+          setDebtAssetAmount(BN_ZERO)
+          setSwapAssetAmount(BN_ZERO)
+        },
+      },
+    })
+  }
 
   if (!modal || !asset) return null
   return (
@@ -297,18 +564,118 @@ function BorrowModal(props: Props) {
           className='flex flex-1 w-full p-4 bg-white/5 max-w-screen-full min-w-[200px]'
           contentClassName='gap-6 flex flex-col justify-between h-full'
         >
-          <TokenInputWithSlider
-            asset={asset}
-            onChange={handleChange}
-            amount={amount}
-            max={max}
-            disabled={max.isZero()}
-            className='w-full'
-            maxText='Max'
-            warningMessages={[]}
-          />
-          {isRepay && maxRepayAmount.isZero() && (
-            <RepayNotAvailable asset={asset} repayFromWallet={repayFromWallet} />
+          {isRepay ? (
+            <>
+              <div>
+                <div className='flex justify-between items-center mb-4'>
+                  <Text>Select Assets to Repay</Text>
+                  {accountHasRepaymentAssets && (
+                    <Button
+                      text='Select Assets'
+                      color='tertiary'
+                      rightIcon={<Plus />}
+                      iconClassName='w-3'
+                      onClick={openAssetSelectionModal}
+                    />
+                  )}
+                </div>
+
+                {!useDebtAsset && !selectedSwapAsset ? (
+                  <div className='flex flex-col items-center justify-center py-10 text-center'>
+                    <Text className='mb-2'>No assets selected for repayment</Text>
+                    <Text size='xs' className='text-white/50 mb-4'>
+                      Click "Select Assets" to choose which assets to use for repayment
+                    </Text>
+                  </div>
+                ) : (
+                  <div className='space-y-4'>
+                    {useDebtAsset && hasDebtAsset && (
+                      <div>
+                        <Text size='sm' className='mb-2 text-white/70'>
+                          Debt Asset {asset.symbol && `(${asset.symbol})`}
+                        </Text>
+                        <TokenInputWithSlider
+                          asset={asset}
+                          onChange={handleDebtAssetChange}
+                          amount={debtAssetAmount}
+                          max={debtAssetMax}
+                          disabled={false}
+                          className='w-full'
+                          maxText='Max'
+                          warningMessages={[]}
+                          balances={account.deposits}
+                          accountId={account.id}
+                          hasSelect={false}
+                        />
+
+                        {debtAssetAmount.isGreaterThan(0) &&
+                          debtAssetAmount.isLessThan(totalRepayable) && (
+                            <Text size='xs' className='mt-2 text-white/50'>
+                              Remaining debt:{' '}
+                              <FormattedNumber
+                                amount={remainingDebt.toNumber()}
+                                options={{
+                                  decimals: asset.decimals,
+                                  suffix: ` ${asset.symbol}`,
+                                }}
+                              />
+                            </Text>
+                          )}
+                      </div>
+                    )}
+
+                    {selectedSwapAsset && (
+                      <div>
+                        <Text size='sm' className='mb-2 text-white/70'>
+                          Swap {selectedSwapAsset.symbol} to {asset.symbol}
+                        </Text>
+                        <TokenInputWithSlider
+                          asset={selectedSwapAsset}
+                          onChange={handleSwapAssetChange}
+                          amount={swapAssetAmount}
+                          max={adjustedSwapAssetMax}
+                          disabled={false}
+                          className='w-full'
+                          maxText='Max'
+                          warningMessages={[]}
+                          balances={account.deposits}
+                          accountId={account.id}
+                          hasSelect={false}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {selectedSwapAsset && isDifferentAsset && swapAssetAmount.isGreaterThan(0) && (
+                <SwapDetails
+                  fromAsset={selectedSwapAsset}
+                  toAsset={asset}
+                  amount={swapAssetAmount}
+                  expectedOutput={swapRouteDetails.expectedOutput}
+                  slippage={slippage}
+                  priceImpact={swapRouteDetails.priceImpact}
+                  route={swapRouteDetails.route}
+                  isLoading={swapRouteDetails.isLoading}
+                  routeDescription={swapRouteDetails.routeDescription}
+                />
+              )}
+            </>
+          ) : (
+            <TokenInputWithSlider
+              asset={asset}
+              onChange={handleChange}
+              amount={amount}
+              max={max}
+              disabled={false}
+              className='w-full'
+              maxText='Max'
+              warningMessages={[]}
+              balances={account.deposits}
+              accountId={account.id}
+              hasSelect={false}
+            />
           )}
           {isRepay ? (
             <>
@@ -348,9 +715,10 @@ function BorrowModal(props: Props) {
           <Button
             onClick={onConfirmClick}
             className='w-full'
-            disabled={amount.isZero()}
-            text={isRepay ? 'Repay' : 'Borrow'}
-            rightIcon={<ArrowRight />}
+            disabled={(!isRepay && amount.isZero()) || (isRepay && !canRepay) || isLoading}
+            text={isLoading ? 'Processing...' : isRepay ? 'Repay' : 'Borrow'}
+            rightIcon={isLoading ? undefined : <ArrowRight />}
+            showProgressIndicator={isLoading}
           />
         </Card>
         <AccountSummaryInModal account={account} />

@@ -26,6 +26,7 @@ import { getCurrentFeeToken } from 'utils/feeToken'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
+import getRouteInfo from 'api/swap/getRouteInfo'
 
 interface ExecuteMsgOptions {
   messages: MsgExecuteContract[]
@@ -600,7 +601,68 @@ export default function createBroadcastSlice(
       accountBalance?: boolean
       lend?: BNCoin
       fromWallet?: boolean
-    }) => {
+      swapFromDenom?: string
+      debtDenom?: string
+      slippage?: number
+    }): Promise<boolean> => {
+      if (
+        options.swapFromDenom &&
+        options.debtDenom &&
+        options.swapFromDenom !== options.debtDenom
+      ) {
+        const chainConfig = get().chainConfig
+        const isOsmosis = chainConfig.isOsmosis
+        const amount = options.coin.amount.toString()
+
+        const routeUrl = isOsmosis
+          ? `${chainConfig.endpoints.routes}/quote?tokenIn=${amount}${options.swapFromDenom}&tokenOutDenom=${options.debtDenom}`
+          : `${chainConfig.endpoints.routes}?start=${options.swapFromDenom}&end=${options.debtDenom}&amount=${amount}&chainId=${chainConfig.id}&limit=1`
+
+        const routeInfo = await getRouteInfo(
+          routeUrl,
+          options.swapFromDenom,
+          get().assets,
+          isOsmosis,
+        )
+
+        if (!routeInfo) return false
+
+        const swapExactIn = getSwapExactInAction(
+          options.coin.toActionCoin(false),
+          options.debtDenom,
+          routeInfo,
+          options.slippage ?? 0.005,
+        )
+
+        const actions: Action[] = []
+
+        if (options.lend && options.lend.amount.isGreaterThan(0)) {
+          actions.push({ reclaim: options.lend.toActionCoin() })
+        }
+
+        actions.push(swapExactIn)
+
+        actions.push({
+          repay: {
+            coin: BNCoin.fromDenomAndBigNumber(options.debtDenom, BN_ZERO).toActionCoin(true),
+          },
+        })
+
+        const msg: CreditManagerExecuteMsg = {
+          update_credit_account: {
+            account_id: options.accountId,
+            actions,
+          },
+        }
+
+        const cmContract = get().chainConfig.contracts.creditManager
+        const messages = [generateExecutionMessage(get().address, cmContract, msg, [])]
+
+        const response = get().executeMsg({ messages })
+        get().handleTransaction({ response })
+        return response.then((response) => !!response.result)
+      }
+
       const actions: Action[] = [
         {
           repay: {
@@ -691,8 +753,10 @@ export default function createBroadcastSlice(
       repay: boolean
       routeInfo: SwapRouteInfo
     }) => {
+      const useAccountBalance = options.repay
+
       const swapExactIn = getSwapExactInAction(
-        options.coinIn.toActionCoin(options.isMax),
+        options.coinIn.toActionCoin(useAccountBalance || options.isMax),
         options.denomOut,
         options.routeInfo,
         options.slippage ?? 0,
@@ -710,7 +774,7 @@ export default function createBroadcastSlice(
                   {
                     repay: {
                       coin: BNCoin.fromDenomAndBigNumber(options.denomOut, BN_ZERO).toActionCoin(
-                        true,
+                        true, // Always use account_balance for repay
                       ),
                     },
                   },

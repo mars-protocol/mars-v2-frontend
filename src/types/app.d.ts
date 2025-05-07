@@ -1134,6 +1134,9 @@ interface BroadcastSlice {
     accountBalance?: boolean
     lend?: BNCoin
     fromWallet?: boolean
+    swapFromDenom?: string
+    debtDenom?: string
+    slippage?: number
   }) => Promise<boolean>
   handleTransaction: (options: { response: Promise<BroadcastResult>; message?: string }) => void
   swap: (options: {
@@ -1314,6 +1317,7 @@ interface ModalSlice {
   unlockModal: UnlockModal | null
   farmModal: FarmModal | null
   walletAssetsModal: WalletAssetModal | null
+  accountAssetsModal: AccountAssetsModal | null
   withdrawFromVaultsModal: DepositedVault[] | null
   v1DepositAndWithdrawModal: V1DepositAndWithdrawModal | null
   v1BorrowAndRepayModal: V1BorrowAndRepayModal | null

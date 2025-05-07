@@ -1,4 +1,5 @@
 import {
+  AccountAssetsModal,
   AccountDeleteController,
   AddFarmAssetsModal,
   AlertDialogController,
@@ -44,6 +45,7 @@ export default function ModalsContainer() {
       <V1DepositAndWithdraw />
       <V1BorrowAndRepay />
       <KeeperFeeModal />
+      <AccountAssetsModal />
     </>
   )
 }

@@ -29,5 +29,6 @@ export default function createModalSlice(
     v1BorrowAndRepayModal: null,
     keeperFeeModal: false,
     addSLTPModal: false,
+    accountAssetsModal: null,
   }
 }

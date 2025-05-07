@@ -11,6 +11,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { getCoinValue } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import { byDenom } from 'utils/array'
 
 interface Props {
   assets: Asset[]
@@ -18,14 +19,28 @@ interface Props {
   selectedDenoms: string[]
   isBorrow?: boolean
   nonCollateralTableAssets?: Asset[]
+  assetsSectionTitle?: string
+  nonCollateralAssetsSectionTitle?: string
+  account?: Account
+  repayFromWallet?: boolean
 }
 
 export default function AssetsSelect(props: Props) {
-  const { onChangeSelected, isBorrow, assets, nonCollateralTableAssets, selectedDenoms } = props
+  const {
+    onChangeSelected,
+    isBorrow,
+    assets,
+    nonCollateralTableAssets,
+    selectedDenoms,
+    assetsSectionTitle = 'Assets that can be used as collateral',
+    nonCollateralAssetsSectionTitle = 'Non whitelisted assets, cannot be used as collateral',
+    account,
+    repayFromWallet,
+  } = props
   const columns = useAssetSelectColumns(isBorrow)
   const markets = useMarkets()
   const whitelistedAssets = useWhitelistedAssets()
-  const balances = useStore((s) => s.balances)
+  const walletBalances = useStore((s) => s.balances)
   const filteredWhitelistedAsset = useMemo(
     () => whitelistedAssets.filter((asset) => !asset.isDeprecated),
     [whitelistedAssets],
@@ -52,22 +67,40 @@ export default function AssetsSelect(props: Props) {
   const createTableData = useCallback(
     (assets: Asset[]): AssetTableRow[] => {
       return assets.map((asset) => {
-        const balanceData = balances.find(
-          (balance) => balance.denom === asset.denom && balance.chainName === asset.chainName,
-        ) || { amount: '0', chainName: '' }
-        const coin = BNCoin.fromDenomAndBigNumber(asset.denom, BN(balanceData.amount))
-        const value = getCoinValue(coin, assets)
-        asset.campaigns = isBorrow ? [] : asset.campaigns
-        return {
-          asset,
-          balance: balanceData.amount,
-          value,
-          market: markets.find((market) => market.asset.denom === asset.denom),
-          chainName: balanceData.chainName || '',
+        if (account && !repayFromWallet) {
+          const depositBalance = account.deposits.find(byDenom(asset.denom))?.amount || BN(0)
+          const lendBalance = account.lends.find(byDenom(asset.denom))?.amount || BN(0)
+          const totalAmount = depositBalance.plus(lendBalance)
+
+          const coin = BNCoin.fromDenomAndBigNumber(asset.denom, totalAmount)
+          const value = getCoinValue(coin, assets)
+
+          asset.campaigns = isBorrow ? [] : asset.campaigns
+          return {
+            asset,
+            balance: totalAmount.toString(),
+            value,
+            market: markets.find((market) => market.asset.denom === asset.denom),
+            chainName: asset.chainName || '',
+          }
+        } else {
+          const balanceData = walletBalances.find(
+            (balance) => balance.denom === asset.denom && balance.chainName === asset.chainName,
+          ) || { amount: '0', chainName: '' }
+          const coin = BNCoin.fromDenomAndBigNumber(asset.denom, BN(balanceData.amount))
+          const value = getCoinValue(coin, assets)
+          asset.campaigns = isBorrow ? [] : asset.campaigns
+          return {
+            asset,
+            balance: balanceData.amount,
+            value,
+            market: markets.find((market) => market.asset.denom === asset.denom),
+            chainName: balanceData.chainName || '',
+          }
         }
       })
     },
-    [balances, markets, isBorrow],
+    [walletBalances, markets, isBorrow, account, repayFromWallet],
   )
 
   const tableData = useMemo(() => {
@@ -75,14 +108,41 @@ export default function AssetsSelect(props: Props) {
       return createTableData(assets)
     }
 
-    const whitelistedTableData = filteredWhitelistedAsset.filter((asset) =>
-      balances.some((balance) => balance.denom === asset.denom && balance.amount !== '0'),
-    )
-    const whitelistedData = createTableData(whitelistedTableData)
-    const nonCollateralData = createTableData(nonCollateralTableAssets)
+    let filteredAssets = assets
+    let filteredNonCollateralAssets = nonCollateralTableAssets
+
+    if (account && !repayFromWallet) {
+      filteredAssets = assets.filter((asset) => {
+        const depositBalance = account.deposits.find(byDenom(asset.denom))?.amount || BN(0)
+        const lendBalance = account.lends.find(byDenom(asset.denom))?.amount || BN(0)
+        return depositBalance.plus(lendBalance).isGreaterThan(0)
+      })
+
+      filteredNonCollateralAssets = nonCollateralTableAssets.filter((asset) => {
+        const depositBalance = account.deposits.find(byDenom(asset.denom))?.amount || BN(0)
+        const lendBalance = account.lends.find(byDenom(asset.denom))?.amount || BN(0)
+        return depositBalance.plus(lendBalance).isGreaterThan(0)
+      })
+    } else {
+      const whitelistedTableData = filteredWhitelistedAsset.filter((asset) =>
+        walletBalances.some((balance) => balance.denom === asset.denom && balance.amount !== '0'),
+      )
+      filteredAssets = whitelistedTableData
+    }
+
+    const whitelistedData = createTableData(filteredAssets)
+    const nonCollateralData = createTableData(filteredNonCollateralAssets)
 
     return { whitelistedData, nonCollateralData }
-  }, [assets, nonCollateralTableAssets, filteredWhitelistedAsset, balances, createTableData])
+  }, [
+    assets,
+    nonCollateralTableAssets,
+    filteredWhitelistedAsset,
+    walletBalances,
+    createTableData,
+    account,
+    repayFromWallet,
+  ])
 
   const [whitelistedSelected, setWhitelistedSelected] = useState<RowSelectionState>(defaultSelected)
   const [nonCollateralSelected, setNonCollateralSelected] = useState<RowSelectionState>(
@@ -112,14 +172,12 @@ export default function AssetsSelect(props: Props) {
 
       const allSelectedAssets = [...filteredWhitelistedAsset, ...nonCollateralAssets]
 
-      const selectedEvmAssets = allSelectedAssets.filter((asset) => asset.chainName)
-      if (selectedEvmAssets.length > 1) {
-        console.warn(
-          'Multiple EVM assets selected - this should not happen due to row-level control',
-        )
-      }
+      const debtAsset = allSelectedAssets.find((asset) => asset.denom === assets[0]?.denom)
+      const swapAsset = allSelectedAssets.find((asset) => asset.denom !== assets[0]?.denom)
 
-      newSelectedDenoms = allSelectedAssets
+      const finalSelectedAssets = [debtAsset, swapAsset].filter(Boolean) as Asset[]
+
+      newSelectedDenoms = finalSelectedAssets
         .sort((a, b) => a.symbol.localeCompare(b.symbol))
         .map((asset) => (asset.chainName ? `${asset.denom}:${asset.chainName}` : asset.denom))
     }
@@ -142,6 +200,23 @@ export default function AssetsSelect(props: Props) {
     nonCollateralTableAssets,
   ])
 
+  const handleNonCollateralSelection: (
+    updaterOrValue: RowSelectionState | ((old: RowSelectionState) => RowSelectionState),
+  ) => void = useCallback((updaterOrValue) => {
+    let selectedIndex: string | undefined
+    if (typeof updaterOrValue === 'function') {
+      const result = updaterOrValue({})
+      selectedIndex = Object.keys(result).find((key) => result[key])
+    } else {
+      selectedIndex = Object.keys(updaterOrValue).find((key) => updaterOrValue[key])
+    }
+    const newSelection: RowSelectionState = {}
+    if (selectedIndex) {
+      newSelection[selectedIndex] = true
+    }
+    setNonCollateralSelected(newSelection)
+  }, [])
+
   if (!nonCollateralTableAssets) {
     return (
       <Table
@@ -161,7 +236,7 @@ export default function AssetsSelect(props: Props) {
     <>
       {(nonCollateralTableAssets.length > 0 || assets.length > 0) && (
         <Table
-          title='Assets that can be used as collateral'
+          title={assetsSectionTitle}
           columns={columns}
           data={createTableData(assets)}
           initialSorting={sorting}
@@ -174,7 +249,7 @@ export default function AssetsSelect(props: Props) {
               size='xs'
               className='p-4 font-semibold border-b bg-black/20 text-white/60 border-white/10'
             >
-              Assets that can be used as collateral
+              {assetsSectionTitle}
             </Text>
           }
         />
@@ -194,12 +269,12 @@ export default function AssetsSelect(props: Props) {
 
       {nonCollateralTableAssets.length > 0 && (
         <Table
-          title='Non whitelisted assets, cannot be used as collateral'
+          title={nonCollateralAssetsSectionTitle}
           columns={columns}
           data={createTableData(nonCollateralTableAssets)}
           initialSorting={sorting}
           onSortingChange={setSorting}
-          setRowSelection={setNonCollateralSelected}
+          setRowSelection={handleNonCollateralSelection}
           selectedRows={nonCollateralSelected}
           disableSortingRow
           hideCard
@@ -208,7 +283,7 @@ export default function AssetsSelect(props: Props) {
               size='xs'
               className='p-4 font-semibold border-t border-b bg-black/20 text-white/60 border-white/10'
             >
-              Non whitelisted assets, cannot be used as collateral
+              {nonCollateralAssetsSectionTitle}
             </Text>
           }
         />
