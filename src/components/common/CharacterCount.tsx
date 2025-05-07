@@ -10,7 +10,7 @@ interface Props {
 export default function CharacterCount(props: Props) {
   const { value, maxLength, size = 'sm' } = props
   return (
-    <Text size={size} className='text-white/30'>
+    <Text size={size} className='text-white/30 text-right'>
       <Text
         tag='span'
         className={classNames({

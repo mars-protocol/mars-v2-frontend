@@ -1,6 +1,6 @@
 import Card from 'components/common/Card'
 import classNames from 'classnames'
-import NavigationBackButton from 'components/common/Button/NavigationBackButton'
+import NavigateBackButton from 'components/managedVaults/NavigateBackButton'
 import Text from 'components/common/Text'
 import useStore from 'store'
 
@@ -16,7 +16,7 @@ export default function CreateVaultContent(props: Props) {
   return (
     <div className='container mx-auto py-8 max-w-4xl'>
       <div className='flex items-center mb-6'>
-        <NavigationBackButton />
+        <NavigateBackButton />
       </div>
 
       <div className='flex flex-col items-center mb-8'>

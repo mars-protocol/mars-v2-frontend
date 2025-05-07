@@ -16,7 +16,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ORACLE_DENOM } from 'constants/oracle'
 import { useMemo } from 'react'
 import { useAccountSummaryStats } from 'hooks/accounts/useAccountSummaryStats'
-
+import { formatValue } from 'utils/formatters'
 interface Props {
   details: ManagedVaultsData
 }
@@ -51,7 +51,7 @@ export default function VaultSummary(props: Props) {
                     <div className='flex flex-col justify-end gap-2'>
                       <HealthBar health={health} healthFactor={healthFactor} className='h-1' />
                       <Text size='2xs' className='text-right text-white/50'>
-                        Health Factor: {healthFactor.toFixed(2)}
+                        Health Factor: {formatValue(healthFactor > 100 ? 100 : healthFactor)}
                       </Text>
                     </div>
                   ),

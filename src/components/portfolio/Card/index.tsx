@@ -29,7 +29,7 @@ export default function PortfolioCard(props: Props) {
   const { health, healthFactor } = useHealthComputer(account)
   const { address: urlAddress } = useParams()
   const currentAccountId = useAccountId()
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     getDefaultChainSettings(chainConfig).reduceMotion,
@@ -84,7 +84,11 @@ export default function PortfolioCard(props: Props) {
       useStore.setState({
         focusComponent: {
           component: <VaultDetails vaultAddress={vaultAddress} />,
-          onClose: () => {},
+          onClose: () => {
+            const newParams = new URLSearchParams(searchParams)
+            newParams.delete('tab')
+            setSearchParams(newParams)
+          },
         },
       })
     }
