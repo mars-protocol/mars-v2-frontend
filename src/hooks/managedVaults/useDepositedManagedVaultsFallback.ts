@@ -3,6 +3,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import useSWR from 'swr'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
+import { BN } from 'utils/helpers'
 
 export function useDepositedManagedVaultsFallback() {
   const chainConfig = useChainConfig()
@@ -36,7 +37,10 @@ export function useDepositedManagedVaultsFallback() {
               title: details.title,
               subtitle: details.subtitle || '',
               description: details.description,
-              fee_rate: details.performance_fee_config.fee_rate,
+              fee_rate: BN(details.performance_fee_config.fee_rate)
+                .multipliedBy(8760)
+                .multipliedBy(100)
+                .toNumber(),
               fee: '0',
               tvl: '0',
               apr: '0',

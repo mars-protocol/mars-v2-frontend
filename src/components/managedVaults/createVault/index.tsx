@@ -1,24 +1,26 @@
 import Button from 'components/common/Button'
 import CharacterCount from 'components/common/CharacterCount'
-import DisplayCurrency from 'components/common/DisplayCurrency'
-import { ArrowRight, InfoCircle } from 'components/common/Icons'
-import Text from 'components/common/Text'
-import TextArea from 'components/common/TextArea'
-import { TextLink } from 'components/common/TextLink'
 import CreateVaultContent from 'components/managedVaults/createVault/CreateVaultContent'
 import PerformanceFee from 'components/managedVaults/createVault/PerformanceFee'
-import VaultInputElement from 'components/managedVaults/createVault/VaultInputElement'
-import useAccountId from 'hooks/accounts/useAccountId'
-import useVaultAssets from 'hooks/assets/useVaultAssets'
-import useChainConfig from 'hooks/chain/useChainConfig'
+import Text from 'components/common/Text'
+import TextArea from 'components/common/TextArea'
+import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import useAlertDialog from 'hooks/common/useAlertDialog'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
+import useStore from 'store'
+import useVaultAssets from 'hooks/assets/useVaultAssets'
+import VaultInputElement from 'components/managedVaults/createVault/VaultInputElement'
+import { ArrowRight, InfoCircle } from 'components/common/Icons'
+import { BN } from 'utils/helpers'
+import { BN_ZERO } from 'constants/math'
+import { byDenom } from 'utils/array'
+import { Callout } from 'components/common/Callout'
+import { CalloutType } from 'components/common/Callout'
+import { getPage, getRoute } from 'utils/route'
+import { TextLink } from 'components/common/TextLink'
 import { useCallback, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import useStore from 'store'
-import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from 'utils/array'
-import { BN } from 'utils/helpers'
-import { getPage, getRoute } from 'utils/route'
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -30,6 +32,13 @@ const options = [
 ]
 
 export default function CreateVault() {
+  const [withdrawFreezePeriod, setWithdrawFreezePeriod] = useState<string>('24')
+  const [isTxPending, setIsTxPending] = useState<boolean>(false)
+  const [description, setDescription] = useState<string>('')
+  const [vaultTitle, setVaultTitle] = useState<string>('')
+  const [performanceFee, setPerformanceFee] = useState<BigNumber>(BN(1))
+  const [amount, setAmount] = useState(BN_ZERO)
+
   const selectableAssets = useVaultAssets()
   const chainConfig = useChainConfig()
   const { open: showAlertDialog } = useAlertDialog()
@@ -39,16 +48,13 @@ export default function CreateVault() {
       selectableAssets[0],
     [selectableAssets, chainConfig.stables],
   )
-  const [withdrawFreezePeriod, setWithdrawFreezePeriod] = useState<string>('24')
-  const [isTxPending, setIsTxPending] = useState<boolean>(false)
-  const [description, setDescription] = useState<string>('')
-  const [vaultTitle, setVaultTitle] = useState<string>('')
-  const [performanceFee, setPerformanceFee] = useState<BigNumber>(BN(1))
+
   const [searchParams] = useSearchParams()
-  const accountId = useAccountId()
-  const address = useStore((s) => s.address)
   const navigate = useNavigate()
+  const address = useStore((s) => s.address)
   const createManagedVault = useStore((s) => s.createManagedVault)
+  const mintVaultAccount = useStore((s) => s.createAccount)
+  const depositInManagedVault = useStore((s) => s.depositInManagedVault)
   const selectedDenom = useStore((s) => s.vaultAssetsModal?.selectedDenom) ?? defaultAsset.denom
 
   const selectedAsset = useMemo(() => {
@@ -56,10 +62,12 @@ export default function CreateVault() {
   }, [selectableAssets, defaultAsset, selectedDenom])
 
   const isFormValid = () => {
-    return vaultTitle.trim() !== '' && description.trim() !== '' && selectedAsset !== null
+    return vaultTitle.trim() !== '' && description.trim() !== ''
   }
 
-  const handleMintVaultAddress = useCallback(async () => {
+  const assetAmountInWallet = BN(useCurrentWalletBalance(selectedAsset.denom)?.amount || '0')
+
+  const handleCreateVaultAccount = useCallback(async () => {
     showAlertDialog({
       title: 'Create Vault',
       icon: <InfoCircle />,
@@ -95,18 +103,40 @@ export default function CreateVault() {
 
             if (!result) return
 
-            if (result.address && accountId) {
+            if (result.address) {
+              const accountKind = {
+                fund_manager: {
+                  vault_addr: result.address,
+                },
+              }
+              const vaultAccountId = await mintVaultAccount(accountKind, false)
+
+              if (!vaultAccountId) {
+                setIsTxPending(false)
+                return
+              }
+
+              const depositResult = await depositInManagedVault({
+                vaultAddress: result.address,
+                amount: amount.toString(),
+              })
+
+              if (!depositResult) {
+                setIsTxPending(false)
+                return
+              }
+
               navigate(
                 getRoute(
-                  getPage(`vaults/${result.address}/mint-account`, chainConfig),
+                  getPage(`vaults/${result.address}/details`, chainConfig),
                   searchParams,
                   address,
-                  accountId,
+                  vaultAccountId,
                 ),
               )
             }
           } catch (error) {
-            console.error('Failed to create vault:', error)
+            console.error('Failed to create and mint vault:', error)
           } finally {
             setIsTxPending(false)
           }
@@ -117,18 +147,20 @@ export default function CreateVault() {
       },
     })
   }, [
+    address,
+    amount,
+    chainConfig,
+    createManagedVault,
+    depositInManagedVault,
+    description,
+    mintVaultAccount,
+    navigate,
+    performanceFee,
+    searchParams,
+    selectedAsset,
     showAlertDialog,
     vaultTitle,
-    description,
-    selectedAsset,
     withdrawFreezePeriod,
-    performanceFee,
-    createManagedVault,
-    accountId,
-    navigate,
-    chainConfig,
-    searchParams,
-    address,
   ])
 
   const handleWithdrawFreezePeriod = useCallback((value: string) => {
@@ -145,25 +177,26 @@ export default function CreateVault() {
     })
   }, [selectableAssets, selectedAsset.denom])
 
+  const handleAmountChange = (newAmount: BigNumber) => {
+    setAmount(newAmount)
+  }
+
   return (
     <CreateVaultContent>
-      <form className='flex flex-col flex-grow space-y-6'>
+      <form className='flex flex-col space-y-6' onSubmit={(e) => e.preventDefault()}>
         <div className='flex flex-col gap-8 md:flex-row'>
-          <div className='flex-1 space-y-8'>
-            <div className='space-y-2'>
-              <div className='flex flex-col gap-2'>
-                <VaultInputElement
-                  type='text'
-                  value={vaultTitle}
-                  onChange={(value) => setVaultTitle(value)}
-                  label='Vault title'
-                  placeholder='Enter vault title'
-                  maxLength={30}
-                  required
-                />
-                <CharacterCount value={vaultTitle} maxLength={30} size='xs' />
-              </div>
-              <PerformanceFee value={performanceFee} onChange={setPerformanceFee} />
+          <div className='flex-1 space-y-2'>
+            <div className='flex flex-col gap-2'>
+              <VaultInputElement
+                type='text'
+                value={vaultTitle}
+                onChange={(value) => setVaultTitle(value)}
+                label='Vault title'
+                placeholder='Enter vault title'
+                maxLength={30}
+                required
+              />
+              <CharacterCount value={vaultTitle} maxLength={30} size='xs' />
             </div>
             <VaultInputElement
               type='button'
@@ -177,11 +210,38 @@ export default function CreateVault() {
               suffix={<ArrowRight />}
               required
             />
+            <div className='flex flex-col gap-5 pt-2'>
+              <div className='space-y-3'>
+                <Text size='xs' className='text-white'>
+                  Deposit
+                </Text>
+                <TokenInputWithSlider
+                  asset={selectedAsset}
+                  onChange={handleAmountChange}
+                  amount={amount}
+                  max={assetAmountInWallet}
+                  disabled={isTxPending}
+                  className='w-full text-sm space-y-6'
+                  maxText='In Wallet'
+                  warningMessages={[]}
+                />
+              </div>
+              <Callout type={CalloutType.INFO}>
+                Optional deposit: Your vault won't appear in Community Vaults until it has a
+                positive TVL.
+              </Callout>
+              <Text size='xs' className='text-white/50'>
+                <span className='text-white'>Please note: </span>A $50 USD creation fee in your
+                selected vault asset is required and goes straight to the protocol.
+              </Text>
+            </div>
           </div>
 
           <div className='border border-white/5' />
 
-          <div className='flex-1 space-y-8'>
+          <div className='flex-1 space-y-6'>
+            <PerformanceFee value={performanceFee} onChange={setPerformanceFee} />
+
             <VaultInputElement
               type='dropdown'
               options={options}
@@ -189,7 +249,6 @@ export default function CreateVault() {
               onChange={handleWithdrawFreezePeriod}
               label='Withdraw Freeze Period'
             />
-
             <div>
               <label className='flex items-center text-xs'>
                 Description
@@ -204,9 +263,15 @@ export default function CreateVault() {
                 footer={<CharacterCount value={description} maxLength={240} size='xs' />}
               />
             </div>
+          </div>
+        </div>
 
+        <div className='border border-white/5' />
+
+        <div className='flex flex-wrap items-center justify-between gap-2 px-4 md:px-0'>
+          <div className='max-w-sm'>
             <div className='flex flex-wrap w-full'>
-              <Text size='sm' className='w-full mb-2'>
+              <Text size='sm' className='w-full mb-1'>
                 Details of your vault
               </Text>
               <Text size='xs' className='text-white/50'>
@@ -234,37 +299,12 @@ export default function CreateVault() {
               </Text>
             </div>
           </div>
-        </div>
-
-        <div className='border border-white/5' />
-
-        <div className='flex flex-wrap items-center justify-between gap-2 px-4 md:px-0'>
-          <div className='space-y-2'>
-            {/* TODO: fetch from contract */}
-            <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber('usd', BN(10))} />
-            <Text size='sm' className='text-white/50'>
-              Vault creation cost.
-              <TextLink
-                //   TODO: add link
-                href=''
-                target='_blank'
-                title='Vault Creation Info'
-                textSize='extraSmall'
-                className='pl-1'
-              >
-                Learn more...
-              </TextLink>
-            </Text>
-          </div>
           <Button
-            onClick={(e) => {
-              e.preventDefault()
-              handleMintVaultAddress()
-            }}
+            onClick={handleCreateVaultAccount}
             size='md'
             rightIcon={<ArrowRight />}
             className='w-full md:w-70'
-            text='Mint Vault Address (1/2)'
+            text='Create Vault Account'
             disabled={isTxPending || !isFormValid()}
             showProgressIndicator={isTxPending}
           />
