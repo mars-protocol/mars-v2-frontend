@@ -13,7 +13,7 @@ interface Props {
   vaultAddress: string
 }
 
-export default function PerformanceCard(props: Props) {
+export default function VaultMetricsCard(props: Props) {
   const { vaultDetails, vaultAddress } = props
   const { data: historicalData } = useHistoricalVaultData(vaultAddress, 90)
   const { data: vaultPnl } = useManagedVaultPnl(vaultAddress)
@@ -40,6 +40,7 @@ export default function PerformanceCard(props: Props) {
   }
 
   const maxDrawdown = useMemo(() => calculateMaxDrawdown(historicalData || []), [historicalData])
+
   const metrics = [
     {
       value: vaultDetails.base_tokens_amount,
@@ -91,7 +92,10 @@ export default function PerformanceCard(props: Props) {
           />
         )
         return (
-          <Card className='text-center py-3 w-[calc(50%-0.5rem)] md:w-45 bg-white/5' key={index}>
+          <Card
+            className='text-center py-3 w-[calc(50%-0.5rem)] md:w-45 bg-white/5'
+            key={`${metric}-${index}`}
+          >
             <TitleAndSubCell title={value} sub={metric.label} className='text-sm' />
           </Card>
         )

@@ -1,4 +1,4 @@
-import PerformanceCard from 'components/managedVaults/vaultDetails/performance/PerformanceCard'
+import VaultMetricsCard from 'components/managedVaults/vaultDetails/performance/VaultMetricsCard'
 import PerformanceChart from 'components/managedVaults/vaultDetails/performance/chart/PerformanceChart'
 import UserMetrics from 'components/managedVaults/vaultDetails/performance/UserMetrics'
 import useStore from 'store'
@@ -24,7 +24,7 @@ export default function VaultPerformance(props: Props) {
             userAddress={address}
           />
         )}
-        <PerformanceCard vaultDetails={vaultDetails} vaultAddress={vaultAddress} />
+        <VaultMetricsCard vaultDetails={vaultDetails} vaultAddress={vaultAddress} />
         <PerformanceChart vaultAddress={vaultAddress} />
       </div>
     </div>
