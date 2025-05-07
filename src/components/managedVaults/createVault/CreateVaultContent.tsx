@@ -24,8 +24,8 @@ export default function CreateVaultContent(props: Props) {
           Create Vault
         </Text>
         <Text size='sm' className='w-full text-center text-white/60'>
-          This process requires multiple wallet authorizations: one to create your vault, one to
-          mint it, and one to deposit funds.
+          Creating your vault requires three separate transactions: vault creation with a $50 fee,
+          account minting, and optional fund deposit.
         </Text>
       </div>
 

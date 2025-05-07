@@ -8,7 +8,6 @@ import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSli
 import useAlertDialog from 'hooks/common/useAlertDialog'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
-import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
 import useStore from 'store'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import VaultInputElement from 'components/managedVaults/createVault/VaultInputElement'
@@ -50,7 +49,6 @@ export default function CreateVault() {
     [selectableAssets, chainConfig.stables],
   )
 
-  const { convertAmount } = useDisplayCurrencyPrice()
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const address = useStore((s) => s.address)
@@ -64,10 +62,7 @@ export default function CreateVault() {
   }, [selectableAssets, defaultAsset, selectedDenom])
 
   const isFormValid = () => {
-    const usdAmount = convertAmount(selectedAsset, amount)
-    return (
-      vaultTitle.trim() !== '' && description.trim() !== '' && usdAmount.isGreaterThanOrEqualTo(50)
-    )
+    return vaultTitle.trim() !== '' && description.trim() !== ''
   }
 
   const assetAmountInWallet = BN(useCurrentWalletBalance(selectedAsset.denom)?.amount || '0')
@@ -190,7 +185,7 @@ export default function CreateVault() {
     <CreateVaultContent>
       <form className='flex flex-col space-y-6' onSubmit={(e) => e.preventDefault()}>
         <div className='flex flex-col gap-8 md:flex-row'>
-          <div className='flex-1 space-y-6'>
+          <div className='flex-1 space-y-2'>
             <div className='flex flex-col gap-2'>
               <VaultInputElement
                 type='text'
@@ -219,7 +214,6 @@ export default function CreateVault() {
               <div className='space-y-3'>
                 <Text size='xs' className='text-white'>
                   Deposit
-                  <span className='ml-1 text-primary'>*</span>
                 </Text>
                 <TokenInputWithSlider
                   asset={selectedAsset}
@@ -233,8 +227,13 @@ export default function CreateVault() {
                 />
               </div>
               <Callout type={CalloutType.INFO}>
-                A minimum deposit of $50 USD is required to complete your vault creation.
+                Optional deposit: Your vault won't appear in Community Vaults until it has a
+                positive TVL.
               </Callout>
+              <Text size='xs' className='text-white/50'>
+                <span className='text-white'>Please note: </span>A $50 USD creation fee in your
+                selected vault asset is required and goes straight to the protocol.
+              </Text>
             </div>
           </div>
 
