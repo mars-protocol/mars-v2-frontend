@@ -6,6 +6,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 import useHistoricalVaultData from 'hooks/managedVaults/useHistoricalVaultData'
 import { useMemo } from 'react'
+import useManagedVaultPnl from 'hooks/managedVaults/useManagedVaultPnl'
 
 interface Props {
   vaultDetails: ManagedVaultsData
@@ -15,6 +16,7 @@ interface Props {
 export default function PerformanceCard(props: Props) {
   const { vaultDetails, vaultAddress } = props
   const { data: historicalData } = useHistoricalVaultData(vaultAddress, 90)
+  const { data: vaultPnl } = useManagedVaultPnl(vaultAddress)
 
   const calculateMaxDrawdown = (data: HistoricalVaultChartData[]) => {
     if (!data?.length) return 0
@@ -46,7 +48,7 @@ export default function PerformanceCard(props: Props) {
       formatOptions: { maxDecimals: 2, minDecimals: 2, abbreviated: false },
     },
     {
-      value: 0,
+      value: Number(vaultPnl?.total_pnl),
       label: 'Total PnL',
       isCurrency: true,
       formatOptions: { maxDecimals: 2, minDecimals: 2 },
