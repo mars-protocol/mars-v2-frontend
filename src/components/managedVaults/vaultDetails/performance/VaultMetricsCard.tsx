@@ -7,6 +7,7 @@ import { BN } from 'utils/helpers'
 import useHistoricalVaultData from 'hooks/managedVaults/useHistoricalVaultData'
 import { useMemo } from 'react'
 import useManagedVaultPnl from 'hooks/managedVaults/useManagedVaultPnl'
+import moment from 'moment'
 
 interface Props {
   vaultDetails: ManagedVaultsData
@@ -15,7 +16,8 @@ interface Props {
 
 export default function VaultMetricsCard(props: Props) {
   const { vaultDetails, vaultAddress } = props
-  const { data: historicalData } = useHistoricalVaultData(vaultAddress, 90)
+  const { data: historicalData90d } = useHistoricalVaultData(vaultAddress, 90)
+  const { data: historicalDataAll } = useHistoricalVaultData(vaultAddress, 'all')
   const { data: vaultPnl } = useManagedVaultPnl(vaultAddress)
 
   const calculateMaxDrawdown = (data: HistoricalVaultChartData[]) => {
@@ -39,7 +41,18 @@ export default function VaultMetricsCard(props: Props) {
     return maxDrawdown
   }
 
-  const maxDrawdown = useMemo(() => calculateMaxDrawdown(historicalData || []), [historicalData])
+  const vaultAge = useMemo(() => {
+    if (!historicalDataAll || historicalDataAll.length === 0) return 0
+
+    const firstDate = moment(historicalDataAll[0].date)
+    const lastDate = moment(historicalDataAll[historicalDataAll.length - 1].date)
+    return lastDate.diff(firstDate, 'days', false)
+  }, [historicalDataAll])
+
+  const maxDrawdown = useMemo(
+    () => calculateMaxDrawdown(historicalData90d || []),
+    [historicalData90d],
+  )
 
   const metrics = [
     {
@@ -70,7 +83,7 @@ export default function VaultMetricsCard(props: Props) {
       formatOptions: { maxDecimals: 2, minDecimals: 2, suffix: '%', abbreviated: true },
     },
     {
-      value: 0,
+      value: vaultAge,
       label: 'Vault Age',
       formatOptions: { maxDecimals: 0, minDecimals: 0, suffix: ' days' },
     },

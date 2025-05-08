@@ -11,7 +11,7 @@ export default function useManagedVaultPnl(vaultAddress: string) {
       return await getManagedVaultPnl(chainConfig, vaultAddress)
     },
     {
-      refreshInterval: 10_000,
+      refreshInterval: 60_000,
       suspense: false,
     },
   )
