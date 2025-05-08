@@ -86,8 +86,8 @@ export default function UserMetrics(props: Props) {
             amount={Number(metric.value)}
             options={metric.formatOptions}
             className={classNames('text-base', {
-              'text-profit': metric.isProfitOrLoss && BN(metric.value).isPositive(),
-              'text-loss': metric.isProfitOrLoss && BN(metric.value).isNegative(),
+              'text-profit': metric.isProfitOrLoss && BN(metric.value).isGreaterThan(0),
+              'text-loss': metric.isProfitOrLoss && BN(metric.value).isLessThan(0),
             })}
           />
         )
