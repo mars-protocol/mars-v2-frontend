@@ -85,6 +85,12 @@ function VaultTable({ title, data, isLoading, hideCard }: Props) {
   if (!data.length) return null
 
   return (
-    <Table title={title} columns={columns} data={data} initialSorting={[]} hideCard={hideCard} />
+    <Table
+      title={title}
+      columns={columns}
+      data={data}
+      initialSorting={[{ id: 'base_tokens_amount', desc: true }]}
+      hideCard={hideCard}
+    />
   )
 }
