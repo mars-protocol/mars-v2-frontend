@@ -86,7 +86,7 @@ export default function CreateVault() {
               enableHls: false,
               performanceFee: {
                 fee_rate: feeRate,
-                withdrawal_interval: 24 * 3600,
+                withdrawal_interval: 30 * 24 * 3600,
               },
               vault_token_subdenom: `vault_${selectedAsset.symbol.toLowerCase()}`,
             }
