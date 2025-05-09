@@ -1,34 +1,43 @@
 import AssetImage from 'components/common/assets/AssetImage'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import useStore from 'store'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVaultConvertToTokens'
-import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
+import { useManagedVaultConvertToBaseTokens } from 'hooks/managedVaults/useManagedVaultConvertToBaseTokens'
+import useManagedVaultUserPosition from 'hooks/managedVaults/useManagedVaultUserPosition'
+import classNames from 'classnames'
 
 interface Props {
   vaultAddress: string
   vaultDetails: ManagedVaultsData
+  userAddress: string
 }
 
 export default function UserMetrics(props: Props) {
-  const { vaultAddress, vaultDetails } = props
-  const address = useStore((s) => s.address)
-  const { amount: userVaultShares, calculateVaultShare } = useManagedVaultUserShares(
-    address,
-    vaultDetails.vault_tokens_denom,
-  )
-  const { data: userVaultTokensAmount } = useManagedVaultConvertToTokens(
+  const { vaultAddress, vaultDetails, userAddress } = props
+
+  const { data: userPosition, calculateVaultShare } = useManagedVaultUserPosition(
     vaultAddress,
-    userVaultShares,
+    userAddress,
   )
+  const { data: userVaultTokensAmount } = useManagedVaultConvertToBaseTokens(
+    vaultAddress,
+    userPosition?.shares ?? '0',
+  )
+
   const sharePercentage = calculateVaultShare(vaultDetails.vault_tokens_amount)
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(vaultDetails.base_tokens_denom)) as Asset
+
+  const calculateROI = (currentBalance: string | number | undefined): number => {
+    if (!userPosition?.pnl || !currentBalance || BN(currentBalance).isZero()) {
+      return 0
+    }
+    return BN(userPosition.pnl).multipliedBy(100).dividedBy(currentBalance).toNumber()
+  }
 
   const metrics = [
     {
@@ -38,15 +47,18 @@ export default function UserMetrics(props: Props) {
       formatOptions: { maxDecimals: 2, minDecimals: 2 },
     },
     {
-      value: 0,
+      value: userPosition?.pnl || 0,
       label: 'Total Earnings',
       isCurrency: true,
       formatOptions: { maxDecimals: 2, minDecimals: 2 },
+      isProfitOrLoss: true,
+      showSignPrefix: true,
     },
     {
-      value: 0,
+      value: calculateROI(userVaultTokensAmount),
       label: 'ROI',
       formatOptions: { maxDecimals: 2, minDecimals: 2, suffix: '%' },
+      isProfitOrLoss: true,
     },
     {
       value: sharePercentage,
@@ -65,13 +77,18 @@ export default function UserMetrics(props: Props) {
               coin={BNCoin.fromDenomAndBigNumber(depositAsset.denom, BN(metric.value))}
               options={metric.formatOptions}
               className='text-base'
+              isProfitOrLoss={metric.isProfitOrLoss}
+              showSignPrefix={metric.showSignPrefix}
             />
           </div>
         ) : (
           <FormattedNumber
             amount={Number(metric.value)}
             options={metric.formatOptions}
-            className='text-base'
+            className={classNames('text-base', {
+              'text-profit': metric.isProfitOrLoss && BN(metric.value).isGreaterThan(0),
+              'text-loss': metric.isProfitOrLoss && BN(metric.value).isLessThan(0),
+            })}
           />
         )
 

@@ -8,8 +8,8 @@ import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
 import { LockUnlocked } from 'components/common/Icons'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVaultConvertToTokens'
-import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
+import { useManagedVaultConvertToBaseTokens } from 'hooks/managedVaults/useManagedVaultConvertToBaseTokens'
+import useManagedVaultUserPosition from 'hooks/managedVaults/useManagedVaultUserPosition'
 
 interface Props {
   details: ManagedVaultsData
@@ -24,13 +24,13 @@ export default function VaultPosition(props: Props) {
   const { details, isOwner, vaultAddress, onDeposit, onWithdraw, depositAsset } = props
 
   const address = useStore((s) => s.address)
-  const { amount: userVaultShares, calculateVaultShare } = useManagedVaultUserShares(
-    address,
-    details.vault_tokens_denom,
-  )
-  const { data: userVaultTokensAmount, isLoading } = useManagedVaultConvertToTokens(
+  const { data: userPosition, calculateVaultShare } = useManagedVaultUserPosition(
     vaultAddress,
-    userVaultShares,
+    address,
+  )
+  const { data: userVaultTokensAmount, isLoading } = useManagedVaultConvertToBaseTokens(
+    vaultAddress,
+    userPosition?.shares ?? '0',
   )
   const sharePercentage = calculateVaultShare(details.vault_tokens_amount)
 

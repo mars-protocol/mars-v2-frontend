@@ -4,7 +4,7 @@ import { getUrl } from 'utils/url'
 
 export default async function getHistoricalManagedVaults(
   chainConfig: ChainConfig,
-  duration: number,
+  duration: number | 'all',
   vaultAddress: string,
 ) {
   const defaultReturn: HistoricalManagedVaultsResponse = { data: [], page: 1, limit: 0, total: 0 }
@@ -14,10 +14,15 @@ export default async function getHistoricalManagedVaults(
 
   try {
     const url = getUrl(
-      chainConfig.endpoints.historicalManagedVaults,
-      `&duration=${duration}&address=${vaultAddress}`,
+      duration === 'all'
+        ? `${chainConfig.endpoints.historicalManagedVaults}&address=${vaultAddress}`
+        : `${chainConfig.endpoints.historicalManagedVaults}&duration=${duration}&address=${vaultAddress}`,
     )
     const response = await fetchWithTimeout(url, FETCH_TIMEOUT)
+
+    if (!response.ok) {
+      return defaultReturn
+    }
     const data = await response.json()
 
     return data as HistoricalManagedVaultsResponse

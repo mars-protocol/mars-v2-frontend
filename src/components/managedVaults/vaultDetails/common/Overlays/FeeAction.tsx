@@ -6,15 +6,16 @@ import EscButton from 'components/common/Button/EscButton'
 import Overlay from 'components/common/Overlay'
 import PerformanceFee from 'components/managedVaults/createVault/PerformanceFee'
 import Text from 'components/common/Text'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Callout, CalloutType } from 'components/common/Callout'
-import { useState } from 'react'
-import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import { demagnify } from 'utils/formatters'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
-import { demagnify } from 'utils/formatters'
+import { produceCountdown } from 'utils/formatters'
+import { useState } from 'react'
 
 interface Props {
   showFeeActionModal: boolean
@@ -63,7 +64,7 @@ export default function FeeAction(props: Props) {
         ...(isEdit && {
           newFee: {
             fee_rate: performanceFee.dividedBy(100).dividedBy(8760).decimalPlaces(18).toString(),
-            withdrawal_interval: 24 * 3600,
+            withdrawal_interval: 30 * 24 * 3600,
           },
         }),
       }
@@ -146,12 +147,12 @@ export default function FeeAction(props: Props) {
         <div className='flex flex-col gap-2'>
           {!isEdit && (
             <Callout type={CalloutType.INFO}>
-              Performance fees can only be withdrawn once every{' '}
-              {vaultDetails.performance_fee_config.withdrawal_interval / 3600} hours.
+              Fees can only be withdrawn once every{' '}
+              {vaultDetails.performance_fee_config.withdrawal_interval / (24 * 3600)} days.
               {cannotWithdraw && (
-                <div className='mt-2'>
+                <div className='mt-1'>
                   Next withdrawal available in{' '}
-                  {Math.ceil((withdrawalInterval - timeSinceLastWithdrawal) / 3600)} hours.
+                  {produceCountdown((withdrawalInterval - timeSinceLastWithdrawal) * 1000)}
                 </div>
               )}
             </Callout>

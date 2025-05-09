@@ -1,10 +1,10 @@
-import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
-import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVaultConvertToTokens'
-import useStore from 'store'
-import Loading from 'components/common/Loading'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import { BNCoin } from 'types/classes/BNCoin'
+import Loading from 'components/common/Loading'
+import useManagedVaultUserPosition from 'hooks/managedVaults/useManagedVaultUserPosition'
+import useStore from 'store'
 import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
+import { useManagedVaultConvertToBaseTokens } from 'hooks/managedVaults/useManagedVaultConvertToBaseTokens'
 
 export const MY_POSITION_META = {
   header: 'My Position',
@@ -18,10 +18,10 @@ interface Props {
 
 export default function MyPosition({ vault, isLoading }: Props) {
   const address = useStore((s) => s.address)
-  const { amount: userShares } = useManagedVaultUserShares(address, vault.vault_tokens_denom)
-  const { data: userTokens, isLoading: isLoadingTokens } = useManagedVaultConvertToTokens(
+  const { data: userPosition } = useManagedVaultUserPosition(vault.vault_address, address)
+  const { data: userTokens, isLoading: isLoadingTokens } = useManagedVaultConvertToBaseTokens(
     vault.vault_address,
-    userShares,
+    userPosition?.shares ?? '0',
   )
 
   if (isLoading || isLoadingTokens) return <Loading />

@@ -3,7 +3,7 @@ import getHistoricalManagedVaults from 'api/managedVaults/getHistoricalManagedVa
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { convertAprToApy } from 'utils/parsers'
 
-export default function useHistoricalVaultData(vaultAddress: string, timeframe: number) {
+export default function useHistoricalVaultData(vaultAddress: string, timeframe: number | 'all') {
   const chainConfig = useChainConfig()
 
   return useSWR(

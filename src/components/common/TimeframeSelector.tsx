@@ -18,7 +18,7 @@ export default function TimeframeSelector(props: Props) {
   const { timeframe, selectedTimeframe, setSelectedTimeframe, size = 'sm', className } = props
 
   return (
-    <div className={classNames('flex gap-3 my-0 sm:my-3', className)}>
+    <div className={classNames('flex gap-3 my-3', className)}>
       {timeframe.map((time, index) => (
         <Button
           color='tertiary'
