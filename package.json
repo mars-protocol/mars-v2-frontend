@@ -24,7 +24,7 @@
     "@delphi-labs/shuttle-react": "^4.2.0",
     "@keplr-wallet/cosmos": "^0.12.230",
     "@next/eslint-plugin-next": "^15.3.1",
-    "@skip-go/client": "^0.16.30",
+    "@skip-go/client": "^0.17.1",
     "@solana/web3.js": "^1.98.2",
     "@tanstack/react-query": "^5.74.4",
     "@tanstack/react-table": "^8.21.3",
