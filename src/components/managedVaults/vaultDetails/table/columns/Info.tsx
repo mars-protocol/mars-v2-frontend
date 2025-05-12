@@ -5,6 +5,7 @@ import { ExternalLink } from 'components/common/Icons'
 import { truncate } from 'utils/formatters'
 import { TextLink } from 'components/common/TextLink'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import moment from 'moment'
 
 export const INFO_META = {
   meta: { className: 'w-40' },
@@ -24,8 +25,8 @@ export default function Info(props: Props) {
 
   const getStatus = (cooldown_end?: number) => {
     if (!cooldown_end) return null
-    const now = Math.floor(Date.now() / 1000)
-    return cooldown_end <= now ? 'Ready to withdraw' : 'Queued'
+    const currentTime = moment().unix()
+    return cooldown_end <= currentTime ? 'Ready to withdraw' : 'Queued'
   }
   const status = value.cooldown_end ? getStatus(value.cooldown_end) : value.status
   const link = `${chainConfig.endpoints.explorer}/address/${address}`

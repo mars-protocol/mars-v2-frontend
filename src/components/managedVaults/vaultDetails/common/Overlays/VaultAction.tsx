@@ -13,8 +13,7 @@ import useAccount from 'hooks/accounts/useAccount'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import { useManagedVaultConvertToShares } from 'hooks/managedVaults/useManagedVaultConvertToShares'
-import { useManagedVaultConvertToTokens } from 'hooks/managedVaults/useManagedVaultConvertToTokens'
-import { useManagedVaultUserShares } from 'hooks/managedVaults/useManagedVaultUserShares'
+import { useManagedVaultConvertToBaseTokens } from 'hooks/managedVaults/useManagedVaultConvertToBaseTokens'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import moment from 'moment'
 import { useMemo, useState } from 'react'
@@ -23,6 +22,7 @@ import { byDenom } from 'utils/array'
 import { formatLockupPeriod } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { useUserUnlocks } from 'hooks/managedVaults/useUserUnlocks'
+import useManagedVaultUserPosition from 'hooks/managedVaults/useManagedVaultUserPosition'
 
 type VaultAction = 'deposit' | 'unlock'
 interface Props {
@@ -40,13 +40,10 @@ export default function VaultAction(props: Props) {
   const [isConfirming, setIsConfirming] = useState(false)
   const address = useStore((s) => s.address)
   const { data: account } = useAccount(vaultDetails.vault_account_id || undefined)
-  const { amount: userVaultShares } = useManagedVaultUserShares(
-    address,
-    vaultDetails.vault_tokens_denom,
-  )
-  const { data: userVaultTokens, isLoading } = useManagedVaultConvertToTokens(
+  const { data: userPosition } = useManagedVaultUserPosition(vaultAddress, address)
+  const { data: userVaultTokens, isLoading } = useManagedVaultConvertToBaseTokens(
     vaultAddress,
-    userVaultShares,
+    userPosition?.shares ?? '0',
   )
   const { data: userUnlocks = [] } = useUserUnlocks(vaultAddress)
   const { data: sharesToUnlock } = useManagedVaultConvertToShares(vaultAddress, amount.toString())
@@ -66,7 +63,7 @@ export default function VaultAction(props: Props) {
     }, BN_ZERO)
   }, [userUnlocks])
 
-  const { data: unlockedBaseTokens } = useManagedVaultConvertToTokens(
+  const { data: unlockedBaseTokens } = useManagedVaultConvertToBaseTokens(
     vaultAddress,
     totalUnlockedVaultTokens.toString(),
   )
