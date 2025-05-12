@@ -167,6 +167,7 @@ export async function combinedRepay(params: {
   if (debtAmount.isZero() && swapAmount.isZero()) return false
 
   try {
+    // Case 1: Only repaying with debt asset, no swap needed
     if (debtAmount.isGreaterThan(0) && swapAmount.isZero()) {
       const { lend } = getDepositAndLendCoinsToSpend(
         BNCoin.fromDenomAndBigNumber(debtAsset.denom, debtAmount),
@@ -176,12 +177,13 @@ export async function combinedRepay(params: {
       return store.repay({
         accountId,
         coin: BNCoin.fromDenomAndBigNumber(debtAsset.denom, debtAmount),
-        accountBalance: false,
+        accountBalance: true, // Use account_balance to handle dust
         lend: fromWallet ? BNCoin.fromDenomAndBigNumber(debtAsset.denom, new BigNumber(0)) : lend,
         fromWallet,
       })
     }
 
+    // Case 2: Only repaying via swap, no direct debt asset repayment
     if (swapAmount.isGreaterThan(0) && debtAmount.isZero()) {
       const { lend } = getDepositAndLendCoinsToSpend(
         BNCoin.fromDenomAndBigNumber(swapAsset.denom, swapAmount),
@@ -191,7 +193,7 @@ export async function combinedRepay(params: {
       return store.repay({
         accountId,
         coin: BNCoin.fromDenomAndBigNumber(swapAsset.denom, swapAmount),
-        accountBalance: true,
+        accountBalance: false, // Specific amount for the swap
         lend: fromWallet ? BNCoin.fromDenomAndBigNumber(swapAsset.denom, new BigNumber(0)) : lend,
         fromWallet,
         swapFromDenom: swapAsset.denom,
@@ -200,7 +202,9 @@ export async function combinedRepay(params: {
       })
     }
 
+    // Case 3: Combined repayment using both debt asset and swap
     if (debtAmount.isGreaterThan(0) && swapAmount.isGreaterThan(0)) {
+      // First handle the swap portion
       const swapLend = getDepositAndLendCoinsToSpend(
         BNCoin.fromDenomAndBigNumber(swapAsset.denom, swapAmount),
         account,
@@ -209,7 +213,7 @@ export async function combinedRepay(params: {
       const swapSuccess = await store.repay({
         accountId,
         coin: BNCoin.fromDenomAndBigNumber(swapAsset.denom, swapAmount),
-        accountBalance: true,
+        accountBalance: false, // Specific amount for the swap
         lend: fromWallet
           ? BNCoin.fromDenomAndBigNumber(swapAsset.denom, new BigNumber(0))
           : swapLend,
@@ -221,6 +225,7 @@ export async function combinedRepay(params: {
 
       if (!swapSuccess) return false
 
+      // Then handle the direct debt asset repayment
       const debtLend = getDepositAndLendCoinsToSpend(
         BNCoin.fromDenomAndBigNumber(debtAsset.denom, debtAmount),
         account,
@@ -229,7 +234,7 @@ export async function combinedRepay(params: {
       return store.repay({
         accountId,
         coin: BNCoin.fromDenomAndBigNumber(debtAsset.denom, debtAmount),
-        accountBalance: false,
+        accountBalance: true, // Use account_balance to handle dust
         lend: fromWallet
           ? BNCoin.fromDenomAndBigNumber(debtAsset.denom, new BigNumber(0))
           : debtLend,

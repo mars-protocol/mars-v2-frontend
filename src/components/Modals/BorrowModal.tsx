@@ -3,13 +3,14 @@ import classNames from 'classnames'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Modal from 'components/Modals/Modal'
+import { getButtonText, RepayAssets } from 'components/Modals/BorrowModal/RepayAssets'
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { ArrowRight, Plus } from 'components/common/Icons'
+import { ArrowRight } from 'components/common/Icons'
 import Switch from 'components/common/Switch'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
@@ -51,23 +52,38 @@ export default function BorrowModalController() {
 
 function BorrowModal(props: Props) {
   const { modal, account } = props
-  const [amount, setAmount] = useState(BN_ZERO)
-  const [debtAssetAmount, setDebtAssetAmount] = useState(BN_ZERO)
-  const [swapAssetAmount, setSwapAssetAmount] = useState(BN_ZERO)
+  const [amounts, setAmounts] = useState({
+    main: BN_ZERO,
+    debtAsset: BN_ZERO,
+    swapAsset: BN_ZERO,
+  })
+  const [maxValues, setMaxValues] = useState({
+    main: BN_ZERO,
+    debtAsset: BN_ZERO,
+    swapAsset: BN_ZERO,
+  })
   const [borrowToWallet, setBorrowToWallet] = useToggle()
   const [repayFromWallet, setRepayFromWallet] = useToggle()
-  const [isLoading, setIsLoading] = useToggle(false)
+  const [loadingState, setLoadingState] = useState<{
+    isLoading: boolean
+    action: 'none' | 'borrow' | 'repay' | 'simulation'
+  }>({
+    isLoading: false,
+    action: 'none',
+  })
   const [useDebtAsset, setUseDebtAsset] = useState(false)
   const [selectedSwapAsset, setSelectedSwapAsset] = useState<Asset | null>(null)
+  const [validationErrors, setValidationErrors] = useState<string[]>([])
+
+  const { main: amount, debtAsset: debtAssetAmount, swapAsset: swapAssetAmount } = amounts
+  const { main: max, debtAsset: debtAssetMax, swapAsset: swapAssetMax } = maxValues
+
   const walletAddress = useStore((s) => s.address)
   const { data: walletBalances } = useWalletBalances(walletAddress)
   const borrow = useStore((s) => s.borrow)
   const assets = useStore((s) => s.assets)
   const asset = modal.asset
   const isRepay = modal.isRepay ?? false
-  const [max, setMax] = useState(BN_ZERO)
-  const [debtAssetMax, setDebtAssetMax] = useState(BN_ZERO)
-  const [swapAssetMax, setSwapAssetMax] = useState(BN_ZERO)
   const { simulateBorrow, simulateRepay } = useUpdatedAccount(account)
   const apy = modal.marketData.apy.borrow
   const { isAutoLendEnabledForCurrentAccount: isAutoLendEnabled } = useAutoLend()
@@ -75,6 +91,22 @@ function BorrowModal(props: Props) {
   const accountDebt = account.debts.find(byDenom(asset.denom))?.amount ?? BN_ZERO
   const markets = useMarkets()
   const [slippage] = useSlippage()
+
+  const setAmount = (value: BigNumber) => setAmounts((prev) => ({ ...prev, main: value }))
+  const setDebtAssetAmount = (value: BigNumber) =>
+    setAmounts((prev) => ({ ...prev, debtAsset: value }))
+  const setSwapAssetAmount = (value: BigNumber) =>
+    setAmounts((prev) => ({ ...prev, swapAsset: value }))
+
+  const updateMaxValues = (main: BigNumber, debtAsset: BigNumber, swapAsset: BigNumber) => {
+    setMaxValues({ main, debtAsset, swapAsset })
+  }
+
+  const setMax = (value: BigNumber) => setMaxValues((prev) => ({ ...prev, main: value }))
+  const setDebtAssetMax = (value: BigNumber) =>
+    setMaxValues((prev) => ({ ...prev, debtAsset: value }))
+  const setSwapAssetMax = (value: BigNumber) =>
+    setMaxValues((prev) => ({ ...prev, swapAsset: value }))
 
   const accountDebtWithInterest = useMemo(
     () => getDebtAmountWithInterest(accountDebt, apy),
@@ -186,7 +218,7 @@ function BorrowModal(props: Props) {
     setAmount(BN_ZERO)
     setDebtAssetAmount(BN_ZERO)
     setSwapAssetAmount(BN_ZERO)
-    setIsLoading(false)
+    setLoadingState({ isLoading: false, action: 'none' })
   }
 
   const remainingDebt = useMemo(() => {
@@ -249,9 +281,56 @@ function BorrowModal(props: Props) {
     }
   }, [isRepay, isDifferentAsset, adjustedSwapAssetMax, swapAssetAmount])
 
+  useEffect(() => {
+    const errors: string[] = []
+
+    if (isRepay) {
+      if (useDebtAsset && debtAssetAmount.isGreaterThan(debtAssetMax)) {
+        errors.push(`Cannot repay more than ${debtAssetMax.toString()} ${asset.symbol}`)
+      }
+
+      if (selectedSwapAsset && swapAssetAmount.isGreaterThan(adjustedSwapAssetMax)) {
+        errors.push(
+          `Cannot use more than ${adjustedSwapAssetMax.toString()} ${selectedSwapAsset.symbol}`,
+        )
+      }
+
+      if (
+        useDebtAsset &&
+        selectedSwapAsset &&
+        debtAssetAmount.isZero() &&
+        swapAssetAmount.isZero()
+      ) {
+        errors.push('Please enter an amount to repay')
+      }
+    } else {
+      if (amount.isGreaterThan(max)) {
+        errors.push(`Cannot borrow more than ${max.toString()} ${asset.symbol}`)
+      }
+
+      if (amount.isZero()) {
+        errors.push('Please enter an amount to borrow')
+      }
+    }
+
+    setValidationErrors(errors)
+  }, [
+    isRepay,
+    useDebtAsset,
+    selectedSwapAsset,
+    debtAssetAmount,
+    swapAssetAmount,
+    amount,
+    debtAssetMax,
+    adjustedSwapAssetMax,
+    max,
+    asset.symbol,
+    selectedSwapAsset?.symbol,
+  ])
+
   async function onConfirmClick() {
     if (!asset) return
-    setIsLoading(true)
+    setLoadingState({ isLoading: true, action: isRepay ? 'repay' : 'borrow' })
 
     try {
       let success = false
@@ -279,16 +358,16 @@ function BorrowModal(props: Props) {
         resetState()
         useStore.setState({ borrowModal: null })
       } else {
-        setIsLoading(false)
+        setLoadingState({ isLoading: false, action: 'none' })
       }
     } catch (error) {
       console.error('Transaction failed:', error)
-      setIsLoading(false)
+      setLoadingState({ isLoading: false, action: 'none' })
     }
   }
 
   function onClose() {
-    if (isLoading) return
+    if (loadingState.isLoading) return
     resetState()
     useStore.setState({ borrowModal: null })
   }
@@ -388,12 +467,16 @@ function BorrowModal(props: Props) {
       if (amount.isEqualTo(newAmount)) return
       setAmount(newAmount)
       if (!isRepay) {
+        setLoadingState({ isLoading: true, action: 'simulation' })
         const borrowCoin = BNCoin.fromDenomAndBigNumber(
           asset.denom,
           newAmount.isGreaterThan(max) ? max : newAmount,
         )
         const target = borrowToWallet ? 'wallet' : isAutoLendEnabled ? 'lend' : 'deposit'
         simulateBorrow(target, borrowCoin)
+        setTimeout(() => {
+          setLoadingState({ isLoading: false, action: 'none' })
+        }, 500)
       }
     },
     [amount, asset.denom, borrowToWallet, isAutoLendEnabled, isRepay, max, simulateBorrow],
@@ -486,7 +569,12 @@ function BorrowModal(props: Props) {
     })
   }
 
-  if (!modal || !asset) return null
+  const buttonText = getButtonText(loadingState.isLoading, loadingState.action, isRepay)
+
+  if (!account || !modal) {
+    return null
+  }
+
   return (
     <Modal
       onClose={onClose}
@@ -567,85 +655,23 @@ function BorrowModal(props: Props) {
           {isRepay ? (
             <>
               <div>
-                <div className='flex justify-between items-center mb-4'>
-                  <Text>Select Assets to Repay</Text>
-                  {accountHasRepaymentAssets && (
-                    <Button
-                      text='Select Assets'
-                      color='tertiary'
-                      rightIcon={<Plus />}
-                      iconClassName='w-3'
-                      onClick={openAssetSelectionModal}
-                    />
-                  )}
-                </div>
-
-                {!useDebtAsset && !selectedSwapAsset ? (
-                  <div className='flex flex-col items-center justify-center py-10 text-center'>
-                    <Text className='mb-2'>No assets selected for repayment</Text>
-                    <Text size='xs' className='text-white/50 mb-4'>
-                      Click "Select Assets" to choose which assets to use for repayment
-                    </Text>
-                  </div>
-                ) : (
-                  <div className='space-y-4'>
-                    {useDebtAsset && hasDebtAsset && (
-                      <div>
-                        <Text size='sm' className='mb-2 text-white/70'>
-                          Debt Asset {asset.symbol && `(${asset.symbol})`}
-                        </Text>
-                        <TokenInputWithSlider
-                          asset={asset}
-                          onChange={handleDebtAssetChange}
-                          amount={debtAssetAmount}
-                          max={debtAssetMax}
-                          disabled={false}
-                          className='w-full'
-                          maxText='Max'
-                          warningMessages={[]}
-                          balances={account.deposits}
-                          accountId={account.id}
-                          hasSelect={false}
-                        />
-
-                        {debtAssetAmount.isGreaterThan(0) &&
-                          debtAssetAmount.isLessThan(totalRepayable) && (
-                            <Text size='xs' className='mt-2 text-white/50'>
-                              Remaining debt:{' '}
-                              <FormattedNumber
-                                amount={remainingDebt.toNumber()}
-                                options={{
-                                  decimals: asset.decimals,
-                                  suffix: ` ${asset.symbol}`,
-                                }}
-                              />
-                            </Text>
-                          )}
-                      </div>
-                    )}
-
-                    {selectedSwapAsset && (
-                      <div>
-                        <Text size='sm' className='mb-2 text-white/70'>
-                          Swap {selectedSwapAsset.symbol} to {asset.symbol}
-                        </Text>
-                        <TokenInputWithSlider
-                          asset={selectedSwapAsset}
-                          onChange={handleSwapAssetChange}
-                          amount={swapAssetAmount}
-                          max={adjustedSwapAssetMax}
-                          disabled={false}
-                          className='w-full'
-                          maxText='Max'
-                          warningMessages={[]}
-                          balances={account.deposits}
-                          accountId={account.id}
-                          hasSelect={false}
-                        />
-                      </div>
-                    )}
-                  </div>
-                )}
+                <RepayAssets
+                  useDebtAsset={useDebtAsset}
+                  selectedSwapAsset={selectedSwapAsset}
+                  asset={asset}
+                  debtAssetAmount={debtAssetAmount}
+                  debtAssetMax={debtAssetMax}
+                  swapAssetAmount={swapAssetAmount}
+                  adjustedSwapAssetMax={adjustedSwapAssetMax}
+                  remainingDebt={remainingDebt}
+                  totalRepayable={totalRepayable}
+                  handleDebtAssetChange={handleDebtAssetChange}
+                  handleSwapAssetChange={handleSwapAssetChange}
+                  accountHasRepaymentAssets={accountHasRepaymentAssets}
+                  hasDebtAsset={hasDebtAsset}
+                  openAssetSelectionModal={openAssetSelectionModal}
+                  account={account}
+                />
               </div>
 
               {selectedSwapAsset && isDifferentAsset && swapAssetAmount.isGreaterThan(0) && (
@@ -712,13 +738,27 @@ function BorrowModal(props: Props) {
               </div>
             </>
           )}
+          {validationErrors.length > 0 && (
+            <div className='mt-2 p-2 border border-red-500/30 bg-red-500/10 rounded'>
+              {validationErrors.map((error, index) => (
+                <Text key={index} size='xs' className='text-red-400'>
+                  {error}
+                </Text>
+              ))}
+            </div>
+          )}
           <Button
             onClick={onConfirmClick}
             className='w-full'
-            disabled={(!isRepay && amount.isZero()) || (isRepay && !canRepay) || isLoading}
-            text={isLoading ? 'Processing...' : isRepay ? 'Repay' : 'Borrow'}
-            rightIcon={isLoading ? undefined : <ArrowRight />}
-            showProgressIndicator={isLoading}
+            disabled={
+              (!isRepay && amount.isZero()) ||
+              (isRepay && !canRepay) ||
+              loadingState.isLoading ||
+              validationErrors.length > 0
+            }
+            text={buttonText}
+            rightIcon={loadingState.isLoading ? undefined : <ArrowRight />}
+            showProgressIndicator={loadingState.isLoading}
           />
         </Card>
         <AccountSummaryInModal account={account} />

@@ -627,6 +627,8 @@ export default function createBroadcastSlice(
 
         if (!routeInfo) return false
 
+        const minReceiveAmount = routeInfo.amountOut.multipliedBy(1 - (options.slippage ?? 0.005))
+
         const swapExactIn = getSwapExactInAction(
           options.coin.toActionCoin(false),
           options.debtDenom,
@@ -666,7 +668,9 @@ export default function createBroadcastSlice(
       const actions: Action[] = [
         {
           repay: {
-            coin: options.coin.toActionCoin(options.accountBalance),
+            coin: options.coin.toActionCoin(
+              options.accountBalance !== undefined ? options.accountBalance : false,
+            ),
           },
         },
       ]
@@ -774,7 +778,7 @@ export default function createBroadcastSlice(
                   {
                     repay: {
                       coin: BNCoin.fromDenomAndBigNumber(options.denomOut, BN_ZERO).toActionCoin(
-                        true, // Always use account_balance for repay
+                        true,
                       ),
                     },
                   },
