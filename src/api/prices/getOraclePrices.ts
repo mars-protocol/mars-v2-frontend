@@ -39,7 +39,6 @@ export default async function getOraclePrices(
 
       const chunkResults = await Promise.all(
         denomChunks.map(async (chunk) => {
-          console.log('querying', { denoms: chunk })
           return await neutronOracleQueryClient.pricesByDenoms({ denoms: chunk })
         }),
       )
