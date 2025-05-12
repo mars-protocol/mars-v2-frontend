@@ -35,7 +35,7 @@ export default async function fetchPythPrices(priceFeedIds: string[], assets: As
           )
           return response
         } catch (error) {
-          console.error('Fallback Pyth API also failed')
+          console.error('Fallback Pyth API also failed', error)
           setApiError(fallbackUrl.toString(), error)
         }
 
