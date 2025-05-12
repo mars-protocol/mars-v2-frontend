@@ -18,22 +18,18 @@ export default async function fetchPythPrices(priceFeedIds: string[], assets: As
   try {
     const pythResponse: PythPriceData[] = await cacheFn(
       async () => {
-        let response = null
-
         try {
-          response = await fetchWithTimeout(pricesUrl.toString(), FETCH_TIMEOUT).then((res) =>
+          return await fetchWithTimeout(pricesUrl.toString(), FETCH_TIMEOUT).then((res) =>
             res.json(),
           )
-          return response
         } catch (error) {
           console.warn('Primary Pyth API failed, falling back to fallback API')
         }
 
         try {
-          response = await fetchWithTimeout(fallbackUrl.toString(), FETCH_TIMEOUT).then((res) =>
+          return await fetchWithTimeout(fallbackUrl.toString(), FETCH_TIMEOUT).then((res) =>
             res.json(),
           )
-          return response
         } catch (error) {
           console.error('Fallback Pyth API also failed')
           setApiError(fallbackUrl.toString(), error)
