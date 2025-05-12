@@ -26,7 +26,7 @@ export default async function fetchPythPrices(priceFeedIds: string[], assets: As
           )
           return response
         } catch (error) {
-          console.warn('Primary Pyth API failed, falling back to fallback API')
+          console.warn('Primary Pyth API failed, falling back to fallback API', error)
         }
 
         try {
