@@ -10,25 +10,36 @@ export default async function fetchPythPrices(priceFeedIds: string[], assets: As
   const pricesUrl = new URL(`${pythEndpoints.api}/latest_price_feeds`)
   const fallbackUrl = new URL(`${pythEndpoints.fallbackApi}/latest_price_feeds`)
 
-  try {
-    priceFeedIds.forEach((id) => {
-      pricesUrl.searchParams.append('ids[]', id)
-      fallbackUrl.searchParams.append('ids[]', id)
-    })
+  priceFeedIds.forEach((id) => {
+    pricesUrl.searchParams.append('ids[]', id)
+    fallbackUrl.searchParams.append('ids[]', id)
+  })
 
+  try {
     const pythResponse: PythPriceData[] = await cacheFn(
       async () => {
-        try {
-          return await fetchWithTimeout(pricesUrl.toString(), FETCH_TIMEOUT).then((res) =>
-            res.json(),
-          )
-        } catch (error) {
-          console.warn('Primary Pyth API failed, falling back to fallback API', error)
+        let response = null
 
-          return await fetchWithTimeout(fallbackUrl.toString(), FETCH_TIMEOUT).then((res) =>
+        try {
+          response = await fetchWithTimeout(pricesUrl.toString(), FETCH_TIMEOUT).then((res) =>
             res.json(),
           )
+          return response
+        } catch (error) {
+          console.warn('Primary Pyth API failed, falling back to fallback API')
         }
+
+        try {
+          response = await fetchWithTimeout(fallbackUrl.toString(), FETCH_TIMEOUT).then((res) =>
+            res.json(),
+          )
+          return response
+        } catch (error) {
+          console.error('Fallback Pyth API also failed')
+          setApiError(fallbackUrl.toString(), error)
+        }
+
+        return [] as PythPriceData[]
       },
       pythPriceCache,
       `pythPrices/${priceFeedIds.flat().join('-')}`,
@@ -49,6 +60,6 @@ export default async function fetchPythPrices(priceFeedIds: string[], assets: As
     return mappedPriceData
   } catch (ex) {
     setApiError(pricesUrl.toString(), ex)
-    throw ex
+    return []
   }
 }
