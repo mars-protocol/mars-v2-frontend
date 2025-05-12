@@ -161,7 +161,7 @@ export default function FeeAction(props: Props) {
                   Fees can only be withdrawn once every{' '}
                   {moment
                     .duration(vaultDetails.performance_fee_config.withdrawal_interval, 'seconds')
-                    .asDays()}
+                    .asDays()}{' '}
                   days.
                 </>
               )}
