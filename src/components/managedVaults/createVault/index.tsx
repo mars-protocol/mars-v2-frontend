@@ -21,6 +21,10 @@ import { getPage, getRoute } from 'utils/route'
 import { TextLink } from 'components/common/TextLink'
 import { useCallback, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import usePrice from 'hooks/prices/usePrice'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { BNCoin } from 'types/classes/BNCoin'
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -61,11 +65,27 @@ export default function CreateVault() {
     return selectableAssets.find(byDenom(selectedDenom)) ?? defaultAsset
   }, [selectableAssets, defaultAsset, selectedDenom])
 
+  const selectedAssetPrice = usePrice(selectedAsset.denom)
+  const creationFeeInAsset = useMemo(() => {
+    if (!selectedAssetPrice || selectedAssetPrice.isZero()) return BN_ZERO
+    return BN(50).dividedBy(selectedAssetPrice)
+  }, [selectedAssetPrice])
+
   const isFormValid = () => {
     return vaultTitle.trim() !== '' && description.trim() !== ''
   }
 
   const assetAmountInWallet = BN(useCurrentWalletBalance(selectedAsset.denom)?.amount || '0')
+  const availableForDeposit = useMemo(() => {
+    const availableAmount = assetAmountInWallet.minus(
+      creationFeeInAsset.shiftedBy(selectedAsset.decimals),
+    )
+    return availableAmount.isGreaterThan(0) ? availableAmount : BN_ZERO
+  }, [assetAmountInWallet, creationFeeInAsset, selectedAsset.decimals])
+
+  const hasEnoughFunds = useMemo(() => {
+    return assetAmountInWallet.isGreaterThan(creationFeeInAsset.shiftedBy(selectedAsset.decimals))
+  }, [assetAmountInWallet, creationFeeInAsset, selectedAsset.decimals])
 
   const handleCreateVaultAccount = useCallback(async () => {
     showAlertDialog({
@@ -219,11 +239,18 @@ export default function CreateVault() {
                   asset={selectedAsset}
                   onChange={handleAmountChange}
                   amount={amount}
-                  max={assetAmountInWallet}
+                  max={availableForDeposit}
                   disabled={isTxPending}
                   className='w-full text-sm space-y-6'
                   maxText='In Wallet'
-                  warningMessages={[]}
+                  warningMessages={
+                    !hasEnoughFunds
+                      ? [
+                          "You currently don't have the needed funds in your wallet to create a vault with this base token.",
+                        ]
+                      : []
+                  }
+                  deductFee={true}
                 />
               </div>
               <Callout type={CalloutType.INFO}>
@@ -231,8 +258,23 @@ export default function CreateVault() {
                 positive TVL.
               </Callout>
               <Text size='xs' className='text-white/50'>
-                <span className='text-white'>Please note: </span>A $50 USD creation fee in your
-                selected vault asset is required and goes straight to the protocol.
+                <span className='text-white'>Please note: </span>Creating a vault comes with a
+                creation fee. You will be charged{' '}
+                <FormattedNumber
+                  amount={creationFeeInAsset.toNumber()}
+                  options={{
+                    maxDecimals: 1,
+                    minDecimals: 1,
+                    suffix: ` ${selectedAsset.symbol}`,
+                  }}
+                  className='inline'
+                />{' '}
+                (~
+                <DisplayCurrency
+                  coin={BNCoin.fromDenomAndBigNumber('usd', BN(50))}
+                  className='inline'
+                />
+                ) on creation.
               </Text>
             </div>
           </div>

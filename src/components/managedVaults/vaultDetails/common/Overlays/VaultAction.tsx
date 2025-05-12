@@ -165,6 +165,7 @@ export default function VaultAction(props: Props) {
             className='w-full'
             maxText={isDeposit ? 'In Wallet' : 'Available to Withdraw'}
             warningMessages={[]}
+            deductFee={isDeposit}
           />
           <Divider className='my-2' />
 
