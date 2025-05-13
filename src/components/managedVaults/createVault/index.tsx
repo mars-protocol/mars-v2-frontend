@@ -27,6 +27,7 @@ import { getPage, getRoute } from 'utils/route'
 import { TextLink } from 'components/common/TextLink'
 import { useCallback, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import WarningMessages from 'components/common/WarningMessages'
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -79,9 +80,11 @@ export default function CreateVault() {
     return availableAmount.isGreaterThan(0) ? availableAmount : BN_ZERO
   }, [assetAmountInWallet, creationFeeInAsset, selectedAsset])
 
-  const hasEnoughFunds = useMemo(() => {
+  const hasInsufficientFunds = useMemo(() => {
     if (!selectedAsset) return false
-    return assetAmountInWallet.isGreaterThan(creationFeeInAsset.shiftedBy(selectedAsset.decimals))
+    return assetAmountInWallet.isLessThanOrEqualTo(
+      creationFeeInAsset.shiftedBy(selectedAsset.decimals),
+    )
   }, [assetAmountInWallet, creationFeeInAsset, selectedAsset])
 
   const handleCreateVaultAccount = useCallback(async () => {
@@ -233,8 +236,8 @@ export default function CreateVault() {
               suffix={<ArrowRight />}
               required
             />
-            <div className='flex flex-col gap-5 pt-2'>
-              <div className='space-y-3'>
+            <div className='flex flex-col gap-3 pt-2'>
+              <div className='space-y-3 pb-2'>
                 <Text size='xs' className='text-white'>
                   Deposit
                 </Text>
@@ -247,13 +250,7 @@ export default function CreateVault() {
                     disabled={isTxPending}
                     className='w-full text-sm space-y-6'
                     maxText='In Wallet'
-                    warningMessages={
-                      !hasEnoughFunds
-                        ? [
-                            "You currently don't have the needed funds in your wallet to create a vault with this base token.",
-                          ]
-                        : []
-                    }
+                    warningMessages={[]}
                     deductFee={true}
                   />
                 ) : (
@@ -266,30 +263,39 @@ export default function CreateVault() {
                 )}
               </div>
               <Callout type={CalloutType.INFO}>
-                Optional deposit: Your vault won't appear in Community Vaults until it has a
-                positive TVL.
+                Optional deposit: It is recommended to deposit some funds into your own vault.
+                Vaults can't perform any action or generate yield until they have funds.
               </Callout>
-              <Text size='xs' className='text-white/50'>
-                <span className='text-white'>Please note: </span>Creating a vault comes with a
-                creation fee. You will be charged{' '}
-                {selectedAsset && (
-                  <FormattedNumber
-                    amount={creationFeeInAsset.toNumber()}
-                    options={{
-                      maxDecimals: 1,
-                      minDecimals: 1,
-                      suffix: ` ${selectedAsset.symbol}`,
-                    }}
+              <div className='flex items-center gap-2'>
+                {hasInsufficientFunds && (
+                  <WarningMessages
+                    messages={[
+                      "You currently don't have the needed funds in your wallet to create a vault with this base token.",
+                    ]}
+                  />
+                )}
+                <Text size='xs' className='text-white/50'>
+                  <span className='text-white'>Please note: </span>Creating a vault comes with a
+                  creation fee. You will be charged{' '}
+                  {selectedAsset && (
+                    <FormattedNumber
+                      amount={creationFeeInAsset.toNumber()}
+                      options={{
+                        maxDecimals: 1,
+                        minDecimals: 1,
+                        suffix: ` ${selectedAsset.symbol}`,
+                      }}
+                      className='inline'
+                    />
+                  )}{' '}
+                  (~
+                  <DisplayCurrency
+                    coin={BNCoin.fromDenomAndBigNumber('usd', BN(50))}
                     className='inline'
                   />
-                )}{' '}
-                (~
-                <DisplayCurrency
-                  coin={BNCoin.fromDenomAndBigNumber('usd', BN(50))}
-                  className='inline'
-                />
-                ) on creation.
-              </Text>
+                  ) on creation.
+                </Text>
+              </div>
             </div>
           </div>
 
