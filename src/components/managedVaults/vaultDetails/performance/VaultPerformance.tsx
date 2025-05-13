@@ -1,4 +1,4 @@
-import PerformanceCard from 'components/managedVaults/vaultDetails/performance/PerformanceCard'
+import VaultMetricsCard from 'components/managedVaults/vaultDetails/performance/VaultMetricsCard'
 import PerformanceChart from 'components/managedVaults/vaultDetails/performance/chart/PerformanceChart'
 import UserMetrics from 'components/managedVaults/vaultDetails/performance/UserMetrics'
 import useStore from 'store'
@@ -17,8 +17,14 @@ export default function VaultPerformance(props: Props) {
   return (
     <div className={classNames(focusComponent ? 'mx-20 min-h-200' : '')}>
       <div className='flex flex-wrap gap-6'>
-        {address && <UserMetrics vaultAddress={vaultAddress} vaultDetails={vaultDetails} />}
-        <PerformanceCard vaultDetails={vaultDetails} vaultAddress={vaultAddress} />
+        {address && (
+          <UserMetrics
+            vaultAddress={vaultAddress}
+            vaultDetails={vaultDetails}
+            userAddress={address}
+          />
+        )}
+        <VaultMetricsCard vaultDetails={vaultDetails} vaultAddress={vaultAddress} />
         <PerformanceChart vaultAddress={vaultAddress} />
       </div>
     </div>

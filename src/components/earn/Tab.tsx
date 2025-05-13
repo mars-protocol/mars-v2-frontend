@@ -31,7 +31,7 @@ export default function Tab(props: Props) {
     <div className={classNames('relative w-full', className)}>
       {tabs.map((tab, index) => (
         <NavLink
-          key={tab.page}
+          key={`${tab.page}-${index}`}
           to={getRoute(tab.page, searchParams, address, accountId)}
           onClick={(e) => {
             if (disableNavigation) {

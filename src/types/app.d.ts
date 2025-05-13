@@ -2024,6 +2024,17 @@ interface ExtendedManagedVaultDetails extends ManagedVaultDetails {
   owner?: string
 }
 
+interface ManagedVaultPnlResponse {
+  total_pnl: string
+  pnl_per_share: string
+  total_shares: string
+}
+
+interface ManagedVaultUserPositionResponse {
+  pnl: string
+  shares: string
+}
+
 interface UserManagedVaultUnlockResponse {
   user_address: string
   created_at: number

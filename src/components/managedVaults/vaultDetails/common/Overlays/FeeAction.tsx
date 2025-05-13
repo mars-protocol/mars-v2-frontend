@@ -6,15 +6,17 @@ import EscButton from 'components/common/Button/EscButton'
 import Overlay from 'components/common/Overlay'
 import PerformanceFee from 'components/managedVaults/createVault/PerformanceFee'
 import Text from 'components/common/Text'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Callout, CalloutType } from 'components/common/Callout'
-import { useState } from 'react'
-import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import { demagnify } from 'utils/formatters'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
-import { demagnify } from 'utils/formatters'
+import { produceCountdown } from 'utils/formatters'
+import { useState } from 'react'
+import moment from 'moment'
 
 interface Props {
   showFeeActionModal: boolean
@@ -43,7 +45,7 @@ export default function FeeAction(props: Props) {
   const isEdit = type === 'edit'
 
   const lastWithdrawalTime = vaultDetails.performance_fee_state.last_withdrawal
-  const currentTime = Math.floor(new Date().getTime() / 1000)
+  const currentTime = moment().unix()
   const withdrawalInterval = vaultDetails.performance_fee_config.withdrawal_interval
   const timeSinceLastWithdrawal = currentTime - lastWithdrawalTime
   const cannotWithdraw = timeSinceLastWithdrawal <= withdrawalInterval
@@ -58,12 +60,15 @@ export default function FeeAction(props: Props) {
 
     setIsTxPending(true)
     try {
+      const feeRate = performanceFee.dividedBy(100).dividedBy(8760).decimalPlaces(18).toString()
+      const withdrawalIntervalSeconds = moment.duration(30, 'days').asSeconds()
+
       const options: PerformanceFeeOptions = {
         vaultAddress,
         ...(isEdit && {
           newFee: {
-            fee_rate: performanceFee.dividedBy(100).dividedBy(8760).decimalPlaces(18).toString(),
-            withdrawal_interval: 24 * 3600,
+            fee_rate: feeRate,
+            withdrawal_interval: withdrawalIntervalSeconds,
           },
         }),
       }
@@ -146,13 +151,19 @@ export default function FeeAction(props: Props) {
         <div className='flex flex-col gap-2'>
           {!isEdit && (
             <Callout type={CalloutType.INFO}>
-              Performance fees can only be withdrawn once every{' '}
-              {vaultDetails.performance_fee_config.withdrawal_interval / 3600} hours.
-              {cannotWithdraw && (
-                <div className='mt-2'>
+              {cannotWithdraw ? (
+                <>
                   Next withdrawal available in{' '}
-                  {Math.ceil((withdrawalInterval - timeSinceLastWithdrawal) / 3600)} hours.
-                </div>
+                  {produceCountdown((withdrawalInterval - timeSinceLastWithdrawal) * 1000)}
+                </>
+              ) : (
+                <>
+                  Fees can only be withdrawn once every{' '}
+                  {moment
+                    .duration(vaultDetails.performance_fee_config.withdrawal_interval, 'seconds')
+                    .asDays()}{' '}
+                  days.
+                </>
               )}
             </Callout>
           )}

@@ -25,6 +25,7 @@ import usePrice from 'hooks/prices/usePrice'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { BNCoin } from 'types/classes/BNCoin'
+import moment from 'moment'
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -106,15 +107,20 @@ export default function CreateVault() {
             const hourlyRate = annualRate.dividedBy(8760)
             const feeRate = hourlyRate.decimalPlaces(18).toString()
 
+            const freezePeriodSeconds = moment
+              .duration(Number(withdrawFreezePeriod), 'hours')
+              .asSeconds()
+            const withdrawalIntervalSeconds = moment.duration(30, 'days').asSeconds()
+
             const vaultParams = {
               title: vaultTitle,
               description: description,
               baseToken: selectedAsset.denom,
-              withdrawFreezePeriod: Number(withdrawFreezePeriod) * 3600,
+              withdrawFreezePeriod: freezePeriodSeconds,
               enableHls: false,
               performanceFee: {
                 fee_rate: feeRate,
-                withdrawal_interval: 24 * 3600,
+                withdrawal_interval: withdrawalIntervalSeconds,
               },
               vault_token_subdenom: `vault_${selectedAsset.symbol.toLowerCase()}`,
             }
