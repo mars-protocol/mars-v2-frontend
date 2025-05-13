@@ -96,7 +96,10 @@ function InputElement(props: InputElementProps) {
         leftIcon={asset && <AssetImage asset={asset} className='w-4 h-4' />}
         rightIcon={<span className='w-4 h-4'>{suffix}</span>}
         text={value}
-        textClassNames='text-left w-full'
+        textClassNames={classNames(
+          'text-left w-full',
+          value === 'Select asset' ? 'text-white/60' : '',
+        )}
       />
     )
 
@@ -112,7 +115,7 @@ function InputElement(props: InputElementProps) {
           onChange(newValue)
         }}
         defaultValue={value}
-        className='relative w-full border rounded-sm bg-white/5 border-white/10 text-white/70'
+        className='relative w-full border rounded-sm bg-white/5 border-white/10 text-sm text-white/70'
         containerClassName='mt-3'
       />
     )
@@ -131,7 +134,7 @@ function InputElement(props: InputElementProps) {
           maxLength={maxLength}
           placeholder={placeholder}
           className={classNames(
-            'w-full px-4 py-3 outline-none border rounded-sm bg-white/5 border-white/10 focus:border-white/20 focus:bg-white/10 hover:cursor-pointer',
+            'w-full px-4 py-3 outline-none border rounded-sm bg-white/5 border-white/10 text-sm focus:border-white/20 focus:bg-white/10 hover:cursor-pointer placeholder:text-white/60',
             suffix && 'pr-6',
           )}
         />

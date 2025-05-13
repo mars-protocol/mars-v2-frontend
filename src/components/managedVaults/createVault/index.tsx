@@ -1,7 +1,10 @@
 import Button from 'components/common/Button'
 import CharacterCount from 'components/common/CharacterCount'
 import CreateVaultContent from 'components/managedVaults/createVault/CreateVaultContent'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import moment from 'moment'
 import PerformanceFee from 'components/managedVaults/createVault/PerformanceFee'
+import Slider from 'components/common/Slider'
 import Text from 'components/common/Text'
 import TextArea from 'components/common/TextArea'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
@@ -9,23 +12,21 @@ import useAlertDialog from 'hooks/common/useAlertDialog'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import useStore from 'store'
+import usePrice from 'hooks/prices/usePrice'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import VaultInputElement from 'components/managedVaults/createVault/VaultInputElement'
 import { ArrowRight, InfoCircle } from 'components/common/Icons'
 import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
 import { byDenom } from 'utils/array'
 import { Callout } from 'components/common/Callout'
 import { CalloutType } from 'components/common/Callout'
+import { FormattedNumber } from 'components/common/FormattedNumber'
 import { getPage, getRoute } from 'utils/route'
 import { TextLink } from 'components/common/TextLink'
 import { useCallback, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import usePrice from 'hooks/prices/usePrice'
-import { FormattedNumber } from 'components/common/FormattedNumber'
-import DisplayCurrency from 'components/common/DisplayCurrency'
-import { BNCoin } from 'types/classes/BNCoin'
-import moment from 'moment'
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -47,48 +48,44 @@ export default function CreateVault() {
   const selectableAssets = useVaultAssets()
   const chainConfig = useChainConfig()
   const { open: showAlertDialog } = useAlertDialog()
-  const defaultAsset = useMemo(
-    () =>
-      selectableAssets.find((asset) => asset.denom === chainConfig.stables[0]) ??
-      selectableAssets[0],
-    [selectableAssets, chainConfig.stables],
-  )
-
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const address = useStore((s) => s.address)
   const createManagedVault = useStore((s) => s.createManagedVault)
   const mintVaultAccount = useStore((s) => s.createAccount)
   const depositInManagedVault = useStore((s) => s.depositInManagedVault)
-  const selectedDenom = useStore((s) => s.vaultAssetsModal?.selectedDenom) ?? defaultAsset.denom
+  const selectedDenom = useStore((s) => s.vaultAssetsModal?.selectedDenom)
 
   const selectedAsset = useMemo(() => {
-    return selectableAssets.find(byDenom(selectedDenom)) ?? defaultAsset
-  }, [selectableAssets, defaultAsset, selectedDenom])
+    return selectedDenom ? selectableAssets.find(byDenom(selectedDenom)) : undefined
+  }, [selectableAssets, selectedDenom])
 
-  const selectedAssetPrice = usePrice(selectedAsset.denom)
+  const selectedAssetPrice = usePrice(selectedAsset?.denom || '')
   const creationFeeInAsset = useMemo(() => {
     if (!selectedAssetPrice || selectedAssetPrice.isZero()) return BN_ZERO
     return BN(50).dividedBy(selectedAssetPrice)
   }, [selectedAssetPrice])
 
   const isFormValid = () => {
-    return vaultTitle.trim() !== '' && description.trim() !== ''
+    return vaultTitle.trim() !== '' && description.trim() !== '' && selectedAsset !== undefined
   }
 
-  const assetAmountInWallet = BN(useCurrentWalletBalance(selectedAsset.denom)?.amount || '0')
+  const assetAmountInWallet = BN(useCurrentWalletBalance(selectedAsset?.denom || '')?.amount || '0')
   const availableForDeposit = useMemo(() => {
+    if (!selectedAsset) return BN_ZERO
     const availableAmount = assetAmountInWallet.minus(
       creationFeeInAsset.shiftedBy(selectedAsset.decimals),
     )
     return availableAmount.isGreaterThan(0) ? availableAmount : BN_ZERO
-  }, [assetAmountInWallet, creationFeeInAsset, selectedAsset.decimals])
+  }, [assetAmountInWallet, creationFeeInAsset, selectedAsset])
 
   const hasEnoughFunds = useMemo(() => {
+    if (!selectedAsset) return false
     return assetAmountInWallet.isGreaterThan(creationFeeInAsset.shiftedBy(selectedAsset.decimals))
-  }, [assetAmountInWallet, creationFeeInAsset, selectedAsset.decimals])
+  }, [assetAmountInWallet, creationFeeInAsset, selectedAsset])
 
   const handleCreateVaultAccount = useCallback(async () => {
+    if (!selectedAsset) return
     showAlertDialog({
       title: 'Create Vault',
       icon: <InfoCircle />,
@@ -197,11 +194,11 @@ export default function CreateVault() {
     useStore.setState({
       vaultAssetsModal: {
         isOpen: true,
-        selectedDenom: selectedAsset.denom,
+        selectedDenom: selectedAsset?.denom || '',
         assets: selectableAssets,
       },
     })
-  }, [selectableAssets, selectedAsset.denom])
+  }, [selectableAssets, selectedAsset?.denom])
 
   const handleAmountChange = (newAmount: BigNumber) => {
     setAmount(newAmount)
@@ -226,7 +223,7 @@ export default function CreateVault() {
             </div>
             <VaultInputElement
               type='button'
-              value={selectedAsset.symbol}
+              value={selectedAsset ? selectedAsset.symbol : 'Select asset'}
               asset={selectedAsset}
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.preventDefault()
@@ -241,23 +238,32 @@ export default function CreateVault() {
                 <Text size='xs' className='text-white'>
                   Deposit
                 </Text>
-                <TokenInputWithSlider
-                  asset={selectedAsset}
-                  onChange={handleAmountChange}
-                  amount={amount}
-                  max={availableForDeposit}
-                  disabled={isTxPending}
-                  className='w-full text-sm space-y-6'
-                  maxText='In Wallet'
-                  warningMessages={
-                    !hasEnoughFunds
-                      ? [
-                          "You currently don't have the needed funds in your wallet to create a vault with this base token.",
-                        ]
-                      : []
-                  }
-                  deductFee={true}
-                />
+                {selectedAsset ? (
+                  <TokenInputWithSlider
+                    asset={selectedAsset}
+                    onChange={handleAmountChange}
+                    amount={amount}
+                    max={availableForDeposit}
+                    disabled={isTxPending}
+                    className='w-full text-sm space-y-6'
+                    maxText='In Wallet'
+                    warningMessages={
+                      !hasEnoughFunds
+                        ? [
+                            "You currently don't have the needed funds in your wallet to create a vault with this base token.",
+                          ]
+                        : []
+                    }
+                    deductFee={true}
+                  />
+                ) : (
+                  <>
+                    <div className='w-full px-4 py-3 text-sm border rounded-sm bg-white/5 border-white/10 text-white/60'>
+                      Please select an asset first
+                    </div>
+                    <Slider value={0} onChange={() => {}} disabled={true} className='mt-6' />
+                  </>
+                )}
               </div>
               <Callout type={CalloutType.INFO}>
                 Optional deposit: Your vault won't appear in Community Vaults until it has a
@@ -266,15 +272,17 @@ export default function CreateVault() {
               <Text size='xs' className='text-white/50'>
                 <span className='text-white'>Please note: </span>Creating a vault comes with a
                 creation fee. You will be charged{' '}
-                <FormattedNumber
-                  amount={creationFeeInAsset.toNumber()}
-                  options={{
-                    maxDecimals: 1,
-                    minDecimals: 1,
-                    suffix: ` ${selectedAsset.symbol}`,
-                  }}
-                  className='inline'
-                />{' '}
+                {selectedAsset && (
+                  <FormattedNumber
+                    amount={creationFeeInAsset.toNumber()}
+                    options={{
+                      maxDecimals: 1,
+                      minDecimals: 1,
+                      suffix: ` ${selectedAsset.symbol}`,
+                    }}
+                    className='inline'
+                  />
+                )}{' '}
                 (~
                 <DisplayCurrency
                   coin={BNCoin.fromDenomAndBigNumber('usd', BN(50))}
