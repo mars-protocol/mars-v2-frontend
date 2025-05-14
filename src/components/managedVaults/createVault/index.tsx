@@ -236,7 +236,7 @@ export default function CreateVault() {
               suffix={<ArrowRight />}
               required
             />
-            <div className='flex flex-col gap-3 pt-2'>
+            <div className='flex flex-col gap-5 pt-2'>
               <div className='space-y-3 pb-2'>
                 <Text size='xs' className='text-white'>
                   Deposit
@@ -266,36 +266,34 @@ export default function CreateVault() {
                 Optional deposit: It is recommended to deposit some funds into your own vault.
                 Vaults can't perform any action or generate yield until they have funds.
               </Callout>
-              <div className='flex items-center gap-2'>
-                {hasInsufficientFunds && (
-                  <WarningMessages
-                    messages={[
-                      "You currently don't have the needed funds in your wallet to create a vault with this base token.",
-                    ]}
-                  />
-                )}
-                <Text size='xs' className='text-white/50'>
-                  <span className='text-white'>Please note: </span>Creating a vault comes with a
-                  creation fee. You will be charged{' '}
-                  {selectedAsset && (
-                    <FormattedNumber
-                      amount={creationFeeInAsset.toNumber()}
-                      options={{
-                        maxDecimals: 1,
-                        minDecimals: 1,
-                        suffix: ` ${selectedAsset.symbol}`,
-                      }}
-                      className='inline'
-                    />
-                  )}{' '}
-                  (~
-                  <DisplayCurrency
-                    coin={BNCoin.fromDenomAndBigNumber('usd', BN(50))}
+
+              <Text size='xs' className='text-white/50'>
+                <span className='text-white'>Please note: </span>Creating a vault comes with a
+                creation fee. You will be charged{' '}
+                {selectedAsset && (
+                  <FormattedNumber
+                    amount={creationFeeInAsset.toNumber()}
+                    options={{
+                      maxDecimals: 1,
+                      minDecimals: 1,
+                      suffix: ` ${selectedAsset.symbol}`,
+                    }}
                     className='inline'
                   />
-                  ) on creation.
-                </Text>
-              </div>
+                )}{' '}
+                (~
+                <DisplayCurrency
+                  coin={BNCoin.fromDenomAndBigNumber('usd', BN(50))}
+                  className='inline'
+                />
+                ) on creation.
+              </Text>
+              {hasInsufficientFunds && (
+                <Callout type={CalloutType.WARNING}>
+                  You currently don't have the needed funds in your wallet to create a vault with
+                  this base token.
+                </Callout>
+              )}
             </div>
           </div>
 
@@ -324,15 +322,6 @@ export default function CreateVault() {
                 required
                 footer={<CharacterCount value={description} maxLength={240} size='xs' />}
               />
-            </div>
-          </div>
-        </div>
-
-        <div className='border border-white/5' />
-
-        <div className='flex flex-wrap items-center justify-between gap-2 px-4 md:px-0'>
-          <div className='max-w-sm'>
-            <div className='flex flex-wrap w-full'>
               <Text size='sm' className='w-full mb-1'>
                 Details of your vault
               </Text>
@@ -361,6 +350,11 @@ export default function CreateVault() {
               </Text>
             </div>
           </div>
+        </div>
+
+        <div className='border border-white/5' />
+
+        <div className='flex justify-end px-4 md:px-0'>
           <Button
             onClick={handleCreateVaultAccount}
             size='md'
