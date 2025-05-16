@@ -19,10 +19,11 @@ interface Props {
 export default function UserMetrics(props: Props) {
   const { vaultAddress, vaultDetails, userAddress } = props
 
-  const { data: userPosition, calculateVaultShare } = useManagedVaultUserPosition(
-    vaultAddress,
-    userAddress,
-  )
+  const {
+    data: userPosition,
+    calculateVaultShare,
+    calculateROI,
+  } = useManagedVaultUserPosition(vaultAddress, userAddress)
   const { data: userVaultTokensAmount } = useManagedVaultConvertToBaseTokens(
     vaultAddress,
     userPosition?.shares ?? '0',
@@ -31,13 +32,6 @@ export default function UserMetrics(props: Props) {
   const sharePercentage = calculateVaultShare(vaultDetails.vault_tokens_amount)
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(vaultDetails.base_tokens_denom)) as Asset
-
-  const calculateROI = (currentBalance: string | number | undefined): number => {
-    if (!userPosition?.pnl || !currentBalance || BN(currentBalance).isZero()) {
-      return 0
-    }
-    return BN(userPosition.pnl).multipliedBy(100).dividedBy(currentBalance).toNumber()
-  }
 
   const metrics = [
     {

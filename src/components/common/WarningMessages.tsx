@@ -2,6 +2,7 @@ import Divider from 'components/common/Divider'
 import { ExclamationMarkTriangle, InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
+import React from 'react'
 
 interface Props {
   messages: string[]
@@ -11,22 +12,20 @@ export default function WarningMessages(props: Props) {
   if (!props.messages.length) return null
 
   return (
-    <div className='grid items-center pr-2 cursor-pointer'>
+    <div className='flex items-center pr-2 cursor-pointer'>
       <Tooltip
         content={
-          <div className='p-2'>
+          <div className='flex flex-col gap-2'>
             {props.messages.map((message, index) => (
-              <div key={message}>
-                <div className='grid grid-cols-[22px,auto] gap-2'>
-                  <InfoCircle />
-                  <div>
-                    <Text size='sm'>{message}</Text>
-                    {index !== props.messages.length - 1 && (
-                      <Divider className='!bg-white/30 my-2' />
-                    )}
-                  </div>
+              <React.Fragment key={message}>
+                <div className='flex items-center gap-1'>
+                  <span className='h-4 w-4'>
+                    <InfoCircle />
+                  </span>
+                  <Text size='xs'>{message}</Text>
                 </div>
-              </div>
+                {index !== props.messages.length - 1 && <Divider className='!bg-white/30 my-1' />}
+              </React.Fragment>
             ))}
           </div>
         }
