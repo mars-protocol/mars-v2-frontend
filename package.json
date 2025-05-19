@@ -65,7 +65,7 @@
     "@eslint/compat": "^1.2.8",
     "@svgr/webpack": "^8.1.0",
     "@tailwindcss/container-queries": "^0.1.1",
-    "@tailwindcss/postcss": "^4.1.4",
+    "@tailwindcss/postcss": "^4.1.7",
     "@types/debounce-promise": "^3.1.9",
     "@types/lodash.debounce": "^4.0.9",
     "@types/lodash.throttle": "^4.1.9",
