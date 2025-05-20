@@ -1334,10 +1334,10 @@ export default function createBroadcastSlice(
             label: `Vault-${params.title}`,
             msg: instantiateMsg,
             funds: [
-              {
-                denom: params.baseToken,
-                amount: params.creationFeeInAsset,
-              },
+              // {
+              //   denom: params.baseToken,
+              //   amount: params.creationFeeInAsset,
+              // },
             ],
           }),
         ]
