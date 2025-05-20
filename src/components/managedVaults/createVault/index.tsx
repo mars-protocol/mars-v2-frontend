@@ -26,7 +26,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { getPage, getRoute } from 'utils/route'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { TextLink } from 'components/common/TextLink'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
 const options = [
@@ -45,6 +45,7 @@ export default function CreateVault() {
   const [vaultTitle, setVaultTitle] = useState<string>('')
   const [performanceFee, setPerformanceFee] = useState<BigNumber>(BN(1))
   const [amount, setAmount] = useState(BN_ZERO)
+  const [pendingVault, setPendingVault] = useState<any>(null)
 
   const selectableAssets = useVaultAssets()
   const chainConfig = useChainConfig()
@@ -135,6 +136,13 @@ export default function CreateVault() {
             if (!result) return
 
             if (result.address) {
+              const pendingVaultData = {
+                address: result.address,
+                amount: amount.toString(),
+                status: 'pending_account_mint',
+              }
+              localStorage.setItem('pendingVaultMint', JSON.stringify(pendingVaultData))
+
               const accountKind = {
                 fund_manager: {
                   vault_addr: result.address,
@@ -213,8 +221,37 @@ export default function CreateVault() {
     setAmount(newAmount)
   }
 
+  useEffect(() => {
+    const storedPendingVault = localStorage.getItem('pendingVaultMint')
+    if (storedPendingVault) {
+      try {
+        const parsedVault = JSON.parse(storedPendingVault)
+        setPendingVault(parsedVault)
+      } catch (error) {
+        console.error('Failed to parse pending vault data:', error)
+        localStorage.removeItem('pendingVaultMint')
+      }
+    }
+  }, [])
+
   return (
     <CreateVaultContent>
+      {pendingVault && (
+        <Callout type={CalloutType.INFO} className='mb-6'>
+          <div className='flex justify-between items-center gap-2'>
+            <Text size='sm' className='text-white'>
+              You have an incomplete vault setup. Would you like to continue where you left off?
+            </Text>
+            <Button
+              onClick={() => {
+                console.log('Recover vault:', pendingVault)
+              }}
+              size='sm'
+              text='Continue Setup'
+            />
+          </div>
+        </Callout>
+      )}
       <form className='flex flex-col space-y-6' onSubmit={(e) => e.preventDefault()}>
         <div className='flex flex-col gap-8 md:flex-row'>
           <div className='flex-1 space-y-2'>
@@ -294,7 +331,7 @@ export default function CreateVault() {
                 />
                 ) on creation.
               </Text>
-              {hasInsufficientFunds && (
+              {hasInsufficientFunds && !isTxPending && (
                 <Callout type={CalloutType.WARNING}>
                   You currently don't have the needed funds in your wallet to create a vault with
                   this base token.
