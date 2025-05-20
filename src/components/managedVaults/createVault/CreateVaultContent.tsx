@@ -14,8 +14,8 @@ export default function CreateVaultContent(props: Props) {
   const address = useStore((s) => s.address)
 
   return (
-    <div className='container mx-auto py-8 max-w-4xl'>
-      <div className='flex items-center mb-6'>
+    <div className='container mx-auto py-4 max-w-4xl'>
+      <div className='flex items-center mb-2'>
         <NavigateBackButton />
       </div>
 
@@ -24,7 +24,8 @@ export default function CreateVaultContent(props: Props) {
           Create Vault
         </Text>
         <Text size='sm' className='w-full text-center text-white/60'>
-          We'll require you to authorise a transaction in your wallet in order to begin.
+          Creating your vault requires three separate transactions: vault creation with a $50 fee,
+          account minting, and optional fund deposit.
         </Text>
       </div>
 

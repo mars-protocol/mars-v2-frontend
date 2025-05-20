@@ -6,6 +6,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import useSWR from 'swr'
 import { useMemo } from 'react'
+import { BN } from 'utils/helpers'
 
 export default function useManagedVaults() {
   const chainConfig = useChainConfig()
@@ -32,6 +33,10 @@ export default function useManagedVaults() {
 
             return {
               ...vault,
+              fee_rate: BN(details.performance_fee_config.fee_rate)
+                .multipliedBy(8760)
+                .multipliedBy(100)
+                .toNumber(),
               base_tokens_denom: details.base_token,
               base_tokens_amount: details.total_base_tokens,
               vault_tokens_denom: details.vault_token,
@@ -63,18 +68,23 @@ export default function useManagedVaults() {
       }
     }
 
+    // Filter out unfunded vaults (those with zero total_base_tokens)
+    const fundedVaults = vaultsResponse.filter((vault) =>
+      BN(vault.base_tokens_amount).isGreaterThan(0),
+    )
+
     return {
-      ownedVaults: address ? vaultsResponse.filter((vault) => vault.isOwner) : [],
+      ownedVaults: address ? fundedVaults.filter((vault) => vault.isOwner) : [],
       depositedVaults: address
-        ? vaultsResponse.filter(
+        ? fundedVaults.filter(
             (vault) => !vault.isOwner && vaultDeposits.get(vault.vault_tokens_denom) === true,
           )
         : [],
       availableVaults: address
-        ? vaultsResponse.filter(
+        ? fundedVaults.filter(
             (vault) => !vault.isOwner && vaultDeposits.get(vault.vault_tokens_denom) !== true,
           )
-        : vaultsResponse,
+        : fundedVaults,
     }
   }, [vaultsResponse, vaultDeposits, address, error, fallbackUserVaults])
 

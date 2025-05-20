@@ -470,7 +470,6 @@ type Page =
   | 'vaults'
   | 'vaults/create'
   | 'vaults/{vaultId}'
-  | 'vaults/{vaultId}/mint-account'
   | 'vaults/{vaultId}/details'
   | 'governance'
   | 'execute'
@@ -1944,6 +1943,7 @@ interface VaultParams {
     withdrawal_interval: number
   }
   vault_token_subdenom: string
+  creationFeeInAsset: string
 }
 
 interface ManagedVaultsDataResponse {
@@ -1963,6 +1963,7 @@ interface ManagedVaultWithDetails extends ManagedVaultsDataResponse {
   base_tokens_amount: string
   vault_tokens_denom: string
   vault_tokens_amount: string
+  fee_rate: number
   isOwner: boolean
 }
 
