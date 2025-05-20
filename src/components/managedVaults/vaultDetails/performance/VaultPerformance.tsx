@@ -15,7 +15,7 @@ export default function VaultPerformance(props: Props) {
   const address = useStore((s) => s.address)
 
   return (
-    <div className={classNames(focusComponent ? 'mx-20 min-h-200' : '')}>
+    <div className={classNames(focusComponent ? 'md:mx-20 min-h-200' : '')}>
       <div className='flex flex-wrap gap-6'>
         {address && (
           <UserMetrics

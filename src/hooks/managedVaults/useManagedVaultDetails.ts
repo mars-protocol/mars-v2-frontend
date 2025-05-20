@@ -83,7 +83,7 @@ export function useManagedVaultDetails(vaultAddress?: string) {
       fee_rate: BN(details.performance_fee_config.fee_rate)
         .multipliedBy(8760)
         .multipliedBy(100)
-        .toNumber()
+        .integerValue(BN.ROUND_CEIL)
         .toString(),
     },
     share_price: details.share_price,
