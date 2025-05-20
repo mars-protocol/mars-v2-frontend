@@ -1943,6 +1943,7 @@ interface VaultParams {
     withdrawal_interval: number
   }
   vault_token_subdenom: string
+  creationFeeInAsset: string
 }
 
 interface ManagedVaultsDataResponse {

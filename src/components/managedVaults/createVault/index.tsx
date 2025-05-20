@@ -24,10 +24,10 @@ import { Callout } from 'components/common/Callout'
 import { CalloutType } from 'components/common/Callout'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { getPage, getRoute } from 'utils/route'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { TextLink } from 'components/common/TextLink'
 import { useCallback, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import WarningMessages from 'components/common/WarningMessages'
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -111,6 +111,10 @@ export default function CreateVault() {
               .duration(Number(withdrawFreezePeriod), 'hours')
               .asSeconds()
             const withdrawalIntervalSeconds = moment.duration(30, 'days').asSeconds()
+            const creationFee = creationFeeInAsset
+              .multipliedBy(1.01)
+              .shiftedBy(PRICE_ORACLE_DECIMALS)
+              .toFixed(0)
 
             const vaultParams = {
               title: vaultTitle,
@@ -123,6 +127,7 @@ export default function CreateVault() {
                 withdrawal_interval: withdrawalIntervalSeconds,
               },
               vault_token_subdenom: `vault_${selectedAsset.symbol.toLowerCase()}`,
+              creationFeeInAsset: creationFee,
             }
 
             const result = await createManagedVault(vaultParams)
@@ -176,6 +181,7 @@ export default function CreateVault() {
     address,
     amount,
     chainConfig,
+    creationFeeInAsset,
     createManagedVault,
     depositInManagedVault,
     description,
