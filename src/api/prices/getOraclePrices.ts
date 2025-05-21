@@ -13,17 +13,47 @@ function getAssetPrice(asset: Asset, priceResult: PriceResponse): BNCoin {
   return BNCoin.fromDenomAndBigNumber(asset.denom, price.shiftedBy(decimalDiff))
 }
 
+function chunkArray<T>(array: T[], chunkSize: number): T[][] {
+  const chunks: T[][] = []
+  for (let i = 0; i < array.length; i += chunkSize) {
+    chunks.push(array.slice(i, i + chunkSize))
+  }
+  return chunks
+}
+
 export default async function getOraclePrices(
   chainConfig: ChainConfig,
   assets: Asset[],
 ): Promise<BNCoin[]> {
-  const oracleQueryClient = chainConfig.isOsmosis
-    ? await getOracleQueryClientOsmosis(chainConfig)
-    : await getOracleQueryClientNeutron(chainConfig)
+  if (!assets.length) return []
   try {
-    if (!assets.length) return []
+    let priceResults: PriceResponse[] = []
+    if (chainConfig.isOsmosis) {
+      const osmosisOracleQueryClient = await getOracleQueryClientOsmosis(chainConfig)
+      priceResults = await iterateContractQuery(osmosisOracleQueryClient.prices)
+    } else {
+      const neutronOracleQueryClient = await getOracleQueryClientNeutron(chainConfig)
+      const denoms = assets.map((asset) => asset.denom)
 
-    const priceResults = await iterateContractQuery(oracleQueryClient.prices)
+      const denomChunks = chunkArray(denoms, 3)
+
+      const chunkResults = await Promise.all(
+        denomChunks.map(async (chunk) => {
+          return await neutronOracleQueryClient.pricesByDenoms({ denoms: chunk, kind: 'default' })
+        }),
+      )
+
+      priceResults = chunkResults.reduce((acc: PriceResponse[], result) => {
+        if (result && typeof result === 'object') {
+          const priceEntries = Object.entries(result).map(([denom, price]) => ({
+            denom,
+            price: String(price),
+          })) as PriceResponse[]
+          return [...acc, ...priceEntries]
+        }
+        return acc
+      }, [])
+    }
 
     return assets.map((asset) => {
       const priceResponse = priceResults.find(byDenom(asset.denom)) as PriceResponse
@@ -32,9 +62,12 @@ export default async function getOraclePrices(
   } catch (error) {
     console.error(error)
     try {
+      const queryClient = chainConfig.isOsmosis
+        ? await getOracleQueryClientOsmosis(chainConfig)
+        : await getOracleQueryClientNeutron(chainConfig)
       return Promise.all(
         assets.map(async (asset) => {
-          const priceResponse = await oracleQueryClient.price({ denom: asset.denom })
+          const priceResponse = await queryClient.price({ denom: asset.denom })
           return getAssetPrice(asset, priceResponse)
         }),
       )
