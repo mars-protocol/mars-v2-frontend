@@ -17,7 +17,7 @@ export const DETAILS_META = {
   accessorKey: 'details',
   header: '',
   enableSorting: false,
-  meta: { className: 'w-40' },
+  meta: { className: 'w-48' },
 }
 
 interface Props {

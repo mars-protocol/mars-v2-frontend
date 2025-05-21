@@ -7,14 +7,23 @@ import TVL, { TVL_META } from 'components/managedVaults/table/column/TVL'
 import Details, { DETAILS_META } from 'components/managedVaults/table/column/Details'
 import { useMemo } from 'react'
 import { convertAprToApy } from 'utils/parsers'
+import Button from 'components/common/Button'
+import useStore from 'store'
 
 interface Props {
   isLoading: boolean
   showPosition?: boolean
+  pendingVault?: {
+    address: string
+    amount: string
+    status: string
+  } | null
 }
 
 export default function useCommunityVaultsColumns(props: Props) {
-  const { isLoading, showPosition } = props
+  const { isLoading, showPosition, pendingVault } = props
+  const mintVaultAccount = useStore((s) => s.createAccount)
+  const depositInManagedVault = useStore((s) => s.depositInManagedVault)
 
   return useMemo<ColumnDef<ManagedVaultWithDetails>[]>(() => {
     return [
@@ -59,9 +68,14 @@ export default function useCommunityVaultsColumns(props: Props) {
       },
       {
         ...DETAILS_META,
-        cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => (
-          <Details isLoading={isLoading} vault={row.original} />
-        ),
+        cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) =>
+          row.original.isPending ? (
+            <div className='flex items-center justify-end'>
+              <Button onClick={() => {}} text='Continue Setup' />
+            </div>
+          ) : (
+            <Details isLoading={isLoading} vault={row.original} />
+          ),
       },
     ]
   }, [isLoading, showPosition])

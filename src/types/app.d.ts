@@ -1965,6 +1965,7 @@ interface ManagedVaultWithDetails extends ManagedVaultsDataResponse {
   vault_tokens_amount: string
   fee_rate: number
   isOwner: boolean
+  isPending?: boolean
 }
 
 interface ManagedVaultSCDetailsResponse {
