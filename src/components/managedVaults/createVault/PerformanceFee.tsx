@@ -20,18 +20,16 @@ const fees = [
 interface Props {
   value: BigNumber
   onChange: (fee: BigNumber) => void
-  disabled?: boolean
 }
 
 export default function PerformanceFee(props: Props) {
-  const { value, onChange, disabled = false } = props
+  const { value, onChange } = props
 
   const handleFeeClick = (
     fee: BigNumber,
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault()
-    if (disabled) return
     onChange(fee)
   }
 
@@ -49,25 +47,16 @@ export default function PerformanceFee(props: Props) {
         max={BN(40)}
         maxLength={2}
         placeholder='Enter fee'
-        disabled={disabled}
-        className={classNames(
-          'px-4 py-3 rounded-sm bg-white/5 !border-solid border border-white/10 focus:border-white/20 focus:bg-white/10 !text-left text-sm',
-          disabled && 'opacity-50 cursor-not-allowed',
-        )}
+        className='px-4 py-3 rounded-sm bg-white/5 !border-solid border border-white/10 focus:border-white/20 focus:bg-white/10 !text-left text-sm'
       />
       <div className='flex gap-2 justify-evenly'>
         {fees.map((fee, index) => (
           <Button
             onClick={(event) => handleFeeClick(fee.value, event)}
             color='secondary'
-            className={classNames(
-              'w-full min-w-0',
-              value.isEqualTo(fee.value) && 'bg-white/20',
-              disabled && 'opacity-50 cursor-not-allowed',
-            )}
+            className={classNames('w-full min-w-0', value.isEqualTo(fee.value) && 'bg-white/20')}
             text={fee.label}
             key={index}
-            disabled={disabled}
           />
         ))}
       </div>

@@ -24,7 +24,6 @@ export default function useManagedVaults() {
     }
   }, [])
 
-  console.log(pendingVault, 'pendingVault')
   const {
     data: vaultsResponse,
     isLoading,
