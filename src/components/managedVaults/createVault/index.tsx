@@ -26,8 +26,16 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { getPage, getRoute } from 'utils/route'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { TextLink } from 'components/common/TextLink'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { getManagedVaultDetails } from 'api/cosmwasm-client'
+import classNames from 'classnames'
+
+interface PendingVaultData {
+  address: string
+  creatorAddress: string
+  status: 'pending_account_mint'
+}
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -45,7 +53,7 @@ export default function CreateVault() {
   const [vaultTitle, setVaultTitle] = useState<string>('')
   const [performanceFee, setPerformanceFee] = useState<BigNumber>(BN(1))
   const [amount, setAmount] = useState(BN_ZERO)
-  const [pendingVault, setPendingVault] = useState<any>(null)
+  const [pendingVault, setPendingVault] = useState<PendingVaultData | null>(null)
 
   const selectableAssets = useVaultAssets()
   const chainConfig = useChainConfig()
@@ -136,10 +144,15 @@ export default function CreateVault() {
             if (!result) return
 
             if (result.address) {
-              const pendingVaultData = {
+              if (!address) {
+                setIsTxPending(false)
+                return
+              }
+
+              const pendingVaultData: PendingVaultData = {
                 address: result.address,
-                amount: amount.toString(),
-                status: 'pending_account_mint',
+                creatorAddress: address,
+                status: 'pending_account_mint' as const,
               }
               localStorage.setItem('pendingVaultMint', JSON.stringify(pendingVaultData))
 
@@ -152,8 +165,12 @@ export default function CreateVault() {
 
               if (!vaultAccountId) {
                 setIsTxPending(false)
+                setPendingVault(pendingVaultData)
                 return
               }
+
+              localStorage.removeItem('pendingVaultMint')
+              setPendingVault(null)
 
               const depositResult = await depositInManagedVault({
                 vaultAddress: result.address,
@@ -221,22 +238,28 @@ export default function CreateVault() {
     setAmount(newAmount)
   }
 
-  useEffect(() => {
-    const storedPendingVault = localStorage.getItem('pendingVaultMint')
-    if (storedPendingVault) {
+  const fetchVaultDetails = useCallback(
+    async (vaultAddress: string) => {
       try {
-        const parsedVault = JSON.parse(storedPendingVault)
-        setPendingVault(parsedVault)
+        const vaultDetails = await getManagedVaultDetails(chainConfig, vaultAddress)
+        if (vaultDetails) {
+          setVaultTitle(vaultDetails.title)
+          setDescription(vaultDetails.description)
+          setPerformanceFee(
+            BN(vaultDetails.performance_fee_config.fee_rate).multipliedBy(8760).multipliedBy(100),
+          )
+          setWithdrawFreezePeriod(vaultDetails.cooldown_period.toString())
+        }
       } catch (error) {
-        console.error('Failed to parse pending vault data:', error)
-        localStorage.removeItem('pendingVaultMint')
+        console.error('Failed to fetch vault details:', error)
       }
-    }
-  }, [])
+    },
+    [chainConfig],
+  )
 
   return (
     <CreateVaultContent>
-      {pendingVault && (
+      {localStorage.getItem('pendingVaultMint') && (
         <Callout type={CalloutType.INFO} className='mb-6'>
           <div className='flex justify-between items-center gap-2'>
             <Text size='sm' className='text-white'>
@@ -244,7 +267,12 @@ export default function CreateVault() {
             </Text>
             <Button
               onClick={() => {
-                console.log('Recover vault:', pendingVault)
+                const storedPendingVault = localStorage.getItem('pendingVaultMint')
+                if (storedPendingVault) {
+                  const parsedVault = JSON.parse(storedPendingVault)
+                  setPendingVault(parsedVault)
+                  fetchVaultDetails(parsedVault.address)
+                }
               }}
               size='sm'
               text='Continue Setup'
@@ -253,7 +281,7 @@ export default function CreateVault() {
         </Callout>
       )}
       <form className='flex flex-col space-y-6' onSubmit={(e) => e.preventDefault()}>
-        <div className='flex flex-col gap-8 md:flex-row'>
+        <div className={classNames('flex flex-col gap-8 md:flex-row', pendingVault ? '' : '')}>
           <div className='flex-1 space-y-2'>
             <div className='flex flex-col gap-2'>
               <VaultInputElement
@@ -264,6 +292,7 @@ export default function CreateVault() {
                 placeholder='Enter vault title'
                 maxLength={30}
                 required
+                disabled={!!pendingVault}
               />
               <CharacterCount value={vaultTitle} maxLength={30} size='xs' />
             </div>
@@ -278,6 +307,7 @@ export default function CreateVault() {
               label='Vault Deposit Asset'
               suffix={<ArrowRight />}
               required
+              disabled={!!pendingVault}
             />
             <div className='flex flex-col gap-5 pt-2'>
               <div className='space-y-3 pb-2'>
@@ -343,7 +373,11 @@ export default function CreateVault() {
           <div className='border border-white/5' />
 
           <div className='flex-1 space-y-6'>
-            <PerformanceFee value={performanceFee} onChange={setPerformanceFee} />
+            <PerformanceFee
+              value={performanceFee}
+              onChange={setPerformanceFee}
+              disabled={!!pendingVault}
+            />
 
             <VaultInputElement
               type='dropdown'
@@ -351,6 +385,7 @@ export default function CreateVault() {
               value={withdrawFreezePeriod}
               onChange={handleWithdrawFreezePeriod}
               label='Withdraw Freeze Period'
+              disabled={!!pendingVault}
             />
             <div>
               <label className='flex items-center text-xs'>
@@ -363,6 +398,7 @@ export default function CreateVault() {
                 maxLength={240}
                 placeholder='Enter a detailed description...'
                 required
+                disabled={!!pendingVault}
                 footer={<CharacterCount value={description} maxLength={240} size='xs' />}
               />
               <Text size='sm' className='w-full mb-1'>
@@ -403,7 +439,7 @@ export default function CreateVault() {
             size='md'
             rightIcon={<ArrowRight />}
             className='w-full md:w-70'
-            text='Create Vault Account'
+            text={pendingVault ? 'Continue Minting Vault' : 'Create Vault Account'}
             disabled={isTxPending || !isFormValid()}
             showProgressIndicator={isTxPending}
           />

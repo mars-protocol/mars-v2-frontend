@@ -14,6 +14,7 @@ interface Props {
   placeholder?: string
   label?: string
   required?: boolean
+  disabled?: boolean
   onChange?: (value: string) => void
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
@@ -35,6 +36,7 @@ export default function VaultInputElement(props: Props) {
     placeholder,
     label,
     required,
+    disabled = false,
   } = props
 
   const [inputValue, setInputValue] = useState(value)
@@ -68,6 +70,7 @@ export default function VaultInputElement(props: Props) {
         placeholder={placeholder}
         onChange={handleChange}
         onClick={onClick}
+        disabled={disabled}
       />
     </div>
   )
@@ -85,6 +88,7 @@ function InputElement(props: InputElementProps) {
     onChange = () => {},
     onClick,
     placeholder,
+    disabled = false,
   } = props
 
   if (type === 'button')
@@ -92,7 +96,10 @@ function InputElement(props: InputElementProps) {
       <Button
         onClick={onClick}
         color='secondary'
-        className='w-full px-4 py-3 mt-3 bg-white/5 !border !border-white/10 hover:cursor-pointer '
+        className={classNames(
+          'w-full px-4 py-3 mt-3 bg-white/5 !border !border-white/10 hover:cursor-pointer',
+          disabled && 'opacity-50 cursor-not-allowed',
+        )}
         leftIcon={asset && <AssetImage asset={asset} className='w-4 h-4' />}
         rightIcon={<span className='w-4 h-4'>{suffix}</span>}
         text={value}
@@ -100,6 +107,7 @@ function InputElement(props: InputElementProps) {
           'text-left w-full',
           value === 'Select asset' ? 'text-white/60' : '',
         )}
+        disabled={disabled}
       />
     )
 
@@ -115,8 +123,12 @@ function InputElement(props: InputElementProps) {
           onChange(newValue)
         }}
         defaultValue={value}
-        className='relative w-full border rounded-sm bg-white/5 border-white/10 text-sm text-white/70'
+        className={classNames(
+          'relative w-full border rounded-sm bg-white/5 border-white/10 text-sm text-white/70',
+          disabled && 'opacity-50',
+        )}
         containerClassName='mt-3'
+        disabled={disabled}
       />
     )
 
@@ -133,9 +145,11 @@ function InputElement(props: InputElementProps) {
           }}
           maxLength={maxLength}
           placeholder={placeholder}
+          disabled={disabled}
           className={classNames(
             'w-full px-4 py-3 outline-none border rounded-sm bg-white/5 border-white/10 text-sm focus:border-white/20 focus:bg-white/10 hover:cursor-pointer placeholder:text-white/60',
             suffix && 'pr-6',
+            disabled && 'opacity-50 hover:cursor-not-allowed',
           )}
         />
         {suffix && (

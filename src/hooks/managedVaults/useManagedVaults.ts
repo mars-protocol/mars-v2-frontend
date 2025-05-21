@@ -53,7 +53,7 @@ export default function useManagedVaults() {
               vault_tokens_denom: details.vault_token,
               vault_tokens_amount: details.total_vault_tokens,
               isOwner: owner === address,
-              isPending: pendingVault.address === vault.vault_address,
+              isPending: pendingVault?.address === vault.vault_address,
             } as ManagedVaultWithDetails
           }),
         )
