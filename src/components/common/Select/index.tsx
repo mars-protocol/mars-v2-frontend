@@ -18,7 +18,6 @@ interface Props {
   label?: string
   displayClassName?: string
   containerClassName?: string
-  disabled?: boolean
 }
 
 export default function Select(props: Props) {
@@ -33,7 +32,6 @@ export default function Select(props: Props) {
 
   const handleChange = useCallback(
     (optionValue: string) => {
-      if (props.disabled) return
       setValue(optionValue)
       const option = props.options.find(
         (option) => option?.value === optionValue || option?.denom === optionValue,
@@ -70,7 +68,6 @@ export default function Select(props: Props) {
   }, [props.options, selected, handleChange])
 
   const handleToggleDropdown = useCallback(() => {
-    if (props.disabled) return
     if (!showDropdown) {
       setIsAssetsLoading(true)
       setShowDropdown(true)
@@ -78,7 +75,7 @@ export default function Select(props: Props) {
     } else {
       setShowDropdown(false)
     }
-  }, [showDropdown, setShowDropdown, getSortedOptions, props.disabled])
+  }, [showDropdown, setShowDropdown, getSortedOptions])
 
   useEffect(() => {
     if (selectedOption && !selected) setSelected(selectedOption)
@@ -104,7 +101,6 @@ export default function Select(props: Props) {
         className={classNames(
           props.isParent && 'relative',
           'flex min-w-fit items-center gap-2 bg-white/10',
-          props.disabled && 'opacity-50 cursor-not-allowed',
           props.className,
         )}
         role='select'
@@ -122,7 +118,6 @@ export default function Select(props: Props) {
             className={classNames(
               'flex items-center gap-2 bg-white/10 p-3',
               'hover:cursor-pointer',
-              props.disabled && 'cursor-not-allowed',
             )}
           >
             <Text className='w-full opacity-50 hover:cursor-pointer'>Select</Text>

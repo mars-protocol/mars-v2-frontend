@@ -1,14 +1,14 @@
 import Button from 'components/common/Button'
-import { ArrowRight } from 'components/common/Icons'
-import Text from 'components/common/Text'
-import Overlay from 'components/common/Overlay'
 import classNames from 'classnames'
 import EscButton from 'components/common/Button/EscButton'
-import { useState } from 'react'
-import useStore from 'store'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import Overlay from 'components/common/Overlay'
+import Text from 'components/common/Text'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import useStore from 'store'
+import { ArrowRight } from 'components/common/Icons'
 import { getPage, getRoute } from 'utils/route'
+import { useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 interface Props {
   onClose: () => void
@@ -100,9 +100,9 @@ export default function PendingVaultMint(props: Props) {
     <Overlay
       show={true}
       setShow={onClose}
-      className='fixed md:absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full md:w-100 max-w-md'
+      className='fixed md:absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full md:w-100'
     >
-      <div className='flex justify-end w-full p-2'>
+      <div className='flex justify-end p-2 w-full'>
         <EscButton onClick={onClose} enableKeyPress />
       </div>
       <div className='px-8 pb-6 pt-4 flex flex-col justify-between gap-16 h-full'>
@@ -125,7 +125,10 @@ export default function PendingVaultMint(props: Props) {
                 </div>
                 <Text
                   size='sm'
-                  className={`${step.isActive ? 'text-white' : 'text-white/60'} text-center`}
+                  className={classNames(
+                    'text-center',
+                    step.isActive ? 'text-white' : 'text-white/60',
+                  )}
                 >
                   {step.label}
                 </Text>
