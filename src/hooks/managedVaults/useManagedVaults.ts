@@ -6,7 +6,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import useSWR from 'swr'
 import { useMemo } from 'react'
-import { BN } from 'utils/helpers'
+import BN from 'bignumber.js'
 
 export default function useManagedVaults() {
   const chainConfig = useChainConfig()
@@ -46,6 +46,7 @@ export default function useManagedVaults() {
               fee_rate: BN(details.performance_fee_config.fee_rate)
                 .multipliedBy(8760)
                 .multipliedBy(100)
+                .integerValue(BN.ROUND_HALF_UP)
                 .toNumber(),
               base_tokens_denom: details.base_token,
               base_tokens_amount: details.total_base_tokens,
@@ -74,6 +75,7 @@ export default function useManagedVaults() {
               fee_rate: BN(details.performance_fee_config.fee_rate)
                 .multipliedBy(8760)
                 .multipliedBy(100)
+                .integerValue(BN.ROUND_HALF_UP)
                 .toNumber(),
               fee: '0',
               tvl: '0',

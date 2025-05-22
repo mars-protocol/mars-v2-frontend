@@ -3,7 +3,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import useSWR from 'swr'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
-import { BN } from 'utils/helpers'
+import BN from 'bignumber.js'
 import { useMemo } from 'react'
 
 export function useDepositedManagedVaultsFallback() {
@@ -51,6 +51,7 @@ export function useDepositedManagedVaultsFallback() {
               fee_rate: BN(details.performance_fee_config.fee_rate)
                 .multipliedBy(8760)
                 .multipliedBy(100)
+                .integerValue(BN.ROUND_HALF_UP)
                 .toNumber(),
               fee: '0',
               tvl: '0',
@@ -83,6 +84,7 @@ export function useDepositedManagedVaultsFallback() {
             fee_rate: BN(details.performance_fee_config.fee_rate)
               .multipliedBy(8760)
               .multipliedBy(100)
+              .integerValue(BN.ROUND_HALF_UP)
               .toNumber(),
             fee: '0',
             tvl: '0',
