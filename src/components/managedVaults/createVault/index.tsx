@@ -4,6 +4,7 @@ import CreateVaultContent from 'components/managedVaults/createVault/CreateVault
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import moment from 'moment'
 import PerformanceFee from 'components/managedVaults/createVault/PerformanceFee'
+import PendingVaultMint from 'components/managedVaults/createVault/PendingVaultMint'
 import Slider from 'components/common/Slider'
 import Text from 'components/common/Text'
 import TextArea from 'components/common/TextArea'
@@ -26,8 +27,16 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { getPage, getRoute } from 'utils/route'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { TextLink } from 'components/common/TextLink'
-import { useCallback, useMemo, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import classNames from 'classnames'
+
+interface PendingVaultData {
+  address: string
+  creatorAddress: string
+  status: 'pending_account_mint'
+  depositAmount: string
+}
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -45,12 +54,14 @@ export default function CreateVault() {
   const [vaultTitle, setVaultTitle] = useState<string>('')
   const [performanceFee, setPerformanceFee] = useState<BigNumber>(BN(1))
   const [amount, setAmount] = useState(BN_ZERO)
+  const [pendingVault, setPendingVault] = useState<PendingVaultData | null>(null)
 
   const selectableAssets = useVaultAssets()
   const chainConfig = useChainConfig()
   const { open: showAlertDialog } = useAlertDialog()
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const address = useStore((s) => s.address)
   const createManagedVault = useStore((s) => s.createManagedVault)
   const mintVaultAccount = useStore((s) => s.createAccount)
@@ -135,6 +146,19 @@ export default function CreateVault() {
             if (!result) return
 
             if (result.address) {
+              if (!address) {
+                setIsTxPending(false)
+                return
+              }
+
+              const pendingVaultData: PendingVaultData = {
+                address: result.address,
+                creatorAddress: address,
+                status: 'pending_account_mint' as const,
+                depositAmount: amount.toString(),
+              }
+              localStorage.setItem('pendingVaultMint', JSON.stringify(pendingVaultData))
+
               const accountKind = {
                 fund_manager: {
                   vault_addr: result.address,
@@ -144,18 +168,17 @@ export default function CreateVault() {
 
               if (!vaultAccountId) {
                 setIsTxPending(false)
+                setPendingVault(pendingVaultData)
                 return
               }
 
-              const depositResult = await depositInManagedVault({
+              localStorage.removeItem('pendingVaultMint')
+              setPendingVault(null)
+
+              await depositInManagedVault({
                 vaultAddress: result.address,
                 amount: amount.toString(),
               })
-
-              if (!depositResult) {
-                setIsTxPending(false)
-                return
-              }
 
               navigate(
                 getRoute(
@@ -213,10 +236,77 @@ export default function CreateVault() {
     setAmount(newAmount)
   }
 
+  const getStoredVaultData = () => {
+    const storedVault = localStorage.getItem('pendingVaultMint')
+    if (!storedVault) return null
+
+    try {
+      return JSON.parse(storedVault)
+    } catch {
+      return null
+    }
+  }
+
+  const hasIncompleteVaultSetup = (() => {
+    const parsedVault = getStoredVaultData()
+    if (!parsedVault || pendingVault || isTxPending) return false
+    return parsedVault.creatorAddress === address
+  })()
+
+  useEffect(() => {
+    if (location.state?.pendingVault) {
+      setPendingVault(location.state.pendingVault)
+    }
+  }, [location.state])
+
   return (
     <CreateVaultContent>
+      {hasIncompleteVaultSetup && (
+        <Callout type={CalloutType.INFO} className='mb-6'>
+          <div className='flex justify-between items-center gap-2'>
+            <Text size='sm' className='text-white'>
+              You have an incomplete vault setup. Would you like to continue where you left off?
+            </Text>
+            <Button
+              onClick={() => {
+                const parsedVault = getStoredVaultData()
+                if (parsedVault) {
+                  setPendingVault(parsedVault)
+                }
+              }}
+              text='Continue Setup'
+            />
+          </div>
+        </Callout>
+      )}
+      {pendingVault && (
+        <PendingVaultMint
+          onClose={() => {
+            setPendingVault(null)
+            setVaultTitle('')
+            setDescription('')
+            setAmount(BN_ZERO)
+            setPerformanceFee(BN(1))
+            setWithdrawFreezePeriod('24')
+            useStore.setState({
+              vaultAssetsModal: {
+                isOpen: false,
+                selectedDenom: '',
+                assets: selectableAssets,
+              },
+            })
+          }}
+          pendingVault={pendingVault}
+        />
+      )}
+
       <form className='flex flex-col space-y-6' onSubmit={(e) => e.preventDefault()}>
-        <div className='flex flex-col gap-8 md:flex-row'>
+        <div
+          className={classNames(
+            'flex flex-col gap-8 md:flex-row',
+            pendingVault || isTxPending ? 'blur-sm pointer-events-none' : 'pointer-events-auto',
+          )}
+        >
           <div className='flex-1 space-y-2'>
             <div className='flex flex-col gap-2'>
               <VaultInputElement
@@ -294,7 +384,7 @@ export default function CreateVault() {
                 />
                 ) on creation.
               </Text>
-              {hasInsufficientFunds && (
+              {hasInsufficientFunds && !isTxPending && (
                 <Callout type={CalloutType.WARNING}>
                   You currently don't have the needed funds in your wallet to create a vault with
                   this base token.
@@ -361,15 +451,17 @@ export default function CreateVault() {
         <div className='border border-white/5' />
 
         <div className='flex justify-end px-4 md:px-0'>
-          <Button
-            onClick={handleCreateVaultAccount}
-            size='md'
-            rightIcon={<ArrowRight />}
-            className='w-full md:w-70'
-            text='Create Vault Account'
-            disabled={isTxPending || !isFormValid()}
-            showProgressIndicator={isTxPending}
-          />
+          {!pendingVault && (
+            <Button
+              onClick={handleCreateVaultAccount}
+              size='md'
+              rightIcon={<ArrowRight />}
+              className='w-full md:w-70'
+              text='Create Vault Account'
+              disabled={isTxPending || !isFormValid()}
+              showProgressIndicator={isTxPending}
+            />
+          )}
         </div>
       </form>
     </CreateVaultContent>
