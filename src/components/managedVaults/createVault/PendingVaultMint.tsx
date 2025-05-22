@@ -64,15 +64,10 @@ export default function PendingVaultMint(props: Props) {
       localStorage.removeItem('pendingVaultMint')
 
       if (pendingVault.depositAmount) {
-        const depositResult = await depositInManagedVault({
+        await depositInManagedVault({
           vaultAddress: pendingVault.address,
           amount: pendingVault.depositAmount,
         })
-
-        if (!depositResult) {
-          setIsTxPending(false)
-          return
-        }
 
         const updatedSteps = steps.map((step, index) => ({
           ...step,

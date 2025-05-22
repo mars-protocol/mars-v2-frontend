@@ -175,15 +175,10 @@ export default function CreateVault() {
               localStorage.removeItem('pendingVaultMint')
               setPendingVault(null)
 
-              const depositResult = await depositInManagedVault({
+              await depositInManagedVault({
                 vaultAddress: result.address,
                 amount: amount.toString(),
               })
-
-              if (!depositResult) {
-                setIsTxPending(false)
-                return
-              }
 
               navigate(
                 getRoute(
