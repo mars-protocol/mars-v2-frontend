@@ -5,25 +5,39 @@ import Title, { TITLE_META } from 'components/managedVaults/table/column/Title'
 import MyPosition, { MY_POSITION_META } from 'components/managedVaults/table/column/MyPosition'
 import TVL, { TVL_META } from 'components/managedVaults/table/column/TVL'
 import Details, { DETAILS_META } from 'components/managedVaults/table/column/Details'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { convertAprToApy } from 'utils/parsers'
 import Button from 'components/common/Button'
 import useStore from 'store'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { getPage, getRoute } from 'utils/route'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 interface Props {
   isLoading: boolean
   showPosition?: boolean
-  pendingVault?: {
-    address: string
-    amount: string
-    status: string
-  } | null
 }
 
 export default function useCommunityVaultsColumns(props: Props) {
-  const { isLoading, showPosition, pendingVault } = props
-  const mintVaultAccount = useStore((s) => s.createAccount)
-  const depositInManagedVault = useStore((s) => s.depositInManagedVault)
+  const { isLoading, showPosition } = props
+  const address = useStore((s) => s.address)
+  const chainConfig = useChainConfig()
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
+
+  const handleContinueSetup = useCallback(() => {
+    const storedVault = localStorage.getItem('pendingVaultMint')
+    if (!storedVault) return
+
+    try {
+      const parsedVault = JSON.parse(storedVault)
+      navigate(getRoute(getPage('vaults/create', chainConfig), searchParams, address), {
+        state: { pendingVault: parsedVault },
+      })
+    } catch {
+      return null
+    }
+  }, [navigate, chainConfig, searchParams, address])
 
   return useMemo<ColumnDef<ManagedVaultWithDetails>[]>(() => {
     return [
@@ -71,12 +85,12 @@ export default function useCommunityVaultsColumns(props: Props) {
         cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) =>
           row.original.isPending ? (
             <div className='flex items-center justify-end'>
-              <Button onClick={() => {}} text='Continue Setup' />
+              <Button onClick={handleContinueSetup} text='Continue Setup' />
             </div>
           ) : (
             <Details isLoading={isLoading} vault={row.original} />
           ),
       },
     ]
-  }, [isLoading, showPosition])
+  }, [isLoading, showPosition, handleContinueSetup])
 }

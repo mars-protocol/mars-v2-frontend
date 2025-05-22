@@ -4,6 +4,7 @@ import CreateVaultContent from 'components/managedVaults/createVault/CreateVault
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import moment from 'moment'
 import PerformanceFee from 'components/managedVaults/createVault/PerformanceFee'
+import PendingVaultMint from 'components/managedVaults/createVault/PendingVaultMint'
 import Slider from 'components/common/Slider'
 import Text from 'components/common/Text'
 import TextArea from 'components/common/TextArea'
@@ -26,10 +27,9 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { getPage, getRoute } from 'utils/route'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { TextLink } from 'components/common/TextLink'
-import { useCallback, useMemo, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import classNames from 'classnames'
-import PendingVaultMint from './PendingVaultMint'
 
 interface PendingVaultData {
   address: string
@@ -61,6 +61,7 @@ export default function CreateVault() {
   const { open: showAlertDialog } = useAlertDialog()
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const address = useStore((s) => s.address)
   const createManagedVault = useStore((s) => s.createManagedVault)
   const mintVaultAccount = useStore((s) => s.createAccount)
@@ -253,9 +254,15 @@ export default function CreateVault() {
 
   const hasIncompleteVaultSetup = (() => {
     const parsedVault = getStoredVaultData()
-    if (!parsedVault || pendingVault) return false
+    if (!parsedVault || pendingVault || isTxPending) return false
     return parsedVault.creatorAddress === address
   })()
+
+  useEffect(() => {
+    if (location.state?.pendingVault) {
+      setPendingVault(location.state.pendingVault)
+    }
+  }, [location.state])
 
   return (
     <CreateVaultContent>
@@ -272,18 +279,39 @@ export default function CreateVault() {
                   setPendingVault(parsedVault)
                 }
               }}
-              size='sm'
               text='Continue Setup'
             />
           </div>
         </Callout>
       )}
       {pendingVault && (
-        <PendingVaultMint onClose={() => setPendingVault(null)} pendingVault={pendingVault} />
+        <PendingVaultMint
+          onClose={() => {
+            setPendingVault(null)
+            setVaultTitle('')
+            setDescription('')
+            setAmount(BN_ZERO)
+            setPerformanceFee(BN(1))
+            setWithdrawFreezePeriod('24')
+            useStore.setState({
+              vaultAssetsModal: {
+                isOpen: false,
+                selectedDenom: '',
+                assets: selectableAssets,
+              },
+            })
+          }}
+          pendingVault={pendingVault}
+        />
       )}
 
       <form className='flex flex-col space-y-6' onSubmit={(e) => e.preventDefault()}>
-        <div className={classNames('flex flex-col gap-8 md:flex-row', pendingVault && 'blur-sm')}>
+        <div
+          className={classNames(
+            'flex flex-col gap-8 md:flex-row',
+            pendingVault || isTxPending ? 'blur-sm pointer-events-none' : 'pointer-events-auto',
+          )}
+        >
           <div className='flex-1 space-y-2'>
             <div className='flex flex-col gap-2'>
               <VaultInputElement
