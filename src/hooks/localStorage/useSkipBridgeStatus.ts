@@ -16,12 +16,6 @@ type SkipBridgeTransaction = {
   id: string
 }
 
-type Coin = {
-  denom: string
-  amount: string
-  chainName?: string
-}
-
 export function useSkipBridgeStatus() {
   const [skipBridges, setSkipBridges] = useState<SkipBridgeTransaction[]>([])
   const [hasCompletedBridge, setHasCompletedBridge] = useState(false)
@@ -40,7 +34,7 @@ export function useSkipBridgeStatus() {
     }
 
     const bridges: SkipBridgeTransaction[] = JSON.parse(skipBridgesString)
-    if (skipBridges.length !== bridges.length || skipBridges[0].status !== bridges[0].status)
+    if (skipBridges.length !== bridges.length || skipBridges[0]?.status !== bridges[0]?.status)
       setSkipBridges(bridges)
 
     if (bridges.length > 0 && walletBalances) {

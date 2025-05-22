@@ -66,7 +66,12 @@ export function useBridgeRoute({
     setRouteError(null)
     try {
       const route = await fetchSkipRoute(evmAsset)
-      const bridgeLogos = await fetchBridgeLogos({ chainIDs: route.chainIDs })
+      if (!route) {
+        setCurrentRoute(undefined)
+        setRouteError(null)
+        return
+      }
+      const bridgeLogos = await fetchBridgeLogos({ chainIDs: route.requiredChainAddresses })
       setBridges(bridgeLogos)
       setCurrentRoute(route)
     } catch (error) {
