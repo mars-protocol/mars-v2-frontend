@@ -61,7 +61,11 @@ export async function analizeTransaction(
 
       try {
         const vaultDetails = await getManagedVaultDetails(chainConfig, vaultAddress)
-        target = vaultDetails ? `${vaultDetails.title} Vault` : `Managed Vault ${accountId}`
+        target = vaultDetails
+          ? vaultDetails.title.toLowerCase().endsWith('vault')
+            ? vaultDetails.title
+            : `${vaultDetails.title} Vault`
+          : `Managed Vault ${accountId}`
       } catch (error) {
         console.error('Error getting vault title:', error)
         target = `Managed Vault ${accountId}`
