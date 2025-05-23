@@ -1,4 +1,3 @@
-import { DEFAULT_GAS_MULTIPLIER } from '@skip-go/client'
 import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useSWR from 'swr'
@@ -23,7 +22,7 @@ export default function useGasPrices() {
             if (assets.find(byDenom(feeToken.denom))) {
               gasPrices.push({
                 denom: feeToken.denom,
-                amount: BN(feeToken.low_gas_price).times(DEFAULT_GAS_MULTIPLIER).toString(),
+                amount: BN(feeToken.low_gas_price).toString(),
               })
             }
           })

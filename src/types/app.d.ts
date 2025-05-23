@@ -48,12 +48,13 @@ interface SkipTransactionInfo {
 }
 
 interface SkipBridgeTransaction {
+  asset: string
+  amount: BigNumber
+  denom: string
   txHash: string
   chainID: string
   explorerLink: string
-  status: StatusState
-  denom: string
-  amount: BigNumber
+  status: string
   id: string
 }
 
