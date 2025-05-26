@@ -25,7 +25,7 @@ export default function MarketDetails({ row, type }: Props) {
     symbol: displayCurrencySymbol,
   } = useDisplayCurrencyPrice()
 
-  const { asset, ltv, deposits, debt } = row.original
+  const { asset, ltv, deposits, debt, borrowEnabled } = row.original
 
   const details: Detail[] = useMemo(() => {
     const isDollar = displayCurrencySymbol === '$'
@@ -140,35 +140,39 @@ export default function MarketDetails({ row, type }: Props) {
             />
           ))}
         </div>
-        <div className='mt-4'>
-          <div className='flex justify-end gap-2 mb-2 px-2'>
-            {intervalOptions.map((opt) => (
-              <button
-                key={opt.label}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setSelectedInterval(opt)
-                }}
-                className={`px-2 py-1 text-xs rounded ${
-                  selectedInterval.label === opt.label ? 'bg-white/20 text-white' : 'text-white/50'
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
+        {borrowEnabled && (
+          <div className='mt-4'>
+            <div className='flex justify-end gap-2 mb-2 px-2'>
+              {intervalOptions.map((opt) => (
+                <button
+                  key={opt.label}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setSelectedInterval(opt)
+                  }}
+                  className={`px-2 py-1 text-xs rounded ${
+                    selectedInterval.label === opt.label
+                      ? 'bg-white/20 text-white'
+                      : 'text-white/50'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+            <DynamicLineChart
+              data={aprData || []}
+              loading={aprLoading}
+              lines={[
+                { dataKey: 'supply_apr', color: '#10b981', name: 'Supply APR', isPercentage: true },
+                { dataKey: 'borrow_apr', color: '#3b82f6', name: 'Borrow APR', isPercentage: true },
+              ]}
+              timeframe={selectedInterval.granularity === 'hour' ? '24' : ''}
+              height='h-40'
+              title=''
+            />
           </div>
-          <DynamicLineChart
-            data={aprData || []}
-            loading={aprLoading}
-            lines={[
-              { dataKey: 'supply_apr', color: '#10b981', name: 'Supply APR', isPercentage: true },
-              { dataKey: 'borrow_apr', color: '#3b82f6', name: 'Borrow APR', isPercentage: true },
-            ]}
-            timeframe={selectedInterval.granularity === 'hour' ? '24' : ''}
-            height='h-40'
-            title=''
-          />
-        </div>
+        )}
       </td>
     </tr>
   )
