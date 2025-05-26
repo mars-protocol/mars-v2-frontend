@@ -67,14 +67,10 @@ export default function Withdrawals(props: Props) {
   })
   const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false, details, depositAsset })
 
-  // TODO: temporary UI for freeze period in minutes, will be updated
-  const lockUpPeriod =
-    moment.duration(details.cooldown_period, 'seconds').as('days') < 1
-      ? formatLockupPeriod(
-          moment.duration(details.cooldown_period, 'seconds').as('minutes'),
-          'minutes',
-        )
-      : formatLockupPeriod(moment.duration(details.cooldown_period, 'seconds').as('days'), 'days')
+  const lockUpPeriod = formatLockupPeriod(
+    moment.duration(details.cooldown_period, 'seconds').as('days'),
+    'days',
+  )
 
   const totalQueuedWithdrawals = allUnlocksData.reduce(
     (sum, unlock) => sum.plus(BN(unlock.base_tokens_amount)),

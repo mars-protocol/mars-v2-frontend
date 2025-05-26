@@ -141,22 +141,12 @@ export default function ProfileVaultCard(props: Props) {
             </div>
           </InfoRow>
           <InfoRow label='Withdrawal Freeze Period'>
-            {/* TODO: temporary UI for freeze period in minutes */}
-            {moment.duration(details.cooldown_period, 'seconds').as('days') < 1 ? (
-              <Text size='sm'>
-                {formatLockupPeriod(
-                  moment.duration(details.cooldown_period, 'seconds').as('minutes'),
-                  'minutes',
-                )}
-              </Text>
-            ) : (
-              <Text size='sm'>
-                {formatLockupPeriod(
-                  moment.duration(details.cooldown_period, 'seconds').as('days'),
-                  'days',
-                )}
-              </Text>
-            )}
+            <Text size='sm'>
+              {formatLockupPeriod(
+                moment.duration(details.cooldown_period, 'seconds').as('days'),
+                'days',
+              )}
+            </Text>
           </InfoRow>
 
           <Divider />

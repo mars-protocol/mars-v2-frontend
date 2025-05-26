@@ -90,17 +90,10 @@ export default function VaultAction(props: Props) {
     availableVaultTokens,
   ])
 
-  // TODO: temporary UI for freeze period in minutes, will be updated
-  const withdrawalPeriod =
-    moment.duration(vaultDetails.cooldown_period, 'seconds').as('days') < 1
-      ? formatLockupPeriod(
-          moment.duration(vaultDetails.cooldown_period, 'seconds').as('minutes'),
-          'minutes',
-        )
-      : formatLockupPeriod(
-          moment.duration(vaultDetails.cooldown_period, 'seconds').as('days'),
-          'days',
-        )
+  const withdrawalPeriod = formatLockupPeriod(
+    moment.duration(vaultDetails.cooldown_period, 'seconds').as('days'),
+    'days',
+  )
 
   const handleAmountChange = (newAmount: BigNumber) => {
     setAmount(newAmount)
