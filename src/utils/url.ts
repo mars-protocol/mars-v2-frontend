@@ -3,11 +3,7 @@ export const getUrl = (baseUrl: string, path: string = ''): string => {
 
   if (isPlaceholder) return baseUrl + '/' + path
 
-  let url = new URL(baseUrl)
-  if (path !== '') url = new URL(path, url)
-
-  if (process.env.NEXT_PUBLIC_API_KEY)
-    url.searchParams.append('x-apikey', process.env.NEXT_PUBLIC_API_KEY)
-
+  const url = new URL(path, baseUrl)
+  // API key should no longer be appended here to avoid exposing it client-side
   return url.toString()
 }
