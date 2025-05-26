@@ -34,7 +34,8 @@ const Pion1: ChainConfig = {
     gasPrices: '/feemarket/v1/gas_price/untrn',
     aprs: {
       vaults: '',
-      perpsVault: 'https://backend.test.mars-dev.net/v2/perps_vault?chain=neutron',
+      perpsVault:
+        'https://backend.test.mars-dev.net/v2/perps_vault_historical?chain=neutron&days=1',
     },
   },
   network: NETWORK.TESTNET,

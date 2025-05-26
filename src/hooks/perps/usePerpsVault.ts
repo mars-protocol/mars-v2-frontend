@@ -27,7 +27,7 @@ export default function usePerpsVault() {
           )
           if (response.ok) {
             const data = await response.json()
-            perpVaultApy = data.projected_apy
+            perpVaultApy = Number(data.apy[0].value)
           }
         }
       } catch (e) {
