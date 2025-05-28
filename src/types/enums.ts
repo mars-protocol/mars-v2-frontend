@@ -12,7 +12,8 @@ export enum DocURL {
   PRIVACY_POLICY_URL = 'https://docs.marsprotocol.io/docs/overview/legal/privacy-policy',
   TERMS_OF_SERVICE_URL = 'https://docs.marsprotocol.io/docs/overview/legal/terms-of-service',
   TRADING_INTRO_URL = 'https://docs.marsprotocol.io/docs/learn/tutorials/trading/trading-intro',
-  VAULT_TUTORIAL_URL = '',
+  CREATE_VAULT_URL = 'https://docs.marsprotocol.io/managed-vaults/creating-a-vault',
+  MANAGE_VAULT_URL = 'https://docs.marsprotocol.io/managed-vaults/managing-a-vault',
   WALLET_INTRO_URL = 'https://docs.marsprotocol.io/docs/learn/tutorials/basics/connecting-your-wallet',
   X_SHARE_URL = 'https://x.com/intent/tweet',
 }

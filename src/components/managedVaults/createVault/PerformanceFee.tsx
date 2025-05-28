@@ -7,6 +7,7 @@ import { TextLink } from 'components/common/TextLink'
 import { ExternalLink } from 'components/common/Icons'
 import { BN } from 'utils/helpers'
 import { BN_ZERO } from 'constants/math'
+import { DocURL } from 'types/enums'
 
 const fees = [
   { label: '1%', value: BN(1) },
@@ -62,9 +63,8 @@ export default function PerformanceFee(props: Props) {
       </div>
       <Callout type={CalloutType.INFO}>
         Performance fees are capped at 40%.
-        {/* TODO add link */}
         <TextLink
-          href={''}
+          href={DocURL.MANAGE_VAULT_URL}
           target='_blank'
           textSize='extraSmall'
           className='ml-1 text-white/50 hover:text-white'
