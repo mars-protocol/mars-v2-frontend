@@ -63,6 +63,7 @@ export default function Manage(props: Props) {
       autolend: isAutoLendEnabledForCurrentAccount,
       baseDenom: perpPosition.baseDenom,
       orderIds: relevantOrderIds,
+      position: perpPosition,
     })
   }, [
     currentAccount,
@@ -166,6 +167,7 @@ export default function Manage(props: Props) {
           coin: BNCoin.fromDenomAndBigNumber(perpPosition.asset.denom, signedAmount),
           autolend: isAutoLendEnabledForCurrentAccount,
           baseDenom: perpPosition.baseDenom,
+          position: perpPosition,
         })
       }
 

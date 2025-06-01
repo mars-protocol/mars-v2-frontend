@@ -1153,6 +1153,7 @@ interface BroadcastSlice {
     autolend: boolean
     baseDenom: string
     orderIds?: string[]
+    position?: PerpsPosition
   }) => Promise<boolean>
   createTriggerOrder: (options: CreateTriggerOrdersOptions) => Promise<boolean>
   createMultipleTriggerOrders: (options: CreateMultipleTriggerOrdersOptions) => Promise<boolean>
