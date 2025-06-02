@@ -76,7 +76,7 @@ export default async function getOraclePrices(
             }
           }),
         )
-        individualPriceResults = shareResults.filter((result) => result !== null) as PriceResponse[]
+        individualPriceResults = shareResults as PriceResponse[]
       }
 
       // Combine all price results
