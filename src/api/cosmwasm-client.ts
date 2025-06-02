@@ -189,7 +189,7 @@ const getManagedVaultOwnerAddress = async (chainConfig: ChainConfig, address: st
   try {
     const client = await getClient(getUrl(chainConfig.endpoints.rpc))
     const contractInfo = await client.getContract(address)
-    return contractInfo.admin ?? contractInfo.creator
+    return contractInfo.creator
   } catch (error) {
     setNodeError(getUrl(chainConfig.endpoints.rpc), error)
     throw error

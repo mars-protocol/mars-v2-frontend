@@ -1329,7 +1329,7 @@ export default function createBroadcastSlice(
         const messages = [
           new MsgInstantiateContract({
             sender: address,
-            admin: address,
+            admin: '',
             codeId: vaultCodeId,
             label: `Vault-${params.title}`,
             msg: instantiateMsg,
