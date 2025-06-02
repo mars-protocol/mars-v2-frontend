@@ -64,7 +64,7 @@ export default async function getOraclePrices(
         }, [])
       }
 
-      // Handle share assets individually to prevent
+      // Handle share assets individually to prevent twap errors breaking the app
       if (shareAssets.length > 0) {
         const shareResults = await Promise.all(
           shareAssets.map(async (asset) => {
