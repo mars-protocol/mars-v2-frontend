@@ -35,8 +35,8 @@ export default async function getOraclePrices(
       const neutronOracleQueryClient = await getOracleQueryClientNeutron(chainConfig)
 
       // Filter assets: separate those with 'share' in denom from others
-      const shareAssets = assets.filter((asset) => asset.denom.includes('share'))
-      const nonShareAssets = assets.filter((asset) => !asset.denom.includes('share'))
+      const shareAssets = assets.filter((asset) => asset.denom.endsWith('share'))
+      const nonShareAssets = assets.filter((asset) => !asset.denom.endsWith('share'))
 
       let batchPriceResults: PriceResponse[] = []
       let individualPriceResults: PriceResponse[] = []
