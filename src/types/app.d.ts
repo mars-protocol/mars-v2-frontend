@@ -48,12 +48,13 @@ interface SkipTransactionInfo {
 }
 
 interface SkipBridgeTransaction {
+  asset: string
+  amount: BigNumber
+  denom: string
   txHash: string
   chainID: string
   explorerLink: string
-  status: StatusState
-  denom: string
-  amount: BigNumber
+  status: string
   id: string
 }
 
@@ -109,6 +110,40 @@ interface AccountStrategyRow {
     secondary?: BNCoin
   }
   unlocksAt?: number
+}
+
+interface MergedChartData {
+  date: string
+  [key: string]: string | number | BigNumber
+}
+interface LineConfig {
+  dataKey: string
+  color: string
+  name: string
+  isPercentage?: boolean
+  strokeDasharray?: string
+  yAxisId?: string
+}
+
+interface ChartDataPayloadProps {
+  chartType?: string
+  color: string
+  dataKey: string
+  fill: string
+  formatter?: string
+  hide: boolean
+  name: string
+  payload: {
+    date: string
+    value: number
+    label: string
+    isPercentage?: boolean
+  }
+  value: string | number
+  stroke?: string
+  strokeWidth?: number
+  type?: string
+  unit?: string
 }
 
 interface AccountPerpRow extends PerpsPosition {

@@ -1,9 +1,11 @@
 import { Row } from '@tanstack/react-table'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
+import useAssetApr from 'hooks/markets/useAssetApr'
+import DynamicLineChart from 'components/common/DynamicLineChart'
 
 interface Props {
   row: Row<BorrowMarketTableData | LendingMarketTableData>
@@ -23,7 +25,7 @@ export default function MarketDetails({ row, type }: Props) {
     symbol: displayCurrencySymbol,
   } = useDisplayCurrencyPrice()
 
-  const { asset, ltv, deposits, debt } = row.original
+  const { asset, ltv, deposits, debt, borrowEnabled } = row.original
 
   const details: Detail[] = useMemo(() => {
     const isDollar = displayCurrencySymbol === '$'
@@ -101,6 +103,20 @@ export default function MarketDetails({ row, type }: Props) {
     deposits,
   ])
 
+  const intervalOptions = [
+    { label: '24H', granularity: 'hour', unit: 24 },
+    { label: '7D', granularity: 'day', unit: 7 },
+    { label: '30D', granularity: 'day', unit: 30 },
+    { label: '90D', granularity: 'day', unit: 90 },
+  ]
+
+  const [selectedInterval, setSelectedInterval] = useState(intervalOptions[2])
+  const { data: aprData, isLoading: aprLoading } = useAssetApr({
+    denom: asset.denom,
+    granularity: selectedInterval.granularity,
+    unit: selectedInterval.unit,
+  })
+
   return (
     <tr>
       <td
@@ -124,6 +140,39 @@ export default function MarketDetails({ row, type }: Props) {
             />
           ))}
         </div>
+        {borrowEnabled && (
+          <div className='mt-4'>
+            <div className='flex justify-end gap-2 mb-2 px-2'>
+              {intervalOptions.map((opt) => (
+                <button
+                  key={opt.label}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setSelectedInterval(opt)
+                  }}
+                  className={`px-2 py-1 text-xs rounded ${
+                    selectedInterval.label === opt.label
+                      ? 'bg-white/20 text-white'
+                      : 'text-white/50'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+            <DynamicLineChart
+              data={aprData || []}
+              loading={aprLoading}
+              lines={[
+                { dataKey: 'supply_apr', color: '#10b981', name: 'Supply APR', isPercentage: true },
+                { dataKey: 'borrow_apr', color: '#3b82f6', name: 'Borrow APR', isPercentage: true },
+              ]}
+              timeframe={selectedInterval.granularity === 'hour' ? '24' : ''}
+              height='h-40'
+              title=''
+            />
+          </div>
+        )}
       </td>
     </tr>
   )

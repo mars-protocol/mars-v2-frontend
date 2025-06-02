@@ -37,7 +37,8 @@ const Pion1: ChainConfig = {
       'https://backend.test.mars-dev.net/v2/managed_vaults_historical?chain=neutron',
     aprs: {
       vaults: '',
-      perpsVault: 'https://backend.test.mars-dev.net/v2/perps_vault?chain=neutron',
+      perpsVault:
+        'https://backend.test.mars-dev.net/v2/perps_vault_historical?chain=neutron&days=1',
     },
   },
   network: NETWORK.TESTNET,

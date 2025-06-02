@@ -153,7 +153,8 @@ const Neutron1: ChainConfig = {
     managedVaults: 'https://backend.prod.mars-dev.net/v2/managed_vaults?chain=neutron',
     aprs: {
       vaults: '',
-      perpsVault: 'https://backend.prod.mars-dev.net/v2/perps_vault?chain=neutron',
+      perpsVault:
+        'https://backend.prod.mars-dev.net/v2/perps_vault_historical?chain=neutron&days=1',
     },
   },
   network: NETWORK.MAINNET,
