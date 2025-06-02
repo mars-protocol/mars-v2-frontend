@@ -1329,7 +1329,6 @@ export default function createBroadcastSlice(
         const messages = [
           new MsgInstantiateContract({
             sender: address,
-            admin: '',
             codeId: vaultCodeId,
             label: `Vault-${params.title}`,
             msg: instantiateMsg,

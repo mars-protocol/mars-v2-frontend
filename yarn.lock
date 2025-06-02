@@ -1380,20 +1380,20 @@
   dependencies:
     uuid "^9.0.1"
 
-"@delphi-labs/shuttle-react@^4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@delphi-labs/shuttle-react/-/shuttle-react-4.2.0.tgz#8395ee20a92bfd2633719b4a18ad93524cdfad52"
-  integrity sha512-w7LGbUnY5tL+pelWUzjNGrQEa61b+I4iDz83kHx+TAe4nDUFnI9/KX3Sh+CSICIK560FxdL4xou/M2AThmXrLg==
+"@delphi-labs/shuttle-react@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@delphi-labs/shuttle-react/-/shuttle-react-4.3.0.tgz#7056b399f0a015263687ce162ed18640dd149664"
+  integrity sha512-aJdKnTLgdXOx80n29gjuq//fQjL3uxPkswH4o2pWmA8DEEe0p7jzHUDE/RYLjIq8yLRAdzptvh5vrhVNnOY8xw==
   dependencies:
-    "@delphi-labs/shuttle" "4.2.0"
+    "@delphi-labs/shuttle" "4.3.0"
     tslib "^2.6.0"
     use-local-storage-state "^18.3.3"
     zustand "^4.3.8"
 
-"@delphi-labs/shuttle@4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@delphi-labs/shuttle/-/shuttle-4.2.0.tgz#73edaa89373650e555d7a5521cde1ee66b8eb8c5"
-  integrity sha512-aRjZWxXxJcQ+K9TTRtbULsFmgV/YWuataG3W47bVz/io6yKQolp+7kwMMcTCSwFJXFl44cEFLfRDyUDpDr0Gjg==
+"@delphi-labs/shuttle@4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@delphi-labs/shuttle/-/shuttle-4.3.0.tgz#1f2a04ce6d2218726f26980eaf9bb20c21bbd81f"
+  integrity sha512-wr+r+9IgqcIJ5/aIv0EvvbTjISFqHvWuwUjNZkH7RYjiLD361tHaW1OMZzuCzhy0tt5EdSP6Mh+TNvqIc69NwQ==
   dependencies:
     "@bufbuild/protobuf" "^1.8.0"
     "@cosmjs/amino" "^0.31.0"
