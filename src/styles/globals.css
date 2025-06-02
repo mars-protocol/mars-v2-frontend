@@ -88,6 +88,12 @@
   --color-white: 0deg 0% 100%;
   --color-pink: 343deg 67% 61%;
   --color-black: 0deg 0% 0%;
+  --color-vault-blue-primary: 184deg 66% 61%;
+  --color-vault-blue-secondary: 227deg 96% 67%;
+  --color-vault-blue-tertiary: 259deg 100% 50%;
+  --color-vault-purple-primary: 241deg 64% 64%;
+  --color-vault-purple-secondary: 101deg 45% 39%;
+  --color-vault-pink-primary: 295deg 100% 50%;
   --color-hls-primary: 2deg 99% 68%;
   --color-hls-secondary: 20deg 95% 68%;
   --color-slider-1: 334deg 6% 53%;

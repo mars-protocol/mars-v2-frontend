@@ -176,7 +176,7 @@ export default function TradeChart(props: Props) {
       console.info('Error on loading chart', e)
       return
     }
-  }, [chartName, onCreateLimitOrder, onCreateStopOrder, isPerps])
+  }, [chartName, isPerps, onCreateLimitOrder, onCreateStopOrder])
 
   const updateShapesAndStudies = useCallback(() => {
     try {

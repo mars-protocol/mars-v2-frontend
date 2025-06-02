@@ -5,14 +5,21 @@ import { isMobile } from 'react-device-detect'
 import AccountCreateFirst from 'components/account/AccountCreateFirst'
 import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 import AccountList from 'components/account/AccountList'
+import AccountMenuTabs from 'components/account/AccountMenuTabs'
 import Button from 'components/common/Button'
 import { Account, Plus, PlusCircled } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
+import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
-import useAccountIds from 'hooks/accounts/useAccountIds'
+import useAccountTitle from 'hooks/accounts/useAccountTitle'
+import useNonHlsAccountIds from 'hooks/accounts/useNonHlsAccountIds'
+import useAccountVaults from 'hooks/accounts/useAccountVaults'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useStore from 'store'
+import { checkAccountKind } from 'utils/accounts'
+import { useLocation } from 'react-router-dom'
 
 interface Props {
   className?: string
@@ -23,15 +30,21 @@ const ACCOUNT_MENU_BUTTON_ID = 'account-menu-button'
 
 export default function AccountMenuContent(props: Props) {
   const address = useStore((s) => s.address)
-  const { data: accountIds } = useAccountIds(address, true, true)
+  const accountIds = useNonHlsAccountIds(address)
   const accountId = useAccountId()
+  const { data: account } = useAccount(accountId ?? undefined)
+  const chainConfig = useChainConfig()
+  const managedVaultsEnabled = chainConfig.managedVaults
+  const { pathname } = useLocation()
   const [showMenu, setShowMenu] = useToggle()
-
   const hasCreditAccounts = useMemo(() => !!accountIds?.length, [accountIds])
   const isAccountSelected = useMemo(
     () => hasCreditAccounts && accountId && accountIds && accountIds.includes(accountId),
     [hasCreditAccounts, accountId, accountIds],
   )
+  const activeAccountKind = checkAccountKind(account?.kind ?? 'default')
+  const accountTitle = useAccountTitle(account, true)
+  const { hasVaults } = useAccountVaults(address)
 
   const performCreateAccount = useCallback(() => {
     setShowMenu(false)
@@ -48,11 +61,22 @@ export default function AccountMenuContent(props: Props) {
 
   const handleCreateAccountClick = useCallback(() => {
     setShowMenu(!showMenu)
-    if (!hasCreditAccounts || !hasCreditAccounts) {
+    if (!hasCreditAccounts && !pathname.includes('/vaults')) {
       useStore.setState({ focusComponent: { component: <AccountCreateFirst /> } })
       return
     }
-  }, [hasCreditAccounts, setShowMenu, showMenu])
+  }, [hasCreditAccounts, setShowMenu, showMenu, pathname])
+
+  const accountTabs = [
+    {
+      title: 'Credit Accounts',
+      renderContent: () => <AccountList setShowMenu={setShowMenu} isVaults={false} />,
+    },
+    {
+      title: 'Vault Accounts',
+      renderContent: () => <AccountList setShowMenu={setShowMenu} isVaults={true} />,
+    },
+  ]
 
   if (!address) return null
 
@@ -69,7 +93,7 @@ export default function AccountMenuContent(props: Props) {
       >
         {hasCreditAccounts
           ? isAccountSelected
-            ? `Credit Account ${accountId}`
+            ? accountTitle
             : 'Select Account'
           : 'Create Account'}
       </Button>
@@ -85,7 +109,7 @@ export default function AccountMenuContent(props: Props) {
           )}
         >
           <Text size='lg' className='font-bold'>
-            Credit Accounts
+            {managedVaultsEnabled && hasVaults ? 'Accounts' : 'Credit Accounts'}
           </Text>
           <Button
             color='secondary'
@@ -96,6 +120,7 @@ export default function AccountMenuContent(props: Props) {
             onClick={performCreateAccount}
           />
         </div>
+
         <div
           className={classNames(
             menuClasses,
@@ -103,7 +128,14 @@ export default function AccountMenuContent(props: Props) {
             'top-[54px] h-[calc(100%-54px)] items-start',
           )}
         >
-          {hasCreditAccounts && <AccountList setShowMenu={setShowMenu} />}
+          {managedVaultsEnabled && hasVaults ? (
+            <AccountMenuTabs
+              tabs={accountTabs}
+              activeIndex={activeAccountKind === 'default' ? 0 : 1}
+            />
+          ) : (
+            hasCreditAccounts && <AccountList setShowMenu={setShowMenu} isVaults={false} />
+          )}
         </div>
       </Overlay>
     </div>

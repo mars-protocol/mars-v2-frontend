@@ -41,9 +41,18 @@ export function getPage(pathname: string, chainConfig: ChainConfig): Page {
     'hls-farm',
     'hls-staking',
     'execute',
+    'vaults',
+    'vaults/create',
+    'vaults/{vaultId}/details',
     'v1',
   ]
+
   const segments = pathname.split('/')
+
+  const fullPath = segments.join('/')
+  if (pages.includes(fullPath as Page)) {
+    return fullPath as Page
+  }
 
   const page = segments.find((segment) => pages.includes(segment as Page))
 
@@ -52,9 +61,12 @@ export function getPage(pathname: string, chainConfig: ChainConfig): Page {
       const path = pathname.split('portfolio')[1]
       return (page + path) as Page
     }
+    if (page === 'vaults') {
+      const path = pathname.split('vaults')[1]
+      return (page + path) as Page
+    }
     return page as Page
   }
-
   return chainConfig.perps ? ('perps' as Page) : ('trade' as Page)
 }
 

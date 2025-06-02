@@ -63,14 +63,13 @@ interface DropDownItemProps {
 function DropDownItem(props: DropDownItemProps) {
   return (
     <ConditionalWrapper
-      condition={!!props.item.disabled}
+      condition={!!props.item.disabledTooltip}
       wrapper={(children) => {
-        if (!props.item.disabledTooltip) return children
         return (
           <Tooltip
-            type='warning'
+            type={(props.item.tooltipType || 'warning') as TooltipType}
             content={<Text size='sm'>{props.item.disabledTooltip}</Text>}
-            contentClassName='max-w-[200px]'
+            contentClassName='max-w-[300px]'
             className='ml-auto'
           >
             {children}

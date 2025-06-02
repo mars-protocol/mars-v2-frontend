@@ -31,7 +31,7 @@ function AccountDeleteModal(props: Props) {
   const deleteAccount = useStore((s) => s.deleteAccount)
   const { address: urlAddress } = useParams()
   const navigate = useNavigate()
-  const chainChonfig = useChainConfig()
+  const chainConfig = useChainConfig()
   const { pathname } = useLocation()
   const { address } = useParams()
   const { debts, vaults, id: accountId } = modal || {}
@@ -44,11 +44,11 @@ function AccountDeleteModal(props: Props) {
   const deleteAccountHandler = useCallback(async () => {
     useStore.setState({ accountDeleteModal: null })
     const options = { accountId: modal.id, lends: modal.lends }
-    const path = getPage(pathname, chainChonfig)
+    const path = getPage(pathname, chainConfig)
     const isDeleted = await deleteAccount(options)
 
     if (isDeleted) {
-      const remainingAccounts = await getAccountIds(chainChonfig, urlAddress)
+      const remainingAccounts = await getAccountIds(chainConfig, urlAddress)
 
       if (remainingAccounts.length > 0) {
         const firstAccountId = remainingAccounts[0].id
@@ -70,7 +70,7 @@ function AccountDeleteModal(props: Props) {
     modal.id,
     modal.lends,
     pathname,
-    chainChonfig,
+    chainConfig,
     deleteAccount,
     closeDeleteAccountModal,
     navigate,

@@ -2,26 +2,22 @@ import classNames from 'classnames'
 import { ReactNode, useMemo } from 'react'
 import { NavLink, useParams, useSearchParams } from 'react-router-dom'
 
-import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
-import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import Skeleton from 'components/portfolio/Card/Skeleton'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
-import useAssets from 'hooks/assets/useAssets'
-import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
+import { useAccountSummaryStats } from 'hooks/accounts/useAccountSummaryStats'
+import useAccountTitle from 'hooks/accounts/useAccountTitle'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useAssetParams from 'hooks/params/useAssetParams'
-import usePerpsVault from 'hooks/perps/usePerpsVault'
-import useVaultAprs from 'hooks/vaults/useVaultAprs'
-import { getAccountSummaryStats } from 'utils/accounts'
+import useStore from 'store'
+import { checkAccountKind } from 'utils/accounts'
 import { getRoute } from 'utils/route'
-import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
+import VaultDetails from 'components/managedVaults/vaultDetails'
 
 interface Props {
   accountId: string
@@ -32,41 +28,24 @@ export default function PortfolioCard(props: Props) {
   const { data: account } = useAccount(props.accountId)
   const { health, healthFactor } = useHealthComputer(account)
   const { address: urlAddress } = useParams()
-  const astroLpAprs = useAstroLpAprs()
   const currentAccountId = useAccountId()
-  const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
-  const data = useBorrowMarketAssetsTableData()
-  const { data: vaultAprs } = useVaultAprs()
-  const [searchParams] = useSearchParams()
-  const { data: assets } = useAssets()
-  const { data: perpsVault } = usePerpsVault()
-  const borrowAssets = useMemo(() => data?.allAssets || [], [data])
+  const [searchParams, setSearchParams] = useSearchParams()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     getDefaultChainSettings(chainConfig).reduceMotion,
   )
-  const assetParams = useAssetParams()
-  const perpsMarketStates = usePerpsMarketStates()
+  const { netWorth, apy, leverage } = useAccountSummaryStats(account)
+
+  const vaultTitle = useAccountTitle(account)
 
   const stats: { title: ReactNode; sub: string }[] = useMemo(() => {
-    if (!account || !assets.length || !lendingAssets.length || !borrowAssets.length) {
+    if (!account) {
       return [
         { title: <Loading />, sub: 'Net worth' },
         { title: <Loading />, sub: 'Leverage' },
         { title: <Loading />, sub: 'APY' },
       ]
     }
-    const { netWorth, apy, leverage } = getAccountSummaryStats(
-      account as Account,
-      borrowAssets,
-      lendingAssets,
-      assets,
-      vaultAprs,
-      astroLpAprs,
-      assetParams.data || [],
-      perpsVault?.apy || 0,
-      perpsMarketStates.data || [],
-    )
 
     return [
       {
@@ -82,18 +61,7 @@ export default function PortfolioCard(props: Props) {
         sub: 'APY',
       },
     ]
-  }, [
-    account,
-    assets,
-    lendingAssets,
-    borrowAssets,
-    vaultAprs,
-    astroLpAprs,
-    assetParams.data,
-    perpsVault?.apy,
-    perpsMarketStates.data,
-  ])
-
+  }, [account, apy, leverage, netWorth])
   if (!account) {
     return (
       <Skeleton
@@ -104,15 +72,39 @@ export default function PortfolioCard(props: Props) {
       />
     )
   }
+  const isVault = checkAccountKind(account.kind) === 'fund_manager'
+  const vaultAddress =
+    typeof account.kind === 'object' && 'fund_manager' in account.kind
+      ? account.kind.fund_manager.vault_addr
+      : ''
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (isVault && vaultAddress) {
+      e.preventDefault()
+      useStore.setState({
+        focusComponent: {
+          component: <VaultDetails vaultAddress={vaultAddress} />,
+          onClose: () => {
+            const newParams = new URLSearchParams(searchParams)
+            newParams.delete('tab')
+            setSearchParams(newParams)
+          },
+        },
+      })
+    }
+  }
+
+  const route = getRoute(
+    `portfolio/${props.accountId}` as Page,
+    searchParams,
+    urlAddress,
+    currentAccountId,
+  )
 
   return (
     <NavLink
-      to={getRoute(
-        `portfolio/${props.accountId}` as Page,
-        searchParams,
-        urlAddress,
-        currentAccountId,
-      )}
+      to={route}
+      onClick={handleClick}
       className={classNames('w-full hover:bg-white/5', !reduceMotion && 'transition-all')}
     >
       <Skeleton
@@ -122,6 +114,7 @@ export default function PortfolioCard(props: Props) {
         accountId={props.accountId}
         isCurrent={props.accountId === currentAccountId}
         isHls={account.kind === 'high_levered_strategy'}
+        vaultTitle={vaultTitle}
       />
     </NavLink>
   )

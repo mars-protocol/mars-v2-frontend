@@ -29,6 +29,7 @@ export default function SwitchWithLabel(props: Props) {
                 {props.tooltip}
               </Text>
             }
+            contentClassName='w-80'
           />
         )}
       </div>

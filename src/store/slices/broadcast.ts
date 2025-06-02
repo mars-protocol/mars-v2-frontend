@@ -1,4 +1,8 @@
-import { DEFAULT_GAS_MULTIPLIER, MsgExecuteContract } from '@delphi-labs/shuttle'
+import {
+  DEFAULT_GAS_MULTIPLIER,
+  MsgExecuteContract,
+  MsgInstantiateContract,
+} from '@delphi-labs/shuttle'
 import moment from 'moment'
 import { StoreApi } from 'zustand'
 
@@ -18,6 +22,7 @@ import {
 import { ExecuteMsg as IncentivesExecuteMsg } from 'types/generated/mars-incentives/MarsIncentives.types'
 import { ExecuteMsg as PerpsExecuteMsg } from 'types/generated/mars-perps/MarsPerps.types'
 import { ExecuteMsg as RedBankExecuteMsg } from 'types/generated/mars-red-bank/MarsRedBank.types'
+import { ExecuteMsg as ManagedVaultExecuteMsg } from 'types/generated/mars-vault/MarsVault.types'
 import { byDenom, bySymbol } from 'utils/array'
 import { setAutoLendForAccount } from 'utils/autoLend'
 import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } from 'utils/broadcast'
@@ -42,7 +47,8 @@ export function generateExecutionMessage(
     | RedBankExecuteMsg
     | PythUpdateExecuteMsg
     | PerpsExecuteMsg
-    | IncentivesExecuteMsg,
+    | IncentivesExecuteMsg
+    | ManagedVaultExecuteMsg,
   funds: Coin[],
 ) {
   return new MsgExecuteContract({
@@ -1293,6 +1299,174 @@ export default function createBroadcastSlice(
 
       get().handleTransaction({ response })
 
+      return response.then((response) => !!response.result)
+    },
+    createManagedVault: async (params: VaultParams): Promise<{ address: string } | null> => {
+      try {
+        const address = get().address
+        if (!address) {
+          console.error('Wallet not connected')
+          return null
+        }
+
+        const instantiateMsg = {
+          base_token: params.baseToken,
+          cooldown_period: params.withdrawFreezePeriod,
+          credit_manager: get().chainConfig.contracts.creditManager,
+          description: params.description,
+          performance_fee_config: params.performanceFee,
+          subtitle: null,
+          title: params.title,
+          vault_token_subdenom: params.vault_token_subdenom,
+        }
+
+        const vaultCodeId = get().chainConfig.vaultCodeId
+        if (!vaultCodeId) {
+          console.error('Vault code ID not configured for this network')
+          return null
+        }
+
+        const messages = [
+          new MsgInstantiateContract({
+            sender: address,
+            admin: address,
+            codeId: vaultCodeId,
+            label: `Vault-${params.title}`,
+            msg: instantiateMsg,
+            funds: [
+              {
+                denom: params.baseToken,
+                amount: params.creationFeeInAsset,
+              },
+            ],
+          }),
+        ]
+
+        const response = get().executeMsg({
+          messages,
+        })
+
+        get().handleTransaction({ response })
+
+        const result = await response
+        if (!result?.result) {
+          return null
+        }
+
+        const vaultAddress = getSingleValueFromBroadcastResult(
+          result.result,
+          'instantiate',
+          '_contract_address',
+        )
+        if (!vaultAddress) {
+          return null
+        }
+        return { address: vaultAddress }
+      } catch (error) {
+        console.error('Failed to create vault:', error)
+        return null
+      }
+    },
+    handlePerformanceFeeAction: async (options: PerformanceFeeOptions) => {
+      try {
+        const address = get().address
+        if (!address) {
+          console.error('Wallet not connected')
+          return false
+        }
+
+        const msg: ManagedVaultExecuteMsg = {
+          vault_extension: {
+            withdraw_performance_fee: {
+              new_performance_fee_config: options.newFee || null,
+            },
+          },
+        }
+
+        const message = generateExecutionMessage(address, options.vaultAddress, msg, [])
+
+        const response = get().executeMsg({
+          messages: [message],
+        })
+
+        get().handleTransaction({ response })
+        return response.then((response) => !!response.result)
+      } catch (error) {
+        console.error('Failed to update performance fee:', error)
+        return false
+      }
+    },
+    depositInManagedVault: async (options: {
+      vaultAddress: string
+      amount: string
+      recipient?: string | null
+    }) => {
+      const msg: ManagedVaultExecuteMsg = {
+        deposit: {
+          amount: options.amount,
+          recipient: options.recipient,
+        },
+      }
+
+      const response = get().executeMsg({
+        messages: [
+          generateExecutionMessage(get().address, options.vaultAddress, msg, [
+            {
+              denom: get().chainConfig.defaultCurrency.coinMinimalDenom,
+              amount: options.amount,
+            },
+          ]),
+        ],
+      })
+
+      get().handleTransaction({ response })
+      return response.then((response) => !!response.result)
+    },
+    unlockFromManagedVault: async (options: {
+      vaultAddress: string
+      amount: string
+      vaultToken: string
+    }) => {
+      const msg: ManagedVaultExecuteMsg = {
+        vault_extension: {
+          unlock: {
+            amount: options.amount,
+          },
+        },
+      }
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, options.vaultAddress, msg, [])],
+      })
+
+      get().handleTransaction({ response })
+      return response.then((response) => !!response.result)
+    },
+    withdrawFromManagedVault: async (options: {
+      vaultAddress: string
+      amount: string
+      recipient?: string | null
+      vaultToken: string
+    }) => {
+      const msg: ManagedVaultExecuteMsg = {
+        redeem: {
+          amount: options.amount,
+          recipient: options.recipient,
+        },
+      }
+
+      const response = get().executeMsg({
+        messages: [
+          generateExecutionMessage(get().address, options.vaultAddress, msg, [
+            {
+              denom: options.vaultToken,
+              amount: options.amount,
+            },
+          ]),
+        ],
+      })
+
+      get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
   }

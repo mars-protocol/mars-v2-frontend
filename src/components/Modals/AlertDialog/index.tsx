@@ -33,6 +33,8 @@ function AlertDialog(props: Props) {
     header,
     isSingleButtonLayout,
     showCloseButton,
+    titleClassName,
+    modalClassName,
   } = props.config
 
   const [toggle, handleToggle] = useToggle()
@@ -58,18 +60,16 @@ function AlertDialog(props: Props) {
             {showCloseButton && <EscButton onClick={props.close} />}
           </div>
         ) : (
-          <div className='flex flex-col'>
-            {icon && (
-              <div className='grid w-12 h-12 mb-4 rounded-sm place-items-center bg-white/5'>
-                {icon}
-              </div>
-            )}
-            <Text size='2xl'>{title ?? ''}</Text>
+          <div className='flex items-center gap-4'>
+            {icon && <div className='w-10 h-10'>{icon}</div>}
+            <Text size='2xl' className={titleClassName}>
+              {title ?? ''}
+            </Text>
           </div>
         )
       }
-      className='md:h-auto h-screen-full'
-      modalClassName='max-w-screen-full md:max-w-modal-md h-screen-full flex items-center justify-center '
+      className={classNames('md:h-auto h-screen-full', modalClassName)}
+      modalClassName='max-w-screen-full md:max-w-modal-md h-screen-full flex items-center justify-center'
       headerClassName='p-4 md:p-6'
       contentClassName='md:px-6 md:pb-6 p-4'
       hideCloseBtn

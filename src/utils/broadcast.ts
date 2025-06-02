@@ -1,7 +1,7 @@
-import { getCreditManagerQueryClient } from 'api/cosmwasm-client'
+import { getCreditManagerQueryClient, getManagedVaultDetails } from 'api/cosmwasm-client'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
-import { removeEmptyCoins } from 'utils/accounts'
+import { checkAccountKind, removeEmptyCoins } from 'utils/accounts'
 import { trackAction } from 'utils/analytics'
 import { getAssetSymbolByDenom } from 'utils/assets'
 import { beautifyErrorMessage } from 'utils/generateToast'
@@ -42,30 +42,55 @@ export async function analizeTransaction(
   txCoinGroups: GroupedTransactionCoin[]
 }> {
   let target = 'Red Bank'
-  let accountKind = 'default'
+  let accountKind: AccountKind = 'default'
 
   const accountId = getCreditAccountIdFromBroadcastResult(result)
 
   if (accountId) {
     const creditManagerQueryClient = await getCreditManagerQueryClient(chainConfig)
-    accountKind = (await creditManagerQueryClient.accountKind({ accountId: accountId })) as any
-    if (accountKind) {
-      target =
-        accountKind === 'high_levered_strategy'
-          ? `Hls Account ${accountId}`
-          : `Account ${accountId}`
+    accountKind = (await creditManagerQueryClient.accountKind({
+      accountId: accountId,
+    })) as AccountKind
+    const accountType = checkAccountKind(accountKind)
 
-      // Track new account creation
-      const newAccountId = getSingleValueFromBroadcastResult(result.result, 'wasm', 'token_id')
-      if (newAccountId) {
-        trackAction(
-          accountKind === 'high_levered_strategy' ? 'Mint HLS Account' : 'Mint Credit Account',
-          [],
-          assets,
-        )
+    if (accountType === 'fund_manager') {
+      const vaultAddress =
+        typeof accountKind === 'object' && 'fund_manager' in accountKind
+          ? accountKind.fund_manager.vault_addr
+          : ''
+
+      try {
+        const vaultDetails = await getManagedVaultDetails(chainConfig, vaultAddress)
+        target = vaultDetails
+          ? vaultDetails.title.toLowerCase().endsWith('vault')
+            ? vaultDetails.title
+            : `${vaultDetails.title} Vault`
+          : `Managed Vault ${accountId}`
+      } catch (error) {
+        console.error('Error getting vault title:', error)
+        target = `Managed Vault ${accountId}`
       }
+    } else if (accountType === 'high_levered_strategy') {
+      target = `Hls Account ${accountId}`
+    } else {
+      target = `Account ${accountId}`
+    }
+
+    // Track new account creation
+    const newAccountId = getSingleValueFromBroadcastResult(result.result, 'wasm', 'token_id')
+    if (newAccountId) {
+      trackAction(
+        accountType === 'high_levered_strategy'
+          ? 'Mint HLS Account'
+          : accountType === 'fund_manager'
+            ? 'Mint Vault Account'
+            : 'Mint Credit Account',
+        [],
+        assets,
+      )
     }
   }
+
   const isHls = accountKind === 'high_levered_strategy'
 
   // Fetch all coins from the BroadcastResult

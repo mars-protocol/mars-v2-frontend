@@ -138,6 +138,7 @@ const Osmosis1: ChainConfig = {
   anyAsset: true,
   evmAssetSupport: true,
   slinky: false,
+  managedVaults: false,
 }
 
 export default Osmosis1

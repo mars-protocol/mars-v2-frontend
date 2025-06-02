@@ -150,5 +150,8 @@ export function beautifyErrorMessage(error: string) {
     return 'You can not execute this transaction. There is not enough spendable balance in the market or your wallet.'
 
   if (error === 'Transaction failed: Request rejected') return 'Transaction rejected by user'
+  if (error.includes('less or equal available liquidity'))
+    return 'There is not enough available liquidity in the selected assets market to borrow.'
+
   return `Transaction failed: ${error}`
 }

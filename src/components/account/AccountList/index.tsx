@@ -1,20 +1,21 @@
 import classNames from 'classnames'
-import { useEffect } from 'react'
-import { isMobile } from 'react-device-detect'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-
 import AccountStats from 'components/account/AccountList/AccountStats'
+import AccountTitle from 'components/account/AccountTitle'
 import Card from 'components/common/Card'
 import Radio from 'components/common/Radio'
-import Text from 'components/common/Text'
 import useAccountId from 'hooks/accounts/useAccountId'
-import useAccountIds from 'hooks/accounts/useAccountIds'
+import useAccounts from 'hooks/accounts/useAccounts'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import { useEffect, useMemo } from 'react'
+import { isMobile } from 'react-device-detect'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
+import { checkAccountKind } from 'utils/accounts'
 import { getPage, getRoute } from 'utils/route'
 
 interface Props {
   setShowMenu: (show: boolean) => void
+  isVaults?: boolean
 }
 
 const accountCardHeaderClasses = classNames(
@@ -24,13 +25,21 @@ const accountCardHeaderClasses = classNames(
 )
 
 export default function AccountList(props: Props) {
-  const { setShowMenu } = props
+  const { setShowMenu, isVaults } = props
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const chainConfig = useChainConfig()
   const currentAccountId = useAccountId()
   const address = useStore((s) => s.address)
-  const { data: accountIds } = useAccountIds(address, true, true)
+  const { data: accounts } = useAccounts('all', address)
+  const filteredAccounts = useMemo(() => {
+    const noHlsAccounts = accounts.filter(
+      (account) => checkAccountKind(account.kind) !== 'high_levered_strategy',
+    )
+    const accountType = isVaults ? 'fund_manager' : 'default'
+    return noHlsAccounts.filter((account) => checkAccountKind(account.kind) === accountType)
+  }, [accounts, isVaults])
+
   const [searchParams] = useSearchParams()
 
   useEffect(() => {
@@ -41,25 +50,27 @@ export default function AccountList(props: Props) {
     }
   }, [currentAccountId])
 
-  if (!accountIds || !accountIds.length) return null
+  if (!filteredAccounts || !filteredAccounts.length) return null
 
   return (
     <div className='flex flex-wrap w-full p-4'>
-      {accountIds.map((accountId) => {
-        const isActive = currentAccountId === accountId
-
+      {filteredAccounts.map((account) => {
+        const isActive = currentAccountId === account.id
         return (
-          <div key={accountId} id={`account-${accountId}`} className='w-full pt-4'>
+          <div key={account.id} id={`account-${account.id}`} className='w-full pt-4'>
             <Card
-              id={`account-${accountId}`}
-              key={accountId}
+              id={`account-${account.id}`}
+              key={account.id}
               className={classNames('w-full', !isActive && 'group/account hover:cursor-pointer')}
               contentClassName='bg-white/10 group-hover/account:bg-white/20'
               onClick={() => {
                 if (isActive) return
                 if (isMobile) setShowMenu(false)
                 useStore.setState({ accountDeleteModal: null })
-                navigate(getRoute(getPage(pathname, chainConfig), searchParams, address, accountId))
+
+                navigate(
+                  getRoute(getPage(pathname, chainConfig), searchParams, address, account.id),
+                )
               }}
               title={
                 <div
@@ -67,14 +78,12 @@ export default function AccountList(props: Props) {
                   role='button'
                   onClick={() => setShowMenu(false)}
                 >
-                  <Text size='xs' className='flex flex-1'>
-                    Credit Account {accountId}
-                  </Text>
+                  <AccountTitle account={account} />
                   <Radio active={isActive} className='group-hover/account:opacity-100' />
                 </div>
               }
             >
-              <AccountStats accountId={accountId} isActive={isActive} setShowMenu={setShowMenu} />
+              <AccountStats account={account} isActive={isActive} setShowMenu={setShowMenu} />
             </Card>
           </div>
         )

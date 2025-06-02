@@ -17,11 +17,14 @@ export default function Background() {
   )
   const { pathname } = useLocation()
   const page = getPage(pathname, chainConfig)
-  const [isHls, isV1] = useMemo(() => [page.split('-')[0] === 'hls', page === 'v1'], [page])
+  const [isHls, isV1, isVaults] = useMemo(
+    () => [page.split('-')[0] === 'hls', page === 'v1', page.includes('vaults')],
+    [page],
+  )
 
   useEffect(() => {
-    useStore.setState({ isHls, isV1 })
-  }, [isHls, isV1])
+    useStore.setState({ isHls, isV1, isVaults })
+  }, [isHls, isV1, isVaults])
 
   const [primaryOrbClassName, secondaryOrbClassName, tertiaryOrbClassName, bodyClassName] =
     useMemo(() => {
@@ -36,9 +39,16 @@ export default function Background() {
           'bg-body md:bg-v1 md:blur-[2px]',
         ]
       }
-
+      if (isVaults) {
+        return [
+          'bg-orb-primary-vaults',
+          'bg-orb-secondary-vaults',
+          'bg-orb-tertiary-vaults',
+          'bg-body',
+        ]
+      }
       return ['bg-orb-primary', 'bg-orb-secondary', 'bg-orb-tertiary', 'bg-body']
-    }, [isHls, isV1])
+    }, [isHls, isV1, isVaults])
 
   return (
     <div
@@ -73,7 +83,7 @@ export default function Background() {
           'bottom-[-20vw] right-[-10vw]',
           'blur-orb-secondary',
           secondaryOrbClassName,
-          'translate-x-0 translate-y-0  rounded-full opacity-30',
+          'translate-x-0 translate-y-0 rounded-full opacity-30',
           !reduceMotion && 'transition-bg duration-1000 delay-300',
         )}
       />

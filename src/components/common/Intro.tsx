@@ -19,6 +19,7 @@ interface Props {
   text: string | ReactNode
   children?: ReactNode
   bg: Page
+  isCompact?: boolean
 }
 
 function IntroBackground(props: { bg: Props['bg'] }) {
@@ -30,6 +31,7 @@ function IntroBackground(props: { bg: Props['bg'] }) {
         </div>
       )
     case 'lend':
+    case 'vaults':
       return (
         <div className='absolute top-0 right-0 block w-180 opacity-5'>
           <GridTire />
@@ -71,11 +73,14 @@ function IntroBackground(props: { bg: Props['bg'] }) {
 export default function Intro(props: Props) {
   const showTutorial = useStore((s) => s.tutorial)
   const isHls = useStore((s) => s.isHls)
-  if (!showTutorial) return null
+
+  if (!showTutorial && !props.isCompact) return null
+
   return (
     <Card
       className={classNames(
-        'relative w-full p-8 bg-cover md:h-55 min-h-55',
+        'relative w-full p-8 bg-cover',
+        props.isCompact ? 'md:h-30' : 'md:h-55 min-h-55',
         isHls ? 'gradient-hls-intro' : 'gradient-intro',
       )}
       contentClassName='flex w-full h-full flex-col justify-between'
@@ -83,23 +88,30 @@ export default function Intro(props: Props) {
       <div className='absolute inset-0 w-full h-full overflow-hidden text-white'>
         <IntroBackground bg={props.bg} />
       </div>
-      <Tooltip
-        className='absolute top-4 right-4'
-        type='info'
-        content={
-          <Text size='xs'>
-            If you want to hide these info boxes. Set the <strong>Tutorial</strong> to OFF in the
-            Settings.
-          </Text>
-        }
-      />
+      {showTutorial && !props.isCompact && (
+        <Tooltip
+          className='absolute top-4 right-4'
+          type='info'
+          content={
+            <Text size='xs'>
+              If you want to hide these info boxes. Set the <strong>Tutorial</strong> to OFF in the
+              Settings.
+            </Text>
+          }
+        />
+      )}
       <div className='flex w-full'>
         <Text size='lg' className='max-w-full leading-7 w-140 text-white/60'>
           {props.text}
         </Text>
       </div>
       {props.children && (
-        <div className='flex flex-wrap w-full gap-4 pt-4 md:flex-nowrap md:pt-0'>
+        <div
+          className={classNames(
+            'flex flex-wrap w-full gap-4 pt-4 md:flex-nowrap md:pt-0',
+            props.isCompact && 'justify-end',
+          )}
+        >
           {props.children}
         </div>
       )}

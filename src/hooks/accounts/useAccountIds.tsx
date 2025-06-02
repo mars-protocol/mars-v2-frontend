@@ -2,22 +2,27 @@ import useSWR from 'swr'
 
 import getAccountIds from 'api/wallets/getAccountIds'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import { checkAccountKind } from 'utils/accounts'
 
-export default function useAccountIdsAndKinds(address?: string, suspense = true, noHls = false) {
+export default function useAccountIds(
+  address?: string,
+  suspense = true,
+  kind: AccountKind | 'fund_manager' | 'all' = 'all',
+) {
   const chainConfig = useChainConfig()
+  const fetchKey = typeof kind === 'string' ? kind : 'vaults'
   return useSWR(
-    address &&
-      `chains/${chainConfig.id}/wallets/${address}/account-ids${noHls ? '-without-hls' : ''}`,
+    address && `chains/${chainConfig.id}/wallets/${address}/account-ids-${fetchKey}`,
     () =>
       getAccountIds(chainConfig, address).then((accountIdsAndKinds) => {
-        if (noHls) {
-          return accountIdsAndKinds
-            .filter((accountIdAndKind) => accountIdAndKind.kind !== 'high_levered_strategy')
-            .map((a) => a.id)
-        }
-        return accountIdsAndKinds.map((a) => a.id)
+        if (kind === 'all') return accountIdsAndKinds.map((a) => a.id)
+
+        return accountIdsAndKinds
+          .filter((accountIdAndKind) => checkAccountKind(accountIdAndKind.kind) === kind)
+          .map((a) => a.id)
       }),
     {
+      refreshInterval: 30_000,
       suspense: suspense,
       fallback: [] as string[],
       revalidateOnFocus: true,
