@@ -1154,6 +1154,7 @@ interface BroadcastSlice {
     baseDenom: string
     orderIds?: string[]
     position?: PerpsPosition
+    debt?: BNCoin
   }) => Promise<boolean>
   createTriggerOrder: (options: CreateTriggerOrdersOptions) => Promise<boolean>
   createMultipleTriggerOrders: (options: CreateMultipleTriggerOrdersOptions) => Promise<boolean>
