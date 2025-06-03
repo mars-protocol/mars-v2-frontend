@@ -1238,6 +1238,7 @@ interface BroadcastSlice {
     vaultAddress: string
     amount: string
     recipient?: string | null
+    baseTokenDenom: string
   }) => Promise<boolean>
   unlockFromManagedVault: (options: {
     vaultAddress: string

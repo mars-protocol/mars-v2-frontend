@@ -34,6 +34,7 @@ import classNames from 'classnames'
 interface PendingVaultData {
   address: string
   creatorAddress: string
+  baseTokenDenom: string
   status: 'pending_account_mint'
   depositAmount: string
 }
@@ -154,6 +155,7 @@ export default function CreateVault() {
               const pendingVaultData: PendingVaultData = {
                 address: result.address,
                 creatorAddress: address,
+                baseTokenDenom: selectedAsset.denom,
                 status: 'pending_account_mint' as const,
                 depositAmount: amount.toString(),
               }
@@ -178,6 +180,7 @@ export default function CreateVault() {
               await depositInManagedVault({
                 vaultAddress: result.address,
                 amount: amount.toString(),
+                baseTokenDenom: selectedAsset.denom,
               })
 
               navigate(
@@ -458,7 +461,7 @@ export default function CreateVault() {
               rightIcon={<ArrowRight />}
               className='w-full md:w-70'
               text='Create Vault Account'
-              disabled={isTxPending || !isFormValid()}
+              disabled={isTxPending || !isFormValid() || hasInsufficientFunds}
               showProgressIndicator={isTxPending}
             />
           )}
