@@ -46,14 +46,21 @@ export default function AccountList(props: Props) {
     if (!currentAccountId) return
     const element = document.getElementById(`account-${currentAccountId}`)
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
+      const container = element.closest('.scrollbar-hide, .overflow-y-scroll')
+      if (container) {
+        const elementTop = element.offsetTop
+        container.scrollTo({
+          top: elementTop - 48,
+          behavior: 'smooth',
+        })
+      }
     }
   }, [currentAccountId])
 
   if (!filteredAccounts || !filteredAccounts.length) return null
 
   return (
-    <div className='flex flex-wrap w-full p-4'>
+    <div className='flex flex-wrap w-full px-4 pb-4'>
       {filteredAccounts.map((account) => {
         const isActive = currentAccountId === account.id
         return (
