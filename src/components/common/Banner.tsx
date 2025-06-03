@@ -19,7 +19,7 @@ export default function Banner(props: Props) {
   return (
     <div
       className={classNames(
-        'flex flex-col sm:flex-row justify-between items-center w-full p-2 md:px-8 gap-1 mb-4 md:h-20 bg-white/10',
+        'flex flex-col sm:flex-row justify-between items-center w-full p-2 md:p-6 gap-4 mb-4 bg-white/10',
         'relative isolate overflow-hidden rounded-base',
         'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
       )}
