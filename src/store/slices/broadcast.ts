@@ -1399,6 +1399,7 @@ export default function createBroadcastSlice(
       vaultAddress: string
       amount: string
       recipient?: string | null
+      baseTokenDenom: string
     }) => {
       const msg: ManagedVaultExecuteMsg = {
         deposit: {
@@ -1411,7 +1412,7 @@ export default function createBroadcastSlice(
         messages: [
           generateExecutionMessage(get().address, options.vaultAddress, msg, [
             {
-              denom: get().chainConfig.defaultCurrency.coinMinimalDenom,
+              denom: options.baseTokenDenom,
               amount: options.amount,
             },
           ]),
