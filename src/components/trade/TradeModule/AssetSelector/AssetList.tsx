@@ -9,7 +9,7 @@ import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'
 import useFavoriteAssets from 'hooks/localStorage/useFavoriteAssets'
 import useMarkets from 'hooks/markets/useMarkets'
-import { getMergedBalancesForAsset } from 'utils/accounts'
+import { getMergedBalancesForAsset, getMergedBalancesForAssetWithPerps } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { sortAssetsOrPairs } from 'utils/assets'
 
@@ -30,8 +30,12 @@ export default function AssetList(props: Props) {
   const [favoriteAssetsDenoms, _] = useFavoriteAssets()
   const balances = useMemo(() => {
     if (!account) return []
+    // Use different balance calculation for perps vs regular trading
+    if (type === 'perps') {
+      return getMergedBalancesForAssetWithPerps(account, marketEnabledAssets)
+    }
     return getMergedBalancesForAsset(account, marketEnabledAssets)
-  }, [account, marketEnabledAssets])
+  }, [account, marketEnabledAssets, type])
 
   const sortedAssets = useMemo(() => {
     const sorted = sortAssetsOrPairs(assets, markets, balances, favoriteAssetsDenoms) as Asset[]
@@ -74,6 +78,7 @@ export default function AssetList(props: Props) {
                     }
                     asset={asset}
                     isActive={props.activeAsset.denom === asset.denom}
+                    type={type}
                   />
                 </Suspense>
               ))}
