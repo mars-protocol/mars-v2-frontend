@@ -61,7 +61,7 @@ export default function PositionInfo(props: Props) {
               <Button {...secondaryButton} />
             </div>
           ) : (
-            <div className='flex gap-2'>
+            <div className='flex flex-col md:flex-row gap-2'>
               <Button {...primaryButton} />
               <Button {...secondaryButton} />
             </div>

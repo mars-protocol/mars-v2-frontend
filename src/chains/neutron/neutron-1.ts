@@ -151,6 +151,8 @@ const Neutron1: ChainConfig = {
       '/feemarket/v1/gas_prices',
     ),
     managedVaults: 'https://backend.prod.mars-dev.net/v2/managed_vaults?chain=neutron',
+    historicalManagedVaults:
+      'https://backend.prod.mars-dev.net/v2/managed_vaults_historical?chain=neutron',
     aprs: {
       vaults: '',
       perpsVault:
