@@ -139,12 +139,8 @@ export function beautifyErrorMessage(error: string) {
   if (error.includes('OI reached'))
     return 'You can not execute this perp order, since it would exceed the maximum Open Interest for this market.'
 
-  if (
-    error.includes('spendable balance') &&
-    (error.includes('ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81') ||
-      error.includes('ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4'))
-  )
-    return 'Looks like you already completed the bridging transaction. Or you spent some of the bridged USDC already.'
+  if (error.includes('insufficient funds'))
+    return "You don't have enough funds to execute this transaction."
 
   if (error.includes('spendable balance'))
     return 'You can not execute this transaction. There is not enough spendable balance in the market or your wallet.'
