@@ -115,6 +115,7 @@ export default function VaultAction(props: Props) {
         await depositInManagedVault({
           vaultAddress,
           amount: amount.toString(),
+          baseTokenDenom: vaultDetails.base_tokens_denom,
         })
       }
     } catch (error) {

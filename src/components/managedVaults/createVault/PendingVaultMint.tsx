@@ -15,6 +15,7 @@ interface Props {
   pendingVault: {
     address: string
     creatorAddress: string
+    baseTokenDenom: string
     status: 'pending_account_mint'
     depositAmount: string
   }
@@ -67,6 +68,7 @@ export default function PendingVaultMint(props: Props) {
         await depositInManagedVault({
           vaultAddress: pendingVault.address,
           amount: pendingVault.depositAmount,
+          baseTokenDenom: pendingVault.baseTokenDenom,
         })
 
         const updatedSteps = steps.map((step, index) => ({
