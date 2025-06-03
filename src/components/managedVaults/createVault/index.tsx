@@ -461,7 +461,7 @@ export default function CreateVault() {
               rightIcon={<ArrowRight />}
               className='w-full md:w-70'
               text='Create Vault Account'
-              disabled={isTxPending || !isFormValid()}
+              disabled={isTxPending || !isFormValid() || hasInsufficientFunds}
               showProgressIndicator={isTxPending}
             />
           )}
