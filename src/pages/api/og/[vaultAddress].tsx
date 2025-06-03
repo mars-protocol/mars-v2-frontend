@@ -37,7 +37,9 @@ export default async function handler(req: NextRequest) {
     // Convert APR to APY with daily compounding
     const apr = Number(vaultInfo.apr)
     const apy = apr ? ((1 + apr / 36500) ** 365 - 1) * 100 : null
-    const formattedAPY = apy ? `${apy.toFixed(2)}%` : 'N/A'
+    const formattedAPY = apy ? `${apy.toFixed(2)}%` : '0.00%*'
+
+    const showApyNote = !apy
 
     const imageDataUrl = 'https://app.marsprotocol.io/vaults_banner.png'
 
@@ -157,6 +159,23 @@ export default async function handler(req: NextRequest) {
               </div>
             </div>
           </div>
+
+          {showApyNote && (
+            <div
+              style={{
+                position: 'absolute',
+                bottom: 100,
+                left: 50,
+                color: 'rgba(255,255,255,0.7)',
+                fontSize: '22px',
+                zIndex: 2,
+                textAlign: 'center',
+                maxWidth: '100%',
+              }}
+            >
+              * The vault has too little trade data to calculate an APY
+            </div>
+          )}
         </div>
       ),
       {
