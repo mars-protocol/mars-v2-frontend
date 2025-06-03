@@ -20,10 +20,20 @@ interface Props {
   toggleOpen: () => void
   onChangeAsset: (asset: Asset | AssetPair) => void
   activeAsset: Asset
+  enableOverflow?: boolean
+  enableScrollbar?: boolean
 }
 
 export default function AssetList(props: Props) {
-  const { assets, type, isOpen, toggleOpen, onChangeAsset } = props
+  const {
+    assets,
+    type,
+    isOpen,
+    toggleOpen,
+    onChangeAsset,
+    enableOverflow = true,
+    enableScrollbar = true,
+  } = props
   const account = useCurrentAccount()
   const markets = useMarkets()
   const marketEnabledAssets = useTradeEnabledAssets()
@@ -43,7 +53,8 @@ export default function AssetList(props: Props) {
   return (
     <section
       className={classNames(
-        'flex flex-wrap w-full overflow-hidden min-h-[58px]',
+        'flex flex-wrap w-full',
+        enableOverflow && 'overflow-hidden min-h-[58px]',
         type === 'buy' && isOpen && assets.length > 9 && 'pb-12',
       )}
     >
@@ -62,7 +73,12 @@ export default function AssetList(props: Props) {
             No available assets found
           </Text>
         ) : (
-          <div className='flex items-start w-full h-full overflow-y-scroll scrollbar-hide'>
+          <div
+            className={classNames(
+              'flex items-start w-full h-full',
+              enableScrollbar && 'overflow-y-scroll scrollbar-hide',
+            )}
+          >
             <ul className='w-full'>
               {sortedAssets.map((asset) => (
                 <Suspense fallback={<AssetSelectorItemLoading />} key={`${type}-${asset.denom}`}>
