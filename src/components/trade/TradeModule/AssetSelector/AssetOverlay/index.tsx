@@ -13,6 +13,7 @@ import PairsList from 'components/trade/TradeModule/AssetSelector/PairsList'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useFilteredAssets from 'hooks/assets/useFilteredAssets'
+import { getPerpsPositionInfo } from 'utils/accounts'
 
 interface Props {
   state: OverlayState
@@ -92,13 +93,16 @@ export default function AssetOverlay(props: Props) {
   )
   const [activePerpsPositions, availablePerpsMarkets] = useMemo(() => {
     if (!account) return [[], assets]
-    const activePerpsPositions = assets.filter((assets) =>
-      account.perps?.find((perp) => perp.denom === assets.denom),
-    )
-    const availablePerpsMarkets = assets.filter(
-      (assets) =>
-        !activePerpsPositions.some((perp) => perp.denom === assets.denom) && !assets.isDeprecated,
-    )
+
+    const activePerpsPositions = assets.filter((asset) => {
+      const { hasPosition } = getPerpsPositionInfo(account, asset.denom)
+      return hasPosition
+    })
+
+    const availablePerpsMarkets = assets.filter((asset) => {
+      const { hasPosition } = getPerpsPositionInfo(account, asset.denom)
+      return !hasPosition && !asset.isDeprecated
+    })
 
     return [activePerpsPositions, availablePerpsMarkets]
   }, [assets, account])
