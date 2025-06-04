@@ -1,17 +1,17 @@
 import { ColumnDef, Row } from '@tanstack/react-table'
-import Apy, { APY_META } from 'components/earn/lend/Table/Columns/Apy'
-import Fee, { FEE_META } from 'components/managedVaults/table/column/Fee'
-import Title, { TITLE_META } from 'components/managedVaults/table/column/Title'
-import MyPosition, { MY_POSITION_META } from 'components/managedVaults/table/column/MyPosition'
-import TVL, { TVL_META } from 'components/managedVaults/table/column/TVL'
-import Details, { DETAILS_META } from 'components/managedVaults/table/column/Details'
-import { useCallback, useMemo } from 'react'
-import { convertAprToApy } from 'utils/parsers'
 import Button from 'components/common/Button'
-import useStore from 'store'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { getPage, getRoute } from 'utils/route'
+import Apy, { APY_META } from 'components/earn/lend/Table/Columns/Apy'
+import Details, { DETAILS_META } from 'components/managedVaults/table/column/Details'
+import Fee, { FEE_META } from 'components/managedVaults/table/column/Fee'
+import MyPosition, { MY_POSITION_META } from 'components/managedVaults/table/column/MyPosition'
+import Title, { TITLE_META } from 'components/managedVaults/table/column/Title'
+import TVL, { TVL_META } from 'components/managedVaults/table/column/TVL'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import { useCallback, useMemo } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import useStore from 'store'
+import { convertAprToApy } from 'utils/parsers'
+import { getPage, getRoute } from 'utils/route'
 
 interface Props {
   isLoading: boolean
@@ -66,13 +66,11 @@ export default function useCommunityVaultsColumns(props: Props) {
       {
         ...APY_META,
         accessorKey: 'apr',
-        cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => (
-          <Apy
-            isLoading={isLoading}
-            borrowEnabled={true}
-            apy={convertAprToApy(Number(row.original.apr ?? 0), 365)}
-          />
-        ),
+        cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => {
+          const apr = Number(row.original.apr ?? 0) === -100 ? 0 : Number(row.original.apr ?? 0)
+          const apy = convertAprToApy(apr, 365)
+          return <Apy isLoading={isLoading} borrowEnabled={true} apy={apy} />
+        },
       },
       {
         ...FEE_META,
