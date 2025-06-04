@@ -64,8 +64,10 @@ export default function useCommunityVaultsColumns(props: Props) {
         ),
       },
       {
-        ...APY_META,
+        id: 'apy',
+        header: 'APY',
         accessorKey: 'apr',
+        meta: { className: 'w-25' },
         cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => (
           <Apy
             isLoading={isLoading}
