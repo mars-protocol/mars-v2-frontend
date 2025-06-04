@@ -17,7 +17,12 @@ export default function useManagedVaults() {
   const pendingVault = useMemo(() => {
     try {
       const storedVault = localStorage.getItem('pendingVaultMint')
-      return storedVault ? JSON.parse(storedVault) : null
+      if (!storedVault) return null
+      const parsed = JSON.parse(storedVault)
+      if (parsed.creatorAddress === address) {
+        return parsed
+      }
+      return null
     } catch (error) {
       console.error('Failed to parse pending vault:', error)
       return null
