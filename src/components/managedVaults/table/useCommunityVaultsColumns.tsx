@@ -1,6 +1,6 @@
 import { ColumnDef, Row } from '@tanstack/react-table'
 import Button from 'components/common/Button'
-import Apy, { APY_META } from 'components/earn/lend/Table/Columns/Apy'
+import Apy from 'components/earn/lend/Table/Columns/Apy'
 import Details, { DETAILS_META } from 'components/managedVaults/table/column/Details'
 import Fee, { FEE_META } from 'components/managedVaults/table/column/Fee'
 import MyPosition, { MY_POSITION_META } from 'components/managedVaults/table/column/MyPosition'
@@ -64,8 +64,10 @@ export default function useCommunityVaultsColumns(props: Props) {
         ),
       },
       {
-        ...APY_META,
+        id: 'apy',
+        header: 'APY',
         accessorKey: 'apr',
+        meta: { className: 'w-25' },
         cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => {
           const apr = Number(row.original.apr ?? 0) === -100 ? 0 : Number(row.original.apr ?? 0)
           const apy = convertAprToApy(apr, 365)
