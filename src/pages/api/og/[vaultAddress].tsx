@@ -30,7 +30,7 @@ export default async function handler(req: NextRequest) {
       ? formatValue(vaultInfo.tvl, {
           abbreviated: true,
           prefix: '$',
-          decimals: PRICE_ORACLE_DECIMALS,
+          decimals: 2,
         })
       : 'N/A'
 
