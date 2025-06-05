@@ -26,6 +26,7 @@ interface Props {
   tableBodyClassName?: string
   showLiquidationPrice?: boolean
   isUsersAccount?: boolean
+  abbreviated?: boolean
 }
 
 export default function AccountBalancesTable(props: Props) {
@@ -38,6 +39,7 @@ export default function AccountBalancesTable(props: Props) {
     hideCard,
     showLiquidationPrice,
     isUsersAccount,
+    abbreviated = true,
   } = props
   const chainConfig = useChainConfig()
   const currentAccount = useCurrentAccount()
@@ -52,7 +54,7 @@ export default function AccountBalancesTable(props: Props) {
     cosmosAddress: address,
   })
 
-  const columns = useAccountBalancesColumns(account, showLiquidationPrice)
+  const columns = useAccountBalancesColumns(account, showLiquidationPrice, abbreviated)
 
   const accountBalanceData = useAccountBalanceData({
     account,
