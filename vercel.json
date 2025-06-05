@@ -24,6 +24,10 @@
           "value": "no-store, no-cache, must-revalidate, proxy-revalidate"
         },
         {
+          "key": "CDN-Cache-Control",
+          "value": "no-store, no-cache, must-revalidate, proxy-revalidate"
+        },
+        {
           "key": "Pragma",
           "value": "no-cache"
         },
