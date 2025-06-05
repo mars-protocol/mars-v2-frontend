@@ -1,22 +1,16 @@
 import { Suspense, useMemo } from 'react'
 
-import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
+import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
+import { Tooltip } from 'components/common/Tooltip'
 import Skeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
+import { useAccountSummaryStats } from 'hooks/accounts/useAccountSummaryStats'
+import useAccountTitle from 'hooks/accounts/useAccountTitle'
 import useAssets from 'hooks/assets/useAssets'
-import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
-import useAssetParams from 'hooks/params/useAssetParams'
-import usePerpsVault from 'hooks/perps/usePerpsVault'
-import useVaultAprs from 'hooks/vaults/useVaultAprs'
-import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
-import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
-import { Tooltip } from 'components/common/Tooltip'
-import classNames from 'classnames'
 
 interface Props {
   account: Account
@@ -25,16 +19,9 @@ interface Props {
 
 function Content(props: Props) {
   const { account } = props
-  const { data: vaultAprs } = useVaultAprs()
   const { health, healthFactor } = useHealthComputer(account)
-  const data = useBorrowMarketAssetsTableData()
-  const borrowAssets = useMemo(() => data?.allAssets || [], [data])
-  const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const { data: assets } = useAssets()
-  const { data: perpsVault } = usePerpsVault()
-  const astroLpAprs = useAstroLpAprs()
-  const assetParams = useAssetParams()
-  const perpsMarketStates = usePerpsMarketStates()
+  const accountTitle = useAccountTitle(account, true)
 
   const hasLstApy = useMemo(() => {
     return account?.deposits?.some((deposit) => {
@@ -43,20 +30,11 @@ function Content(props: Props) {
     })
   }, [account, assets])
 
+  const { positionValue, collateralValue, debts, netWorth, apy, leverage } =
+    useAccountSummaryStats(account)
+
   const stats = useMemo(() => {
-    if (!account || !borrowAssets.length || !lendingAssets.length) return DEFAULT_PORTFOLIO_STATS
-    const { positionValue, collateralValue, debts, netWorth, apy, leverage } =
-      getAccountSummaryStats(
-        account,
-        borrowAssets,
-        lendingAssets,
-        assets,
-        vaultAprs,
-        astroLpAprs,
-        assetParams.data || [],
-        perpsVault?.apy || 0,
-        perpsMarketStates.data || [],
-      )
+    if (!account) return DEFAULT_PORTFOLIO_STATS
 
     return [
       {
@@ -116,26 +94,14 @@ function Content(props: Props) {
         sub: props.v1 ? 'Total Leverage' : DEFAULT_PORTFOLIO_STATS[5].sub,
       },
     ]
-  }, [
-    account,
-    borrowAssets,
-    lendingAssets,
-    assets,
-    vaultAprs,
-    astroLpAprs,
-    assetParams.data,
-    perpsVault?.apy,
-    perpsMarketStates.data,
-    props.v1,
-    hasLstApy,
-  ])
+  }, [account, apy, collateralValue, debts, leverage, hasLstApy, positionValue, props.v1, netWorth])
 
   return (
     <Skeleton
       stats={stats}
       health={health}
       healthFactor={healthFactor}
-      title={props.v1 ? 'V1 Portfolio' : `Credit Account ${account.id}`}
+      title={props.v1 ? 'V1 Portfolio' : accountTitle}
       accountId={account.id}
     />
   )

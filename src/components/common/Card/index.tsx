@@ -11,6 +11,7 @@ interface Props {
   title?: string | ReactElement
   id?: string
   isTab?: boolean
+  showOverflow?: boolean
 }
 
 export default function Card(props: Props) {
@@ -22,7 +23,8 @@ export default function Card(props: Props) {
       className={classNames(
         props.className,
         'flex flex-col',
-        'relative isolate max-w-full overflow-hidden  max-h-full',
+        'relative isolate max-w-full max-h-full',
+        !props.showOverflow && 'overflow-hidden',
         isTab
           ? ''
           : 'before:content-[" "] before:absolute rounded-base before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',

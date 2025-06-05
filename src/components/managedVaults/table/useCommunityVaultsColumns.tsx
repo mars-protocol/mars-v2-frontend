@@ -1,0 +1,96 @@
+import { ColumnDef, Row } from '@tanstack/react-table'
+import Button from 'components/common/Button'
+import Apy from 'components/earn/lend/Table/Columns/Apy'
+import Details, { DETAILS_META } from 'components/managedVaults/table/column/Details'
+import Fee, { FEE_META } from 'components/managedVaults/table/column/Fee'
+import MyPosition, { MY_POSITION_META } from 'components/managedVaults/table/column/MyPosition'
+import Title, { TITLE_META } from 'components/managedVaults/table/column/Title'
+import TVL, { TVL_META } from 'components/managedVaults/table/column/TVL'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import { useCallback, useMemo } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import useStore from 'store'
+import { convertAprToApy } from 'utils/parsers'
+import { getPage, getRoute } from 'utils/route'
+
+interface Props {
+  isLoading: boolean
+  showPosition?: boolean
+}
+
+export default function useCommunityVaultsColumns(props: Props) {
+  const { isLoading, showPosition } = props
+  const address = useStore((s) => s.address)
+  const chainConfig = useChainConfig()
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
+
+  const handleContinueSetup = useCallback(() => {
+    const storedVault = localStorage.getItem('pendingVaultMint')
+    if (!storedVault) return
+
+    try {
+      const parsedVault = JSON.parse(storedVault)
+      navigate(getRoute(getPage('vaults/create', chainConfig), searchParams, address), {
+        state: { pendingVault: parsedVault },
+      })
+    } catch {
+      return null
+    }
+  }, [navigate, chainConfig, searchParams, address])
+
+  return useMemo<ColumnDef<ManagedVaultWithDetails>[]>(() => {
+    return [
+      {
+        ...TITLE_META,
+        cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => (
+          <Title value={row.original} isLoading={isLoading} />
+        ),
+      },
+      ...(showPosition
+        ? [
+            {
+              ...MY_POSITION_META,
+              cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => (
+                <MyPosition vault={row.original} isLoading={isLoading} />
+              ),
+            },
+          ]
+        : []),
+      {
+        ...TVL_META,
+        cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => (
+          <TVL value={row.original} isLoading={isLoading} />
+        ),
+      },
+      {
+        id: 'apy',
+        header: 'APY',
+        accessorKey: 'apr',
+        meta: { className: 'w-25' },
+        cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => {
+          const apr = Number(row.original.apr ?? 0) === -100 ? 0 : Number(row.original.apr ?? 0)
+          const apy = convertAprToApy(apr, 365)
+          return <Apy isLoading={isLoading} borrowEnabled={true} apy={apy} />
+        },
+      },
+      {
+        ...FEE_META,
+        cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => (
+          <Fee value={row.original.fee_rate} isLoading={isLoading} />
+        ),
+      },
+      {
+        ...DETAILS_META,
+        cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) =>
+          row.original.isPending ? (
+            <div className='flex items-center justify-end'>
+              <Button onClick={handleContinueSetup} text='Continue Setup' />
+            </div>
+          ) : (
+            <Details isLoading={isLoading} vault={row.original} />
+          ),
+      },
+    ]
+  }, [isLoading, showPosition, handleContinueSetup])
+}

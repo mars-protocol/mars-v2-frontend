@@ -342,6 +342,8 @@ interface ChainConfig {
     dexAssets: string
     dexPools?: string
     gasPrices: string
+    managedVaults?: string
+    historicalManagedVaults?: string
     aprs: {
       vaults: string
       perpsVault?: string
@@ -354,6 +356,7 @@ interface ChainConfig {
   name: string
   network: 'mainnet' | 'testnet'
   vaults: VaultMetaData[]
+  vaultCodeId?: string
   hls: boolean
   perps: boolean
   farm: boolean
@@ -361,6 +364,7 @@ interface ChainConfig {
   evmAssetSupport: boolean
   campaignAssets?: AssetCampaignInfo[]
   slinky: boolean
+  managedVaults: boolean
 }
 
 interface AssetCampaignInfo {
@@ -498,6 +502,10 @@ type Page =
   | 'portfolio/{accountId}'
   | 'hls-farm'
   | 'hls-staking'
+  | 'vaults'
+  | 'vaults/create'
+  | 'vaults/{vaultId}'
+  | 'vaults/{vaultId}/details'
   | 'governance'
   | 'execute'
   | 'v1'
@@ -690,6 +698,7 @@ interface PerpsVault {
 }
 
 interface DepositedPerpsVault extends PerpsVault, DepositedVault {}
+
 interface VaultValuesAndAmounts {
   amounts: {
     primary: BigNumber
@@ -936,11 +945,12 @@ type CardTab = {
 type DocLinkType = 'wallet' | 'account' | 'terms' | 'fund' | 'hls'
 
 interface DropDownItem {
-  icon: import('react').ReactNode
+  icon: React.ReactNode
   onClick: () => void
   text: string
   disabled?: boolean
   disabledTooltip?: string
+  tooltipType?: string
 }
 
 interface FormattedNumberProps {
@@ -1224,6 +1234,25 @@ interface BroadcastSlice {
     vaultDenom: string
   }) => Promise<boolean>
   v1Action: (type: V1ActionType, funds: BNCoin) => Promise<boolean>
+  createManagedVault: (params: VaultParams) => Promise<{ address: string } | null>
+  handlePerformanceFeeAction: (options: PerformanceFeeOptions) => Promise<boolean>
+  depositInManagedVault: (options: {
+    vaultAddress: string
+    amount: string
+    recipient?: string | null
+    baseTokenDenom: string
+  }) => Promise<boolean>
+  unlockFromManagedVault: (options: {
+    vaultAddress: string
+    amount: string
+    vaultToken: string
+  }) => Promise<boolean>
+  withdrawFromManagedVault: (options: {
+    vaultAddress: string
+    amount: string
+    recipient?: string | null
+    vaultToken: string
+  }) => Promise<boolean>
 }
 
 type V1ActionType = 'withdraw' | 'deposit' | 'borrow' | 'repay'
@@ -1308,6 +1337,7 @@ interface CommonSlice {
   useAutoRepay: boolean
   isOracleStale: boolean
   isHls: boolean
+  isVaults: boolean
   isV1: boolean
   assets: Asset[]
   perpsBaseDenom?: string
@@ -1351,6 +1381,7 @@ interface ModalSlice {
   unlockModal: UnlockModal | null
   farmModal: FarmModal | null
   walletAssetsModal: WalletAssetModal | null
+  vaultAssetsModal: VaultAssetModal | null
   withdrawFromVaultsModal: DepositedVault[] | null
   v1DepositAndWithdrawModal: V1DepositAndWithdrawModal | null
   v1BorrowAndRepayModal: V1BorrowAndRepayModal | null
@@ -1377,6 +1408,8 @@ interface AlertDialogConfig {
   title?: string
   isSingleButtonLayout?: boolean
   showCloseButton?: boolean
+  modalClassName?: string
+  titleClassName?: string
 }
 
 interface BorrowModal {
@@ -1415,6 +1448,12 @@ interface WalletAssetModal {
   isOpen?: boolean
   selectedDenoms: string[]
   isBorrow?: boolean
+}
+
+interface VaultAssetModal {
+  isOpen?: boolean
+  selectedDenom: string
+  assets: Asset[]
 }
 
 interface HlsModal {
@@ -1925,7 +1964,191 @@ type TrackActionType =
   | 'Claim Rewards'
   | 'Mint HLS Account'
   | 'Mint Credit Account'
+  | 'Mint Vault Account'
   | 'Create Limit Order'
   | 'Cancel Limit Order'
   | 'Deposit Into Vault'
   | 'Deposit Into Perps Vault'
+
+interface VaultParams {
+  title: string
+  description: string
+  baseToken: string
+  withdrawFreezePeriod: number
+  enableHls: boolean
+  performanceFee: {
+    fee_rate: string
+    withdrawal_interval: number
+  }
+  vault_token_subdenom: string
+  creationFeeInAsset: string
+}
+
+interface ManagedVaultsDataResponse {
+  vault_address: string
+  account_id: string
+  title: string
+  subtitle: string
+  description: string
+  fee_rate: string
+  fee: string
+  tvl: string
+  apr: string
+}
+
+interface ManagedVaultWithDetails extends ManagedVaultsDataResponse {
+  base_tokens_denom: string
+  base_tokens_amount: string
+  vault_tokens_denom: string
+  vault_tokens_amount: string
+  fee_rate: number
+  isOwner: boolean
+  isPending?: boolean
+}
+
+interface ManagedVaultSCDetailsResponse {
+  base_token: string
+  vault_token: string
+  title: string
+  subtitle: string | null
+  description: string
+  credit_manager: string
+  vault_account_id: string | null
+  cooldown_period: number
+  performance_fee_config: PerformanceFeeConfig
+  total_base_tokens: string
+  total_vault_tokens: string
+  share_price: number
+}
+
+interface ManagedVaultsData {
+  vault_address: string
+  title: string
+  subtitle: string | null
+  description: string
+  credit_manager: string
+  vault_account_id: string | null
+  cooldown_period: number
+  performance_fee_config: PerformanceFeeConfig
+  share_price: number
+  ownerAddress: string | undefined
+  tvl: string
+  apy: number
+  performance_fee_state: PerformanceFeeState
+  base_tokens_denom: string
+  base_tokens_amount: string
+  vault_tokens_denom: string
+  vault_tokens_amount: string
+}
+
+interface PerformanceFeeState {
+  accumulated_fee: string
+  accumulated_pnl: string
+  base_tokens_amt: string
+  last_withdrawal: number
+}
+
+interface PerformanceFeeOptions {
+  vaultAddress: string
+  newFee?: PerformanceFeeConfig | null
+}
+
+interface PerformanceFeeConfig {
+  fee_rate: string
+  withdrawal_interval: number
+}
+
+interface ExtendedManagedVaultDetails extends ManagedVaultDetails {
+  metrics: ManagedVaultMetrics
+  performance_fee_state: PerformanceFeeState
+  owner?: string
+}
+
+interface ManagedVaultPnlResponse {
+  total_pnl: string
+  pnl_per_share: string
+  total_shares: string
+}
+
+interface ManagedVaultUserPositionResponse {
+  pnl: string
+  shares: string
+}
+
+interface UserManagedVaultUnlockResponse {
+  user_address: string
+  created_at: number
+  cooldown_end: number
+  vault_tokens: string
+  base_tokens: string
+}
+
+interface UserManagedVaultUnlock {
+  user_address: string
+  created_at: number
+  cooldown_end: number
+  vault_tokens_amount: string
+  base_tokens_amount: string
+}
+
+interface StargazeNameInfo {
+  wallet: {
+    name: {
+      name: string
+      associatedAddr: string
+      media: StargazeMedia
+      records: StargazeSocialRecord[]
+    }
+  }
+}
+
+interface StargazeMedia extends Image {
+  visualAssets: {
+    lg: Image
+  }
+}
+
+interface StargazeSocialRecord {
+  name: string
+  value: string
+  verified: boolean
+}
+
+interface StargazeSocial {
+  name: string
+  verified: boolean
+  icon: React.ReactNode
+  link: string
+}
+
+interface Image {
+  url: string
+  width: number
+  height: number
+}
+
+interface DataPoint {
+  date: string
+  value: string
+}
+
+interface HistoricalVaultData {
+  vault_address: string
+  tvl: DataPoint[]
+  apr: DataPoint[]
+  share_price: DataPoint[]
+}
+
+interface HistoricalManagedVaultsResponse {
+  data: HistoricalVaultData[]
+  page: number
+  limit: number
+  total: number
+}
+
+interface HistoricalVaultChartData {
+  tvl: number
+  apy: number
+  sharePrice: number
+  date: string
+}

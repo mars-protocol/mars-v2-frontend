@@ -8,6 +8,7 @@ import { MarsOracleWasmQueryClient } from 'types/generated/mars-oracle-wasm/Mars
 import { MarsParamsQueryClient } from 'types/generated/mars-params/MarsParams.client'
 import { MarsPerpsQueryClient } from 'types/generated/mars-perps/MarsPerps.client'
 import { MarsRedBankQueryClient } from 'types/generated/mars-red-bank/MarsRedBank.client'
+import { MarsVaultQueryClient } from 'types/generated/mars-vault/MarsVault.client'
 import { setNodeError } from 'utils/error'
 import { getUrl } from 'utils/url'
 
@@ -18,6 +19,7 @@ const _paramsQueryClient: Map<string, MarsParamsQueryClient> = new Map()
 const _incentivesQueryClient: Map<string, MarsIncentivesQueryClient> = new Map()
 const _perpsClient: Map<string, MarsPerpsQueryClient> = new Map()
 const _redBankQueryClient: Map<string, MarsRedBankQueryClient> = new Map()
+const _managedVaultQueryClient: Map<string, MarsVaultQueryClient> = new Map()
 
 const getClient = async (rpc: string) => {
   try {
@@ -167,14 +169,207 @@ const getRedBankQueryClient = async (chainConfig: ChainConfig) => {
   }
 }
 
+const getManagedVaultQueryClient = async (chainConfig: ChainConfig, address: string) => {
+  try {
+    const rpc = getUrl(chainConfig.endpoints.rpc)
+    const key = rpc + address
+
+    if (!_managedVaultQueryClient.get(key)) {
+      const client = await getClient(rpc)
+      _managedVaultQueryClient.set(key, new MarsVaultQueryClient(client, address))
+    }
+
+    return _managedVaultQueryClient.get(key)!
+  } catch (error) {
+    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
+    throw error
+  }
+}
+const getManagedVaultOwnerAddress = async (chainConfig: ChainConfig, address: string) => {
+  try {
+    const client = await getClient(getUrl(chainConfig.endpoints.rpc))
+    const contractInfo = await client.getContract(address)
+    return contractInfo.creator
+  } catch (error) {
+    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
+    throw error
+  }
+}
+
+const getManagedVaultDetails = async (chainConfig: ChainConfig, vaultAddress: string) => {
+  try {
+    const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    const response = await client.vaultExtension({
+      vault_info: {},
+    })
+    return response as unknown as ManagedVaultSCDetailsResponse
+  } catch (error) {
+    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
+    throw error
+  }
+}
+
+const getManagedVaultPnl = async (chainConfig: ChainConfig, vaultAddress: string) => {
+  try {
+    const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    const response = await client.vaultExtension({
+      vault_pnl: {},
+    })
+    return response as unknown as ManagedVaultPnlResponse
+  } catch (error) {
+    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
+    throw error
+  }
+}
+
+const getManagedVaultUserPosition = async (
+  chainConfig: ChainConfig,
+  vaultAddress: string,
+  userAddress: string,
+) => {
+  try {
+    const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    const response = await client.vaultExtension({
+      user_pnl: {
+        user_address: userAddress,
+      },
+    })
+    return response as unknown as ManagedVaultUserPositionResponse
+  } catch (error) {
+    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
+    throw error
+  }
+}
+
+const getManagedVaultPerformanceFeeState = async (
+  chainConfig: ChainConfig,
+  vaultAddress: string,
+) => {
+  try {
+    const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    const response = await client.vaultExtension({
+      performance_fee_state: {},
+    })
+    return response as unknown as PerformanceFeeState
+  } catch (error) {
+    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
+    throw error
+  }
+}
+
+const getManagedVaultUserUnlocks = async (
+  chainConfig: ChainConfig,
+  vaultAddress: string,
+  userAddress: string,
+) => {
+  try {
+    const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    const response = await client.vaultExtension({
+      user_unlocks: {
+        user_address: userAddress,
+      },
+    })
+    return response as unknown as UserManagedVaultUnlockResponse[]
+  } catch (error) {
+    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
+    throw error
+  }
+}
+
+const getManagedVaultAllUnlocks = async (
+  chainConfig: ChainConfig,
+  vaultAddress: string,
+  limit?: number,
+  startAfter?: [string, number] | null,
+) => {
+  try {
+    const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    const response = await client.vaultExtension({
+      all_unlocks: {
+        limit,
+        start_after: startAfter,
+      },
+    })
+    return response as unknown as {
+      data: UserManagedVaultUnlockResponse[]
+      metadata: { has_more: boolean }
+    }
+  } catch (error) {
+    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
+    throw error
+  }
+}
+
+const getManagedVaultPreviewRedeem = async (
+  chainConfig: ChainConfig,
+  vaultAddress: string,
+  amount: string,
+) => {
+  try {
+    const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    const response = await client.previewRedeem({
+      amount,
+    })
+    return response
+  } catch (error) {
+    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
+    throw error
+  }
+}
+
+const getManagedVaultConvertToTokens = async (
+  chainConfig: ChainConfig,
+  vaultAddress: string,
+  amount: string,
+) => {
+  try {
+    const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    const response = await client.convertToAssets({
+      amount,
+    })
+    return response
+  } catch (error) {
+    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
+    throw error
+  }
+}
+
+const getManagedVaultConvertToShares = async (
+  chainConfig: ChainConfig,
+  vaultAddress: string,
+  amount: string,
+) => {
+  try {
+    const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    const response = await client.convertToShares({
+      amount,
+    })
+    return response
+  } catch (error) {
+    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
+    throw error
+  }
+}
+
 export {
   getClient,
   getCreditManagerQueryClient,
   getIncentivesQueryClient,
+  getManagedVaultAllUnlocks,
+  getManagedVaultDetails,
+  getManagedVaultPnl,
+  getManagedVaultUserPosition,
+  getManagedVaultOwnerAddress,
+  getManagedVaultPerformanceFeeState,
+  getManagedVaultQueryClient,
+  getManagedVaultUserUnlocks,
   getOracleQueryClientNeutron,
   getOracleQueryClientOsmosis,
   getParamsQueryClient,
   getPerpsQueryClient,
   getRedBankQueryClient,
   getVaultQueryClient,
+  getManagedVaultPreviewRedeem,
+  getManagedVaultConvertToTokens,
+  getManagedVaultConvertToShares,
 }

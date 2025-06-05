@@ -150,6 +150,9 @@ const Neutron1: ChainConfig = {
       process.env.NEXT_PUBLIC_NEUTRON_REST ?? 'https://rest-lb.neutron.org',
       '/feemarket/v1/gas_prices',
     ),
+    managedVaults: 'https://backend.prod.mars-dev.net/v2/managed_vaults?chain=neutron',
+    historicalManagedVaults:
+      'https://backend.prod.mars-dev.net/v2/managed_vaults_historical?chain=neutron',
     aprs: {
       vaults: '',
       perpsVault:
@@ -173,12 +176,14 @@ const Neutron1: ChainConfig = {
     },
   },
   features: ['ibc-transfer', 'ibc-go'],
+  vaultCodeId: '3679',
   hls: true,
   perps: true,
   farm: true,
   anyAsset: true,
   evmAssetSupport: true,
   slinky: true,
+  managedVaults: true,
 }
 
 export default Neutron1

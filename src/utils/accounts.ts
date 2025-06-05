@@ -441,6 +441,31 @@ export function getMergedBalancesForAsset(account: Account, assets: Asset[]) {
   return balances
 }
 
+export function getMergedBalancesForAssetWithPerps(account: Account, assets: Asset[]) {
+  const balances: BNCoin[] = []
+  assets.forEach((asset) => {
+    const regularBalance = accumulateAmounts(asset.denom, [...account.deposits, ...account.lends])
+
+    const perpPosition = account.perps?.find((perp) => perp.denom === asset.denom)
+
+    if (perpPosition && !perpPosition.amount.isZero()) {
+      balances.push(BNCoin.fromDenomAndBigNumber(asset.denom, perpPosition.amount.abs()))
+    } else {
+      balances.push(BNCoin.fromDenomAndBigNumber(asset.denom, regularBalance))
+    }
+  })
+  return balances
+}
+
+export function getPerpsPositionInfo(
+  account: Account,
+  denom: string,
+): { position: PerpsPosition | null; hasPosition: boolean } {
+  const position = account.perps?.find((perp) => perp.denom === denom) || null
+  const hasPosition = position !== null && !position.amount.isZero()
+  return { position, hasPosition }
+}
+
 export function computeHealthGaugePercentage(health: number) {
   const ATTENTION_CUTOFF = 10
   const HEALTHY_CUTOFF = 30
@@ -583,4 +608,10 @@ export function removeEmptyBNCoins(coins: BNCoin[]) {
     newCoins.push(coin)
   })
   return newCoins
+}
+
+export function checkAccountKind(kind: AccountKind): AccountKind | 'fund_manager' | 'unknown' {
+  if (typeof kind === 'string') return kind
+  if (typeof kind === 'object' && 'fund_manager' in kind) return 'fund_manager'
+  return 'unknown'
 }

@@ -2,24 +2,18 @@ import classNames from 'classnames'
 import { useMemo } from 'react'
 
 import useAccountPerpData from 'components/account/AccountPerpPositionTable/useAccountPerpData'
-import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ArrowRight } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
 import useAssets from 'hooks/assets/useAssets'
-import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import useAssetParams from 'hooks/params/useAssetParams'
-import usePerpsVault from 'hooks/perps/usePerpsVault'
-import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { getAccountSummaryStats, getAccountUnrealizedPnlValue } from 'utils/accounts'
-import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
+import { getAccountUnrealizedPnlValue } from 'utils/accounts'
+import { useAccountSummaryStats } from 'hooks/accounts/useAccountSummaryStats'
 
 interface Props {
   account: Account
@@ -35,56 +29,18 @@ interface ItemProps {
 }
 
 export default function AccountComposition(props: Props) {
+  const { account } = props
   const chainConfig = useChainConfig()
   const updatedAccount = useStore((s) => s.updatedAccount)
-  const { account } = props
   const hasChanged = !!updatedAccount
-  const { data: vaultAprs } = useVaultAprs()
   const accountPerpData = useAccountPerpData({
     account,
     updatedAccount,
   })
-
-  const astroLpAprs = useAstroLpAprs()
   const { data: assets } = useAssets()
-  const data = useBorrowMarketAssetsTableData()
-  const { data: perpsVault } = usePerpsVault()
-  const borrowAssetsData = useMemo(() => data?.allAssets || [], [data])
-  const { availableAssets: lendingAvailableAssets, accountLentAssets } =
-    useLendingMarketAssetsTableData()
-  const lendingAssetsData = useMemo(
-    () => [...lendingAvailableAssets, ...accountLentAssets],
-    [lendingAvailableAssets, accountLentAssets],
-  )
-  const assetParams = useAssetParams()
-  const perpsMarketStates = usePerpsMarketStates()
 
-  const { positionValue, debts, netWorth, collateralValue, apy, leverage } = useMemo(
-    () =>
-      getAccountSummaryStats(
-        account,
-        borrowAssetsData,
-        lendingAssetsData,
-        assets,
-        vaultAprs,
-        astroLpAprs,
-        assetParams.data || [],
-        perpsVault?.apy || 0,
-        perpsMarketStates.data || [],
-      ),
-    [
-      account,
-      borrowAssetsData,
-      lendingAssetsData,
-      assets,
-      vaultAprs,
-      astroLpAprs,
-      assetParams.data,
-      perpsVault?.apy,
-      perpsMarketStates,
-    ],
-  )
-
+  const { positionValue, debts, netWorth, collateralValue, apy, leverage } =
+    useAccountSummaryStats(account)
   const {
     positionValue: updatedPositionValue,
     debts: updatedDebts,
@@ -92,45 +48,7 @@ export default function AccountComposition(props: Props) {
     collateralValue: updatedCollateralValue,
     apy: updatedApy,
     leverage: updatedLeverage,
-  } = useMemo(() => {
-    if (!updatedAccount) {
-      return {
-        positionValue,
-        debts,
-        netWorth,
-        collateralValue,
-        apy,
-        leverage,
-      }
-    }
-    return getAccountSummaryStats(
-      updatedAccount,
-      borrowAssetsData,
-      lendingAssetsData,
-      assets,
-      vaultAprs,
-      astroLpAprs,
-      assetParams.data || [],
-      perpsVault?.apy || 0,
-      perpsMarketStates.data || [],
-    )
-  }, [
-    updatedAccount,
-    borrowAssetsData,
-    lendingAssetsData,
-    assets,
-    vaultAprs,
-    astroLpAprs,
-    assetParams.data,
-    perpsVault?.apy,
-    perpsMarketStates.data,
-    positionValue,
-    debts,
-    netWorth,
-    collateralValue,
-    apy,
-    leverage,
-  ])
+  } = useAccountSummaryStats(updatedAccount)
 
   const totalUnrealizedPnl = useMemo(
     () => getAccountUnrealizedPnlValue(account, assets),

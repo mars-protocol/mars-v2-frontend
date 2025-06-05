@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import Text from 'components/common/Text'
 
@@ -19,7 +19,7 @@ interface Props {
 
 export default function TextInput(props: Props) {
   const [value, setValue] = useState<string>(props.value ?? '')
-  const inputRef = React.useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const onInputChange = (inputValue: string) => {
     setValue(inputValue)

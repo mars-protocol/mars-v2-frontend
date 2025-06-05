@@ -16,6 +16,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'xdefi-static.s3.eu-west-1.amazonaws.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'i.stargaze-apis.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ichef.bbci.co.uk',
+      },
     ],
   },
   async headers() {
@@ -46,8 +54,15 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/:any*',
+        source: '/:path*',
         destination: '/',
+        has: [
+          {
+            type: 'header',
+            key: 'User-Agent',
+            value: '(^(?!facebook|twitter|linkedin|telegram|discord|bot|crawl|spider).*$)',
+          },
+        ],
       },
     ]
   },

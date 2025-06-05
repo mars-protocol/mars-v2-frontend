@@ -107,6 +107,14 @@ export type ExtensionQueryMsg =
   | {
       performance_fee_state: {}
     }
+  | {
+      user_pnl: {
+        user_address: string
+      }
+    }
+  | {
+      vault_pnl: {}
+    }
 export interface VaultInfoResponse {
   base_token: string
   vault_token: string
