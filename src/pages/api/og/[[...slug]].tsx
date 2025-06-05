@@ -14,7 +14,7 @@ export default async function handler(req: NextRequest) {
   try {
     const { pathname } = new URL(req.url)
     const segments = pathname.split('/')
-    const vaultAddress = segments[segments.length - 1]
+    const vaultAddress = segments[segments.length - 2]
 
     if (!vaultAddress) {
       return new Response('Missing vault address', { status: 400 })

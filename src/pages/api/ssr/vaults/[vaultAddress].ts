@@ -1,8 +1,10 @@
+import moment from 'moment'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getManagedVaultsUrl } from 'utils/api'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { vaultAddress } = req.query
+  const unixTime = moment().unix()
 
   try {
     const response = await fetch(getManagedVaultsUrl(vaultAddress as string))
@@ -27,10 +29,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           <title>${title}</title>
           <meta property="og:title" content="${title}" />
           <meta property="og:description" content="${description}" />
-          <meta property="og:image" content="/api/og/${vault.vault_address}" />
+          <meta property="og:image" content="/api/og/${vault.vault_address}/${unixTime}" />
           <meta property="twitter:title" content="${title}" />
           <meta property="twitter:description" content="${description}" />
-          <meta property="twitter:image" content="/api/og/${vault.vault_address}" />
+          <meta property="twitter:image" content="/api/og/${vault.vault_address}/${unixTime}" />
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:site" content="@mars_protocol" />
           <meta name="twitter:creator" content="@mars_protocol" />
