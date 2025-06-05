@@ -129,9 +129,7 @@ export function beautifyErrorMessage(error: string) {
     error.includes('Max LTV health factor') ||
     error.includes('Actions did not result in improved health factor')
   )
-    return 'You can not execute this transaction, since it would result in a Health Factor below 1'
-
-  if (error.includes('Generic Error')) return 'Generic Error. Please try again'
+    return 'You can not execute this transaction, since it would result in a Health Factor below 1.'
 
   if (error.includes('incorrect account sequence'))
     return 'You have a pending transaction. Wait for it to be executed and try again.'
@@ -145,9 +143,10 @@ export function beautifyErrorMessage(error: string) {
   if (error.includes('spendable balance'))
     return 'You can not execute this transaction. There is not enough spendable balance in the market or your wallet.'
 
-  if (error === 'Transaction failed: Request rejected') return 'Transaction rejected by user'
+  if (error === 'Transaction failed: Request rejected') return 'Transaction rejected by user.'
   if (error.includes('less or equal available liquidity'))
     return 'There is not enough available liquidity in the selected assets market to borrow.'
+  if (error.includes('Generic error')) return 'Transaction failed: Unknown error. Please try again.'
 
   return `Transaction failed: ${error}`
 }
