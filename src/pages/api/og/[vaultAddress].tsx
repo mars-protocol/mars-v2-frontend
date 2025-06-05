@@ -1,5 +1,4 @@
 import { ImageResponse } from '@vercel/og'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { NextRequest } from 'next/server'
 import { getManagedVaultsUrl } from 'utils/api'
 import { formatValue } from 'utils/edgeFormatters'
@@ -33,7 +32,7 @@ export default async function handler(req: NextRequest) {
       ? formatValue(vaultInfo.tvl, {
           abbreviated: true,
           prefix: '$',
-          decimals: PRICE_ORACLE_DECIMALS,
+          decimals: 2,
         })
       : 'N/A'
 
