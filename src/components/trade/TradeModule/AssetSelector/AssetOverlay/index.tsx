@@ -157,6 +157,8 @@ export default function AssetOverlay(props: Props) {
                 isOpen
                 toggleOpen={() => {}}
                 activeAsset={props.buyAsset}
+                enableOverflow={false}
+                enableScrollbar={false}
               />
             </>
           )}
