@@ -36,12 +36,16 @@ const nextConfig = {
             value: 'origin-when-cross-origin',
           },
           {
+            key: 'Cache-Control',
+            value: 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          },
+          {
             key: 'Pragma',
             value: 'no-cache',
           },
           {
             key: 'Expires',
-            value: new Date().toString(),
+            value: '0',
           },
           {
             key: 'X-Content-Type-Options',
@@ -55,20 +59,6 @@ const nextConfig = {
     return [
       {
         source: '/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'no-store, no-cache, must-revalidate, proxy-revalidate',
-          },
-          {
-            key: 'Pragma',
-            value: 'no-cache',
-          },
-          {
-            key: 'Expires',
-            value: '0',
-          },
-        ],
         destination: '/',
         has: [
           {
