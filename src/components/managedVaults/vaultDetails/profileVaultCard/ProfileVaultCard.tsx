@@ -100,14 +100,14 @@ export default function ProfileVaultCard(props: Props) {
         <Divider />
 
         <div className='space-y-4'>
-          <InfoRow label='APY'>
+          <InfoRow label='Vault APY'>
             <FormattedNumber
               amount={details.apy || 0}
               options={{ minDecimals: 2, maxDecimals: 2, suffix: '%', abbreviated: true }}
               className='text-sm'
             />
           </InfoRow>
-          <InfoRow label='TVL'>
+          <InfoRow label='Total Deposits'>
             <DisplayCurrency
               coin={BNCoin.fromDenomAndBigNumber(
                 details.base_tokens_denom,
@@ -116,7 +116,7 @@ export default function ProfileVaultCard(props: Props) {
               className='text-sm'
             />
           </InfoRow>
-          <InfoRow label='Total PnL'>
+          <InfoRow label='Vault PnL'>
             {!vaultPnl ? (
               <Loading className='h-4 w-20' />
             ) : (
