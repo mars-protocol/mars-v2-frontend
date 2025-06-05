@@ -6,6 +6,9 @@ import { formatValue } from 'utils/edgeFormatters'
 export const config = {
   runtime: 'edge',
 }
+export const revalidate = 0
+export const fetchCache = 'no-store'
+export const dynamic = 'force-dynamic'
 
 export default async function handler(req: NextRequest) {
   try {
