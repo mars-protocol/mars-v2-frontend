@@ -215,6 +215,8 @@ export function PerpsModule() {
       autolend: isAutoLendEnabledForCurrentAccount,
       baseDenom: currentPerpPosition.baseDenom,
       orderIds: relevantOrderIds,
+      position: currentPerpPosition,
+      debt: currentAccount.debts.find((debt) => debt.denom === currentPerpPosition.baseDenom),
     })
   }, [
     currentAccount,

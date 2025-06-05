@@ -992,6 +992,8 @@ export default function createBroadcastSlice(
       autolend: boolean
       baseDenom: string
       orderIds?: string[]
+      position?: PerpsPosition
+      debt?: BNCoin
     }) => {
       const actions: Action[] = [
         {
@@ -1007,13 +1009,39 @@ export default function createBroadcastSlice(
           },
         })) || []),
       ]
-      if (options.autolend)
+
+      if (options.position && options.debt) {
+        const unrealizedPnL = options.position.pnl.unrealized.net.amount
+        const realizedPnL = options.position.pnl.realized.net.amount
+        const usdcDebt = options.debt.amount
+
+        const isInProfit = unrealizedPnL.isGreaterThan(0)
+        const canCoverRepay = unrealizedPnL.isGreaterThan(realizedPnL.abs())
+
+        const hasDebt = usdcDebt.isGreaterThan(0)
+
+        if (isInProfit && canCoverRepay && realizedPnL.isLessThan(0) && hasDebt) {
+          actions.push({
+            repay: {
+              coin: {
+                denom: options.baseDenom,
+                amount: {
+                  exact: realizedPnL.abs().integerValue().toString(),
+                },
+              },
+            },
+          })
+        }
+      }
+
+      if (options.autolend) {
         actions.push({
           lend: {
             denom: options.baseDenom,
             amount: 'account_balance',
           },
         })
+      }
 
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
