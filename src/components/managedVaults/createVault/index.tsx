@@ -125,7 +125,7 @@ export default function CreateVault() {
             const withdrawalIntervalSeconds = moment.duration(30, 'days').asSeconds()
             const creationFee = creationFeeInAsset
               .multipliedBy(1.01)
-              .shiftedBy(PRICE_ORACLE_DECIMALS)
+              .shiftedBy(selectedAsset.decimals)
               .toFixed(0)
 
             const vaultParams = {
@@ -373,7 +373,7 @@ export default function CreateVault() {
                   <FormattedNumber
                     amount={creationFeeInAsset.toNumber()}
                     options={{
-                      maxDecimals: 1,
+                      maxDecimals: 3,
                       minDecimals: 1,
                       suffix: ` ${selectedAsset.symbol}`,
                     }}
