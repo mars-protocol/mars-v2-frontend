@@ -32,7 +32,6 @@ export default async function handler(req: NextRequest) {
       ? formatValue(vaultInfo.tvl, {
           abbreviated: true,
           prefix: '$',
-          decimals: 2,
         })
       : 'N/A'
 
