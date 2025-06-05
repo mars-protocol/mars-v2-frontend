@@ -17,7 +17,10 @@ export default async function handler(req: NextRequest) {
       return new Response('Missing vault address', { status: 400 })
     }
 
-    const response = await fetch(getManagedVaultsUrl(vaultAddress)).then((res) => res.json())
+    const response = await fetch(getManagedVaultsUrl(vaultAddress), {
+      cache: 'no-store',
+      next: { revalidate: 0 },
+    }).then((res) => res.json())
     const data = response.data[0]
 
     if (!data) {
