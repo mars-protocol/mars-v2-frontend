@@ -1,5 +1,4 @@
 import { ImageResponse } from '@vercel/og'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { NextRequest } from 'next/server'
 import { getManagedVaultsUrl } from 'utils/api'
 import { formatValue } from 'utils/edgeFormatters'
@@ -7,18 +6,24 @@ import { formatValue } from 'utils/edgeFormatters'
 export const config = {
   runtime: 'edge',
 }
+export const revalidate = 0
+export const fetchCache = 'no-store'
+export const dynamic = 'force-dynamic'
 
 export default async function handler(req: NextRequest) {
   try {
     const { pathname } = new URL(req.url)
     const segments = pathname.split('/')
-    const vaultAddress = segments[segments.length - 1]
+    const vaultAddress = segments[segments.length - 2]
 
     if (!vaultAddress) {
       return new Response('Missing vault address', { status: 400 })
     }
 
-    const response = await fetch(getManagedVaultsUrl(vaultAddress)).then((res) => res.json())
+    const response = await fetch(getManagedVaultsUrl(vaultAddress), {
+      cache: 'no-store',
+      next: { revalidate: 0 },
+    }).then((res) => res.json())
     const data = response.data[0]
 
     if (!data) {
@@ -30,7 +35,6 @@ export default async function handler(req: NextRequest) {
       ? formatValue(vaultInfo.tvl, {
           abbreviated: true,
           prefix: '$',
-          decimals: PRICE_ORACLE_DECIMALS,
         })
       : 'N/A'
 

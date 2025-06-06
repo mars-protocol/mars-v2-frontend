@@ -68,11 +68,13 @@ export default function useCommunityVaultsColumns(props: Props) {
         header: 'APY',
         accessorKey: 'apr',
         meta: { className: 'w-25' },
-        cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => {
-          const apr = Number(row.original.apr ?? 0) === -100 ? 0 : Number(row.original.apr ?? 0)
-          const apy = convertAprToApy(apr, 365)
-          return <Apy isLoading={isLoading} borrowEnabled={true} apy={apy} />
-        },
+        cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => (
+          <Apy
+            isLoading={isLoading}
+            borrowEnabled={true}
+            apy={convertAprToApy(Number(row.original.apr ?? 0), 365)}
+          />
+        ),
       },
       {
         ...FEE_META,

@@ -1,19 +1,19 @@
+import { Row } from '@tanstack/react-table'
 import AssetImage from 'components/common/assets/AssetImage'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Loading from 'components/common/Loading'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
-import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { Row } from '@tanstack/react-table'
+import { BN } from 'utils/helpers'
 
 export const TVL_META = {
-  accessorKey: 'base_tokens_amount',
+  accessorKey: 'tvl',
   header: 'TVL',
   meta: { className: 'w-30' },
   sortingFn: (a: Row<ManagedVaultWithDetails>, b: Row<ManagedVaultWithDetails>) => {
-    const amountA = Number(a.original.base_tokens_amount)
-    const amountB = Number(b.original.base_tokens_amount)
+    const amountA = Number(a.original.tvl)
+    const amountB = Number(b.original.tvl)
     return amountA - amountB
   },
 }

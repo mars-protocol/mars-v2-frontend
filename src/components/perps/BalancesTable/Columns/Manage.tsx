@@ -63,6 +63,8 @@ export default function Manage(props: Props) {
       autolend: isAutoLendEnabledForCurrentAccount,
       baseDenom: perpPosition.baseDenom,
       orderIds: relevantOrderIds,
+      position: perpPosition,
+      debt: currentAccount.debts.find((debt) => debt.denom === perpPosition.baseDenom),
     })
   }, [
     currentAccount,
@@ -166,6 +168,8 @@ export default function Manage(props: Props) {
           coin: BNCoin.fromDenomAndBigNumber(perpPosition.asset.denom, signedAmount),
           autolend: isAutoLendEnabledForCurrentAccount,
           baseDenom: perpPosition.baseDenom,
+          position: perpPosition,
+          debt: currentAccount.debts.find((debt) => debt.denom === perpPosition.baseDenom),
         })
       }
 

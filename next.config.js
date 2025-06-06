@@ -36,12 +36,16 @@ const nextConfig = {
             value: 'origin-when-cross-origin',
           },
           {
+            key: 'Cache-Control',
+            value: 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          },
+          {
             key: 'Pragma',
             value: 'no-cache',
           },
           {
             key: 'Expires',
-            value: new Date().toString(),
+            value: '0',
           },
           {
             key: 'X-Content-Type-Options',
@@ -60,7 +64,8 @@ const nextConfig = {
           {
             type: 'header',
             key: 'User-Agent',
-            value: '(^(?!facebook|twitter|linkedin|telegram|discord|bot|crawl|spider).*$)',
+            value:
+              '(^(?!facebook|twitter|linkedin|telegram|discord|bot|crawl|spider|facebookexternalhit|Facebot|Twitterbot|TelegramBot).*$)',
           },
         ],
       },

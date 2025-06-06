@@ -89,7 +89,7 @@ function VaultTable({ title, data, isLoading, hideCard }: Props) {
       title={title}
       columns={columns}
       data={data}
-      initialSorting={[{ id: 'base_tokens_amount', desc: true }]}
+      initialSorting={[{ id: 'tvl', desc: true }]}
       hideCard={hideCard}
     />
   )
