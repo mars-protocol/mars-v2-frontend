@@ -11,17 +11,26 @@ import { DocURL } from 'types/enums'
 
 interface Props {
   text: string
+  excludeWalletAddress?: boolean
 }
 
 export default function ShareBar(props: Props) {
   const { address } = useParams()
   const { pathname } = useLocation()
-  const currentUrl = `https://${location.host}${pathname}`
+
+  const cleanPathname = props.excludeWalletAddress
+    ? pathname
+        .split('/')
+        .filter((segment) => segment !== 'wallets' && segment !== address)
+        .join('/')
+    : pathname
+
+  const currentUrl = `https://${location.host}${cleanPathname}`
   const [isCopied, setCopied] = useClipboard(currentUrl, {
     successDuration: 1000 * 5,
   })
 
-  if (!window || !address) return null
+  if (!window || (!props.excludeWalletAddress && !address)) return null
   return (
     <div className='flex justify-end gap-2 flex-grow'>
       <ConditionalWrapper
