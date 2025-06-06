@@ -5,20 +5,17 @@ import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
-import { ArrowRight } from 'components/common/Icons'
+import VaultInputElement from 'components/managedVaults/createVault/VaultInputElement'
+import { ArrowRight, ExternalLink } from 'components/common/Icons'
+import { Callout, CalloutType } from 'components/common/Callout'
 import { getPage, getRoute } from 'utils/route'
+import { TextLink } from 'components/common/TextLink'
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
 interface Props {
   onClose: () => void
-  pendingVault: {
-    address: string
-    creatorAddress: string
-    baseTokenDenom: string
-    status: 'pending_account_mint'
-    depositAmount: string
-  }
+  pendingVault: PendingVaultData
 }
 
 const INITIAL_STEPS = [
@@ -32,6 +29,7 @@ export default function PendingVaultMint(props: Props) {
 
   const [steps, setSteps] = useState(INITIAL_STEPS)
   const [isTxPending, setIsTxPending] = useState(false)
+  const [manualVaultAddress, setManualVaultAddress] = useState('')
 
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -41,13 +39,18 @@ export default function PendingVaultMint(props: Props) {
   const depositInManagedVault = useStore((s) => s.depositInManagedVault)
 
   const handleMintVaultAccount = async () => {
-    if (!pendingVault?.address) return
+    const vaultAddress = pendingVault.vaultAddress || manualVaultAddress
+    if (!vaultAddress) return
+    if (address?.toLowerCase() !== pendingVault.creatorAddress?.toLowerCase()) {
+      console.error('Only the vault creator can mint the vault account.')
+      return
+    }
 
     try {
       setIsTxPending(true)
       const accountKind = {
         fund_manager: {
-          vault_addr: pendingVault.address,
+          vault_addr: vaultAddress,
         },
       }
       const vaultAccountId = await mintVaultAccount(accountKind, false)
@@ -66,7 +69,7 @@ export default function PendingVaultMint(props: Props) {
 
       if (pendingVault.depositAmount) {
         await depositInManagedVault({
-          vaultAddress: pendingVault.address,
+          vaultAddress: vaultAddress,
           amount: pendingVault.depositAmount,
           baseTokenDenom: pendingVault.baseTokenDenom,
         })
@@ -80,7 +83,7 @@ export default function PendingVaultMint(props: Props) {
 
       navigate(
         getRoute(
-          getPage(`vaults/${pendingVault.address}/details`, chainConfig),
+          getPage(`vaults/${vaultAddress}/details`, chainConfig),
           searchParams,
           address,
           vaultAccountId,
@@ -97,7 +100,7 @@ export default function PendingVaultMint(props: Props) {
     <Overlay
       show={true}
       setShow={onClose}
-      className='fixed md:absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full md:w-100'
+      className='fixed md:absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full md:w-120'
     >
       <div className='flex justify-end p-2 w-full'>
         <EscButton onClick={onClose} enableKeyPress />
@@ -111,7 +114,7 @@ export default function PendingVaultMint(props: Props) {
                   className={classNames(
                     'w-8 h-8 rounded-full flex items-center justify-center',
                     step.isActive
-                      ? 'border-2 border-primary bg-transparent'
+                      ? 'border-2 border-purple bg-transparent'
                       : 'border border-white/20 bg-white/10',
                     'transition-colors',
                   )}
@@ -136,6 +139,32 @@ export default function PendingVaultMint(props: Props) {
         </div>
 
         <div className='flex flex-col gap-4'>
+          {!pendingVault.vaultAddress && (
+            <div>
+              <Callout type={CalloutType.WARNING}>
+                We couldn't detect your vault address. Please paste it below to continue.
+                <TextLink
+                  href={''}
+                  target='_blank'
+                  textSize='extraSmall'
+                  className='ml-1 text-white/50 hover:text-white'
+                  title='How to get the vault address?'
+                >
+                  How to get your vault address?
+                  <ExternalLink className='ml-1 inline w-3' />
+                </TextLink>
+              </Callout>
+
+              <VaultInputElement
+                type='text'
+                value={manualVaultAddress}
+                onChange={setManualVaultAddress}
+                label=''
+                placeholder='Enter vault address'
+                required
+              />
+            </div>
+          )}
           <Text size='sm' className='text-white/70 text-center'>
             Your vault has been created. Complete the remaining steps to finish the setup.
           </Text>
@@ -146,7 +175,7 @@ export default function PendingVaultMint(props: Props) {
             rightIcon={<ArrowRight />}
             className='w-full'
             text='Continue Minting Vault'
-            disabled={isTxPending}
+            disabled={isTxPending || (!pendingVault.vaultAddress && !manualVaultAddress)}
             showProgressIndicator={isTxPending}
           />
         </div>

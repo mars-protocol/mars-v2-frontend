@@ -2041,6 +2041,14 @@ interface ManagedVaultsData {
   vault_tokens_amount: string
 }
 
+interface PendingVaultData {
+  vaultAddress?: string
+  creatorAddress: string
+  baseTokenDenom: string
+  status: 'pending_account_mint' | 'pending_tx'
+  depositAmount: string
+}
+
 interface PerformanceFeeState {
   accumulated_fee: string
   accumulated_pnl: string
