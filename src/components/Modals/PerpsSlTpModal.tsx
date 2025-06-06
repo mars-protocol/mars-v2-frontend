@@ -70,15 +70,23 @@ export default function PerpsSlTpModal() {
     [assets, perpsConfig?.base_denom],
   )
 
+  const parsedKeeperFee = useMemo(() => {
+    try {
+      return typeof keeperFee === 'string' ? JSON.parse(keeperFee) : keeperFee
+    } catch {
+      return null
+    }
+  }, [keeperFee])
+
   const calculateKeeperFee = useMemo(
     () =>
-      feeToken
+      feeToken && parsedKeeperFee?.amount
         ? BNCoin.fromDenomAndBigNumber(
             feeToken.denom,
-            magnify(BN(keeperFee.amount).toNumber(), feeToken),
+            magnify(BN(parsedKeeperFee.amount).toNumber(), feeToken),
           )
         : undefined,
-    [feeToken, keeperFee.amount],
+    [feeToken, parsedKeeperFee],
   )
 
   const onClose = useCallback(() => {

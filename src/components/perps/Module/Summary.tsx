@@ -104,12 +104,20 @@ export default function PerpsSummary(props: Props) {
     [assets, perpsConfig?.base_denom],
   )
 
+  const parsedKeeperFee = useMemo(() => {
+    try {
+      return typeof keeperFee === 'string' ? JSON.parse(keeperFee) : keeperFee
+    } catch {
+      return null
+    }
+  }, [keeperFee])
+
   const calculateKeeperFee = useMemo(() => {
     const defaultKeeperFee = getDefaultKeeperFee(chainConfig)
-    return (isLimitOrder || isStopOrder) && keeperFee?.amount
-      ? BNCoin.fromDenomAndBigNumber(keeperFee.denom, BN(keeperFee.amount))
+    return (isLimitOrder || isStopOrder) && parsedKeeperFee?.amount
+      ? BNCoin.fromDenomAndBigNumber(parsedKeeperFee.denom, BN(parsedKeeperFee.amount))
       : BNCoin.fromDenomAndBigNumber(defaultKeeperFee.denom, BN(defaultKeeperFee.amount))
-  }, [chainConfig, isLimitOrder, isStopOrder, keeperFee.amount, keeperFee.denom])
+  }, [chainConfig, isLimitOrder, isStopOrder, parsedKeeperFee])
 
   const submitLimitOrder = useSubmitLimitOrder()
 

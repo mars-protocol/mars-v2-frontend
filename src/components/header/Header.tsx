@@ -97,7 +97,7 @@ export default function Header() {
       <header
         className={classNames(
           'fixed left-0 top-0 z-50 w-full max-w-screen-full',
-          'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:h-full before:w-full before:rounded-sm before:backdrop-blur-sticky',
+          'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:h-full before:w-full before:rounded-sm before:backdrop-blur-xl before:bg-black/30',
         )}
       >
         <div
