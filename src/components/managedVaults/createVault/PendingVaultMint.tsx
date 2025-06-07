@@ -6,12 +6,18 @@ import Text from 'components/common/Text'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import VaultInputElement from 'components/managedVaults/createVault/VaultInputElement'
-import { ArrowRight, ExternalLink } from 'components/common/Icons'
+import {
+  ArrowRight,
+  ExclamationMarkTriangle,
+  ExternalLink,
+  TrashBin,
+} from 'components/common/Icons'
 import { Callout, CalloutType } from 'components/common/Callout'
 import { getPage, getRoute } from 'utils/route'
 import { TextLink } from 'components/common/TextLink'
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import useAlertDialog from 'hooks/common/useAlertDialog'
 
 interface Props {
   onClose: () => void
@@ -30,6 +36,7 @@ export default function PendingVaultMint(props: Props) {
   const [steps, setSteps] = useState(INITIAL_STEPS)
   const [isTxPending, setIsTxPending] = useState(false)
   const [manualVaultAddress, setManualVaultAddress] = useState('')
+  const { open: showAlertDialog } = useAlertDialog()
 
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -96,6 +103,30 @@ export default function PendingVaultMint(props: Props) {
     }
   }
 
+  const handleDeleteDraft = () => {
+    showAlertDialog({
+      title: 'Delete Draft Vault',
+      icon: <ExclamationMarkTriangle />,
+      content: (
+        <div>
+          <Text className='text-white/60'>
+            Are you sure you want to delete this draft vault? This action is permanent and cannot be
+            reversed. Please note that any creation fees paid will not be refunded.
+          </Text>
+        </div>
+      ),
+      positiveButton: {
+        text: 'Delete',
+        onClick: () => {
+          localStorage.removeItem('pendingVaultMint')
+        },
+      },
+      negativeButton: {
+        text: 'Cancel',
+      },
+    })
+  }
+
   return (
     <Overlay
       show={true}
@@ -138,7 +169,7 @@ export default function PendingVaultMint(props: Props) {
           ))}
         </div>
 
-        <div className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-6'>
           {!pendingVault.vaultAddress && (
             <div>
               <Callout type={CalloutType.WARNING}>
@@ -169,15 +200,26 @@ export default function PendingVaultMint(props: Props) {
             Your vault has been created. Complete the remaining steps to finish the setup.
           </Text>
 
-          <Button
-            onClick={handleMintVaultAccount}
-            size='md'
-            rightIcon={<ArrowRight />}
-            className='w-full'
-            text='Continue Minting Vault'
-            disabled={isTxPending || (!pendingVault.vaultAddress && !manualVaultAddress)}
-            showProgressIndicator={isTxPending}
-          />
+          <div className='flex gap-12'>
+            <Button
+              onClick={handleDeleteDraft}
+              rightIcon={<TrashBin />}
+              color='secondary'
+              className='w-full py-3'
+              text='Delete Draft'
+              disabled={isTxPending || (!pendingVault.vaultAddress && !manualVaultAddress)}
+              showProgressIndicator={isTxPending}
+            />
+
+            <Button
+              onClick={handleMintVaultAccount}
+              rightIcon={<ArrowRight />}
+              className='w-full py-3'
+              text='Continue Minting'
+              disabled={isTxPending || (!pendingVault.vaultAddress && !manualVaultAddress)}
+              showProgressIndicator={isTxPending}
+            />
+          </div>
         </div>
       </div>
     </Overlay>
