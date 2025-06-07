@@ -71,7 +71,7 @@ export default function PendingVaultMint(props: Props) {
         await depositInManagedVault({
           vaultAddress: vaultAddress,
           amount: pendingVault.depositAmount,
-          baseTokenDenom: pendingVault.baseTokenDenom,
+          baseTokenDenom: pendingVault.params.baseToken,
         })
 
         const updatedSteps = steps.map((step, index) => ({

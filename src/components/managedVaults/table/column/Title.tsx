@@ -3,6 +3,7 @@ import Loading from 'components/common/Loading'
 import useManagedVaultOwnerInfo from 'hooks/managedVaults/useManagedVaultOwnerInfo'
 import Text from 'components/common/Text'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
+import { truncate } from 'utils/formatters'
 
 export const TITLE_META = {
   accessorKey: 'title',
@@ -47,7 +48,7 @@ export default function Title(props: Props) {
         <Text size='xs'>{value.title}</Text>
         <div>
           <Text size='xs' className='inline-block text-white/60 bg-white/10 rounded px-1.5 py-0.5'>
-            {vaultOwnerInfo.name}
+            {value.isPending ? truncate(value.ownerAddress, [2, 6]) : vaultOwnerInfo.name}
           </Text>
         </div>
       </div>
