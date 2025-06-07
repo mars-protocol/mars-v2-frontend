@@ -201,7 +201,7 @@ export default function ProfileVaultCard(props: Props) {
 
         <div className='flex justify-between items-center pb-4'>
           <Text size='sm'>Share Vault</Text>
-          <ShareBar text={shareText} />
+          <ShareBar text={shareText} excludeWalletAddress />
         </div>
 
         {isOwner && !vaultOwnerInfo.hasStargazeNames && (
