@@ -1,5 +1,6 @@
 import { ColumnDef, Row } from '@tanstack/react-table'
 import Button from 'components/common/Button'
+import Apy, { APY_META } from 'components/managedVaults/table/column/Apy'
 import Details, { DETAILS_META } from 'components/managedVaults/table/column/Details'
 import Fee, { FEE_META } from 'components/managedVaults/table/column/Fee'
 import MyPosition, { MY_POSITION_META } from 'components/managedVaults/table/column/MyPosition'
@@ -11,7 +12,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { convertAprToApy } from 'utils/parsers'
 import { getPage, getRoute } from 'utils/route'
-import Apy, { APY_META } from './column/Apy'
 
 interface Props {
   isLoading: boolean

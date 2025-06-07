@@ -4,6 +4,7 @@ import { priceFeedIDs } from 'constants/pythPriceFeedIDs'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { demagnify, truncate } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 export function findCoinByDenom(denom: string, coins: BigNumberCoin[]) {
   return coins.find((coin) => coin.denom === denom)
@@ -117,6 +118,7 @@ export function convertAstroportAssetsResponse(data: AstroportAsset[]): Asset[] 
         ?.priceFeedID,
       pythFeedName: priceFeedIDs.find((pf) => pf.symbol === asset.symbol.toUpperCase())?.feedName,
       campaigns: [],
+      isTradeEnabled: BN(asset.totalLiquidityUSD).isGreaterThan(1000),
     }
   })
 }
