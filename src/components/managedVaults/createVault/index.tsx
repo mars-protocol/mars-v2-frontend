@@ -269,7 +269,6 @@ export default function CreateVault() {
             <Button
               onClick={() => {
                 const parsedVault = getStoredVaultData()
-                console.log(parsedVault, 'parsed vault in button')
                 if (parsedVault) {
                   setPendingVault(parsedVault)
                 }
@@ -296,7 +295,7 @@ export default function CreateVault() {
               },
             })
           }}
-          pendingVault={pendingVault as PendingVaultData & { address: string }}
+          pendingVault={pendingVault}
         />
       )}
 

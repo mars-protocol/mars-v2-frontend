@@ -1396,7 +1396,7 @@ export default function createBroadcastSlice(
         }
         return { address: vaultAddress }
       } catch (error) {
-        console.error('Error in createManagedVault:', error)
+        console.error('Failed to create vault:', error)
         return null
       }
     },
