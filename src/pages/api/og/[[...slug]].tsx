@@ -1,8 +1,7 @@
 import { ImageResponse } from '@vercel/og'
 import { NextRequest } from 'next/server'
 import { getManagedVaultsUrl } from 'utils/api'
-import { formatValue } from 'utils/formatters'
-import { convertAprToApy } from 'utils/parsers'
+import { formatValue } from 'utils/edgeFormatters'
 
 export const config = {
   runtime: 'edge',
@@ -41,7 +40,7 @@ export default async function handler(req: NextRequest) {
 
     // Convert APR to APY with daily compounding
     const apr = Number(vaultInfo.apr)
-    const apy = convertAprToApy(apr, 365)
+    const apy = apr ? ((1 + apr / 36500) ** 365 - 1) * 100 : null
     const formattedAPY = apy
       ? formatValue(apy, {
           abbreviated: false,
