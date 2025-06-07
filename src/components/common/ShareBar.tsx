@@ -8,6 +8,8 @@ import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import { DocURL } from 'types/enums'
+import { getPage, getRoute } from 'utils/route'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 interface Props {
   text: string
@@ -17,15 +19,13 @@ interface Props {
 export default function ShareBar(props: Props) {
   const { address } = useParams()
   const { pathname } = useLocation()
+  const chainConfig = useChainConfig()
 
-  const cleanPathname = props.excludeWalletAddress
-    ? pathname
-        .split('/')
-        .filter((segment) => segment !== 'wallets' && segment !== address)
-        .join('/')
-    : pathname
+  const cleanPath = getRoute(getPage(pathname, chainConfig), new URLSearchParams())
+  const currentUrl = props.excludeWalletAddress
+    ? `https://${location.host}${cleanPath}`
+    : `https://${location.host}${pathname}`
 
-  const currentUrl = `https://${location.host}${cleanPathname}`
   const [isCopied, setCopied] = useClipboard(currentUrl, {
     successDuration: 1000 * 5,
   })
