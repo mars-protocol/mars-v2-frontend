@@ -55,6 +55,7 @@ export default function ProfileVaultCard(props: Props) {
     ? `Check out '${vaultTitle}' on Mars Protocol!`
     : `Check out the '${vaultTitle}' Vault on Mars Protocol!`
 
+  const apy = details.apy || 0
   return (
     <Card className='bg-white/5'>
       <div className='relative mb-6'>
@@ -102,10 +103,10 @@ export default function ProfileVaultCard(props: Props) {
         <div className='space-y-4'>
           <InfoRow label='Vault APY'>
             <FormattedNumber
-              amount={details.apy || 0}
+              amount={apy}
               options={{
-                minDecimals: details.apy > 100 ? 0 : 2,
-                maxDecimals: details.apy > 100 ? 0 : 2,
+                minDecimals: apy > 100 ? 0 : 2,
+                maxDecimals: apy > 100 ? 0 : 2,
                 suffix: '%',
                 abbreviated: false,
               }}
