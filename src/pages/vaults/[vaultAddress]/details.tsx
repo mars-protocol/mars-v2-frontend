@@ -1,8 +1,8 @@
-import VaultDetails from 'components/managedVaults/vaultDetails'
-import { isbot } from 'isbot'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
+import VaultDetails from 'components/managedVaults/vaultDetails'
 import { useEffect, useState } from 'react'
+import { isbot } from 'isbot'
 
 export default function VaultDetailsPage() {
   const router = useRouter()

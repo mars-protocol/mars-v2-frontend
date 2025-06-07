@@ -1,8 +1,9 @@
 import classNames from 'classnames'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useEffect } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import useAccountBalancesColumns from 'components/account/AccountBalancesTable/Columns/useAccountBalancesColumns'
+import { VALUE_META } from 'components/account/AccountBalancesTable/Columns/Value'
 import useAccountBalanceData from 'components/account/AccountBalancesTable/useAccountBalanceData'
 import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 import ActionButton from 'components/common/Button/ActionButton'
@@ -12,11 +13,11 @@ import Text from 'components/common/Text'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import useAccountTitle from 'hooks/accounts/useAccountTitle'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
+import { useSkipBridgeData } from 'hooks/bridge/useSkipBridgeData'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
-import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
-import { useSkipBridgeData } from 'hooks/bridge/useSkipBridgeData'
 
 interface Props {
   account: Account
@@ -133,7 +134,7 @@ export default function AccountBalancesTable(props: Props) {
       columns={columns}
       data={dynamicAssets}
       tableBodyClassName={classNames(tableBodyClassName, 'text-white/60')}
-      initialSorting={[]}
+      initialSorting={[{ id: VALUE_META.accessorKey, desc: true }]}
       spacingClassName='p-2'
       hideCard={hideCard}
       type='balances'
