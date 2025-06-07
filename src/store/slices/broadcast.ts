@@ -1376,6 +1376,11 @@ export default function createBroadcastSlice(
         get().handleTransaction({ response })
 
         const result = await response
+
+        if (!result.result && result.error === 'Request rejected') {
+          localStorage.removeItem('pendingVaultMint')
+          return null
+        }
         if (!result?.result) {
           return null
         }
@@ -1386,11 +1391,12 @@ export default function createBroadcastSlice(
           '_contract_address',
         )
         if (!vaultAddress) {
+          console.error('Failed to get vault address', result)
           return null
         }
         return { address: vaultAddress }
       } catch (error) {
-        console.error('Failed to create vault:', error)
+        console.error('Error in createManagedVault:', error)
         return null
       }
     },

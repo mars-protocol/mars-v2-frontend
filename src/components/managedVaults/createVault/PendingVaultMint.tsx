@@ -67,7 +67,7 @@ export default function PendingVaultMint(props: Props) {
 
       localStorage.removeItem('pendingVaultMint')
 
-      if (pendingVault.depositAmount) {
+      if (pendingVault.depositAmount && pendingVault.depositAmount !== '0') {
         await depositInManagedVault({
           vaultAddress: vaultAddress,
           amount: pendingVault.depositAmount,

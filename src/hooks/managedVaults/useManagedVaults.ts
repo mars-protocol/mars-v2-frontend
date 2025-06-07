@@ -66,10 +66,10 @@ export default function useManagedVaults() {
         // Add pending vault if it exists and isn't in the API response yet
         if (
           pendingVault &&
+          pendingVault.creatorAddress === address &&
           !vaultsWithDetails.some((vault) => vault.vault_address === pendingVault.vaultAddress)
         ) {
           try {
-            // const details = await getManagedVaultDetails(chainConfig, pendingVault.vaultAddress)
             vaultsWithDetails.push({
               vault_address: pendingVault.vaultAddress,
               account_id: '',

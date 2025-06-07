@@ -15,12 +15,17 @@ export function useDepositedManagedVaultsFallback() {
   const pendingVault = useMemo(() => {
     try {
       const storedVault = localStorage.getItem('pendingVaultMint')
-      return storedVault ? JSON.parse(storedVault) : null
+      if (!storedVault) return null
+      const parsedVault = JSON.parse(storedVault)
+      if (parsedVault.creatorAddress === address) {
+        return parsedVault
+      }
+      return null
     } catch (error) {
       console.error('Failed to parse pending vault:', error)
       return null
     }
-  }, [])
+  }, [address])
 
   const { data: userVaults, isLoading } = useSWR(
     address && hasBalances ? `chains/${chainConfig.id}/managedVaults/fallback/${address}` : null,
@@ -72,9 +77,8 @@ export function useDepositedManagedVaultsFallback() {
       const filteredVaults = vaults.filter(Boolean) as ManagedVaultWithDetails[]
 
       // Add pending vault if it exists
-      if (pendingVault) {
+      if (pendingVault && pendingVault.creatorAddress === address) {
         try {
-          // const details = await getManagedVaultDetails(chainConfig, pendingVault.vaultAddress)
           const pendingVaultData = {
             vault_address: pendingVault.vaultAddress,
             account_id: '',

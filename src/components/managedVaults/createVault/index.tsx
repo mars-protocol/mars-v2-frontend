@@ -133,16 +133,16 @@ export default function CreateVault() {
               creationFeeInAsset: creationFee,
             }
 
-            const result = await createManagedVault(vaultParams)
-
-            const pendingVaultData = {
+            const pendingInitialVaultData: PendingVaultData = {
               creatorAddress: address || '',
-              vaultAddress: null,
-              status: 'pending_tx',
+              vaultAddress: undefined,
+              status: 'pending_tx' as const,
               depositAmount: amount.toString(),
               params: vaultParams,
             }
-            localStorage.setItem('pendingVaultMint', JSON.stringify(pendingVaultData))
+            localStorage.setItem('pendingVaultMint', JSON.stringify(pendingInitialVaultData))
+
+            const result = await createManagedVault(vaultParams)
 
             if (result && result.address) {
               if (!address) {
@@ -150,12 +150,12 @@ export default function CreateVault() {
                 return
               }
 
-              const updatedVaultData: PendingVaultData = {
-                ...pendingVaultData,
+              const updatedPendingVaultData: PendingVaultData = {
+                ...pendingInitialVaultData,
                 vaultAddress: result.address,
-                status: 'pending_account_mint',
+                status: 'pending_account_mint' as const,
               }
-              localStorage.setItem('pendingVaultMint', JSON.stringify(updatedVaultData))
+              localStorage.setItem('pendingVaultMint', JSON.stringify(updatedPendingVaultData))
 
               const accountKind = {
                 fund_manager: {
@@ -166,7 +166,7 @@ export default function CreateVault() {
 
               if (!vaultAccountId) {
                 setIsTxPending(false)
-                setPendingVault(updatedVaultData)
+                setPendingVault(updatedPendingVaultData)
                 return
               }
 
