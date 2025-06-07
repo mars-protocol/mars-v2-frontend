@@ -94,4 +94,8 @@ export const priceFeedIDs: { symbol: string; priceFeedID: string; feedName?: str
     symbol: 'TRX',
     priceFeedID: '67aed5a24fdad045475e7195c98a98aea119c763f272d4523f5bac93a4f33c2b',
   },
+  {
+    symbol: 'WSTETH',
+    priceFeedID: '0x6df640f3b8963d8f8358f791f352b8364513f6ab1cca5ed3f1f7b5448980e784',
+  },
 ]
