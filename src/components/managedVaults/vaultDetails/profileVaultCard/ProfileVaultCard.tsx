@@ -12,20 +12,20 @@ import Loading from 'components/common/Loading'
 import ShareBar from 'components/common/ShareBar'
 import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
+import { Tooltip } from 'components/common/Tooltip'
 import FeeTag from 'components/managedVaults/vaultDetails/profileVaultCard/FeeTag'
 import InfoRow from 'components/managedVaults/vaultDetails/profileVaultCard/InfoRow'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useManagedVaultOwnerInfo from 'hooks/managedVaults/useManagedVaultOwnerInfo'
+import useManagedVaultPnl from 'hooks/managedVaults/useManagedVaultPnl'
 import moment from 'moment'
 import Image from 'next/image'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatLockupPeriod } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import useStore from 'store'
-import { Tooltip } from 'components/common/Tooltip'
-import useManagedVaultPnl from 'hooks/managedVaults/useManagedVaultPnl'
 
 interface Props {
   details: ManagedVaultsData
@@ -103,7 +103,12 @@ export default function ProfileVaultCard(props: Props) {
           <InfoRow label='Vault APY'>
             <FormattedNumber
               amount={details.apy || 0}
-              options={{ minDecimals: 2, maxDecimals: 2, suffix: '%', abbreviated: true }}
+              options={{
+                minDecimals: details.apy > 100 ? 0 : 2,
+                maxDecimals: details.apy > 100 ? 0 : 2,
+                suffix: '%',
+                abbreviated: false,
+              }}
               className='text-sm'
             />
           </InfoRow>
