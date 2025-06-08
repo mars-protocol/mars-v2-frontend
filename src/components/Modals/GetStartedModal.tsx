@@ -78,7 +78,7 @@ export default function GetStartedModal() {
         title='Perpetual Futures'
         description='Go long or short with margin, manage risk with stop-loss orders, and gain exposure to price movements without owning the underlying asset.'
         link={DocURL.PERPS_INTRO_URL}
-        icon={<ArrowChartLineUp className='w-5' />}
+        icon={<LineChart className='w-5' />}
       />
       <TutorialItem
         title='Trading'
@@ -102,7 +102,7 @@ export default function GetStartedModal() {
         title='High Leverage Strategies'
         description='Use HLS Accounts forhigher leverage ratios compared to standard Credit Accounts - while preserving overall protocol stability.'
         link={DocURL.HLS_INTRO_URL}
-        icon={<LineChart className='w-5' />}
+        icon={<ArrowChartLineUp className='w-5' />}
       />
       <TutorialItem
         title='Managed Vaults'
