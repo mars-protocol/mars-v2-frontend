@@ -13,13 +13,13 @@ import Text from 'components/common/Text'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useAccountTitle from 'hooks/accounts/useAccountTitle'
-import useNonHlsAccountIds from 'hooks/accounts/useNonHlsAccountIds'
 import useAccountVaults from 'hooks/accounts/useAccountVaults'
+import useNonHlsAccountIds from 'hooks/accounts/useNonHlsAccountIds'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
+import { useLocation } from 'react-router-dom'
 import useStore from 'store'
 import { checkAccountKind } from 'utils/accounts'
-import { useLocation } from 'react-router-dom'
 
 interface Props {
   className?: string
@@ -52,8 +52,7 @@ export default function AccountMenuContent(props: Props) {
       focusComponent: {
         component: <AccountFundFullPage isCreateAccount />,
         onClose: () => {
-          // TODO: update docs to reflect the current state of v2
-          //useStore.setState({ getStartedModal: true })
+          useStore.setState({ getStartedModal: true })
         },
       },
     })

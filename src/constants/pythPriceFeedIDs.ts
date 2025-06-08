@@ -34,7 +34,7 @@ export const priceFeedIDs: { symbol: string; priceFeedID: string; feedName?: str
   {
     symbol: 'USDC.AXL',
     priceFeedID: 'eaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a',
-    feedName: 'USDCUSD',
+    feedName: 'USDC/USD',
   },
   {
     symbol: 'USDC',
@@ -47,7 +47,7 @@ export const priceFeedIDs: { symbol: string; priceFeedID: string; feedName?: str
   {
     symbol: 'WBTC.AXL',
     priceFeedID: 'c9d8b075a5c69303365ae23633d4e085199bf5c520a3b90fed1322a0342ffc33',
-    feedName: 'WBTCUSD',
+    feedName: 'WBTC/USD',
   },
   {
     symbol: 'WBTC',
@@ -56,11 +56,11 @@ export const priceFeedIDs: { symbol: string; priceFeedID: string; feedName?: str
   {
     symbol: 'WETH.AXL',
     priceFeedID: 'ff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace',
-    feedName: 'ETHUSD',
+    feedName: 'ETH/USD',
   },
   {
     symbol: 'WSTETH',
-    priceFeedID: '0x6df640f3b8963d8f8358f791f352b8364513f6ab1cca5ed3f1f7b5448980e784',
+    priceFeedID: '6df640f3b8963d8f8358f791f352b8364513f6ab1cca5ed3f1f7b5448980e784',
   },
   {
     symbol: 'BTC',

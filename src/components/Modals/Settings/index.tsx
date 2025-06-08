@@ -399,8 +399,7 @@ export default function SettingsModal() {
               onClick={() => {
                 useStore.setState({
                   settingsModal: false,
-                  // TODO: update docs to reflect the current state of v2
-                  //getStartedModal: true
+                  getStartedModal: true,
                 })
               }}
             >

@@ -41,7 +41,14 @@ export default async function handler(req: NextRequest) {
     // Convert APR to APY with daily compounding
     const apr = Number(vaultInfo.apr)
     const apy = apr ? ((1 + apr / 36500) ** 365 - 1) * 100 : null
-    const formattedAPY = apy ? `${apy.toFixed(2)}%` : '0.00%*'
+    const formattedAPY = apy
+      ? formatValue(apy, {
+          abbreviated: false,
+          minDecimals: apy > 100 ? 0 : 2,
+          maxDecimals: apy > 100 ? 0 : 2,
+          suffix: '%',
+        })
+      : '0.00%*'
 
     const showApyNote = !apy
 
