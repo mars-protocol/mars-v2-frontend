@@ -25,19 +25,10 @@ import { Callout } from 'components/common/Callout'
 import { CalloutType } from 'components/common/Callout'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { getPage, getRoute } from 'utils/route'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { TextLink } from 'components/common/TextLink'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import classNames from 'classnames'
-
-interface PendingVaultData {
-  address: string
-  creatorAddress: string
-  baseTokenDenom: string
-  status: 'pending_account_mint'
-  depositAmount: string
-}
 
 const options = [
   { label: '24 hours', value: '24' },
@@ -142,24 +133,29 @@ export default function CreateVault() {
               creationFeeInAsset: creationFee,
             }
 
+            const pendingInitialVaultData: PendingVaultData = {
+              creatorAddress: address || '',
+              vaultAddress: undefined,
+              status: 'pending_tx' as const,
+              depositAmount: amount.toString(),
+              params: vaultParams,
+            }
+            localStorage.setItem('pendingVaultMint', JSON.stringify(pendingInitialVaultData))
+
             const result = await createManagedVault(vaultParams)
 
-            if (!result) return
-
-            if (result.address) {
+            if (result && result.address) {
               if (!address) {
                 setIsTxPending(false)
                 return
               }
 
-              const pendingVaultData: PendingVaultData = {
-                address: result.address,
-                creatorAddress: address,
-                baseTokenDenom: selectedAsset.denom,
+              const updatedPendingVaultData: PendingVaultData = {
+                ...pendingInitialVaultData,
+                vaultAddress: result.address,
                 status: 'pending_account_mint' as const,
-                depositAmount: amount.toString(),
               }
-              localStorage.setItem('pendingVaultMint', JSON.stringify(pendingVaultData))
+              localStorage.setItem('pendingVaultMint', JSON.stringify(updatedPendingVaultData))
 
               const accountKind = {
                 fund_manager: {
@@ -170,7 +166,7 @@ export default function CreateVault() {
 
               if (!vaultAccountId) {
                 setIsTxPending(false)
-                setPendingVault(pendingVaultData)
+                setPendingVault(updatedPendingVaultData)
                 return
               }
 
@@ -253,7 +249,7 @@ export default function CreateVault() {
   const hasIncompleteVaultSetup = (() => {
     const parsedVault = getStoredVaultData()
     if (!parsedVault || pendingVault || isTxPending) return false
-    return parsedVault.creatorAddress === address
+    return parsedVault.creatorAddress?.toLowerCase() === address?.toLowerCase()
   })()
 
   useEffect(() => {
@@ -371,7 +367,7 @@ export default function CreateVault() {
                 creation fee. You will be charged{' '}
                 {selectedAsset && (
                   <FormattedNumber
-                    amount={creationFeeInAsset.toNumber()}
+                    amount={Number(creationFeeInAsset.toPrecision(2))}
                     options={{
                       maxDecimals: 3,
                       minDecimals: 1,
