@@ -58,7 +58,8 @@ export default function VaultMetricsCard(props: Props) {
       value: Number(vaultPnl?.total_pnl),
       label: 'Total PnL',
       isCurrency: true,
-      formatOptions: { maxDecimals: 2, minDecimals: 2, showPrefix: true },
+      formatOptions: { maxDecimals: 2, minDecimals: 2 },
+      showSignPrefix: true,
     },
     {
       value: maxDrawdown,
@@ -93,6 +94,7 @@ export default function VaultMetricsCard(props: Props) {
             coin={BNCoin.fromDenomAndBigNumber(vaultDetails.base_tokens_denom, BN(metric.value))}
             options={metric.formatOptions}
             className='text-sm'
+            showSignPrefix={metric.showSignPrefix}
           />
         ) : (
           <FormattedNumber
