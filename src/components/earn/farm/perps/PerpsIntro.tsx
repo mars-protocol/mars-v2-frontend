@@ -27,7 +27,7 @@ export default function PerpsIntro() {
       bg='perps-vault'
     >
       <Button
-        text='Read more'
+        text='Learn more'
         leftIcon={<PlusSquared />}
         onClick={(e) => {
           e.preventDefault()
