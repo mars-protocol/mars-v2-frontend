@@ -1,28 +1,28 @@
-import AmountAndValue from 'components/common/AmountAndValue'
 import classNames from 'classnames'
+import AmountAndValue from 'components/common/AmountAndValue'
+import { CardWithTabs } from 'components/common/Card/CardWithTabs'
 import DisplayCurrency from 'components/common/DisplayCurrency'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { ExclamationMarkTriangle } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
-import moment from 'moment'
 import Table from 'components/common/Table'
+import TablePagination from 'components/common/Table/TablePagination'
 import Text from 'components/common/Text'
-import useQueuedWithdrawals from 'components/managedVaults/vaultDetails/table/useQueuedWithdrawals'
-import useUserWithdrawals from 'components/managedVaults/vaultDetails/table/useUserWithdrawals'
-import useVaultAssets from 'hooks/assets/useVaultAssets'
+import { Tooltip } from 'components/common/Tooltip'
 import VaultStats from 'components/managedVaults/vaultDetails/common/VaultStats'
 import WithdrawButton from 'components/managedVaults/vaultDetails/table/columns/WithdrawButton'
-import { BN } from 'utils/helpers'
-import { BNCoin } from 'types/classes/BNCoin'
+import useQueuedWithdrawals from 'components/managedVaults/vaultDetails/table/useQueuedWithdrawals'
+import useUserWithdrawals from 'components/managedVaults/vaultDetails/table/useUserWithdrawals'
 import { BN_ZERO } from 'constants/math'
-import { byDenom } from 'utils/array'
-import { CardWithTabs } from 'components/common/Card/CardWithTabs'
-import { ExclamationMarkTriangle } from 'components/common/Icons'
-import { formatLockupPeriod } from 'utils/formatters'
-import { FormattedNumber } from 'components/common/FormattedNumber'
-import { Tooltip } from 'components/common/Tooltip'
+import useVaultAssets from 'hooks/assets/useVaultAssets'
 import { useAllUnlocks } from 'hooks/managedVaults/useAllUnlocks'
 import { useUserUnlocks } from 'hooks/managedVaults/useUserUnlocks'
+import moment from 'moment'
 import { useMemo } from 'react'
-import TablePagination from 'components/common/Table/TablePagination'
+import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
+import { formatLockupPeriod } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 interface Props {
   details: ManagedVaultsData
@@ -170,7 +170,7 @@ export default function Withdrawals(props: Props) {
                       )}
                       showSignPrefix
                       className={classNames(
-                        'text-sm',
+                        'text-xs',
                         BN(details.performance_fee_state.accumulated_pnl).isGreaterThan(0) &&
                           'text-profit',
                         BN(details.performance_fee_state.accumulated_pnl).isLessThan(0) &&
