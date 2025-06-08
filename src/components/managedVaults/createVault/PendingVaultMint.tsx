@@ -1,23 +1,24 @@
-import Button from 'components/common/Button'
 import classNames from 'classnames'
+import Button from 'components/common/Button'
 import EscButton from 'components/common/Button/EscButton'
-import Overlay from 'components/common/Overlay'
-import Text from 'components/common/Text'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import useStore from 'store'
-import VaultInputElement from 'components/managedVaults/createVault/VaultInputElement'
+import { Callout, CalloutType } from 'components/common/Callout'
 import {
   ArrowRight,
   ExclamationMarkTriangle,
   ExternalLink,
   TrashBin,
 } from 'components/common/Icons'
-import { Callout, CalloutType } from 'components/common/Callout'
-import { getPage, getRoute } from 'utils/route'
+import Overlay from 'components/common/Overlay'
+import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
+import VaultInputElement from 'components/managedVaults/createVault/VaultInputElement'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useAlertDialog from 'hooks/common/useAlertDialog'
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import useAlertDialog from 'hooks/common/useAlertDialog'
+import useStore from 'store'
+import { DocURL } from 'types/enums'
+import { getPage, getRoute } from 'utils/route'
 
 interface Props {
   onClose: () => void
@@ -175,7 +176,7 @@ export default function PendingVaultMint(props: Props) {
               <Callout type={CalloutType.WARNING}>
                 We couldn't detect your vault address. Please paste it below to continue.
                 <TextLink
-                  href={''}
+                  href={DocURL.RECOVER_VAULT_ADDRESS_URL}
                   target='_blank'
                   textSize='extraSmall'
                   className='ml-1 text-white/50 hover:text-white'
