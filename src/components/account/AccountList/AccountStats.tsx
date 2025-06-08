@@ -131,8 +131,7 @@ export default function AccountStats(props: Props) {
                       focusComponent: {
                         component: <AccountFundFullPage />,
                         onClose: () => {
-                          // TODO: update docs to reflect the current state of v2
-                          //useStore.setState({ getStartedModal: true })
+                          useStore.setState({ getStartedModal: true })
                         },
                       },
                     })
