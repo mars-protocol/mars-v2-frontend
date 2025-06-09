@@ -1,14 +1,14 @@
+import classNames from 'classnames'
 import AssetImage from 'components/common/assets/AssetImage'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import useVaultAssets from 'hooks/assets/useVaultAssets'
-import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import { BN } from 'utils/helpers'
-import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from 'utils/array'
 import { FormattedNumber } from 'components/common/FormattedNumber'
+import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import useVaultAssets from 'hooks/assets/useVaultAssets'
 import { useManagedVaultConvertToBaseTokens } from 'hooks/managedVaults/useManagedVaultConvertToBaseTokens'
 import useManagedVaultUserPosition from 'hooks/managedVaults/useManagedVaultUserPosition'
-import classNames from 'classnames'
+import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
+import { BN } from 'utils/helpers'
 
 interface Props {
   vaultAddress: string
@@ -36,13 +36,13 @@ export default function UserMetrics(props: Props) {
   const metrics = [
     {
       value: userVaultTokensAmount || 0,
-      label: 'My Current Balance',
+      label: 'Your Current Balance',
       isCurrency: true,
       formatOptions: { maxDecimals: 2, minDecimals: 2 },
     },
     {
       value: userPosition?.pnl || 0,
-      label: 'Total Earnings',
+      label: 'Your Total Earnings',
       isCurrency: true,
       formatOptions: { maxDecimals: 2, minDecimals: 2 },
       isProfitOrLoss: true,
@@ -50,13 +50,13 @@ export default function UserMetrics(props: Props) {
     },
     {
       value: calculateROI(userVaultTokensAmount),
-      label: 'ROI',
+      label: 'Your ROI',
       formatOptions: { maxDecimals: 2, minDecimals: 2, suffix: '%' },
       isProfitOrLoss: true,
     },
     {
       value: sharePercentage,
-      label: 'Vault Shares',
+      label: 'Your Vault Shares',
       formatOptions: { maxDecimals: 2, minDecimals: 2, suffix: '%' },
     },
   ]
