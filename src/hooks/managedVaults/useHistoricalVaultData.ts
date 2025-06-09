@@ -1,9 +1,9 @@
-import useSWR from 'swr'
 import getHistoricalManagedVaults from 'api/managedVaults/getHistoricalManagedVaults'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import { convertAprToApy } from 'utils/parsers'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useSWR from 'swr'
 import { BN } from 'utils/helpers'
+import { convertAprToApy } from 'utils/parsers'
 
 export default function useHistoricalVaultData(vaultAddress: string, timeframe: number | 'all') {
   const chainConfig = useChainConfig()
