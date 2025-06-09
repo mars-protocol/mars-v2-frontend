@@ -16,6 +16,7 @@ export enum DocURL {
   PERPS_VAULT_URL = 'https://docs.marsprotocol.io/perpetual-futures-perps/perps-vault-counterparty-vault',
   PERPS_INTRO_URL = 'https://docs.marsprotocol.io/perpetual-futures-perps',
   GET_STARTED_URL = 'https://docs.marsprotocol.io/getting-started',
+  MANAGE_VAULT_URL = 'https://docs.marsprotocol.io/managed-vaults',
   PERFORMANCE_FEES_URL = 'https://docs.marsprotocol.io/managed-vaults#performance-fee',
   CREATE_VAULT_URL = 'https://docs.marsprotocol.io/managed-vaults/creating-a-vault',
   RECOVER_VAULT_ADDRESS_URL = 'https://docs.marsprotocol.io/managed-vaults/creating-a-vault/how-to-resume-vault-creation-after-failed-transaction',
