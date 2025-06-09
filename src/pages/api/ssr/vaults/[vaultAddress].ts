@@ -37,6 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:site" content="@mars_protocol" />
           <meta name="twitter:creator" content="@mars_protocol" />
+          <meta name=”twitter:image:alt” content="${title}">
         </head>
         <body>
           <h1>${title}</h1>

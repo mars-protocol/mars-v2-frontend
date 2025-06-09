@@ -65,7 +65,7 @@ const nextConfig = {
             type: 'header',
             key: 'User-Agent',
             value:
-              '(^(?!facebook|twitter|linkedin|telegram|discord|bot|crawl|spider|facebookexternalhit|Facebot|Twitterbot|TelegramBot).*$)',
+              '(^(?!facebook|twitter|linkedin|telegram|discord|bot|crawl|spider|facebookexternalhit|Facebot|Twitterbot|TelegramBot|XtilesBot).*$)',
           },
         ],
       },

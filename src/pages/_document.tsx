@@ -12,6 +12,7 @@ export default function Document() {
         <link color='#dd5b65' href='/safari-pinned-tab.svg' rel='mask-icon' />
         <meta content='index,follow' name='robots' />
         <meta content='summary_large_image' name='twitter:card' />
+        <meta content='Mars Protocol' name='twitter:title' />
         <meta content='@mars_protocol' name='twitter:site' />
         <meta content='@mars_protocol' name='twitter:creator' />
         <meta
