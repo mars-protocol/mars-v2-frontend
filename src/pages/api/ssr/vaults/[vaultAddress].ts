@@ -29,10 +29,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           <title>${title}</title>
           <meta property="og:title" content="${title}" />
           <meta property="og:description" content="${description}" />
-          <meta property="og:image" content="/api/og/${vault.vault_address}/${unixTime}" />
+          <meta property="og:image" content="https://${location.host}/api/og/${vault.vault_address}/${unixTime}" />
           <meta property="twitter:title" content="${title}" />
           <meta property="twitter:description" content="${description}" />
-          <meta property="twitter:image" content="/api/og/${vault.vault_address}/${unixTime}" />
+          <meta property="twitter:image" content="https://${location.host}/api/og/${vault.vault_address}/${unixTime}" />
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:site" content="@mars_protocol" />
           <meta name="twitter:creator" content="@mars_protocol" />
