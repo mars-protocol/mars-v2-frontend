@@ -11,6 +11,7 @@ export const usePositionSimulation = ({
   amount,
   perpsAsset,
   limitPrice,
+  isAutoLendEnabledForCurrentAccount,
   simulatePerps,
 }: {
   tradingFee?: {
@@ -28,7 +29,7 @@ export const usePositionSimulation = ({
   perpsAsset: Asset
   limitPrice: BigNumber
   isAutoLendEnabledForCurrentAccount: boolean
-  simulatePerps: (newPosition: PerpsPosition) => void
+  simulatePerps: (newPosition: PerpsPosition, isLendAction?: boolean) => void
 }) => {
   useMemo(() => {
     if (!tradingFee || !perpsVault || perpsVaultModal) return
@@ -48,10 +49,11 @@ export const usePositionSimulation = ({
       currentPerpPosition,
       limitPrice,
     )
-    simulatePerps(newPosition)
+    simulatePerps(newPosition, isAutoLendEnabledForCurrentAccount)
   }, [
     amount,
     currentPerpPosition,
+    isAutoLendEnabledForCurrentAccount,
     isLimitOrder,
     isStopOrder,
     limitPrice,
