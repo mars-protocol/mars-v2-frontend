@@ -11,14 +11,13 @@ export enum DocURL {
   PRIVACY_POLICY_URL = 'https://docs.marsprotocol.io/legal/privacy-policy',
   TERMS_OF_SERVICE_URL = 'https://docs.marsprotocol.io/legal/terms-of-service',
   TRADING_INTRO_URL = 'https://docs.marsprotocol.io/spot-and-margin-trading',
-  CREATE_VAULT_URL = 'https://docs.marsprotocol.io/managed-vaults/creating-a-vault',
-  MANAGE_VAULT_URL = 'https://docs.marsprotocol.io/managed-vaults/managing-a-vault',
   WALLET_INTRO_URL = 'https://docs.marsprotocol.io/getting-started/how-to-set-up-a-wallet',
   X_SHARE_URL = 'https://x.com/intent/tweet',
   PERPS_VAULT_URL = 'https://docs.marsprotocol.io/perpetual-futures-perps/perps-vault-counterparty-vault',
-  PERFORMANCE_FEES_URL = 'https://docs.marsprotocol.io/managed-vaults#performance-fee',
   PERPS_INTRO_URL = 'https://docs.marsprotocol.io/perpetual-futures-perps',
   GET_STARTED_URL = 'https://docs.marsprotocol.io/getting-started',
+  PERFORMANCE_FEES_URL = 'https://docs.marsprotocol.io/managed-vaults#performance-fee',
+  CREATE_VAULT_URL = 'https://docs.marsprotocol.io/managed-vaults/creating-a-vault',
   RECOVER_VAULT_ADDRESS_URL = 'https://docs.marsprotocol.io/managed-vaults/creating-a-vault/how-to-resume-vault-creation-after-failed-transaction',
 }
 
