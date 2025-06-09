@@ -107,7 +107,7 @@ export default function GetStartedModal() {
       <TutorialItem
         title='Managed Vaults'
         description='Managed Vaults on Mars Protocol are a powerful tool enabling the decentralized deployment of trading strategies via community-managed Credit Accounts.'
-        link={DocURL.VAULT_TUTORIAL_URL}
+        link={DocURL.MANAGE_VAULT_URL}
         icon={<Vault className='w-5' />}
       />
       <Text
