@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         </head>
         <body>
           <h1>${title}</h1>
-          <p></p>
+          <p>${description}</p>
         </body>
       </html>
     `
