@@ -27,6 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           <meta charset="utf-8" />
           <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0" />
           <title>${title}</title>
+          <meta property="og:url" content="https://${location.host}/vaults/${vault.vault_address}/details" />
           <meta property="og:title" content="${title}" />
           <meta property="og:description" content="${description}" />
           <meta property="og:image" content="https://${location.host}/api/og/${vault.vault_address}/${unixTime}" />
