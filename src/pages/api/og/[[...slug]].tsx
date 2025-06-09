@@ -192,6 +192,11 @@ export default async function handler(req: NextRequest) {
       {
         width: 1280,
         height: 720,
+        status: 200,
+        headers: {
+          'content-type': 'image/png',
+          'cache-control': 'public, max-age=0, s-maxage=0, must-revalidate',
+        },
       },
     )
   } catch (e: unknown) {
