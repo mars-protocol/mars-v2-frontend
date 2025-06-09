@@ -87,12 +87,13 @@ export default function AccountStats(props: Props) {
 
   const navigateToVaultDetails = useCallback(() => {
     if (!account) return
+    setShowMenu?.(false)
     const vaultAddress =
       typeof account.kind === 'object' && 'fund_manager' in account.kind
         ? account.kind.fund_manager.vault_addr
         : ''
     navigate(getRoute(`vaults/${vaultAddress}/details` as Page, searchParams, address))
-  }, [account, navigate, searchParams, address])
+  }, [account, navigate, searchParams, address, setShowMenu])
 
   return (
     <div className='w-full p-4'>
@@ -130,8 +131,7 @@ export default function AccountStats(props: Props) {
                       focusComponent: {
                         component: <AccountFundFullPage />,
                         onClose: () => {
-                          // TODO: update docs to reflect the current state of v2
-                          //useStore.setState({ getStartedModal: true })
+                          useStore.setState({ getStartedModal: true })
                         },
                       },
                     })

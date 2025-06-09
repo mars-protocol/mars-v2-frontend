@@ -53,7 +53,7 @@ const TooltipContent = ({ payload, lines }: { payload: any[]; lines: LineConfig[
         {lineConfig?.isPercentage ? (
           <FormattedNumber
             amount={item.value}
-            options={{ maxDecimals: 2, minDecimals: 2, suffix: '%' }}
+            options={{ maxDecimals: 3, minDecimals: 2, suffix: '%' }}
             className='text-xs'
           />
         ) : lineConfig?.isCurrency ? (
@@ -62,13 +62,13 @@ const TooltipContent = ({ payload, lines }: { payload: any[]; lines: LineConfig[
               'usd',
               BN(item.value).shiftedBy(-PRICE_ORACLE_DECIMALS),
             )}
-            options={{ maxDecimals: 2, minDecimals: 2 }}
+            options={{ maxDecimals: 3, minDecimals: 2 }}
             className='text-xs'
           />
         ) : (
           <DisplayCurrency
             coin={BNCoin.fromDenomAndBigNumber('usd', BN(item.value))}
-            options={{ maxDecimals: 2, minDecimals: 2 }}
+            options={{ maxDecimals: 3, minDecimals: 2 }}
             className='text-xs'
           />
         )}

@@ -48,12 +48,13 @@ interface SkipTransactionInfo {
 }
 
 interface SkipBridgeTransaction {
+  asset: string
+  amount: BigNumber
+  denom: string
   txHash: string
   chainID: string
   explorerLink: string
-  status: StatusState
-  denom: string
-  amount: BigNumber
+  status: string
   id: string
 }
 
@@ -109,6 +110,40 @@ interface AccountStrategyRow {
     secondary?: BNCoin
   }
   unlocksAt?: number
+}
+
+interface MergedChartData {
+  date: string
+  [key: string]: string | number | BigNumber
+}
+interface LineConfig {
+  dataKey: string
+  color: string
+  name: string
+  isPercentage?: boolean
+  strokeDasharray?: string
+  yAxisId?: string
+}
+
+interface ChartDataPayloadProps {
+  chartType?: string
+  color: string
+  dataKey: string
+  fill: string
+  formatter?: string
+  hide: boolean
+  name: string
+  payload: {
+    date: string
+    value: number
+    label: string
+    isPercentage?: boolean
+  }
+  value: string | number
+  stroke?: string
+  strokeWidth?: number
+  type?: string
+  unit?: string
 }
 
 interface AccountPerpRow extends PerpsPosition {
@@ -1128,6 +1163,8 @@ interface BroadcastSlice {
     autolend: boolean
     baseDenom: string
     orderIds?: string[]
+    position?: PerpsPosition
+    debt?: BNCoin
   }) => Promise<boolean>
   createTriggerOrder: (options: CreateTriggerOrdersOptions) => Promise<boolean>
   createMultipleTriggerOrders: (options: CreateMultipleTriggerOrdersOptions) => Promise<boolean>
@@ -1203,6 +1240,7 @@ interface BroadcastSlice {
     vaultAddress: string
     amount: string
     recipient?: string | null
+    baseTokenDenom: string
   }) => Promise<boolean>
   unlockFromManagedVault: (options: {
     vaultAddress: string
@@ -1966,6 +2004,7 @@ interface ManagedVaultWithDetails extends ManagedVaultsDataResponse {
   fee_rate: number
   isOwner: boolean
   isPending?: boolean
+  ownerAddress?: string
 }
 
 interface ManagedVaultSCDetailsResponse {
@@ -2001,6 +2040,14 @@ interface ManagedVaultsData {
   base_tokens_amount: string
   vault_tokens_denom: string
   vault_tokens_amount: string
+}
+
+interface PendingVaultData {
+  vaultAddress?: string
+  creatorAddress: string
+  status: 'pending_account_mint' | 'pending_tx'
+  depositAmount: string
+  params: VaultParams
 }
 
 interface PerformanceFeeState {

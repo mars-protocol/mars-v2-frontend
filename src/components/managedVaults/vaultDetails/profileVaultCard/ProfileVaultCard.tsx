@@ -12,20 +12,21 @@ import Loading from 'components/common/Loading'
 import ShareBar from 'components/common/ShareBar'
 import Text from 'components/common/Text'
 import { TextLink } from 'components/common/TextLink'
+import { Tooltip } from 'components/common/Tooltip'
 import FeeTag from 'components/managedVaults/vaultDetails/profileVaultCard/FeeTag'
 import InfoRow from 'components/managedVaults/vaultDetails/profileVaultCard/InfoRow'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useManagedVaultOwnerInfo from 'hooks/managedVaults/useManagedVaultOwnerInfo'
+import useManagedVaultPnl from 'hooks/managedVaults/useManagedVaultPnl'
+import useManagedVaultAge from 'hooks/managedVaults/useManagedVaultAge'
 import moment from 'moment'
 import Image from 'next/image'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { formatLockupPeriod } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import useStore from 'store'
-import { Tooltip } from 'components/common/Tooltip'
-import useManagedVaultPnl from 'hooks/managedVaults/useManagedVaultPnl'
 
 interface Props {
   details: ManagedVaultsData
@@ -38,6 +39,7 @@ export default function ProfileVaultCard(props: Props) {
   const { details, isOwner, wallet, depositAsset } = props
   const { vaultOwnerInfo, isLoading } = useManagedVaultOwnerInfo(wallet)
   const { data: vaultPnl } = useManagedVaultPnl(details.vault_address)
+  const vaultAge = useManagedVaultAge(details.vault_address)
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
@@ -54,6 +56,8 @@ export default function ProfileVaultCard(props: Props) {
   const shareText = hasVaultWord
     ? `Check out '${vaultTitle}' on Mars Protocol!`
     : `Check out the '${vaultTitle}' Vault on Mars Protocol!`
+
+  const apy = details.apy || 0
 
   return (
     <Card className='bg-white/5'>
@@ -100,14 +104,30 @@ export default function ProfileVaultCard(props: Props) {
         <Divider />
 
         <div className='space-y-4'>
-          <InfoRow label='APY'>
-            <FormattedNumber
-              amount={details.apy || 0}
-              options={{ minDecimals: 2, maxDecimals: 2, suffix: '%', abbreviated: true }}
-              className='text-sm'
-            />
+          <InfoRow label='Vault APY'>
+            <Tooltip
+              content={
+                vaultAge < 30
+                  ? 'This is a new vault. APY may be volatile until sufficient historical data is collected.'
+                  : 'Annual Percentage Yield based on 30-day rolling average performance'
+              }
+              type='info'
+            >
+              <div className='border-b border-dashed border-white/40'>
+                <FormattedNumber
+                  amount={apy}
+                  options={{
+                    minDecimals: apy > 100 ? 0 : 2,
+                    maxDecimals: apy > 100 ? 0 : 2,
+                    suffix: '%',
+                    abbreviated: false,
+                  }}
+                  className='text-sm cursor-help'
+                />
+              </div>
+            </Tooltip>
           </InfoRow>
-          <InfoRow label='TVL'>
+          <InfoRow label='Total Deposits'>
             <DisplayCurrency
               coin={BNCoin.fromDenomAndBigNumber(
                 details.base_tokens_denom,
@@ -116,7 +136,7 @@ export default function ProfileVaultCard(props: Props) {
               className='text-sm'
             />
           </InfoRow>
-          <InfoRow label='Total PnL'>
+          <InfoRow label='Vault PnL'>
             {!vaultPnl ? (
               <Loading className='h-4 w-20' />
             ) : (
@@ -201,7 +221,7 @@ export default function ProfileVaultCard(props: Props) {
 
         <div className='flex justify-between items-center pb-4'>
           <Text size='sm'>Share Vault</Text>
-          <ShareBar text={shareText} />
+          <ShareBar text={shareText} excludeWalletAddress />
         </div>
 
         {isOwner && !vaultOwnerInfo.hasStargazeNames && (

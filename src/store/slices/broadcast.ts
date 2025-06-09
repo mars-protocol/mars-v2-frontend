@@ -992,6 +992,8 @@ export default function createBroadcastSlice(
       autolend: boolean
       baseDenom: string
       orderIds?: string[]
+      position?: PerpsPosition
+      debt?: BNCoin
     }) => {
       const actions: Action[] = [
         {
@@ -1007,13 +1009,39 @@ export default function createBroadcastSlice(
           },
         })) || []),
       ]
-      if (options.autolend)
+
+      if (options.position && options.debt) {
+        const unrealizedPnL = options.position.pnl.unrealized.net.amount
+        const realizedPnL = options.position.pnl.realized.net.amount
+        const usdcDebt = options.debt.amount
+
+        const isInProfit = unrealizedPnL.isGreaterThan(0)
+        const canCoverRepay = unrealizedPnL.isGreaterThan(realizedPnL.abs())
+
+        const hasDebt = usdcDebt.isGreaterThan(0)
+
+        if (isInProfit && canCoverRepay && realizedPnL.isLessThan(0) && hasDebt) {
+          actions.push({
+            repay: {
+              coin: {
+                denom: options.baseDenom,
+                amount: {
+                  exact: realizedPnL.abs().integerValue().toString(),
+                },
+              },
+            },
+          })
+        }
+      }
+
+      if (options.autolend) {
         actions.push({
           lend: {
             denom: options.baseDenom,
             amount: 'account_balance',
           },
         })
+      }
 
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
@@ -1329,15 +1357,14 @@ export default function createBroadcastSlice(
         const messages = [
           new MsgInstantiateContract({
             sender: address,
-            admin: address,
             codeId: vaultCodeId,
             label: `Vault-${params.title}`,
             msg: instantiateMsg,
             funds: [
-              // {
-              //   denom: params.baseToken,
-              //   amount: params.creationFeeInAsset,
-              // },
+              {
+                denom: params.baseToken,
+                amount: params.creationFeeInAsset,
+              },
             ],
           }),
         ]
@@ -1349,6 +1376,11 @@ export default function createBroadcastSlice(
         get().handleTransaction({ response })
 
         const result = await response
+
+        if (!result.result && result.error === 'Request rejected') {
+          localStorage.removeItem('pendingVaultMint')
+          return null
+        }
         if (!result?.result) {
           return null
         }
@@ -1359,6 +1391,7 @@ export default function createBroadcastSlice(
           '_contract_address',
         )
         if (!vaultAddress) {
+          console.error('Failed to get vault address', result)
           return null
         }
         return { address: vaultAddress }
@@ -1400,6 +1433,7 @@ export default function createBroadcastSlice(
       vaultAddress: string
       amount: string
       recipient?: string | null
+      baseTokenDenom: string
     }) => {
       const msg: ManagedVaultExecuteMsg = {
         deposit: {
@@ -1412,7 +1446,7 @@ export default function createBroadcastSlice(
         messages: [
           generateExecutionMessage(get().address, options.vaultAddress, msg, [
             {
-              denom: get().chainConfig.defaultCurrency.coinMinimalDenom,
+              denom: options.baseTokenDenom,
               amount: options.amount,
             },
           ]),

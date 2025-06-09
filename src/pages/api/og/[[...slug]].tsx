@@ -1,5 +1,4 @@
 import { ImageResponse } from '@vercel/og'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { NextRequest } from 'next/server'
 import { getManagedVaultsUrl } from 'utils/api'
 import { formatValue } from 'utils/edgeFormatters'
@@ -7,18 +6,24 @@ import { formatValue } from 'utils/edgeFormatters'
 export const config = {
   runtime: 'edge',
 }
+export const revalidate = 0
+export const fetchCache = 'no-store'
+export const dynamic = 'force-dynamic'
 
 export default async function handler(req: NextRequest) {
   try {
     const { pathname } = new URL(req.url)
     const segments = pathname.split('/')
-    const vaultAddress = segments[segments.length - 1]
+    const vaultAddress = segments[segments.length - 2]
 
     if (!vaultAddress) {
       return new Response('Missing vault address', { status: 400 })
     }
 
-    const response = await fetch(getManagedVaultsUrl(vaultAddress)).then((res) => res.json())
+    const response = await fetch(getManagedVaultsUrl(vaultAddress), {
+      cache: 'no-store',
+      next: { revalidate: 0 },
+    }).then((res) => res.json())
     const data = response.data[0]
 
     if (!data) {
@@ -30,14 +35,22 @@ export default async function handler(req: NextRequest) {
       ? formatValue(vaultInfo.tvl, {
           abbreviated: true,
           prefix: '$',
-          decimals: PRICE_ORACLE_DECIMALS,
         })
       : 'N/A'
 
     // Convert APR to APY with daily compounding
     const apr = Number(vaultInfo.apr)
     const apy = apr ? ((1 + apr / 36500) ** 365 - 1) * 100 : null
-    const formattedAPY = apy ? `${apy.toFixed(2)}%` : 'N/A'
+    const formattedAPY = apy
+      ? formatValue(apy, {
+          abbreviated: false,
+          minDecimals: apy > 100 ? 0 : 2,
+          maxDecimals: apy > 100 ? 0 : 2,
+          suffix: '%',
+        })
+      : '0.00%*'
+
+    const showApyNote = !apy
 
     const imageDataUrl = 'https://app.marsprotocol.io/vaults_banner.png'
 
@@ -157,6 +170,23 @@ export default async function handler(req: NextRequest) {
               </div>
             </div>
           </div>
+
+          {showApyNote && (
+            <div
+              style={{
+                position: 'absolute',
+                bottom: 100,
+                left: 50,
+                color: 'rgba(255,255,255,0.7)',
+                fontSize: '22px',
+                zIndex: 2,
+                textAlign: 'center',
+                maxWidth: '100%',
+              }}
+            >
+              * The vault has too little trade data to calculate an APY
+            </div>
+          )}
         </div>
       ),
       {

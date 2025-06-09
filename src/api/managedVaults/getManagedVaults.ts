@@ -16,10 +16,11 @@ export default async function getManagedVaults(chainConfig: ChainConfig, vaultAd
   }
 
   try {
-    const url = vaultAddress
-      ? getUrl(chainConfig.endpoints.managedVaults, `&address=${vaultAddress}`)
-      : getUrl(chainConfig.endpoints.managedVaults, '')
-
+    let baseUrl = chainConfig.endpoints.managedVaults
+    if (vaultAddress) {
+      baseUrl += `&address=${vaultAddress}`
+    }
+    const url = getUrl(baseUrl, '')
     const response = await fetchWithTimeout(url, FETCH_TIMEOUT)
 
     if (!response.ok) return defaultReturn

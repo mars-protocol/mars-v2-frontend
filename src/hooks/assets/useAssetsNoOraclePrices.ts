@@ -139,7 +139,7 @@ async function fetchSortAndMapAllAssets(
         !!currentAssetParams?.credit_manager.hls && !currentAssetParams?.red_bank.borrow_enabled,
       isPerpsEnabled: !!currentAssetPerpsParams,
       isDeprecated,
-      isTradeEnabled,
+      isTradeEnabled: chainConfig.isOsmosis ? isTradeEnabled : asset.isTradeEnabled,
       poolInfo: currentAssetPoolInfo,
       campaigns: resolveAssetCampaigns(asset, campaignApys, chainConfig),
     }

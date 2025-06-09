@@ -1,23 +1,28 @@
-import Button from 'components/common/Button'
 import classNames from 'classnames'
+import Button from 'components/common/Button'
 import EscButton from 'components/common/Button/EscButton'
+import { Callout, CalloutType } from 'components/common/Callout'
+import {
+  ArrowRight,
+  ExclamationMarkTriangle,
+  ExternalLink,
+  TrashBin,
+} from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Text from 'components/common/Text'
+import { TextLink } from 'components/common/TextLink'
+import VaultInputElement from 'components/managedVaults/createVault/VaultInputElement'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import useStore from 'store'
-import { ArrowRight } from 'components/common/Icons'
-import { getPage, getRoute } from 'utils/route'
+import useAlertDialog from 'hooks/common/useAlertDialog'
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import useStore from 'store'
+import { DocURL } from 'types/enums'
+import { getPage, getRoute } from 'utils/route'
 
 interface Props {
   onClose: () => void
-  pendingVault: {
-    address: string
-    creatorAddress: string
-    status: 'pending_account_mint'
-    depositAmount: string
-  }
+  pendingVault: PendingVaultData
 }
 
 const INITIAL_STEPS = [
@@ -31,6 +36,8 @@ export default function PendingVaultMint(props: Props) {
 
   const [steps, setSteps] = useState(INITIAL_STEPS)
   const [isTxPending, setIsTxPending] = useState(false)
+  const [manualVaultAddress, setManualVaultAddress] = useState('')
+  const { open: showAlertDialog } = useAlertDialog()
 
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -40,13 +47,18 @@ export default function PendingVaultMint(props: Props) {
   const depositInManagedVault = useStore((s) => s.depositInManagedVault)
 
   const handleMintVaultAccount = async () => {
-    if (!pendingVault?.address) return
+    const vaultAddress = pendingVault.vaultAddress || manualVaultAddress
+    if (!vaultAddress) return
+    if (address?.toLowerCase() !== pendingVault.creatorAddress?.toLowerCase()) {
+      console.error('Only the vault creator can mint the vault account.')
+      return
+    }
 
     try {
       setIsTxPending(true)
       const accountKind = {
         fund_manager: {
-          vault_addr: pendingVault.address,
+          vault_addr: vaultAddress,
         },
       }
       const vaultAccountId = await mintVaultAccount(accountKind, false)
@@ -63,10 +75,11 @@ export default function PendingVaultMint(props: Props) {
 
       localStorage.removeItem('pendingVaultMint')
 
-      if (pendingVault.depositAmount) {
+      if (pendingVault.depositAmount && pendingVault.depositAmount !== '0') {
         await depositInManagedVault({
-          vaultAddress: pendingVault.address,
+          vaultAddress: vaultAddress,
           amount: pendingVault.depositAmount,
+          baseTokenDenom: pendingVault.params.baseToken,
         })
 
         const updatedSteps = steps.map((step, index) => ({
@@ -78,7 +91,7 @@ export default function PendingVaultMint(props: Props) {
 
       navigate(
         getRoute(
-          getPage(`vaults/${pendingVault.address}/details`, chainConfig),
+          getPage(`vaults/${vaultAddress}/details`, chainConfig),
           searchParams,
           address,
           vaultAccountId,
@@ -91,11 +104,35 @@ export default function PendingVaultMint(props: Props) {
     }
   }
 
+  const handleDeleteDraft = () => {
+    showAlertDialog({
+      title: 'Delete Draft Vault',
+      icon: <ExclamationMarkTriangle />,
+      content: (
+        <div>
+          <Text className='text-white/60'>
+            Are you sure you want to delete this draft vault? This action is permanent and cannot be
+            reversed. Please note that any creation fees paid will not be refunded.
+          </Text>
+        </div>
+      ),
+      positiveButton: {
+        text: 'Delete',
+        onClick: () => {
+          localStorage.removeItem('pendingVaultMint')
+        },
+      },
+      negativeButton: {
+        text: 'Cancel',
+      },
+    })
+  }
+
   return (
     <Overlay
       show={true}
       setShow={onClose}
-      className='fixed md:absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full md:w-100'
+      className='fixed md:absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full md:w-120'
     >
       <div className='flex justify-end p-2 w-full'>
         <EscButton onClick={onClose} enableKeyPress />
@@ -109,7 +146,7 @@ export default function PendingVaultMint(props: Props) {
                   className={classNames(
                     'w-8 h-8 rounded-full flex items-center justify-center',
                     step.isActive
-                      ? 'border-2 border-primary bg-transparent'
+                      ? 'border-2 border-purple bg-transparent'
                       : 'border border-white/20 bg-white/10',
                     'transition-colors',
                   )}
@@ -133,20 +170,57 @@ export default function PendingVaultMint(props: Props) {
           ))}
         </div>
 
-        <div className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-6'>
+          {!pendingVault.vaultAddress && (
+            <div>
+              <Callout type={CalloutType.WARNING}>
+                We couldn't detect your vault address. Please paste it below to continue.
+                <TextLink
+                  href={DocURL.RECOVER_VAULT_ADDRESS_URL}
+                  target='_blank'
+                  textSize='extraSmall'
+                  className='ml-1 text-white/50 hover:text-white'
+                  title='How to get the vault address?'
+                >
+                  How to get your vault address?
+                  <ExternalLink className='ml-1 inline w-3' />
+                </TextLink>
+              </Callout>
+
+              <VaultInputElement
+                type='text'
+                value={manualVaultAddress}
+                onChange={setManualVaultAddress}
+                label=''
+                placeholder='Enter vault address'
+                required
+              />
+            </div>
+          )}
           <Text size='sm' className='text-white/70 text-center'>
             Your vault has been created. Complete the remaining steps to finish the setup.
           </Text>
 
-          <Button
-            onClick={handleMintVaultAccount}
-            size='md'
-            rightIcon={<ArrowRight />}
-            className='w-full'
-            text='Continue Minting Vault'
-            disabled={isTxPending}
-            showProgressIndicator={isTxPending}
-          />
+          <div className='flex gap-12'>
+            <Button
+              onClick={handleDeleteDraft}
+              rightIcon={<TrashBin />}
+              color='secondary'
+              className='w-full py-3'
+              text='Delete Draft'
+              disabled={isTxPending || (!pendingVault.vaultAddress && !manualVaultAddress)}
+              showProgressIndicator={isTxPending}
+            />
+
+            <Button
+              onClick={handleMintVaultAccount}
+              rightIcon={<ArrowRight />}
+              className='w-full py-3'
+              text='Continue Minting'
+              disabled={isTxPending || (!pendingVault.vaultAddress && !manualVaultAddress)}
+              showProgressIndicator={isTxPending}
+            />
+          </div>
         </div>
       </div>
     </Overlay>

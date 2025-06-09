@@ -13,6 +13,7 @@ interface Props {
   amountChange: BigNumber
   value: string
   type: PositionType
+  abbreviated?: boolean
 }
 
 export const valueBalancesSortingFn = (
@@ -31,7 +32,7 @@ export const valuePerpSortingFn = (a: Row<AccountPerpRow>, b: Row<AccountPerpRow
 }
 
 export default function Value(props: Props) {
-  const { amountChange, type, value } = props
+  const { amountChange, type, value, abbreviated = true } = props
   const color = getAmountChangeColor(type, amountChange)
   const coin = new BNCoin({
     denom: ORACLE_DENOM,
@@ -39,6 +40,11 @@ export default function Value(props: Props) {
   })
 
   return (
-    <DisplayCurrency coin={coin} className={classNames('text-xs text-right', color)} showZero />
+    <DisplayCurrency
+      coin={coin}
+      className={classNames('text-xs text-right', color)}
+      showZero
+      options={{ abbreviated }}
+    />
   )
 }

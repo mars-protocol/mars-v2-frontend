@@ -1,4 +1,4 @@
-import { SkipClient, TxStatusResponse } from '@skip-go/client'
+import { chains, executeRoute, route } from '@skip-go/client'
 import { useEvmBridge } from 'hooks/bridge/useEvmBridge'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -56,33 +56,20 @@ export function useSkipBridge({
     [chainConfig.id, refreshBalances],
   )
 
-  const skipClient = useMemo(
-    () =>
-      new SkipClient({
-        getCosmosSigner: async () => {
-          const offlineSigner = window.keplr?.getOfflineSigner(chainConfig.id.toString())
-          if (!offlineSigner) throw new Error('Keplr not installed')
-          return offlineSigner
-        },
-        getEVMSigner: getEvmSigner,
-      }),
-    [chainConfig, getEvmSigner],
-  )
-
   const fetchSkipRoute = useCallback(
     async (selectedAsset: WrappedBNCoin) => {
       try {
         const expectedChainAttributes = await switchEvmChain(selectedAsset, chainConfig)
 
-        const response = await skipClient.route({
+        const response = await route({
           sourceAssetDenom: expectedChainAttributes.assetAddress,
-          sourceAssetChainID: expectedChainAttributes.chainID.toString(),
+          sourceAssetChainId: expectedChainAttributes.chainID.toString(),
           destAssetDenom: chainConfig.stables[0],
-          destAssetChainID: chainConfig.id.toString(),
+          destAssetChainId: chainConfig.id.toString(),
           allowUnsafe: true,
           experimentalFeatures: ['hyperlane', 'stargate'],
           allowMultiTx: false,
-          cumulativeAffiliateFeeBPS: '0',
+          cumulativeAffiliateFeeBps: '0',
           smartRelay: true,
           smartSwapOptions: {
             splitRoutes: true,
@@ -100,7 +87,7 @@ export function useSkipBridge({
         throw error
       }
     },
-    [skipClient, goFast, chainConfig, switchEvmChain],
+    [goFast, chainConfig, switchEvmChain],
   )
 
   const handleSkipTransfer = useCallback(
@@ -146,34 +133,46 @@ export function useSkipBridge({
             : selectedAsset
 
         const route = await fetchSkipRoute(adjustedAsset)
+        if (!route) {
+          setIsBridgeInProgress(false)
+          return false
+        }
         const amountOut = route.amountOut
 
         const userAddresses = route.requiredChainAddresses.map((chainID: string) => {
-          if (chainID === 'neutron-1') {
-            return { chainID, address: skipAddresses ? skipAddresses['neutron-1'] : cosmosAddress }
-          } else if (chainID === 'osmosis-1') {
-            return { chainID, address: skipAddresses ? skipAddresses['osmosis-1'] : cosmosAddress }
-          } else if (chainID === 'noble-1') {
-            return { chainID, address: skipAddresses ? skipAddresses['noble-1'] : cosmosAddress }
-          } else {
-            return { chainID, address: evmAddress }
-          }
+          const address =
+            chainID === 'neutron-1'
+              ? (skipAddresses?.['neutron-1'] ?? cosmosAddress)
+              : chainID === 'osmosis-1'
+                ? (skipAddresses?.['osmosis-1'] ?? cosmosAddress)
+                : chainID === 'noble-1'
+                  ? (skipAddresses?.['noble-1'] ?? cosmosAddress)
+                  : evmAddress
+          return { chainId: chainID, address }
         })
 
         const transactionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
         try {
-          await skipClient.executeRoute({
+          await executeRoute({
             route,
             userAddresses,
             slippageTolerancePercent: '3',
-            onTransactionTracked: async (txInfo: SkipTransactionInfo) => {
+            getCosmosSigner: async () => {
+              const offlineSigner = window.keplr?.getOfflineSigner(chainConfig.id.toString())
+              if (!offlineSigner) throw new Error('Keplr not installed')
+              return offlineSigner
+            },
+            getEvmSigner,
+            onTransactionTracked: async (txInfo) => {
               updateSkipBridges({
                 ...txInfo,
                 id: transactionId,
                 denom: chainConfig.stables[0],
                 amount: BN(amountOut),
                 status: 'STATE_PENDING',
+                asset: selectedAsset.coin.denom,
+                chainID: chainConfig.id,
               })
               if (!isNewAccount) {
                 useStore.setState({
@@ -182,19 +181,16 @@ export function useSkipBridge({
               }
               refreshBalances()
             },
-            onTransactionCompleted: async (
-              chainID: string,
-              txHash: string,
-              status: TxStatusResponse,
-            ) => {
+            onTransactionCompleted: async (txInfo) => {
               updateSkipBridges({
-                txHash,
-                chainID,
+                ...txInfo,
                 id: transactionId,
                 explorerLink: skipBridges.find((b) => b.id === transactionId)?.explorerLink ?? '',
-                status: status.status,
+                status: (txInfo.status ?? 'STATE_COMPLETED').toString(),
                 denom: chainConfig.stables[0],
                 amount: BN(amountOut),
+                asset: selectedAsset.coin.denom,
+                chainID: chainConfig.id,
               })
               setIsBridgeInProgress(false)
               refreshBalances()
@@ -240,7 +236,7 @@ export function useSkipBridge({
     [
       cosmosAddress,
       evmAddress,
-      skipClient,
+      getEvmSigner,
       skipBridges,
       updateSkipBridges,
       isBridgeInProgress,
@@ -295,13 +291,17 @@ export function useSkipBridge({
 
   const fetchBridgeLogos = async ({ chainIDs }: { chainIDs: string[] }) => {
     try {
-      const chains = await skipClient.chains({ chainIDs })
+      const chainsList = await chains({})
       const bridgeLogos = chainIDs.slice(1).map((chainID) => {
-        const chain = chains?.find((c) => c.chainID === chainID)
+        const chainItem: any = chainsList?.find(
+          (c: any) => c.chainId === chainID || c.chain_id === chainID,
+        )
+        const name = chainItem?.chainName ?? chainItem?.chain_name ?? chainID
+        const logo = chainItem?.logoUri ?? chainItem?.logo_uri ?? ''
         return {
           id: chainID,
-          name: chain?.chainName ?? chainID,
-          logo_uri: chain?.logoURI ?? '',
+          name,
+          logo_uri: logo,
         }
       })
       return bridgeLogos

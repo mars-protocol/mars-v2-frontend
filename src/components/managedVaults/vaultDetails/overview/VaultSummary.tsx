@@ -121,6 +121,7 @@ export default function VaultSummary(props: Props) {
                 borrowingData={borrowAssetsData}
                 lendingData={lendingAssetsData}
                 hideCard
+                abbreviated={false}
               />
             </div>
           ) : null,

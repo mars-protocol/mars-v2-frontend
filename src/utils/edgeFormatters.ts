@@ -1,9 +1,20 @@
 export function formatValue(
   amount: number | string,
-  options?: { decimals?: number; abbreviated?: boolean; prefix?: string },
+  options?: {
+    decimals?: number
+    abbreviated?: boolean
+    prefix?: string
+    suffix?: string
+    maxDecimals?: number
+    minDecimals?: number
+  },
 ): string {
   const num = typeof amount === 'string' ? parseFloat(amount) : amount
   if (isNaN(num)) return 'N/A'
+
+  let maxDecimals = options?.maxDecimals ?? 2
+  const minDecimals = options?.minDecimals ?? 2
+  if (maxDecimals < minDecimals) maxDecimals = minDecimals
 
   const convertedAmount = num / 10 ** (options?.decimals ?? 0)
 
@@ -21,9 +32,9 @@ export function formatValue(
 
   const formattedAmount = `${options?.prefix || ''}${convertedAmount.toLocaleString('en', {
     useGrouping: true,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`
+    minimumFractionDigits: minDecimals,
+    maximumFractionDigits: maxDecimals,
+  })}${options?.suffix || ''}`
 
   return formattedAmount
 }

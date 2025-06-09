@@ -151,9 +151,12 @@ const Neutron1: ChainConfig = {
       '/feemarket/v1/gas_prices',
     ),
     managedVaults: 'https://backend.prod.mars-dev.net/v2/managed_vaults?chain=neutron',
+    historicalManagedVaults:
+      'https://backend.prod.mars-dev.net/v2/managed_vaults_historical?chain=neutron',
     aprs: {
       vaults: '',
-      perpsVault: 'https://backend.prod.mars-dev.net/v2/perps_vault?chain=neutron',
+      perpsVault:
+        'https://backend.prod.mars-dev.net/v2/perps_vault_historical?chain=neutron&days=1',
     },
   },
   network: NETWORK.MAINNET,
@@ -173,7 +176,7 @@ const Neutron1: ChainConfig = {
     },
   },
   features: ['ibc-transfer', 'ibc-go'],
-  vaultCodeId: '3651',
+  vaultCodeId: '3679',
   hls: true,
   perps: true,
   farm: true,
