@@ -33,26 +33,54 @@ export default async function getOraclePrices(
       priceResults = await iterateContractQuery(osmosisOracleQueryClient.prices)
     } else {
       const neutronOracleQueryClient = await getOracleQueryClientNeutron(chainConfig)
-      const denoms = assets.map((asset) => asset.denom)
 
-      const denomChunks = chunkArray(denoms, 3)
+      // Filter assets: separate those with 'share' in denom from others
+      const shareAssets = assets.filter((asset) => asset.denom.endsWith('share'))
+      const nonShareAssets = assets.filter((asset) => !asset.denom.endsWith('share'))
 
-      const chunkResults = await Promise.all(
-        denomChunks.map(async (chunk) => {
-          return await neutronOracleQueryClient.pricesByDenoms({ denoms: chunk, kind: 'default' })
-        }),
-      )
+      let batchPriceResults: PriceResponse[] = []
+      let individualPriceResults: PriceResponse[] = []
 
-      priceResults = chunkResults.reduce((acc: PriceResponse[], result) => {
-        if (result && typeof result === 'object') {
-          const priceEntries = Object.entries(result).map(([denom, price]) => ({
-            denom,
-            price: String(price),
-          })) as PriceResponse[]
-          return [...acc, ...priceEntries]
-        }
-        return acc
-      }, [])
+      // Handle non-share assets with batching
+      if (nonShareAssets.length > 0) {
+        const denoms = nonShareAssets.map((asset) => asset.denom)
+        const denomChunks = chunkArray(denoms, 3)
+
+        const chunkResults = await Promise.all(
+          denomChunks.map(async (chunk) => {
+            return await neutronOracleQueryClient.pricesByDenoms({ denoms: chunk, kind: 'default' })
+          }),
+        )
+
+        batchPriceResults = chunkResults.reduce((acc: PriceResponse[], result) => {
+          if (result && typeof result === 'object') {
+            const priceEntries = Object.entries(result).map(([denom, price]) => ({
+              denom,
+              price: String(price),
+            })) as PriceResponse[]
+            return [...acc, ...priceEntries]
+          }
+          return acc
+        }, [])
+      }
+
+      // Handle share assets individually to prevent twap errors breaking the app
+      if (shareAssets.length > 0) {
+        const shareResults = await Promise.all(
+          shareAssets.map(async (asset) => {
+            try {
+              return await neutronOracleQueryClient.price({ denom: asset.denom })
+            } catch (error) {
+              console.warn(`Failed to fetch price for share asset ${asset.denom}:`, error)
+              return { denom: asset.denom, price: '0' } as PriceResponse
+            }
+          }),
+        )
+        individualPriceResults = shareResults as PriceResponse[]
+      }
+
+      // Combine all price results
+      priceResults = [...batchPriceResults, ...individualPriceResults]
     }
 
     return assets.map((asset) => {
