@@ -333,7 +333,7 @@ export function useUpdatedAccount(account?: Account) {
         currentPerpPosition && position.amount.abs().isLessThan(currentPerpPosition.amount.abs())
 
       if (unrealizedPnL.amount.isGreaterThan(0)) {
-        const profitsToProcess = unrealizedPnL.amount
+        let profitsToProcess = unrealizedPnL.amount
 
         if (isClosingPosition && currentDebt && currentDebt.amount.isGreaterThan(0)) {
           const isInProfit = unrealizedPnL.amount.isGreaterThan(0)
@@ -344,6 +344,7 @@ export function useUpdatedAccount(account?: Account) {
           if (isInProfit && canCoverRepay && hasRealizedLosses && hasDebt) {
             const repayAmount = BigNumber.min(realizedPnL.amount.abs(), currentDebt.amount)
             removeDebts([BNCoin.fromDenomAndBigNumber(position.baseDenom, repayAmount)])
+            profitsToProcess = profitsToProcess.minus(repayAmount)
           }
         }
 
