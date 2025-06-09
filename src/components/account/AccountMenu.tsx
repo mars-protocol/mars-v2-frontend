@@ -1,5 +1,5 @@
-import { Suspense } from 'react'
 import classNames from 'classnames'
+import { Suspense } from 'react'
 
 import AccountMenuContent from 'components/account/AccountMenuContent'
 import Loading from 'components/common/Loading'

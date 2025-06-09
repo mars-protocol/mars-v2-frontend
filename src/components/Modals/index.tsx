@@ -17,4 +17,5 @@ export { default as V1BorrowAndRepay } from 'components/Modals/v1/V1BorrowAndRep
 export { default as V1DepositAndWithdraw } from 'components/Modals/v1/V1DepositAndWithdraw'
 export { default as VaultModal } from 'components/Modals/Vault'
 export { default as WalletAssets } from 'components/Modals/WalletAssets'
+export { default as VaultAssets } from 'components/Modals/VaultAssets'
 export { default as WithdrawFromVaultsModal } from 'components/Modals/WithdrawFromVaultsModal'

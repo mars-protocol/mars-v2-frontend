@@ -14,6 +14,7 @@ interface Props {
   amountChange: BigNumber
   denom: string
   type: PositionType
+  abbreviated?: boolean
 }
 
 export const sizeSortingFn = (a: Row<AccountBalanceRow>, b: Row<AccountBalanceRow>): number => {
@@ -27,7 +28,7 @@ export const sizeSortingFn = (a: Row<AccountBalanceRow>, b: Row<AccountBalanceRo
 }
 
 export default function Size(props: Props) {
-  const { amountChange, type, size } = props
+  const { amountChange, type, size, abbreviated = true } = props
   const color = useMemo(() => getAmountChangeColor(type, amountChange), [amountChange, type])
 
   if (type === 'vault') return <p className='text-xs text-right number'>&ndash;</p>
@@ -39,7 +40,7 @@ export default function Size(props: Props) {
       <FormattedNumber
         className={className}
         amount={size}
-        options={{ abbreviated: true, maxDecimals: MAX_AMOUNT_DECIMALS }}
+        options={{ abbreviated, maxDecimals: MAX_AMOUNT_DECIMALS }}
       />
     )
 

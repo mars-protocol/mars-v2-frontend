@@ -18,11 +18,31 @@ interface Props {
   selectedDenoms: string[]
   isBorrow?: boolean
   nonCollateralTableAssets?: Asset[]
+  hideColumns?: string[]
+  hideApy?: boolean
 }
 
 export default function AssetsSelect(props: Props) {
-  const { onChangeSelected, isBorrow, assets, nonCollateralTableAssets, selectedDenoms } = props
-  const columns = useAssetSelectColumns(isBorrow)
+  const {
+    onChangeSelected,
+    isBorrow,
+    assets,
+    nonCollateralTableAssets,
+    selectedDenoms,
+    hideColumns,
+    hideApy,
+  } = props
+  const columns = useAssetSelectColumns(isBorrow, hideApy)
+
+  const filteredColumns = useMemo(() => {
+    if (!hideColumns || hideColumns.length === 0) return columns
+
+    return columns.filter((column) => {
+      if (!column.id) return true
+      return !hideColumns.includes(column.id)
+    })
+  }, [columns, hideColumns])
+
   const markets = useMarkets()
   const whitelistedAssets = useWhitelistedAssets()
   const balances = useStore((s) => s.balances)
@@ -146,7 +166,7 @@ export default function AssetsSelect(props: Props) {
     return (
       <Table
         title='Assets'
-        columns={columns}
+        columns={filteredColumns}
         data={tableData as AssetTableRow[]}
         initialSorting={sorting}
         onSortingChange={setSorting}

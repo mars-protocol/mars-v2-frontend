@@ -17,26 +17,27 @@ import { fetchWithTimeout } from 'utils/fetch'
 const lastBarsCache = new Map()
 
 export const datafeed = {
-  onReady: (callback: OnReadyCallback) => {
-    callback({
-      supported_resolutions: [
-        '1',
-        '2',
-        '5',
-        '15',
-        '30',
-        '60',
-        '120',
-        '240',
-        '360',
-        '720',
-        'D',
-        '1D',
-      ] as ResolutionString[],
-      supports_marks: true,
-      supports_timescale_marks: false,
-    })
-  },
+  onReady: (callback: OnReadyCallback) =>
+    setTimeout(() => {
+      callback({
+        supported_resolutions: [
+          '1',
+          '2',
+          '5',
+          '15',
+          '30',
+          '60',
+          '120',
+          '240',
+          '360',
+          '720',
+          'D',
+          '1D',
+        ] as ResolutionString[],
+        supports_marks: true,
+        supports_timescale_marks: false,
+      })
+    }, 0),
   getBars: (
     symbolInfo: LibrarySymbolInfo,
     resolution: ResolutionString,
@@ -116,22 +117,24 @@ export const datafeed = {
     extension?: SymbolResolveExtension,
   ) => {
     try {
-      fetch(`${pythEndpoints.candles}/symbols?symbol=Crypto.${symbolName}`).then((response) => {
-        response
-          .json()
-          .then((symbolInfo) => {
-            if (symbolInfo.errmsg) {
-              symbolInfo.description = symbolName
-            } else {
-              symbolInfo.description = symbolInfo.ticker.split('Crypto.')[1]
-            }
-            onResolve(symbolInfo)
-          })
-          .catch((error) => {
-            console.error(error)
-            return
-          })
-      })
+      fetch(`${pythEndpoints.candles}/symbols?symbol=Crypto.${symbolName.toUpperCase()}`).then(
+        (response) => {
+          response
+            .json()
+            .then((symbolInfo) => {
+              if (symbolInfo.errmsg) {
+                symbolInfo.description = symbolName
+              } else {
+                symbolInfo.description = symbolInfo.ticker.split('Crypto.')[1]
+              }
+              onResolve(symbolInfo)
+            })
+            .catch((error) => {
+              console.error(error)
+              return
+            })
+        },
+      )
     } catch (error) {
       console.error(error)
       return

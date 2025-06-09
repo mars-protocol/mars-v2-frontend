@@ -24,14 +24,12 @@ function FetchLoading() {
 function Content() {
   const address = useStore((s) => s.address)
   const isV1 = useStore((s) => s.isV1)
-  const { data: accountIds, isLoading: isLoadingAccounts } = useAccountIds(
-    address || '',
-    true,
-    true,
-  )
+  const { data: accountIds, isLoading: isLoadingAccounts } = useAccountIds(address || '', true)
+  const { pathname } = useLocation()
 
   if (isLoadingAccounts) return <FetchLoading />
-  if (accountIds && accountIds.length === 0 && !isV1) return <AccountCreateFirst />
+  if (accountIds && accountIds.length === 0 && !isV1 && !pathname.includes('/vaults'))
+    return <AccountCreateFirst />
   if (!isLoadingAccounts && accountIds)
     return <FetchedBalances accountIds={accountIds} isV1={isV1} address={address} />
   return <FetchLoading />
@@ -55,15 +53,18 @@ function FetchedBalances({
   address?: string
 }) {
   const [searchParams] = useSearchParams()
-  const { address: urlAddress } = useParams()
+  const { address: urlAddress, vaultAddress: urlVaultAddress } = useParams()
   const urlAccountId = useAccountId()
   const chainConfig = useChainConfig()
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const page = getPage(pathname, chainConfig)
-
   useEffect(() => {
-    if (page === 'portfolio' && urlAddress && urlAddress !== address) {
+    if (
+      (page.startsWith('vaults/') || page === 'portfolio') &&
+      urlAddress &&
+      urlAddress !== address
+    ) {
       navigate(getRoute(page, searchParams, urlAddress as string))
     } else {
       const currentAccountIsHls = urlAccountId && !accountIds.includes(urlAccountId)
@@ -73,9 +74,18 @@ function FetchedBalances({
         replace: true,
       })
     }
-
     useStore.setState({ focusComponent: null })
-  }, [accountIds, address, isV1, navigate, page, searchParams, urlAccountId, urlAddress])
+  }, [
+    accountIds,
+    address,
+    isV1,
+    navigate,
+    page,
+    searchParams,
+    urlAccountId,
+    urlAddress,
+    urlVaultAddress,
+  ])
 
   return <FetchLoading />
 }

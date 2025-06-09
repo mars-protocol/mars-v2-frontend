@@ -16,6 +16,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'xdefi-static.s3.eu-west-1.amazonaws.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'i.stargaze-apis.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ichef.bbci.co.uk',
+      },
     ],
   },
   async headers() {
@@ -28,12 +36,16 @@ const nextConfig = {
             value: 'origin-when-cross-origin',
           },
           {
+            key: 'Cache-Control',
+            value: 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          },
+          {
             key: 'Pragma',
             value: 'no-cache',
           },
           {
             key: 'Expires',
-            value: new Date().toString(),
+            value: '0',
           },
           {
             key: 'X-Content-Type-Options',
@@ -46,8 +58,16 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/:any*',
+        source: '/:path*',
         destination: '/',
+        has: [
+          {
+            type: 'header',
+            key: 'User-Agent',
+            value:
+              '(^(?!facebook|twitter|linkedin|telegram|discord|bot|crawl|spider|facebookexternalhit|Facebot|Twitterbot|TelegramBot|XtilesBot).*$)',
+          },
+        ],
       },
     ]
   },

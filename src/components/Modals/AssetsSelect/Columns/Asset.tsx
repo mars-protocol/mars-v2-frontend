@@ -1,4 +1,5 @@
 import { Row } from '@tanstack/react-table'
+import classNames from 'classnames'
 import Checkbox from 'components/common/Checkbox'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
@@ -11,6 +12,8 @@ export const ASSET_META = { id: 'name', header: 'Asset', accessorKey: 'asset.sym
 
 interface Props {
   row: Row<AssetTableRow>
+  hideApy?: boolean
+  hideCheckbox?: boolean
 }
 
 function isBorrowAsset(object?: any): object is BorrowAsset {
@@ -19,7 +22,7 @@ function isBorrowAsset(object?: any): object is BorrowAsset {
 }
 
 export default function Asset(props: Props) {
-  const { row } = props
+  const { row, hideApy, hideCheckbox } = props
   const asset = row.original.asset
   const market = row.original.market
   const isBorrow = isBorrowAsset(asset)
@@ -28,12 +31,14 @@ export default function Asset(props: Props) {
 
   return (
     <div className='flex items-center'>
-      <Checkbox
-        name={`asset-${asset.denom.toLowerCase()}`}
-        checked={row.getIsSelected()}
-        onChange={row.getToggleSelectedHandler()}
-        noMouseEvents
-      />
+      {!hideCheckbox && (
+        <Checkbox
+          name={`asset-${asset.denom.toLowerCase()}`}
+          checked={row.getIsSelected()}
+          onChange={row.getToggleSelectedHandler()}
+          noMouseEvents
+        />
+      )}
       {asset.chainName ? (
         <AssetImageEvm
           asset={asset}
@@ -42,7 +47,7 @@ export default function Asset(props: Props) {
           evmChainLogo={getChainLogoByName(asset.chainName)}
         />
       ) : (
-        <AssetImage asset={asset} className='w-6 h-6 ml-4' />
+        <AssetImage asset={asset} className={classNames('w-6 h-6', !hideCheckbox && 'ml-4')} />
       )}
       <div className='ml-2 flex flex-col'>
         <div className='flex items-center gap-2'>
@@ -58,7 +63,7 @@ export default function Asset(props: Props) {
           )}
         </div>
         <div className='flex items-center gap-2'>
-          {showRate && market ? (
+          {!hideApy && showRate && market ? (
             <Text size='xs' className='text-white/60'>
               {(apy ?? 0).toFixed(1)}% APY
             </Text>

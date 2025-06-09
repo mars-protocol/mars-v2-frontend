@@ -5,14 +5,11 @@ import { Callout, CalloutType } from 'components/common/Callout'
 import Divider from 'components/common/Divider'
 import { TrashBin } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import { getDefaultChainSettings } from 'constants/defaultSettings'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAssets from 'hooks/assets/useAssets'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import { useKeeperFee } from 'hooks/perps/useKeeperFee'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
 import usePerpsConfig from 'hooks/perps/usePerpsConfig'
 import { useSubmitLimitOrder } from 'hooks/perps/useSubmitLimitOrder'
@@ -21,7 +18,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { formatPercent, magnify } from 'utils/formatters'
+import { formatPercent } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 export default function PerpsSlTpModal() {
@@ -42,7 +39,6 @@ export default function PerpsSlTpModal() {
   const { perpsAsset } = usePerpsAsset()
   const { data: perpsConfig } = usePerpsConfig()
   const assets = useDepositEnabledAssets()
-  const chainConfig = useChainConfig()
   const currentPrice = usePrice(perpsAsset?.denom)
 
   const assetName = useMemo(() => perpsAsset?.symbol || 'the asset', [perpsAsset])
@@ -57,28 +53,11 @@ export default function PerpsSlTpModal() {
     return takeProfitPrice.minus(currentPrice).dividedBy(currentPrice).multipliedBy(100)
   }, [currentPrice, takeProfitPrice])
 
-  const creditManagerConfig = useStore((s) => s.creditManagerConfig)
-
-  const [keeperFee, setKeeperFee] = useLocalStorage(
-    `${chainConfig.id}/${LocalStorageKeys.PERPS_KEEPER_FEE}`,
-    creditManagerConfig?.keeper_fee_config?.min_fee ??
-      getDefaultChainSettings(chainConfig).keeperFee,
-  )
+  const { calculateKeeperFee } = useKeeperFee()
 
   const feeToken = useMemo(
     () => assets.find(byDenom(perpsConfig?.base_denom ?? '')),
     [assets, perpsConfig?.base_denom],
-  )
-
-  const calculateKeeperFee = useMemo(
-    () =>
-      feeToken
-        ? BNCoin.fromDenomAndBigNumber(
-            feeToken.denom,
-            magnify(BN(keeperFee.amount).toNumber(), feeToken),
-          )
-        : undefined,
-    [feeToken, keeperFee.amount],
   )
 
   const onClose = useCallback(() => {
@@ -189,7 +168,7 @@ export default function PerpsSlTpModal() {
           limitPrice: stopLossPrice,
           tradeDirection,
           baseDenom: feeToken.denom,
-          keeperFee: calculateKeeperFee ?? BNCoin.fromDenomAndBigNumber(feeToken.denom, BN_ZERO),
+          keeperFee: calculateKeeperFee,
           isReduceOnly: true,
           comparison,
         })
@@ -213,7 +192,7 @@ export default function PerpsSlTpModal() {
           limitPrice: takeProfitPrice,
           tradeDirection,
           baseDenom: feeToken.denom,
-          keeperFee: calculateKeeperFee ?? BNCoin.fromDenomAndBigNumber(feeToken.denom, BN_ZERO),
+          keeperFee: calculateKeeperFee,
           isReduceOnly: true,
           comparison,
         })

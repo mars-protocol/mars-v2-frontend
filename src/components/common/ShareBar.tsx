@@ -2,28 +2,37 @@ import classNames from 'classnames'
 import { useLocation, useParams } from 'react-router-dom'
 import useClipboard from 'react-use-clipboard'
 
-import { DocURL } from 'types/enums'
 import Button from 'components/common/Button'
 import { Chain, Check, Twitter } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
+import { DocURL } from 'types/enums'
+import { getPage, getRoute } from 'utils/route'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
 interface Props {
   text: string
+  excludeWalletAddress?: boolean
 }
 
 export default function ShareBar(props: Props) {
   const { address } = useParams()
   const { pathname } = useLocation()
-  const currentUrl = `https://${location.host}${pathname}`
+  const chainConfig = useChainConfig()
+
+  const cleanPath = getRoute(getPage(pathname, chainConfig), new URLSearchParams())
+  const currentUrl = props.excludeWalletAddress
+    ? `https://${location.host}${cleanPath}`
+    : `https://${location.host}${pathname}`
+
   const [isCopied, setCopied] = useClipboard(currentUrl, {
     successDuration: 1000 * 5,
   })
 
-  if (!window || !address) return null
+  if (!window || (!props.excludeWalletAddress && !address)) return null
   return (
-    <div className='flex justify-end w-full gap-4'>
+    <div className='flex justify-end gap-2 flex-grow'>
       <ConditionalWrapper
         condition={isCopied}
         wrapper={(children) => (

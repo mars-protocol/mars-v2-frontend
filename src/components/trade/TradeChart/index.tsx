@@ -176,7 +176,7 @@ export default function TradeChart(props: Props) {
       console.info('Error on loading chart', e)
       return
     }
-  }, [chartName, onCreateLimitOrder, onCreateStopOrder, isPerps])
+  }, [chartName, isPerps, onCreateLimitOrder, onCreateStopOrder])
 
   const updateShapesAndStudies = useCallback(() => {
     try {
@@ -311,7 +311,7 @@ export default function TradeChart(props: Props) {
     const settings = getTradingViewSettings(theme)
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      symbol: props.buyAsset.pythFeedName ?? `${props.buyAsset.symbol}/USD`,
+      symbol: props.buyAsset.pythFeedName ?? `${props.buyAsset.symbol.toUpperCase()}/USD`,
       datafeed: datafeed,
       interval: chartInterval,
       library_path: '/charting_library/',

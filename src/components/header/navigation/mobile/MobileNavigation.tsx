@@ -10,6 +10,7 @@ import ChainSelect from 'components/header/ChainSelect'
 import RewardsCenter from 'components/header/RewardsCenter'
 import useAccount from 'hooks/accounts/useAccount'
 import useAccountId from 'hooks/accounts/useAccountId'
+import useAccountTitle from 'hooks/accounts/useAccountTitle'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useV1Account from 'hooks/v1/useV1Account'
 import { useCallback, useEffect, useMemo } from 'react'
@@ -55,6 +56,7 @@ function Content(props: Props & { account?: Account }) {
   const currentPage = getPage(pathname, chainConfig)
 
   const menu = useMemo(() => menuTree(chainConfig), [chainConfig, menuTree])
+  const accountTitle = useAccountTitle(account, true)
 
   useEffect(() => {
     if (mobileNavExpanded) {
@@ -147,7 +149,7 @@ function Content(props: Props & { account?: Account }) {
         )}
         {account && (
           <div className='flex w-full'>
-            <Card title={isV1 ? 'Red Bank' : `Credit Account ${account.id}`}>
+            <Card title={isV1 ? 'Red Bank' : accountTitle}>
               <AccountSummary account={account} />
             </Card>
           </div>

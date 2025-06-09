@@ -13,7 +13,7 @@ export default function useAutoLend(): {
   enableAutoLendAccountId: (accountId: string) => void
 } {
   const address = useStore((s) => s.address)
-  const { data: accounts } = useAccounts('default', address, false)
+  const { data: accounts } = useAccounts('all', address, false)
   const currentAccount = useCurrentAccount()
   const [autoLendEnabledAccountIds, setAutoLendEnabledAccountIds] = useAutoLendEnabledAccountIds()
 
