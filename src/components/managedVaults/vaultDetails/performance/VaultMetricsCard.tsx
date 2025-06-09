@@ -7,7 +7,8 @@ import { BN } from 'utils/helpers'
 import useHistoricalVaultData from 'hooks/managedVaults/useHistoricalVaultData'
 import { useMemo } from 'react'
 import useManagedVaultPnl from 'hooks/managedVaults/useManagedVaultPnl'
-import moment from 'moment'
+import useManagedVaultAge from 'hooks/managedVaults/useManagedVaultAge'
+import { Tooltip } from 'components/common/Tooltip'
 
 interface Props {
   vaultDetails: ManagedVaultsData
@@ -17,8 +18,8 @@ interface Props {
 export default function VaultMetricsCard(props: Props) {
   const { vaultDetails, vaultAddress } = props
   const { data: historicalData90d } = useHistoricalVaultData(vaultAddress, 90)
-  const { data: historicalDataAll } = useHistoricalVaultData(vaultAddress, 'all')
   const { data: vaultPnl } = useManagedVaultPnl(vaultAddress)
+  const vaultAge = useManagedVaultAge(vaultAddress)
 
   const calculateMaxDrawdown = (data: HistoricalVaultChartData[]) => {
     if (!data?.length) return 0
@@ -41,14 +42,6 @@ export default function VaultMetricsCard(props: Props) {
     return maxDrawdown
   }
 
-  const vaultAge = useMemo(() => {
-    if (!historicalDataAll || historicalDataAll.length === 0) return 0
-
-    const firstDate = moment(historicalDataAll[0].date)
-    const lastDate = moment(historicalDataAll[historicalDataAll.length - 1].date)
-    return lastDate.diff(firstDate, 'days', false)
-  }, [historicalDataAll])
-
   const maxDrawdown = useMemo(
     () => calculateMaxDrawdown(historicalData90d || []),
     [historicalData90d],
@@ -66,6 +59,7 @@ export default function VaultMetricsCard(props: Props) {
       label: 'Total PnL',
       isCurrency: true,
       formatOptions: { maxDecimals: 2, minDecimals: 2 },
+      showSignPrefix: true,
     },
     {
       value: maxDrawdown,
@@ -81,6 +75,10 @@ export default function VaultMetricsCard(props: Props) {
       value: vaultDetails.apy,
       label: 'APY',
       formatOptions: { maxDecimals: 2, minDecimals: 2, suffix: '%', abbreviated: true },
+      tooltip:
+        vaultAge < 30
+          ? 'This is a new vault. APY may be volatile until sufficient historical data is collected.'
+          : 'APY based on 30-day rolling average performance',
     },
     {
       value: vaultAge,
@@ -96,6 +94,7 @@ export default function VaultMetricsCard(props: Props) {
             coin={BNCoin.fromDenomAndBigNumber(vaultDetails.base_tokens_denom, BN(metric.value))}
             options={metric.formatOptions}
             className='text-sm'
+            showSignPrefix={metric.showSignPrefix}
           />
         ) : (
           <FormattedNumber
@@ -109,7 +108,16 @@ export default function VaultMetricsCard(props: Props) {
             className='text-center py-3 w-[calc(50%-0.5rem)] md:w-45 bg-white/5'
             key={`${metric.label}-${index}`}
           >
-            <TitleAndSubCell title={value} sub={metric.label} className='text-sm' />
+            <TitleAndSubCell
+              title={value}
+              sub={
+                <div className='w-full flex items-center justify-center gap-1'>
+                  {metric.label}
+                  {metric.tooltip && <Tooltip content={metric.tooltip} type='info' />}
+                </div>
+              }
+              className='text-sm'
+            />
           </Card>
         )
       })}

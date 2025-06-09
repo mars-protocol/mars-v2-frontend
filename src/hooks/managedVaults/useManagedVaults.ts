@@ -17,12 +17,17 @@ export default function useManagedVaults() {
   const pendingVault = useMemo(() => {
     try {
       const storedVault = localStorage.getItem('pendingVaultMint')
-      return storedVault ? JSON.parse(storedVault) : null
+      if (!storedVault) return null
+      const parsedVault = JSON.parse(storedVault)
+      if (parsedVault.creatorAddress === address) {
+        return parsedVault
+      }
+      return null
     } catch (error) {
       console.error('Failed to parse pending vault:', error)
       return null
     }
-  }, [])
+  }, [address])
 
   const {
     data: vaultsResponse,
@@ -61,18 +66,17 @@ export default function useManagedVaults() {
         // Add pending vault if it exists and isn't in the API response yet
         if (
           pendingVault &&
-          !vaultsWithDetails.some((vault) => vault.vault_address === pendingVault.address)
+          pendingVault.creatorAddress === address &&
+          !vaultsWithDetails.some((vault) => vault.vault_address === pendingVault.vaultAddress)
         ) {
           try {
-            const details = await getManagedVaultDetails(chainConfig, pendingVault.address)
-
             vaultsWithDetails.push({
-              vault_address: pendingVault.address,
-              account_id: details.vault_account_id,
-              title: details.title,
-              subtitle: details.subtitle || '',
-              description: details.description,
-              fee_rate: BN(details.performance_fee_config.fee_rate)
+              vault_address: pendingVault.vaultAddress,
+              account_id: '',
+              title: pendingVault.params.title,
+              subtitle: '',
+              description: pendingVault.params.description,
+              fee_rate: BN(pendingVault.params.performanceFee.fee_rate)
                 .multipliedBy(8760)
                 .multipliedBy(100)
                 .integerValue(BN.ROUND_HALF_UP)
@@ -80,16 +84,17 @@ export default function useManagedVaults() {
               fee: '0',
               tvl: '0',
               apr: '0',
-              base_tokens_denom: details.base_token,
-              base_tokens_amount: details.total_base_tokens,
-              vault_tokens_denom: details.vault_token,
-              vault_tokens_amount: details.total_vault_tokens,
-              isOwner: true,
+              base_tokens_denom: pendingVault.params.baseToken,
+              base_tokens_amount: '0',
+              vault_tokens_denom: pendingVault.params.vaultToken,
+              vault_tokens_amount: '0',
+              isOwner: pendingVault.creatorAddress === address,
               isPending: true,
+              ownerAddress: pendingVault.creatorAddress,
             } as ManagedVaultWithDetails)
           } catch (error) {
             console.error(
-              `Error fetching details for pending vault ${pendingVault.address}:`,
+              `Error fetching details for pending vault ${pendingVault.vaultAddress}:`,
               error,
             )
           }

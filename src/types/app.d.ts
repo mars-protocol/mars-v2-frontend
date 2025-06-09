@@ -2004,6 +2004,7 @@ interface ManagedVaultWithDetails extends ManagedVaultsDataResponse {
   fee_rate: number
   isOwner: boolean
   isPending?: boolean
+  ownerAddress?: string
 }
 
 interface ManagedVaultSCDetailsResponse {
@@ -2039,6 +2040,14 @@ interface ManagedVaultsData {
   base_tokens_amount: string
   vault_tokens_denom: string
   vault_tokens_amount: string
+}
+
+interface PendingVaultData {
+  vaultAddress?: string
+  creatorAddress: string
+  status: 'pending_account_mint' | 'pending_tx'
+  depositAmount: string
+  params: VaultParams
 }
 
 interface PerformanceFeeState {

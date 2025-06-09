@@ -1,6 +1,8 @@
-import useSWR from 'swr'
 import getHistoricalManagedVaults from 'api/managedVaults/getHistoricalManagedVaults'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import useSWR from 'swr'
+import { BN } from 'utils/helpers'
 import { convertAprToApy } from 'utils/parsers'
 
 export default function useHistoricalVaultData(vaultAddress: string, timeframe: number | 'all') {
@@ -15,33 +17,19 @@ export default function useHistoricalVaultData(vaultAddress: string, timeframe: 
       if (!response.data.length) return []
 
       const vaultData = response.data[0]
-      const initialSharePrice =
-        vaultData.share_price.find((point) => Number(point?.value) > 0)?.value ?? '1'
+      return vaultData.tvl.map((point) => {
+        const sharePricePoint = vaultData.share_price.find((sp) => sp.date === point.date)
+        const aprPoint = vaultData.apr?.find((ap) => ap.date === point.date)
 
-      const transformedData = vaultData.tvl
-        .map((point, index) => {
-          // Skipping points with missing data
-          if (!point?.value || !vaultData.share_price[index]?.value) {
-            return null
-          }
-
-          const currentSharePrice = Number(vaultData.share_price[index].value)
-          const normalizedSharePrice =
-            currentSharePrice > 0 ? currentSharePrice / Number(initialSharePrice) : 0
-
-          return {
-            date: point.date,
-            tvl: Number(point.value),
-            apy:
-              vaultData.apr && vaultData.apr[index]?.value
-                ? convertAprToApy(Number(vaultData.apr[index].value), 365)
-                : 0,
-            sharePrice: normalizedSharePrice,
-          }
-        })
-        .filter(Boolean)
-
-      return transformedData as HistoricalVaultChartData[]
+        return {
+          date: point.date,
+          tvl: Number(point.value),
+          apy: aprPoint?.value ? convertAprToApy(Number(aprPoint.value), 365) : 0,
+          sharePrice: sharePricePoint?.value
+            ? BN(sharePricePoint.value).shiftedBy(PRICE_ORACLE_DECIMALS).toNumber()
+            : 0,
+        }
+      })
     },
     {
       revalidateOnFocus: false,

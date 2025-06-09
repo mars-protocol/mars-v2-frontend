@@ -1,7 +1,9 @@
+import Button from 'components/common/Button'
 import ActionButton from 'components/common/Button/ActionButton'
-import { ArrowUpLine } from 'components/common/Icons'
+import { ArrowUpLine, PlusSquared } from 'components/common/Icons'
 import Intro from 'components/common/Intro'
 import useStore from 'store'
+import { DocURL } from 'types/enums'
 
 export default function LendIntro() {
   return (
@@ -15,6 +17,15 @@ export default function LendIntro() {
       }
       bg='lend'
     >
+      <Button
+        text='Learn more'
+        leftIcon={<PlusSquared />}
+        onClick={(e) => {
+          e.preventDefault()
+          window.open(DocURL.BORROW_LENDING_URL, '_blank')
+        }}
+        color='secondary'
+      />
       <ActionButton
         text='Deposit assets'
         color='secondary'

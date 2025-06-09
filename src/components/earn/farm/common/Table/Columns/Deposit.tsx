@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 
 import ActionButton from 'components/common/Button/ActionButton'
-import { Enter, Plus, TrashBin, Wallet } from 'components/common/Icons'
+import { CrossCircled, Enter, ExclamationMarkTriangle, Plus, Wallet } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -105,13 +105,19 @@ export const Deposit = (props: Props) => {
 
 const INFO_ITEMS = [
   {
+    icon: <ExclamationMarkTriangle />,
+    title: 'Counter party risk',
+    description:
+      'By depositing you are taking on the opposite position of the perps traders. If the perps traders lose, the vault gains — but when they win, the vault takes the loss.',
+  },
+  {
     icon: <Wallet />,
     title: 'Your leverage may be affected',
     description:
       'When depositing into this vault, your deposited value is removed from your total collateral value. This increases your overall leverage.',
   },
   {
-    icon: <TrashBin />,
+    icon: <CrossCircled />,
     title: 'Does not count towards collateral',
     description: 'Your deposits into the perps vault do not count towards your collateral.',
   },

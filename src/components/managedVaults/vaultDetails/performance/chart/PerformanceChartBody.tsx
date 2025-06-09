@@ -1,4 +1,11 @@
-import React from 'react'
+import classNames from 'classnames'
+import DisplayCurrency from 'components/common/DisplayCurrency'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { Circle } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import ChartTooltip from 'components/managedVaults/vaultDetails/performance/chart/tooltip/ChartTooltip'
+import { PRICE_ORACLE_DECIMALS } from 'constants/query'
+import moment from 'moment'
 import {
   Area,
   AreaChart,
@@ -9,17 +16,9 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import moment from 'moment'
-import DisplayCurrency from 'components/common/DisplayCurrency'
-import { Circle } from 'components/common/Icons'
-import Text from 'components/common/Text'
-import { FormattedNumber } from 'components/common/FormattedNumber'
-import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
-import ChartTooltip from 'components/managedVaults/vaultDetails/performance/chart/tooltip/ChartTooltip'
-import classNames from 'classnames'
-import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { formatValue } from 'utils/formatters'
+import { BN } from 'utils/helpers'
 
 interface LineConfig {
   dataKey: string
@@ -53,7 +52,11 @@ const TooltipContent = ({ payload, lines }: { payload: any[]; lines: LineConfig[
         {lineConfig?.isPercentage ? (
           <FormattedNumber
             amount={item.value}
-            options={{ maxDecimals: 3, minDecimals: 2, suffix: '%' }}
+            options={{
+              maxDecimals: Number(item.value) > 100 ? 0 : 2,
+              minDecimals: Number(item.value) > 100 ? 0 : 2,
+              suffix: '%',
+            }}
             className='text-xs'
           />
         ) : lineConfig?.isCurrency ? (
@@ -127,7 +130,7 @@ export default function PerformanceChartBody(props: Props) {
             dataKey='date'
             dy={10}
             stroke='rgba(255, 255, 255, 0.4)'
-            padding={{ left: 5, right: 15 }}
+            padding={{ left: 5, right: 18 }}
             tickFormatter={(value) => moment(value).format('DD MMM')}
             interval={data.length > 10 ? Math.floor(data.length / 8) : 0}
           />
@@ -140,8 +143,8 @@ export default function PerformanceChartBody(props: Props) {
             tickFormatter={(value) => {
               if (lines[0]?.isPercentage) {
                 return formatValue(value, {
-                  minDecimals: 0,
-                  maxDecimals: 0,
+                  minDecimals: Number(value) > 100 ? 0 : 2,
+                  maxDecimals: Number(value) > 100 ? 0 : 2,
                   suffix: '%',
                   abbreviated: true,
                 })

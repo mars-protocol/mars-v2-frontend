@@ -18,6 +18,7 @@ import InfoRow from 'components/managedVaults/vaultDetails/profileVaultCard/Info
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useManagedVaultOwnerInfo from 'hooks/managedVaults/useManagedVaultOwnerInfo'
 import useManagedVaultPnl from 'hooks/managedVaults/useManagedVaultPnl'
+import useManagedVaultAge from 'hooks/managedVaults/useManagedVaultAge'
 import moment from 'moment'
 import Image from 'next/image'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -38,6 +39,7 @@ export default function ProfileVaultCard(props: Props) {
   const { details, isOwner, wallet, depositAsset } = props
   const { vaultOwnerInfo, isLoading } = useManagedVaultOwnerInfo(wallet)
   const { data: vaultPnl } = useManagedVaultPnl(details.vault_address)
+  const vaultAge = useManagedVaultAge(details.vault_address)
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
@@ -56,6 +58,7 @@ export default function ProfileVaultCard(props: Props) {
     : `Check out the '${vaultTitle}' Vault on Mars Protocol!`
 
   const apy = details.apy || 0
+
   return (
     <Card className='bg-white/5'>
       <div className='relative mb-6'>
@@ -102,16 +105,27 @@ export default function ProfileVaultCard(props: Props) {
 
         <div className='space-y-4'>
           <InfoRow label='Vault APY'>
-            <FormattedNumber
-              amount={apy}
-              options={{
-                minDecimals: apy > 100 ? 0 : 2,
-                maxDecimals: apy > 100 ? 0 : 2,
-                suffix: '%',
-                abbreviated: false,
-              }}
-              className='text-sm'
-            />
+            <Tooltip
+              content={
+                vaultAge < 30
+                  ? 'This is a new vault. APY may be volatile until sufficient historical data is collected.'
+                  : 'Annual Percentage Yield based on 30-day rolling average performance'
+              }
+              type='info'
+            >
+              <div className='border-b border-dashed border-white/40'>
+                <FormattedNumber
+                  amount={apy}
+                  options={{
+                    minDecimals: apy > 100 ? 0 : 2,
+                    maxDecimals: apy > 100 ? 0 : 2,
+                    suffix: '%',
+                    abbreviated: false,
+                  }}
+                  className='text-sm cursor-help'
+                />
+              </div>
+            </Tooltip>
           </InfoRow>
           <InfoRow label='Total Deposits'>
             <DisplayCurrency

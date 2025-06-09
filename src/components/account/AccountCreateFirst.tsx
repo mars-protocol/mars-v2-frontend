@@ -7,14 +7,14 @@ import Card from 'components/common/Card'
 import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
 import WalletSelect from 'components/Wallet/WalletSelect'
-import useStore from 'store'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import { useWeb3WalletConnection } from 'hooks/wallet/useWeb3WalletConnections'
-import useToggle from 'hooks/common/useToggle'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import { getPage, getRoute } from 'utils/route'
+import useToggle from 'hooks/common/useToggle'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
+import { useWeb3WalletConnection } from 'hooks/wallet/useWeb3WalletConnections'
+import useStore from 'store'
+import { getPage, getRoute } from 'utils/route'
 
 export default function AccountCreateFirst() {
   const navigate = useNavigate()
@@ -46,8 +46,7 @@ export default function AccountCreateFirst() {
         focusComponent: {
           component: <AccountFundFullPage />,
           onClose: () => {
-            // TODO: update docs to reflect the current state of v2
-            //useStore.setState({ getStartedModal: true })
+            useStore.setState({ getStartedModal: true })
           },
         },
       })

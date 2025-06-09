@@ -1,5 +1,7 @@
+import Button from 'components/common/Button'
+import { PlusSquared } from 'components/common/Icons'
 import Intro from 'components/common/Intro'
-
+import { DocURL } from 'types/enums'
 export default function BorrowIntro() {
   return (
     <Intro
@@ -10,6 +12,16 @@ export default function BorrowIntro() {
         </>
       }
       bg='borrow'
-    ></Intro>
+    >
+      <Button
+        text='Learn more'
+        leftIcon={<PlusSquared />}
+        onClick={(e) => {
+          e.preventDefault()
+          window.open(DocURL.BORROW_LENDING_URL, '_blank')
+        }}
+        color='secondary'
+      />
+    </Intro>
   )
 }
