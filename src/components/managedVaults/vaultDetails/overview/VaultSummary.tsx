@@ -125,16 +125,19 @@ export default function VaultSummary(props: Props) {
               />
             </div>
           ) : null,
+        notificationCount:
+          (accountData?.debts.length || 0) +
+          (accountData?.lends.length || 0) +
+          (accountData?.deposits.length || 0),
       },
     ]
 
-    const hasStrategies =
-      accountData &&
-      (accountData.vaults.length > 0 ||
-        accountData.perpsVault ||
-        accountData.stakedAstroLps.length > 0)
+    const strategiesCount =
+      (accountData?.vaults?.length || 0) +
+      (accountData?.perpsVault ? 1 : 0) +
+      (accountData?.stakedAstroLps?.length || 0)
 
-    if (hasStrategies) {
+    if (strategiesCount > 0 && accountData) {
       tabsArray.push({
         title: 'Strategies',
         renderContent: () => (
@@ -142,12 +145,13 @@ export default function VaultSummary(props: Props) {
             <AccountStrategiesTable account={accountData} hideCard />
           </div>
         ),
+        notificationCount: strategiesCount,
       })
     }
 
-    const hasPerps = accountData && accountData.perps && accountData.perps.length > 0
+    const perpsCount = accountData?.perps?.length || 0
 
-    if (hasPerps) {
+    if (perpsCount > 0 && accountData) {
       tabsArray.push({
         title: 'Perp Positions',
         renderContent: () => (
@@ -155,6 +159,7 @@ export default function VaultSummary(props: Props) {
             <AccountPerpPositionTable account={accountData} hideCard />
           </div>
         ),
+        notificationCount: perpsCount,
       })
     }
 
