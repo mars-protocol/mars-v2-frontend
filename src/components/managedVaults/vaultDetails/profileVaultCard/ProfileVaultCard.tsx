@@ -27,6 +27,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { formatLockupPeriod } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
+import useManagedVaultOwnerPosition from 'hooks/managedVaults/useManagedVaultOwnerPosition'
 
 interface Props {
   details: ManagedVaultsData
@@ -45,6 +46,12 @@ export default function ProfileVaultCard(props: Props) {
   const address = useStore((s) => s.address)
   const chainConfig = useChainConfig()
 
+  const { calculateOwnerVaultShare } = useManagedVaultOwnerPosition(
+    details.vault_address,
+    details.ownerAddress,
+  )
+
+  const ownerSharesPercentage = calculateOwnerVaultShare(details.vault_tokens_amount)
   const handleManageVault = () => {
     navigate(
       getRoute(getPage('perps', chainConfig), searchParams, address, details.vault_account_id),
@@ -151,6 +158,21 @@ export default function ProfileVaultCard(props: Props) {
                   BN(vaultPnl.total_pnl).isGreaterThan(0) && 'text-profit',
                   BN(vaultPnl.total_pnl).isLessThan(0) && 'text-loss',
                 )}
+              />
+            )}
+          </InfoRow>
+          <InfoRow label='Vault Owner Shares'>
+            {!ownerSharesPercentage ? (
+              <Loading className='h-4 w-20' />
+            ) : (
+              <FormattedNumber
+                amount={ownerSharesPercentage}
+                options={{
+                  suffix: '%',
+                  minDecimals: 2,
+                  maxDecimals: 2,
+                }}
+                className='text-sm'
               />
             )}
           </InfoRow>
