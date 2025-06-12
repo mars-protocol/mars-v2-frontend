@@ -14,7 +14,7 @@ export default function useManagedVaultOwnerPosition(
 ) {
   const chainConfig = useChainConfig()
 
-  const { data, ...rest } = useSWR(
+  const { data } = useSWR(
     vaultAddress && ownerAddress
       ? `chains/${chainConfig.id}/managedVaults/${vaultAddress}/ownerPosition`
       : null,
@@ -38,6 +38,5 @@ export default function useManagedVaultOwnerPosition(
   return {
     data,
     calculateOwnerVaultShare,
-    ...rest,
   }
 }

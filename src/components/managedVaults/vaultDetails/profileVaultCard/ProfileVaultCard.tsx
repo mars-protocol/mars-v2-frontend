@@ -19,6 +19,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useManagedVaultOwnerInfo from 'hooks/managedVaults/useManagedVaultOwnerInfo'
 import useManagedVaultPnl from 'hooks/managedVaults/useManagedVaultPnl'
 import useManagedVaultAge from 'hooks/managedVaults/useManagedVaultAge'
+import useManagedVaultOwnerPosition from 'hooks/managedVaults/useManagedVaultOwnerPosition'
 import moment from 'moment'
 import Image from 'next/image'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -27,7 +28,6 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { formatLockupPeriod } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { getPage, getRoute } from 'utils/route'
-import useManagedVaultOwnerPosition from 'hooks/managedVaults/useManagedVaultOwnerPosition'
 
 interface Props {
   details: ManagedVaultsData
@@ -45,13 +45,12 @@ export default function ProfileVaultCard(props: Props) {
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
   const chainConfig = useChainConfig()
-
   const { calculateOwnerVaultShare } = useManagedVaultOwnerPosition(
     details.vault_address,
     details.ownerAddress,
   )
-
   const ownerSharesPercentage = calculateOwnerVaultShare(details.vault_tokens_amount)
+
   const handleManageVault = () => {
     navigate(
       getRoute(getPage('perps', chainConfig), searchParams, address, details.vault_account_id),
@@ -162,7 +161,7 @@ export default function ProfileVaultCard(props: Props) {
             )}
           </InfoRow>
           <InfoRow label='Vault Owner Shares'>
-            {!ownerSharesPercentage ? (
+            {ownerSharesPercentage === undefined ? (
               <Loading className='h-4 w-20' />
             ) : (
               <FormattedNumber
