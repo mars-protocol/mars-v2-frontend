@@ -37,13 +37,13 @@ export default function useAccountPerpsColumns(props: Props) {
       return [
         {
           ...ASSET_META,
-          meta: { className: 'min-w-30' },
+          meta: { className: 'min-w-20' },
           cell: ({ row }) => <Asset row={row.original} />,
         },
         {
           ...SIZE_META,
           id: 'size',
-          meta: { className: 'min-w-30' },
+          meta: { className: 'min-w-20' },
           cell: ({ row }) => {
             const { asset, amount, value } = row.original
             return <Size amount={amount} asset={asset} value={BN(value)} />
@@ -52,7 +52,7 @@ export default function useAccountPerpsColumns(props: Props) {
         },
         {
           ...PRICE_META,
-          meta: { className: 'min-w-30' },
+          meta: { className: 'min-w-20' },
           cell: ({ row }) => (
             <Price amount={row.original.amount.toNumber()} denom={row.original.denom} type='perp' />
           ),
@@ -60,7 +60,7 @@ export default function useAccountPerpsColumns(props: Props) {
         },
         {
           ...LIQ_META,
-          meta: { className: 'min-w-30' },
+          meta: { className: 'min-w-20' },
           cell: ({ row }) => (
             <LiqPrice
               denom={row.original.denom}
@@ -74,7 +74,7 @@ export default function useAccountPerpsColumns(props: Props) {
         },
         {
           ...PNL_META,
-          meta: { className: 'min-w-30' },
+          meta: { className: 'min-w-20' },
           cell: ({ row }) => <TotalPnL pnl={row.original.pnl} />,
           sortingFn: pnlSortingFn,
         },
@@ -83,13 +83,13 @@ export default function useAccountPerpsColumns(props: Props) {
     return [
       {
         ...ASSET_META,
-        meta: { className: 'min-w-30' },
+        meta: { className: 'min-w-20' },
         cell: ({ row }) => <Asset row={row.original} />,
       },
       {
         ...SIZE_META,
         id: 'size',
-        meta: { className: 'min-w-30' },
+        meta: { className: 'min-w-20' },
         cell: ({ row }) => {
           const { asset, amount, value } = row.original
           return (
@@ -100,7 +100,7 @@ export default function useAccountPerpsColumns(props: Props) {
       },
       {
         ...PNL_META,
-        meta: { className: 'min-w-30' },
+        meta: { className: 'min-w-20' },
         cell: ({ row }) => <TotalPnL pnl={row.original.pnl} />,
         sortingFn: pnlSortingFn,
       },

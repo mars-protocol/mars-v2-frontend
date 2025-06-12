@@ -38,6 +38,13 @@ export default function AssetSelectorItem(props: Props) {
     return { position: null, hasPosition: false }
   }, [type, account, asset.denom])
 
+  const perpsPositionSize = useMemo(() => {
+    if (type === 'perps' && perpsInfo.position) {
+      return demagnify(perpsInfo.position.amount.abs(), asset)
+    }
+    return 0
+  }, [type, perpsInfo.position, asset])
+
   const [favoriteAssetsDenoms, setFavoriteAssetsDenoms] = useFavoriteAssets()
   const isFavorite = useMemo(
     () => favoriteAssetsDenoms.includes(asset.denom),
@@ -68,10 +75,10 @@ export default function AssetSelectorItem(props: Props) {
 
   const positionValue = useMemo(() => {
     if (type === 'perps' && perpsInfo.position && asset.price) {
-      return amount * asset.price.amount.toNumber()
+      return perpsPositionSize * asset.price.amount.toNumber()
     }
     return 0
-  }, [type, perpsInfo.position, amount, asset.price])
+  }, [type, perpsInfo.position, perpsPositionSize, asset.price])
 
   return (
     <li
@@ -108,12 +115,21 @@ export default function AssetSelectorItem(props: Props) {
             {shouldShowBalance && (
               <div className='flex gap-1 items-center mt-1'>
                 {type === 'perps' ? (
-                  <Text size='xs' className='text-white/60'>
-                    Size:{' '}
-                    {amount >= 1
-                      ? formatAmountToPrecision(amount, MAX_AMOUNT_DECIMALS)
-                      : formatAmountToPrecision(lowAmount, MAX_AMOUNT_DECIMALS)}
-                  </Text>
+                  <div className='flex items-center gap-1'>
+                    <span className='text-xs text-white/60'>Size:</span>
+                    <FormattedNumber
+                      className='text-xs text-white/60'
+                      amount={perpsPositionSize}
+                      smallerThanThreshold={
+                        perpsPositionSize !== 0 && perpsPositionSize < MIN_AMOUNT
+                      }
+                      options={{
+                        maxDecimals: MAX_AMOUNT_DECIMALS,
+                        minDecimals: 0,
+                        abbreviated: perpsPositionSize >= 1000,
+                      }}
+                    />
+                  </div>
                 ) : (
                   <>
                     <span className='text-xs text-left text-white/80'>{balanceLabel}</span>
@@ -168,9 +184,19 @@ export default function AssetSelectorItem(props: Props) {
             showDetailedPrice
           />
           {type === 'perps' && perpsInfo.hasPosition && positionValue > 0 && (
-            <Text size='xs' className='text-white/60 mt-1'>
-              Value: ${positionValue.toFixed(2)}
-            </Text>
+            <div className='flex items-center gap-1 mt-1'>
+              <span className='text-xs text-white/60'>Value:</span>
+              <FormattedNumber
+                className='text-xs text-white/60'
+                amount={positionValue}
+                options={{
+                  prefix: '$',
+                  maxDecimals: 2,
+                  minDecimals: 2,
+                  abbreviated: positionValue >= 1000,
+                }}
+              />
+            </div>
           )}
         </div>
       </button>

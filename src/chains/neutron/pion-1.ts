@@ -29,8 +29,8 @@ const Pion1: ChainConfig = {
     rest: process.env.NEXT_PUBLIC_NEUTRON_TEST_REST ?? 'https://rest-lb-pion.ntrn.tech',
     swap: 'https://testnet-neutron.astroport.fi/swap',
     explorer: 'https://www.mintscan.io/neutron-testnet',
-    dexAssets: 'https://neutron-cache-api.onrender.com/pion-1/tokens',
-    dexPools: 'https://neutron-cache-api.onrender.com/pion-1/pools',
+    dexAssets: 'https://cache.marsprotocol.io/api/pion-1/tokens',
+    dexPools: 'https://cache.marsprotocol.io/api/pion-1/pools',
     gasPrices: '/feemarket/v1/gas_price/untrn',
     managedVaults: 'https://backend.test.mars-dev.net/v2/managed_vaults?chain=neutron',
     historicalManagedVaults:

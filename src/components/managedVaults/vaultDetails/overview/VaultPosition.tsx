@@ -1,15 +1,15 @@
 import AssetImage from 'components/common/assets/AssetImage'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import Loading from 'components/common/Loading'
-import PositionInfo from 'components/managedVaults/vaultDetails/common/PositionInfo'
-import Text from 'components/common/Text'
-import useStore from 'store'
-import { BN } from 'utils/helpers'
-import { BNCoin } from 'types/classes/BNCoin'
-import { LockUnlocked } from 'components/common/Icons'
 import { FormattedNumber } from 'components/common/FormattedNumber'
+import { LockUnlocked } from 'components/common/Icons'
+import Loading from 'components/common/Loading'
+import Text from 'components/common/Text'
+import PositionInfo from 'components/managedVaults/vaultDetails/common/PositionInfo'
 import { useManagedVaultConvertToBaseTokens } from 'hooks/managedVaults/useManagedVaultConvertToBaseTokens'
 import useManagedVaultUserPosition from 'hooks/managedVaults/useManagedVaultUserPosition'
+import useStore from 'store'
+import { BNCoin } from 'types/classes/BNCoin'
+import { BN } from 'utils/helpers'
 
 interface Props {
   details: ManagedVaultsData
@@ -59,8 +59,8 @@ export default function VaultPosition(props: Props) {
           amount={sharePercentage}
           options={{
             suffix: '% of the vault',
-            minDecimals: 0,
-            maxDecimals: 0,
+            minDecimals: 2,
+            maxDecimals: 2,
             abbreviated: false,
           }}
           className='text-xs text-white/60'
