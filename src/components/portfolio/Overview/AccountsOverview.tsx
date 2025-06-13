@@ -36,11 +36,11 @@ export default function AccountsOverview(props: Props) {
   }, [hasFundsForTxFee])
 
   if (!walletAddress && !urlAddress) return <ConnectInfo />
-  const isLoadedButEmtpy =
+  const isLoadedButEmpty =
     !isLoading && accountIds && accountIds.length === 0 && urlAddress === walletAddress
 
-  if (isLoadedButEmtpy && !isDefault) return null
-  if (isLoadedButEmtpy && isDefault) {
+  if (isLoadedButEmpty && !isDefault) return null
+  if (isLoadedButEmpty && isDefault) {
     return (
       <Card
         className='w-full h-fit bg-white/5'
