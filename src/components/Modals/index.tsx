@@ -12,7 +12,7 @@ export { default as LendAndReclaimModalController } from 'components/Modals/Lend
 export { default as KeeperFeeModal } from 'components/Modals/KeeperFeeModal'
 export { default as PerpsVaultModal } from 'components/Modals/PerpsVault'
 export { default as SettingsModal } from 'components/Modals/Settings'
-export { default as LevelStakingModal } from 'components/Modals/LevelStakingModal'
+export { default as MarsStakingModal } from 'components/Modals/MarsStakingModal'
 export { default as UnlockModal } from 'components/Modals/Unlock'
 export { default as V1BorrowAndRepay } from 'components/Modals/v1/V1BorrowAndRepay'
 export { default as V1DepositAndWithdraw } from 'components/Modals/v1/V1DepositAndWithdraw'

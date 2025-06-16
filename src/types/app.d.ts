@@ -367,6 +367,10 @@ interface ChainConfig {
   campaignAssets?: AssetCampaignInfo[]
   slinky: boolean
   managedVaults: boolean
+  mars?: {
+    decimals: number
+    denom: string
+  }
 }
 
 interface AssetCampaignInfo {
@@ -504,7 +508,6 @@ type Page =
   | 'portfolio/{accountId}'
   | 'hls-farm'
   | 'hls-staking'
-  | 'levels'
   | 'vaults'
   | 'vaults/create'
   | 'vaults/{vaultId}'
@@ -1391,7 +1394,7 @@ interface ModalSlice {
   withdrawFromVaultsModal: DepositedVault[] | null
   v1DepositAndWithdrawModal: V1DepositAndWithdrawModal | null
   v1BorrowAndRepayModal: V1BorrowAndRepayModal | null
-  levelStakingModal: LevelStakingModal | null
+  marsStakingModal: MarsStakingModal | null
 }
 
 interface AlertDialogButton {
@@ -2170,6 +2173,6 @@ interface HistoricalVaultChartData {
   date: string
 }
 
-interface LevelStakingModal {
+interface MarsStakingModal {
   type: 'stake' | 'unstake'
 }

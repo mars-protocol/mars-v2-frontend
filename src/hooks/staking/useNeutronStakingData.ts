@@ -2,9 +2,9 @@ import useSWR from 'swr'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
 import { BN_ZERO } from 'constants/math'
-import { MARS_DECIMALS } from 'constants/levels'
 import { convertToNeutronAddress } from 'utils/wallet'
 import chains from 'chains'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { ChainInfoID } from 'types/enums'
 
 interface ProcessedClaim {
@@ -80,6 +80,9 @@ export function useStakedMars() {
 export function useUnstakedMars() {
   const address = useStore((s) => s.address)
   const neutronAddress = convertToNeutronAddress(address)
+
+  const chainConfig = useChainConfig()
+  const MARS_DECIMALS = chainConfig.mars?.decimals ?? 0
 
   return useSWR(
     neutronAddress ? `neutron-unstaked-mars/${neutronAddress}` : null,

@@ -11,7 +11,7 @@ import {
   HlsModal,
   KeeperFeeModal,
   LendAndReclaimModalController,
-  LevelStakingModal,
+  MarsStakingModal,
   PerpsVaultModal,
   SettingsModal,
   UnlockModal,
@@ -50,7 +50,7 @@ export default function ModalsContainer() {
       {store.v1BorrowAndRepayModal && <V1BorrowAndRepay />}
       {store.keeperFeeModal && <KeeperFeeModal />}
       {store.vaultAssetsModal && <VaultAssets />}
-      {store.levelStakingModal && <LevelStakingModal />}
+      {store.marsStakingModal && <MarsStakingModal />}
     </>
   )
 }

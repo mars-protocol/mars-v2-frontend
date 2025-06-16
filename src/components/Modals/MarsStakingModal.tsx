@@ -10,28 +10,39 @@ import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import Modal from 'components/Modals/Modal'
 import { BN_ZERO } from 'constants/math'
-import { MARS_DECIMALS, MARS_DENOM } from 'constants/levels'
-import useLevelSystem from 'hooks/levels/useLevelSystem'
-import { useUnstakedMars } from 'hooks/levels/useNeutronStakingData'
+import { useStakedMars, useUnstakedMars } from 'hooks/staking/useNeutronStakingData'
 import { formatReleaseDate } from 'utils/dateTime'
+import { useMarsStakingActions } from 'hooks/staking/useMarsStakingActions'
+import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
+import { BN } from 'utils/helpers'
+import useChainConfig from 'hooks/chain/useChainConfig'
 
-export default function LevelStakingModal() {
-  const { levelStakingModal: modal } = useStore()
+export default function MarsStakingModal() {
+  const { marsStakingModal: modal } = useStore()
   const [amount, setAmount] = useState(BN_ZERO)
   const [isLoading, setIsLoading] = useState(false)
   const [isWithdrawing, setIsWithdrawing] = useState(false)
   const [modalType, setModalType] = useState<'stake' | 'unstake'>('stake')
 
-  const [levelData, actions] = useLevelSystem()
+  const { data: stakedMarsData } = useStakedMars()
   const { data: unstakedData } = useUnstakedMars()
+  const actions = useMarsStakingActions()
+  const chainConfig = useChainConfig()
 
-  const { stakedAmount, walletBalance, marsAsset } = levelData
+  const MARS_DENOM = chainConfig.mars?.denom ?? ''
+  const MARS_DECIMALS = chainConfig.mars?.decimals ?? 0
+
+  const stakedAmount = stakedMarsData?.stakedAmount || BN_ZERO
+  const walletBalanceRaw = useCurrentWalletBalance(MARS_DENOM)
+  const walletBalance = walletBalanceRaw
+    ? BN(walletBalanceRaw.amount).shiftedBy(-MARS_DECIMALS)
+    : BN_ZERO
 
   const defaultMarsAsset = useMemo(
     () => ({
       denom: MARS_DENOM,
       symbol: 'MARS',
-      decimals: 6,
+      decimals: MARS_DECIMALS,
       name: 'Mars Protocol',
       campaigns: [],
     }),
@@ -74,7 +85,7 @@ export default function LevelStakingModal() {
       } else {
         await actions.unstake(actualAmount)
       }
-      useStore.setState({ levelStakingModal: null })
+      useStore.setState({ marsStakingModal: null })
     } catch (error: any) {
       console.error('Transaction failed:', error)
     } finally {
@@ -83,7 +94,7 @@ export default function LevelStakingModal() {
   }, [isValidAmount, modal, modalType, actualAmount, actions])
 
   const handleClose = useCallback(() => {
-    useStore.setState({ levelStakingModal: null })
+    useStore.setState({ marsStakingModal: null })
   }, [])
 
   const handleWithdraw = useCallback(async () => {
@@ -262,7 +273,7 @@ export default function LevelStakingModal() {
 
         <TokenInputWithSlider
           amount={amount.shiftedBy(MARS_DECIMALS)}
-          asset={marsAsset || defaultMarsAsset}
+          asset={defaultMarsAsset}
           max={maxAmount.shiftedBy(MARS_DECIMALS)}
           onChange={handleAmountChange}
           maxText='Available:'

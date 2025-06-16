@@ -28,6 +28,6 @@ export default function createModalSlice(
     keeperFeeModal: false,
     addSLTPModal: false,
     vaultAssetsModal: null,
-    levelStakingModal: null,
+    marsStakingModal: null,
   }
 }
