@@ -13,6 +13,7 @@ import {
   LendAndReclaimModalController,
   PerpsVaultModal,
   SettingsModal,
+  TierStakingModal,
   UnlockModal,
   V1BorrowAndRepay,
   V1DepositAndWithdraw,
@@ -49,6 +50,7 @@ export default function ModalsContainer() {
       {store.v1BorrowAndRepayModal && <V1BorrowAndRepay />}
       {store.keeperFeeModal && <KeeperFeeModal />}
       {store.vaultAssetsModal && <VaultAssets />}
+      {store.tierStakingModal && <TierStakingModal />}
     </>
   )
 }

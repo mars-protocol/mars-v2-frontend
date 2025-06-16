@@ -136,6 +136,8 @@ const Neutron1: ChainConfig = {
     accountNft: 'neutron184kvu96rqtetmunkkmhu5hru8yaqg7qfhd8ldu5avjnamdqu69squrh3f5',
     perps: 'neutron1g3catxyv0fk8zzsra2mjc0v4s69a7xygdjt85t54l7ym3gv0un4q2xhaf6',
     pyth: 'neutron1m2emc93m9gpwgsrsf2vylv9xvgqh654630v7dfrhrkmr5slly53spg85wv',
+    marsStaking: 'neutron1rly5as5fdhhuasfw375hs4wyensvyx6eytzkdxtqfma6veyneggs457lnj',
+    marsVotingPower: 'neutron1pxjszcmmdxwtw9kv533u3hcudl6qahsa42chcs24gervf4ge40usaw3pcr',
   },
   endpoints: {
     routes: 'https://app.astroport.fi/api/routes',

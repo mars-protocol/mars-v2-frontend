@@ -127,6 +127,64 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
+    stakeMars: async (amount: BNCoin) => {
+      const marsStakingContract = get().chainConfig.contracts.marsStaking
+      if (!marsStakingContract || !get().address) {
+        throw new Error('Mars staking contract not available or wallet not connected')
+      }
+
+      const stakeMsg = {
+        stake: {},
+      } as any
+
+      const funds = [amount.toCoin()]
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, marsStakingContract, stakeMsg, funds)],
+      })
+
+      get().handleTransaction({ response })
+
+      return response.then((response) => !!response.result)
+    },
+    unstakeMars: async (amount: BNCoin) => {
+      const marsStakingContract = get().chainConfig.contracts.marsStaking
+      if (!marsStakingContract || !get().address) {
+        throw new Error('Mars staking contract not available or wallet not connected')
+      }
+
+      const unstakeMsg = {
+        unstake: {
+          amount: amount.amount.toString(),
+        },
+      } as any
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, marsStakingContract, unstakeMsg, [])],
+      })
+
+      get().handleTransaction({ response })
+
+      return response.then((response) => !!response.result)
+    },
+    withdrawMars: async () => {
+      const marsStakingContract = get().chainConfig.contracts.marsStaking
+      if (!marsStakingContract || !get().address) {
+        throw new Error('Mars staking contract not available or wallet not connected')
+      }
+
+      const withdrawMsg = {
+        claim: {},
+      } as any
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, marsStakingContract, withdrawMsg, [])],
+      })
+
+      get().handleTransaction({ response })
+
+      return response.then((response) => !!response.result)
+    },
     execute: async (contract: string, msg: ExecuteMsg, funds: Coin[]) => {
       const response = get().executeMsg({
         messages: [generateExecutionMessage(get().address, contract, msg, sortFunds(funds))],

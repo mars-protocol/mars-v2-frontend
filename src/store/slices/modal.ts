@@ -18,17 +18,16 @@ export default function createModalSlice(
     hlsCloseModal: null,
     lendAndReclaimModal: null,
     perpsVaultModal: null,
-    resetStettingsModal: false,
     settingsModal: false,
     unlockModal: null,
     farmModal: null,
     walletAssetsModal: null,
     withdrawFromVaultsModal: null,
-    withdrawFromAstroLpModal: null,
     v1DepositAndWithdrawModal: null,
     v1BorrowAndRepayModal: null,
     keeperFeeModal: false,
     addSLTPModal: false,
     vaultAssetsModal: null,
+    tierStakingModal: null,
   }
 }

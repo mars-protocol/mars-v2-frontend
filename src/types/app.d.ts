@@ -329,6 +329,8 @@ interface ChainConfig {
     perps: string
     creditManager: string
     pyth: string
+    marsStaking?: string
+    marsVotingPower?: string
   }
   defaultCurrency: NetworkCurrency
   endpoints: {
@@ -502,6 +504,7 @@ type Page =
   | 'portfolio/{accountId}'
   | 'hls-farm'
   | 'hls-staking'
+  | 'tiers'
   | 'vaults'
   | 'vaults/create'
   | 'vaults/{vaultId}'
@@ -1112,6 +1115,9 @@ interface BroadcastSlice {
     depositCoin: BNCoin
     borrowCoin: BNCoin
   }) => Promise<boolean>
+  stakeMars: (amount: BNCoin) => Promise<boolean>
+  unstakeMars: (amount: BNCoin) => Promise<boolean>
+  withdrawMars: () => Promise<boolean>
   borrow: (options: {
     accountId: string
     coin: BNCoin
@@ -1385,6 +1391,7 @@ interface ModalSlice {
   withdrawFromVaultsModal: DepositedVault[] | null
   v1DepositAndWithdrawModal: V1DepositAndWithdrawModal | null
   v1BorrowAndRepayModal: V1BorrowAndRepayModal | null
+  tierStakingModal: TierStakingModal | null
 }
 
 interface AlertDialogButton {
@@ -2161,4 +2168,8 @@ interface HistoricalVaultChartData {
   apy: number
   sharePrice: number
   date: string
+}
+
+interface TierStakingModal {
+  type: 'stake' | 'unstake'
 }
