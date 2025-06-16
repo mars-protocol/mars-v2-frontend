@@ -40,37 +40,50 @@ export default function useManagedVaults() {
         const managedVaults = await getManagedVaults(chainConfig)
         const vaultsWithDetails = await Promise.all(
           managedVaults.data.map(async (vault) => {
-            const details = await getManagedVaultDetails(chainConfig, vault.vault_address)
-            let owner = null
-            if (address) {
-              owner = await getManagedVaultOwnerAddress(chainConfig, vault.vault_address)
-            }
+            try {
+              const details = await getManagedVaultDetails(chainConfig, vault.vault_address)
+              if (!details) return null
+              let owner = null
+              if (address) {
+                owner = await getManagedVaultOwnerAddress(chainConfig, vault.vault_address)
+              }
 
-            return {
-              ...vault,
-              fee_rate: BN(details.performance_fee_config.fee_rate)
-                .multipliedBy(8760)
-                .multipliedBy(100)
-                .integerValue(BN.ROUND_HALF_UP)
-                .toNumber(),
-              base_tokens_denom: details.base_token,
-              base_tokens_amount: details.total_base_tokens,
-              vault_tokens_denom: details.vault_token,
-              vault_tokens_amount: details.total_vault_tokens,
-              isOwner: owner === address,
-              isPending: pendingVault?.address === vault.vault_address,
-            } as ManagedVaultWithDetails
+              return {
+                ...vault,
+                fee_rate: BN(details.performance_fee_config.fee_rate)
+                  .multipliedBy(8760)
+                  .multipliedBy(100)
+                  .integerValue(BN.ROUND_HALF_UP)
+                  .toNumber(),
+                base_tokens_denom: details.base_token,
+                base_tokens_amount: details.total_base_tokens,
+                vault_tokens_denom: details.vault_token,
+                vault_tokens_amount: details.total_vault_tokens,
+                isOwner: owner === address,
+                isPending: pendingVault?.address === vault.vault_address,
+              } as ManagedVaultWithDetails
+            } catch (error) {
+              console.error(`Error fetching details for vault ${vault.vault_address}:`, error)
+              return null
+            }
           }),
+        )
+
+        // Filter out any nulls (errored vaults)
+        const filteredVaultsWithDetails = vaultsWithDetails.filter(
+          (vault): vault is ManagedVaultWithDetails => vault !== null,
         )
 
         // Add pending vault if it exists and isn't in the API response yet
         if (
           pendingVault &&
           pendingVault.creatorAddress === address &&
-          !vaultsWithDetails.some((vault) => vault.vault_address === pendingVault.vaultAddress)
+          !filteredVaultsWithDetails.some(
+            (vault) => vault.vault_address === pendingVault.vaultAddress,
+          )
         ) {
           try {
-            vaultsWithDetails.push({
+            filteredVaultsWithDetails.push({
               vault_address: pendingVault.vaultAddress,
               account_id: '',
               title: pendingVault.params.title,
@@ -100,7 +113,7 @@ export default function useManagedVaults() {
           }
         }
 
-        return vaultsWithDetails
+        return filteredVaultsWithDetails
       } catch (error) {
         console.error('Error fetching vaults:', error)
         return []
