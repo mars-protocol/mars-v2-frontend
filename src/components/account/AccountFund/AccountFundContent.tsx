@@ -151,7 +151,7 @@ export default function AccountFundContent(props: Props) {
       )
 
       let accountId = props.accountId
-      const isNewAccount = hasNoAccounts || isCreateAccount
+      const isNewAccount = hasNoAccounts || (isCreateAccount && !props.hasExistingAccount)
       const hasEvmAssets = evmAssets.length > 0
 
       if (hasEvmAssets) {
