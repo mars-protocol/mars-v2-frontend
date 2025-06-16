@@ -35,16 +35,18 @@ export default function Info(props: Props) {
     <>
       {address && (
         <div className='flex justify-end'>
-          <TextLink
-            href={link}
-            target='_blank'
-            textSize='extraSmall'
-            className='underline hover:no-underline hover:text-white '
-            title={address}
-          >
-            {address}
-            <ExternalLink className='ml-1 inline w-3' />
-          </TextLink>
+          <span onClick={(e) => e.stopPropagation()}>
+            <TextLink
+              href={link}
+              externalLink={true}
+              textSize='extraSmall'
+              className='underline hover:no-underline hover:text-white'
+              title={address}
+            >
+              {address}
+              <ExternalLink className='ml-1 inline w-3' />
+            </TextLink>
+          </span>
         </div>
       )}
       {status && (
