@@ -29,7 +29,7 @@ export default function Info(props: Props) {
     return cooldown_end <= currentTime ? 'Ready to withdraw' : 'Queued'
   }
   const status = value.cooldown_end ? getStatus(value.cooldown_end) : value.status
-  const link = `${chainConfig.endpoints.explorer}/address/${address}`
+  const link = `${chainConfig.endpoints.explorer}/address/${value.walletAddress}`
 
   return (
     <>
