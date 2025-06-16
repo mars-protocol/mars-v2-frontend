@@ -2156,13 +2156,6 @@
   resolved "https://registry.yarnpkg.com/@keplr-wallet/simple-fetch/-/simple-fetch-0.12.238.tgz#f38ff1882d34214b8e6290fb866246a1d67e7215"
   integrity sha512-MMRB5bivkIvslutEq/IYAHdrZIpjFhr9ZvoLjxy3xDWx+smFsKwT+d5z6ng2dPhldN+ppyoG/fGYtTvDMZPPgg==
 
-"@keplr-wallet/types@0.12.235":
-  version "0.12.235"
-  resolved "https://registry.yarnpkg.com/@keplr-wallet/types/-/types-0.12.235.tgz#f8104c9d648ad480d482601536abcaf57a73f972"
-  integrity sha512-bZJRLHwq7fhPCTD2O92KJneeiO9PBrR1a4c+jH6h0D/LZZKiPFArv39Ifg4aumI9pJ5375+Cl2+DeVJpJS1LHw==
-  dependencies:
-    long "^4.0.0"
-
 "@keplr-wallet/types@0.12.238":
   version "0.12.238"
   resolved "https://registry.yarnpkg.com/@keplr-wallet/types/-/types-0.12.238.tgz#2f9b8083bdbef6c4611a0956826ef4ea331aed68"
@@ -2170,21 +2163,12 @@
   dependencies:
     long "^4.0.0"
 
-"@keplr-wallet/unit@0.12.238":
+"@keplr-wallet/unit@0.12.238", "@keplr-wallet/unit@^0.12.143":
   version "0.12.238"
   resolved "https://registry.yarnpkg.com/@keplr-wallet/unit/-/unit-0.12.238.tgz#2718c5457f2254a568e458ae5cb223f2a5dadcb1"
   integrity sha512-4VbTtbdUl7B0N7lfDICtUhj3x1M6X87o0HcCimRND6x6GFjXNhTO2OzyhUxKeMWJAZCva9dxpmO/VmI0R17/FA==
   dependencies:
     "@keplr-wallet/types" "0.12.238"
-    big-integer "^1.6.48"
-    utility-types "^3.10.0"
-
-"@keplr-wallet/unit@^0.12.143":
-  version "0.12.235"
-  resolved "https://registry.yarnpkg.com/@keplr-wallet/unit/-/unit-0.12.235.tgz#dfe5f1bc1e58e0f8103a2c045e040640643542fe"
-  integrity sha512-afq2WmJ+VRdOYEo//brsL+hrYqJ/OmLJt6lTPg9a2J9JMdJIo+q3msRqsWuv7njJhXbykQPBM8FTwryzWTq+PQ==
-  dependencies:
-    "@keplr-wallet/types" "0.12.235"
     big-integer "^1.6.48"
     utility-types "^3.10.0"
 
@@ -3071,10 +3055,10 @@
     fflate "^0.7.3"
     string.prototype.codepointat "^0.2.1"
 
-"@skip-go/client@^1.1.7":
-  version "1.1.7"
-  resolved "https://registry.yarnpkg.com/@skip-go/client/-/client-1.1.7.tgz#e2e2c3b7fc67a3603f4d5340b849528b14ef4020"
-  integrity sha512-kWtCytJSysRIrLWQ52we7F1Q5vKh0O53dGoGW+HC+uyin2MAIUkaDbgLrxpdWsZglEeaOobavl034qu/6bHlKQ==
+"@skip-go/client@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@skip-go/client/-/client-1.2.3.tgz#ee187f919eef48cc56e74d5a6dae1d92489257dc"
+  integrity sha512-/kIx4umVFJ3Zcgf1MJjUq6b9AsQWtsDT/YqwdCjlFErxxYyA+t16U8NfbT0Ncn1pLGtsOyvhOVREawKFZ22lAQ==
   dependencies:
     "@cosmjs/amino" "0.33.1"
     "@cosmjs/cosmwasm-stargate" "0.33.1"
