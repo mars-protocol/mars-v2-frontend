@@ -47,6 +47,7 @@ export function useDepositedManagedVaultsFallback() {
         vaultTokens.map(async (vaultAddress) => {
           try {
             const details = await getManagedVaultDetails(chainConfig, vaultAddress)
+            if (!details) return null
             return {
               vault_address: vaultAddress,
               account_id: details.vault_account_id,

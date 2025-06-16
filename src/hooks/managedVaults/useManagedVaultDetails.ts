@@ -37,7 +37,12 @@ export function useManagedVaultDetails(vaultAddress?: string) {
   const { data: details, isLoading: isDetailsLoading } = useSWR(
     vaultAddress && `chains/${chainConfig.id}/managedVaults/${vaultAddress}/details`,
     async () => {
-      return await getManagedVaultDetails(chainConfig, vaultAddress!)
+      try {
+        return await getManagedVaultDetails(chainConfig, vaultAddress!)
+      } catch (error) {
+        console.error(`Error fetching details for vault ${vaultAddress}:`, error)
+        return null
+      }
     },
     {
       revalidateOnFocus: false,
