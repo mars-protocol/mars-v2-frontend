@@ -204,8 +204,8 @@ const getManagedVaultDetails = async (chainConfig: ChainConfig, vaultAddress: st
     })
     return response as unknown as ManagedVaultSCDetailsResponse
   } catch (error) {
-    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
-    throw error
+    console.error(`Error fetching details for vault ${vaultAddress}:`, error)
+    return null
   }
 }
 
