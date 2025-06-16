@@ -1642,15 +1642,16 @@ interface TradingViewSettings {
 
 type ShapePoint = import('utils/charting_library/charting_library').ShapePoint
 type TOverrides = import('utils/charting_library/charting_library').TOverrides
+type CreateShapeOptions =
+  import('utils/charting_library/charting_library').CreateShapeOptions<TOverrides>
+type CreateMultipointShapeOptions =
+  import('utils/charting_library/charting_library').CreateMultipointShapeOptions<TOverrides>
 
-interface TradingViewShapeOptions
-  extends import('utils/charting_library/charting_library').CreateShapeOptions<TOverrides> {
+interface TradingViewShapeOptions extends CreateShapeOptions {
   shape: TradingViewShapeNames
 }
 
-interface TradingViewMultipointShapeOptions
-  extends import('utils/charting_library/charting_library')
-    .CreateMultipointShapeOptions<TOverrides> {
+interface TradingViewMultipointShapeOptions extends CreateMultipointShapeOptions {
   shape: TradingViewShapeNames
 }
 
