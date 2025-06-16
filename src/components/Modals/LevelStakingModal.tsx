@@ -10,22 +10,22 @@ import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import Modal from 'components/Modals/Modal'
 import { BN_ZERO } from 'constants/math'
-import { MARS_DECIMALS, MARS_DENOM } from 'constants/tiers'
-import useTierSystem from 'hooks/tiers/useTierSystem'
-import { useUnstakedMars } from 'hooks/tiers/useNeutronStakingData'
+import { MARS_DECIMALS, MARS_DENOM } from 'constants/levels'
+import useLevelSystem from 'hooks/levels/useLevelSystem'
+import { useUnstakedMars } from 'hooks/levels/useNeutronStakingData'
 import { formatReleaseDate } from 'utils/dateTime'
 
-export default function TierStakingModal() {
-  const { tierStakingModal: modal } = useStore()
+export default function LevelStakingModal() {
+  const { levelStakingModal: modal } = useStore()
   const [amount, setAmount] = useState(BN_ZERO)
   const [isLoading, setIsLoading] = useState(false)
   const [isWithdrawing, setIsWithdrawing] = useState(false)
   const [modalType, setModalType] = useState<'stake' | 'unstake'>('stake')
 
-  const [tierData, actions] = useTierSystem()
+  const [levelData, actions] = useLevelSystem()
   const { data: unstakedData } = useUnstakedMars()
 
-  const { stakedAmount, walletBalance, marsAsset } = tierData
+  const { stakedAmount, walletBalance, marsAsset } = levelData
 
   const defaultMarsAsset = useMemo(
     () => ({
@@ -74,7 +74,7 @@ export default function TierStakingModal() {
       } else {
         await actions.unstake(actualAmount)
       }
-      useStore.setState({ tierStakingModal: null })
+      useStore.setState({ levelStakingModal: null })
     } catch (error: any) {
       console.error('Transaction failed:', error)
     } finally {
@@ -83,7 +83,7 @@ export default function TierStakingModal() {
   }, [isValidAmount, modal, modalType, actualAmount, actions])
 
   const handleClose = useCallback(() => {
-    useStore.setState({ tierStakingModal: null })
+    useStore.setState({ levelStakingModal: null })
   }, [])
 
   const handleWithdraw = useCallback(async () => {

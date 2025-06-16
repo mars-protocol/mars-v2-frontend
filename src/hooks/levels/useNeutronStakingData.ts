@@ -2,7 +2,7 @@ import useSWR from 'swr'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
 import { BN_ZERO } from 'constants/math'
-import { MARS_DECIMALS } from 'constants/tiers'
+import { MARS_DECIMALS } from 'constants/levels'
 import { convertToNeutronAddress } from 'utils/wallet'
 import chains from 'chains'
 import { ChainInfoID } from 'types/enums'
@@ -91,7 +91,7 @@ export function useUnstakedMars() {
         })
 
         const now = new Date()
-        const processedClaims: ProcessedClaim[] = (data.data.claims || []).map((claim: any) => {
+        const processedClaims: ProcessedClaim[] = (data.data.claims ?? []).map((claim: any) => {
           const amount = BN(claim.amount).shiftedBy(-MARS_DECIMALS)
           const releaseTimeMs = BN(claim.release_at.at_time).dividedBy(1_000_000).toNumber()
           const releaseTime = new Date(releaseTimeMs)

@@ -1,32 +1,32 @@
 import { useMemo, useState } from 'react'
 import { BN_ZERO } from 'constants/math'
-import { MARS_DECIMALS, MARS_DENOM, TIER_CONFIGS, TierConfig } from 'constants/tiers'
+import { LEVEL_CONFIGS, LevelConfig, MARS_DECIMALS, MARS_DENOM } from 'constants/levels'
 import useAssets from 'hooks/assets/useAssets'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
-import { useStakedMars } from 'hooks/tiers/useNeutronStakingData'
+import { useStakedMars } from 'hooks/levels/useNeutronStakingData'
 import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
 import useStore from 'store'
 
-export interface TierSystemData {
-  currentTier: TierConfig
-  nextTier: TierConfig | null
+export interface LevelSystemData {
+  currentLevel: LevelConfig
+  nextLevel: LevelConfig | null
   stakedAmount: BigNumber
   walletBalance: BigNumber
-  progressToNextTier: number // 0-100 percentage
-  marsNeededForNextTier: BigNumber
+  progressToNextLevel: number
+  marsNeededForNextLevel: BigNumber
   totalMarsBalance: BigNumber
   marsAsset: Asset | null
 }
 
-export interface TierSystemActions {
+export interface LevelSystemActions {
   stake: (amount: BigNumber) => Promise<void>
   unstake: (amount: BigNumber) => Promise<void>
   withdraw: () => Promise<void>
   setStakedAmount: (amount: BigNumber) => void
 }
 
-export default function useTierSystem(): [TierSystemData, TierSystemActions] {
+export default function useLevelSystem(): [LevelSystemData, LevelSystemActions] {
   const { data: stakedMarsData } = useStakedMars()
   const [localStakedAmount, setLocalStakedAmount] = useState<BigNumber | null>(null)
 
@@ -43,48 +43,48 @@ export default function useTierSystem(): [TierSystemData, TierSystemActions] {
     return walletBalance ? BN(walletBalance.amount).shiftedBy(-MARS_DECIMALS) : BN_ZERO
   }, [walletBalance])
 
-  const tierData = useMemo((): TierSystemData => {
+  const levelData = useMemo((): LevelSystemData => {
     const stakedMars = localStakedAmount || stakedMarsData?.stakedAmount || BN_ZERO
     const walletMars = walletBalanceBN
     const totalMars = stakedMars.plus(walletMars)
 
-    let currentTier = TIER_CONFIGS[0]
-    for (let i = TIER_CONFIGS.length - 1; i >= 0; i--) {
-      if (stakedMars.gte(TIER_CONFIGS[i].minAmount)) {
-        currentTier = TIER_CONFIGS[i]
+    let currentLevel = LEVEL_CONFIGS[0]
+    for (let i = LEVEL_CONFIGS.length - 1; i >= 0; i--) {
+      if (stakedMars.gte(LEVEL_CONFIGS[i].minAmount)) {
+        currentLevel = LEVEL_CONFIGS[i]
         break
       }
     }
 
-    const nextTier = TIER_CONFIGS.find((tier) => tier.minAmount > stakedMars.toNumber()) || null
+    const nextLevel = LEVEL_CONFIGS.find((level) => level.minAmount > stakedMars.toNumber()) || null
 
-    let progressToNextTier = 100
-    let marsNeededForNextTier = BN_ZERO
+    let progressToNextLevel = 100
+    let marsNeededForNextLevel = BN_ZERO
 
-    if (nextTier) {
-      const currentTierMin = currentTier.minAmount
-      const nextTierMin = nextTier.minAmount
+    if (nextLevel) {
+      const currentLevelMin = currentLevel.minAmount
+      const nextLevelMin = nextLevel.minAmount
       const progress = stakedMars
-        .minus(currentTierMin)
-        .div(nextTierMin - currentTierMin)
+        .minus(currentLevelMin)
+        .div(nextLevelMin - currentLevelMin)
         .times(100)
-      progressToNextTier = Math.min(100, Math.max(0, progress.toNumber()))
-      marsNeededForNextTier = BN(nextTier.minAmount).minus(stakedMars)
+      progressToNextLevel = Math.min(100, Math.max(0, progress.toNumber()))
+      marsNeededForNextLevel = BN(nextLevel.minAmount).minus(stakedMars)
     }
 
     return {
-      currentTier,
-      nextTier,
+      currentLevel,
+      nextLevel,
       stakedAmount: stakedMars,
       walletBalance: walletMars,
-      progressToNextTier,
-      marsNeededForNextTier,
+      progressToNextLevel,
+      marsNeededForNextLevel,
       totalMarsBalance: totalMars,
       marsAsset: marsAsset || null,
     }
   }, [localStakedAmount, stakedMarsData?.stakedAmount, walletBalanceBN, marsAsset])
 
-  const actions: TierSystemActions = {
+  const actions: LevelSystemActions = {
     stake: async (amount: BigNumber) => {
       try {
         const stakingAmount = BNCoin.fromDenomAndBigNumber(MARS_DENOM, amount)
@@ -133,5 +133,5 @@ export default function useTierSystem(): [TierSystemData, TierSystemActions] {
     },
   }
 
-  return [tierData, actions]
+  return [levelData, actions]
 }

@@ -6,10 +6,10 @@ import Card from 'components/common/Card'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import WalletConnectButton from 'components/Wallet/WalletConnectButton'
-import TierProgressBar from 'components/tiers/TierProgressBar'
-import TierStakingModal from 'components/tiers/TierStakingModal'
-import useTierSystem from 'hooks/tiers/useTierSystem'
-import { useUnstakedMars } from 'hooks/tiers/useNeutronStakingData'
+import LevelProgressBar from 'components/levels/LevelProgressBar'
+import LevelStakingModal from 'components/Modals/LevelStakingModal'
+import useLevelSystem from 'hooks/levels/useLevelSystem'
+import { useUnstakedMars } from 'hooks/levels/useNeutronStakingData'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import chains from 'chains'
@@ -18,7 +18,7 @@ import { getRoute } from 'utils/route'
 import { formatReleaseDate } from 'utils/dateTime'
 import useStore from 'store'
 
-export default function TierStaking({ className }: { className?: string }) {
+export default function LevelStaking({ className }: { className?: string }) {
   const connectedAddress = useStore((s) => s.address)
   const chainConfig = useChainConfig()
   const { mutate } = useSWRConfig()
@@ -26,12 +26,12 @@ export default function TierStaking({ className }: { className?: string }) {
   const [searchParams] = useSearchParams()
   const [_, setCurrentChainId] = useCurrentChainId()
 
-  const [tierData] = useTierSystem()
-  const { stakedAmount } = tierData
+  const [levelData] = useLevelSystem()
+  const { stakedAmount } = levelData
   const { data: unstakedData } = useUnstakedMars()
 
   const handleOpenManageModal = () => {
-    useStore.setState({ tierStakingModal: { type: 'stake' } })
+    useStore.setState({ levelStakingModal: { type: 'stake' } })
   }
 
   const handleSwitchToNeutron = useCallback(async () => {
@@ -96,7 +96,7 @@ export default function TierStaking({ className }: { className?: string }) {
   return (
     <>
       <Card className={className} title='MARS Staking' contentClassName='px-4 py-2 space-y-6'>
-        <TierProgressBar compact />
+        <LevelProgressBar />
 
         <div className='space-y-3'>
           <div className='flex justify-between items-center'>
@@ -151,7 +151,7 @@ export default function TierStaking({ className }: { className?: string }) {
         {renderActionButton()}
       </Card>
 
-      {connectedAddress && <TierStakingModal />}
+      {connectedAddress && <LevelStakingModal />}
     </>
   )
 }

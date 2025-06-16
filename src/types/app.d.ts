@@ -504,7 +504,7 @@ type Page =
   | 'portfolio/{accountId}'
   | 'hls-farm'
   | 'hls-staking'
-  | 'tiers'
+  | 'levels'
   | 'vaults'
   | 'vaults/create'
   | 'vaults/{vaultId}'
@@ -1391,7 +1391,7 @@ interface ModalSlice {
   withdrawFromVaultsModal: DepositedVault[] | null
   v1DepositAndWithdrawModal: V1DepositAndWithdrawModal | null
   v1BorrowAndRepayModal: V1BorrowAndRepayModal | null
-  tierStakingModal: TierStakingModal | null
+  levelStakingModal: LevelStakingModal | null
 }
 
 interface AlertDialogButton {
@@ -2170,6 +2170,6 @@ interface HistoricalVaultChartData {
   date: string
 }
 
-interface TierStakingModal {
+interface LevelStakingModal {
   type: 'stake' | 'unstake'
 }
