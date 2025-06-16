@@ -3,6 +3,8 @@ import BigNumber from 'bignumber.js'
 
 import useStore from 'store'
 import Button from 'components/common/Button'
+import Card from 'components/common/Card'
+import { Callout, CalloutType } from 'components/common/Callout'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
@@ -194,21 +196,21 @@ export default function TierStakingModal() {
           )}
         </div>
 
-        <div className='p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg space-y-3'>
-          <div className='flex justify-between items-center'>
-            <Text size='sm' className='text-yellow-400 font-semibold'>
+        <Callout type={CalloutType.WARNING} iconClassName='self-start'>
+          <div className='flex justify-between items-center mb-2'>
+            <Text size='sm' className='font-semibold'>
               Unstaking period:
             </Text>
-            <Text size='sm' className='text-yellow-400 font-semibold'>
+            <Text size='sm' className='font-semibold'>
               1 day
             </Text>
           </div>
-          <Text size='xs' className='text-yellow-200/80 leading-relaxed'>
+          <Text size='xs' className='ml-[-16px] leading-relaxed'>
             It will take 1 day from when you unstake your tokens until you can withdraw them. During
             that time, you will not receive voting power for the unstaking tokens, nor will you be
             able to cancel the unstaking process.
           </Text>
-        </div>
+        </Callout>
 
         {modalType === 'unstake' && unstakedData && unstakedData.claims.length > 0 && (
           <div className='space-y-3'>
@@ -230,15 +232,16 @@ export default function TierStakingModal() {
             </div>
             <div className='space-y-2 max-h-32 overflow-y-auto'>
               {unstakedData.claims.map((claim) => (
-                <div
+                <Card
                   key={`${claim.amount.toString()}-${claim.releaseTime.getTime()}`}
-                  className='flex justify-between items-center p-3 bg-white/5 rounded-lg'
+                  className='bg-white/5'
+                  contentClassName='p-3 flex justify-between items-center'
                 >
                   <div className='flex flex-col'>
                     <FormattedNumber
                       amount={claim.amount.toNumber()}
                       options={{ abbreviated: true, suffix: ' MARS' }}
-                      className='text-sm'
+                      className='text-sm font-medium'
                     />
                     <Text size='xs' className='text-white/60'>
                       {claim.isReady
@@ -247,11 +250,11 @@ export default function TierStakingModal() {
                     </Text>
                   </div>
                   {claim.isReady && (
-                    <Text size='xs' className='text-green-400 font-semibold'>
+                    <div className='px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-semibold'>
                       Ready
-                    </Text>
+                    </div>
                   )}
-                </div>
+                </Card>
               ))}
             </div>
           </div>
