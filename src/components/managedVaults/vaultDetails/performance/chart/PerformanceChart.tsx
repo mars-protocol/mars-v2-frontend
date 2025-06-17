@@ -1,9 +1,9 @@
 import PerformanceChartWrapper from 'components/managedVaults/vaultDetails/performance/chart/PerformanceChartWrapper'
-import PerformanceChartLoading from 'components/managedVaults/vaultDetails/performance/chart/PerformanceChartLoading'
 import PerformanceChartBody from 'components/managedVaults/vaultDetails/performance/chart/PerformanceChartBody'
 import { useState } from 'react'
 import useHistoricalVaultData from 'hooks/managedVaults/useHistoricalVaultData'
 import Text from 'components/common/Text'
+import AreaChartLoading from 'components/common/DynamicLineChart/AreaChartLoading'
 
 interface ChartLine {
   dataKey: string
@@ -61,7 +61,7 @@ export default function PerformanceChart(props: Props) {
 
   const renderChartContent = (lines: ChartLine[]) => {
     if (isLoading) {
-      return <PerformanceChartLoading />
+      return <AreaChartLoading height='h-80' />
     }
 
     if (error || !hasData) {

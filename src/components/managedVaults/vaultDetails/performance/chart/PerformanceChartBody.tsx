@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
+import ChartTooltip from 'components/common/DynamicLineChart/ChartTooltip'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { Circle } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import ChartTooltip from 'components/managedVaults/vaultDetails/performance/chart/tooltip/ChartTooltip'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import moment from 'moment'
 import {
