@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import BigNumber from 'bignumber.js'
+import classNames from 'classnames'
 
 import useStore from 'store'
 import Button from 'components/common/Button'
@@ -15,7 +16,8 @@ import { formatReleaseDate } from 'utils/dateTime'
 import { useMarsStakingActions } from 'hooks/staking/useMarsStakingActions'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import { BN } from 'utils/helpers'
-import useChainConfig from 'hooks/chain/useChainConfig'
+import { MARS_DECIMALS, MARS_DENOM } from 'utils/constants'
+import useAsset from 'hooks/assets/useAsset'
 
 export default function MarsStakingModal() {
   const { marsStakingModal: modal } = useStore()
@@ -27,10 +29,6 @@ export default function MarsStakingModal() {
   const { data: stakedMarsData } = useStakedMars()
   const { data: unstakedData } = useUnstakedMars()
   const actions = useMarsStakingActions()
-  const chainConfig = useChainConfig()
-
-  const MARS_DENOM = chainConfig.mars?.denom ?? ''
-  const MARS_DECIMALS = chainConfig.mars?.decimals ?? 0
 
   const stakedAmount = stakedMarsData?.stakedAmount || BN_ZERO
   const walletBalanceRaw = useCurrentWalletBalance(MARS_DENOM)
@@ -38,16 +36,7 @@ export default function MarsStakingModal() {
     ? BN(walletBalanceRaw.amount).shiftedBy(-MARS_DECIMALS)
     : BN_ZERO
 
-  const defaultMarsAsset = useMemo(
-    () => ({
-      denom: MARS_DENOM,
-      symbol: 'MARS',
-      decimals: MARS_DECIMALS,
-      name: 'Mars Protocol',
-      campaigns: [],
-    }),
-    [],
-  )
+  const marsAsset = useAsset(MARS_DENOM)
 
   const maxAmount = useMemo(() => {
     if (!modal) return BN_ZERO
@@ -144,17 +133,19 @@ export default function MarsStakingModal() {
         <div className='flex bg-white/10 rounded-lg p-1'>
           <button
             onClick={() => handleModeChange('stake')}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium ${
-              modalType === 'stake' ? 'bg-white text-black' : 'text-white/60 hover:text-white'
-            }`}
+            className={classNames(
+              'flex-1 py-2 px-4 rounded-md text-sm font-medium',
+              modalType === 'stake' ? 'bg-white text-black' : 'text-white/60 hover:text-white',
+            )}
           >
             Stake
           </button>
           <button
             onClick={() => handleModeChange('unstake')}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium ${
-              modalType === 'unstake' ? 'bg-white text-black' : 'text-white/60 hover:text-white'
-            }`}
+            className={classNames(
+              'flex-1 py-2 px-4 rounded-md text-sm font-medium',
+              modalType === 'unstake' ? 'bg-white text-black' : 'text-white/60 hover:text-white',
+            )}
           >
             Unstake
           </button>
@@ -189,7 +180,7 @@ export default function MarsStakingModal() {
               <FormattedNumber
                 amount={unstakedData.totalUnstaked.toNumber()}
                 options={{ abbreviated: true, suffix: ' MARS' }}
-                className='text-sm'
+                className='text-sm text-warning'
               />
             </div>
           )}
@@ -201,7 +192,7 @@ export default function MarsStakingModal() {
               <FormattedNumber
                 amount={unstakedData.totalReady.toNumber()}
                 options={{ abbreviated: true, suffix: ' MARS' }}
-                className='text-sm'
+                className='text-sm text-success'
               />
             </div>
           )}
@@ -261,7 +252,7 @@ export default function MarsStakingModal() {
                     </Text>
                   </div>
                   {claim.isReady && (
-                    <div className='px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-semibold'>
+                    <div className='px-2 py-1 bg-success/20 text-success rounded text-xs font-semibold'>
                       Ready
                     </div>
                   )}
@@ -273,7 +264,7 @@ export default function MarsStakingModal() {
 
         <TokenInputWithSlider
           amount={amount.shiftedBy(MARS_DECIMALS)}
-          asset={defaultMarsAsset}
+          asset={marsAsset as Asset}
           max={maxAmount.shiftedBy(MARS_DECIMALS)}
           onChange={handleAmountChange}
           maxText='Available:'

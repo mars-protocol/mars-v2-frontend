@@ -1,6 +1,6 @@
 import { BNCoin } from 'types/classes/BNCoin'
 import useStore from 'store'
-import useChainConfig from 'hooks/chain/useChainConfig'
+import { MARS_DENOM } from 'utils/constants'
 
 export interface MarsStakingActions {
   stake: (amount: BigNumber) => Promise<void>
@@ -9,11 +9,6 @@ export interface MarsStakingActions {
 }
 
 export function useMarsStakingActions(): MarsStakingActions {
-  const chainConfig = useChainConfig()
-
-  const MARS_DENOM = chainConfig.mars?.denom ?? ''
-  const MARS_DECIMALS = chainConfig.mars?.decimals ?? 0
-
   const stakeMars = useStore((s) => s.stakeMars)
   const unstakeMars = useStore((s) => s.unstakeMars)
   const withdrawMars = useStore((s) => s.withdrawMars)

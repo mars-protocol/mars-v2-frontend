@@ -177,10 +177,6 @@ const Neutron1: ChainConfig = {
       high: 0.0053,
     },
   },
-  mars: {
-    decimals: 6,
-    denom: 'factory/neutron1ndu2wvkrxtane8se2tr48gv7nsm46y5gcqjhux/MARS',
-  },
   features: ['ibc-transfer', 'ibc-go'],
   vaultCodeId: '3679',
   hls: true,

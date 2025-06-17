@@ -4,8 +4,8 @@ import { BN } from 'utils/helpers'
 import { BN_ZERO } from 'constants/math'
 import { convertToNeutronAddress } from 'utils/wallet'
 import chains from 'chains'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import { ChainInfoID } from 'types/enums'
+import { MARS_DECIMALS } from 'utils/constants'
 
 interface ProcessedClaim {
   amount: BigNumber
@@ -49,7 +49,7 @@ export function useStakedMars() {
         })
 
         const stakedAmountMicro = BN(data.data.power ?? '0')
-        const stakedAmount = stakedAmountMicro.shiftedBy(-6)
+        const stakedAmount = stakedAmountMicro.shiftedBy(-MARS_DECIMALS)
 
         return {
           stakedAmount,
@@ -80,9 +80,6 @@ export function useStakedMars() {
 export function useUnstakedMars() {
   const address = useStore((s) => s.address)
   const neutronAddress = convertToNeutronAddress(address)
-
-  const chainConfig = useChainConfig()
-  const MARS_DECIMALS = chainConfig.mars?.decimals ?? 0
 
   return useSWR(
     neutronAddress ? `neutron-unstaked-mars/${neutronAddress}` : null,

@@ -367,10 +367,6 @@ interface ChainConfig {
   campaignAssets?: AssetCampaignInfo[]
   slinky: boolean
   managedVaults: boolean
-  mars?: {
-    decimals: number
-    denom: string
-  }
 }
 
 interface AssetCampaignInfo {

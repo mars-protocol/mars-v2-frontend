@@ -16,6 +16,7 @@ import { ChainInfoID } from 'types/enums'
 import { getRoute } from 'utils/route'
 import { formatReleaseDate } from 'utils/dateTime'
 import useStore from 'store'
+import MarsProtocolLogo from 'components/common/Icons/Logo.svg'
 
 export default function MarsStaking({ className }: { className?: string }) {
   const connectedAddress = useStore((s) => s.address)
@@ -67,7 +68,7 @@ export default function MarsStaking({ className }: { className?: string }) {
       return (
         <div className='space-y-3'>
           <div className='p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg'>
-            <Text size='sm' className='text-yellow-200 text-center'>
+            <Text size='sm' className='text-warning text-center'>
               MARS staking is only available on Neutron network.
             </Text>
           </div>
@@ -95,7 +96,18 @@ export default function MarsStaking({ className }: { className?: string }) {
 
   return (
     <>
-      <Card className={className} title='MARS Staking' contentClassName='px-4 py-2 space-y-6'>
+      <Card
+        className={className}
+        title={
+          <div className='flex items-center gap-2 flex w-full p-4 font-semibold bg-white/10'>
+            <MarsProtocolLogo className='w-6 h-6' />
+            <Text size='lg' className=''>
+              MARS Staking
+            </Text>
+          </div>
+        }
+        contentClassName='px-4 py-2 space-y-6'
+      >
         <div className='space-y-3'>
           <div className='flex justify-between items-center'>
             <Text size='sm' className='text-white/60'>
@@ -116,7 +128,7 @@ export default function MarsStaking({ className }: { className?: string }) {
               <FormattedNumber
                 amount={unstakedData.totalUnstaked.toNumber()}
                 options={{ abbreviated: true, suffix: ' MARS' }}
-                className='text-sm font-medium text-yellow-400'
+                className='text-sm font-medium text-warning'
               />
             </div>
           )}
@@ -129,7 +141,7 @@ export default function MarsStaking({ className }: { className?: string }) {
               <FormattedNumber
                 amount={unstakedData.totalReady.toNumber()}
                 options={{ abbreviated: true, suffix: ' MARS' }}
-                className='text-sm font-medium text-green-400'
+                className='text-sm font-medium text-success'
               />
             </div>
           )}
