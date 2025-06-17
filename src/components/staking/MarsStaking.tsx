@@ -87,7 +87,7 @@ export default function MarsStaking({ className }: { className?: string }) {
       <Button
         color='primary'
         size='md'
-        text='Manage your $MARS stake'
+        text='Manage your MARS stake'
         onClick={handleOpenManageModal}
         className='w-full'
       />

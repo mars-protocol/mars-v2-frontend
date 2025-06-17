@@ -121,7 +121,7 @@ export default function MarsStakingModal() {
       onClose={handleClose}
       header={
         <Text size='lg' className='font-semibold text-white'>
-          Manage your $MARS stake
+          Manage your MARS stake
         </Text>
       }
       className='w-full max-w-md'
