@@ -101,16 +101,38 @@ export function RouteInfo(props: Props) {
           )}
           <SummaryLine label='Route'>{props.route.description}</SummaryLine>
           {props.tradeInfo && (
-            <SummaryLine label={`Min receive (${props.tradeInfo.slippage * 100}% slippage)`}>
-              <FormattedNumber
-                amount={props.tradeInfo.minReceive.toNumber()}
-                options={{
-                  decimals: props.assets.out.decimals,
-                  suffix: ` ${props.assets.out.symbol}`,
-                  maxDecimals: 6,
-                }}
-              />
-            </SummaryLine>
+            <div className='space-y-1'>
+              <SummaryLine label={`Min receive (${props.tradeInfo.slippage * 100}% slippage)`}>
+                <FormattedNumber
+                  amount={props.tradeInfo.minReceive.toNumber()}
+                  options={{
+                    decimals: props.assets.out.decimals,
+                    suffix: ` ${props.assets.out.symbol}`,
+                    maxDecimals: 6,
+                  }}
+                />
+              </SummaryLine>
+              {props.assets.out.price && (
+                <div className='flex justify-end'>
+                  <Text size='xs' className='text-white/60'>
+                    {formatValue(
+                      getCoinValue(
+                        BNCoin.fromDenomAndBigNumber(
+                          props.assets.out.denom,
+                          props.tradeInfo.minReceive,
+                        ),
+                        [props.assets.out],
+                      ).toNumber(),
+                      {
+                        prefix: '$',
+                        maxDecimals: 2,
+                        abbreviated: true,
+                      },
+                    )}
+                  </Text>
+                </div>
+              )}
+            </div>
           )}
           <Divider className='my-2' />
         </>

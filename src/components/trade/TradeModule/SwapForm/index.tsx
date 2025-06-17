@@ -394,12 +394,12 @@ export default function SwapForm(props: Props) {
               <AvailableLiquidityMessage market={borrowMarket} />
             )}
           <Divider />
-          <div className='flex justify-between w-full'>
-            <Text size='sm'>You receive</Text>
-            {!inputAssetAmount.isZero() && outputAssetAmount.isZero() ? (
-              <CircularProgress size={14} />
-            ) : (
-              <div className='flex items-center gap-1 flex-nowrap whitespace-nowrap'>
+          <div className='space-y-1'>
+            <div className='flex justify-between w-full'>
+              <Text size='sm'>You receive</Text>
+              {!inputAssetAmount.isZero() && outputAssetAmount.isZero() ? (
+                <CircularProgress size={14} />
+              ) : (
                 <Text size='sm'>
                   {formatValue(outputAssetAmount.toNumber(), {
                     decimals: outputAsset.decimals,
@@ -409,21 +409,23 @@ export default function SwapForm(props: Props) {
                     maxDecimals: outputAsset.decimals,
                   })}
                 </Text>
-                {!outputAssetAmount.isZero() && outputAsset.price && (
-                  <Text size='sm' className='text-white/60'>
-                    {` (${formatValue(
-                      getCoinValue(
-                        BNCoin.fromDenomAndBigNumber(outputAsset.denom, outputAssetAmount),
-                        [outputAsset],
-                      ).toNumber(),
-                      {
-                        prefix: '$',
-                        maxDecimals: 2,
-                        abbreviated: true,
-                      },
-                    )})`}
-                  </Text>
-                )}
+              )}
+            </div>
+            {!outputAssetAmount.isZero() && outputAsset.price && (
+              <div className='flex justify-end'>
+                <Text size='xs' className='text-white/60'>
+                  {formatValue(
+                    getCoinValue(
+                      BNCoin.fromDenomAndBigNumber(outputAsset.denom, outputAssetAmount),
+                      [outputAsset],
+                    ).toNumber(),
+                    {
+                      prefix: '$',
+                      maxDecimals: 2,
+                      abbreviated: true,
+                    },
+                  )}
+                </Text>
               </div>
             )}
           </div>
