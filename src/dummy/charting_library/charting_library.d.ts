@@ -24958,7 +24958,7 @@ export interface SymbolResolveExtension {
   session?: string
 }
 /**
- * Symbol override data. Passed to and returned from the symbol search override funciton.
+ * Symbol override data. Passed to and returned from the symbol search override function.
  */
 export interface SymbolSearchCompleteData {
   /**
