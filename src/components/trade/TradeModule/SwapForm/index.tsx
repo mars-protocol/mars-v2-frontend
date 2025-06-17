@@ -445,7 +445,6 @@ export default function SwapForm(props: Props) {
           isAdvanced={isAdvanced}
           direction={tradeDirection}
           routeInfo={routeInfo}
-          inputAmount={inputAssetAmount}
         />
       </div>
     </>

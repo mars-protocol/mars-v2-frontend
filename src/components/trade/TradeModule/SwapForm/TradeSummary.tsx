@@ -30,7 +30,6 @@ interface Props {
   routeInfo?: SwapRouteInfo | null
   isAdvanced?: boolean
   direction?: TradeDirection
-  inputAmount?: BigNumber
 }
 
 export default function TradeSummary(props: Props) {
@@ -47,7 +46,6 @@ export default function TradeSummary(props: Props) {
     isAdvanced,
     direction,
     routeInfo,
-    inputAmount,
   } = props
   const [slippage] = useSlippage()
   const { liquidationPrice, isUpdatingLiquidationPrice } = useLiquidationPrice(
@@ -138,7 +136,6 @@ export default function TradeSummary(props: Props) {
               route={routeInfo}
               assets={{ in: sellAsset, out: buyAsset }}
               tradeInfo={{ slippage, minReceive }}
-              inputAmount={inputAmount}
             />
           )}
         </div>

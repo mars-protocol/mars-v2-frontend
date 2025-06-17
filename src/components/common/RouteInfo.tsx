@@ -9,14 +9,12 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { ChevronDown } from 'components/common/Icons'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { formatValue, getCoinValue } from 'utils/formatters'
-import { useMemo } from 'react'
 
 interface Props {
   assets: SwapAssets
   route: SwapRouteInfo
   title: string
   tradeInfo?: TradeInfo
-  inputAmount?: BigNumber
 }
 
 interface TradeInfo {
@@ -32,16 +30,6 @@ export interface SwapAssets {
 export function RouteInfo(props: Props) {
   const [showSummary, setShowSummary] = useToggle()
   const chainConfig = useChainConfig()
-
-  const priceImpactUsdValue = useMemo(() => {
-    if (!props.inputAmount || !props.assets.in.price) return null
-
-    const inputCoin = BNCoin.fromDenomAndBigNumber(props.assets.in.denom, props.inputAmount)
-    const inputValue = getCoinValue(inputCoin, [props.assets.in])
-    const priceImpactValue = inputValue.times(props.route.priceImpact.dividedBy(100))
-
-    return priceImpactValue
-  }, [props.inputAmount, props.assets.in, props.route.priceImpact])
 
   return (
     <div className='flex flex-col'>
@@ -65,23 +53,13 @@ export function RouteInfo(props: Props) {
       {showSummary && (
         <>
           <SummaryLine label='Price impact' className='mt-2'>
-            <div className='flex items-center gap-1 flex-nowrap whitespace-nowrap'>
-              <FormattedNumber
-                amount={props.route.priceImpact.toNumber() || 0}
-                options={{ suffix: '%' }}
-                className={classNames({
-                  'text-info': props.route.priceImpact.toNumber() > 5,
-                })}
-              />
-              {priceImpactUsdValue && (
-                <span className='text-white/60'>
-                  {` ($ ${formatValue(priceImpactUsdValue.toNumber(), {
-                    maxDecimals: 2,
-                    abbreviated: true,
-                  })})`}
-                </span>
-              )}
-            </div>
+            <FormattedNumber
+              amount={props.route.priceImpact.toNumber() || 0}
+              options={{ suffix: '%' }}
+              className={classNames({
+                'text-info': props.route.priceImpact.toNumber() > 5,
+              })}
+            />
           </SummaryLine>
           {chainConfig.isOsmosis && (
             <SummaryLine
