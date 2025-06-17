@@ -1,9 +1,10 @@
-import PerformanceChartWrapper from 'components/managedVaults/vaultDetails/performance/chart/PerformanceChartWrapper'
 import PerformanceChartBody from 'components/managedVaults/vaultDetails/performance/chart/PerformanceChartBody'
 import { useState } from 'react'
 import useHistoricalVaultData from 'hooks/managedVaults/useHistoricalVaultData'
 import Text from 'components/common/Text'
 import AreaChartLoading from 'components/common/DynamicLineChart/AreaChartLoading'
+import { TimeframeOption } from 'components/common/TimeframeSelector'
+import ChartCardWrapper from 'components/common/ChartWrapper/ChartCardWrapper'
 
 interface ChartLine {
   dataKey: string
@@ -37,9 +38,14 @@ const sharePriceLine: ChartLine = {
   name: 'Share Price',
 }
 
+const timeframeOptions: TimeframeOption[] = [
+  { label: '7D', value: 7 },
+  { label: '30D', value: 30 },
+  { label: '90D', value: 90 },
+]
 export default function PerformanceChart(props: Props) {
   const { vaultAddress } = props
-  const [timeframe, setTimeframe] = useState(30)
+  const [timeframe, setTimeframe] = useState(timeframeOptions[1].value)
   const { data, isLoading, error } = useHistoricalVaultData(vaultAddress, timeframe)
 
   const charts = [
@@ -78,13 +84,14 @@ export default function PerformanceChart(props: Props) {
   }
 
   return (
-    <PerformanceChartWrapper
-      charts={charts.map((chart) => ({
+    <ChartCardWrapper
+      tabs={charts.map((chart) => ({
         title: chart.title,
         content: renderChartContent(chart.lines),
       }))}
       timeframe={timeframe}
       setTimeframe={setTimeframe}
+      timeframeOptions={timeframeOptions}
     />
   )
 }
