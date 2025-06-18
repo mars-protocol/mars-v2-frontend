@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
-import { mutate } from 'swr'
 import { useParams } from 'react-router-dom'
 
 import useStore from 'store'
@@ -20,7 +19,6 @@ import { BN } from 'utils/helpers'
 import { MARS_DECIMALS, MARS_DENOM } from 'utils/constants'
 import useAsset from 'hooks/assets/useAsset'
 import { BNCoin } from 'types/classes/BNCoin'
-import { convertToNeutronAddress } from 'utils/wallet'
 
 export default function MarsStakingModal() {
   const { marsStakingModal: modal } = useStore()
@@ -46,16 +44,6 @@ export default function MarsStakingModal() {
     : BN_ZERO
 
   const marsAsset = useAsset(MARS_DENOM)
-
-  const invalidateStakingData = useCallback(() => {
-    if (connectedAddress) {
-      const neutronAddress = convertToNeutronAddress(connectedAddress)
-      if (neutronAddress) {
-        mutate(`neutron-staked-mars/${neutronAddress}`)
-        mutate(`neutron-unstaked-mars/${neutronAddress}`)
-      }
-    }
-  }, [connectedAddress])
 
   const maxAmount = useMemo(() => {
     if (!modal) return BN_ZERO
@@ -94,18 +82,16 @@ export default function MarsStakingModal() {
       if (modalType === 'stake') {
         const stakingAmount = BNCoin.fromDenomAndBigNumber(MARS_DENOM, actualAmount)
         await stakeMars(stakingAmount)
-        invalidateStakingData()
       } else {
         const unstakingAmount = BNCoin.fromDenomAndBigNumber(MARS_DENOM, actualAmount)
         await unstakeMars(unstakingAmount)
-        invalidateStakingData()
       }
     } catch (error: any) {
       console.error('Transaction failed:', error)
     } finally {
       setIsLoading(false)
     }
-  }, [isValidAmount, modal, modalType, actualAmount, stakeMars, unstakeMars, invalidateStakingData])
+  }, [isValidAmount, modal, modalType, actualAmount, stakeMars, unstakeMars])
 
   const handleClose = useCallback(() => {
     useStore.setState({ marsStakingModal: null })
@@ -122,13 +108,12 @@ export default function MarsStakingModal() {
         ? BNCoin.fromDenomAndBigNumber(MARS_DENOM, readyAmount.shiftedBy(MARS_DECIMALS))
         : undefined
       await withdrawMars(withdrawAmount)
-      invalidateStakingData()
     } catch (error: any) {
       console.error('Withdraw failed:', error)
     } finally {
       setIsWithdrawing(false)
     }
-  }, [withdrawMars, unstakedData, invalidateStakingData])
+  }, [withdrawMars, unstakedData])
 
   const handleModeChange = useCallback(
     (type: 'stake' | 'unstake') => {
