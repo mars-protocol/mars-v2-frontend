@@ -133,6 +133,9 @@ function getTransactionTypesByAction() {
   transactionTypes.set('withdraw_from_perp_vault', 'withdraw_from_vault')
   transactionTypes.set('create_trigger_order', 'create-order')
   transactionTypes.set('cancel_trigger_order', 'cancel-order')
+  transactionTypes.set('stake', 'mars-stake')
+  transactionTypes.set('unstake', 'mars-unstake')
+  transactionTypes.set('claim', 'mars-withdraw')
 
   return transactionTypes
 }

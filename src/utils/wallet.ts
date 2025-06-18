@@ -6,6 +6,12 @@ interface SkipAddresses {
   'neutron-1': string
 }
 
+export function convertToNeutronAddress(address?: string): string | null {
+  if (!address) return null
+  const { data } = fromBech32(address)
+  return toBech32('neutron', data)
+}
+
 export function convertToSkipAddresses(address?: string): SkipAddresses | null {
   if (!address) return null
   const { data } = fromBech32(address)

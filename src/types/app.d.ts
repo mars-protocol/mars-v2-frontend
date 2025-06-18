@@ -329,6 +329,8 @@ interface ChainConfig {
     perps: string
     creditManager: string
     pyth: string
+    marsStaking?: string
+    marsVotingPower?: string
   }
   defaultCurrency: NetworkCurrency
   endpoints: {
@@ -1112,6 +1114,9 @@ interface BroadcastSlice {
     depositCoin: BNCoin
     borrowCoin: BNCoin
   }) => Promise<boolean>
+  stakeMars: (amount: BNCoin) => Promise<boolean>
+  unstakeMars: (amount: BNCoin) => Promise<boolean>
+  withdrawMars: (amount?: BNCoin) => Promise<boolean>
   borrow: (options: {
     accountId: string
     coin: BNCoin
@@ -1315,6 +1320,9 @@ type TransactionType =
   | 'cancel-order'
   | 'create-order'
   | 'withdraw_from_vault'
+  | 'mars-stake'
+  | 'mars-unstake'
+  | 'mars-withdraw'
 
 interface CommonSlice {
   address?: string
@@ -1385,6 +1393,7 @@ interface ModalSlice {
   withdrawFromVaultsModal: DepositedVault[] | null
   v1DepositAndWithdrawModal: V1DepositAndWithdrawModal | null
   v1BorrowAndRepayModal: V1BorrowAndRepayModal | null
+  marsStakingModal: MarsStakingModal | null
 }
 
 interface AlertDialogButton {
@@ -2161,4 +2170,8 @@ interface HistoricalVaultChartData {
   apy: number
   sharePrice: number
   date: string
+}
+
+interface MarsStakingModal {
+  type: 'stake' | 'unstake'
 }

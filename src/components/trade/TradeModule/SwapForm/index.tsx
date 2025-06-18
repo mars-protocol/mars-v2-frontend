@@ -4,6 +4,7 @@ import AssetAmountInput from 'components/common/AssetAmountInput'
 import AvailableLiquidityMessage from 'components/common/AvailableLiquidityMessage'
 import { CircularProgress } from 'components/common/CircularProgress'
 import DepositCapMessage from 'components/common/DepositCapMessage'
+import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
 import LeverageSlider from 'components/common/LeverageSlider'
 import OrderTypeSelector from 'components/common/OrderTypeSelector'
@@ -394,20 +395,31 @@ export default function SwapForm(props: Props) {
               <AvailableLiquidityMessage market={borrowMarket} />
             )}
           <Divider />
-          <div className='flex justify-between w-full'>
-            <Text size='sm'>You receive</Text>
-            {!inputAssetAmount.isZero() && outputAssetAmount.isZero() ? (
-              <CircularProgress size={14} />
-            ) : (
-              <Text size='sm'>
-                {formatValue(outputAssetAmount.toNumber(), {
-                  decimals: outputAsset.decimals,
-                  abbreviated: false,
-                  suffix: ` ${outputAsset.symbol}`,
-                  minDecimals: 0,
-                  maxDecimals: outputAsset.decimals,
-                })}
-              </Text>
+          <div className='space-y-1'>
+            <div className='flex justify-between w-full'>
+              <Text size='sm'>You receive</Text>
+              {!inputAssetAmount.isZero() && outputAssetAmount.isZero() ? (
+                <CircularProgress size={14} />
+              ) : (
+                <Text size='sm'>
+                  {formatValue(outputAssetAmount.toNumber(), {
+                    decimals: outputAsset.decimals,
+                    abbreviated: false,
+                    suffix: ` ${outputAsset.symbol}`,
+                    minDecimals: 0,
+                    maxDecimals: outputAsset.decimals,
+                  })}
+                </Text>
+              )}
+            </div>
+            {!outputAssetAmount.isZero() && outputAsset.price && (
+              <div className='flex justify-end'>
+                <DisplayCurrency
+                  coin={BNCoin.fromDenomAndBigNumber(outputAsset.denom, outputAssetAmount)}
+                  className='text-xs text-white/60'
+                  options={{ maxDecimals: 2, abbreviated: true }}
+                />
+              </div>
             )}
           </div>
         </div>
