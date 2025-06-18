@@ -86,7 +86,7 @@ export default function Select(props: Props) {
       setSortedOptions(sorted)
       setIsAssetsLoading(false)
     }, remainingTime)
-  }, [props.options, selected, handleChange, assets])
+  }, [getOptionValue, handleChange, props.options, selected])
 
   const handleToggleDropdown = useCallback(() => {
     if (!showDropdown) {
