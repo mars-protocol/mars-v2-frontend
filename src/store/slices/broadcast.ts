@@ -31,6 +31,7 @@ import { getCurrentFeeToken } from 'utils/feeToken'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
+import { MARS_DECIMALS } from 'utils/constants'
 
 interface ExecuteMsgOptions {
   messages: MsgExecuteContract[]
@@ -124,6 +125,79 @@ export default function createBroadcastSlice(
       })
 
       get().handleTransaction({ response })
+
+      return response.then((response) => !!response.result)
+    },
+    stakeMars: async (amount: BNCoin) => {
+      const marsStakingContract = get().chainConfig.contracts.marsStaking
+      if (!marsStakingContract || !get().address) {
+        throw new Error('Mars staking contract not available or wallet not connected')
+      }
+
+      const stakeMsg = {
+        stake: {},
+      } as any
+
+      const funds = [amount.toCoin()]
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, marsStakingContract, stakeMsg, funds)],
+      })
+
+      const formattedAmount = amount.amount.shiftedBy(-MARS_DECIMALS).toFixed(2)
+      get().handleTransaction({
+        response,
+        message: `Staked ${formattedAmount} MARS`,
+      })
+
+      return response.then((response) => !!response.result)
+    },
+    unstakeMars: async (amount: BNCoin) => {
+      const marsStakingContract = get().chainConfig.contracts.marsStaking
+      if (!marsStakingContract || !get().address) {
+        throw new Error('Mars staking contract not available or wallet not connected')
+      }
+
+      const unstakeMsg = {
+        unstake: {
+          amount: amount.amount.toString(),
+        },
+      } as any
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, marsStakingContract, unstakeMsg, [])],
+      })
+
+      const formattedAmount = amount.amount.shiftedBy(-MARS_DECIMALS).toFixed(2)
+      get().handleTransaction({
+        response,
+        message: `Unstaked ${formattedAmount} MARS`,
+      })
+
+      return response.then((response) => !!response.result)
+    },
+    withdrawMars: async (amount?: BNCoin) => {
+      const marsStakingContract = get().chainConfig.contracts.marsStaking
+      if (!marsStakingContract || !get().address) {
+        throw new Error('Mars staking contract not available or wallet not connected')
+      }
+
+      const withdrawMsg = {
+        claim: {},
+      } as any
+
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, marsStakingContract, withdrawMsg, [])],
+      })
+
+      const message = amount
+        ? `Withdrew ${amount.amount.shiftedBy(-MARS_DECIMALS).toFixed(2)} MARS`
+        : 'Withdrew MARS'
+
+      get().handleTransaction({
+        response,
+        message,
+      })
 
       return response.then((response) => !!response.result)
     },
