@@ -160,7 +160,7 @@ export default function Select(props: Props) {
         >
           <div className='relative w-full overflow-hidden rounded-sm isolate'>
             {props.title && (
-              <Text size='lg' className='block p-4 font-bold bg-white/25'>
+              <Text size='sm' className='block p-4 font-bold bg-white/25'>
                 {props.title}
               </Text>
             )}
