@@ -80,7 +80,20 @@ export default function PerformanceChart(props: Props) {
       )
     }
 
-    return <DynamicLineChartBody data={data} lines={lines} legend={false} height='h-80' />
+    return (
+      <DynamicLineChartBody
+        data={data}
+        lines={lines}
+        legend={false}
+        height='h-80'
+        customYAxisDomain={(values) => {
+          const max = Math.max(...values)
+          const min = Math.min(...values)
+          const padding = (max - min) * 0.1
+          return [min - padding, max + padding]
+        }}
+      />
+    )
   }
 
   return (
