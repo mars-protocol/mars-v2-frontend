@@ -25,17 +25,22 @@ interface Props {
 export default function WithdrawFromAccount(props: Props) {
   const { account } = props
   const { data: assets } = useAssets()
-  const tradeEnabledAssets = assets.filter((asset) => asset.isTradeEnabled)
-  const sortedBalances = mergeBNCoinArrays(account.deposits, account.lends)
-    .filter((coin) => tradeEnabledAssets.some((asset) => asset.denom === coin.denom))
-    .sort((a, b) => {
-      const valueA = getCoinValue(a, tradeEnabledAssets)?.toNumber?.() ?? 0
-      const valueB = getCoinValue(b, tradeEnabledAssets)?.toNumber?.() ?? 0
-      return valueB - valueA
-    })
-
-  const defaultAsset =
-    tradeEnabledAssets.find(byDenom(sortedBalances[0]?.denom)) ?? tradeEnabledAssets[0]
+  const tradeEnabledAssets = useMemo(() => assets.filter((asset) => asset.isTradeEnabled), [assets])
+  const sortedBalances = useMemo(
+    () =>
+      mergeBNCoinArrays(account.deposits, account.lends)
+        .filter((coin) => tradeEnabledAssets.some((asset) => asset.denom === coin.denom))
+        .sort((a, b) => {
+          const valueA = getCoinValue(a, tradeEnabledAssets)?.toNumber?.() ?? 0
+          const valueB = getCoinValue(b, tradeEnabledAssets)?.toNumber?.() ?? 0
+          return valueB - valueA
+        }),
+    [account.deposits, account.lends, tradeEnabledAssets],
+  )
+  const defaultAsset = useMemo(
+    () => tradeEnabledAssets.find(byDenom(sortedBalances[0]?.denom)) ?? tradeEnabledAssets[0],
+    [tradeEnabledAssets, sortedBalances],
+  )
 
   const withdraw = useStore((s) => s.withdraw)
   const [withdrawWithBorrowing, setWithdrawWithBorrowing] = useToggle()
