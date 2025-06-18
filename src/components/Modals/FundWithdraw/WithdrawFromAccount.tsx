@@ -16,6 +16,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { cloneAccount, removeDepositsAndLends } from 'utils/accounts'
 import { byDenom } from 'utils/array'
 import { mergeBNCoinArrays } from 'utils/helpers'
+import { getCoinValue } from 'utils/formatters'
 
 interface Props {
   account: Account
@@ -24,8 +25,23 @@ interface Props {
 export default function WithdrawFromAccount(props: Props) {
   const { account } = props
   const { data: assets } = useAssets()
-  const balances = mergeBNCoinArrays(account.deposits, account.lends)
-  const defaultAsset = assets.find(byDenom(balances[0]?.denom)) ?? assets[0]
+  const tradeEnabledAssets = useMemo(() => assets.filter((asset) => asset.isTradeEnabled), [assets])
+  const sortedBalances = useMemo(
+    () =>
+      mergeBNCoinArrays(account.deposits, account.lends)
+        .filter((coin) => tradeEnabledAssets.some((asset) => asset.denom === coin.denom))
+        .sort((a, b) => {
+          const valueA = getCoinValue(a, tradeEnabledAssets)?.toNumber?.() ?? 0
+          const valueB = getCoinValue(b, tradeEnabledAssets)?.toNumber?.() ?? 0
+          return valueB - valueA
+        }),
+    [account.deposits, account.lends, tradeEnabledAssets],
+  )
+  const defaultAsset = useMemo(
+    () => tradeEnabledAssets.find(byDenom(sortedBalances[0]?.denom)) ?? tradeEnabledAssets[0],
+    [tradeEnabledAssets, sortedBalances],
+  )
+
   const withdraw = useStore((s) => s.withdraw)
   const [withdrawWithBorrowing, setWithdrawWithBorrowing] = useToggle()
   const [currentAsset, setCurrentAsset] = useState<Asset>(defaultAsset)
@@ -46,7 +62,7 @@ export default function WithdrawFromAccount(props: Props) {
   const isBorrowEnabledAsset = currentAsset.isBorrowEnabled
   const maxWithdrawAmount =
     isDeprecatedAsset || !isBorrowEnabledAsset
-      ? (balances.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO)
+      ? (sortedBalances.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO)
       : computeMaxWithdrawAmount(currentAsset.denom)
   const maxWithdrawWithBorrowAmount =
     isDeprecatedAsset || !isBorrowEnabledAsset
@@ -125,7 +141,7 @@ export default function WithdrawFromAccount(props: Props) {
           amount={amount}
           max={max}
           className='w-full'
-          balances={balances}
+          balances={sortedBalances}
           accountId={account.id}
           hasSelect
           maxText='Max'

@@ -61,38 +61,42 @@ export default function Option(props: Props) {
       <div
         data-testid='option-component'
         className={classNames(
-          'grid grid-flow-row grid-cols-5 grid-rows-2 py-3.5 pr-4',
+          'flex gap-4 justify-between items-center py-2 px-4',
           'border-b border-b-white/20 last:border-none',
           'hover:cursor-pointer hover:bg-white/20',
           !props.isSelected ? 'bg-white/10' : 'pointer-events-none',
         )}
         onClick={() => handleOnClick(asset.denom)}
       >
-        <div className='flex items-center justify-center h-full row-span-2'>
+        <div className='flex items-center justify-center gap-4'>
           <AssetImage asset={asset} className='w-8 h-8' />
+          <div className='flex flex-col gap-1'>
+            <Text size='sm'>{asset.symbol}</Text>
+            <AssetRate
+              rate={marketAsset?.apy.borrow ?? 0}
+              isEnabled={marketAsset?.borrowEnabled ?? false}
+              className='text-sm text-white/50'
+              type='apy'
+              orientation='rtl'
+              suffix
+              hasCampaignApy={asset.campaigns.find((c) => c.type === 'apy') !== undefined}
+            />
+          </div>
         </div>
-        <Text className='col-span-2 pb-1'>{asset.symbol}</Text>
-        <Text size='sm' className='col-span-2 pb-1 font-bold text-right'>
-          {formatValue(balance.toString(), {
-            decimals: asset.decimals,
-            maxDecimals: 4,
-            minDecimals: 0,
-            rounded: true,
-          })}
-        </Text>
-        <AssetRate
-          rate={marketAsset?.apy.borrow ?? 0}
-          isEnabled={marketAsset?.borrowEnabled ?? false}
-          className='col-span-2 text-white/50'
-          type='apy'
-          orientation='rtl'
-          suffix
-          hasCampaignApy={asset.campaigns.find((c) => c.type === 'apy') !== undefined}
-        />
-        <DisplayCurrency
-          className='col-span-2 text-sm text-right text-white/50'
-          coin={BNCoin.fromDenomAndBigNumber(asset.denom, balance)}
-        />
+        <div className='flex flex-col gap-2 items-end'>
+          <Text size='sm' className='font-bold'>
+            {formatValue(balance.toString(), {
+              decimals: asset.decimals,
+              maxDecimals: 4,
+              minDecimals: 0,
+              rounded: true,
+            })}
+          </Text>
+          <DisplayCurrency
+            className='text-sm text-white/50'
+            coin={BNCoin.fromDenomAndBigNumber(asset.denom, balance)}
+          />
+        </div>
       </div>
     )
   }
