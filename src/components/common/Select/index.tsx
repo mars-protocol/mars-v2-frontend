@@ -7,6 +7,9 @@ import Overlay from 'components/common/Overlay'
 import Option from 'components/common/Select/Option'
 import Text from 'components/common/Text'
 import useToggle from 'hooks/common/useToggle'
+import { getCoinValue } from 'utils/formatters'
+import useAssets from 'hooks/assets/useAssets'
+import { BNCoin } from 'types/classes/BNCoin'
 
 interface Props {
   options: SelectOption[]
@@ -29,6 +32,7 @@ export default function Select(props: Props) {
   const [showDropdown, setShowDropdown] = useToggle()
   const [isAssetsLoading, setIsAssetsLoading] = useState(false)
   const [sortedOptions, setSortedOptions] = useState<React.ReactNode[]>([])
+  const { data: assets } = useAssets()
 
   const handleChange = useCallback(
     (optionValue: string) => {
@@ -43,10 +47,27 @@ export default function Select(props: Props) {
     },
     [props, setShowDropdown],
   )
+
+  const getOptionValue = useCallback(
+    (option: SelectOption) => {
+      if (option.denom && option.amount && assets) {
+        return (
+          getCoinValue(
+            BNCoin.fromDenomAndBigNumber(option.denom, option.amount),
+            assets,
+          )?.toNumber?.() ?? 0
+        )
+      }
+      return option.amount?.toNumber() ?? 0
+    },
+    [assets],
+  )
+
   const getSortedOptions = useCallback(() => {
     const start = performance.now()
     const sorted = props.options
-      .sort((a, b) => ((a.amount?.toNumber() ?? 0) > (b.amount?.toNumber() ?? 0) ? -1 : 1))
+      .slice()
+      .sort((a, b) => getOptionValue(b) - getOptionValue(a))
       .map((option: SelectOption, index: number) => (
         <Option
           key={index}
@@ -65,7 +86,7 @@ export default function Select(props: Props) {
       setSortedOptions(sorted)
       setIsAssetsLoading(false)
     }, remainingTime)
-  }, [props.options, selected, handleChange])
+  }, [props.options, selected, handleChange, assets])
 
   const handleToggleDropdown = useCallback(() => {
     if (!showDropdown) {
