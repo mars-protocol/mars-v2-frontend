@@ -8,7 +8,7 @@ import useToggle from 'hooks/common/useToggle'
 import { BNCoin } from 'types/classes/BNCoin'
 import { ChevronDown } from 'components/common/Icons'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { formatValue, getCoinValue } from 'utils/formatters'
+import { formatValue } from 'utils/formatters'
 
 interface Props {
   assets: SwapAssets
@@ -92,22 +92,14 @@ export function RouteInfo(props: Props) {
               </SummaryLine>
               {props.assets.out.price && (
                 <div className='flex justify-end'>
-                  <Text size='xs' className='text-white/60'>
-                    {formatValue(
-                      getCoinValue(
-                        BNCoin.fromDenomAndBigNumber(
-                          props.assets.out.denom,
-                          props.tradeInfo.minReceive,
-                        ),
-                        [props.assets.out],
-                      ).toNumber(),
-                      {
-                        prefix: '$',
-                        maxDecimals: 2,
-                        abbreviated: true,
-                      },
+                  <DisplayCurrency
+                    coin={BNCoin.fromDenomAndBigNumber(
+                      props.assets.out.denom,
+                      props.tradeInfo.minReceive,
                     )}
-                  </Text>
+                    className='text-xs text-white/60'
+                    options={{ maxDecimals: 2, abbreviated: true }}
+                  />
                 </div>
               )}
             </div>

@@ -4,6 +4,7 @@ import AssetAmountInput from 'components/common/AssetAmountInput'
 import AvailableLiquidityMessage from 'components/common/AvailableLiquidityMessage'
 import { CircularProgress } from 'components/common/CircularProgress'
 import DepositCapMessage from 'components/common/DepositCapMessage'
+import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
 import LeverageSlider from 'components/common/LeverageSlider'
 import OrderTypeSelector from 'components/common/OrderTypeSelector'
@@ -32,7 +33,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
 import { ENABLE_AUTO_REPAY } from 'utils/constants'
-import { formatValue, getCoinValue } from 'utils/formatters'
+import { formatValue } from 'utils/formatters'
 import { getCapLeftWithBuffer } from 'utils/generic'
 import { BN } from 'utils/helpers'
 
@@ -413,19 +414,11 @@ export default function SwapForm(props: Props) {
             </div>
             {!outputAssetAmount.isZero() && outputAsset.price && (
               <div className='flex justify-end'>
-                <Text size='xs' className='text-white/60'>
-                  {formatValue(
-                    getCoinValue(
-                      BNCoin.fromDenomAndBigNumber(outputAsset.denom, outputAssetAmount),
-                      [outputAsset],
-                    ).toNumber(),
-                    {
-                      prefix: '$',
-                      maxDecimals: 2,
-                      abbreviated: true,
-                    },
-                  )}
-                </Text>
+                <DisplayCurrency
+                  coin={BNCoin.fromDenomAndBigNumber(outputAsset.denom, outputAssetAmount)}
+                  className='text-xs text-white/60'
+                  options={{ maxDecimals: 2, abbreviated: true }}
+                />
               </div>
             )}
           </div>
