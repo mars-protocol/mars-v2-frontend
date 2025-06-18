@@ -41,6 +41,7 @@ interface Props {
   height?: string
   legend?: boolean
   timeframe?: string
+  customYAxisDomain?: (values: number[]) => [number, number]
 }
 
 interface ChartDataPayloadProps {
@@ -119,12 +120,41 @@ const TooltipContent = ({
 }
 
 export default function DynamicLineChartBody(props: Props) {
-  const { data, lines, height = 'h-80', timeframe = '', legend = true } = props
+  const { data, lines, height = 'h-80', timeframe = '', legend = true, customYAxisDomain } = props
   const chainConfig = useChainConfig()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     getDefaultChainSettings(chainConfig).reduceMotion,
   )
+
+  // domain setting for large percentage values and custom domains
+  const getYAxisDomain = () => {
+    const extractValues = () =>
+      data
+        .map((item) =>
+          lines.map((line) => {
+            const value = item[line.dataKey]
+            return typeof value === 'string' ? parseFloat(value) : (value as number)
+          }),
+        )
+        .flat()
+
+    // if customYAxisDomain is a function
+    if (typeof customYAxisDomain === 'function') {
+      return customYAxisDomain(extractValues())
+    }
+
+    // Default percentage handling
+    if (!lines[0]?.isPercentage) return undefined
+
+    const values = extractValues()
+    const maxValue = Math.max(...values)
+    const minValue = Math.min(...values)
+
+    // Add 10% padding to the domain y-axis
+    const padding = (maxValue - minValue) * 0.1
+    return [Math.min(0, minValue - padding), maxValue + padding]
+  }
 
   return (
     <div className={classNames('-ml-4', height)}>
@@ -189,6 +219,7 @@ export default function DynamicLineChartBody(props: Props) {
             tickLine={false}
             fontSize={8}
             tickCount={8}
+            domain={getYAxisDomain()}
             stroke='rgba(255, 255, 255, 0.4)'
             tickFormatter={(value) => {
               if (lines[0]?.isPercentage) {
