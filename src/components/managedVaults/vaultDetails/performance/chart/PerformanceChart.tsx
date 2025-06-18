@@ -1,10 +1,10 @@
-import PerformanceChartBody from 'components/managedVaults/vaultDetails/performance/chart/PerformanceChartBody'
 import { useState } from 'react'
 import useHistoricalVaultData from 'hooks/managedVaults/useHistoricalVaultData'
 import Text from 'components/common/Text'
 import AreaChartLoading from 'components/common/DynamicLineChart/AreaChartLoading'
 import { TimeframeOption } from 'components/common/TimeframeSelector'
 import ChartCardWrapper from 'components/common/ChartWrapper/ChartCardWrapper'
+import DynamicLineChartBody from 'components/common/DynamicLineChart/DynamicLineChartBody'
 
 interface ChartLine {
   dataKey: string
@@ -80,7 +80,7 @@ export default function PerformanceChart(props: Props) {
       )
     }
 
-    return <PerformanceChartBody data={data} lines={lines} />
+    return <DynamicLineChartBody data={data} lines={lines} legend={false} height='h-80' />
   }
 
   return (

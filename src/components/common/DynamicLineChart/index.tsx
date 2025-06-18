@@ -8,12 +8,12 @@ interface Props {
   loading?: boolean
   lines: LineConfig[]
   height?: string
-  customYAxisDomain?: (values: number[]) => [number, number]
   timeframe?: string
+  legend?: boolean
 }
 
 export default function DynamicLineChart(props: Props) {
-  const { data, loading, lines, height = 'h-65', title, customYAxisDomain, timeframe } = props
+  const { data, loading, lines, height = 'h-65', title, timeframe, legend = true } = props
 
   return (
     <ChartCardWrapper title={title}>
@@ -24,8 +24,8 @@ export default function DynamicLineChart(props: Props) {
           data={data}
           lines={lines}
           height={height}
-          customYAxisDomain={customYAxisDomain}
           timeframe={timeframe}
+          legend={legend}
         />
       )}
     </ChartCardWrapper>

@@ -25,13 +25,21 @@ import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import CustomTooltip from './ChartTooltip'
+import CustomTooltip from 'components/common/DynamicLineChart/ChartTooltip'
+
+interface LineConfig {
+  dataKey: string
+  color: string
+  name: string
+  isPercentage?: boolean
+  isCurrency?: boolean
+}
 
 interface Props {
   data: MergedChartData[]
   lines: LineConfig[]
   height?: string
-  customYAxisDomain?: (values: number[]) => [number, number]
+  legend?: boolean
   timeframe?: string
 }
 
@@ -82,14 +90,27 @@ const TooltipContent = ({
         {lineConfig?.isPercentage ? (
           <FormattedNumber
             amount={value}
-            options={{ minDecimals: 2, maxDecimals: 2, suffix: '%' }}
+            options={{
+              maxDecimals: Number(item.value) > 100 ? 0 : 2,
+              minDecimals: Number(item.value) > 100 ? 0 : 2,
+              suffix: '%',
+            }}
+            className='text-xs'
+          />
+        ) : lineConfig?.isCurrency ? (
+          <DisplayCurrency
+            coin={BNCoin.fromDenomAndBigNumber(
+              'usd',
+              BN(item.value).shiftedBy(-PRICE_ORACLE_DECIMALS),
+            )}
+            options={{ maxDecimals: 3, minDecimals: 2 }}
             className='text-xs'
           />
         ) : (
           <DisplayCurrency
-            coin={BNCoin.fromDenomAndBigNumber('usd', BN(value).shiftedBy(-PRICE_ORACLE_DECIMALS))}
+            coin={BNCoin.fromDenomAndBigNumber('usd', BN(item.value))}
+            options={{ maxDecimals: 3, minDecimals: 2 }}
             className='text-xs'
-            showSignPrefix
           />
         )}
       </div>
@@ -98,48 +119,18 @@ const TooltipContent = ({
 }
 
 export default function DynamicLineChartBody(props: Props) {
-  const { data, lines, height = 'h-65', customYAxisDomain, timeframe = '' } = props
+  const { data, lines, height = 'h-80', timeframe = '', legend = true } = props
   const chainConfig = useChainConfig()
   const [reduceMotion] = useLocalStorage<boolean>(
     LocalStorageKeys.REDUCE_MOTION,
     getDefaultChainSettings(chainConfig).reduceMotion,
   )
-  const reversedData = [...data].reverse()
-
-  // domain setting for large percentage values and custom domains
-  const getYAxisDomain = () => {
-    const extractValues = () =>
-      reversedData
-        .map((item) =>
-          lines.map((line) => {
-            const value = item[line.dataKey]
-            return typeof value === 'string' ? parseFloat(value) : (value as number)
-          }),
-        )
-        .flat()
-
-    // if customYAxisDomain is a function
-    if (typeof customYAxisDomain === 'function') {
-      return customYAxisDomain(extractValues())
-    }
-
-    // Default percentage handling
-    if (!lines[0]?.isPercentage) return undefined
-
-    const values = extractValues()
-    const maxValue = Math.max(...values)
-    const minValue = Math.min(...values)
-
-    // Add 10% padding to the domain y-axis
-    const padding = (maxValue - minValue) * 0.1
-    return [Math.min(0, minValue - padding), maxValue + padding]
-  }
 
   return (
     <div className={classNames('-ml-4', height)}>
       <ResponsiveContainer width='100%' height='100%'>
         <AreaChart
-          data={reversedData}
+          data={data}
           margin={{
             top: 10,
             right: 10,
@@ -174,7 +165,6 @@ export default function DynamicLineChartBody(props: Props) {
               dot={false}
               strokeWidth={2}
               isAnimationActive={!reduceMotion}
-              strokeDasharray={lineConfig.strokeDasharray}
             />
           ))}
 
@@ -192,7 +182,7 @@ export default function DynamicLineChartBody(props: Props) {
               }
               return moment(value).format('DD MMM')
             }}
-            interval={reversedData.length > 10 ? Math.floor(reversedData.length / 7) : 0}
+            interval={data.length > 10 ? Math.floor(data.length / 7) : 0}
           />
           <YAxis
             axisLine={false}
@@ -200,21 +190,28 @@ export default function DynamicLineChartBody(props: Props) {
             fontSize={8}
             tickCount={8}
             stroke='rgba(255, 255, 255, 0.4)'
-            domain={getYAxisDomain()}
             tickFormatter={(value) => {
               if (lines[0]?.isPercentage) {
                 return formatValue(value, {
-                  minDecimals: 2,
-                  maxDecimals: 2,
+                  minDecimals: Number(value) > 100 ? 0 : 2,
+                  maxDecimals: Number(value) > 100 ? 0 : 2,
                   suffix: '%',
+                  abbreviated: true,
                 })
               }
-              const adjustedValue = BN(value).shiftedBy(-PRICE_ORACLE_DECIMALS).toNumber()
-              return formatValue(adjustedValue, {
-                minDecimals: 0,
+              if (lines[0]?.isCurrency) {
+                const adjustedValue = BN(value).shiftedBy(-PRICE_ORACLE_DECIMALS).toNumber()
+                return formatValue(adjustedValue, {
+                  minDecimals: 2,
+                  maxDecimals: 2,
+                  prefix: '$',
+                  abbreviated: true,
+                })
+              }
+              return formatValue(value, {
+                minDecimals: 2,
                 maxDecimals: 2,
                 prefix: '$',
-                abbreviated: true,
               })
             }}
           />
@@ -228,7 +225,9 @@ export default function DynamicLineChartBody(props: Props) {
               />
             )}
           />
-          <Legend content={<ChartLegend payload={[]} data={reversedData} />} verticalAlign='top' />
+          {legend && (
+            <Legend content={<ChartLegend payload={[]} data={data} />} verticalAlign='top' />
+          )}
           <CartesianGrid opacity={0.1} vertical={false} />
           <ReferenceLine y={0} stroke='rgba(255, 255, 255, 0.2)' strokeWidth={2} />
         </AreaChart>
