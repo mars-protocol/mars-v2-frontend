@@ -35,8 +35,9 @@ async function queryNeutronContract(contractAddress: string, queryMsg: any) {
   return response.json()
 }
 
-export function useStakedMars() {
-  const address = useStore((s) => s.address)
+export function useStakedMars(addressOverride?: string) {
+  const connectedAddress = useStore((s) => s.address)
+  const address = addressOverride ?? connectedAddress
   const neutronAddress = convertToNeutronAddress(address)
 
   return useSWR(
@@ -77,8 +78,9 @@ export function useStakedMars() {
   )
 }
 
-export function useUnstakedMars() {
-  const address = useStore((s) => s.address)
+export function useUnstakedMars(addressOverride?: string) {
+  const connectedAddress = useStore((s) => s.address)
+  const address = addressOverride ?? connectedAddress
   const neutronAddress = convertToNeutronAddress(address)
 
   return useSWR(

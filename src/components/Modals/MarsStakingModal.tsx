@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
+import { mutate } from 'swr'
+import { useParams } from 'react-router-dom'
 
 import useStore from 'store'
 import Button from 'components/common/Button'
@@ -13,22 +15,29 @@ import Modal from 'components/Modals/Modal'
 import { BN_ZERO } from 'constants/math'
 import { useStakedMars, useUnstakedMars } from 'hooks/staking/useNeutronStakingData'
 import { formatReleaseDate } from 'utils/dateTime'
-import { useMarsStakingActions } from 'hooks/staking/useMarsStakingActions'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import { BN } from 'utils/helpers'
 import { MARS_DECIMALS, MARS_DENOM } from 'utils/constants'
 import useAsset from 'hooks/assets/useAsset'
+import { BNCoin } from 'types/classes/BNCoin'
+import { convertToNeutronAddress } from 'utils/wallet'
 
 export default function MarsStakingModal() {
   const { marsStakingModal: modal } = useStore()
+  const { address: urlAddress } = useParams()
+  const connectedAddress = useStore((s) => s.address)
   const [amount, setAmount] = useState(BN_ZERO)
   const [isLoading, setIsLoading] = useState(false)
   const [isWithdrawing, setIsWithdrawing] = useState(false)
   const [modalType, setModalType] = useState<'stake' | 'unstake'>('stake')
 
-  const { data: stakedMarsData } = useStakedMars()
-  const { data: unstakedData } = useUnstakedMars()
-  const actions = useMarsStakingActions()
+  const displayAddress = urlAddress ?? connectedAddress
+
+  const { data: stakedMarsData } = useStakedMars(displayAddress)
+  const { data: unstakedData } = useUnstakedMars(displayAddress)
+  const stakeMars = useStore((s) => s.stakeMars)
+  const unstakeMars = useStore((s) => s.unstakeMars)
+  const withdrawMars = useStore((s) => s.withdrawMars)
 
   const stakedAmount = stakedMarsData?.stakedAmount || BN_ZERO
   const walletBalanceRaw = useCurrentWalletBalance(MARS_DENOM)
@@ -37,6 +46,16 @@ export default function MarsStakingModal() {
     : BN_ZERO
 
   const marsAsset = useAsset(MARS_DENOM)
+
+  const invalidateStakingData = useCallback(() => {
+    if (connectedAddress) {
+      const neutronAddress = convertToNeutronAddress(connectedAddress)
+      if (neutronAddress) {
+        mutate(`neutron-staked-mars/${neutronAddress}`)
+        mutate(`neutron-unstaked-mars/${neutronAddress}`)
+      }
+    }
+  }, [connectedAddress])
 
   const maxAmount = useMemo(() => {
     if (!modal) return BN_ZERO
@@ -68,19 +87,25 @@ export default function MarsStakingModal() {
     if (!isValidAmount || !modal) return
 
     setIsLoading(true)
+
+    useStore.setState({ marsStakingModal: null })
+
     try {
       if (modalType === 'stake') {
-        await actions.stake(actualAmount)
+        const stakingAmount = BNCoin.fromDenomAndBigNumber(MARS_DENOM, actualAmount)
+        await stakeMars(stakingAmount)
+        invalidateStakingData()
       } else {
-        await actions.unstake(actualAmount)
+        const unstakingAmount = BNCoin.fromDenomAndBigNumber(MARS_DENOM, actualAmount)
+        await unstakeMars(unstakingAmount)
+        invalidateStakingData()
       }
-      useStore.setState({ marsStakingModal: null })
     } catch (error: any) {
       console.error('Transaction failed:', error)
     } finally {
       setIsLoading(false)
     }
-  }, [isValidAmount, modal, modalType, actualAmount, actions])
+  }, [isValidAmount, modal, modalType, actualAmount, stakeMars, unstakeMars, invalidateStakingData])
 
   const handleClose = useCallback(() => {
     useStore.setState({ marsStakingModal: null })
@@ -88,14 +113,22 @@ export default function MarsStakingModal() {
 
   const handleWithdraw = useCallback(async () => {
     setIsWithdrawing(true)
+
+    useStore.setState({ marsStakingModal: null })
+
     try {
-      await actions.withdraw()
+      const readyAmount = unstakedData?.totalReady
+      const withdrawAmount = readyAmount
+        ? BNCoin.fromDenomAndBigNumber(MARS_DENOM, readyAmount.shiftedBy(MARS_DECIMALS))
+        : undefined
+      await withdrawMars(withdrawAmount)
+      invalidateStakingData()
     } catch (error: any) {
       console.error('Withdraw failed:', error)
     } finally {
       setIsWithdrawing(false)
     }
-  }, [actions])
+  }, [withdrawMars, unstakedData, invalidateStakingData])
 
   const handleModeChange = useCallback(
     (type: 'stake' | 'unstake') => {
@@ -233,31 +266,47 @@ export default function MarsStakingModal() {
               )}
             </div>
             <div className='space-y-2 max-h-32 overflow-y-auto'>
-              {unstakedData.claims.map((claim) => (
+              {unstakedData.totalReady.gt(0) && (
                 <Card
-                  key={`${claim.amount.toString()}-${claim.releaseTime.getTime()}`}
                   className='bg-white/5'
                   contentClassName='p-3 flex justify-between items-center'
                 >
                   <div className='flex flex-col'>
                     <FormattedNumber
-                      amount={claim.amount.toNumber()}
+                      amount={unstakedData.totalReady.toNumber()}
                       options={{ abbreviated: true, suffix: ' MARS' }}
                       className='text-sm font-medium'
                     />
                     <Text size='xs' className='text-white/60'>
-                      {claim.isReady
-                        ? 'Ready to withdraw'
-                        : `Available: ${formatReleaseDate(claim.releaseTime)}`}
+                      Ready to withdraw
                     </Text>
                   </div>
-                  {claim.isReady && (
-                    <div className='px-2 py-1 bg-success/20 text-success rounded text-xs font-semibold'>
-                      Ready
-                    </div>
-                  )}
+                  <div className='px-2 py-1 bg-success/20 text-success rounded text-xs font-semibold'>
+                    Ready
+                  </div>
                 </Card>
-              ))}
+              )}
+              {unstakedData.claims.map(
+                (claim) =>
+                  !claim.isReady && (
+                    <Card
+                      key={`${claim.amount.toString()}-${claim.releaseTime.getTime()}`}
+                      className='bg-white/5'
+                      contentClassName='p-3 flex justify-between items-center'
+                    >
+                      <div className='flex flex-col'>
+                        <FormattedNumber
+                          amount={claim.amount.toNumber()}
+                          options={{ abbreviated: true, suffix: ' MARS' }}
+                          className='text-sm font-medium'
+                        />
+                        <Text size='xs' className='text-white/60'>
+                          Available: {formatReleaseDate(claim.releaseTime)}
+                        </Text>
+                      </div>
+                    </Card>
+                  ),
+              )}
             </div>
           </div>
         )}

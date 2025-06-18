@@ -1116,7 +1116,7 @@ interface BroadcastSlice {
   }) => Promise<boolean>
   stakeMars: (amount: BNCoin) => Promise<boolean>
   unstakeMars: (amount: BNCoin) => Promise<boolean>
-  withdrawMars: () => Promise<boolean>
+  withdrawMars: (amount?: BNCoin) => Promise<boolean>
   borrow: (options: {
     accountId: string
     coin: BNCoin
@@ -1320,6 +1320,9 @@ type TransactionType =
   | 'cancel-order'
   | 'create-order'
   | 'withdraw_from_vault'
+  | 'mars-stake'
+  | 'mars-unstake'
+  | 'mars-withdraw'
 
 interface CommonSlice {
   address?: string

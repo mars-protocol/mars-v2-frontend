@@ -31,6 +31,7 @@ import { getCurrentFeeToken } from 'utils/feeToken'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
+import { MARS_DECIMALS } from 'utils/constants'
 
 interface ExecuteMsgOptions {
   messages: MsgExecuteContract[]
@@ -143,7 +144,11 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, marsStakingContract, stakeMsg, funds)],
       })
 
-      get().handleTransaction({ response })
+      const formattedAmount = amount.amount.shiftedBy(-MARS_DECIMALS).toFixed(2)
+      get().handleTransaction({
+        response,
+        message: `Staked ${formattedAmount} MARS`,
+      })
 
       return response.then((response) => !!response.result)
     },
@@ -163,11 +168,15 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, marsStakingContract, unstakeMsg, [])],
       })
 
-      get().handleTransaction({ response })
+      const formattedAmount = amount.amount.shiftedBy(-MARS_DECIMALS).toFixed(2)
+      get().handleTransaction({
+        response,
+        message: `Unstaked ${formattedAmount} MARS`,
+      })
 
       return response.then((response) => !!response.result)
     },
-    withdrawMars: async () => {
+    withdrawMars: async (amount?: BNCoin) => {
       const marsStakingContract = get().chainConfig.contracts.marsStaking
       if (!marsStakingContract || !get().address) {
         throw new Error('Mars staking contract not available or wallet not connected')
@@ -181,7 +190,14 @@ export default function createBroadcastSlice(
         messages: [generateExecutionMessage(get().address, marsStakingContract, withdrawMsg, [])],
       })
 
-      get().handleTransaction({ response })
+      const message = amount
+        ? `Withdrew ${amount.amount.shiftedBy(-MARS_DECIMALS).toFixed(2)} MARS`
+        : 'Withdrew MARS'
+
+      get().handleTransaction({
+        response,
+        message,
+      })
 
       return response.then((response) => !!response.result)
     },

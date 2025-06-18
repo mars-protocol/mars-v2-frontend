@@ -1,4 +1,4 @@
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useCallback } from 'react'
 import { useSWRConfig } from 'swr'
 import Button from 'components/common/Button'
@@ -19,6 +19,7 @@ import useStore from 'store'
 import MarsProtocolLogo from 'components/common/Icons/Logo.svg'
 
 export default function MarsStaking({ className }: { className?: string }) {
+  const { address: urlAddress } = useParams()
   const connectedAddress = useStore((s) => s.address)
   const chainConfig = useChainConfig()
   const { mutate } = useSWRConfig()
@@ -26,8 +27,11 @@ export default function MarsStaking({ className }: { className?: string }) {
   const [searchParams] = useSearchParams()
   const [_, setCurrentChainId] = useCurrentChainId()
 
-  const { data: stakedMarsData } = useStakedMars()
-  const { data: unstakedData } = useUnstakedMars()
+  const displayAddress = urlAddress ?? connectedAddress
+  const isOwnWallet = !urlAddress || urlAddress === connectedAddress
+
+  const { data: stakedMarsData } = useStakedMars(displayAddress)
+  const { data: unstakedData } = useUnstakedMars(displayAddress)
 
   const stakedAmount = stakedMarsData?.stakedAmount || BN_ZERO
 
@@ -53,6 +57,10 @@ export default function MarsStaking({ className }: { className?: string }) {
   }, [setCurrentChainId, mutate, navigate, searchParams])
 
   const renderActionButton = () => {
+    if (!isOwnWallet) {
+      return null
+    }
+
     if (!connectedAddress) {
       return (
         <WalletConnectButton
@@ -161,7 +169,7 @@ export default function MarsStaking({ className }: { className?: string }) {
         {renderActionButton()}
       </Card>
 
-      {connectedAddress && <MarsStakingModal />}
+      {connectedAddress && isOwnWallet && <MarsStakingModal />}
     </>
   )
 }
