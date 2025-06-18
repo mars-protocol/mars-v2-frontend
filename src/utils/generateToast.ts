@@ -91,6 +91,24 @@ export async function generateToast(
       )
       break
 
+    case 'mars-stake':
+      toast.target = 'Mars Staking'
+      toast.message = toastOptions?.message || 'Staked MARS'
+      mutationKeys.push(`neutron-staked-mars/##ADDRESS##`, `neutron-unstaked-mars/##ADDRESS##`)
+      break
+
+    case 'mars-unstake':
+      toast.target = 'Mars Staking'
+      toast.message = toastOptions?.message || 'Unstaked MARS'
+      mutationKeys.push(`neutron-staked-mars/##ADDRESS##`, `neutron-unstaked-mars/##ADDRESS##`)
+      break
+
+    case 'mars-withdraw':
+      toast.target = 'Mars Staking'
+      toast.message = toastOptions?.message || 'Withdrew MARS'
+      mutationKeys.push(`neutron-staked-mars/##ADDRESS##`, `neutron-unstaked-mars/##ADDRESS##`)
+      break
+
     case 'transaction':
       txCoinGroups.forEach((txCoinGroup: GroupedTransactionCoin) => {
         const contentsAndKeys = getToastContentsAndMutationKeysFromGroupedTransactionCoin(

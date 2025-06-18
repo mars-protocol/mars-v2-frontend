@@ -26,3 +26,6 @@ export const ENABLE_AUTO_REPAY = true
 export const STANDARD_SWAP_FEE = 0.002
 export const HF_THRESHOLD = 1.03
 export const MINIMUM_USDC = 1000000
+
+export const MARS_DECIMALS = 6
+export const MARS_DENOM = 'factory/neutron1ndu2wvkrxtane8se2tr48gv7nsm46y5gcqjhux/MARS'
