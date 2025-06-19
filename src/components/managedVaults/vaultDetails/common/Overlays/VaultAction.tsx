@@ -42,7 +42,7 @@ export default function VaultAction(props: Props) {
   const { data: account } = useAccount(vaultDetails.vault_account_id || undefined)
   const { data: userPosition } = useManagedVaultUserPosition(vaultAddress, address)
   const { data: userUnlocks = [] } = useUserUnlocks(vaultAddress)
-  const { data: sharesToUnlock } = useManagedVaultConvertToShares(vaultAddress, amount.toString())
+  const { data: sharesToUnlock } = useManagedVaultConvertToShares(vaultAddress, amount.toFixed(0))
   const { computeMaxWithdrawAmount, computeMaxBorrowAmount } = useHealthComputer(account)
   const depositInManagedVault = useStore((s) => s.depositInManagedVault)
   const unlockFromManagedVault = useStore((s) => s.unlockFromManagedVault)
@@ -113,7 +113,7 @@ export default function VaultAction(props: Props) {
       } else {
         await depositInManagedVault({
           vaultAddress,
-          amount: amount.toString(),
+          amount: amount.toFixed(0),
           baseTokenDenom: vaultDetails.base_tokens_denom,
         })
       }
