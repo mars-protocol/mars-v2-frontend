@@ -195,7 +195,7 @@ export default async function handler(req: NextRequest) {
         status: 200,
         headers: {
           'content-type': 'image/png',
-          'cache-control': 'public, max-age=0, s-maxage=0, must-revalidate',
+          'cache-control': 'public, max-age=86400, s-maxage=86400, must-revalidate',
         },
       },
     )
