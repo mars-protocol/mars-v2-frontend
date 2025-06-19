@@ -41,10 +41,6 @@ export default function VaultAction(props: Props) {
   const address = useStore((s) => s.address)
   const { data: account } = useAccount(vaultDetails.vault_account_id || undefined)
   const { data: userPosition } = useManagedVaultUserPosition(vaultAddress, address)
-  const { data: userVaultTokens, isLoading } = useManagedVaultConvertToBaseTokens(
-    vaultAddress,
-    userPosition?.shares ?? '0',
-  )
   const { data: userUnlocks = [] } = useUserUnlocks(vaultAddress)
   const { data: sharesToUnlock } = useManagedVaultConvertToShares(vaultAddress, amount.toString())
   const { computeMaxWithdrawAmount, computeMaxBorrowAmount } = useHealthComputer(account)
@@ -63,31 +59,34 @@ export default function VaultAction(props: Props) {
     }, BN_ZERO)
   }, [userUnlocks])
 
-  const { data: unlockedBaseTokens } = useManagedVaultConvertToBaseTokens(
-    vaultAddress,
-    totalUnlockedVaultTokens.toString(),
-  )
+  const maxWithdrawableShares = useMemo(() => {
+    if (!userPosition?.shares) return BN_ZERO
+    return BigNumber.maximum(BN(userPosition.shares).minus(totalUnlockedVaultTokens), BN_ZERO)
+  }, [userPosition?.shares, totalUnlockedVaultTokens])
 
-  const availableVaultTokens = useMemo(() => {
-    return BN(userVaultTokens || 0).minus(BN(unlockedBaseTokens || 0))
-  }, [userVaultTokens, unlockedBaseTokens])
+  const { data: maxWithdrawableBaseTokens, isLoading } = useManagedVaultConvertToBaseTokens(
+    vaultAddress,
+    maxWithdrawableShares.toString(),
+  )
 
   const maxAmount = useMemo(() => {
     if (isDeposit) {
       return assetAmountInWallet
     }
 
+    const shareBasedLimit = BN(maxWithdrawableBaseTokens || 0)
     const maxWithdrawAmount = computeMaxWithdrawAmount(vaultDetails.base_tokens_denom)
     const maxBorrowAmount = computeMaxBorrowAmount(vaultDetails.base_tokens_denom, 'wallet')
     const totalMaxWithdrawAmount = maxWithdrawAmount.plus(maxBorrowAmount)
-    return BigNumber.minimum(availableVaultTokens, totalMaxWithdrawAmount)
+
+    return BigNumber.maximum(BigNumber.minimum(shareBasedLimit, totalMaxWithdrawAmount), BN_ZERO)
   }, [
     assetAmountInWallet,
     computeMaxBorrowAmount,
     computeMaxWithdrawAmount,
     isDeposit,
     vaultDetails.base_tokens_denom,
-    availableVaultTokens,
+    maxWithdrawableBaseTokens,
   ])
 
   const withdrawalPeriod = formatLockupPeriod(
@@ -96,7 +95,7 @@ export default function VaultAction(props: Props) {
   )
 
   const handleAmountChange = (newAmount: BigNumber) => {
-    setAmount(newAmount)
+    setAmount(BigNumber.maximum(newAmount, BN_ZERO))
   }
 
   const handleAction = async (type: VaultAction) => {
@@ -176,12 +175,14 @@ export default function VaultAction(props: Props) {
                 <Callout type={CalloutType.INFO}>
                   Please note there is a {withdrawalPeriod} withdrawal freeze.
                 </Callout>
-                {availableVaultTokens.isGreaterThan(maxAmount) && (
-                  <Callout type={CalloutType.WARNING}>
-                    The vault currently has insufficient {depositAsset?.symbol} to process your full
-                    withdrawal. Please try withdrawing a smaller amount or contact the vault owner.
-                  </Callout>
-                )}
+                {maxWithdrawableBaseTokens &&
+                  BN(maxWithdrawableBaseTokens).isGreaterThan(maxAmount) && (
+                    <Callout type={CalloutType.WARNING}>
+                      The vault currently has insufficient {depositAsset?.symbol} to process your
+                      full withdrawal. Please try withdrawing a smaller amount or contact the vault
+                      owner.
+                    </Callout>
+                  )}
               </>
             )}
           </div>
