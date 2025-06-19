@@ -44,17 +44,28 @@ export default function Withdrawals(props: Props) {
   } = useAllUnlocks(vaultAddress)
   const { data: userUnlocksData = [] } = useUserUnlocks(vaultAddress)
 
+  console.log('userUnlocksData in withdrawals', userUnlocksData)
+
   const unlockedPositions = useMemo(() => {
     return userUnlocksData.filter((unlock) => {
       return unlock.cooldown_end * 1000 <= Date.now()
     })
   }, [userUnlocksData])
 
+  console.log('finishe unlocked Positions in withdrawals', unlockedPositions)
+
+  console.log(
+    'Unlocked amounts per position:',
+    unlockedPositions.map((u) => u.vault_tokens_amount),
+  )
+
   const totalUnlockedAmount = useMemo(() => {
     return unlockedPositions.reduce((total, unlock) => {
       return total.plus(BN(unlock.vault_tokens_amount))
     }, BN_ZERO)
   }, [unlockedPositions])
+
+  console.log('totalUnlockedAmount in withdrawals', totalUnlockedAmount)
 
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(details.base_tokens_denom)) as Asset
