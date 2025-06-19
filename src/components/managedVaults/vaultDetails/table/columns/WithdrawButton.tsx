@@ -2,6 +2,9 @@ import Button from 'components/common/Button'
 import { AccountArrowDown } from 'components/common/Icons'
 import { useCallback, useState } from 'react'
 import useStore from 'store'
+import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
+import { BN } from 'utils/helpers'
+import BigNumber from 'bignumber.js'
 
 export const WITHDRAW_META = {
   id: 'withdraw',
@@ -21,13 +24,19 @@ export default function WithdrawButton(props: Props) {
   const address = useStore((s) => s.address)
   const [isConfirming, setIsConfirming] = useState(false)
   const withdrawFromManagedVault = useStore((s) => s.withdrawFromManagedVault)
+  const walletBalance = useCurrentWalletBalance(vaultTokenDenom)
 
   const handleWithdraw = useCallback(async () => {
     setIsConfirming(true)
     try {
+      // Ensure the withdrawal amount never exceeds the user's wallet balance
+      const walletBalanceAmount = BN(walletBalance?.amount || '0')
+      const requestedAmount = BN(amount)
+      const actualAmount = BigNumber.minimum(requestedAmount, walletBalanceAmount).toString()
+
       await withdrawFromManagedVault({
         vaultAddress,
-        amount,
+        amount: actualAmount,
         vaultToken: vaultTokenDenom,
         recipient: address,
       })
@@ -36,7 +45,14 @@ export default function WithdrawButton(props: Props) {
     } finally {
       setIsConfirming(false)
     }
-  }, [address, amount, vaultAddress, vaultTokenDenom, withdrawFromManagedVault])
+  }, [
+    address,
+    amount,
+    vaultAddress,
+    vaultTokenDenom,
+    withdrawFromManagedVault,
+    walletBalance?.amount,
+  ])
 
   return (
     <Button
