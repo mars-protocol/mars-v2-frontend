@@ -40,6 +40,10 @@ const nextConfig = {
             value: 'public, max-age=86400, s-maxage=86400, must-revalidate',
           },
           {
+            key: 'CDN-Cache-Control',
+            value: 'public, max-age=86400, s-maxage=86400, must-revalidate',
+          },
+          {
             key: 'Expires',
             value: '01',
           },
