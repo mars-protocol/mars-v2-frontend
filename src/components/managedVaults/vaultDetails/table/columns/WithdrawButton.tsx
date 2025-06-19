@@ -21,7 +21,7 @@ interface Props {
 
 export default function WithdrawButton(props: Props) {
   const { amount, vaultAddress, vaultTokenDenom, disabled } = props
-  console.log('amount in withdraw button', amount)
+  console.log('### amount in withdraw button:', amount)
 
   const address = useStore((s) => s.address)
   const [isConfirming, setIsConfirming] = useState(false)
@@ -33,12 +33,12 @@ export default function WithdrawButton(props: Props) {
     try {
       // Ensure the withdrawal amount never exceeds the user's wallet balance
       const walletBalanceAmount = BN(walletBalance?.amount || '0')
-      console.log('walletBalanceAmount', walletBalanceAmount.toString())
+      console.log('### walletBalanceAmount:', walletBalanceAmount.toString())
       const requestedAmount = BN(amount)
-      console.log('requestedAmount', requestedAmount.toString())
+      console.log('### requestedAmount:', requestedAmount.toString())
       const actualAmount = BigNumber.minimum(requestedAmount, walletBalanceAmount).toString()
-      console.log('actualAmount sent to contract', actualAmount.toString())
-      console.log('vaultTokenDenom sent to contract', vaultTokenDenom)
+      console.log('### actualAmount sent to contract:', actualAmount.toString())
+      console.log('### vaultTokenDenom sent to contract:', vaultTokenDenom)
 
       await withdrawFromManagedVault({
         vaultAddress,

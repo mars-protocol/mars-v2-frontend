@@ -27,11 +27,11 @@ import { byDenom, bySymbol } from 'utils/array'
 import { setAutoLendForAccount } from 'utils/autoLend'
 import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
+import { MARS_DECIMALS } from 'utils/constants'
 import { getCurrentFeeToken } from 'utils/feeToken'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
-import { MARS_DECIMALS } from 'utils/constants'
 
 interface ExecuteMsgOptions {
   messages: MsgExecuteContract[]
@@ -1556,14 +1556,14 @@ export default function createBroadcastSlice(
       recipient?: string | null
       vaultToken: string
     }) => {
-      console.log('[withdrawFromManagedVault] called with options:', options)
+      console.log('### [withdrawFromManagedVault] called with options:', options)
       const msg: ManagedVaultExecuteMsg = {
         redeem: {
           amount: options.amount,
           recipient: options.recipient,
         },
       }
-      console.log('[withdrawFromManagedVault] constructed message:', msg)
+      console.log('### [withdrawFromManagedVault] constructed message:', msg)
 
       const response = get().executeMsg({
         messages: [
@@ -1578,7 +1578,7 @@ export default function createBroadcastSlice(
 
       get().handleTransaction({ response })
       return response.then((response) => {
-        console.log('[withdrawFromManagedVault] transaction response:', response)
+        console.log('### [withdrawFromManagedVault] transaction response:', response)
         return !!response.result
       })
     },
