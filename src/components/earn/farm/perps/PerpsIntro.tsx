@@ -19,9 +19,9 @@ export default function PerpsIntro() {
           <span className='text-white'>
             Provide liquidity to the Counterparty Vault and earn perpetuals trading fees.
           </span>{' '}
-          Deposits are subject to a {vault?.lockup.duration}-{vault?.lockup.timeframe} and carry
-          directional risk: when perps traders lose, the vault gains — but when they win, the vault
-          takes the loss.
+          Deposits are subject to a {vault?.lockup.duration}-{vault?.lockup.timeframe} unlocking
+          period and carry directional risk: when perps traders lose, the vault gains — but when
+          they win, the vault takes the loss.
         </>
       }
       bg='perps-vault'
