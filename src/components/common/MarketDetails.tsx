@@ -117,6 +117,10 @@ export default function MarketDetails({ row, type }: Props) {
     unit: selectedInterval.unit,
   })
 
+  const chartData = useMemo(() => {
+    return [...aprData].reverse()
+  }, [aprData])
+
   return (
     <tr>
       <td
@@ -161,7 +165,7 @@ export default function MarketDetails({ row, type }: Props) {
               ))}
             </div>
             <DynamicLineChart
-              data={aprData || []}
+              data={chartData || []}
               loading={aprLoading}
               lines={[
                 { dataKey: 'supply_apr', color: '#10b981', name: 'Supply APR', isPercentage: true },
