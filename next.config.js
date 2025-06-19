@@ -37,15 +37,15 @@ const nextConfig = {
           },
           {
             key: 'Cache-Control',
-            value: 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            value: 'public, max-age=86400, s-maxage=86400, must-revalidate',
           },
           {
-            key: 'Pragma',
-            value: 'no-cache',
+            key: 'CDN-Cache-Control',
+            value: 'public, max-age=86400, s-maxage=86400, must-revalidate',
           },
           {
             key: 'Expires',
-            value: '0',
+            value: '01',
           },
           {
             key: 'X-Content-Type-Options',
