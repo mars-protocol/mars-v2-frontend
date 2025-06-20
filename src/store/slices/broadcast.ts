@@ -1556,15 +1556,12 @@ export default function createBroadcastSlice(
       recipient?: string | null
       vaultToken: string
     }) => {
-      console.log('### [withdrawFromManagedVault] called with options:', options)
       const msg: ManagedVaultExecuteMsg = {
         redeem: {
           amount: options.amount,
           recipient: options.recipient,
         },
       }
-      console.log('### [withdrawFromManagedVault] constructed message:', msg)
-
       const response = get().executeMsg({
         messages: [
           generateExecutionMessage(get().address, options.vaultAddress, msg, [
@@ -1578,7 +1575,6 @@ export default function createBroadcastSlice(
 
       get().handleTransaction({ response })
       return response.then((response) => {
-        console.log('### [withdrawFromManagedVault] transaction response:', response)
         return !!response.result
       })
     },

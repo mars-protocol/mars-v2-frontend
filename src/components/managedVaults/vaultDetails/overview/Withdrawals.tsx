@@ -13,6 +13,7 @@ import VaultStats from 'components/managedVaults/vaultDetails/common/VaultStats'
 import WithdrawButton from 'components/managedVaults/vaultDetails/table/columns/WithdrawButton'
 import useQueuedWithdrawals from 'components/managedVaults/vaultDetails/table/useQueuedWithdrawals'
 import useUserWithdrawals from 'components/managedVaults/vaultDetails/table/useUserWithdrawals'
+import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import { BN_ZERO } from 'constants/math'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import { useAllUnlocks } from 'hooks/managedVaults/useAllUnlocks'
@@ -43,8 +44,7 @@ export default function Withdrawals(props: Props) {
     handlePageChange,
   } = useAllUnlocks(vaultAddress)
   const { data: userUnlocksData = [] } = useUserUnlocks(vaultAddress)
-
-  console.log('### userUnlocksData in withdrawals:', userUnlocksData)
+  const walletBalance = useCurrentWalletBalance(details.vault_tokens_denom)
 
   const unlockedPositions = useMemo(() => {
     return userUnlocksData.filter((unlock) => {
@@ -52,20 +52,15 @@ export default function Withdrawals(props: Props) {
     })
   }, [userUnlocksData])
 
-  console.log('### finished unlocked Positions in withdrawals:', unlockedPositions)
-
-  console.log(
-    '### Unlocked amounts per position:',
-    unlockedPositions.map((u) => u.vault_tokens_amount),
-  )
-
   const totalUnlockedAmount = useMemo(() => {
     return unlockedPositions.reduce((total, unlock) => {
       return total.plus(BN(unlock.vault_tokens_amount))
     }, BN_ZERO)
   }, [unlockedPositions])
 
-  console.log('### totalUnlockedAmount in withdrawals:', totalUnlockedAmount.toString())
+  const walletBalanceAmount = BN(walletBalance?.amount || '0')
+  const isWithdrawDisabled =
+    totalUnlockedAmount.isZero() || walletBalanceAmount.isLessThan(totalUnlockedAmount)
 
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(details.base_tokens_denom)) as Asset
@@ -82,7 +77,6 @@ export default function Withdrawals(props: Props) {
     moment.duration(details.cooldown_period, 'seconds').as('days'),
     'days',
   )
-
   const totalQueuedWithdrawals = allUnlocksData.reduce(
     (sum, unlock) => sum.plus(BN(unlock.base_tokens_amount)),
     BN_ZERO,
@@ -99,10 +93,10 @@ export default function Withdrawals(props: Props) {
             <div className='flex justify-between items-center w-full py-3 px-4 bg-white/10'>
               <Text size='lg'>Withdrawals</Text>
               <WithdrawButton
-                amount={totalUnlockedAmount.toString()}
+                totalUnlockedAmount={totalUnlockedAmount.toString()}
                 vaultAddress={vaultAddress}
                 vaultTokenDenom={details.vault_tokens_denom}
-                disabled={unlockedPositions.length === 0}
+                disabled={isWithdrawDisabled}
               />
             </div>
           }
@@ -290,10 +284,10 @@ export default function Withdrawals(props: Props) {
           {userUnlocksData.length > 0 && (
             <div className='w-full py-2 px-4 bg-black/15 border-t border-white/10'>
               <WithdrawButton
-                amount={totalUnlockedAmount.toString()}
+                totalUnlockedAmount={totalUnlockedAmount.toString()}
                 vaultAddress={vaultAddress}
                 vaultTokenDenom={details.vault_tokens_denom}
-                disabled={unlockedPositions.length === 0}
+                disabled={isWithdrawDisabled}
               />
             </div>
           )}

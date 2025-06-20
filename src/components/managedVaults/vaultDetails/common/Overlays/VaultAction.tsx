@@ -36,57 +36,60 @@ interface Props {
 export default function VaultAction(props: Props) {
   const { showActionModal, setShowActionModal, vaultDetails, vaultAddress, type } = props
 
-  const [amount, setAmount] = useState(BN_ZERO)
+  const [inputAmount, setInputAmount] = useState(BN_ZERO)
   const [isConfirming, setIsConfirming] = useState(false)
   const address = useStore((s) => s.address)
   const { data: account } = useAccount(vaultDetails.vault_account_id || undefined)
   const { data: userPosition } = useManagedVaultUserPosition(vaultAddress, address)
   const { data: userUnlocks = [] } = useUserUnlocks(vaultAddress)
-  const { data: sharesToUnlock } = useManagedVaultConvertToShares(vaultAddress, amount.toFixed(0))
+  const { data: sharesToUnlock } = useManagedVaultConvertToShares(
+    vaultAddress,
+    inputAmount.toFixed(0),
+  )
   const { computeMaxWithdrawAmount, computeMaxBorrowAmount } = useHealthComputer(account)
   const depositInManagedVault = useStore((s) => s.depositInManagedVault)
   const unlockFromManagedVault = useStore((s) => s.unlockFromManagedVault)
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(vaultDetails.base_tokens_denom)) as Asset
-  const assetAmountInWallet = BN(
+  const baseTokenWalletBalance = BN(
     useCurrentWalletBalance(vaultDetails.base_tokens_denom)?.amount || '0',
   )
   const isDeposit = type === 'deposit'
 
-  const totalUnlockedVaultTokens = useMemo(() => {
+  const pendingUnlockShares = useMemo(() => {
     return userUnlocks.reduce((total, unlock) => {
       return total.plus(BN(unlock.vault_tokens_amount))
     }, BN_ZERO)
   }, [userUnlocks])
 
-  const maxWithdrawableShares = useMemo(() => {
+  const maxUnlockableShares = useMemo(() => {
     if (!userPosition?.shares) return BN_ZERO
-    return BigNumber.maximum(BN(userPosition.shares).minus(totalUnlockedVaultTokens), BN_ZERO)
-  }, [userPosition?.shares, totalUnlockedVaultTokens])
+    return BigNumber.maximum(BN(userPosition.shares).minus(pendingUnlockShares), BN_ZERO)
+  }, [userPosition?.shares, pendingUnlockShares])
 
-  const { data: maxWithdrawableBaseTokens, isLoading } = useManagedVaultConvertToBaseTokens(
+  const { data: maxUnlockableBaseTokens, isLoading } = useManagedVaultConvertToBaseTokens(
     vaultAddress,
-    maxWithdrawableShares.toString(),
+    maxUnlockableShares.toString(),
   )
 
-  const maxAmount = useMemo(() => {
+  const maxInputAmount = useMemo(() => {
     if (isDeposit) {
-      return assetAmountInWallet
+      return baseTokenWalletBalance
     }
 
-    const shareBasedLimit = BN(maxWithdrawableBaseTokens || 0)
+    const shareBasedLimit = BN(maxUnlockableBaseTokens || 0)
     const maxWithdrawAmount = computeMaxWithdrawAmount(vaultDetails.base_tokens_denom)
     const maxBorrowAmount = computeMaxBorrowAmount(vaultDetails.base_tokens_denom, 'wallet')
     const totalMaxWithdrawAmount = maxWithdrawAmount.plus(maxBorrowAmount)
 
     return BigNumber.maximum(BigNumber.minimum(shareBasedLimit, totalMaxWithdrawAmount), BN_ZERO)
   }, [
-    assetAmountInWallet,
+    baseTokenWalletBalance,
     computeMaxBorrowAmount,
     computeMaxWithdrawAmount,
     isDeposit,
     vaultDetails.base_tokens_denom,
-    maxWithdrawableBaseTokens,
+    maxUnlockableBaseTokens,
   ])
 
   const withdrawalPeriod = formatLockupPeriod(
@@ -95,25 +98,30 @@ export default function VaultAction(props: Props) {
   )
 
   const handleAmountChange = (newAmount: BigNumber) => {
-    setAmount(BigNumber.maximum(newAmount, BN_ZERO))
+    setInputAmount(BigNumber.maximum(newAmount, BN_ZERO))
   }
 
   const handleAction = async (type: VaultAction) => {
-    if (amount.isZero()) return
+    if (inputAmount.isZero()) return
 
     setIsConfirming(true)
     try {
       if (type === 'unlock') {
         if (!sharesToUnlock) return
+        const finalSharesToSend = BigNumber.minimum(
+          BN(sharesToUnlock),
+          maxUnlockableShares,
+        ).toFixed(0)
+
         await unlockFromManagedVault({
           vaultAddress,
-          amount: sharesToUnlock,
+          amount: finalSharesToSend,
           vaultToken: vaultDetails.vault_tokens_denom,
         })
       } else {
         await depositInManagedVault({
           vaultAddress,
-          amount: amount.toFixed(0),
+          amount: inputAmount.toFixed(0),
           baseTokenDenom: vaultDetails.base_tokens_denom,
         })
       }
@@ -122,13 +130,13 @@ export default function VaultAction(props: Props) {
     } finally {
       setIsConfirming(false)
       setShowActionModal(false)
-      setAmount(BN_ZERO)
+      setInputAmount(BN_ZERO)
     }
   }
 
   const handleCloseModal = () => {
     setShowActionModal(false)
-    setAmount(BN_ZERO)
+    setInputAmount(BN_ZERO)
   }
 
   return (
@@ -149,9 +157,9 @@ export default function VaultAction(props: Props) {
           <TokenInputWithSlider
             asset={depositAsset}
             onChange={handleAmountChange}
-            amount={amount}
-            max={maxAmount}
-            disabled={maxAmount.isZero() || isLoading || isConfirming}
+            amount={inputAmount}
+            max={maxInputAmount}
+            disabled={maxInputAmount.isZero() || isLoading || isConfirming}
             className='w-full'
             maxText={isDeposit ? 'In Wallet' : 'Available to Withdraw'}
             warningMessages={[]}
@@ -175,8 +183,8 @@ export default function VaultAction(props: Props) {
                 <Callout type={CalloutType.INFO}>
                   Please note there is a {withdrawalPeriod} withdrawal freeze.
                 </Callout>
-                {maxWithdrawableBaseTokens &&
-                  BN(maxWithdrawableBaseTokens).isGreaterThan(maxAmount) && (
+                {maxUnlockableBaseTokens &&
+                  BN(maxUnlockableBaseTokens).isGreaterThan(maxInputAmount) && (
                     <Callout type={CalloutType.WARNING}>
                       The vault currently has insufficient {depositAsset?.symbol} to process your
                       full withdrawal. Please try withdrawing a smaller amount or contact the vault
@@ -192,7 +200,7 @@ export default function VaultAction(props: Props) {
             className='w-full'
             text={isDeposit ? 'Deposit' : 'Unlock'}
             rightIcon={<ArrowRight />}
-            disabled={amount.isZero() || maxAmount.isZero() || isConfirming}
+            disabled={inputAmount.isZero() || maxInputAmount.isZero() || isConfirming}
             showProgressIndicator={isConfirming}
           />
         </Card>
