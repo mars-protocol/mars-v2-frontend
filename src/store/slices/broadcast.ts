@@ -27,11 +27,11 @@ import { byDenom, bySymbol } from 'utils/array'
 import { setAutoLendForAccount } from 'utils/autoLend'
 import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
+import { MARS_DECIMALS } from 'utils/constants'
 import { getCurrentFeeToken } from 'utils/feeToken'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
-import { MARS_DECIMALS } from 'utils/constants'
 
 interface ExecuteMsgOptions {
   messages: MsgExecuteContract[]
@@ -1562,7 +1562,6 @@ export default function createBroadcastSlice(
           recipient: options.recipient,
         },
       }
-
       const response = get().executeMsg({
         messages: [
           generateExecutionMessage(get().address, options.vaultAddress, msg, [
@@ -1575,7 +1574,9 @@ export default function createBroadcastSlice(
       })
 
       get().handleTransaction({ response })
-      return response.then((response) => !!response.result)
+      return response.then((response) => {
+        return !!response.result
+      })
     },
   }
 }
