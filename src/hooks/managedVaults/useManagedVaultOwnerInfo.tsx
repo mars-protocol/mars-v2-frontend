@@ -37,6 +37,8 @@ export default function useManagedVaultOwnerInfo(address?: string): VaultOwnerIn
       ? `https://www.stargaze.zone/p/${stargazeInfo.associatedAddr}/names/${stargazeInfo.name}`
       : `${chainConfig.endpoints.explorer}/address/${address}`
     const walletLinkName = stargazeInfo ? stargazeInfo.name : truncate(address, [2, 6])
+    const walletTruncatedName =
+      walletLinkName.length > 15 ? truncate(walletLinkName, [15, 0]) : walletLinkName
     const walletLinkTitle = stargazeInfo
       ? 'View Stargaze Profile'
       : `View on ${chainConfig.explorerName}`
@@ -80,11 +82,11 @@ export default function useManagedVaultOwnerInfo(address?: string): VaultOwnerIn
 
     return {
       vaultOwnerInfo: {
-        name: walletLinkName,
+        name: walletTruncatedName,
         avatar: avatar,
         link: {
           href: walletLinkTarget,
-          name: walletLinkName,
+          name: walletTruncatedName,
           title: walletLinkTitle,
         },
         socials: socials.sort((a: StargazeSocial, b: StargazeSocial) =>
