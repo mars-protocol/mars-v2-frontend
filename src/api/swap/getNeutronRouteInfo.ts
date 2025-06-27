@@ -7,15 +7,16 @@ export default async function getNeutronRouteInfo(
   denomOut: string,
   amount: BigNumber,
   assets: Asset[],
+  chainConfig: ChainConfig,
 ): Promise<SwapRouteInfo | null> {
   try {
     const skipRouteResponse = await skipRoute({
       amountIn: amount.toString(),
       sourceAssetDenom: denomIn,
-      sourceAssetChainId: 'neutron-1',
+      sourceAssetChainId: chainConfig.id,
       destAssetDenom: denomOut,
-      destAssetChainId: 'neutron-1',
-      swapVenues: [{ chainId: 'neutron-1' }],
+      destAssetChainId: chainConfig.id,
+      swapVenues: [{ chainId: chainConfig.id }],
     })
 
     if (!skipRouteResponse) return null

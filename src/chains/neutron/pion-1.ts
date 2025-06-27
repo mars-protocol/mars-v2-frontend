@@ -1,6 +1,7 @@
 import { Bech32Address } from '@keplr-wallet/cosmos'
 
 import { ChainInfoID, NETWORK } from 'types/enums'
+import { getUrl } from 'utils/url'
 
 const Pion1: ChainConfig = {
   id: ChainInfoID.Pion1,
@@ -31,7 +32,10 @@ const Pion1: ChainConfig = {
     explorer: 'https://www.mintscan.io/neutron-testnet',
     dexAssets: 'https://cache.marsprotocol.io/api/pion-1/tokens',
     dexPools: 'https://cache.marsprotocol.io/api/pion-1/pools',
-    gasPrices: '/feemarket/v1/gas_price/untrn',
+    gasPrices: getUrl(
+      process.env.NEXT_PUBLIC_NEUTRON_TEST_REST ?? 'https://rest-lb-pion.ntrn.tech',
+      '/feemarket/v1/gas_prices',
+    ),
     managedVaults: 'https://backend.test.mars-dev.net/v2/managed_vaults?chain=neutron',
     historicalManagedVaults:
       'https://backend.test.mars-dev.net/v2/managed_vaults_historical?chain=neutron',

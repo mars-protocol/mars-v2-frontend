@@ -21,7 +21,7 @@ export default function useRouteInfo(denomIn: string, denomOut: string, amount: 
   )
   const neutronRoute = useSWR<SwapRouteInfo | null>(
     !isOsmosis && debouncedAmount !== '0' && assets && astroportUrl,
-    async () => getNeutronRouteInfo(denomIn, denomOut, amount, assets),
+    async () => getNeutronRouteInfo(denomIn, denomOut, amount, assets, chainConfig),
   )
 
   if (isOsmosis) return osmosisRoute

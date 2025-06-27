@@ -146,6 +146,7 @@ export async function getFarmSwapActionsAndOutputCoins(
           farm.denoms[swapTo],
           bnCoin.amount,
           assets,
+          chainConfig,
         )
         if (neutronRouteInfo) {
           swapCoins[swapTo].amount = swapCoins[swapTo].amount.plus(
@@ -207,7 +208,13 @@ export async function getFarmSwapActionsAndOutputCoins(
       const primarySwapUrl = `${chainConfig.endpoints.routes}/quote?tokenIn=${swapAmount}${bnCoin.denom}&tokenOutDenom=${farm.denoms.primary}`
       const primarySwapRouteInfo = chainConfig.isOsmosis
         ? await getOsmosisRouteInfo(primarySwapUrl, farm.denoms.primary, assets)
-        : await getNeutronRouteInfo(bnCoin.denom, farm.denoms.primary, swapAmount, assets)
+        : await getNeutronRouteInfo(
+            bnCoin.denom,
+            farm.denoms.primary,
+            swapAmount,
+            assets,
+            chainConfig,
+          )
 
       if (swapAmount.isGreaterThan(BN_ZERO) && primarySwapRouteInfo) {
         swapCoins.primary.amount = swapCoins.primary.amount.plus(
@@ -232,7 +239,13 @@ export async function getFarmSwapActionsAndOutputCoins(
 
       const secondarySwapRouteInfo = chainConfig.isOsmosis
         ? await getOsmosisRouteInfo(secondarySwapUrl, farm.denoms.primary, assets)
-        : await getNeutronRouteInfo(bnCoin.denom, farm.denoms.secondary, amount, assets)
+        : await getNeutronRouteInfo(
+            bnCoin.denom,
+            farm.denoms.secondary,
+            amount,
+            assets,
+            chainConfig,
+          )
 
       if (amount.isGreaterThan(BN_ZERO) && secondarySwapRouteInfo) {
         swapCoins.secondary.amount = swapCoins.secondary.amount.plus(
