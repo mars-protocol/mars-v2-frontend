@@ -13,7 +13,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     setApiOptions({
-      apiUrl: process.env.NEXT_PUBLIC_SKIP_API_URL!,
+      apiUrl: 'https://api.skip.build',
     })
   }, [])
 

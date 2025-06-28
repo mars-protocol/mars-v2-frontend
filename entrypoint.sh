@@ -9,7 +9,6 @@ echo "APP_NEXT_OSMOSIS_REST=$URL_OSMOSIS_REST" >> $envFilename
 echo "APP_NEXT_NEUTRON_RPC=$URL_NEUTRON_RPC" >> $envFilename
 echo "APP_NEXT_NEUTRON_REST=$URL_NEUTRON_REST" >> $envFilename
 echo "APP_NEXT_WALLET_CONNECT_ID=$WALLET_CONNECT_ID" >> $envFilename
-echo "APP_NEXT_SKIP_API_URL='https://api.skip.build'" >> $envFilename
 
 function apply_path {
   # read all config file  
