@@ -1,9 +1,10 @@
 import useSWR from 'swr'
 
-import getRouteInfo from 'api/swap/getRouteInfo'
-import useDebounce from 'hooks/common/useDebounce'
+import getNeutronRouteInfo from 'api/swap/getNeutronRouteInfo'
+import getOsmosisRouteInfo from 'api/swap/getOsmosisRouteInfo'
 import useAssets from 'hooks/assets/useAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import useDebounce from 'hooks/common/useDebounce'
 
 export default function useRouteInfo(denomIn: string, denomOut: string, amount: BigNumber) {
   const chainConfig = useChainConfig()
@@ -16,14 +17,14 @@ export default function useRouteInfo(denomIn: string, denomOut: string, amount: 
 
   const osmosisRoute = useSWR<SwapRouteInfo | null>(
     isOsmosis && debouncedAmount !== '0' && osmosisUrl,
-    async () => getRouteInfo(osmosisUrl, denomIn, assets, true),
+    async () => getOsmosisRouteInfo(osmosisUrl, denomIn, assets),
   )
-  const astroportRoute = useSWR<SwapRouteInfo | null>(
-    !isOsmosis && debouncedAmount !== '0' && astroportUrl,
-    async () => getRouteInfo(astroportUrl, denomIn, assets, false),
+  const neutronRoute = useSWR<SwapRouteInfo | null>(
+    !isOsmosis && debouncedAmount !== '0' && assets && astroportUrl,
+    async () => getNeutronRouteInfo(denomIn, denomOut, amount, assets, chainConfig),
   )
 
   if (isOsmosis) return osmosisRoute
 
-  return astroportRoute
+  return neutronRoute
 }
