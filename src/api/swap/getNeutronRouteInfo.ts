@@ -1,6 +1,95 @@
 import { route as skipRoute } from '@skip-go/client'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
+import getAstroportRouteInfo from './getAstroportRouteInfo'
+
+type VenueType = 'duality' | 'astroport' | 'mixed' | 'unknown'
+
+function analyzeVenues(skipRouteResponse: any): VenueType {
+  if (!skipRouteResponse) return 'unknown'
+  if (!skipRouteResponse.swapVenues && !skipRouteResponse.operations) return 'unknown'
+
+  const venuesUsed = new Set<string>()
+
+  skipRouteResponse.swapVenues?.forEach((venue: any) => {
+    if (venue?.name) venuesUsed.add(venue.name)
+  })
+
+  skipRouteResponse.operations?.forEach((operation: any) => {
+    const venueName = operation?.swap?.swapIn?.swapVenue?.name
+    if (venueName) venuesUsed.add(venueName)
+  })
+
+  if (venuesUsed.size === 0) return 'unknown'
+  if (venuesUsed.size > 1) return 'mixed'
+
+  const singleVenue = Array.from(venuesUsed)[0]
+  if (singleVenue === 'neutron-duality') return 'duality'
+  if (singleVenue === 'neutron-astroport') return 'astroport'
+
+  return 'unknown'
+}
+
+function extractSwapOperations(skipRouteResponse: any): any[] {
+  const firstOperation = (skipRouteResponse.operations?.[0] as any)?.swap?.swapIn?.swapOperations
+  return firstOperation || []
+}
+
+function createDualityRoute(denomIn: string, denomOut: string, swapOperations: any[]): any {
+  const swapDenoms: string[] = []
+
+  swapOperations.forEach((op: any) => {
+    if (op.denomOut && op.denomOut !== denomOut) {
+      swapDenoms.push(op.denomOut)
+    }
+  })
+
+  return {
+    duality: {
+      from: denomIn,
+      swap_denoms: swapDenoms,
+      to: denomOut,
+    },
+  }
+}
+
+function createAstroportRoute(denomIn: string, denomOut: string, swapOperations: any[]): any {
+  const swaps: any[] = []
+
+  swapOperations.forEach((op: any) => {
+    swaps.push({
+      from: op.denomIn,
+      to: op.denomOut,
+    })
+  })
+
+  return {
+    astro: {
+      swaps: swaps.length > 0 ? swaps : [{ from: denomIn, to: denomOut }],
+    },
+  }
+}
+
+function createSwapDescription(denomIn: string, denomOut: string, assets: Asset[]): string {
+  return [
+    assets.find(byDenom(denomIn))?.symbol || denomIn,
+    assets.find(byDenom(denomOut))?.symbol || denomOut,
+  ].join(' -> ')
+}
+
+function buildSwapRouteInfo(
+  skipRouteResponse: any,
+  route: any,
+  description: string,
+): SwapRouteInfo {
+  return {
+    amountOut: BN(skipRouteResponse.amountOut || '0'),
+    priceImpact: BN(skipRouteResponse.swapPriceImpactPercent || '0'),
+    fee: BN('0'),
+    description,
+    route,
+  } as SwapRouteInfo
+}
 
 export default async function getNeutronRouteInfo(
   denomIn: string,
@@ -10,37 +99,41 @@ export default async function getNeutronRouteInfo(
   chainConfig: ChainConfig,
 ): Promise<SwapRouteInfo | null> {
   try {
-    const skipRouteResponse = await skipRoute({
+    const skipRouteParams = {
       amountIn: amount.toString(),
       sourceAssetDenom: denomIn,
       sourceAssetChainId: chainConfig.id,
       destAssetDenom: denomOut,
       destAssetChainId: chainConfig.id,
-      swapVenues: [{ chainId: chainConfig.id }],
-    })
+      swapVenues: [
+        { name: 'neutron-duality', chainId: chainConfig.id },
+        { name: 'neutron-astroport', chainId: chainConfig.id },
+      ],
+    }
 
-    if (!skipRouteResponse) return null
+    const skipRouteResponse = await skipRoute(skipRouteParams)
 
-    return {
-      amountOut: BN(skipRouteResponse.amountOut || '0'),
-      priceImpact: BN('0'), // Skip doesn't provide price impact in the same format
-      fee: BN('0'), // Skip fees are calculated differently
-      description: [
-        assets.find(byDenom(denomIn))?.symbol || denomIn,
-        assets.find(byDenom(denomOut))?.symbol || denomOut,
-      ].join(' -> '),
-      route: {
-        astro: {
-          swaps: [
-            {
-              from: denomIn,
-              to: denomOut,
-            },
-          ],
-        },
-      },
-    } as SwapRouteInfo
-  } catch {
-    return null
+    if (!skipRouteResponse) {
+      return await getAstroportRouteInfo(denomIn, denomOut, amount, assets, chainConfig)
+    }
+
+    const venueType = analyzeVenues(skipRouteResponse)
+
+    if (venueType === 'mixed' || venueType === 'unknown') {
+      return await getAstroportRouteInfo(denomIn, denomOut, amount, assets, chainConfig)
+    }
+
+    const swapOperations = extractSwapOperations(skipRouteResponse)
+
+    const route =
+      venueType === 'duality'
+        ? createDualityRoute(denomIn, denomOut, swapOperations)
+        : createAstroportRoute(denomIn, denomOut, swapOperations)
+
+    const description = createSwapDescription(denomIn, denomOut, assets)
+
+    return buildSwapRouteInfo(skipRouteResponse, route, description)
+  } catch (error) {
+    return await getAstroportRouteInfo(denomIn, denomOut, amount, assets, chainConfig)
   }
 }

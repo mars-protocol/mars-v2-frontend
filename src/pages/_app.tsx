@@ -1,8 +1,8 @@
 import { AppProps } from 'next/app'
 import { useEffect, useState } from 'react'
 
-import init from 'utils/health_computer'
 import { setApiOptions } from '@skip-go/client'
+import init from 'utils/health_computer'
 
 import 'react-toastify/dist/ReactToastify.css'
 import 'styles/globals.css'
@@ -14,7 +14,6 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     setApiOptions({
       apiUrl: process.env.NEXT_PUBLIC_SKIP_API_URL!,
-      apiKey: process.env.NEXT_PUBLIC_SKIP_API_KEY!,
     })
   }, [])
 
