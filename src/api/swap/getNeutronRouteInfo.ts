@@ -82,9 +82,23 @@ function buildSwapRouteInfo(
   route: any,
   description: string,
 ): SwapRouteInfo {
+  let priceImpact = BN('0')
+
+  if (skipRouteResponse.swapPriceImpactPercent) {
+    priceImpact = BN(skipRouteResponse.swapPriceImpactPercent)
+  } else if (skipRouteResponse.usdAmountIn && skipRouteResponse.usdAmountOut) {
+    const usdAmountIn = BN(skipRouteResponse.usdAmountIn)
+    const usdAmountOut = BN(skipRouteResponse.usdAmountOut)
+
+    if (usdAmountIn.gt(0)) {
+      // Price impact = ((usdAmountOut - usdAmountIn) / usdAmountIn) * 100
+      priceImpact = usdAmountOut.minus(usdAmountIn).dividedBy(usdAmountIn).multipliedBy(100)
+    }
+  }
+
   return {
     amountOut: BN(skipRouteResponse.amountOut || '0'),
-    priceImpact: BN(skipRouteResponse.swapPriceImpactPercent || '0'),
+    priceImpact,
     fee: BN('0'),
     description,
     route,
