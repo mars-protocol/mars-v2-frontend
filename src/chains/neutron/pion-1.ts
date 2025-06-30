@@ -1,6 +1,7 @@
 import { Bech32Address } from '@keplr-wallet/cosmos'
 
 import { ChainInfoID, NETWORK } from 'types/enums'
+import { getUrl } from 'utils/url'
 
 const Pion1: ChainConfig = {
   id: ChainInfoID.Pion1,
@@ -13,13 +14,13 @@ const Pion1: ChainConfig = {
     sell: 'factory/neutron1ke0vqqzyymlp5esr8gjwuzh94ysnpvj8er5hm7/UUSDC',
   },
   contracts: {
-    redBank: 'neutron1ufcjwgucts9kdgsfvtnsdh9edx7j2fxcxf64e0s8kzrljzq5fq3stvpg74',
-    incentives: 'neutron1p35wyc2zz6fr7kx9e5sw6acq7kr0hcqphuschljh60sz8ypeyhyq6jswuj',
-    oracle: 'neutron14d0trdr8mueuhh0lxxmt596vrtpe7sy2avgrvklex6k3v7yy8s2stkdgex',
-    params: 'neutron1p0lgz33aatghtscs6qwa38lzm3zpnrkrw0tj6g0tunpjzkm7cshs542n0q',
-    creditManager: 'neutron1tqksp69rqe44xvkhwwgfgt64r508t5h6h0hqy2vz9aq7wjc5yhusrrghju',
-    accountNft: 'neutron13asfwvgfjspc0w9l2534xnr853e58fnmlmlzkkq0n53pls0flx2q5c3qpw',
-    perps: 'neutron1puj7jan803lnqtnche3m3z6gtyhw6vthu9ey9tpjyu7qvqryeaqsq74e3h',
+    redBank: 'neutron1u7850wkf52lyly7wmzrx3lkkqvur9wnwu9vnh0grpa23mn2fuujqsym5a9',
+    incentives: 'neutron1xlkxdc863efk0l2whl53pzvf9t90t68pxmruv3dnx2ay6qnp2dsqf0n83w',
+    oracle: 'neutron1rtvghc7ux7mvrq0j88va494t9rl4ylye3u73fgn7f3g0fxkt3lfs29lnwt',
+    params: 'neutron1upvt9j5f6l98sfw6qjf4xmcmggfpzh8yrp33m0997qnk6e2rlyhsfnstw5',
+    creditManager: 'neutron17qanmykcr5fr4kmvstzn03efqpdufk6dzxtna0970dkjar2qjd8s9h4pdd',
+    accountNft: 'neutron1tk3hfrcl6k05tkeewzzalamhaye7q669mz5htk3s9tdzy73up8zsnt47p9',
+    perps: 'neutron15dwg9zp3ngv724ehz6c5k2v4emwu6jyj6u4tc560p5qn358pyhvsl4yf84',
     pyth: 'neutron15ldst8t80982akgr8w8ekcytejzkmfpgdkeq4xgtge48qs7435jqp87u3t',
   },
   endpoints: {
@@ -31,7 +32,10 @@ const Pion1: ChainConfig = {
     explorer: 'https://www.mintscan.io/neutron-testnet',
     dexAssets: 'https://cache.marsprotocol.io/api/pion-1/tokens',
     dexPools: 'https://cache.marsprotocol.io/api/pion-1/pools',
-    gasPrices: '/feemarket/v1/gas_price/untrn',
+    gasPrices: getUrl(
+      process.env.NEXT_PUBLIC_NEUTRON_TEST_REST ?? 'https://rest-lb-pion.ntrn.tech',
+      '/feemarket/v1/gas_prices',
+    ),
     managedVaults: 'https://backend.test.mars-dev.net/v2/managed_vaults?chain=neutron',
     historicalManagedVaults:
       'https://backend.test.mars-dev.net/v2/managed_vaults_historical?chain=neutron',

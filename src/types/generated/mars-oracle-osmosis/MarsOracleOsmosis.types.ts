@@ -189,11 +189,20 @@ export type QueryMsg =
         kind?: ActionKind | null
       }
     }
+  | {
+      has_price_source: {
+        denom: string
+      }
+    }
 export type ActionKind = 'default' | 'liquidation'
 export interface ConfigResponse {
   base_denom: string
   owner?: string | null
   proposed_new_owner?: string | null
+}
+export interface HasPriceSourceResponse {
+  denom: string
+  has_price_source: boolean
 }
 export interface PriceResponse {
   denom: string
