@@ -105,6 +105,7 @@ export default async function getNeutronRouteInfo(
       sourceAssetChainId: chainConfig.id,
       destAssetDenom: denomOut,
       destAssetChainId: chainConfig.id,
+      allowUnsafe: true,
       swapVenues: [
         { name: 'neutron-duality', chainId: chainConfig.id },
         { name: 'neutron-astroport', chainId: chainConfig.id },
