@@ -57,8 +57,9 @@ const nextConfig = {
   },
   async rewrites() {
     return [
+      // Rewrite frontend routes for non-bot user agents (excluding API routes)
       {
-        source: '/:path*',
+        source: '/((?!api|_next|favicon).*)',
         destination: '/',
         has: [
           {
