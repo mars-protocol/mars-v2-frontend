@@ -13,6 +13,7 @@ import Name, { NAME_META } from 'components/hls/Staking/Table/Columns/Name'
 
 interface Props {
   isLoading: boolean
+  openHlsInfoDialog: (continueCallback: () => void) => void
 }
 
 export default function useAvailableColumns(props: Props) {
@@ -46,10 +47,14 @@ export default function useAvailableColumns(props: Props) {
       {
         ...DEPOSIT_META,
         cell: ({ row }) => (
-          <Deposit strategy={row.original as HlsStrategy} isLoading={props.isLoading} />
+          <Deposit
+            strategy={row.original as HlsStrategy}
+            isLoading={props.isLoading}
+            openHlsInfoDialog={props.openHlsInfoDialog}
+          />
         ),
       },
     ],
-    [props.isLoading],
+    [props.isLoading, props.openHlsInfoDialog],
   )
 }

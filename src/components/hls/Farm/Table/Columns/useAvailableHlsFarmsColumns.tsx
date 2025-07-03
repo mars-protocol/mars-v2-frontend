@@ -15,6 +15,7 @@ import useAssets from 'hooks/assets/useAssets'
 
 interface Props {
   isLoading: boolean
+  openHlsInfoDialog: (continueCallback: () => void) => void
 }
 
 export default function useAvailableHlsFarmsColumns(props: Props) {
@@ -47,8 +48,10 @@ export default function useAvailableHlsFarmsColumns(props: Props) {
       },
       {
         ...DEPOSIT_META,
-        cell: ({ row }) => <Deposit hlsFarm={row.original} />,
+        cell: ({ row }) => (
+          <Deposit hlsFarm={row.original} openHlsInfoDialog={props.openHlsInfoDialog} />
+        ),
       },
     ]
-  }, [assets, props.isLoading])
+  }, [assets, props.isLoading, props.openHlsInfoDialog])
 }

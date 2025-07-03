@@ -1372,7 +1372,6 @@ interface FocusComponent {
 interface ModalSlice {
   accountDeleteModal: Account | null
   addFarmBorrowingsModal: AddFarmBorrowingsModal | null
-  alertDialog: AlertDialogConfig | null
   assetOverlayState: OverlayState
   hlsModal: HlsModal | null
   hlsManageModal: HlsManageModal | null

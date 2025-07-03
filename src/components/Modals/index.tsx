@@ -1,6 +1,5 @@
 export { default as AccountDeleteController } from 'components/Modals/Account/AccountDeleteModal'
 export { default as AddFarmAssetsModal } from 'components/Modals/AddFarmAssets'
-export { default as AlertDialogController } from 'components/Modals/AlertDialog'
 export { default as AstroLpModal } from 'components/Modals/AstroLp'
 export { default as BorrowModal } from 'components/Modals/BorrowModal'
 export { default as FundAndWithdrawModal } from 'components/Modals/FundWithdraw'

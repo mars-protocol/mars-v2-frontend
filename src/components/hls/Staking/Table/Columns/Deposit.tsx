@@ -1,12 +1,8 @@
 import { useCallback } from 'react'
 
 import ActionButton from 'components/common/Button/ActionButton'
-import { ArrowRight, Circle, TrashBin, Wallet } from 'components/common/Icons'
+import { Circle, TrashBin, Wallet } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
-import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
-import { LocalStorageKeys } from 'constants/localStorageKeys'
-import useAlertDialog from 'hooks/common/useAlertDialog'
-import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 
 export const DEPOSIT_META = {
@@ -20,17 +16,11 @@ interface Props {
   isLoading: boolean
   strategy?: HlsStrategy
   vault?: Vault
+  openHlsInfoDialog: (continueCallback: () => void) => void
 }
 
 export default function Deposit(props: Props) {
-  const { strategy, vault } = props
-
-  const [showHlsInfo, setShowHlsInfo] = useLocalStorage<boolean>(
-    LocalStorageKeys.HLS_INFORMATION,
-    true,
-  )
-
-  const { open: openAlertDialog, close } = useAlertDialog()
+  const { strategy, vault, openHlsInfoDialog } = props
 
   const openHlsModal = useCallback(() => {
     if (!strategy && !vault) return
@@ -38,32 +28,8 @@ export default function Deposit(props: Props) {
   }, [strategy, vault])
 
   const handleOnClick = useCallback(() => {
-    if (!showHlsInfo) {
-      openHlsModal()
-      return
-    }
-
-    openAlertDialog({
-      title: 'Understanding Hls Positions',
-      content: <AlertDialogItems items={HLS_INFO_ITEMS} />,
-      positiveButton: {
-        text: 'Continue',
-        icon: <ArrowRight />,
-        onClick: openHlsModal,
-      },
-      negativeButton: {
-        text: 'Cancel',
-        onClick: () => {
-          setShowHlsInfo(true)
-          close()
-        },
-      },
-      checkbox: {
-        text: "Don't show again",
-        onClick: (isChecked: boolean) => setShowHlsInfo(!isChecked),
-      },
-    })
-  }, [close, openAlertDialog, openHlsModal, setShowHlsInfo, showHlsInfo])
+    openHlsInfoDialog(openHlsModal)
+  }, [openHlsModal, openHlsInfoDialog])
 
   if (props.isLoading) return <Loading />
 
