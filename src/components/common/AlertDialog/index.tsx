@@ -1,29 +1,36 @@
 import classNames from 'classnames'
 
 import Button from 'components/common/Button'
-import Checkbox from 'components/common/Checkbox'
 import EscButton from 'components/common/Button/EscButton'
+import Checkbox from 'components/common/Checkbox'
 import Text from 'components/common/Text'
 import { NoIcon, YesIcon } from 'components/Modals/AlertDialog/ButtonIcons'
 import Modal from 'components/Modals/Modal'
-import useAlertDialog from 'hooks/common/useAlertDialog'
 import useToggle from 'hooks/common/useToggle'
 
-export default function AlertDialogController() {
-  const { config, close } = useAlertDialog()
-
-  if (!config) return null
-
-  return <AlertDialog config={config} close={close} />
+interface AlertDialogProps {
+  isOpen: boolean
+  onClose: () => void
+  title?: string
+  content: React.ReactElement | string
+  icon?: React.ReactElement
+  header?: React.ReactElement
+  positiveButton?: AlertDialogButton
+  negativeButton?: AlertDialogButton
+  checkbox?: {
+    text: string
+    onClick: (isChecked: boolean) => void
+  }
+  isSingleButtonLayout?: boolean
+  showCloseButton?: boolean
+  titleClassName?: string
+  modalClassName?: string
 }
 
-interface Props {
-  config: AlertDialogConfig
-  close: () => void
-}
-
-function AlertDialog(props: Props) {
+export default function AlertDialog(props: AlertDialogProps) {
   const {
+    isOpen,
+    onClose,
     title,
     icon,
     content,
@@ -35,13 +42,15 @@ function AlertDialog(props: Props) {
     showCloseButton,
     titleClassName,
     modalClassName,
-  } = props.config
+  } = props
 
   const [toggle, handleToggle] = useToggle()
 
+  if (!isOpen) return null
+
   const handleButtonClick = (button?: AlertDialogButton) => {
     button?.onClick && button.onClick()
-    props.close()
+    onClose()
   }
 
   function handleCheckboxClick() {
@@ -51,13 +60,13 @@ function AlertDialog(props: Props) {
 
   return (
     <Modal
-      onClose={props.close}
+      onClose={onClose}
       hideTxLoader
       header={
         header ? (
           <div className='flex items-center justify-between w-full'>
             {header}
-            {showCloseButton && <EscButton onClick={props.close} />}
+            {showCloseButton && <EscButton onClick={onClose} />}
           </div>
         ) : (
           <div className='flex items-center gap-4'>
@@ -84,7 +93,7 @@ function AlertDialog(props: Props) {
           {checkbox && (
             <div className='flex justify-center'>
               <Checkbox
-                name='hls-info-toggle'
+                name='alert-dialog-checkbox'
                 checked={toggle}
                 onChange={handleCheckboxClick}
                 text={checkbox.text}
@@ -123,7 +132,7 @@ function AlertDialog(props: Props) {
             )}
             {checkbox && (
               <Checkbox
-                name='hls-info-toggle'
+                name='alert-dialog-checkbox'
                 checked={toggle}
                 onChange={handleCheckboxClick}
                 text={checkbox.text}

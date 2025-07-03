@@ -1,7 +1,7 @@
-import { ReactElement, useEffect, useMemo } from 'react'
+import { ReactElement, useCallback, useEffect, useState } from 'react'
 
+import AlertDialog from 'components/common/AlertDialog'
 import { Enter, InfoCircle } from 'components/common/Icons'
-import useAlertDialog from 'hooks/common/useAlertDialog'
 
 interface Props {
   content: string | ReactElement
@@ -12,53 +12,29 @@ interface Props {
 }
 
 export default function AccountAlertDialog(props: Props) {
-  const { open: showAlertDialog, close: closeAlertDialog } = useAlertDialog()
   const { title, content, closeHandler, positiveButton, icon = <InfoCircle /> } = props
+  const [isOpen, setIsOpen] = useState(false)
 
-  const alertConfig = useMemo(
-    () => ({
-      icon,
-      title,
-      content,
-      negativeButton: {
-        text: 'Cancel',
-        icon: <Enter />,
-        onClick: () => {
-          closeHandler()
-          closeAlertDialog()
-        },
-      },
-      positiveButton: {
-        ...positiveButton,
-        onClick: async () => {
-          if (positiveButton.onClick) {
-            await positiveButton.onClick()
-          }
-          closeAlertDialog()
-        },
-      },
-      onEscapeKeyDown: () => {
-        closeHandler()
-        closeAlertDialog()
-      },
-    }),
-    [title, content, closeHandler, positiveButton, icon, closeAlertDialog],
-  )
+  const handleClose = useCallback(() => {
+    setIsOpen(false)
+    closeHandler()
+  }, [closeHandler])
+
+  const handlePositiveClick = async () => {
+    if (positiveButton.onClick) {
+      await positiveButton.onClick()
+    }
+    setIsOpen(false)
+  }
 
   useEffect(() => {
-    showAlertDialog(alertConfig)
-
-    return () => {
-      closeAlertDialog()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showAlertDialog, closeAlertDialog])
+    setIsOpen(true)
+  }, [])
 
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        closeHandler()
-        closeAlertDialog()
+        handleClose()
       }
     }
 
@@ -67,7 +43,24 @@ export default function AccountAlertDialog(props: Props) {
     return () => {
       document.removeEventListener('keydown', handleEscKey)
     }
-  }, [closeHandler, closeAlertDialog])
+  }, [handleClose])
 
-  return null
+  return (
+    <AlertDialog
+      isOpen={isOpen}
+      onClose={handleClose}
+      title={title}
+      content={content}
+      icon={icon}
+      positiveButton={{
+        ...positiveButton,
+        onClick: handlePositiveClick,
+      }}
+      negativeButton={{
+        text: 'Cancel',
+        icon: <Enter />,
+        onClick: handleClose,
+      }}
+    />
+  )
 }
