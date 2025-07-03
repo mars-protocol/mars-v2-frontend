@@ -1,12 +1,12 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 
+import AlertDialog from 'components/common/AlertDialog'
 import ActionButton from 'components/common/Button/ActionButton'
 import { CrossCircled, Enter, ExclamationMarkTriangle, Plus, Wallet } from 'components/common/Icons'
 import Loading from 'components/common/Loading'
 import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 
@@ -31,7 +31,7 @@ export const Deposit = (props: Props) => {
     chainConfig.id + '/' + LocalStorageKeys.PERPS_VAULT_INFORMATION,
     true,
   )
-  const { open: openAlertDialog, close } = useAlertDialog()
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   function enterVaultHandler() {
     if (props.isPerps && !showPerpsVaultInformation) {
@@ -40,7 +40,7 @@ export const Deposit = (props: Props) => {
     }
 
     if (props.isPerps && showPerpsVaultInformation) {
-      openPerpsVaultInfoDialog()
+      setIsDialogOpen(true)
       return
     }
 
@@ -64,28 +64,19 @@ export const Deposit = (props: Props) => {
     })
   }, [])
 
-  const openPerpsVaultInfoDialog = useCallback(() => {
-    openAlertDialog({
-      title: 'Information on perps vaults',
-      content: <AlertDialogItems items={INFO_ITEMS} />,
-      positiveButton: {
-        text: 'Continue',
-        icon: <Enter />,
-        onClick: openPerpsVaultModal,
-      },
-      negativeButton: {
-        text: 'Cancel',
-        onClick: () => {
-          setShowPerpsVaultInformation(true)
-          close()
-        },
-      },
-      checkbox: {
-        text: "Don't show again",
-        onClick: (isChecked: boolean) => setShowPerpsVaultInformation(!isChecked),
-      },
-    })
-  }, [close, openAlertDialog, openPerpsVaultModal, setShowPerpsVaultInformation])
+  const handleDialogClose = () => {
+    setIsDialogOpen(false)
+  }
+
+  const handleContinue = () => {
+    openPerpsVaultModal()
+    setIsDialogOpen(false)
+  }
+
+  const handleCancel = () => {
+    setShowPerpsVaultInformation(true)
+    setIsDialogOpen(false)
+  }
 
   if (props.isLoading) return <Loading />
 
@@ -98,6 +89,26 @@ export const Deposit = (props: Props) => {
         leftIcon={<Plus />}
         short
         className='w-full'
+      />
+
+      <AlertDialog
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+        title='Information on perps vaults'
+        content={<AlertDialogItems items={INFO_ITEMS} />}
+        positiveButton={{
+          text: 'Continue',
+          icon: <Enter />,
+          onClick: handleContinue,
+        }}
+        negativeButton={{
+          text: 'Cancel',
+          onClick: handleCancel,
+        }}
+        checkbox={{
+          text: "Don't show again",
+          onClick: (isChecked: boolean) => setShowPerpsVaultInformation(!isChecked),
+        }}
       />
     </div>
   )

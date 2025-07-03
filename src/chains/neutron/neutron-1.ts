@@ -140,7 +140,7 @@ const Neutron1: ChainConfig = {
     marsVotingPower: 'neutron1pxjszcmmdxwtw9kv533u3hcudl6qahsa42chcs24gervf4ge40usaw3pcr',
   },
   endpoints: {
-    routes: 'https://app.astroport.fi/api/routes',
+    routes: 'https://router.astroport.fi/api/routes',
     rpc: process.env.NEXT_PUBLIC_NEUTRON_RPC ?? 'https://rpc-lb.neutron.org',
     fallbackRpc: 'https://neutron-rpc.cosmos-apis.com',
     rest: process.env.NEXT_PUBLIC_NEUTRON_REST ?? 'https://rest-lb.neutron.org',

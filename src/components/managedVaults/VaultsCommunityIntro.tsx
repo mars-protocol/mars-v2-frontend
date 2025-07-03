@@ -1,24 +1,24 @@
+import AlertDialog from 'components/common/AlertDialog'
 import Button from 'components/common/Button'
 import { Account, ArrowRight, HandCoins, Plus, PlusSquared, Wallet } from 'components/common/Icons'
 import Intro from 'components/common/Intro'
 import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
+import WalletSelect from 'components/Wallet/WalletSelect'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { DocURL } from 'types/enums'
 import { getPage, getRoute } from 'utils/route'
-import WalletSelect from 'components/Wallet/WalletSelect'
 
 export default function VaultsCommunityIntro() {
   const [showVaultInformation, setShowVaultInformation] = useLocalStorage<boolean>(
     LocalStorageKeys.VAULT_COMMUNITY_INFORMATION,
     true,
   )
-  const { open: showAlertDialog, close } = useAlertDialog()
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
@@ -39,67 +39,77 @@ export default function VaultsCommunityIntro() {
       return
     }
 
-    showAlertDialog({
-      title: 'Become a Vault Manager',
-      content: <AlertDialogItems items={INFO_ITEMS} />,
+    setIsDialogOpen(true)
+  }, [showVaultInformation, openCreateVaultOverlay])
 
-      positiveButton: {
-        text: 'Continue',
-        icon: <ArrowRight />,
-        onClick: openCreateVaultOverlay,
-      },
-      negativeButton: {
-        text: 'Cancel',
-        onClick: () => {
-          setShowVaultInformation(true)
-          close()
-        },
-      },
-      checkbox: {
-        text: "Don't show again",
-        onClick: (isChecked: boolean) => setShowVaultInformation(!isChecked),
-      },
-    })
-  }, [
-    close,
-    showAlertDialog,
-    showVaultInformation,
-    setShowVaultInformation,
-    openCreateVaultOverlay,
-  ])
+  const handleDialogClose = () => {
+    setIsDialogOpen(false)
+  }
+
+  const handleContinue = () => {
+    openCreateVaultOverlay()
+    setIsDialogOpen(false)
+  }
+
+  const handleCancel = () => {
+    setShowVaultInformation(true)
+    setIsDialogOpen(false)
+  }
 
   return (
-    <Intro
-      bg='vaults'
-      isCompact={!showTutorial}
-      text={
-        showTutorial ? (
-          <>
-            <span className='text-white'>User generated vaults </span> is a strategy where users
-            borrow funds to increase their yield farming position, aiming to earn more in rewards
-            than the cost of the borrowed assets.
-          </>
-        ) : (
-          <>
-            <span className='text-white'>Become a Vault Manager</span> and create your own strategy.
-            Earn management fees from users who deposit into your vault.
-          </>
-        )
-      }
-    >
-      <Button text='Create Vault' color='primary' leftIcon={<Plus />} onClick={handleOnClick} />
-      {showTutorial && (
-        <Button
-          text='Learn more'
-          leftIcon={<PlusSquared />}
-          onClick={(e) => {
-            e.preventDefault()
-            window.open(DocURL.CREATE_VAULT_URL, '_blank')
-          }}
-          color='secondary'
-        />
-      )}
-    </Intro>
+    <>
+      <Intro
+        bg='vaults'
+        isCompact={!showTutorial}
+        text={
+          showTutorial ? (
+            <>
+              <span className='text-white'>User generated vaults </span> is a strategy where users
+              borrow funds to increase their yield farming position, aiming to earn more in rewards
+              than the cost of the borrowed assets.
+            </>
+          ) : (
+            <>
+              <span className='text-white'>Become a Vault Manager</span> and create your own
+              strategy. Earn management fees from users who deposit into your vault.
+            </>
+          )
+        }
+      >
+        <Button text='Create Vault' color='primary' leftIcon={<Plus />} onClick={handleOnClick} />
+        {showTutorial && (
+          <Button
+            text='Learn more'
+            leftIcon={<PlusSquared />}
+            onClick={(e) => {
+              e.preventDefault()
+              window.open(DocURL.CREATE_VAULT_URL, '_blank')
+            }}
+            color='secondary'
+          />
+        )}
+      </Intro>
+
+      <AlertDialog
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+        title='Become a Vault Manager'
+        content={<AlertDialogItems items={INFO_ITEMS} />}
+        positiveButton={{
+          text: 'Continue',
+          icon: <ArrowRight />,
+          onClick: handleContinue,
+        }}
+        negativeButton={{
+          text: 'Cancel',
+          onClick: handleCancel,
+        }}
+        checkbox={{
+          text: "Don't show again",
+          onClick: (isChecked: boolean) => setShowVaultInformation(!isChecked),
+        }}
+      />
+    </>
   )
 }
 

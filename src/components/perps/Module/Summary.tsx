@@ -1,11 +1,12 @@
 import classNames from 'classnames'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import LiqPrice from 'components/account/AccountBalancesTable/Columns/LiqPrice'
+import AlertDialog from 'components/common/AlertDialog'
 import ActionButton from 'components/common/Button/ActionButton'
 import { Callout, CalloutType } from 'components/common/Callout'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import { ArrowRight, Check } from 'components/common/Icons'
+import { ArrowRight } from 'components/common/Icons'
 import SummaryLine from 'components/common/SummaryLine'
 import Text from 'components/common/Text'
 import AssetAmount from 'components/common/assets/AssetAmount'
@@ -15,14 +16,13 @@ import { ExpectedPrice } from 'components/perps/Module/ExpectedPrice'
 import TradingFee from 'components/perps/Module/TradingFee'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import { useKeeperFee } from 'hooks/perps/useKeeperFee'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import useAlertDialog from 'hooks/common/useAlertDialog'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import { useKeeperFee } from 'hooks/perps/useKeeperFee'
 import usePerpsConfig from 'hooks/perps/usePerpsConfig'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
 import { useSubmitLimitOrder } from 'hooks/perps/useSubmitLimitOrder'
@@ -32,7 +32,6 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
 import { formatLeverage, getPerpsPriceDecimals } from 'utils/formatters'
-import { BN } from 'utils/helpers'
 
 type Props = {
   leverage: number
@@ -208,7 +207,7 @@ export default function PerpsSummary(props: Props) {
     [isNewPosition, previousAmount, newAmount],
   )
 
-  const { open: openAlertDialog } = useAlertDialog()
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const handleOnClick = useCallback(() => {
     if (!currentAccount) return
@@ -216,47 +215,17 @@ export default function PerpsSummary(props: Props) {
       onConfirm()
       return
     }
-    openAlertDialog({
-      header: (
-        <div className='flex items-center justify-between w-full'>
-          <Text size='2xl'>{isLimitOrder ? 'Limit Order Summary' : 'Order Summary'}</Text>
-        </div>
-      ),
-      content: (
-        <ConfirmationSummary
-          amount={amount}
-          accountId={currentAccount.id}
-          asset={asset}
-          leverage={leverage}
-          limitPrice={isLimitOrder ? limitPrice : undefined}
-          keeperFee={finalKeeperFee}
-        />
-      ),
-      positiveButton: {
-        text: 'Continue',
-        icon: <ArrowRight />,
-        onClick: onConfirm,
-      },
-      checkbox: {
-        text: 'Hide summary in the future',
-        onClick: (isChecked: boolean) => setShowSummary(!isChecked),
-      },
-      isSingleButtonLayout: true,
-      showCloseButton: true,
-    })
-  }, [
-    currentAccount,
-    showSummary,
-    openAlertDialog,
-    isLimitOrder,
-    amount,
-    asset,
-    leverage,
-    limitPrice,
-    finalKeeperFee,
-    onConfirm,
-    setShowSummary,
-  ])
+    setIsDialogOpen(true)
+  }, [currentAccount, showSummary, onConfirm])
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false)
+  }
+
+  const handleConfirm = () => {
+    onConfirm()
+    setIsDialogOpen(false)
+  }
 
   const submitBtnText = useMemo(() => {
     if (isStopOrder) return 'Create Stop Order'
@@ -321,6 +290,37 @@ export default function PerpsSummary(props: Props) {
           </>
         )}
       </ActionButton>
+
+      <AlertDialog
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+        header={
+          <div className='flex items-center justify-between w-full'>
+            <Text size='2xl'>{isLimitOrder ? 'Limit Order Summary' : 'Order Summary'}</Text>
+          </div>
+        }
+        content={
+          <ConfirmationSummary
+            amount={amount}
+            accountId={currentAccount?.id || ''}
+            asset={asset}
+            leverage={leverage}
+            limitPrice={isLimitOrder ? limitPrice : undefined}
+            keeperFee={finalKeeperFee}
+          />
+        }
+        positiveButton={{
+          text: 'Continue',
+          icon: <ArrowRight />,
+          onClick: handleConfirm,
+        }}
+        checkbox={{
+          text: 'Hide summary in the future',
+          onClick: (isChecked: boolean) => setShowSummary(!isChecked),
+        }}
+        isSingleButtonLayout
+        showCloseButton
+      />
     </div>
   )
 }
