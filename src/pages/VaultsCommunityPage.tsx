@@ -1,4 +1,5 @@
 import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
+import AlertDialog from 'components/common/AlertDialog'
 import { ArrowRight } from 'components/common/Icons'
 import VaultsCommunityIntro from 'components/managedVaults/VaultsCommunityIntro'
 import AvailableCommunityVaults from 'components/managedVaults/table/AvailableCommunityVaults'
@@ -6,9 +7,8 @@ import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { INFO_ITEMS } from 'constants/warningDialog'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import useAlertDialog from 'hooks/common/useAlertDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { getPage, getRoute } from 'utils/route'
@@ -18,12 +18,12 @@ export default function VaultsCommunityPage() {
     LocalStorageKeys.VAULT_PAGE_WARNING,
     true,
   )
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
   const chainConfig = useChainConfig()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
   const accountId = useAccountId()
-  const { open: showAlertDialog, close } = useAlertDialog()
 
   useEffect(() => {
     if (!chainConfig.managedVaults) {
@@ -33,32 +33,21 @@ export default function VaultsCommunityPage() {
 
   const showDialog = useCallback(() => {
     if (!showVaultWarning) return
+    setIsDialogOpen(true)
+  }, [showVaultWarning])
 
-    showAlertDialog({
-      title: 'Please be aware of the following',
-      content: <AlertDialogItems items={INFO_ITEMS} />,
-      positiveButton: {
-        text: 'Continue',
-        icon: <ArrowRight />,
-        onClick: () => {
-          close()
-        },
-      },
-      negativeButton: {
-        text: 'Cancel',
-        onClick: () => {
-          setShowVaultWarning(true)
-          close()
-        },
-      },
-      checkbox: {
-        text: "Don't show again",
-        onClick: (isChecked: boolean) => setShowVaultWarning(!isChecked),
-      },
-      modalClassName: '!bg-info/20',
-      titleClassName: 'text-info',
-    })
-  }, [close, showAlertDialog, showVaultWarning, setShowVaultWarning])
+  const handleDialogClose = () => {
+    setIsDialogOpen(false)
+  }
+
+  const handleContinue = () => {
+    setIsDialogOpen(false)
+  }
+
+  const handleCancel = () => {
+    setShowVaultWarning(true)
+    setIsDialogOpen(false)
+  }
 
   useEffect(() => {
     const vaultWarning = localStorage.getItem(LocalStorageKeys.VAULT_PAGE_WARNING)
@@ -67,16 +56,32 @@ export default function VaultsCommunityPage() {
     }
   }, [showDialog])
 
-  useEffect(() => {
-    if (!chainConfig.managedVaults) {
-      navigate(getRoute(getPage('trade', chainConfig), searchParams, address, accountId))
-    }
-  }, [accountId, address, chainConfig, chainConfig.managedVaults, navigate, searchParams])
-
   return (
     <div className='flex flex-wrap w-full gap-6'>
       <VaultsCommunityIntro />
       <AvailableCommunityVaults />
+
+      <AlertDialog
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+        title='Please be aware of the following'
+        content={<AlertDialogItems items={INFO_ITEMS} />}
+        positiveButton={{
+          text: 'Continue',
+          icon: <ArrowRight />,
+          onClick: handleContinue,
+        }}
+        negativeButton={{
+          text: 'Cancel',
+          onClick: handleCancel,
+        }}
+        checkbox={{
+          text: "Don't show again",
+          onClick: (isChecked: boolean) => setShowVaultWarning(!isChecked),
+        }}
+        modalClassName='!bg-info/20'
+        titleClassName='text-info'
+      />
     </div>
   )
 }

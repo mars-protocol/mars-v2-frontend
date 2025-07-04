@@ -7,7 +7,6 @@ export default function createModalSlice(
   return {
     accountDeleteModal: null,
     addFarmBorrowingsModal: null,
-    alertDialog: null,
     assetOverlayState: 'closed' as OverlayState,
     hlsModal: null,
     borrowModal: null,

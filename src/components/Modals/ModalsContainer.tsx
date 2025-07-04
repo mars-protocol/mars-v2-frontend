@@ -1,7 +1,6 @@
 import {
   AccountDeleteController,
   AddFarmAssetsModal,
-  AlertDialogController,
   AstroLpModal,
   BorrowModal,
   FundAndWithdrawModal,
@@ -41,7 +40,6 @@ export default function ModalsContainer() {
       {store.farmModal && <VaultModal />}
       {store.withdrawFromVaultsModal && <WithdrawFromVaultsModal />}
       {store.walletAssetsModal && <WalletAssets />}
-      <AlertDialogController />
       {store.hlsModal && <HlsModal />}
       {store.hlsCloseModal && <HlsCloseModal />}
       {store.hlsManageModal && <HlsManageModal />}
