@@ -1,7 +1,7 @@
 import { route as skipRoute } from '@skip-go/client'
+import getAstroportRouteInfo from 'api/swap/getAstroportRouteInfo'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
-import getAstroportRouteInfo from './getAstroportRouteInfo'
 
 type VenueType = 'duality' | 'astroport' | 'mixed' | 'unknown'
 

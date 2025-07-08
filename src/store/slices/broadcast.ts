@@ -32,6 +32,8 @@ import { getCurrentFeeToken } from 'utils/feeToken'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
+import getOsmosisRouteInfo from 'api/swap/getOsmosisRouteInfo'
+import getNeutronRouteInfo from 'api/swap/getNeutronRouteInfo'
 
 interface ExecuteMsgOptions {
   messages: MsgExecuteContract[]
@@ -680,11 +682,74 @@ export default function createBroadcastSlice(
       accountBalance?: boolean
       lend?: BNCoin
       fromWallet?: boolean
-    }) => {
+      swapFromDenom?: string
+      debtDenom?: string
+      slippage?: number
+    }): Promise<boolean> => {
+      if (
+        options.swapFromDenom &&
+        options.debtDenom &&
+        options.swapFromDenom !== options.debtDenom
+      ) {
+        const chainConfig = get().chainConfig
+        const isOsmosis = chainConfig.isOsmosis
+        const amount = options.coin.amount.toString()
+
+        const osmosisUrl = `${chainConfig.endpoints.routes}/quote?tokenIn=${amount}${options.swapFromDenom}&tokenOutDenom=${options.debtDenom}`
+        const routeInfo = isOsmosis
+          ? await getOsmosisRouteInfo(osmosisUrl, options.swapFromDenom, get().assets)
+          : await getNeutronRouteInfo(
+              options.swapFromDenom,
+              options.debtDenom,
+              BN(amount),
+              get().assets,
+              chainConfig,
+            )
+
+        if (!routeInfo) return false
+
+        const swapExactIn = getSwapExactInAction(
+          options.coin.toActionCoin(false),
+          options.debtDenom,
+          routeInfo,
+          options.slippage ?? 0.005,
+        )
+
+        const actions: Action[] = []
+
+        if (options.lend && options.lend.amount.isGreaterThan(0)) {
+          actions.push({ reclaim: options.lend.toActionCoin() })
+        }
+
+        actions.push(swapExactIn)
+
+        actions.push({
+          repay: {
+            coin: BNCoin.fromDenomAndBigNumber(options.debtDenom, BN_ZERO).toActionCoin(true),
+          },
+        })
+
+        const msg: CreditManagerExecuteMsg = {
+          update_credit_account: {
+            account_id: options.accountId,
+            actions,
+          },
+        }
+
+        const cmContract = get().chainConfig.contracts.creditManager
+        const messages = [generateExecutionMessage(get().address, cmContract, msg, [])]
+
+        const response = get().executeMsg({ messages })
+        get().handleTransaction({ response })
+        return response.then((response) => !!response.result)
+      }
+
       const actions: Action[] = [
         {
           repay: {
-            coin: options.coin.toActionCoin(options.accountBalance),
+            coin: options.coin.toActionCoin(
+              options.accountBalance !== undefined ? options.accountBalance : false,
+            ),
           },
         },
       ]
@@ -771,8 +836,10 @@ export default function createBroadcastSlice(
       repay: boolean
       routeInfo: SwapRouteInfo
     }) => {
+      const useAccountBalance = options.repay
+
       const swapExactIn = getSwapExactInAction(
-        options.coinIn.toActionCoin(options.isMax),
+        options.coinIn.toActionCoin(useAccountBalance || options.isMax),
         options.denomOut,
         options.routeInfo,
         options.slippage ?? 0,

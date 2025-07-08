@@ -1,4 +1,5 @@
 import {
+  AccountAssetsModal,
   AccountDeleteController,
   AddFarmAssetsModal,
   AstroLpModal,
@@ -55,6 +56,7 @@ export default function ModalsContainer() {
       <PerpsConditionalTriggersModal />
       <PerpsTriggerOrdersModal />
       <PerpsSlTpModal />
+      <AccountAssetsModal />
     </>
   )
 }

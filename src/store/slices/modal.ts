@@ -25,6 +25,7 @@ export default function createModalSlice(
     v1DepositAndWithdrawModal: null,
     v1BorrowAndRepayModal: null,
     keeperFeeModal: false,
+    accountAssetsModal: null,
     addSLTPModal: false as false | { parentPosition: PerpPositionRow },
     conditionalTriggersModal: false,
     triggerOrdersModal: null,
