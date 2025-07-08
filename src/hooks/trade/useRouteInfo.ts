@@ -13,14 +13,13 @@ export default function useRouteInfo(denomIn: string, denomOut: string, amount: 
   const debouncedAmount = useDebounce<string>(amount.toString(), 500)
 
   const osmosisUrl = `${chainConfig.endpoints.routes}/quote?tokenIn=${debouncedAmount}${denomIn}&tokenOutDenom=${denomOut}`
-  const astroportUrl = `${chainConfig.endpoints.routes}?start=${denomIn}&end=${denomOut}&amount=${debouncedAmount}&chainId=${chainConfig.id}&limit=1`
 
   const osmosisRoute = useSWR<SwapRouteInfo | null>(
     isOsmosis && debouncedAmount !== '0' && osmosisUrl,
     async () => getOsmosisRouteInfo(osmosisUrl, denomIn, assets),
   )
   const neutronRoute = useSWR<SwapRouteInfo | null>(
-    !isOsmosis && debouncedAmount !== '0' && assets && astroportUrl,
+    !isOsmosis && debouncedAmount !== '0' && assets,
     async () => getNeutronRouteInfo(denomIn, denomOut, amount, assets, chainConfig),
   )
 

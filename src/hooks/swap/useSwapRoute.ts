@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
+import { useEffect, useState } from 'react'
 
-import getRouteInfo from 'api/swap/getRouteInfo'
+import getNeutronRouteInfo from 'api/swap/getNeutronRouteInfo'
+import getOsmosisRouteInfo from 'api/swap/getOsmosisRouteInfo'
+import { getDepositAndLendCoinsToSpend } from 'hooks/accounts/useUpdatedAccount/functions'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { getDepositAndLendCoinsToSpend } from 'hooks/accounts/useUpdatedAccount/functions'
 
 export interface RouteHop {
   tokenSymbol: string
@@ -57,14 +58,13 @@ export default function useSwapRoute(
       setSwapDetails((prev) => ({ ...prev, isLoading: true }))
 
       const isOsmosis = chainConfig.isOsmosis
-      const amountString = amount.toString()
 
-      const routeUrl = isOsmosis
-        ? `${chainConfig.endpoints.routes}/quote?tokenIn=${amountString}${fromDenom}&tokenOutDenom=${toDenom}`
-        : `${chainConfig.endpoints.routes}?start=${fromDenom}&end=${toDenom}&amount=${amountString}&chainId=${chainConfig.id}&limit=1`
+      const osmosisUrl = `${chainConfig.endpoints.routes}/quote?tokenIn=${amount}${fromDenom}&tokenOutDenom=${toDenom}`
 
       try {
-        const routeInfo = await getRouteInfo(routeUrl, fromDenom, assets, isOsmosis)
+        const routeInfo = isOsmosis
+          ? await getOsmosisRouteInfo(osmosisUrl, fromDenom, assets)
+          : await getNeutronRouteInfo(fromDenom, toDenom, amount, assets, chainConfig)
 
         if (routeInfo) {
           const fromAsset = assets.find((a) => a.denom === fromDenom)
