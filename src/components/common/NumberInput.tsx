@@ -92,8 +92,7 @@ export default function NumberInput({
       return
     }
 
-    const decimalPattern =
-      props.maxDecimals > 0 ? `^\\d*\\.?\\d{0,${props.maxDecimals}}$` : '^\\d*$'
+    const decimalPattern = maxDecimals > 0 ? `^\\d*\\.?\\d{0,${maxDecimals}}$` : '^\\d*$'
     const regex = new RegExp(decimalPattern)
 
     if (regex.test(newValue)) {
