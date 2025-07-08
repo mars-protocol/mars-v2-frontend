@@ -32,7 +32,8 @@ import { getCurrentFeeToken } from 'utils/feeToken'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
-import getRouteInfo from 'api/swap/getRouteInfo'
+import getOsmosisRouteInfo from 'api/swap/getOsmosisRouteInfo'
+import getNeutronRouteInfo from 'api/swap/getNeutronRouteInfo'
 
 interface ExecuteMsgOptions {
   messages: MsgExecuteContract[]
@@ -694,20 +695,18 @@ export default function createBroadcastSlice(
         const isOsmosis = chainConfig.isOsmosis
         const amount = options.coin.amount.toString()
 
-        const routeUrl = isOsmosis
-          ? `${chainConfig.endpoints.routes}/quote?tokenIn=${amount}${options.swapFromDenom}&tokenOutDenom=${options.debtDenom}`
-          : `${chainConfig.endpoints.routes}?start=${options.swapFromDenom}&end=${options.debtDenom}&amount=${amount}&chainId=${chainConfig.id}&limit=1`
-
-        const routeInfo = await getRouteInfo(
-          routeUrl,
-          options.swapFromDenom,
-          get().assets,
-          isOsmosis,
-        )
+        const osmosisUrl = `${chainConfig.endpoints.routes}/quote?tokenIn=${amount}${options.swapFromDenom}&tokenOutDenom=${options.debtDenom}`
+        const routeInfo = isOsmosis
+          ? await getOsmosisRouteInfo(osmosisUrl, options.swapFromDenom, get().assets)
+          : await getNeutronRouteInfo(
+              options.swapFromDenom,
+              options.debtDenom,
+              BN(amount),
+              get().assets,
+              chainConfig,
+            )
 
         if (!routeInfo) return false
-
-        const minReceiveAmount = routeInfo.amountOut.multipliedBy(1 - (options.slippage ?? 0.005))
 
         const swapExactIn = getSwapExactInAction(
           options.coin.toActionCoin(false),
