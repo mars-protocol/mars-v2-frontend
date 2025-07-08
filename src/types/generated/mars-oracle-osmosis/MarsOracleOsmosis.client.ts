@@ -23,6 +23,7 @@ import {
   QueryMsg,
   ActionKind,
   ConfigResponse,
+  HasPriceSourceResponse,
   PriceResponse,
   PriceSourceResponseForString,
   ArrayOfPriceSourceResponseForString,
@@ -56,6 +57,7 @@ export interface MarsOracleOsmosisReadOnlyInterface {
     denoms: string[]
     kind?: ActionKind
   }) => Promise<ArrayOfPriceResponse>
+  hasPriceSource: ({ denom }: { denom: string }) => Promise<HasPriceSourceResponse>
 }
 export class MarsOracleOsmosisQueryClient implements MarsOracleOsmosisReadOnlyInterface {
   client: CosmWasmClient
@@ -69,6 +71,7 @@ export class MarsOracleOsmosisQueryClient implements MarsOracleOsmosisReadOnlyIn
     this.price = this.price.bind(this)
     this.prices = this.prices.bind(this)
     this.pricesByDenoms = this.pricesByDenoms.bind(this)
+    this.hasPriceSource = this.hasPriceSource.bind(this)
   }
   config = async (): Promise<ConfigResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
@@ -132,6 +135,13 @@ export class MarsOracleOsmosisQueryClient implements MarsOracleOsmosisReadOnlyIn
       prices_by_denoms: {
         denoms,
         kind,
+      },
+    })
+  }
+  hasPriceSource = async ({ denom }: { denom: string }): Promise<HasPriceSourceResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      has_price_source: {
+        denom,
       },
     })
   }

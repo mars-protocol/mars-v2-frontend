@@ -15,15 +15,6 @@ export default function FarmIntro() {
       bg='farm'
     >
       <Button
-        text='Read more about Mars'
-        leftIcon={<PlusSquared />}
-        onClick={(e) => {
-          e.preventDefault()
-          window.open(DocURL.DOCS_URL, '_blank')
-        }}
-        color='secondary'
-      />
-      <Button
         text='Learn how to Farm'
         leftIcon={<PlusSquared />}
         onClick={(e) => {

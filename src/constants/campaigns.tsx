@@ -6,7 +6,7 @@ export const CAMPAIGNS: AssetCampaign[] = [
     name: 'Stride Staking',
     type: 'apy',
     apyApi: {
-      url: 'https://neutron-cache-api.onrender.com/stride',
+      url: 'https://cache.marsprotocol.io/api/stride',
       isApr: true,
       isPercent: false,
       apyStructure: ['strideData', 'stats', 'strideYield'],
@@ -46,7 +46,7 @@ export const CAMPAIGNS: AssetCampaign[] = [
     name: 'Drop Staking',
     type: 'apy',
     apyApi: {
-      url: 'https://neutron-cache-api.onrender.com/drop',
+      url: 'https://cache.marsprotocol.io/api/drop',
       isApr: false,
       isPercent: false,
       apyStructure: ['dropData', 'apy'],
@@ -64,7 +64,7 @@ export const CAMPAIGNS: AssetCampaign[] = [
     name: 'Lido Staking',
     type: 'apy',
     apyApi: {
-      url: 'https://neutron-cache-api.onrender.com/lido',
+      url: 'https://cache.marsprotocol.io/api/lido',
       isApr: true,
       isPercent: true,
       apyStructure: ['lidoData', 'data', 'smaApr'],
@@ -83,7 +83,7 @@ export const CAMPAIGNS: AssetCampaign[] = [
     name: 'Milkyway Staking',
     type: 'apy',
     apyApi: {
-      url: 'https://neutron-cache-api.onrender.com/milkyway',
+      url: 'https://cache.marsprotocol.io/api/milkyway',
       isApr: true,
       isPercent: true,
       apyStructure: ['milkywayData', 'apr'],

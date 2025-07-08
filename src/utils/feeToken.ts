@@ -1,6 +1,6 @@
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
-import { BN } from './helpers'
+import { BN } from 'utils/helpers'
 
 export const MIN_FEE_AMOUNT = '150000'
 export const LOW_NTRN_THRESHOLD = '250000'
@@ -148,8 +148,8 @@ export function deductFeeFromMax(
   if (tokenDenom.includes('usdc') || tokenDenom.includes('uusdc')) {
     feeReserveAmount = MIN_FEE_AMOUNT
   } else {
-    const decimalAdjustment = tokenDecimals / 6
-    feeReserveAmount = BN(MIN_FEE_AMOUNT).multipliedBy(decimalAdjustment).toFixed(0)
+    const decimalAdjustment = tokenDecimals - 6
+    feeReserveAmount = BN(MIN_FEE_AMOUNT).shiftedBy(decimalAdjustment).toFixed(0)
   }
 
   if (maxAmount.isLessThanOrEqualTo(feeReserveAmount)) {

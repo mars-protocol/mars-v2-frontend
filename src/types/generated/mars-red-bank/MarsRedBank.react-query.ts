@@ -13,9 +13,10 @@ import {
   CreateOrUpdateConfig,
   ExecuteMsg,
   OwnerUpdate,
+  MarketParamsUpdate,
   Decimal,
   Uint128,
-  InitOrUpdateAssetParams,
+  MarketParams,
   InterestRateModel,
   QueryMsg,
   ConfigResponse,
@@ -752,49 +753,24 @@ export function useMarsRedBankDepositMutation(
     options,
   )
 }
-export interface MarsRedBankUpdateAssetMutation {
+export interface MarsRedBankUpdateMarketParamsMutation {
   client: MarsRedBankClient
-  msg: {
-    denom: string
-    params: InitOrUpdateAssetParams
-  }
+  msg: MarketParamsUpdate
   args?: {
     fee?: number | StdFee | 'auto'
     memo?: string
     funds?: Coin[]
   }
 }
-export function useMarsRedBankUpdateAssetMutation(
+export function useMarsRedBankUpdateMarketParamsMutation(
   options?: Omit<
-    UseMutationOptions<ExecuteResult, Error, MarsRedBankUpdateAssetMutation>,
+    UseMutationOptions<ExecuteResult, Error, MarsRedBankUpdateMarketParamsMutation>,
     'mutationFn'
   >,
 ) {
-  return useMutation<ExecuteResult, Error, MarsRedBankUpdateAssetMutation>(
-    ({ client, msg, args: { fee, memo, funds } = {} }) => client.updateAsset(msg, fee, memo, funds),
-    options,
-  )
-}
-export interface MarsRedBankInitAssetMutation {
-  client: MarsRedBankClient
-  msg: {
-    denom: string
-    params: InitOrUpdateAssetParams
-  }
-  args?: {
-    fee?: number | StdFee | 'auto'
-    memo?: string
-    funds?: Coin[]
-  }
-}
-export function useMarsRedBankInitAssetMutation(
-  options?: Omit<
-    UseMutationOptions<ExecuteResult, Error, MarsRedBankInitAssetMutation>,
-    'mutationFn'
-  >,
-) {
-  return useMutation<ExecuteResult, Error, MarsRedBankInitAssetMutation>(
-    ({ client, msg, args: { fee, memo, funds } = {} }) => client.initAsset(msg, fee, memo, funds),
+  return useMutation<ExecuteResult, Error, MarsRedBankUpdateMarketParamsMutation>(
+    ({ client, msg, args: { fee, memo, funds } = {} }) =>
+      client.updateMarketParams(msg, fee, memo, funds),
     options,
   )
 }

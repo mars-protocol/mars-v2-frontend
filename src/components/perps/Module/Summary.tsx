@@ -1,11 +1,12 @@
 import classNames from 'classnames'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import LiqPrice from 'components/account/AccountBalancesTable/Columns/LiqPrice'
+import AlertDialog from 'components/common/AlertDialog'
 import ActionButton from 'components/common/Button/ActionButton'
 import { Callout, CalloutType } from 'components/common/Callout'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import { ArrowRight, Check } from 'components/common/Icons'
+import { ArrowRight } from 'components/common/Icons'
 import SummaryLine from 'components/common/SummaryLine'
 import Text from 'components/common/Text'
 import AssetAmount from 'components/common/assets/AssetAmount'
@@ -13,29 +14,25 @@ import TradeDirection from 'components/perps/BalancesTable/Columns/TradeDirectio
 import ConfirmationSummary from 'components/perps/Module/ConfirmationSummary'
 import { ExpectedPrice } from 'components/perps/Module/ExpectedPrice'
 import TradingFee from 'components/perps/Module/TradingFee'
-import {
-  defaultKeeperFeeAmount,
-  defaultKeeperFeeDenom,
-  getDefaultChainSettings,
-} from 'constants/defaultSettings'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useDepositEnabledAssets from 'hooks/assets/useDepositEnabledAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import useAlertDialog from 'hooks/common/useAlertDialog'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import { useKeeperFee } from 'hooks/perps/useKeeperFee'
 import usePerpsConfig from 'hooks/perps/usePerpsConfig'
 import { usePerpsParams } from 'hooks/perps/usePerpsParams'
 import { useSubmitLimitOrder } from 'hooks/perps/useSubmitLimitOrder'
+import { useSubmitParentOrderWithChildren } from 'hooks/perps/useSubmitParentOrderWithChildren'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
 import { formatLeverage, getPerpsPriceDecimals } from 'utils/formatters'
-import { BN } from 'utils/helpers'
 
 type Props = {
   leverage: number
@@ -45,7 +42,6 @@ type Props = {
   previousAmount: BigNumber
   previousTradeDirection?: TradeDirection
   previousLeverage?: number | null
-  hasActivePosition: boolean
   onTxExecuted: () => void
   disabled: boolean
   orderType: OrderType
@@ -54,6 +50,7 @@ type Props = {
   baseDenom: string
   isReduceOnly: boolean
   validateReduceOnlyOrder: () => boolean
+  conditionalTriggers: { sl: string | null; tp: string | null }
 }
 
 export default function PerpsSummary(props: Props) {
@@ -65,24 +62,18 @@ export default function PerpsSummary(props: Props) {
     leverage,
     onTxExecuted,
     disabled,
-    previousTradeDirection,
     baseDenom,
     limitPrice,
     stopPrice,
     isReduceOnly,
+    conditionalTriggers,
     validateReduceOnlyOrder,
   } = props
   const account = useCurrentAccount()
   const updatedAccount = useStore((s) => s.updatedAccount)
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const chainConfig = useChainConfig()
-  const creditManagerConfig = useStore((s) => s.creditManagerConfig)
-  const [keeperFee] = useLocalStorage(
-    `${chainConfig.id}/${LocalStorageKeys.PERPS_KEEPER_FEE}`,
-    creditManagerConfig?.keeper_fee_config?.min_fee ??
-      getDefaultChainSettings(chainConfig).keeperFee,
-  )
-
+  const { calculateKeeperFee } = useKeeperFee()
   const currentAccount = useCurrentAccount()
   const isLimitOrder = props.orderType === OrderType.LIMIT
   const isStopOrder = props.orderType === OrderType.STOP
@@ -108,69 +99,108 @@ export default function PerpsSummary(props: Props) {
     [assets, perpsConfig?.base_denom],
   )
 
-  const calculateKeeperFee = useMemo(
-    () =>
-      (isLimitOrder || isStopOrder) && keeperFee?.amount
-        ? BNCoin.fromDenomAndBigNumber(keeperFee.denom, BN(keeperFee.amount))
-        : BNCoin.fromDenomAndBigNumber(defaultKeeperFeeDenom, BN(defaultKeeperFeeAmount)),
-    [isLimitOrder, isStopOrder, keeperFee.amount, keeperFee.denom],
-  )
+  const finalKeeperFee = useMemo(() => {
+    return isLimitOrder || isStopOrder ? calculateKeeperFee : undefined
+  }, [isLimitOrder, isStopOrder, calculateKeeperFee])
 
   const submitLimitOrder = useSubmitLimitOrder()
+  const submitParentOrderWithChildren = useSubmitParentOrderWithChildren()
 
-  const onConfirm = useCallback(async () => {
-    if (!currentAccount || !feeToken) return
+  const handleTriggerOrder = useCallback(async () => {
+    if (!currentAccount || !feeToken || !calculateKeeperFee) return false
 
-    if (isReduceOnly && !validateReduceOnlyOrder()) return
+    await submitParentOrderWithChildren({
+      asset,
+      amount,
+      tradeDirection,
+      baseDenom,
+      orderType: props.orderType,
+      limitPrice: isLimitOrder ? limitPrice : undefined,
+      stopPrice: isStopOrder ? stopPrice : undefined,
+      isReduceOnly,
+      conditionalTriggers,
+    })
+    return true
+  }, [
+    asset,
+    amount,
+    tradeDirection,
+    baseDenom,
+    props.orderType,
+    isLimitOrder,
+    limitPrice,
+    isStopOrder,
+    stopPrice,
+    isReduceOnly,
+    conditionalTriggers,
+    submitParentOrderWithChildren,
+    currentAccount,
+    feeToken,
+    calculateKeeperFee,
+  ])
+
+  const handleStopOrder = useCallback(async () => {
+    if (!calculateKeeperFee) return false
+
+    let comparison: 'less_than' | 'greater_than'
+    let stopTradeDirection: 'long' | 'short'
+
+    if (tradeDirection === 'long') {
+      comparison = 'less_than'
+      stopTradeDirection = 'short'
+    } else {
+      comparison = 'greater_than'
+      stopTradeDirection = 'long'
+    }
 
     const orderSize = tradeDirection === 'short' && amount.isPositive() ? amount.negated() : amount
 
-    if (isStopOrder && calculateKeeperFee) {
-      let comparison: 'less_than' | 'greater_than'
-      let stopTradeDirection: 'long' | 'short'
+    await submitLimitOrder({
+      asset,
+      orderSize: orderSize,
+      limitPrice: stopPrice,
+      tradeDirection: stopTradeDirection,
+      baseDenom,
+      keeperFee: calculateKeeperFee,
+      reduceOnly: true,
+      comparison,
+    })
+    return true
+  }, [tradeDirection, amount, asset, stopPrice, baseDenom, calculateKeeperFee, submitLimitOrder])
 
-      if (tradeDirection === 'long') {
-        comparison = 'less_than'
-        stopTradeDirection = 'short'
-      } else {
-        comparison = 'greater_than'
-        stopTradeDirection = 'long'
-      }
+  const handleLimitOrder = useCallback(async () => {
+    if (!calculateKeeperFee) return false
 
-      await submitLimitOrder({
-        asset,
-        orderSize: orderSize,
-        limitPrice: stopPrice,
-        tradeDirection: stopTradeDirection,
-        baseDenom,
-        keeperFee: calculateKeeperFee,
-        isReduceOnly: true,
-        comparison,
-      })
-      return onTxExecuted()
-    }
+    const comparison = tradeDirection === 'long' ? 'less_than' : 'greater_than'
 
-    if (isLimitOrder && calculateKeeperFee) {
-      let comparison: 'less_than' | 'greater_than'
+    const orderSize = tradeDirection === 'short' && amount.isPositive() ? amount.negated() : amount
 
-      if (tradeDirection === 'long') {
-        comparison = 'less_than'
-      } else {
-        comparison = 'greater_than'
-      }
+    await submitLimitOrder({
+      asset,
+      orderSize,
+      limitPrice,
+      tradeDirection,
+      baseDenom,
+      comparison,
+      keeperFee: calculateKeeperFee,
+      reduceOnly: isReduceOnly,
+    })
+    return true
+  }, [
+    calculateKeeperFee,
+    tradeDirection,
+    amount,
+    asset,
+    limitPrice,
+    baseDenom,
+    isReduceOnly,
+    submitLimitOrder,
+  ])
 
-      await submitLimitOrder({
-        asset,
-        orderSize,
-        limitPrice,
-        tradeDirection,
-        baseDenom,
-        comparison,
-        keeperFee: calculateKeeperFee,
-        isReduceOnly,
-      })
-      return onTxExecuted()
-    }
+  const handleMarketOrder = useCallback(async () => {
+    if (!currentAccount) return false
+
+    const orderSize = tradeDirection === 'short' && amount.isPositive() ? amount.negated() : amount
 
     const perpOrderParams = {
       accountId: currentAccount.id,
@@ -178,28 +208,58 @@ export default function PerpsSummary(props: Props) {
       autolend: isAutoLendEnabledForCurrentAccount,
       baseDenom,
       reduceOnly: isReduceOnly,
+      keeperFee: calculateKeeperFee,
+      conditionalTriggers,
     }
 
     await executePerpOrder(perpOrderParams)
-    return onTxExecuted()
+    return true
+  }, [
+    currentAccount,
+    tradeDirection,
+    amount,
+    asset.denom,
+    isAutoLendEnabledForCurrentAccount,
+    baseDenom,
+    isReduceOnly,
+    executePerpOrder,
+    calculateKeeperFee,
+    conditionalTriggers,
+  ])
+
+  const onConfirm = useCallback(async () => {
+    if (!currentAccount || !feeToken) return
+    if (isReduceOnly && !validateReduceOnlyOrder()) return
+
+    const hasTriggers = !!(conditionalTriggers.tp ?? conditionalTriggers.sl)
+    let success = false
+
+    if (hasTriggers) {
+      success = await handleTriggerOrder()
+    } else if (isStopOrder) {
+      success = await handleStopOrder()
+    } else if (isLimitOrder) {
+      success = await handleLimitOrder()
+    } else {
+      success = await handleMarketOrder()
+    }
+
+    if (success) {
+      onTxExecuted()
+    }
   }, [
     currentAccount,
     feeToken,
-    isLimitOrder,
-    isStopOrder,
-    calculateKeeperFee,
-    asset,
-    amount,
-    tradeDirection,
-    stopPrice,
-    limitPrice,
-    baseDenom,
     isReduceOnly,
     validateReduceOnlyOrder,
-    isAutoLendEnabledForCurrentAccount,
-    executePerpOrder,
+    conditionalTriggers,
+    isStopOrder,
+    isLimitOrder,
+    handleTriggerOrder,
+    handleStopOrder,
+    handleLimitOrder,
+    handleMarketOrder,
     onTxExecuted,
-    submitLimitOrder,
   ])
 
   const isDisabled = useMemo(() => amount.isZero() || disabled, [amount, disabled])
@@ -220,7 +280,7 @@ export default function PerpsSummary(props: Props) {
     [isNewPosition, previousAmount, newAmount],
   )
 
-  const { open: openAlertDialog } = useAlertDialog()
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const handleOnClick = useCallback(() => {
     if (!currentAccount) return
@@ -228,47 +288,17 @@ export default function PerpsSummary(props: Props) {
       onConfirm()
       return
     }
-    openAlertDialog({
-      header: (
-        <div className='flex items-center justify-between w-full'>
-          <Text size='2xl'>{isLimitOrder ? 'Limit Order Summary' : 'Order Summary'}</Text>
-        </div>
-      ),
-      content: (
-        <ConfirmationSummary
-          amount={amount}
-          accountId={currentAccount.id}
-          asset={asset}
-          leverage={leverage}
-          limitPrice={isLimitOrder ? limitPrice : undefined}
-          keeperFee={isLimitOrder ? calculateKeeperFee : undefined}
-        />
-      ),
-      positiveButton: {
-        text: 'Continue',
-        icon: <ArrowRight />,
-        onClick: onConfirm,
-      },
-      checkbox: {
-        text: 'Hide summary in the future',
-        onClick: (isChecked: boolean) => setShowSummary(!isChecked),
-      },
-      isSingleButtonLayout: true,
-      showCloseButton: true,
-    })
-  }, [
-    currentAccount,
-    showSummary,
-    openAlertDialog,
-    isLimitOrder,
-    amount,
-    asset,
-    leverage,
-    limitPrice,
-    calculateKeeperFee,
-    onConfirm,
-    setShowSummary,
-  ])
+    setIsDialogOpen(true)
+  }, [currentAccount, showSummary, onConfirm])
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false)
+  }
+
+  const handleConfirm = () => {
+    onConfirm()
+    setIsDialogOpen(false)
+  }
 
   const submitBtnText = useMemo(() => {
     if (isStopOrder) return 'Create Stop Order'
@@ -315,7 +345,7 @@ export default function PerpsSummary(props: Props) {
             denom={asset.denom}
             newAmount={newAmount}
             previousAmount={previousAmount}
-            keeperFee={calculateKeeperFee}
+            keeperFee={finalKeeperFee}
           />
         </SummaryLine>
       </div>
@@ -333,7 +363,113 @@ export default function PerpsSummary(props: Props) {
           </>
         )}
       </ActionButton>
+
+      <AlertDialog
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+        header={
+          <div className='flex items-center justify-between w-full'>
+            <Text size='2xl'>{isLimitOrder ? 'Limit Order Summary' : 'Order Summary'}</Text>
+          </div>
+        }
+        content={
+          <ConfirmationSummary
+            amount={amount}
+            accountId={currentAccount?.id || ''}
+            asset={asset}
+            leverage={leverage}
+            limitPrice={isLimitOrder ? limitPrice : undefined}
+            keeperFee={finalKeeperFee}
+          />
+        }
+        positiveButton={{
+          text: 'Continue',
+          icon: <ArrowRight />,
+          onClick: handleConfirm,
+        }}
+        checkbox={{
+          text: 'Hide summary in the future',
+          onClick: (isChecked: boolean) => setShowSummary(!isChecked),
+        }}
+        isSingleButtonLayout
+        showCloseButton
+      />
     </div>
+  )
+}
+
+interface SideSectionProps {
+  isNewPosition: boolean
+  isDirectionChange: boolean
+  tradeDirection: TradeDirection
+  previousTradeDirection?: TradeDirection
+  isLimitOrder: boolean
+}
+
+function SideSection({
+  isNewPosition,
+  isDirectionChange,
+  tradeDirection,
+  previousTradeDirection,
+  isLimitOrder,
+}: SideSectionProps) {
+  if (!previousTradeDirection || !tradeDirection) return null
+
+  return (
+    <SummaryLine
+      label={isDirectionChange && !isNewPosition ? 'New Side' : 'Side'}
+      contentClassName='flex gap-1'
+    >
+      <TradeDirection
+        tradeDirection={
+          isNewPosition || isDirectionChange ? tradeDirection : previousTradeDirection
+        }
+        type={isLimitOrder ? 'limit' : 'stop'}
+        previousTradeDirection={isDirectionChange ? previousTradeDirection : undefined}
+      />
+    </SummaryLine>
+  )
+}
+
+interface LeverageSectionProps {
+  previousLeverage?: number | null
+  leverage: number
+  previousAmount: BigNumber
+}
+
+function getLeverageArrowClass(leverage: number, previousLeverage: number | null | undefined) {
+  if (leverage === undefined) return 'text-error'
+  if (previousLeverage === null || previousLeverage === undefined) return ''
+  return leverage > previousLeverage ? 'text-error' : 'text-success'
+}
+
+function LeverageSection({ previousLeverage, leverage, previousAmount }: LeverageSectionProps) {
+  return (
+    <SummaryLine label='Leverage' contentClassName='flex gap-1'>
+      {previousLeverage && !previousAmount.isZero() ? (
+        <div className='flex items-center gap-1'>
+          <span>{formatLeverage(previousLeverage)}</span>
+          <div className='w-4'>
+            <ArrowRight
+              className={classNames(
+                getLeverageArrowClass(leverage, previousLeverage),
+                'transition-colors duration-200',
+              )}
+            />
+          </div>
+          <span
+            className={classNames(
+              getLeverageArrowClass(leverage, previousLeverage),
+              'transition-colors duration-200',
+            )}
+          >
+            {leverage === undefined ? '—' : formatLeverage(leverage)}
+          </span>
+        </div>
+      ) : (
+        <span>{leverage === undefined ? '—' : formatLeverage(leverage)}</span>
+      )}
+    </SummaryLine>
   )
 }
 
@@ -361,6 +497,7 @@ function ManageSummary(
 
   const size = useMemo(() => previousAmount.plus(amount).abs(), [amount, previousAmount])
   const isLimitOrder = props.orderType === OrderType.LIMIT
+
   if (amount.isZero()) return null
 
   return (
@@ -376,23 +513,19 @@ function ManageSummary(
       )}
 
       {previousTradeDirection && !newAmount.isZero() && (
-        <SummaryLine
-          label={isDirectionChange && !isNewPosition ? 'New Side' : 'Side'}
-          contentClassName='flex gap-1'
-        >
-          <TradeDirection
-            tradeDirection={
-              isNewPosition || isDirectionChange ? tradeDirection : previousTradeDirection
-            }
-            type={isLimitOrder ? 'limit' : 'stop'}
-            previousTradeDirection={isDirectionChange ? previousTradeDirection : undefined}
-          />
-        </SummaryLine>
+        <SideSection
+          isNewPosition={isNewPosition}
+          isDirectionChange={isDirectionChange}
+          tradeDirection={tradeDirection}
+          previousTradeDirection={previousTradeDirection}
+          isLimitOrder={isLimitOrder}
+        />
       )}
 
       <SummaryLine label={isNewPosition ? 'Size' : 'New Size'} contentClassName='flex gap-1'>
         <AssetAmount asset={asset} amount={size.toNumber()} />
       </SummaryLine>
+
       <SummaryLine label={isNewPosition ? 'Value' : 'New Value'} contentClassName='flex gap-1'>
         <DisplayCurrency
           coin={BNCoin.fromDenomAndBigNumber(
@@ -405,39 +538,12 @@ function ManageSummary(
           }}
         />
       </SummaryLine>
-      <SummaryLine label='Leverage' contentClassName='flex gap-1'>
-        {previousLeverage && !previousAmount.isZero() ? (
-          <div className='flex items-center gap-1'>
-            <span>{formatLeverage(previousLeverage)}</span>
-            <div className='w-4'>
-              <ArrowRight
-                className={classNames(
-                  leverage === undefined
-                    ? 'text-error'
-                    : leverage > previousLeverage
-                      ? 'text-error'
-                      : 'text-success',
-                  'transition-colors duration-200',
-                )}
-              />
-            </div>
-            <span
-              className={classNames(
-                leverage === undefined
-                  ? 'text-error'
-                  : leverage > previousLeverage
-                    ? 'text-error'
-                    : 'text-success',
-                'transition-colors duration-200',
-              )}
-            >
-              {leverage === undefined ? '—' : formatLeverage(leverage)}
-            </span>
-          </div>
-        ) : (
-          <span>{leverage === undefined ? '—' : formatLeverage(leverage)}</span>
-        )}
-      </SummaryLine>
+
+      <LeverageSection
+        previousLeverage={previousLeverage}
+        leverage={leverage}
+        previousAmount={previousAmount}
+      />
     </div>
   )
 }

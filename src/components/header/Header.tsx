@@ -54,6 +54,7 @@ const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
     label: 'Earn',
   },
   { pages: ['borrow'], label: 'Borrow' },
+  ...(chainConfig.managedVaults ? [{ pages: ['vaults'] as Page[], label: 'Vaults' }] : []),
   ...(chainConfig.hls
     ? [{ pages: ['hls-staking', 'hls-farm'] as Page[], label: 'High Leverage' }]
     : []),
@@ -75,9 +76,10 @@ export default function Header() {
   const focusComponent = useStore((s) => s.focusComponent)
   const isOracleStale = useStore((s) => s.isOracleStale)
   const isHls = useStore((s) => s.isHls)
+  const isVaults = useStore((s) => s.isVaults)
   const accountId = useAccountId()
   const isV1 = useStore((s) => s.isV1)
-  const showAccountMenu = address && !isHls && !isMobile && !isV1
+  const showAccountMenu = address && !isHls && !isVaults && !isMobile && !isV1
   const feeTokenInitiated = useInitFeeToken()
 
   function handleCloseFocusMode() {
@@ -95,7 +97,7 @@ export default function Header() {
       <header
         className={classNames(
           'fixed left-0 top-0 z-50 w-full max-w-screen-full',
-          'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:h-full before:w-full before:rounded-sm before:backdrop-blur-sticky',
+          'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:h-full before:w-full before:rounded-sm before:backdrop-blur-xl before:bg-black/30',
         )}
       >
         <div

@@ -18,7 +18,7 @@ export default function SwitchWithLabel(props: Props) {
   return (
     <div className={classNames('flex w-full', props.className)}>
       <div className='flex flex-1'>
-        <Text className='mr-2 text-white/70' size='sm'>
+        <Text className='mr-2 text-white' size='sm'>
           {props.label}
         </Text>
         {props.tooltip && (
@@ -29,6 +29,7 @@ export default function SwitchWithLabel(props: Props) {
                 {props.tooltip}
               </Text>
             }
+            contentClassName='w-80'
           />
         )}
       </div>

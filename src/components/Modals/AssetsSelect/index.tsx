@@ -23,6 +23,8 @@ interface Props {
   nonCollateralAssetsSectionTitle?: string
   account?: Account
   repayFromWallet?: boolean
+  hideColumns?: string[]
+  hideApy?: boolean
 }
 
 export default function AssetsSelect(props: Props) {
@@ -36,8 +38,20 @@ export default function AssetsSelect(props: Props) {
     nonCollateralAssetsSectionTitle = 'Non whitelisted assets, cannot be used as collateral',
     account,
     repayFromWallet,
+    hideColumns,
+    hideApy,
   } = props
-  const columns = useAssetSelectColumns(isBorrow)
+  const columns = useAssetSelectColumns(isBorrow, hideApy)
+
+  const filteredColumns = useMemo(() => {
+    if (!hideColumns || hideColumns.length === 0) return columns
+
+    return columns.filter((column) => {
+      if (!column.id) return true
+      return !hideColumns.includes(column.id)
+    })
+  }, [columns, hideColumns])
+
   const markets = useMarkets()
   const whitelistedAssets = useWhitelistedAssets()
   const walletBalances = useStore((s) => s.balances)
@@ -221,7 +235,7 @@ export default function AssetsSelect(props: Props) {
     return (
       <Table
         title='Assets'
-        columns={columns}
+        columns={filteredColumns}
         data={tableData as AssetTableRow[]}
         initialSorting={sorting}
         onSortingChange={setSorting}

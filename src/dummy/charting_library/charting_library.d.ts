@@ -13866,7 +13866,7 @@ export interface LeverageInfo {
    */
   max: number
   /**
-   * The mimimum change between leverage values.
+   * The minimum change between leverage values.
    */
   step: number
 }
@@ -24958,7 +24958,7 @@ export interface SymbolResolveExtension {
   session?: string
 }
 /**
- * Symbol override data. Passed to and returned from the symbol search override funciton.
+ * Symbol override data. Passed to and returned from the symbol search override function.
  */
 export interface SymbolSearchCompleteData {
   /**

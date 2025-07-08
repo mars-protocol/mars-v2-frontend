@@ -3,9 +3,13 @@ import Text from 'components/common/Text'
 import useAvailableHlsFarmsColumns from 'components/hls/Farm/Table/Columns/useAvailableHlsFarmsColumns'
 import useHlsFarms from 'hooks/hls/useHlsFarms'
 
-export default function AvailableHlsFarmsTable() {
+interface Props {
+  openHlsInfoDialog: (continueCallback: () => void) => void
+}
+
+export default function AvailableHlsFarmsTable({ openHlsInfoDialog }: Props) {
   const { data: availableHlsFarms, isLoading } = useHlsFarms()
-  const columns = useAvailableHlsFarmsColumns({ isLoading })
+  const columns = useAvailableHlsFarmsColumns({ isLoading, openHlsInfoDialog })
 
   if (availableHlsFarms.length === 0)
     return (

@@ -20,10 +20,16 @@ export default function createCommonSlice(
     useAutoRepay: true,
     isOracleStale: false,
     isHls: false,
+    isVaults: false,
     isV1: false,
     assets: [],
     hlsBorrowAmount: null,
     errorStore: { apiError: null, nodeError: null },
     creditManagerConfig: null,
+    conditionalTriggerOrders: {
+      tp: null,
+      sl: null,
+    },
+    perpsTradeDirection: 'long' as TradeDirection,
   }
 }

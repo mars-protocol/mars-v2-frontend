@@ -85,6 +85,9 @@ export type SwapperRoute =
       astro: AstroRoute
     }
   | {
+      duality: DualityRoute
+    }
+  | {
       osmo: OsmoRoute
     }
 export interface AstroportRoute {
@@ -103,6 +106,11 @@ export interface AstroRoute {
 }
 export interface AstroSwap {
   from: string
+  to: string
+}
+export interface DualityRoute {
+  from: string
+  swap_denoms: string[]
   to: string
 }
 export interface OsmoRoute {

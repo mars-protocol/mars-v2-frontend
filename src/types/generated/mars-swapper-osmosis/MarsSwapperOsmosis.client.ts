@@ -19,6 +19,7 @@ import {
   Coin,
   AstroRoute,
   AstroSwap,
+  DualityRoute,
   OsmoRoute,
   OsmoSwap,
   OsmosisConfig,

@@ -9,6 +9,7 @@ import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tan
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
 import {
+  SwapperBaseForString,
   HealthContractBaseForString,
   IncentivesUnchecked,
   Uint128,
@@ -16,7 +17,6 @@ import {
   OracleBaseForString,
   ParamsBaseForString,
   RedBankUnchecked,
-  SwapperBaseForString,
   ZapperBaseForString,
   InstantiateMsg,
   KeeperFeeConfig,
@@ -26,8 +26,10 @@ import {
   Action,
   ActionAmount,
   Int128,
+  ExecutePerpOrderType,
   Condition,
   Comparison,
+  CreateTriggerOrderType,
   LiquidateRequestForVaultBaseForString,
   VaultPositionType,
   SwapperRoute,
@@ -48,6 +50,7 @@ import {
   VaultBaseForString,
   AstroRoute,
   AstroSwap,
+  DualityRoute,
   OsmoRoute,
   OsmoSwap,
   ConfigUpdates,

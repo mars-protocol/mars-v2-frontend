@@ -1,6 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
-
 import { BN_ZERO } from 'constants/math'
 import {
   addCoins,
@@ -15,6 +13,7 @@ import useAvailableAstroLps from 'hooks/astroLp/useAvailableAstroLps'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
 import useSlippage from 'hooks/settings/useSlippage'
 import useVaults from 'hooks/vaults/useVaults'
+import { useCallback, useEffect, useState } from 'react'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountLeverage, cloneAccount } from 'utils/accounts'
@@ -321,9 +320,11 @@ export function useUpdatedAccount(account?: Account) {
 
   const resetPerpPosition = useCallback(() => {
     addDeposits([])
+    addLends([])
     removeLends([])
     removeDeposits([])
     addDebts([])
+    removeDebts([])
     return setUpdatedPerpPosition(undefined)
   }, [])
 
@@ -342,9 +343,37 @@ export function useUpdatedAccount(account?: Account) {
       }
 
       const unrealizedPnL = position.pnl.unrealized.net
+      const realizedPnL = position.pnl.realized.net
+      const currentDebt = account.debts.find(byDenom(position.baseDenom))
 
-      if (unrealizedPnL.amount.isGreaterThan(0) && isLendAction) addLends([unrealizedPnL])
-      if (unrealizedPnL.amount.isGreaterThan(0) && !isLendAction) addDeposits([unrealizedPnL])
+      const isClosingPosition =
+        currentPerpPosition && position.amount.abs().isLessThan(currentPerpPosition.amount.abs())
+
+      if (unrealizedPnL.amount.isGreaterThan(0)) {
+        let profitsToProcess = unrealizedPnL.amount
+
+        if (isClosingPosition && currentDebt && currentDebt.amount.isGreaterThan(0)) {
+          const isInProfit = unrealizedPnL.amount.isGreaterThan(0)
+          const canCoverRepay = unrealizedPnL.amount.isGreaterThan(realizedPnL.amount.abs())
+          const hasDebt = currentDebt.amount.isGreaterThan(0)
+          const hasRealizedLosses = realizedPnL.amount.isLessThan(0)
+
+          if (isInProfit && canCoverRepay && hasRealizedLosses && hasDebt) {
+            const repayAmount = BigNumber.min(realizedPnL.amount.abs(), currentDebt.amount)
+            removeDebts([BNCoin.fromDenomAndBigNumber(position.baseDenom, repayAmount)])
+            profitsToProcess = profitsToProcess.minus(repayAmount)
+          }
+        }
+
+        if (profitsToProcess.isGreaterThan(0)) {
+          const profits = BNCoin.fromDenomAndBigNumber(position.baseDenom, profitsToProcess)
+          if (isLendAction) {
+            addLends([profits])
+          } else {
+            addDeposits([profits])
+          }
+        }
+      }
 
       if (unrealizedPnL.amount.isLessThan(0)) {
         const currentDepositAmount = account.deposits.find(byDenom(position.baseDenom))?.amount

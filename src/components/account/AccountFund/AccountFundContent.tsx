@@ -1,4 +1,3 @@
-import { RouteResponse } from '@skip-go/client'
 import classNames from 'classnames'
 import AccountFundingAssets from 'components/account/AccountFund/AccountFundingAssets'
 import BridgeRouteVisualizer from 'components/account/AccountFund/BridgeContent/BridgeRouteVisualizer'
@@ -14,6 +13,7 @@ import useAccounts from 'hooks/accounts/useAccounts'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import { useFundingAssets } from 'hooks/assets/useFundingAssets'
 import { useUSDCBalances } from 'hooks/assets/useUSDCBalances'
+import { useBridgeRoute } from 'hooks/bridge/useBridgeRoute'
 import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
@@ -78,22 +78,16 @@ export default function AccountFundContent(props: Props) {
 
   const accounts = useAccounts('default', props.address)
   const hasNoAccounts = accounts.data?.length < 1
-  const [currentRoute, setCurrentRoute] = useState<RouteResponse | undefined>(undefined)
-  const [routeError, setRouteError] = useState<string | null>(null)
 
-  const [bridges, setBridges] = useState<BridgeInfo[]>([])
-
-  const { isBridgeInProgress, handleSkipTransfer, fetchSkipRoute, fetchBridgeLogos } =
-    useSkipBridge({
-      chainConfig,
-      cosmosAddress: props.address,
-      evmAddress,
-      goFast,
-    })
+  const { isBridgeInProgress, handleSkipTransfer } = useSkipBridge({
+    chainConfig,
+    cosmosAddress: props.address,
+    evmAddress,
+    goFast,
+  })
 
   const [showMinimumUSDCValueOverlay, setShowMinimumUSDCValueOverlay] = useState(false)
 
-  const [isLoadingRoute, setIsLoadingRoute] = useState(false)
   const evmAsset = fundingAssets.find(
     (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
   )
@@ -132,63 +126,12 @@ export default function AccountFundContent(props: Props) {
     )
   }, [previousEVMAmount, fundingAssets, currentEVMAssetValue, handleSkipTransfer])
 
-  const fetchRouteForEVMAsset = useCallback(async () => {
-    const evmAsset = fundingAssets.find(
-      (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
-    )
-
-    if (!evmAsset || evmAsset.coin.amount.isZero()) {
-      setCurrentRoute(undefined)
-      setRouteError(null)
-      return
-    }
-
-    if (isLoadingRoute) return
-
-    setIsLoadingRoute(true)
-    setRouteError(null)
-    try {
-      const route = await fetchSkipRoute(evmAsset)
-      const bridgeLogos = await fetchBridgeLogos({ chainIDs: route.chainIDs })
-      setBridges(bridgeLogos)
-      setCurrentRoute(route)
-    } catch (error) {
-      console.error('Failed to fetch route:', error)
-      setCurrentRoute(undefined)
-      if (error instanceof Error && error.message.includes('no routes found')) {
-        setRouteError(
-          'No available routes found for this transfer. Please try again later or choose a different asset.',
-        )
-      } else {
-        setRouteError('Failed to fetch route. Please try again later.')
-      }
-    } finally {
-      setIsLoadingRoute(false)
-    }
-  }, [fetchSkipRoute, fundingAssets, isLoadingRoute, fetchBridgeLogos])
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const evmAsset = fundingAssets.find(
-        (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
-      )
-
-      if (
-        evmAsset &&
-        !evmAsset.coin.amount.isZero() &&
-        !isEVMAssetLessThanMinimumUSDC &&
-        !showMinimumUSDCValueOverlay
-      ) {
-        fetchRouteForEVMAsset()
-      } else {
-        setCurrentRoute(undefined)
-        setRouteError(null)
-      }
-    }, 500)
-
-    return () => clearTimeout(timer)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [goFast, currentEVMAssetValue, showMinimumUSDCValueOverlay])
+  const { currentRoute, isLoadingRoute, routeError, bridges } = useBridgeRoute({
+    chainConfig,
+    cosmosAddress: props.address,
+    evmAddress,
+    fundingAssets,
+  })
 
   const handleClick = useCallback(async () => {
     if (isConfirming) return
@@ -208,7 +151,7 @@ export default function AccountFundContent(props: Props) {
       )
 
       let accountId = props.accountId
-      const isNewAccount = hasNoAccounts || isCreateAccount
+      const isNewAccount = hasNoAccounts || (isCreateAccount && !props.hasExistingAccount)
       const hasEvmAssets = evmAssets.length > 0
 
       if (hasEvmAssets) {

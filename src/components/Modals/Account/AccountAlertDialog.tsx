@@ -1,7 +1,7 @@
-import { ReactElement, useEffect } from 'react'
+import { ReactElement, useCallback, useEffect, useState } from 'react'
 
+import AlertDialog from 'components/common/AlertDialog'
 import { Enter, InfoCircle } from 'components/common/Icons'
-import useAlertDialog from 'hooks/common/useAlertDialog'
 
 interface Props {
   content: string | ReactElement
@@ -12,22 +12,55 @@ interface Props {
 }
 
 export default function AccountAlertDialog(props: Props) {
-  const { open: showAlertDialog } = useAlertDialog()
-  const { title, content, closeHandler, positiveButton } = props
+  const { title, content, closeHandler, positiveButton, icon = <InfoCircle /> } = props
+  const [isOpen, setIsOpen] = useState(false)
+
+  const handleClose = useCallback(() => {
+    setIsOpen(false)
+    closeHandler()
+  }, [closeHandler])
+
+  const handlePositiveClick = async () => {
+    if (positiveButton.onClick) {
+      await positiveButton.onClick()
+    }
+    setIsOpen(false)
+  }
 
   useEffect(() => {
-    showAlertDialog({
-      icon: <InfoCircle />,
-      title,
-      content,
-      negativeButton: {
+    setIsOpen(true)
+  }, [])
+
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        handleClose()
+      }
+    }
+
+    document.addEventListener('keydown', handleEscKey)
+
+    return () => {
+      document.removeEventListener('keydown', handleEscKey)
+    }
+  }, [handleClose])
+
+  return (
+    <AlertDialog
+      isOpen={isOpen}
+      onClose={handleClose}
+      title={title}
+      content={content}
+      icon={icon}
+      positiveButton={{
+        ...positiveButton,
+        onClick: handlePositiveClick,
+      }}
+      negativeButton={{
         text: 'Cancel',
         icon: <Enter />,
-        onClick: closeHandler,
-      },
-      positiveButton,
-    })
-  }, [showAlertDialog, closeHandler, positiveButton, title, content])
-
-  return null
+        onClick: handleClose,
+      }}
+    />
+  )
 }

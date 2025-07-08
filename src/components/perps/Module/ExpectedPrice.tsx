@@ -5,7 +5,9 @@ import { Tooltip } from 'components/common/Tooltip'
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import usePerpsEnabledAssets from 'hooks/assets/usePerpsEnabledAssets'
+import usePerpsMarket from 'hooks/perps/usePerpsMarket'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
+import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
 import { getPerpsPriceDecimals } from 'utils/formatters'
@@ -20,15 +22,21 @@ type Props = {
 
 export const ExpectedPrice = (props: Props) => {
   const { denom, newAmount, className, override, tradeDirection } = props
+  const market = usePerpsMarket()
   const perpsAssets = usePerpsEnabledAssets()
   const { data: tradingFeeAndPrice, isLoading } = useTradingFeeAndPrice(denom, newAmount)
   const perpsAsset = perpsAssets.find(byDenom(denom))
+
+  const currentPrice = useMemo(() => {
+    if (market && market.asset.price) return market.asset.price.amount
+    if (perpsAsset) return perpsAsset.price?.amount ?? BN_ZERO
+    return BN_ZERO
+  }, [market, perpsAsset])
 
   if (isLoading) return <CircularProgress className='h-full' size={12} />
   if (!tradingFeeAndPrice?.price || !perpsAsset) return '-'
 
   const price = tradingFeeAndPrice.price.shiftedBy(perpsAsset.decimals - PRICE_ORACLE_DECIMALS)
-  const currentPrice = perpsAsset.price?.amount ?? BN_ZERO
 
   const priceDiff = price.minus(currentPrice).div(currentPrice).times(100)
   const isPriceEqual = priceDiff.abs().isLessThan(0.01)
