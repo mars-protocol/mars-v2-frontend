@@ -92,7 +92,11 @@ export default function NumberInput({
       return
     }
 
-    if (/^\d*\.?\d*$/.test(newValue)) {
+    const decimalPattern =
+      props.maxDecimals > 0 ? `^\\d*\\.?\\d{0,${props.maxDecimals}}$` : '^\\d*$'
+    const regex = new RegExp(decimalPattern)
+
+    if (regex.test(newValue)) {
       let newAmount = BN(newValue || '0')
 
       if (max && newAmount.isGreaterThan(max.shiftedBy(-asset.decimals))) {
