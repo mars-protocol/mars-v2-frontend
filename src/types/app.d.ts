@@ -32,6 +32,11 @@ type PositionType =
   | 'market'
   | 'limit'
   | 'stop'
+type ExecutePerpOrderType =
+  import('types/generated/mars-credit-manager/MarsCreditManager.types').ExecutePerpOrderType
+type CreateTriggerOrderType =
+  import('types/generated/mars-credit-manager/MarsCreditManager.types').CreateTriggerOrderType
+
 type TableType = 'balances' | 'strategies' | 'perps'
 type AccountKind = import('types/generated/mars-credit-manager/MarsCreditManager.types').AccountKind
 
@@ -445,6 +450,7 @@ interface PerpPositionRow extends PerpsPosition {
   hasStopLoss?: boolean
   hasTakeProfit?: boolean
   reduce_only?: boolean
+  isChildOrder?: boolean
 }
 
 interface PerpsPnL {
@@ -1089,6 +1095,7 @@ interface CreateMultipleTriggerOrdersOptions {
   keeperFeeFromLends: BNCoin
   keeperFeeFromBorrows: BNCoin
   orders: TriggerOrderOptions[]
+  cancelOrders?: { orderId: string }[]
 }
 
 interface TriggerOrderOptions {
@@ -1099,6 +1106,9 @@ interface TriggerOrderOptions {
   tradeDirection: TradeDirection
   price: BigNumber
   keeperFee: BNCoin
+  comparison?: TriggerType
+  orderType?: CreateTriggerOrderType
+  parentOrderId?: string
 }
 
 interface CreateTriggerOrdersOptions extends TriggerOrderOptions {
@@ -1160,6 +1170,19 @@ interface BroadcastSlice {
     reduceOnly?: boolean
     autolend: boolean
     baseDenom: string
+    orderType?: ExecutePerpOrderType
+  }) => Promise<boolean>
+  executeParentOrderWithConditionalTriggers: (options: {
+    accountId: string
+    coin: BNCoin
+    reduceOnly?: boolean
+    autolend: boolean
+    baseDenom: string
+    orderType: ExecutePerpOrderType
+    conditionalTriggers: { sl: string | null; tp: string | null }
+    keeperFee: BNCoin
+    limitPrice?: string
+    stopPrice?: string
   }) => Promise<boolean>
   closePerpPosition: (options: {
     accountId: string
@@ -1352,6 +1375,11 @@ interface CommonSlice {
   hlsBorrowAmount: BigNumber | null
   errorStore: ErrorStore
   creditManagerConfig: ConfigResponse | null
+  conditionalTriggerOrders: {
+    tp: string | null
+    sl: string | null
+  }
+  perpsTradeDirection: TradeDirection
 }
 
 interface ErrorStore {
@@ -1384,7 +1412,8 @@ interface ModalSlice {
   perpsVaultModal: PerpsVaultModal | null
   settingsModal: boolean
   keeperFeeModal: boolean
-  addSLTPModal: boolean
+  conditionalTriggersModal: boolean
+  addSLTPModal: { parentPosition: PerpPositionRow } | false
   unlockModal: UnlockModal | null
   farmModal: FarmModal | null
   walletAssetsModal: WalletAssetModal | null
@@ -1392,6 +1421,7 @@ interface ModalSlice {
   withdrawFromVaultsModal: DepositedVault[] | null
   v1DepositAndWithdrawModal: V1DepositAndWithdrawModal | null
   v1BorrowAndRepayModal: V1BorrowAndRepayModal | null
+  triggerOrdersModal: string | null
   marsStakingModal: MarsStakingModal | null
 }
 
@@ -1883,7 +1913,7 @@ interface ExceutePerpsOrder {
     denom: string
     order_size: SignedUint
     reduce_only?: boolean | null
-    order_type: 'stop_loss' | 'take_profit'
+    order_type?: 'stop_loss' | 'take_profit' | null
   }
 }
 
@@ -1978,6 +2008,10 @@ type TrackActionType =
   | 'Cancel Limit Order'
   | 'Deposit Into Vault'
   | 'Deposit Into Perps Vault'
+
+type PerpOrderType = ExceutePerpsOrder['execute_perp_order'] | undefined
+
+type TriggerConditionType = TriggerCondition['oracle_price'] | undefined
 
 interface VaultParams {
   title: string

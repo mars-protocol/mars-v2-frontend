@@ -19,7 +19,6 @@ import SettingsOptions from 'components/Modals/Settings/SettingsOptions'
 import SettingsSwitch from 'components/Modals/Settings/SettingsSwitch'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
-import { BN_ZERO } from 'constants/math'
 import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
@@ -471,9 +470,7 @@ export default function SettingsModal() {
             onFocus={handleSlippageInputFocus}
             amount={BN(customSlippage).multipliedBy(100)}
             max={BN(10)}
-            min={BN_ZERO}
             maxDecimals={1}
-            maxLength={2}
             style={{ fontSize: 16 }}
             placeholder='...'
             className='!w-6'

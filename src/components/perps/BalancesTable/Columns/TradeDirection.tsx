@@ -35,7 +35,8 @@ function getPositionEffect(
   if (currentPosition.tradeDirection === orderDirection) return 'Increase Position'
 
   if (isReduceOnly) {
-    if (orderAmount.abs().isGreaterThan(currentPosition.amount.abs())) return 'Close Position'
+    if (orderAmount.abs().isGreaterThanOrEqualTo(currentPosition.amount.abs()))
+      return 'Close Position'
     return 'Reduce Position'
   }
 
@@ -61,11 +62,16 @@ export default function TradeDirection({
   const currentAccount = useCurrentAccount()
   const currentPosition = currentAccount?.perps.find(byDenom(denom ?? ''))
 
-  const positionEffect = showPositionEffect
-    ? amount && denom
-      ? getPositionEffect(currentPosition, tradeDirection, BN(amount), type, reduce_only)
-      : ''
-    : ''
+  let positionEffect = ''
+  if (showPositionEffect && amount && denom) {
+    positionEffect = getPositionEffect(
+      currentPosition,
+      tradeDirection,
+      BN(amount),
+      type,
+      reduce_only,
+    )
+  }
 
   return (
     <div className={classNames('flex flex-col items-end gap-0.5', className)}>

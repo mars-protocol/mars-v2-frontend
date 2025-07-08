@@ -41,7 +41,7 @@ export default function Modal(props: ModalProps) {
         'backdrop:bg-black/50 backdrop:backdrop-blur-sm',
         modalClassName,
       )}
-      id={props.dialogId ? props.dialogId : 'modal'}
+      id={props.dialogId ?? 'modal'}
     >
       <Card
         className={classNames(
@@ -58,7 +58,7 @@ export default function Modal(props: ModalProps) {
         </div>
         {props.subHeader && <div className='gradient-header'>{props.subHeader}</div>}
         <div className={classNames(props.contentClassName, 'flex-1 relative')}>
-          {props.children ? props.children : props.content}
+          {props.children ?? props.content}
         </div>
       </Card>
     </dialog>

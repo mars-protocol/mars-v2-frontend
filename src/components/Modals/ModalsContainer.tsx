@@ -11,6 +11,9 @@ import {
   KeeperFeeModal,
   LendAndReclaimModalController,
   MarsStakingModal,
+  PerpsConditionalTriggersModal,
+  PerpsSlTpModal,
+  PerpsTriggerOrdersModal,
   PerpsVaultModal,
   SettingsModal,
   UnlockModal,
@@ -49,6 +52,9 @@ export default function ModalsContainer() {
       {store.keeperFeeModal && <KeeperFeeModal />}
       {store.vaultAssetsModal && <VaultAssets />}
       {store.marsStakingModal && <MarsStakingModal />}
+      <PerpsConditionalTriggersModal />
+      <PerpsTriggerOrdersModal />
+      <PerpsSlTpModal />
     </>
   )
 }
