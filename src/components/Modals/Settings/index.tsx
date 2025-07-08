@@ -3,6 +3,7 @@ import classNames from 'classnames'
 import { useCallback, useMemo, useState } from 'react'
 
 import chains from 'chains'
+import AlertDialog from 'components/common/AlertDialog'
 import AssetImage from 'components/common/assets/AssetImage'
 import Button from 'components/common/Button'
 import { Callout, CalloutType } from 'components/common/Callout'
@@ -20,7 +21,6 @@ import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import useAlertDialog from 'hooks/common/useAlertDialog'
 import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
@@ -38,7 +38,7 @@ export default function SettingsModal() {
   const { disconnectWallet } = useShuttle()
   const currentWallet = useCurrentWallet()
   const modal = useStore((s) => s.settingsModal)
-  const { open: showResetDialog } = useAlertDialog()
+  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false)
   const displayCurrencies = useDisplayCurrencyAssets()
   const { setAutoLendOnAllAccounts } = useAutoLend()
   const [customSlippage, setCustomSlippage] = useState<number>(0)
@@ -290,22 +290,17 @@ export default function SettingsModal() {
   )
 
   const showResetModal = useCallback(() => {
-    showResetDialog({
-      icon: (
-        <div className='flex w-full h-full p-3'>
-          <ArrowCircle />
-        </div>
-      ),
-      title: 'Are you sure you want to restore to default?',
-      content:
-        "Once you reset to default settings you can't revert it, and will result in the permanent loss of your current settings",
-      positiveButton: {
-        text: 'Yes',
-        icon: <Enter />,
-        onClick: handleResetSettings,
-      },
-    })
-  }, [showResetDialog, handleResetSettings])
+    setIsResetDialogOpen(true)
+  }, [])
+
+  const handleResetDialogClose = () => {
+    setIsResetDialogOpen(false)
+  }
+
+  const handleConfirmReset = () => {
+    handleResetSettings()
+    setIsResetDialogOpen(false)
+  }
 
   const handleCloseModal = useCallback(() => {
     if (hasEndpointsChangedValid && currentWallet) {
@@ -398,8 +393,7 @@ export default function SettingsModal() {
               onClick={() => {
                 useStore.setState({
                   settingsModal: false,
-                  // TODO: update docs to reflect the current state of v2
-                  //getStartedModal: true
+                  getStartedModal: true,
                 })
               }}
             >
@@ -532,6 +526,27 @@ export default function SettingsModal() {
         />
         <Button text='Confirm' onClick={handleCloseModal} disabled={!validRest || !validRpc} />
       </div>
+
+      <AlertDialog
+        isOpen={isResetDialogOpen}
+        onClose={handleResetDialogClose}
+        icon={
+          <div className='flex w-full h-full p-3'>
+            <ArrowCircle />
+          </div>
+        }
+        title='Are you sure you want to restore to default?'
+        content="Once you reset to default settings you can't revert it, and will result in the permanent loss of your current settings"
+        positiveButton={{
+          text: 'Yes',
+          icon: <Enter />,
+          onClick: handleConfirmReset,
+        }}
+        negativeButton={{
+          text: 'Cancel',
+          onClick: handleResetDialogClose,
+        }}
+      />
     </Modal>
   )
 }

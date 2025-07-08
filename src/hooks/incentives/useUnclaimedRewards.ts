@@ -3,6 +3,7 @@ import useSWR from 'swr'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
+import { useMemo } from 'react'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import iterateContractQuery from 'utils/iterateContractQuery'
@@ -14,7 +15,10 @@ export default function useUserUnclaimedRewards() {
   const clients = useClients()
   const address = useStore((s) => s.address)
 
-  const enabled = isV1 ? !!clients && !!address : !!accountId && !!clients
+  const enabled = useMemo(
+    () => (isV1 ? !!clients && !!address : !!accountId && !!clients),
+    [isV1, clients, address, accountId],
+  )
   const key = isV1
     ? `chains/${chainConfig.id}/v1/user/${address}/unclaimed-rewards`
     : `chains/${chainConfig.id}/accounts/${accountId}/unclaimed-rewards`

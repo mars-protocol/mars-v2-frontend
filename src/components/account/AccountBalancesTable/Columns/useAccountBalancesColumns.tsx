@@ -22,6 +22,7 @@ import { byDenom } from 'utils/array'
 export default function useAccountBalancesColumns(
   account: Account,
   showLiquidationPrice?: boolean,
+  abbreviated: boolean = true,
 ) {
   const markets = useMarkets()
   const updatedAccount = useStore((s) => s.updatedAccount)
@@ -51,11 +52,12 @@ export default function useAccountBalancesColumns(
           amountChange={row.original.amountChange}
           value={row.original.value}
           type={row.original.type}
+          abbreviated={abbreviated}
         />
       ),
       sortingFn: valueBalancesSortingFn,
     }),
-    [],
+    [abbreviated],
   )
 
   const sizeCell = useMemo(
@@ -67,11 +69,12 @@ export default function useAccountBalancesColumns(
           amountChange={row.original.amountChange}
           denom={row.original.denom}
           type={row.original.type}
+          abbreviated={abbreviated}
         />
       ),
       sortingFn: sizeSortingFn,
     }),
-    [],
+    [abbreviated],
   )
 
   const priceCell = useMemo(

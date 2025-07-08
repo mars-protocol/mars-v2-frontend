@@ -7,8 +7,8 @@ import Text from 'components/common/Text'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useAsset from 'hooks/assets/useAsset'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import useKeeperFee from 'hooks/perps/useKeeperFee'
-import { useCallback, useEffect, useState } from 'react'
+import { useKeeperFee } from 'hooks/perps/useKeeperFee'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import useStore from 'store'
 import { BN } from 'utils/helpers'
 
@@ -17,10 +17,15 @@ export default function KeeperFeeModal() {
   const creditManagerConfig = useStore((s) => s.creditManagerConfig)
   const USD = useAsset('usd')
   const modal = useStore((s) => s.keeperFeeModal)
-  const { keeperFee, setKeeperFee } = useKeeperFee()
+
+  const { parsedKeeperFee, setKeeperFee } = useKeeperFee()
+
+  const displayKeeperFee = useMemo(() => {
+    return parsedKeeperFee || { denom: '', amount: '0' }
+  }, [parsedKeeperFee])
 
   const [amount, setAmount] = useState(() => {
-    return BN(keeperFee?.amount ?? '0').shiftedBy(2 - PRICE_ORACLE_DECIMALS)
+    return BN(displayKeeperFee?.amount ?? '0').shiftedBy(2 - PRICE_ORACLE_DECIMALS)
   })
 
   const onClose = useCallback(() => {
@@ -31,17 +36,17 @@ export default function KeeperFeeModal() {
   const isLessThanMin = amount.isLessThan(minKeeperFee?.shiftedBy(2 - PRICE_ORACLE_DECIMALS))
 
   useEffect(() => {
-    if (keeperFee?.amount) {
-      setAmount(BN(keeperFee.amount).shiftedBy(2 - PRICE_ORACLE_DECIMALS))
+    if (displayKeeperFee?.amount) {
+      setAmount(BN(displayKeeperFee.amount).shiftedBy(2 - PRICE_ORACLE_DECIMALS))
     }
-  }, [keeperFee])
+  }, [displayKeeperFee])
 
   const handleActionClick = () => {
-    if (!USD || !keeperFee?.denom) return
+    if (!USD || !displayKeeperFee.denom) return
 
     setKeeperFee(
       JSON.stringify({
-        denom: keeperFee.denom,
+        denom: displayKeeperFee.denom,
         amount: amount.shiftedBy(PRICE_ORACLE_DECIMALS - 2).toString(),
       }),
     )

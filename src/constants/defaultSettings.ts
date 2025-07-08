@@ -2,7 +2,12 @@ import { ORACLE_DENOM } from 'constants/oracle'
 import { RewardsCenterType } from 'types/enums'
 import { ResolutionString } from 'utils/charting_library'
 
-export const defaultKeeperFeeAmount = '200000'
+export const getDefaultKeeperFee = (chainConfig: ChainConfig) => {
+  return {
+    denom: chainConfig.stables[0],
+    amount: '200000',
+  }
+}
 
 export const getDefaultChainSettings = (chainConfig: ChainConfig) => {
   return {
@@ -25,9 +30,6 @@ export const getDefaultChainSettings = (chainConfig: ChainConfig) => {
     tvChartStore: JSON.stringify({}),
     showPerpsVaultBanner: true,
     fundingRateInterval: '1H',
-    keeperFee: JSON.stringify({
-      denom: chainConfig.stables[0],
-      amount: defaultKeeperFeeAmount,
-    }),
+    keeperFee: JSON.stringify(getDefaultKeeperFee(chainConfig)),
   }
 }

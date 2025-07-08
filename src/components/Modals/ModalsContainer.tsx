@@ -1,7 +1,6 @@
 import {
   AccountDeleteController,
   AddFarmAssetsModal,
-  AlertDialogController,
   AstroLpModal,
   BorrowModal,
   FundAndWithdrawModal,
@@ -11,6 +10,7 @@ import {
   HlsModal,
   KeeperFeeModal,
   LendAndReclaimModalController,
+  MarsStakingModal,
   PerpsConditionalTriggersModal,
   PerpsSlTpModal,
   PerpsTriggerOrdersModal,
@@ -19,34 +19,39 @@ import {
   UnlockModal,
   V1BorrowAndRepay,
   V1DepositAndWithdraw,
+  VaultAssets,
   VaultModal,
   WalletAssets,
   WithdrawFromVaultsModal,
 } from 'components/Modals'
+import useStore from 'store'
 
 export default function ModalsContainer() {
+  const store = useStore((s) => s)
+
   return (
     <>
-      <AccountDeleteController />
-      <AddFarmAssetsModal />
-      <BorrowModal />
-      <FundAndWithdrawModal />
-      <GetStartedModal />
-      <LendAndReclaimModalController />
-      <SettingsModal />
-      <UnlockModal />
-      <AstroLpModal />
-      <VaultModal />
-      <WithdrawFromVaultsModal />
-      <WalletAssets />
-      <AlertDialogController />
-      <HlsModal />
-      <HlsCloseModal />
-      <HlsManageModal />
-      <PerpsVaultModal />
-      <V1DepositAndWithdraw />
-      <V1BorrowAndRepay />
-      <KeeperFeeModal />
+      {store.accountDeleteModal && <AccountDeleteController />}
+      {store.farmModal && <AddFarmAssetsModal />}
+      {store.borrowModal && <BorrowModal />}
+      {store.fundAndWithdrawModal && <FundAndWithdrawModal />}
+      {store.getStartedModal && <GetStartedModal />}
+      {store.lendAndReclaimModal && <LendAndReclaimModalController />}
+      {store.settingsModal && <SettingsModal />}
+      {store.unlockModal && <UnlockModal />}
+      {store.farmModal && <AstroLpModal />}
+      {store.farmModal && <VaultModal />}
+      {store.withdrawFromVaultsModal && <WithdrawFromVaultsModal />}
+      {store.walletAssetsModal && <WalletAssets />}
+      {store.hlsModal && <HlsModal />}
+      {store.hlsCloseModal && <HlsCloseModal />}
+      {store.hlsManageModal && <HlsManageModal />}
+      {store.perpsVaultModal && <PerpsVaultModal />}
+      {store.v1DepositAndWithdrawModal && <V1DepositAndWithdraw />}
+      {store.v1BorrowAndRepayModal && <V1BorrowAndRepay />}
+      {store.keeperFeeModal && <KeeperFeeModal />}
+      {store.vaultAssetsModal && <VaultAssets />}
+      {store.marsStakingModal && <MarsStakingModal />}
       <PerpsConditionalTriggersModal />
       <PerpsTriggerOrdersModal />
       <PerpsSlTpModal />

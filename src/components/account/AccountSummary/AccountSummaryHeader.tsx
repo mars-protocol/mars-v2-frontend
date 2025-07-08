@@ -9,6 +9,7 @@ import { ArrowRight, ArrowRightLine } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
+import useAccountTitle from 'hooks/accounts/useAccountTitle'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { calculateAccountBalanceValue } from 'utils/accounts'
@@ -54,6 +55,7 @@ export default function AccountSummaryHeader(props: Props) {
     accountBalance.toFixed(2),
   )
   const increase = updatedAccountBalance?.isGreaterThan(accountBalance)
+  const accountTitle = useAccountTitle(account, true)
 
   return (
     <div className='relative flex flex-wrap w-full p-4 pb-2 border-b bg-white/10 border-white/10'>
@@ -68,10 +70,9 @@ export default function AccountSummaryHeader(props: Props) {
         />
       )}
       {!isInModal && (
-        <Text
-          size='sm'
-          className='w-full pb-1 text-white/50'
-        >{`Credit Account ${account.id}`}</Text>
+        <Text size='sm' className='w-full pb-1 text-white/50'>
+          {accountTitle}
+        </Text>
       )}
       <div className='flex items-end w-full gap-2 pb-2 border-b border-white/5'>
         <DisplayCurrency

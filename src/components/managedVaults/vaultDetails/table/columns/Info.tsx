@@ -1,0 +1,62 @@
+import classNames from 'classnames'
+import Loading from 'components/common/Loading'
+import Text from 'components/common/Text'
+import { ExternalLink } from 'components/common/Icons'
+import { truncate } from 'utils/formatters'
+import { TextLink } from 'components/common/TextLink'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import moment from 'moment'
+
+export const INFO_META = {
+  meta: { className: 'w-40' },
+}
+interface Props {
+  value: any
+  isLoading: boolean
+}
+
+export default function Info(props: Props) {
+  const { value, isLoading } = props
+  const chainConfig = useChainConfig()
+
+  if (isLoading) return <Loading />
+
+  const address = value.walletAddress ? truncate(value.walletAddress, [2, 6]) : null
+
+  const getStatus = (cooldown_end?: number) => {
+    if (!cooldown_end) return null
+    const currentTime = moment().unix()
+    return cooldown_end <= currentTime ? 'Ready to withdraw' : 'Queued'
+  }
+  const status = value.cooldown_end ? getStatus(value.cooldown_end) : value.status
+  const link = `${chainConfig.endpoints.explorer}/address/${value.walletAddress}`
+
+  return (
+    <>
+      {address && (
+        <div className='flex justify-end'>
+          <span onClick={(e) => e.stopPropagation()}>
+            <TextLink
+              href={link}
+              externalLink={true}
+              textSize='extraSmall'
+              className='underline hover:no-underline hover:text-white'
+              title={address}
+            >
+              {address}
+              <ExternalLink className='ml-1 inline w-3' />
+            </TextLink>
+          </span>
+        </div>
+      )}
+      {status && (
+        <Text
+          size='xs'
+          className={classNames(status === 'Queued' ? 'text-warning' : 'text-white/40')}
+        >
+          {status}
+        </Text>
+      )}
+    </>
+  )
+}

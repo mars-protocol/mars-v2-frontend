@@ -7,7 +7,6 @@ export default function createModalSlice(
   return {
     accountDeleteModal: null,
     addFarmBorrowingsModal: null,
-    alertDialog: null,
     assetOverlayState: 'closed' as OverlayState,
     hlsModal: null,
     borrowModal: null,
@@ -18,18 +17,18 @@ export default function createModalSlice(
     hlsCloseModal: null,
     lendAndReclaimModal: null,
     perpsVaultModal: null,
-    resetStettingsModal: false,
     settingsModal: false,
     unlockModal: null,
     farmModal: null,
     walletAssetsModal: null,
     withdrawFromVaultsModal: null,
-    withdrawFromAstroLpModal: null,
     v1DepositAndWithdrawModal: null,
     v1BorrowAndRepayModal: null,
     keeperFeeModal: false,
     addSLTPModal: false as false | { parentPosition: PerpPositionRow },
     conditionalTriggersModal: false,
     triggerOrdersModal: null,
+    vaultAssetsModal: null,
+    marsStakingModal: null,
   }
 }

@@ -5,6 +5,7 @@ import Card from 'components/common/Card'
 
 type Props = {
   tabs: CardTab[]
+  textSizeClass?: string
 }
 
 export function CardWithTabs(props: Props) {
@@ -14,7 +15,14 @@ export function CardWithTabs(props: Props) {
 
   return (
     <Card
-      title={<Tabs onChange={setActiveIdx} activeIdx={activeIdx} {...props} />}
+      title={
+        <Tabs
+          onChange={setActiveIdx}
+          activeIdx={activeIdx}
+          textSizeClass={props.textSizeClass}
+          {...props}
+        />
+      }
       className='w-full'
     >
       {props.tabs[activeIdx].renderContent()}
@@ -26,6 +34,7 @@ type TabsProps = {
   tabs: CardTab[]
   onChange: (index: number) => void
   activeIdx: number
+  textSizeClass?: string
 }
 
 function Tabs(props: TabsProps) {
@@ -36,7 +45,8 @@ function Tabs(props: TabsProps) {
           <button
             key={tab.title}
             className={classNames(
-              'pt-4 pb-1 mb-3 border-b-[2px] border-transparent flex items-center text-lg',
+              'pt-4 pb-1 mb-3 border-b-[2px] border-transparent flex items-center',
+              props.textSizeClass || 'text-lg',
               props.tabs.length < 2 && 'cursor-default text-white border-transparent',
               index === props.activeIdx && props.tabs.length > 1 && 'border-b-martian-red',
               index !== props.activeIdx && props.tabs.length > 1 && 'text-white/20',

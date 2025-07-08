@@ -6,14 +6,14 @@ import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import OrderTypeSelector from 'components/common/OrderTypeSelector'
-import Text from 'components/common/Text'
 import SwitchWithText from 'components/common/Switch/SwitchWithText'
+import Text from 'components/common/Text'
 import { PERPS_ORDER_TYPE_TABS } from 'components/perps/Module/constants'
 import KeeperFee from 'components/perps/Module/KeeperFee'
 import { LeverageSection } from 'components/perps/Module/LeverageSection'
+import { PerpsOrderOptions } from 'components/perps/Module/PerpsOrderOptions'
 import PerpsTradeDirectionSelector from 'components/perps/Module/PerpsTradeDirectionSelector'
 import { LimitPriceSection, StopPriceSection } from 'components/perps/Module/PriceInputs'
-import { PerpsOrderOptions } from 'components/perps/Module/PerpsOrderOptions'
 import PerpsSummary from 'components/perps/Module/Summary'
 import AssetSelectorPerps from 'components/trade/TradeModule/AssetSelector/AssetSelectorPerps'
 
@@ -227,6 +227,8 @@ export function PerpsModule() {
       autolend: isAutoLendEnabledForCurrentAccount,
       baseDenom: currentPerpPosition.baseDenom,
       orderIds: relevantOrderIds,
+      position: currentPerpPosition,
+      debt: currentAccount.debts.find((debt) => debt.denom === currentPerpPosition.baseDenom),
     })
   }, [
     currentAccount,

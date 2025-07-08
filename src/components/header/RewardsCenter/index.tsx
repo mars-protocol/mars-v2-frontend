@@ -157,7 +157,7 @@ export default function RewardsCenter(props: Props) {
               Unclaimed Rewards
             </Text>
           </div>
-          <CampaignRewards campaignPoints={campaignPoints} />
+          {campaignPoints && <CampaignRewards campaignPoints={campaignPoints} />}
           <RewardsByToken
             rewards={rewards}
             assets={assets}

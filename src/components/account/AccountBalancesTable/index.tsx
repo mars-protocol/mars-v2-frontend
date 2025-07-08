@@ -1,8 +1,9 @@
 import classNames from 'classnames'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useEffect } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import useAccountBalancesColumns from 'components/account/AccountBalancesTable/Columns/useAccountBalancesColumns'
+import { VALUE_META } from 'components/account/AccountBalancesTable/Columns/Value'
 import useAccountBalanceData from 'components/account/AccountBalancesTable/useAccountBalanceData'
 import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullPage'
 import ActionButton from 'components/common/Button/ActionButton'
@@ -10,12 +11,13 @@ import Card from 'components/common/Card'
 import Table from 'components/common/Table'
 import Text from 'components/common/Text'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
+import useAccountTitle from 'hooks/accounts/useAccountTitle'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useStore from 'store'
-import { getPage, getRoute } from 'utils/route'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import { useSkipBridge } from 'hooks/bridge/useSkipBridge'
 import { useSkipBridgeData } from 'hooks/bridge/useSkipBridgeData'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import useStore from 'store'
+import { getPage, getRoute } from 'utils/route'
 
 interface Props {
   account: Account
@@ -25,6 +27,7 @@ interface Props {
   tableBodyClassName?: string
   showLiquidationPrice?: boolean
   isUsersAccount?: boolean
+  abbreviated?: boolean
 }
 
 export default function AccountBalancesTable(props: Props) {
@@ -37,6 +40,7 @@ export default function AccountBalancesTable(props: Props) {
     hideCard,
     showLiquidationPrice,
     isUsersAccount,
+    abbreviated = true,
   } = props
   const chainConfig = useChainConfig()
   const currentAccount = useCurrentAccount()
@@ -51,7 +55,7 @@ export default function AccountBalancesTable(props: Props) {
     cosmosAddress: address,
   })
 
-  const columns = useAccountBalancesColumns(account, showLiquidationPrice)
+  const columns = useAccountBalancesColumns(account, showLiquidationPrice, abbreviated)
 
   const accountBalanceData = useAccountBalanceData({
     account,
@@ -59,6 +63,7 @@ export default function AccountBalancesTable(props: Props) {
     lendingData,
     borrowingData,
   })
+  const accountTitle = useAccountTitle(account, true)
 
   const { dynamicAssets, currentBridges, forceUpdate } = useSkipBridgeData({
     accountBalanceData,
@@ -98,8 +103,7 @@ export default function AccountBalancesTable(props: Props) {
                   focusComponent: {
                     component: <AccountFundFullPage />,
                     onClose: () => {
-                      // TODO: update docs to reflect the current state of v2
-                      //useStore.setState({ getStartedModal: true })
+                      useStore.setState({ getStartedModal: true })
                     },
                   },
                 })
@@ -123,13 +127,13 @@ export default function AccountBalancesTable(props: Props) {
           className='flex items-center justify-between w-full p-4 font-semibold bg-white/10'
         >
           <span>Balances</span>
-          <span className='text-white/60'>Credit Account {account.id}</span>
+          <span className='text-white/60'>{accountTitle}</span>
         </Text>
       }
       columns={columns}
       data={dynamicAssets}
       tableBodyClassName={classNames(tableBodyClassName, 'text-white/60')}
-      initialSorting={[]}
+      initialSorting={[{ id: VALUE_META.accessorKey, desc: true }]}
       spacingClassName='p-2'
       hideCard={hideCard}
       type='balances'

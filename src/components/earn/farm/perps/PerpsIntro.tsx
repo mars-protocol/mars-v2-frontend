@@ -1,9 +1,9 @@
 import Button from 'components/common/Button'
-import Intro from 'components/common/Intro'
-import usePerpsVault from 'hooks/perps/usePerpsVault'
 import { PlusSquared } from 'components/common/Icons'
-import { DocURL } from 'types/enums'
+import Intro from 'components/common/Intro'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
+import usePerpsVault from 'hooks/perps/usePerpsVault'
+import { DocURL } from 'types/enums'
 
 export default function PerpsIntro() {
   const { data: vault } = usePerpsVault()
@@ -16,19 +16,22 @@ export default function PerpsIntro() {
     <Intro
       text={
         <>
-          <span className='text-white'>Earn perps trading fees</span> by depositing {asset.symbol}{' '}
-          into the counterparty vault, with deposits subject to a {vault?.lockup.duration}-
-          {vault?.lockup.timeframe} lockup.
+          <span className='text-white'>
+            Provide liquidity to the Counterparty Vault and earn perpetuals trading fees.
+          </span>{' '}
+          Deposits are subject to a {vault?.lockup.duration}-{vault?.lockup.timeframe} unlocking
+          period and carry directional risk: when perps traders lose, the vault gains — but when
+          they win, the vault takes the loss.
         </>
       }
       bg='perps-vault'
     >
       <Button
-        text='Read more about Mars'
+        text='Learn more'
         leftIcon={<PlusSquared />}
         onClick={(e) => {
           e.preventDefault()
-          window.open(DocURL.DOCS_URL, '_blank')
+          window.open(DocURL.PERPS_VAULT_URL, '_blank')
         }}
         color='secondary'
       />

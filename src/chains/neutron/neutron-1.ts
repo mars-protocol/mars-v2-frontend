@@ -136,23 +136,29 @@ const Neutron1: ChainConfig = {
     accountNft: 'neutron184kvu96rqtetmunkkmhu5hru8yaqg7qfhd8ldu5avjnamdqu69squrh3f5',
     perps: 'neutron1g3catxyv0fk8zzsra2mjc0v4s69a7xygdjt85t54l7ym3gv0un4q2xhaf6',
     pyth: 'neutron1m2emc93m9gpwgsrsf2vylv9xvgqh654630v7dfrhrkmr5slly53spg85wv',
+    marsStaking: 'neutron1rly5as5fdhhuasfw375hs4wyensvyx6eytzkdxtqfma6veyneggs457lnj',
+    marsVotingPower: 'neutron1pxjszcmmdxwtw9kv533u3hcudl6qahsa42chcs24gervf4ge40usaw3pcr',
   },
   endpoints: {
-    routes: 'https://app.astroport.fi/api/routes',
+    routes: 'https://router.astroport.fi/api/routes',
     rpc: process.env.NEXT_PUBLIC_NEUTRON_RPC ?? 'https://rpc-lb.neutron.org',
     fallbackRpc: 'https://neutron-rpc.cosmos-apis.com',
     rest: process.env.NEXT_PUBLIC_NEUTRON_REST ?? 'https://rest-lb.neutron.org',
     swap: 'https://neutron.astroport.fi/swap',
     explorer: 'https://mintscan.io/neutron',
-    dexAssets: 'https://neutron-cache-api.onrender.com/neutron-1/tokens',
-    dexPools: 'https://neutron-cache-api.onrender.com/neutron-1/pools',
+    dexAssets: 'https://cache.marsprotocol.io/api/neutron-1/tokens',
+    dexPools: 'https://cache.marsprotocol.io/api/neutron-1/pools',
     gasPrices: getUrl(
       process.env.NEXT_PUBLIC_NEUTRON_REST ?? 'https://rest-lb.neutron.org',
       '/feemarket/v1/gas_prices',
     ),
+    managedVaults: 'https://backend.prod.mars-dev.net/v2/managed_vaults?chain=neutron',
+    historicalManagedVaults:
+      'https://backend.prod.mars-dev.net/v2/managed_vaults_historical?chain=neutron',
     aprs: {
       vaults: '',
-      perpsVault: 'https://backend.prod.mars-dev.net/v2/perps_vault?chain=neutron',
+      perpsVault:
+        'https://backend.prod.mars-dev.net/v2/perps_vault_historical?chain=neutron&days=1',
     },
   },
   network: NETWORK.MAINNET,
@@ -172,12 +178,14 @@ const Neutron1: ChainConfig = {
     },
   },
   features: ['ibc-transfer', 'ibc-go'],
+  vaultCodeId: '3679',
   hls: true,
   perps: true,
   farm: true,
   anyAsset: true,
   evmAssetSupport: true,
   slinky: true,
+  managedVaults: true,
 }
 
 export default Neutron1

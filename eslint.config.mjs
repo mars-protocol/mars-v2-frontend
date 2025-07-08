@@ -50,6 +50,7 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-function-type': 'off',
       'linebreak-style': ['warn', 'unix'],
       'no-undef': 'off',
+      'prettier/prettier': 0,
       'sort-imports': [
         'warn',
         {

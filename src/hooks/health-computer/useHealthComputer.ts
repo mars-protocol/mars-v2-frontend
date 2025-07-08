@@ -275,7 +275,7 @@ export default function useHealthComputer(account?: Account) {
         return BN_ZERO
       }
     },
-    [healthComputer, slippage, priceData],
+    [healthComputer, priceData, slippage],
   )
 
   const computeLiquidationPrice = useCallback(

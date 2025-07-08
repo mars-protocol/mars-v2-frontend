@@ -7,7 +7,6 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import { BNCoin } from 'types/classes/BNCoin'
 import { ChevronDown } from 'components/common/Icons'
-import { ChainInfoID } from 'types/enums'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { formatValue } from 'utils/formatters'
 
@@ -80,16 +79,30 @@ export function RouteInfo(props: Props) {
           )}
           <SummaryLine label='Route'>{props.route.description}</SummaryLine>
           {props.tradeInfo && (
-            <SummaryLine label={`Min receive (${props.tradeInfo.slippage * 100}% slippage)`}>
-              <FormattedNumber
-                amount={props.tradeInfo.minReceive.toNumber()}
-                options={{
-                  decimals: props.assets.out.decimals,
-                  suffix: ` ${props.assets.out.symbol}`,
-                  maxDecimals: 6,
-                }}
-              />
-            </SummaryLine>
+            <div className='space-y-1'>
+              <SummaryLine label={`Min receive (${props.tradeInfo.slippage * 100}% slippage)`}>
+                <FormattedNumber
+                  amount={props.tradeInfo.minReceive.toNumber()}
+                  options={{
+                    decimals: props.assets.out.decimals,
+                    suffix: ` ${props.assets.out.symbol}`,
+                    maxDecimals: 6,
+                  }}
+                />
+              </SummaryLine>
+              {props.assets.out.price && (
+                <div className='flex justify-end'>
+                  <DisplayCurrency
+                    coin={BNCoin.fromDenomAndBigNumber(
+                      props.assets.out.denom,
+                      props.tradeInfo.minReceive,
+                    )}
+                    className='text-xs text-white/60'
+                    options={{ maxDecimals: 2, abbreviated: true }}
+                  />
+                </div>
+              )}
+            </div>
           )}
           <Divider className='my-2' />
         </>

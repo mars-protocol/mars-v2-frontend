@@ -1,13 +1,19 @@
-import { defaultKeeperFeeAmount, getDefaultChainSettings } from 'constants/defaultSettings'
+import { useMemo } from 'react'
+
+import { getDefaultChainSettings, getDefaultKeeperFee } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import { useMemo } from 'react'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
-export default function useKeeperFee() {
+export interface ParsedKeeperFee {
+  denom: string
+  amount: string
+}
+
+export function useKeeperFee() {
   const chainConfig = useChainConfig()
   const creditManagerConfig = useStore((s) => s.creditManagerConfig)
 
@@ -17,25 +23,28 @@ export default function useKeeperFee() {
       getDefaultChainSettings(chainConfig).keeperFee,
   )
 
-  const parsedKeeperFee = useMemo(() => {
+  const parsedKeeperFee = useMemo((): ParsedKeeperFee | null => {
     try {
       return typeof keeperFee === 'string' ? JSON.parse(keeperFee) : keeperFee
     } catch {
-      return { denom: '', amount: '0' }
+      return keeperFee
     }
   }, [keeperFee])
 
-  const calculateKeeperFee = useMemo(
-    () =>
-      parsedKeeperFee?.amount
-        ? BNCoin.fromDenomAndBigNumber(parsedKeeperFee.denom, BN(parsedKeeperFee.amount))
-        : BNCoin.fromDenomAndBigNumber(chainConfig.stables[0], BN(defaultKeeperFeeAmount)),
-    [chainConfig.stables, parsedKeeperFee.amount, parsedKeeperFee.denom],
-  )
+  const calculateKeeperFee = useMemo(() => {
+    const defaultKeeperFee = getDefaultKeeperFee(chainConfig)
+
+    if (parsedKeeperFee?.amount && parsedKeeperFee?.denom) {
+      return BNCoin.fromDenomAndBigNumber(parsedKeeperFee.denom, BN(parsedKeeperFee.amount))
+    }
+
+    return BNCoin.fromDenomAndBigNumber(defaultKeeperFee.denom, BN(defaultKeeperFee.amount))
+  }, [chainConfig, parsedKeeperFee])
 
   return {
-    keeperFee: parsedKeeperFee,
+    keeperFee,
     setKeeperFee,
+    parsedKeeperFee,
     calculateKeeperFee,
   }
 }

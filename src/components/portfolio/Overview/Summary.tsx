@@ -1,46 +1,30 @@
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 
-import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import SummarySkeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import useAccounts from 'hooks/accounts/useAccounts'
-import useAssets from 'hooks/assets/useAssets'
-import useAstroLpAprs from 'hooks/astroLp/useAstroLpAprs'
-import useAssetParams from 'hooks/params/useAssetParams'
-import usePerpsVault from 'hooks/perps/usePerpsVault'
-import useVaultAprs from 'hooks/vaults/useVaultAprs'
 import useStore from 'store'
-import { getAccountSummaryStats } from 'utils/accounts'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 import { mergeBNCoinArrays, mergePerpsVaults } from 'utils/helpers'
-import usePerpsMarketStates from 'hooks/perps/usePerpsMarketStates'
+import { useAccountSummaryStats } from 'hooks/accounts/useAccountSummaryStats'
 
 export default function PortfolioSummary() {
   const { address: urlAddress } = useParams()
   const walletAddress = useStore((s) => s.address)
-  const data = useBorrowMarketAssetsTableData()
-  const borrowAssets = useMemo(() => data?.allAssets || [], [data])
-  const { allAssets: lendingAssets } = useLendingMarketAssetsTableData()
   const { data: defaultAccounts } = useAccounts('default', urlAddress || walletAddress)
   const { data: hlsAccounts } = useAccounts('high_levered_strategy', urlAddress || walletAddress)
-  const { data: vaultAprs } = useVaultAprs()
-  const { data: assets } = useAssets()
-  const astroLpAprs = useAstroLpAprs()
-  const assetParams = useAssetParams()
-  const { data: perpsVault } = usePerpsVault()
-  const perpsMarketStates = usePerpsMarketStates()
 
   const allAccounts = useMemo(() => {
     return [...(defaultAccounts || []), ...(hlsAccounts || [])]
   }, [defaultAccounts, hlsAccounts])
 
-  const stats = useMemo(() => {
+  const combinedAccount = useMemo(() => {
     if (!allAccounts?.length) return
-    const combinedAccount = allAccounts.reduce(
+
+    return allAccounts.reduce(
       (combinedAccount, account) => {
         combinedAccount.debts = mergeBNCoinArrays(combinedAccount.debts, account.debts)
         combinedAccount.deposits = mergeBNCoinArrays(combinedAccount.deposits, account.deposits)
@@ -65,21 +49,23 @@ export default function PortfolioSummary() {
         kind: 'default' as AccountKind,
       } as Account,
     )
-    const combinedPerpsVaults = mergePerpsVaults(allAccounts.map((account) => account.perpsVault))
-    combinedAccount.perpsVault = combinedPerpsVaults.denom !== '' ? combinedPerpsVaults : null
+  }, [allAccounts])
 
-    const { positionValue, debts, netWorth, collateralValue, apy, leverage } =
-      getAccountSummaryStats(
-        combinedAccount,
-        borrowAssets,
-        lendingAssets,
-        assets,
-        vaultAprs,
-        astroLpAprs,
-        assetParams.data || [],
-        perpsVault?.apy || 0,
-        perpsMarketStates.data || [],
-      )
+  const combinedAccountWithPerps = useMemo(() => {
+    if (!combinedAccount) return undefined
+
+    const combinedPerpsVaults = mergePerpsVaults(allAccounts.map((account) => account.perpsVault))
+    return {
+      ...combinedAccount,
+      perpsVault: combinedPerpsVaults.denom !== '' ? combinedPerpsVaults : null,
+    }
+  }, [combinedAccount, allAccounts])
+
+  const { positionValue, collateralValue, debts, netWorth, apy, leverage } =
+    useAccountSummaryStats(combinedAccountWithPerps)
+
+  const stats = useMemo(() => {
+    if (!combinedAccountWithPerps) return
 
     return [
       {
@@ -123,17 +109,7 @@ export default function PortfolioSummary() {
         sub: 'Combined leverage',
       },
     ]
-  }, [
-    allAccounts,
-    assets,
-    borrowAssets,
-    lendingAssets,
-    vaultAprs,
-    astroLpAprs,
-    assetParams,
-    perpsVault?.apy,
-    perpsMarketStates.data,
-  ])
+  }, [combinedAccountWithPerps, positionValue, collateralValue, debts, netWorth, apy, leverage])
 
   if (!walletAddress && !urlAddress) return null
 
