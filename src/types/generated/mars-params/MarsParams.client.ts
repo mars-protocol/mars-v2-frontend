@@ -21,6 +21,7 @@ import {
   CmEmergencyUpdate,
   RedBankEmergencyUpdate,
   PerpsEmergencyUpdate,
+  ManagedVaultConfigUpdate,
   AssetParamsBaseForString,
   CmSettingsForString,
   HlsParamsBaseForString,
@@ -47,6 +48,7 @@ import {
   PaginationResponseForVaultConfigBaseForAddr,
   NullableAssetParamsBaseForAddr,
   ConfigResponse,
+  ManagedVaultConfigResponse,
   OwnerResponse,
 } from './MarsParams.types'
 export interface MarsParamsReadOnlyInterface {
@@ -54,6 +56,7 @@ export interface MarsParamsReadOnlyInterface {
   owner: () => Promise<OwnerResponse>
   riskManager: () => Promise<OwnerResponse>
   config: () => Promise<ConfigResponse>
+  managedVaultConfig: () => Promise<ManagedVaultConfigResponse>
   assetParams: ({ denom }: { denom: string }) => Promise<NullableAssetParamsBaseForAddr>
   allAssetParams: ({
     limit,
@@ -117,6 +120,7 @@ export class MarsParamsQueryClient implements MarsParamsReadOnlyInterface {
     this.owner = this.owner.bind(this)
     this.riskManager = this.riskManager.bind(this)
     this.config = this.config.bind(this)
+    this.managedVaultConfig = this.managedVaultConfig.bind(this)
     this.assetParams = this.assetParams.bind(this)
     this.allAssetParams = this.allAssetParams.bind(this)
     this.allAssetParamsV2 = this.allAssetParamsV2.bind(this)
@@ -142,6 +146,11 @@ export class MarsParamsQueryClient implements MarsParamsReadOnlyInterface {
   config = async (): Promise<ConfigResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       config: {},
+    })
+  }
+  managedVaultConfig = async (): Promise<ManagedVaultConfigResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      managed_vault_config: {},
     })
   }
   assetParams = async ({ denom }: { denom: string }): Promise<NullableAssetParamsBaseForAddr> => {
@@ -327,6 +336,12 @@ export interface MarsParamsInterface extends MarsParamsReadOnlyInterface {
     memo?: string,
     _funds?: Coin[],
   ) => Promise<ExecuteResult>
+  updateManagedVaultConfig: (
+    managedVaultConfigUpdate: ManagedVaultConfigUpdate,
+    fee?: number | StdFee | 'auto',
+    memo?: string,
+    _funds?: Coin[],
+  ) => Promise<ExecuteResult>
 }
 export class MarsParamsClient extends MarsParamsQueryClient implements MarsParamsInterface {
   client: SigningCosmWasmClient
@@ -345,6 +360,7 @@ export class MarsParamsClient extends MarsParamsQueryClient implements MarsParam
     this.updateVaultConfig = this.updateVaultConfig.bind(this)
     this.updatePerpParams = this.updatePerpParams.bind(this)
     this.emergencyUpdate = this.emergencyUpdate.bind(this)
+    this.updateManagedVaultConfig = this.updateManagedVaultConfig.bind(this)
   }
   updateOwner = async (
     ownerUpdate: OwnerUpdate,
@@ -484,6 +500,23 @@ export class MarsParamsClient extends MarsParamsQueryClient implements MarsParam
       this.contractAddress,
       {
         emergency_update: emergencyUpdate,
+      },
+      fee,
+      memo,
+      _funds,
+    )
+  }
+  updateManagedVaultConfig = async (
+    managedVaultConfigUpdate: ManagedVaultConfigUpdate,
+    fee: number | StdFee | 'auto' = 'auto',
+    memo?: string,
+    _funds?: Coin[],
+  ): Promise<ExecuteResult> => {
+    return await this.client.execute(
+      this.sender,
+      this.contractAddress,
+      {
+        update_managed_vault_config: managedVaultConfigUpdate,
       },
       fee,
       memo,

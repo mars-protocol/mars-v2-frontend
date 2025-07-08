@@ -8,6 +8,7 @@
 import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
 import {
+  SwapperBaseForString,
   HealthContractBaseForString,
   IncentivesUnchecked,
   Uint128,
@@ -15,7 +16,6 @@ import {
   OracleBaseForString,
   ParamsBaseForString,
   RedBankUnchecked,
-  SwapperBaseForString,
   ZapperBaseForString,
   InstantiateMsg,
   KeeperFeeConfig,
@@ -47,6 +47,7 @@ import {
   VaultBaseForString,
   AstroRoute,
   AstroSwap,
+  DualityRoute,
   OsmoRoute,
   OsmoSwap,
   ConfigUpdates,
