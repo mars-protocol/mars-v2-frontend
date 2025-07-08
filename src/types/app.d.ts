@@ -1493,9 +1493,13 @@ interface WalletAssetModal {
 }
 
 interface AccountAssetsModal {
-  isOpen?: boolean
-  selectedDenom: string
-  assets: Asset[]
+  debtAsset: Asset
+  availableAssets: Asset[]
+  swapAssets: Asset[]
+  selectedDenoms: string[]
+  onSelect: (selectedDenoms: string[]) => void
+  account: Account
+  repayFromWallet: boolean
 }
 
 interface VaultAssetModal {
