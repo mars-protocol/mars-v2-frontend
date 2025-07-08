@@ -9,13 +9,13 @@ import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from '@tan
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 import { StdFee } from '@cosmjs/amino'
 import {
-  Uint128,
+  TransferType,
   Decimal,
   InstantiateMsg,
-  NeutronIbcConfig,
-  Coin,
+  RewardConfig,
   ExecuteMsg,
   OwnerUpdate,
+  Uint128,
   Action,
   ActionAmount,
   Int128,
@@ -28,10 +28,12 @@ import {
   SwapperRoute,
   IncentiveKind,
   UpdateConfig,
+  Coin,
   ActionCoin,
   VaultBaseForString,
   AstroRoute,
   AstroSwap,
+  DualityRoute,
   OsmoRoute,
   OsmoSwap,
   QueryMsg,
@@ -143,7 +145,6 @@ export function useMarsRewardsCollectorBaseSwapAssetMutation(
 export interface MarsRewardsCollectorBaseDistributeRewardsMutation {
   client: MarsRewardsCollectorBaseClient
   msg: {
-    amount?: Uint128
     denom: string
   }
   args?: {

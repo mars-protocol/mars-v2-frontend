@@ -24,6 +24,7 @@ import {
   QueryMsg,
   ActionKind,
   ConfigResponse,
+  HasPriceSourceResponse,
   PriceResponse,
   PriceSourceResponseForString,
   ArrayOfPriceSourceResponseForString,
@@ -91,6 +92,14 @@ export const marsOracleOsmosisQueryKeys = {
         args,
       },
     ] as const,
+  hasPriceSource: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
+    [
+      {
+        ...marsOracleOsmosisQueryKeys.address(contractAddress)[0],
+        method: 'has_price_source',
+        args,
+      },
+    ] as const,
 }
 export interface MarsOracleOsmosisReactQuery<TResponse, TData = TResponse> {
   client: MarsOracleOsmosisQueryClient | undefined
@@ -100,6 +109,31 @@ export interface MarsOracleOsmosisReactQuery<TResponse, TData = TResponse> {
   > & {
     initialData?: undefined
   }
+}
+export interface MarsOracleOsmosisHasPriceSourceQuery<TData>
+  extends MarsOracleOsmosisReactQuery<HasPriceSourceResponse, TData> {
+  args: {
+    denom: string
+  }
+}
+export function useMarsOracleOsmosisHasPriceSourceQuery<TData = HasPriceSourceResponse>({
+  client,
+  args,
+  options,
+}: MarsOracleOsmosisHasPriceSourceQuery<TData>) {
+  return useQuery<HasPriceSourceResponse, Error, TData>(
+    marsOracleOsmosisQueryKeys.hasPriceSource(client?.contractAddress, args),
+    () =>
+      client
+        ? client.hasPriceSource({
+            denom: args.denom,
+          })
+        : Promise.reject(new Error('Invalid client')),
+    {
+      ...options,
+      enabled: !!client && (options?.enabled != undefined ? options.enabled : true),
+    },
+  )
 }
 export interface MarsOracleOsmosisPricesByDenomsQuery<TData>
   extends MarsOracleOsmosisReactQuery<ArrayOfPriceResponse, TData> {

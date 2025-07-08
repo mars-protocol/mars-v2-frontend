@@ -5,6 +5,7 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
+export type SwapperBaseForString = string
 export type HealthContractBaseForString = string
 export type IncentivesUnchecked = string
 export type Uint128 = string
@@ -12,9 +13,9 @@ export type Decimal = string
 export type OracleBaseForString = string
 export type ParamsBaseForString = string
 export type RedBankUnchecked = string
-export type SwapperBaseForString = string
 export type ZapperBaseForString = string
 export interface InstantiateMsg {
+  duality_swapper: SwapperBaseForString
   health_contract: HealthContractBaseForString
   incentives: IncentivesUnchecked
   keeper_fee_config: KeeperFeeConfig
@@ -288,6 +289,9 @@ export type VaultPositionType = 'u_n_l_o_c_k_e_d' | 'l_o_c_k_e_d' | 'u_n_l_o_c_k
 export type SwapperRoute =
   | {
       astro: AstroRoute
+    }
+  | {
+      duality: DualityRoute
     }
   | {
       osmo: OsmoRoute
@@ -600,6 +604,11 @@ export interface AstroSwap {
   from: string
   to: string
 }
+export interface DualityRoute {
+  from: string
+  swap_denoms: string[]
+  to: string
+}
 export interface OsmoRoute {
   swaps: OsmoSwap[]
 }
@@ -609,6 +618,7 @@ export interface OsmoSwap {
 }
 export interface ConfigUpdates {
   account_nft?: AccountNftBaseForString | null
+  duality_swapper?: SwapperBaseForString | null
   health_contract?: HealthContractBaseForString | null
   incentives?: IncentivesUnchecked | null
   keeper_fee_config?: KeeperFeeConfig | null
@@ -816,6 +826,7 @@ export interface VaultUtilizationResponse {
 }
 export interface ConfigResponse {
   account_nft?: string | null
+  duality_swapper: string
   health_contract: string
   incentives: string
   keeper_fee_config: KeeperFeeConfig
