@@ -1492,6 +1492,12 @@ interface WalletAssetModal {
   isBorrow?: boolean
 }
 
+interface AccountAssetsModal {
+  isOpen?: boolean
+  selectedDenom: string
+  assets: Asset[]
+}
+
 interface VaultAssetModal {
   isOpen?: boolean
   selectedDenom: string
