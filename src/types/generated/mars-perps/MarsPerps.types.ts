@@ -92,8 +92,10 @@ export interface PerpParams {
   denom: string
   enabled: boolean
   liquidation_threshold: Decimal
+  liquidation_threshold_usdc?: Decimal | null
   max_funding_velocity: Decimal
   max_loan_to_value: Decimal
+  max_loan_to_value_usdc?: Decimal | null
   max_long_oi_value: Uint128
   max_net_oi_value: Uint128
   max_position_value?: Uint128 | null

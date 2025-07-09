@@ -20,7 +20,7 @@ export type HlsAssetTypeForAddr =
 export type Addr = string
 export type Uint128 = string
 export type AccountKind =
-  | ('default' | 'high_levered_strategy')
+  | ('default' | 'usdc_margin' | 'high_levered_strategy')
   | {
       fund_manager: {
         vault_addr: string
@@ -99,8 +99,10 @@ export interface PerpParams {
   denom: string
   enabled: boolean
   liquidation_threshold: Decimal
+  liquidation_threshold_usdc?: Decimal | null
   max_funding_velocity: Decimal
   max_loan_to_value: Decimal
+  max_loan_to_value_usdc?: Decimal | null
   max_long_oi_value: Uint128
   max_net_oi_value: Uint128
   max_position_value?: Uint128 | null
