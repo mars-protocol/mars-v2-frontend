@@ -80,7 +80,7 @@ export default function AlertDialog(props: AlertDialogProps) {
       className={classNames('md:h-auto h-screen-full', modalClassName)}
       modalClassName='max-w-screen-full md:max-w-modal-md h-screen-full flex items-center justify-center'
       headerClassName='p-4 md:p-6'
-      contentClassName='md:px-6 md:pb-6 p-4'
+      contentClassName='md:px-6 md:pb-6 p-4 text-left'
       hideCloseBtn
     >
       {typeof content === 'string' ? (
