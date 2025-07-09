@@ -54,10 +54,6 @@ export default function VaultDetails(props: Props) {
     setIsDialogOpen(false)
   }
 
-  const handleContinue = () => {
-    setIsDialogOpen(false)
-  }
-
   const handleCancel = () => {
     setShowVaultWarning(true)
     setIsDialogOpen(false)
@@ -105,7 +101,7 @@ export default function VaultDetails(props: Props) {
         positiveButton={{
           text: 'Continue',
           icon: <ArrowRight />,
-          onClick: handleContinue,
+          onClick: handleDialogClose,
         }}
         negativeButton={{
           text: 'Cancel',
@@ -115,7 +111,7 @@ export default function VaultDetails(props: Props) {
           text: "Don't show again",
           onClick: (isChecked: boolean) => setShowVaultWarning(!isChecked),
         }}
-        modalClassName='!bg-info/20 text-left'
+        modalClassName='!bg-info/20'
         titleClassName='text-info'
       />
     </section>
