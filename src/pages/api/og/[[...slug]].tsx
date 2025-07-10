@@ -52,7 +52,7 @@ export default async function handler(req: NextRequest) {
 
     const showApyNote = !apy
 
-    const imageDataUrl = 'https://app.marsprotocol.io/vaults_banner.png'
+    const imageDataUrl = 'https://app.marsprotocol.io/vaults_banner.jpg'
 
     return new ImageResponse(
       (
