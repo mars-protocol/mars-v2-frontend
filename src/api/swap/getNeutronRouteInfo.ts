@@ -36,13 +36,18 @@ function extractSwapOperations(skipRouteResponse: any): any[] {
 }
 
 function createDualityRoute(denomIn: string, denomOut: string, swapOperations: any[]): any {
-  const swapDenoms: string[] = []
+  const swapDenoms: string[] = [denomIn]
 
   swapOperations.forEach((op: any) => {
-    if (op.denomOut && op.denomOut !== denomOut) {
+    if (op.denomOut && !swapDenoms.includes(op.denomOut)) {
       swapDenoms.push(op.denomOut)
     }
   })
+
+  // Ensure denomOut is included if not already present
+  if (!swapDenoms.includes(denomOut)) {
+    swapDenoms.push(denomOut)
+  }
 
   return {
     duality: {
