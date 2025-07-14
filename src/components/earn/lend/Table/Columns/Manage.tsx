@@ -30,7 +30,7 @@ export default function Manage(props: Props) {
   const account = useCurrentAccount()
 
   const hasAssetInDeposits = useMemo(
-    () => !!account?.deposits?.find((deposit) => deposit.denom === props.data.asset.denom),
+    () => !!account?.deposits?.find((deposit) => deposit.denom === props.data.asset.denom)?.amount,
     [account?.deposits, props.data.asset.denom],
   )
 
@@ -63,8 +63,10 @@ export default function Manage(props: Props) {
         text: 'Lend more',
         onClick: () => openLend(props.data),
         disabled: !hasAssetInDeposits,
-        disabledTooltip: `You don't have any ${props.data.asset.symbol}.
+        ...(!hasAssetInDeposits && {
+          disabledTooltip: `You don't have any ${props.data.asset.symbol}.
              Please first deposit ${props.data.asset.symbol} into your Credit Account before lending.`,
+        }),
       },
       {
         icon: <ArrowDownLine />,
