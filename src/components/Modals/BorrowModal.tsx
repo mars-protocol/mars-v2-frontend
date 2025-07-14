@@ -2,8 +2,8 @@ import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import Modal from 'components/Modals/Modal'
 import { getButtonText, RepayAssets } from 'components/Modals/BorrowModal/RepayAssets'
+import Modal from 'components/Modals/Modal'
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
 import Button from 'components/common/Button'
 import Card from 'components/common/Card'
@@ -11,18 +11,20 @@ import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ArrowRight } from 'components/common/Icons'
+import SwapDetails from 'components/common/SwapDetails/SwapDetails'
 import Switch from 'components/common/Switch'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import AssetImage from 'components/common/assets/AssetImage'
-import SwapDetails from 'components/common/SwapDetails/SwapDetails'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useToggle from 'hooks/common/useToggle'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useMarkets from 'hooks/markets/useMarkets'
+import useSlippage from 'hooks/settings/useSlippage'
+import useSwapRoute, { combinedRepay } from 'hooks/swap/useSwapRoute'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
@@ -31,8 +33,6 @@ import { byDenom } from 'utils/array'
 import { formatPercent } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { getDebtAmountWithInterest } from 'utils/tokens'
-import useSlippage from 'hooks/settings/useSlippage'
-import useSwapRoute, { combinedRepay } from 'hooks/swap/useSwapRoute'
 
 interface Props {
   account: Account
@@ -333,10 +333,10 @@ function BorrowModal(props: Props) {
     setLoadingState({ isLoading: true, action: isRepay ? 'repay' : 'borrow' })
 
     try {
-      let success = false
+      const success = false
 
       if (isRepay) {
-        success = await combinedRepay({
+        combinedRepay({
           accountId: account.id,
           debtAsset: asset,
           debtAmount: useDebtAsset ? debtAssetAmount : BN_ZERO,
@@ -347,19 +347,14 @@ function BorrowModal(props: Props) {
           account: account,
         })
       } else {
-        success = await borrow({
+        borrow({
           accountId: account.id,
           coin: BNCoin.fromDenomAndBigNumber(asset.denom, amount),
           borrowToWallet,
         })
       }
-
-      if (success) {
-        resetState()
-        useStore.setState({ borrowModal: null })
-      } else {
-        setLoadingState({ isLoading: false, action: 'none' })
-      }
+      resetState()
+      useStore.setState({ borrowModal: null })
     } catch (error) {
       console.error('Transaction failed:', error)
       setLoadingState({ isLoading: false, action: 'none' })
