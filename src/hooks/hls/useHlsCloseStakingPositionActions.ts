@@ -2,8 +2,8 @@ import BigNumber from 'bignumber.js'
 
 import { BN_ZERO } from 'constants/math'
 import useSlippage from 'hooks/settings/useSlippage'
-import useRouteInfo from 'hooks/trade/useRouteInfo'
-import { useMemo } from 'react'
+import useRouteInfo, { useRouteInfoReverse } from 'hooks/trade/useRouteInfo'
+import { useMemo, useRef } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getSwapExactInAction } from 'utils/swap'
@@ -21,18 +21,14 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
   const collateralDenom = props.account.strategy.denoms.deposit
   const borrowDenom = props.account.strategy.denoms.borrow
 
+  // Track if we've had a successful route before to distinguish initial load vs updates
+  const hasHadRouteRef = useRef(false)
+
   const debtAmount: BigNumber = useMemo(
     () =>
       props.account.debts.find((debt) => debt.denom === props.account.strategy.denoms.borrow)
         ?.amount || BN_ZERO,
     [props.account.debts, props.account.strategy.denoms.borrow],
-  )
-
-  // This estimates the rough collateral amount we need to swap in order to repay the debt
-  const { data: routeInfoForCollateralAmount } = useRouteInfo(
-    borrowDenom,
-    collateralDenom,
-    debtAmount,
   )
 
   const collateralAmount: BigNumber = useMemo(
@@ -43,20 +39,43 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
     [props.account.deposits, props.account.strategy.denoms.deposit],
   )
 
+  // Calculate the target amount we need to get from the swap (debt + buffer for interest)
+  const targetRepayAmount = debtAmount.times(1.002) // 0.2% buffer for interest accrual
+
+  // Use reverse routing to find out exactly how much collateral we need to swap
+  // to get the target debt repayment amount
+  const { data: reverseRouteInfo } = useRouteInfoReverse(
+    collateralDenom,
+    borrowDenom,
+    targetRepayAmount,
+  )
+
+  // Calculate the swap amount from reverse routing, with fallback to conservative estimate
   const swapInAmount = useMemo(() => {
-    if (!routeInfoForCollateralAmount) return BN_ZERO
+    if (debtAmount.isZero()) return BN_ZERO
 
-    return BigNumber.min(
-      routeInfoForCollateralAmount.amountOut.times(1 + slippage),
-      collateralAmount,
-    )
-  }, [routeInfoForCollateralAmount, collateralAmount, slippage])
+    if (reverseRouteInfo && (reverseRouteInfo as any).amountIn) {
+      // Use the amount from reverse routing, with a small buffer
+      const reverseAmount = BigNumber((reverseRouteInfo as any).amountIn || '0').times(1.02) // 2% buffer
+      return BigNumber.min(reverseAmount, collateralAmount)
+    }
 
-  const { data: routeInfo } = useRouteInfo(
+    // Fallback: use conservative estimate if reverse routing fails
+    const fallbackAmount = collateralAmount.times(0.9)
+    return fallbackAmount
+  }, [reverseRouteInfo, debtAmount, collateralAmount])
+
+  // Get the final route with our calculated swap amount for action creation
+  const { data: finalRouteInfo } = useRouteInfo(
     collateralDenom,
     borrowDenom,
     swapInAmount.integerValue(),
   )
+
+  // Update the ref when we get a successful route
+  if ((reverseRouteInfo || finalRouteInfo) && !debtAmount.isZero()) {
+    hasHadRouteRef.current = true
+  }
 
   return useMemo<{
     actions: Action[] | null
@@ -64,14 +83,27 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
     isLoadingRoute: boolean
   }>(() => {
     const swapExactIn =
-      debtAmount.isZero() || !routeInfo
+      debtAmount.isZero() || !finalRouteInfo
         ? null
         : getSwapExactInAction(
             BNCoin.fromDenomAndBigNumber(collateralDenom, swapInAmount).toActionCoin(),
             borrowDenom,
-            routeInfo,
+            finalRouteInfo,
             slippage,
           )
+
+    // Calculate refunds more accurately
+    const swapOutput = finalRouteInfo?.amountOut ?? BN_ZERO
+    const excessFromSwap = swapOutput.minus(debtAmount)
+    const remainingCollateral = collateralAmount.minus(swapInAmount)
+
+    const refunds = []
+    if (remainingCollateral.gt(0)) {
+      refunds.push(BNCoin.fromDenomAndBigNumber(collateralDenom, remainingCollateral))
+    }
+    if (excessFromSwap.gt(0) && !debtAmount.isZero()) {
+      refunds.push(BNCoin.fromDenomAndBigNumber(borrowDenom, excessFromSwap))
+    }
 
     return {
       actions: [
@@ -83,7 +115,7 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
                 repay: {
                   coin: BNCoin.fromDenomAndBigNumber(
                     borrowDenom,
-                    debtAmount.times(1.0001).integerValue(), // Over pay to by-pass increase in debt
+                    debtAmount.times(1.0001).integerValue(), // Small overpay to handle interest
                   ).toActionCoin(),
                 },
               },
@@ -96,25 +128,25 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
           ? null
           : {
               coinIn: BNCoin.fromDenomAndBigNumber(collateralDenom, swapInAmount),
-              coinOut: BNCoin.fromDenomAndBigNumber(borrowDenom, routeInfo?.amountOut ?? BN_ZERO),
+              coinOut: BNCoin.fromDenomAndBigNumber(borrowDenom, swapOutput),
             },
         repay: debtAmount.isZero() ? null : BNCoin.fromDenomAndBigNumber(borrowDenom, debtAmount),
         refund:
-          !routeInfo || debtAmount.isZero()
-            ? [BNCoin.fromDenomAndBigNumber(collateralDenom, collateralAmount.minus(swapInAmount))]
-            : [
-                BNCoin.fromDenomAndBigNumber(borrowDenom, routeInfo.amountOut.minus(debtAmount)),
-                BNCoin.fromDenomAndBigNumber(collateralDenom, collateralAmount.minus(swapInAmount)),
-              ],
+          refunds.length > 0
+            ? refunds
+            : [BNCoin.fromDenomAndBigNumber(collateralDenom, collateralAmount)],
       },
-      isLoadingRoute: !debtAmount.isZero() && !routeInfo,
+      // Only show loading on initial load, not on subsequent route updates
+      isLoadingRoute:
+        !debtAmount.isZero() && !finalRouteInfo && !reverseRouteInfo && !hasHadRouteRef.current,
     }
   }, [
     borrowDenom,
     collateralAmount,
     collateralDenom,
     debtAmount,
-    routeInfo,
+    finalRouteInfo,
+    reverseRouteInfo,
     slippage,
     swapInAmount,
   ])

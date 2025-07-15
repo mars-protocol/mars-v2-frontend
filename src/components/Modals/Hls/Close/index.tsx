@@ -209,8 +209,13 @@ function HlsClosingDialogContent(props: ClosingDialogProps) {
         )}
         <Text size='sm'>The following actions will be performed on closing the position</Text>
       </div>
-      <SwapInfo changes={changes.swap} collateralAsset={collateralAsset} debtAsset={debtAsset} />
-      <RepayInfo repayCoin={changes.repay} debtAsset={debtAsset} />
+      <SwapInfo
+        changes={changes.swap}
+        collateralAsset={collateralAsset}
+        debtAsset={debtAsset}
+        isLoadingRoute={isLoadingRoute}
+      />
+      <RepayInfo repayCoin={changes.repay} debtAsset={debtAsset} isLoadingRoute={isLoadingRoute} />
       {isLoadingRoute ? (
         <Callout type={CalloutType.LOADING} className='mt-8'>
           Loading Swap-Route...

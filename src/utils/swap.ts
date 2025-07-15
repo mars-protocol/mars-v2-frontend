@@ -1,3 +1,5 @@
+import BigNumber from 'bignumber.js'
+
 import { BN_ZERO } from 'constants/math'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 
