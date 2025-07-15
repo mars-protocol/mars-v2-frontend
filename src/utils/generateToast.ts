@@ -139,32 +139,40 @@ export async function generateToast(
 }
 
 export function beautifyErrorMessage(error: string) {
+  const lowerCaseError = error.toLocaleLowerCase()
   console.error(error)
-  if (error.includes('too old'))
+  if (lowerCaseError.includes('too old'))
     return 'The oracle prices are stale. Please wait until the prices in the oracle contract are updated again.'
 
   if (
-    error.includes('Max LTV health factor') ||
-    error.includes('Actions did not result in improved health factor')
+    lowerCaseError.includes('max ltv health factor') ||
+    lowerCaseError.includes('actions did not result in improved health factor')
   )
     return 'You can not execute this transaction, since it would result in a Health Factor below 1.'
 
-  if (error.includes('incorrect account sequence'))
+  if (lowerCaseError.includes('incorrect account sequence'))
     return 'You have a pending transaction. Wait for it to be executed and try again.'
 
-  if (error.includes('OI reached'))
+  if (lowerCaseError.includes('oi reached'))
     return 'You can not execute this perp order, since it would exceed the maximum Open Interest for this market.'
 
-  if (error.includes('insufficient funds'))
+  if (lowerCaseError.includes('insufficient funds'))
     return "You don't have enough funds to execute this transaction."
 
-  if (error.includes('spendable balance'))
+  if (lowerCaseError.includes('cannot sub'))
+    return 'The expected received was less than the expected amount: subtraction would result in an invalid value.'
+
+  if (lowerCaseError.includes('spendable balance'))
     return 'You can not execute this transaction. There is not enough spendable balance in the market or your wallet.'
 
-  if (error === 'Transaction failed: Request rejected') return 'Transaction rejected by user.'
-  if (error.includes('less or equal available liquidity'))
+  if (lowerCaseError === 'transaction failed: request rejected')
+    return 'Transaction rejected by user.'
+
+  if (lowerCaseError.includes('less or equal available liquidity'))
     return 'There is not enough available liquidity in the selected assets market to borrow.'
-  if (error.includes('Generic error')) return 'Transaction failed: Unknown error. Please try again.'
+
+  if (lowerCaseError.includes('generic error'))
+    return 'Transaction failed: Unknown error. Please try again.'
 
   return `Transaction failed: ${error}`
 }

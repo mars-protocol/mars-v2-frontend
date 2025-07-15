@@ -10,13 +10,13 @@ import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.ty
 import { getSwapExactInAction } from 'utils/swap'
 
 /**
- * Calculate debt amount with 10-second interest buffer for precise repayment
+ * Calculate debt amount with 1-minute interest buffer for precise repayment
  * Uses actual market borrow rate instead of arbitrary percentage
  */
-function getDebtWith10SecondInterest(debt: BigNumber, borrowApr: number): BigNumber {
-  // 10 seconds worth of interest: debt * (1 + apr / (365 * 24 * 60 * 6))
-  const tenSecondInterestRate = borrowApr / (365 * 24 * 60 * 6)
-  return debt.times(1 + tenSecondInterestRate).integerValue(BigNumber.ROUND_CEIL)
+function getDebtWith1MinuteInterest(debt: BigNumber, borrowApr: number): BigNumber {
+  // 1 minute worth of interest: debt * (1 + apr / (365 * 24 * 60))
+  const oneMinuteInterestRate = borrowApr / (365 * 24 * 60)
+  return debt.times(1 + oneMinuteInterestRate).integerValue(BigNumber.ROUND_CEIL)
 }
 
 interface Props {
@@ -64,7 +64,7 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
       return debtAmount.times(1.001) // 0.1% fallback
     }
 
-    return getDebtWith10SecondInterest(debtAmount, borrowMarket.apy.borrow)
+    return getDebtWith1MinuteInterest(debtAmount, borrowMarket.apy.borrow)
   }, [debtAmount, borrowDenom, markets])
 
   // Use reverse routing to find out exactly how much collateral we need to swap
