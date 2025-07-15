@@ -1,5 +1,4 @@
 import BigNumber from 'bignumber.js'
-import React from 'react'
 
 import Button from 'components/common/Button'
 import { FormattedNumber } from 'components/common/FormattedNumber'
@@ -7,8 +6,8 @@ import { Plus } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import { BN_ZERO } from 'constants/math'
-import { BN } from 'utils/helpers'
 import { byDenom } from 'utils/array'
+import { BN } from 'utils/helpers'
 
 export const getAssetBalance = (
   asset: Asset,
