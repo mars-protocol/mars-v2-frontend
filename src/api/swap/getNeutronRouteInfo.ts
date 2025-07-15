@@ -186,8 +186,8 @@ async function getNeutronRouteInfoInternal(
     const routeInfo = buildSwapRouteInfo(skipRouteResponse, route, description, isReverse)
 
     // For reverse routing, override amountOut with our requested amount to ensure consistency
-    if (isReverse && routeParams.minAmountOut) {
-      routeInfo.amountOut = BN(routeParams.minAmountOut)
+    if (isReverse && routeParams.amountOut) {
+      routeInfo.amountOut = BN(routeParams.amountOut)
     }
 
     return routeInfo
@@ -213,7 +213,7 @@ async function getNeutronRouteInfoInternal(
 export async function getNeutronRouteInfoReverse(
   denomIn: string,
   denomOut: string,
-  minAmountOut: BigNumber,
+  amountOut: BigNumber,
   assets: Asset[],
   chainConfig: ChainConfig,
 ): Promise<SwapRouteInfo | null> {
@@ -222,7 +222,7 @@ export async function getNeutronRouteInfoReverse(
     denomOut,
     assets,
     chainConfig,
-    { minAmountOut: minAmountOut.toString() },
+    { amountOut: amountOut.integerValue(BigNumber.ROUND_CEIL).toString() },
     true, // isReverse
     false, // shouldFallbackToAstroport - don't fallback for reverse routing
   )

@@ -40,7 +40,7 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
   )
 
   // Calculate the target amount we need to get from the swap (debt + buffer for interest)
-  const targetRepayAmount = debtAmount.times(1.002) // 0.2% buffer for interest accrual
+  const targetRepayAmount = debtAmount.times(1.001) // 0.1% buffer for interest accrual
 
   // Use reverse routing to find out exactly how much collateral we need to swap
   // to get the target debt repayment amount
@@ -56,7 +56,7 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
 
     if (reverseRouteInfo && (reverseRouteInfo as any).amountIn) {
       // Use the amount from reverse routing, with a small buffer
-      const reverseAmount = BigNumber((reverseRouteInfo as any).amountIn || '0').times(1.02) // 2% buffer
+      const reverseAmount = BigNumber((reverseRouteInfo as any).amountIn || '0').times(1.001) //  0.1% buffer
       return BigNumber.min(reverseAmount, collateralAmount)
     }
 
