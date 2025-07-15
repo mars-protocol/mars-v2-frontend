@@ -160,7 +160,7 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
                 repay: {
                   coin: BNCoin.fromDenomAndBigNumber(
                     borrowDenom,
-                    debtAmount.times(1.0001).integerValue(), // Small overpay to handle interest
+                    debtAmount.times(1 + slippage).integerValue(), // Use slippage buffer for repay amount
                   ).toActionCoin(),
                 },
               },

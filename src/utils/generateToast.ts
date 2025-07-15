@@ -160,7 +160,7 @@ export function beautifyErrorMessage(error: string) {
     return "You don't have enough funds to execute this transaction."
 
   if (lowerCaseError.includes('cannot sub'))
-    return 'The expected received was less than the expected amount: subtraction would result in an invalid value.'
+    return 'The received amount was less than the expected amount: subtraction would result in an invalid value.'
 
   if (lowerCaseError.includes('spendable balance'))
     return 'You can not execute this transaction. There is not enough spendable balance in the market or your wallet.'
