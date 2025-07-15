@@ -145,7 +145,10 @@ export default function AssetAmountInput(props: Props) {
                     })}
                   </div>
                 ) : (
-                  <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(asset.denom, amount)} />
+                  <DisplayCurrency
+                    coin={BNCoin.fromDenomAndBigNumber(asset.denom, amount)}
+                    options={{ abbreviated: false }}
+                  />
                 )}
               </div>
             </div>

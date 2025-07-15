@@ -418,7 +418,7 @@ export default function SwapForm(props: Props) {
                 <DisplayCurrency
                   coin={BNCoin.fromDenomAndBigNumber(outputAsset.denom, outputAssetAmount)}
                   className='text-xs text-white/60'
-                  options={{ maxDecimals: 2, abbreviated: true }}
+                  options={{ abbreviated: false }}
                 />
               </div>
             )}

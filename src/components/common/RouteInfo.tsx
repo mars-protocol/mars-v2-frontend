@@ -98,7 +98,7 @@ export function RouteInfo(props: Props) {
                       props.tradeInfo.minReceive,
                     )}
                     className='text-xs text-white/60'
-                    options={{ maxDecimals: 2, abbreviated: true }}
+                    options={{ abbreviated: false }}
                   />
                 </div>
               )}
