@@ -135,8 +135,9 @@ function BorrowModal(props: Props) {
 
     const maxDebtBalance = repayFromWallet
       ? BN(walletBalances.find(byDenom(asset.denom))?.amount ?? 0)
-      : (account.deposits.find(byDenom(asset.denom))?.amount ??
-        BN_ZERO.plus(account.lends.find(byDenom(asset.denom))?.amount ?? BN_ZERO))
+      : (account.deposits.find(byDenom(asset.denom))?.amount ?? BN_ZERO).plus(
+          account.lends.find(byDenom(asset.denom))?.amount ?? BN_ZERO,
+        )
 
     const borrowedAmount = overpayExeedsCap ? accountDebt : accountDebtWithInterest
     const maxDebtAmount = BigNumber.min(maxDebtBalance, borrowedAmount)
@@ -147,8 +148,9 @@ function BorrowModal(props: Props) {
     if (selectedSwapAsset) {
       maxSwapBalance = repayFromWallet
         ? BN(walletBalances.find(byDenom(selectedSwapAsset.denom))?.amount ?? 0)
-        : (account.deposits.find(byDenom(selectedSwapAsset.denom))?.amount ??
-          BN_ZERO.plus(account.lends.find(byDenom(selectedSwapAsset.denom))?.amount ?? BN_ZERO))
+        : (account.deposits.find(byDenom(selectedSwapAsset.denom))?.amount ?? BN_ZERO).plus(
+            account.lends.find(byDenom(selectedSwapAsset.denom))?.amount ?? BN_ZERO,
+          )
 
       if (isDifferentAsset) {
         const debtAsset = markets.find((m) => m.asset.denom === asset.denom)
@@ -252,8 +254,9 @@ function BorrowModal(props: Props) {
 
       const maxBalance = repayFromWallet
         ? BN(walletBalances.find(byDenom(selectedSwapAsset.denom))?.amount ?? 0)
-        : (account.deposits.find(byDenom(selectedSwapAsset.denom))?.amount ??
-          BN_ZERO.plus(account.lends.find(byDenom(selectedSwapAsset.denom))?.amount ?? BN_ZERO))
+        : (account.deposits.find(byDenom(selectedSwapAsset.denom))?.amount ?? BN_ZERO).plus(
+            account.lends.find(byDenom(selectedSwapAsset.denom))?.amount ?? BN_ZERO,
+          )
 
       return BigNumber.min(maxBalance, equivalentAmount)
     }
