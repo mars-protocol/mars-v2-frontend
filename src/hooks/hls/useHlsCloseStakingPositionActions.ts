@@ -142,11 +142,26 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
       refunds.push(BNCoin.fromDenomAndBigNumber(borrowDenom, excessFromSwap))
     }
 
+    // Handle positions with no debt - should still be closable to withdraw collateral
+    if (debtAmount.isZero()) {
+      return {
+        actions: [{ refund_all_coin_balances: {} }],
+        changes: {
+          widthdraw: null,
+          swap: null,
+          repay: null,
+          refund: [BNCoin.fromDenomAndBigNumber(collateralDenom, collateralAmount)],
+        },
+        isLoadingRoute: false,
+      }
+    }
+
+    // Handle positions with debt but no swap amount calculated (loading/error state)
     if (!swapInAmount || swapInAmount.isZero()) {
       return {
         actions: null,
         changes: null,
-        isLoadingRoute: !debtAmount.isZero() && !routeToUse && !hasHadRouteRef.current,
+        isLoadingRoute: !routeToUse && !hasHadRouteRef.current,
       }
     }
 
