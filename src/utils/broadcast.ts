@@ -173,9 +173,9 @@ function getTransactionCoinsGrouped(
   perpsBaseDenom?: string,
 ) {
   const transactionCoins: TransactionCoin[] = []
-  // Event types that include coins are wasm, token_swapped and pool_joined
+  // Event types that include coins are wasm, token_swapped, pool_joined, and message (for Duality swaps)
   // This should be streamlined by SC one day
-  const eventTypes = ['wasm', 'token_swapped', 'pool_joined']
+  const eventTypes = ['wasm', 'token_swapped', 'pool_joined', 'message']
 
   const coinRules = getRules()
 
@@ -185,6 +185,7 @@ function getTransactionCoinsGrouped(
 
   filteredEvents.forEach((event: TransactionEvent) => {
     if (!Array.isArray(event.attributes)) return
+
     // Check if the event type is a token_swapped and get coins from the event
     // This is needed for the "old" swap event, while the new swap event has an action attribute
     if (event.type === 'token_swapped') {
@@ -192,6 +193,29 @@ function getTransactionCoinsGrouped(
       if (tokenIn && tokenOut) {
         transactionCoins.push({ type: 'swap', coin: tokenIn })
         transactionCoins.push({ type: 'swap', coin: tokenOut })
+      }
+      return
+    }
+
+    // Check if the event type is a message event with PlaceLimitOrder action (Duality swap)
+    if (event.type === 'message') {
+      const action = event.attributes.find((a) => a.key === 'action')?.value
+      if (action === 'PlaceLimitOrder') {
+        const requestAmountIn = event.attributes.find((a) => a.key === 'RequestAmountIn')?.value
+        const swapAmountOut = event.attributes.find((a) => a.key === 'SwapAmountOut')?.value
+        const tokenIn = event.attributes.find((a) => a.key === 'TokenIn')?.value
+        const tokenOut = event.attributes.find((a) => a.key === 'TokenOut')?.value
+
+        if (requestAmountIn && swapAmountOut && tokenIn && tokenOut) {
+          transactionCoins.push({
+            type: 'swap',
+            coin: BNCoin.fromDenomAndBigNumber(tokenIn, BN(requestAmountIn)),
+          })
+          transactionCoins.push({
+            type: 'swap',
+            coin: BNCoin.fromDenomAndBigNumber(tokenOut, BN(swapAmountOut)),
+          })
+        }
       }
       return
     }
