@@ -1,6 +1,8 @@
+import BigNumber from 'bignumber.js'
+
 import { route as skipRoute } from '@skip-go/client'
 import getAstroportRouteInfo from 'api/swap/getAstroportRouteInfo'
-import BigNumber from 'bignumber.js'
+import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { byDenom } from 'utils/array'
 import { BN, toIntegerString } from 'utils/helpers'
 
@@ -213,7 +215,11 @@ export async function getNeutronRouteInfoReverse(
   amountOut: BigNumber,
   assets: Asset[],
   chainConfig: ChainConfig,
+  slippage?: number, // Will use default from settings if not provided
 ): Promise<SwapRouteInfo | null> {
+  // Use default slippage from settings if not provided
+  const effectiveSlippage = slippage ?? getDefaultChainSettings(chainConfig).slippage
+
   try {
     const skipRouteParams = {
       sourceAssetDenom: denomIn,
@@ -265,7 +271,14 @@ export async function getNeutronRouteInfoReverse(
     return routeInfo
   } catch (error) {
     // Fallback to binary search if native reverse routing fails
-    return await binarySearchReverseRouting(denomIn, denomOut, amountOut, assets, chainConfig)
+    return await binarySearchReverseRouting(
+      denomIn,
+      denomOut,
+      amountOut,
+      assets,
+      chainConfig,
+      effectiveSlippage,
+    )
   }
 }
 
@@ -279,12 +292,14 @@ async function binarySearchReverseRouting(
   targetAmountOut: BigNumber,
   assets: Asset[],
   chainConfig: ChainConfig,
+  slippage: number,
 ): Promise<SwapRouteInfo | null> {
   // Work with integers from the start - convert target to integer
   const targetAmountOutInt = BN(toIntegerString(targetAmountOut))
 
-  let low = BN(toIntegerString(targetAmountOutInt.times(0.95))) // Start at 95% of target (tighter range)
-  let high = BN(toIntegerString(targetAmountOutInt.times(1.1))) // Start at 110% of target (tighter range)
+  // Use slippage to define realistic search bounds
+  let low = targetAmountOutInt.times(1 - slippage).integerValue(BigNumber.ROUND_CEIL) // Minimum amount (target - slippage)
+  let high = targetAmountOutInt.times(1 + slippage).integerValue(BigNumber.ROUND_CEIL) // Maximum amount (target + slippage)
   let bestRoute: SwapRouteInfo | null = null
   let bestAmountIn = BN('0')
 

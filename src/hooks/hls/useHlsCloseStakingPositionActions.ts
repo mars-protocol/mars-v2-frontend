@@ -73,6 +73,7 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
     collateralDenom,
     borrowDenom,
     targetRepayAmount,
+    slippage, // Pass user's slippage setting
   )
 
   // Calculate the swap amount from reverse routing, with fallback to conservative estimate
