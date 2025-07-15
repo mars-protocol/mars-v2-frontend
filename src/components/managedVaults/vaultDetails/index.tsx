@@ -111,7 +111,7 @@ export default function VaultDetails(props: Props) {
           text: "Don't show again",
           onClick: (isChecked: boolean) => setShowVaultWarning(!isChecked),
         }}
-        modalClassName='!bg-info/20'
+        modalClassName='!bg-info/20 max-w-modal-md'
         titleClassName='text-info'
       />
     </section>

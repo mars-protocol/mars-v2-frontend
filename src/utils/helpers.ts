@@ -11,6 +11,14 @@ export function BN(n: BigNumber.Value) {
   return new BigNumber(n)
 }
 
+/**
+ * Converts a BigNumber to an integer string, always rounding up
+ * Used for token amounts which must be integers
+ */
+export function toIntegerString(n: BigNumber) {
+  return n.integerValue(BigNumber.ROUND_CEIL).toString()
+}
+
 export function getApproximateHourlyInterest(amount: string, borrowRate: number) {
   return BigNumber(borrowRate)
     .dividedBy(24 * 365)
