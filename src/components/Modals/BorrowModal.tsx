@@ -74,6 +74,8 @@ function BorrowModal(props: Props) {
   const [useDebtAsset, setUseDebtAsset] = useState(false)
   const [selectedSwapAsset, setSelectedSwapAsset] = useState<Asset | null>(null)
   const [validationErrors, setValidationErrors] = useState<string[]>([])
+  const [hasUserMadeSelection, setHasUserMadeSelection] = useState(false)
+  const [hasUserInteracted, setHasUserInteracted] = useState(false)
 
   const { main: amount, debtAsset: debtAssetAmount, swapAsset: swapAssetAmount } = amounts
   const { main: max, debtAsset: debtAssetMax, swapAsset: swapAssetMax } = maxValues
@@ -296,6 +298,7 @@ function BorrowModal(props: Props) {
       }
 
       if (
+        hasUserInteracted &&
         useDebtAsset &&
         selectedSwapAsset &&
         debtAssetAmount.isZero() &&
@@ -326,6 +329,7 @@ function BorrowModal(props: Props) {
     max,
     asset.symbol,
     selectedSwapAsset?.symbol,
+    hasUserInteracted,
   ])
 
   async function onConfirmClick() {
@@ -427,6 +431,7 @@ function BorrowModal(props: Props) {
     (newAmount: BigNumber) => {
       if (debtAssetAmount.isEqualTo(newAmount)) return
       setDebtAssetAmount(newAmount)
+      setHasUserInteracted(true)
 
       if (isRepay) {
         const repayCoin = BNCoin.fromDenomAndBigNumber(asset.denom, newAmount)
@@ -440,6 +445,7 @@ function BorrowModal(props: Props) {
     (newAmount: BigNumber) => {
       if (swapAssetAmount.isEqualTo(newAmount)) return
       setSwapAssetAmount(newAmount)
+      setHasUserInteracted(true)
 
       if (isRepay && isDifferentAsset && selectedSwapAsset) {
         const repayCoin = BNCoin.fromDenomAndBigNumber(selectedSwapAsset.denom, newAmount)
@@ -514,6 +520,7 @@ function BorrowModal(props: Props) {
   }, [availableRepaymentAssets])
 
   useEffect(() => {
+    setHasUserMadeSelection(false)
     setUseDebtAsset(false)
     setSelectedSwapAsset(null)
     setDebtAssetAmount(BN_ZERO)
@@ -521,7 +528,7 @@ function BorrowModal(props: Props) {
   }, [repayFromWallet])
 
   useEffect(() => {
-    if (isRepay && account) {
+    if (isRepay && account && !hasUserMadeSelection) {
       const hasDebtAssetInAccount =
         account.deposits.some(byDenom(asset.denom)) || account.lends.some(byDenom(asset.denom))
 
@@ -529,7 +536,7 @@ function BorrowModal(props: Props) {
         setUseDebtAsset(true)
       }
     }
-  }, [isRepay, account, asset.denom])
+  }, [isRepay, account, asset.denom, hasUserMadeSelection])
 
   const openAssetSelectionModal = () => {
     useStore.setState({
@@ -553,7 +560,7 @@ function BorrowModal(props: Props) {
               break
             }
           }
-
+          setHasUserMadeSelection(true)
           setUseDebtAsset(useSelectedDebtAsset)
           setSelectedSwapAsset(swapAsset)
 
