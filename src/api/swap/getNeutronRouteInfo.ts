@@ -1,7 +1,8 @@
 import { route as skipRoute } from '@skip-go/client'
 import getAstroportRouteInfo from 'api/swap/getAstroportRouteInfo'
+import BigNumber from 'bignumber.js'
 import { byDenom } from 'utils/array'
-import { BN } from 'utils/helpers'
+import { BN, toIntegerString } from 'utils/helpers'
 
 type VenueType = 'duality' | 'astroport' | 'mixed' | 'unknown'
 
@@ -110,10 +111,7 @@ function buildSwapRouteInfo(
     route,
   }
 
-  // For reverse routing, include the input amount
-  if (isReverse && skipRouteResponse.amountIn) {
-    ;(routeInfo as any).amountIn = BN(skipRouteResponse.amountIn)
-  }
+  // Note: Reverse routing is now handled separately using iterative forward routing
 
   return routeInfo
 }
@@ -185,11 +183,6 @@ async function getNeutronRouteInfoInternal(
 
     const routeInfo = buildSwapRouteInfo(skipRouteResponse, route, description, isReverse)
 
-    // For reverse routing, override amountOut with our requested amount to ensure consistency
-    if (isReverse && routeParams.amountOut) {
-      routeInfo.amountOut = BN(routeParams.amountOut)
-    }
-
     return routeInfo
   } catch (error) {
     if (shouldFallbackToAstroport && !isReverse) {
@@ -210,6 +203,10 @@ async function getNeutronRouteInfoInternal(
  * Specifically designed for HLS debt repayment scenarios where we need
  * to know how much collateral to swap to get an exact debt amount
  */
+/**
+ * Implements reverse routing using Skip API's native reverse swap support
+ * Uses the swapOut operation to specify exact output amount needed
+ */
 export async function getNeutronRouteInfoReverse(
   denomIn: string,
   denomOut: string,
@@ -217,15 +214,135 @@ export async function getNeutronRouteInfoReverse(
   assets: Asset[],
   chainConfig: ChainConfig,
 ): Promise<SwapRouteInfo | null> {
-  return getNeutronRouteInfoInternal(
-    denomIn,
-    denomOut,
-    assets,
-    chainConfig,
-    { amountOut: amountOut.integerValue(BigNumber.ROUND_CEIL).toString() },
-    true, // isReverse
-    false, // shouldFallbackToAstroport - don't fallback for reverse routing
-  )
+  try {
+    const skipRouteParams = {
+      sourceAssetDenom: denomIn,
+      sourceAssetChainId: chainConfig.id,
+      destAssetDenom: denomOut,
+      destAssetChainId: chainConfig.id,
+      allowUnsafe: true,
+      swapVenues: [
+        { name: 'neutron-duality', chainId: chainConfig.id },
+        { name: 'neutron-astroport', chainId: chainConfig.id },
+      ],
+      // Use reverse routing parameters
+      amountOut: toIntegerString(amountOut),
+    }
+
+    const skipRouteResponse = await skipRoute(skipRouteParams)
+
+    if (!skipRouteResponse) {
+      return null
+    }
+
+    const venueType = analyzeVenues(skipRouteResponse)
+
+    if (venueType === 'mixed' || venueType === 'unknown') {
+      return null
+    }
+
+    const swapOperations = extractSwapOperations(skipRouteResponse)
+
+    const route =
+      venueType === 'duality'
+        ? createDualityRoute(denomIn, denomOut, swapOperations)
+        : createAstroportRoute(denomIn, denomOut, swapOperations)
+
+    const description = createSwapDescription(denomIn, denomOut, assets)
+
+    const routeInfo = buildSwapRouteInfo(skipRouteResponse, route, description, false)
+
+    // For reverse routing, add the amountIn that Skip calculated
+    if (skipRouteResponse.amountIn) {
+      ;(routeInfo as any).amountIn = BN(skipRouteResponse.amountIn)
+    } else {
+      ;(routeInfo as any).amountIn = null
+    }
+
+    // Ensure amountOut matches what we requested
+    routeInfo.amountOut = amountOut
+
+    return routeInfo
+  } catch (error) {
+    // Fallback to binary search if native reverse routing fails
+    return await binarySearchReverseRouting(denomIn, denomOut, amountOut, assets, chainConfig)
+  }
+}
+
+/**
+ * Binary search approach to find the right input amount for exact output
+ * Much more precise than the previous iterative approach
+ */
+async function binarySearchReverseRouting(
+  denomIn: string,
+  denomOut: string,
+  targetAmountOut: BigNumber,
+  assets: Asset[],
+  chainConfig: ChainConfig,
+): Promise<SwapRouteInfo | null> {
+  // Work with integers from the start - convert target to integer
+  const targetAmountOutInt = BN(toIntegerString(targetAmountOut))
+
+  let low = BN(toIntegerString(targetAmountOutInt.times(0.95))) // Start at 95% of target (tighter range)
+  let high = BN(toIntegerString(targetAmountOutInt.times(1.1))) // Start at 110% of target (tighter range)
+  let bestRoute: SwapRouteInfo | null = null
+  let bestAmountIn = BN('0')
+
+  const tolerance = BigNumber.max(BN(toIntegerString(targetAmountOutInt.times(0.0005))), BN('1')) // 0.05% tolerance, minimum 1
+  const maxIterations = 10
+
+  for (let i = 0; i < maxIterations; i++) {
+    const mid = BN(toIntegerString(low.plus(high).dividedBy(2))) // Always integer
+
+    try {
+      const route = await getNeutronRouteInfoInternal(
+        denomIn,
+        denomOut,
+        assets,
+        chainConfig,
+        { amountIn: mid.toString() },
+        false,
+        false,
+      )
+
+      if (!route || route.amountOut.isZero()) {
+        low = mid.plus(1) // Try higher amount
+        continue
+      }
+
+      const diff = route.amountOut.minus(targetAmountOutInt)
+
+      // Save the best route so far
+      if (!bestRoute || diff.abs().lt(bestRoute.amountOut.minus(targetAmountOutInt).abs())) {
+        bestRoute = route
+        bestAmountIn = mid
+      }
+
+      // Check if we're within tolerance
+      if (diff.abs().lte(tolerance)) {
+        break
+      }
+
+      // Adjust search range (keep integers)
+      if (diff.gt(0)) {
+        // We got more than needed, try smaller input
+        high = mid.minus(1) // Ensure we don't get stuck
+      } else {
+        // We got less than needed, try larger input
+        low = mid.plus(1) // Ensure we don't get stuck
+      }
+    } catch (error) {
+      low = mid.plus(1) // Try higher amount on error (keep integers)
+    }
+  }
+
+  if (bestRoute) {
+    // Add the calculated amountIn to the route
+    ;(bestRoute as any).amountIn = bestAmountIn
+    return bestRoute
+  }
+
+  return null
 }
 
 export default async function getNeutronRouteInfo(

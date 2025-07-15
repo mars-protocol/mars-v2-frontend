@@ -1,12 +1,23 @@
 import BigNumber from 'bignumber.js'
 
 import { BN_ZERO } from 'constants/math'
+import useMarkets from 'hooks/markets/useMarkets'
 import useSlippage from 'hooks/settings/useSlippage'
 import useRouteInfo, { useRouteInfoReverse } from 'hooks/trade/useRouteInfo'
-import { useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { Action } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { getSwapExactInAction } from 'utils/swap'
+
+/**
+ * Calculate debt amount with 10-second interest buffer for precise repayment
+ * Uses actual market borrow rate instead of arbitrary percentage
+ */
+function getDebtWith10SecondInterest(debt: BigNumber, borrowApr: number): BigNumber {
+  // 10 seconds worth of interest: debt * (1 + apr / (365 * 24 * 60 * 6))
+  const tenSecondInterestRate = borrowApr / (365 * 24 * 60 * 6)
+  return debt.times(1 + tenSecondInterestRate).integerValue(BigNumber.ROUND_CEIL)
+}
 
 interface Props {
   account: HlsAccountWithStrategy
@@ -18,11 +29,15 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
   isLoadingRoute: boolean
 } {
   const [slippage] = useSlippage()
+  const markets = useMarkets()
   const collateralDenom = props.account.strategy.denoms.deposit
   const borrowDenom = props.account.strategy.denoms.borrow
 
   // Track if we've had a successful route before to distinguish initial load vs updates
   const hasHadRouteRef = useRef(false)
+
+  // State to preserve previous route values during refetching
+  const [lastKnownRouteInfo, setLastKnownRouteInfo] = useState<SwapRouteInfo | null>(null)
 
   const debtAmount: BigNumber = useMemo(
     () =>
@@ -39,8 +54,18 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
     [props.account.deposits, props.account.strategy.denoms.deposit],
   )
 
-  // Calculate the target amount we need to get from the swap (debt + buffer for interest)
-  const targetRepayAmount = debtAmount.times(1.001) // 0.1% buffer for interest accrual
+  // Calculate the target amount we need to get from the swap (debt + precise interest buffer)
+  const targetRepayAmount = useMemo(() => {
+    if (debtAmount.isZero()) return BN_ZERO
+
+    const borrowMarket = markets.find((market) => market.asset.denom === borrowDenom)
+    if (!borrowMarket) {
+      // Fallback to minimal buffer if market data not available
+      return debtAmount.times(1.001) // 0.1% fallback
+    }
+
+    return getDebtWith10SecondInterest(debtAmount, borrowMarket.apy.borrow)
+  }, [debtAmount, borrowDenom, markets])
 
   // Use reverse routing to find out exactly how much collateral we need to swap
   // to get the target debt repayment amount
@@ -55,8 +80,9 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
     if (debtAmount.isZero()) return BN_ZERO
 
     if (reverseRouteInfo && (reverseRouteInfo as any).amountIn) {
-      // Use the amount from reverse routing, with a small buffer
-      const reverseAmount = BigNumber((reverseRouteInfo as any).amountIn || '0').times(1.001) //  0.1% buffer
+      // Use the amount from reverse routing directly - no additional buffer needed
+      // since we already have precise 10-second interest in targetRepayAmount
+      const reverseAmount = BigNumber((reverseRouteInfo as any).amountIn || '0')
       return BigNumber.min(reverseAmount, collateralAmount)
     }
 
@@ -72,6 +98,13 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
     swapInAmount.integerValue(),
   )
 
+  // Update last known route info when we get new valid data
+  useEffect(() => {
+    if (finalRouteInfo && finalRouteInfo.amountOut.gt(0)) {
+      setLastKnownRouteInfo(finalRouteInfo)
+    }
+  }, [finalRouteInfo])
+
   // Update the ref when we get a successful route
   if ((reverseRouteInfo || finalRouteInfo) && !debtAmount.isZero()) {
     hasHadRouteRef.current = true
@@ -82,18 +115,21 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
     changes: HlsClosingChanges | null
     isLoadingRoute: boolean
   }>(() => {
+    // Use current route if available, otherwise fall back to last known good route
+    const routeToUse = finalRouteInfo || lastKnownRouteInfo
+
     const swapExactIn =
-      debtAmount.isZero() || !finalRouteInfo
+      debtAmount.isZero() || !routeToUse
         ? null
         : getSwapExactInAction(
             BNCoin.fromDenomAndBigNumber(collateralDenom, swapInAmount).toActionCoin(),
             borrowDenom,
-            finalRouteInfo,
+            routeToUse,
             slippage,
           )
 
-    // Calculate refunds more accurately
-    const swapOutput = finalRouteInfo?.amountOut ?? BN_ZERO
+    // Calculate refunds more accurately using preserved route info
+    const swapOutput = routeToUse?.amountOut ?? BN_ZERO
     const excessFromSwap = swapOutput.minus(debtAmount)
     const remainingCollateral = collateralAmount.minus(swapInAmount)
 
@@ -103,6 +139,14 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
     }
     if (excessFromSwap.gt(0) && !debtAmount.isZero()) {
       refunds.push(BNCoin.fromDenomAndBigNumber(borrowDenom, excessFromSwap))
+    }
+
+    if (!swapInAmount || swapInAmount.isZero()) {
+      return {
+        actions: null,
+        changes: null,
+        isLoadingRoute: !debtAmount.isZero() && !routeToUse && !hasHadRouteRef.current,
+      }
     }
 
     return {
@@ -137,8 +181,7 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
             : [BNCoin.fromDenomAndBigNumber(collateralDenom, collateralAmount)],
       },
       // Only show loading on initial load, not on subsequent route updates
-      isLoadingRoute:
-        !debtAmount.isZero() && !finalRouteInfo && !reverseRouteInfo && !hasHadRouteRef.current,
+      isLoadingRoute: !debtAmount.isZero() && !routeToUse && !hasHadRouteRef.current,
     }
   }, [
     borrowDenom,
@@ -146,7 +189,7 @@ export default function useHlsCloseStakingPositionActions(props: Props): {
     collateralDenom,
     debtAmount,
     finalRouteInfo,
-    reverseRouteInfo,
+    lastKnownRouteInfo,
     slippage,
     swapInAmount,
   ])
