@@ -6,6 +6,7 @@ import getOsmosisRouteInfo from 'api/swap/getOsmosisRouteInfo'
 import { getDepositAndLendCoinsToSpend } from 'hooks/accounts/useUpdatedAccount/functions'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
 
 export interface RouteHop {
   tokenSymbol: string
@@ -173,11 +174,14 @@ export async function combinedRepay(params: {
         BNCoin.fromDenomAndBigNumber(debtAsset.denom, debtAmount),
         account,
       )
+      const currentDebt = account.debts.find(byDenom(debtAsset.denom))
+      const isMaxRepayment =
+        currentDebt && debtAmount.isGreaterThanOrEqualTo(currentDebt.amount.times(0.99)) // use account_balance for max repayments to handle dust
 
       return store.repay({
         accountId,
         coin: BNCoin.fromDenomAndBigNumber(debtAsset.denom, debtAmount),
-        accountBalance: true, // Use account_balance to handle dust
+        accountBalance: isMaxRepayment,
         lend: fromWallet ? BNCoin.fromDenomAndBigNumber(debtAsset.denom, new BigNumber(0)) : lend,
         fromWallet,
       })
@@ -231,10 +235,14 @@ export async function combinedRepay(params: {
         account,
       ).lend
 
+      const currentDebt = account.debts.find(byDenom(debtAsset.denom))
+      const isMaxRepayment =
+        currentDebt && debtAmount.isGreaterThanOrEqualTo(currentDebt.amount.times(0.99)) // use account_balance for max repayments to handle dust
+
       return store.repay({
         accountId,
         coin: BNCoin.fromDenomAndBigNumber(debtAsset.denom, debtAmount),
-        accountBalance: true, // Use account_balance to handle dust
+        accountBalance: isMaxRepayment,
         lend: fromWallet
           ? BNCoin.fromDenomAndBigNumber(debtAsset.denom, new BigNumber(0))
           : debtLend,
