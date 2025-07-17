@@ -367,6 +367,7 @@ export default function PerpsSummary(props: Props) {
       <AlertDialog
         isOpen={isDialogOpen}
         onClose={handleDialogClose}
+        modalClassName='max-w-screen-full md:max-w-modal-md'
         header={
           <div className='flex items-center justify-between w-full'>
             <Text size='2xl'>{isLimitOrder ? 'Limit Order Summary' : 'Order Summary'}</Text>
