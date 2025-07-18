@@ -18,6 +18,7 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { SearchParams } from 'types/enums'
 import { getSearchParamsObject } from 'utils/route'
+import ActionButton from 'components/common/Button/ActionButton'
 
 export const MANAGE_META = { id: 'manage', header: 'Manage', meta: { className: 'w-40 min-w-30' } }
 
@@ -225,6 +226,29 @@ export default function Manage(props: Props) {
       setSearchParams,
     ],
   )
+
+  if (props.perpPosition.type === 'limit' || props.perpPosition.type === 'stop')
+    return (
+      <div className='flex justify-end'>
+        <ActionButton
+          text='Cancel'
+          onClick={async () => {
+            if (!props.perpPosition.orderId || !currentAccount) return
+            setIsConfirming(true)
+            await cancelTriggerOrder({
+              accountId: currentAccount.id,
+              orderId: props.perpPosition.orderId,
+              autolend: isAutoLendEnabledForCurrentAccount,
+              baseDenom: perpPosition.baseDenom,
+            })
+            setIsConfirming(false)
+          }}
+          className='min-w-[105px]'
+          color='tertiary'
+          showProgressIndicator={isConfirming}
+        />
+      </div>
+    )
 
   const getAlertContent = () => {
     if (!currentAccount) return null
