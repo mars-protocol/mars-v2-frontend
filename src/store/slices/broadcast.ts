@@ -725,7 +725,9 @@ export default function createBroadcastSlice(
 
         actions.push({
           repay: {
-            coin: BNCoin.fromDenomAndBigNumber(options.debtDenom, BN_ZERO).toActionCoin(true),
+            coin: BNCoin.fromDenomAndBigNumber(options.debtDenom, routeInfo.amountOut).toActionCoin(
+              false,
+            ),
           },
         })
 
@@ -836,10 +838,8 @@ export default function createBroadcastSlice(
       repay: boolean
       routeInfo: SwapRouteInfo
     }) => {
-      const useAccountBalance = options.repay
-
       const swapExactIn = getSwapExactInAction(
-        options.coinIn.toActionCoin(useAccountBalance || options.isMax),
+        options.coinIn.toActionCoin(options.isMax),
         options.denomOut,
         options.routeInfo,
         options.slippage ?? 0,
@@ -856,9 +856,10 @@ export default function createBroadcastSlice(
               ? [
                   {
                     repay: {
-                      coin: BNCoin.fromDenomAndBigNumber(options.denomOut, BN_ZERO).toActionCoin(
-                        true,
-                      ),
+                      coin: BNCoin.fromDenomAndBigNumber(
+                        options.denomOut,
+                        options.routeInfo.amountOut,
+                      ).toActionCoin(false), // Use exact amount from swap output
                     },
                   },
                 ]
