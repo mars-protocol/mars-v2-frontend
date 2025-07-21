@@ -121,7 +121,15 @@ export function useUpdatedAccount(account?: Account) {
           removeLends(repayFromWallet ? [] : [lend])
         }
       } else {
-        removeDebts([coin])
+        const debtCoin = account.debts.find(byDenom(coin.denom))
+        if (!debtCoin) return
+        const isMaxRepayment = coin.amount.isGreaterThanOrEqualTo(debtCoin.amount.times(0.99))
+        if (isMaxRepayment) {
+          removeDebts([debtCoin])
+        } else {
+          removeDebts([coin])
+        }
+
         removeDeposits(repayFromWallet ? [] : [deposit])
         removeLends(repayFromWallet ? [] : [lend])
       }
