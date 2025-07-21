@@ -61,7 +61,7 @@
     "starknet": "^7.6.4",
     "swr": "^2.3.4",
     "viem": "^2.31.7",
-    "wagmi": "^2.15.6",
+    "wagmi": "^2.16.0",
     "zustand": "5.0.6"
   },
   "devDependencies": {
