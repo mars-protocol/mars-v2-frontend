@@ -201,6 +201,46 @@ function BorrowModal(props: Props) {
     useDebtAsset,
   ])
 
+  const adjustedDebtAssetMax = useMemo(() => {
+    if (!isRepay || !selectedSwapAsset || !isDifferentAsset) return maxDebtAssetAmount
+
+    const debtAsset = markets.find((m) => m.asset.denom === asset.denom)
+    const selectedAssetMarket = markets.find((m) => m.asset.denom === selectedSwapAsset.denom)
+
+    if (debtAsset?.asset.price && selectedAssetMarket?.asset.price) {
+      const debtAssetPrice = debtAsset.asset.price.amount
+      const selectedAssetPrice = selectedAssetMarket.asset.price.amount
+
+      const swapAssetValue = swapAssetAmount
+        .multipliedBy(selectedAssetPrice)
+        .shiftedBy(-selectedSwapAsset.decimals)
+
+      const swapAssetDebtReduction = swapAssetValue
+        .times(0.98) // 2% buffer for fees
+        .dividedBy(debtAssetPrice)
+        .shiftedBy(debtAsset.asset.decimals)
+        .integerValue()
+
+      const remainingDebtAfterSwapAsset = BigNumber.max(
+        totalRepayable.minus(swapAssetDebtReduction),
+        BN_ZERO,
+      )
+
+      return BigNumber.min(maxDebtAssetAmount, remainingDebtAfterSwapAsset)
+    }
+
+    return maxDebtAssetAmount
+  }, [
+    isRepay,
+    selectedSwapAsset,
+    isDifferentAsset,
+    maxDebtAssetAmount,
+    markets,
+    asset.denom,
+    swapAssetAmount,
+    totalRepayable,
+  ])
+
   const hasDebtAsset = useMemo(() => {
     if (!isRepay) return false
 
@@ -209,10 +249,10 @@ function BorrowModal(props: Props) {
 
   useEffect(() => {
     if (isRepay) {
-      setDebtAssetMax(maxDebtAssetAmount)
+      setDebtAssetMax(adjustedDebtAssetMax)
       setSwapAssetMax(maxSwapAssetAmount)
     }
-  }, [isRepay, maxDebtAssetAmount, maxSwapAssetAmount])
+  }, [isRepay, adjustedDebtAssetMax, maxSwapAssetAmount])
 
   function resetState() {
     setAmount(BN_ZERO)
