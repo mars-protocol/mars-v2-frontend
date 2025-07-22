@@ -64,9 +64,9 @@ export default function VaultsCommunityIntro() {
         text={
           showTutorial ? (
             <>
-              <span className='text-white'>User generated vaults </span> is a strategy where users
-              borrow funds to increase their yield farming position, aiming to earn more in rewards
-              than the cost of the borrowed assets.
+              <span className='text-white'>User generated vaults</span> are managed strategies where
+              vault creators use deposited funds to run trading strategies aiming to generate
+              returns for both themselves and their depositors.
             </>
           ) : (
             <>
