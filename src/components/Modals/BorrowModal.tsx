@@ -86,7 +86,7 @@ function BorrowModal(props: Props) {
   const assets = useStore((s) => s.assets)
   const asset = modal.asset
   const isRepay = modal.isRepay ?? false
-  const { simulateBorrow, simulateRepay, simulateCombinedRepay } = useUpdatedAccount(account)
+  const { simulateBorrow, simulateCombinedRepay } = useUpdatedAccount(account)
   const apy = modal.marketData.apy.borrow
   const { isAutoLendEnabledForCurrentAccount: isAutoLendEnabled } = useAutoLend()
   const { computeMaxBorrowAmount } = useHealthComputer(account)
@@ -201,7 +201,7 @@ function BorrowModal(props: Props) {
     useDebtAsset,
   ])
 
-  const adjustedDebtAssetMax = useMemo(() => {
+  const swapAdjustedDebtAssetMax = useMemo(() => {
     if (!isRepay || !selectedSwapAsset || !isDifferentAsset) return maxDebtAssetAmount
 
     const debtAsset = markets.find((m) => m.asset.denom === asset.denom)
@@ -249,10 +249,10 @@ function BorrowModal(props: Props) {
 
   useEffect(() => {
     if (isRepay) {
-      setDebtAssetMax(adjustedDebtAssetMax)
+      setDebtAssetMax(swapAdjustedDebtAssetMax)
       setSwapAssetMax(maxSwapAssetAmount)
     }
-  }, [isRepay, adjustedDebtAssetMax, maxSwapAssetAmount])
+  }, [isRepay, swapAdjustedDebtAssetMax, maxSwapAssetAmount])
 
   function resetState() {
     setAmount(BN_ZERO)
@@ -511,7 +511,7 @@ function BorrowModal(props: Props) {
 
         simulateCombinedRepay(
           debtAsset,
-          selectedSwapAsset && newAmount.isGreaterThan(0) && isDifferentAsset
+          newAmount.isGreaterThan(0)
             ? BNCoin.fromDenomAndBigNumber(selectedSwapAsset.denom, newAmount)
             : null,
           asset.denom,
