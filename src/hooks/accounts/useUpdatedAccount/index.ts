@@ -137,6 +137,64 @@ export function useUpdatedAccount(account?: Account) {
     [account, removeDebts, removeDeposits, removeLends, assets],
   )
 
+  const simulateCombinedRepay = useCallback(
+    (
+      debtAssetCoin: BNCoin | null,
+      swapAssetCoin: BNCoin | null,
+      debtDenom: string,
+      repayFromWallet: boolean,
+    ) => {
+      if (!account) return
+      let totalDebtReduction = BN_ZERO
+      const depositsToRemove: BNCoin[] = []
+      const lendsToRemove: BNCoin[] = []
+
+      if (debtAssetCoin && debtAssetCoin.amount.isGreaterThan(0)) {
+        const { deposit, lend } = getDepositAndLendCoinsToSpend(debtAssetCoin, account)
+        depositsToRemove.push(deposit)
+        lendsToRemove.push(lend)
+        totalDebtReduction = totalDebtReduction.plus(debtAssetCoin.amount)
+      }
+
+      if (swapAssetCoin && swapAssetCoin.amount.isGreaterThan(0)) {
+        const { deposit, lend } = getDepositAndLendCoinsToSpend(swapAssetCoin, account)
+        depositsToRemove.push(deposit)
+        lendsToRemove.push(lend)
+
+        const debtCoin = account.debts.find(byDenom(debtDenom))
+        if (debtCoin) {
+          const inputValue = getCoinValue(swapAssetCoin, assets)
+          const debtValue = getCoinValue(debtCoin, assets)
+          const repayableValue = inputValue.times(0.98) // 2% buffer for fees
+          const repayRatio = BigNumber.min(1, repayableValue.dividedBy(debtValue))
+          const debtAmountToRepay = debtCoin.amount.times(repayRatio).integerValue()
+          totalDebtReduction = totalDebtReduction.plus(debtAmountToRepay)
+        }
+      }
+
+      if (totalDebtReduction.isGreaterThan(0)) {
+        const debtCoin = account.debts.find(byDenom(debtDenom))
+        if (debtCoin) {
+          const isMaxRepayment = totalDebtReduction.isGreaterThanOrEqualTo(
+            debtCoin.amount.times(0.99),
+          )
+          if (isMaxRepayment) {
+            removeDebts([debtCoin])
+          } else {
+            const combinedRepayment = BNCoin.fromDenomAndBigNumber(debtDenom, totalDebtReduction)
+            removeDebts([combinedRepayment])
+          }
+        }
+      }
+
+      if (!repayFromWallet) {
+        removeDeposits(depositsToRemove)
+        removeLends(lendsToRemove)
+      }
+    },
+    [account, removeDebts, removeDeposits, removeLends, assets],
+  )
+
   const simulateDeposits = useCallback(
     (target: 'deposit' | 'lend', coins: BNCoin[]) => {
       if (!account) return
@@ -563,6 +621,7 @@ export function useUpdatedAccount(account?: Account) {
     simulateHlsStakingWithdraw,
     simulateLending,
     simulateRepay,
+    simulateCombinedRepay,
     simulateTrade,
     simulateAstroLpDeposit,
     simulateVaultDeposit,

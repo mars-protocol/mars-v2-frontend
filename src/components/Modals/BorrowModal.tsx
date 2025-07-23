@@ -86,7 +86,7 @@ function BorrowModal(props: Props) {
   const assets = useStore((s) => s.assets)
   const asset = modal.asset
   const isRepay = modal.isRepay ?? false
-  const { simulateBorrow, simulateRepay } = useUpdatedAccount(account)
+  const { simulateBorrow, simulateCombinedRepay } = useUpdatedAccount(account)
   const apy = modal.marketData.apy.borrow
   const { isAutoLendEnabledForCurrentAccount: isAutoLendEnabled } = useAutoLend()
   const { computeMaxBorrowAmount } = useHealthComputer(account)
@@ -99,10 +99,6 @@ function BorrowModal(props: Props) {
     setAmounts((prev) => ({ ...prev, debtAsset: value }))
   const setSwapAssetAmount = (value: BigNumber) =>
     setAmounts((prev) => ({ ...prev, swapAsset: value }))
-
-  const updateMaxValues = (main: BigNumber, debtAsset: BigNumber, swapAsset: BigNumber) => {
-    setMaxValues({ main, debtAsset, swapAsset })
-  }
 
   const setMax = (value: BigNumber) => setMaxValues((prev) => ({ ...prev, main: value }))
   const setDebtAssetMax = (value: BigNumber) =>
@@ -435,13 +431,30 @@ function BorrowModal(props: Props) {
       if (debtAssetAmount.isEqualTo(newAmount)) return
       setDebtAssetAmount(newAmount)
       setHasUserInteracted(true)
-
       if (isRepay) {
-        const repayCoin = BNCoin.fromDenomAndBigNumber(asset.denom, newAmount)
-        simulateRepay(repayCoin, repayFromWallet)
+        const swapAsset =
+          selectedSwapAsset && swapAssetAmount.isGreaterThan(0) && isDifferentAsset
+            ? BNCoin.fromDenomAndBigNumber(selectedSwapAsset.denom, swapAssetAmount)
+            : null
+
+        simulateCombinedRepay(
+          BNCoin.fromDenomAndBigNumber(asset.denom, newAmount),
+          swapAsset,
+          asset.denom,
+          repayFromWallet,
+        )
       }
     },
-    [asset.denom, debtAssetAmount, isRepay, repayFromWallet, simulateRepay],
+    [
+      asset.denom,
+      debtAssetAmount,
+      isRepay,
+      repayFromWallet,
+      simulateCombinedRepay,
+      selectedSwapAsset,
+      swapAssetAmount,
+      isDifferentAsset,
+    ],
   )
 
   const handleSwapAssetChange = useCallback(
@@ -451,8 +464,19 @@ function BorrowModal(props: Props) {
       setHasUserInteracted(true)
 
       if (isRepay && isDifferentAsset && selectedSwapAsset) {
-        const repayCoin = BNCoin.fromDenomAndBigNumber(selectedSwapAsset.denom, newAmount)
-        simulateRepay(repayCoin, repayFromWallet, asset.denom)
+        const debtAsset =
+          useDebtAsset && debtAssetAmount.isGreaterThan(0)
+            ? BNCoin.fromDenomAndBigNumber(asset.denom, debtAssetAmount)
+            : null
+
+        simulateCombinedRepay(
+          debtAsset,
+          newAmount.isGreaterThan(0)
+            ? BNCoin.fromDenomAndBigNumber(selectedSwapAsset.denom, newAmount)
+            : null,
+          asset.denom,
+          repayFromWallet,
+        )
       }
     },
     [
@@ -460,9 +484,11 @@ function BorrowModal(props: Props) {
       swapAssetAmount,
       isRepay,
       repayFromWallet,
-      simulateRepay,
+      simulateCombinedRepay,
+      useDebtAsset,
       asset.denom,
       isDifferentAsset,
+      debtAssetAmount,
     ],
   )
 
