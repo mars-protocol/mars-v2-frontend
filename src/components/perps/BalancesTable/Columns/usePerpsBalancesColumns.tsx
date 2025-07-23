@@ -12,7 +12,6 @@ import TradeDirection, {
   TRADE_DIRECTION_META,
 } from 'components/perps/BalancesTable/Columns/TradeDirection'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
-import usePerpsLimitOrderRows from 'hooks/perps/usePerpsLimitOrdersRows'
 import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 import { demagnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
@@ -25,7 +24,6 @@ interface Props {
 export default function usePerpsBalancesColumns(props: Props) {
   const { isOrderTable } = props
 
-  const activeLimitOrders = usePerpsLimitOrderRows()
   const { data: rawLimitOrders } = usePerpsLimitOrders()
 
   const parentChildMapping = useMemo(() => {

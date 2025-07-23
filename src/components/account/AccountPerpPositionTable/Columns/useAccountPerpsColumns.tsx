@@ -45,8 +45,8 @@ export default function useAccountPerpsColumns(props: Props) {
           id: 'size',
           meta: { className: 'min-w-20' },
           cell: ({ row }) => {
-            const { asset, amount, value } = row.original
-            return <Size amount={amount} asset={asset} value={BN(value)} />
+            const { asset, amount, value, type } = row.original
+            return <Size amount={amount} asset={asset} value={BN(value)} type={type} />
           },
           sortingFn: accountPerpSizeSortingFn,
         },
@@ -91,10 +91,8 @@ export default function useAccountPerpsColumns(props: Props) {
         id: 'size',
         meta: { className: 'min-w-20' },
         cell: ({ row }) => {
-          const { asset, amount, value } = row.original
-          return (
-            <Size amount={amount} asset={asset} value={BN(value)} options={{ abbreviated: true }} />
-          )
+          const { asset, amount, value, type } = row.original
+          return <Size amount={amount} asset={asset} value={BN(value)} type={type} />
         },
         sortingFn: accountPerpSizeSortingFn,
       },
