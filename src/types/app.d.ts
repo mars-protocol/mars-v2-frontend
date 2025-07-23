@@ -423,6 +423,11 @@ interface LendingMarketTableData extends Market {
 
 type TradeDirection = 'long' | 'short'
 
+interface SLTPIndicators {
+  hasSL: boolean
+  hasTP: boolean
+}
+
 interface PerpsPosition {
   denom: string
   baseDenom: string
@@ -434,7 +439,6 @@ interface PerpsPosition {
   type: PositionType
   reduce_only?: boolean
 }
-
 interface PerpsLimitOrder {
   denom: string
   tradeDirection: TradeDirection
@@ -1928,6 +1932,28 @@ interface ExceutePerpsOrder {
     order_size: SignedUint
     reduce_only?: boolean | null
     order_type?: 'stop_loss' | 'take_profit' | null
+  }
+}
+
+interface LimitOrderData {
+  order: {
+    order_id: string
+    actions: Action[]
+    conditions: Condition[]
+  }
+}
+
+interface TriggerOrderExecutedCondition {
+  trigger_order_executed: {
+    trigger_order_id: string
+  }
+}
+
+interface ExecutePerpOrderAction {
+  execute_perp_order: {
+    denom: string
+    order_size: string
+    reduce_only?: boolean
   }
 }
 
