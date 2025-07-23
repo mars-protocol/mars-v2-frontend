@@ -406,7 +406,9 @@ export function PerpsModule() {
           conditionalTriggers={conditionalTriggers}
           isMarketOrder={selectedOrderType === OrderType.MARKET}
         />
-        {(isLimitOrder || isStopOrder) && <KeeperFee />}
+        {(isLimitOrder || isStopOrder || conditionalTriggers.tp || conditionalTriggers.sl) && (
+          <KeeperFee />
+        )}
         <PerpsSummary
           amount={amount}
           tradeDirection={isStopOrder ? stopTradeDirection : tradeDirection}

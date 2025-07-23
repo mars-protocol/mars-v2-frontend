@@ -1,35 +1,119 @@
 import { BN_ONE, BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { BNCoin } from 'types/classes/BNCoin'
-import { TriggerOrderResponse } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
+import { TriggerOrder } from 'types/generated/mars-credit-manager/MarsCreditManager.types'
 import { ConfigForString } from 'types/generated/mars-perps/MarsPerps.types'
 import { byDenom } from 'utils/array'
 import { LiquidationPriceKind } from 'utils/health_computer'
 import { BN } from 'utils/helpers'
 
-export const checkStopLossAndTakeProfit = (
+// Helper function to determine if an order is a take profit or stop loss
+function classifyChildOrder(
+  order: LimitOrderData,
+  parentOrder: LimitOrderData,
+): 'takeProfit' | 'stopLoss' | 'unknown' {
+  const oraclePriceCondition = order.order.conditions.find(
+    (c): c is TriggerCondition => 'oracle_price' in c,
+  )
+  if (!oraclePriceCondition) return 'unknown'
+
+  const perpAction = order.order.actions.find(
+    (a): a is ExecutePerpOrderAction => 'execute_perp_order' in a,
+  )
+  if (!perpAction?.execute_perp_order?.reduce_only) {
+    return 'unknown'
+  }
+
+  const parentAction = parentOrder.order.actions.find(
+    (a): a is ExecutePerpOrderAction => 'execute_perp_order' in a,
+  )
+  if (!parentAction) return 'unknown'
+
+  const isLong = !parentAction.execute_perp_order.order_size.startsWith('-')
+  const comparison = oraclePriceCondition.oracle_price.comparison
+
+  if ((isLong && comparison === 'greater_than') || (!isLong && comparison === 'less_than')) {
+    return 'takeProfit'
+  } else if ((isLong && comparison === 'less_than') || (!isLong && comparison === 'greater_than')) {
+    return 'stopLoss'
+  }
+
+  return 'unknown'
+}
+
+// Helper function to build parent-child mapping with SL/TP indicators
+export function buildParentChildMapping(
+  rawLimitOrders: LimitOrderData[],
+): Record<string, SLTPIndicators> {
+  const mapping: Record<string, SLTPIndicators> = {}
+
+  // Initialize all orders
+  rawLimitOrders.forEach((order) => {
+    mapping[order.order.order_id] = { hasSL: false, hasTP: false }
+  })
+
+  // Process child orders
+  rawLimitOrders.forEach((order) => {
+    const triggerCondition = order.order.conditions.find(
+      (c): c is TriggerOrderExecutedCondition => 'trigger_order_executed' in c,
+    )
+    if (!triggerCondition) return
+
+    const parentId = triggerCondition.trigger_order_executed.trigger_order_id
+    if (!parentId || !mapping[parentId]) return
+
+    const parentOrder = rawLimitOrders.find((o) => o.order.order_id === parentId)
+    if (!parentOrder) return
+
+    const orderType = classifyChildOrder(order, parentOrder)
+
+    switch (orderType) {
+      case 'takeProfit':
+        mapping[parentId].hasTP = true
+        break
+      case 'stopLoss':
+        mapping[parentId].hasSL = true
+        break
+    }
+  })
+
+  return mapping
+}
+
+// Helper function to determine SL/TP for positions without parent mapping
+export function getPositionSLTPIndicators(
   position: PerpPositionRow,
-  activeLimitOrders: PerpPositionRow[],
-) => {
-  const limitOrders = activeLimitOrders.filter((order) => order.denom === position.denom)
+  rawLimitOrders: LimitOrderData[],
+): SLTPIndicators {
+  const indicators: SLTPIndicators = { hasSL: false, hasTP: false }
 
-  const hasStopLoss = limitOrders.some(
-    (order) =>
-      (position.tradeDirection === 'long' &&
-        BN(order.entryPrice).isLessThan(BN(position.currentPrice))) ||
-      (position.tradeDirection === 'short' &&
-        BN(order.entryPrice).isGreaterThan(BN(position.currentPrice))),
-  )
+  rawLimitOrders.forEach((order) => {
+    const perpAction = order.order.actions.find(
+      (a): a is ExecutePerpOrderAction => 'execute_perp_order' in a,
+    )
+    if (!perpAction || perpAction.execute_perp_order.denom !== position.denom) {
+      return
+    }
 
-  const hasTakeProfit = limitOrders.some(
-    (order) =>
-      (position.tradeDirection === 'long' &&
-        BN(order.entryPrice).isGreaterThan(BN(position.currentPrice))) ||
-      (position.tradeDirection === 'short' &&
-        BN(order.entryPrice).isLessThan(BN(position.currentPrice))),
-  )
+    const oraclePriceCondition = order.order.conditions.find(
+      (c): c is TriggerCondition => 'oracle_price' in c,
+    )
+    if (!oraclePriceCondition) return
 
-  return { hasStopLoss, hasTakeProfit }
+    const comparison = oraclePriceCondition.oracle_price.comparison
+    const isLong = position.tradeDirection === 'long'
+
+    if ((isLong && comparison === 'greater_than') || (!isLong && comparison === 'less_than')) {
+      indicators.hasTP = true
+    } else if (
+      (isLong && comparison === 'less_than') ||
+      (!isLong && comparison === 'greater_than')
+    ) {
+      indicators.hasSL = true
+    }
+  })
+
+  return indicators
 }
 
 export const isStopOrder = (
@@ -49,7 +133,7 @@ export const isStopOrder = (
 }
 
 export const convertTriggerOrderResponseToPerpPosition = (
-  limitOrder: TriggerOrderResponse,
+  limitOrder: { order: TriggerOrder },
   perpAssets: Asset[],
   perpsConfig: ConfigForString,
   computeLiquidationPrice: (denom: string, kind: LiquidationPriceKind) => number | null,
@@ -61,11 +145,12 @@ export const convertTriggerOrderResponseToPerpPosition = (
   const perpOrder = limitOrderAction.execute_perp_order
 
   const oraclePriceCondition = limitOrder.order.conditions.find(
-    (condition) => 'oracle_price' in condition,
-  ) as TriggerCondition | undefined
+    (condition): condition is TriggerCondition => 'oracle_price' in condition,
+  )
 
   const triggerOrderCondition = limitOrder.order.conditions.find(
-    (condition) => 'trigger_order_executed' in condition,
+    (condition): condition is TriggerOrderExecutedCondition =>
+      'trigger_order_executed' in condition,
   )
   const isChildOrder = !!triggerOrderCondition && 'trigger_order_executed' in triggerOrderCondition
 
