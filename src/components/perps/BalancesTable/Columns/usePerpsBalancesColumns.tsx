@@ -16,7 +16,7 @@ import usePerpsLimitOrderRows from 'hooks/perps/usePerpsLimitOrdersRows'
 import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 import { demagnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import { checkStopLossAndTakeProfit } from 'utils/perps'
+import { buildParentChildMapping, getPositionSLTPIndicators } from 'utils/perps'
 
 interface Props {
   isOrderTable: boolean
@@ -30,51 +30,7 @@ export default function usePerpsBalancesColumns(props: Props) {
 
   const parentChildMapping = useMemo(() => {
     if (!rawLimitOrders) return {}
-
-    const mapping: Record<string, { hasSL: boolean; hasTP: boolean }> = {}
-
-    rawLimitOrders.forEach((order) => {
-      mapping[order.order.order_id] = { hasSL: false, hasTP: false }
-    })
-
-    rawLimitOrders.forEach((order) => {
-      const triggerCondition = order.order.conditions.find((c) => 'trigger_order_executed' in c)
-      if (!triggerCondition || !('trigger_order_executed' in triggerCondition)) return
-
-      const parentId = triggerCondition.trigger_order_executed.trigger_order_id
-      if (!parentId || !mapping[parentId]) return
-
-      const oraclePriceCondition = order.order.conditions.find((c) => 'oracle_price' in c)
-      if (!oraclePriceCondition || !('oracle_price' in oraclePriceCondition)) return
-
-      const perpAction = order.order.actions.find((a) => 'execute_perp_order' in a)
-      if (
-        !perpAction ||
-        !('execute_perp_order' in perpAction) ||
-        !perpAction.execute_perp_order.reduce_only
-      )
-        return
-
-      const parentOrder = rawLimitOrders.find((o) => o.order.order_id === parentId)
-      if (!parentOrder) return
-
-      const parentAction = parentOrder.order.actions.find((a) => 'execute_perp_order' in a)
-      if (!parentAction || !('execute_perp_order' in parentAction)) return
-
-      const isLong = !parentAction.execute_perp_order.order_size.startsWith('-')
-      const comparison = oraclePriceCondition.oracle_price.comparison
-
-      if ((isLong && comparison === 'greater_than') || (!isLong && comparison === 'less_than')) {
-        mapping[parentId].hasTP = true
-      } else if (
-        (isLong && comparison === 'less_than') ||
-        (!isLong && comparison === 'greater_than')
-      ) {
-        mapping[parentId].hasSL = true
-      }
-    })
-
-    return mapping
+    return buildParentChildMapping(rawLimitOrders)
   }, [rawLimitOrders])
 
   const staticColumns = useMemo<ColumnDef<PerpPositionRow>[]>(
@@ -117,7 +73,14 @@ export default function usePerpsBalancesColumns(props: Props) {
               .shiftedBy(asset.decimals - PRICE_ORACLE_DECIMALS)
           }
 
-          return <Size amount={row.original.amount} asset={row.original.asset} value={value} />
+          return (
+            <Size
+              type={type}
+              amount={row.original.amount}
+              asset={row.original.asset}
+              value={value}
+            />
+          )
         },
         sortingFn: sizeSortingFn,
       },
@@ -170,31 +133,30 @@ export default function usePerpsBalancesColumns(props: Props) {
       cell: ({ row }) => {
         const position = row.original
 
-        let hasStopLoss = false
-        let hasTakeProfit = false
-
+        let indicators
         if (position.orderId && parentChildMapping[position.orderId]) {
-          hasStopLoss = parentChildMapping[position.orderId].hasSL
-          hasTakeProfit = parentChildMapping[position.orderId].hasTP
+          indicators = parentChildMapping[position.orderId]
+        } else if (rawLimitOrders) {
+          indicators = getPositionSLTPIndicators(position, rawLimitOrders)
         } else {
-          const result = checkStopLossAndTakeProfit(position, activeLimitOrders)
-          hasStopLoss = result.hasStopLoss
-          hasTakeProfit = result.hasTakeProfit
+          indicators = { hasSL: false, hasTP: false }
         }
+
+        const shouldShowIndicators =
+          position.type === 'market' ||
+          (!!position.orderId && (indicators.hasSL || indicators.hasTP))
 
         return (
           <Status
             type={position.type}
-            hasStopLoss={hasStopLoss}
-            hasTakeProfit={hasTakeProfit}
-            showIndicators={
-              position.type === 'market' || (!!position.orderId && (hasStopLoss || hasTakeProfit))
-            }
+            hasStopLoss={indicators.hasSL}
+            hasTakeProfit={indicators.hasTP}
+            showIndicators={shouldShowIndicators}
           />
         )
       },
     }),
-    [activeLimitOrders, parentChildMapping],
+    [parentChildMapping, rawLimitOrders],
   )
 
   return useMemo(() => {

@@ -1285,7 +1285,7 @@ export default function createBroadcastSlice(
                   oracle_price: {
                     comparison: tpComparison,
                     denom: options.coin.denom,
-                    price: tpPrice.toString(),
+                    price: tpPrice.shiftedBy(-asset.decimals).toString(),
                   },
                 },
               ],
@@ -1320,7 +1320,7 @@ export default function createBroadcastSlice(
                   oracle_price: {
                     comparison: slComparison,
                     denom: options.coin.denom,
-                    price: slPrice.toString(),
+                    price: slPrice.shiftedBy(-asset.decimals).toString(),
                   },
                 },
               ],
@@ -1335,6 +1335,12 @@ export default function createBroadcastSlice(
             actions,
           },
         }
+        console.log('message', {
+          update_credit_account: {
+            account_id: options.accountId,
+            actions,
+          },
+        })
 
         const cmContract = get().chainConfig.contracts.creditManager
 
