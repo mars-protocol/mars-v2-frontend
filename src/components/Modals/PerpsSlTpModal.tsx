@@ -116,7 +116,7 @@ export default function PerpsSlTpModal() {
     return {
       asset: perpsAsset,
       orderSize: positionSize.negated(),
-      limitPrice: stopLossPrice,
+      limitPrice: stopLossPrice.shiftedBy(-PRICE_ORACLE_DECIMALS),
       tradeDirection: isShort ? 'long' : ('short' as TradeDirection),
       comparison: isShort ? 'greater_than' : ('less_than' as TriggerType),
       baseDenom: feeToken.denom,
@@ -140,7 +140,7 @@ export default function PerpsSlTpModal() {
     return {
       asset: perpsAsset,
       orderSize: positionSize.negated(),
-      limitPrice: takeProfitPrice,
+      limitPrice: takeProfitPrice.shiftedBy(-PRICE_ORACLE_DECIMALS),
       tradeDirection: isShort ? 'long' : ('short' as TradeDirection),
       comparison: isShort ? 'less_than' : ('greater_than' as TriggerType),
       baseDenom: feeToken.denom,
@@ -199,6 +199,7 @@ export default function PerpsSlTpModal() {
   const handleDone = useCallback(async () => {
     if (!currentAccount || !perpsAsset || !feeToken) return
     setIsLoading(true)
+    onClose()
     try {
       const existingOrders = filterExistingOrders()
 
@@ -215,8 +216,6 @@ export default function PerpsSlTpModal() {
           cancelOrders: existingOrders.map((order) => ({ orderId: order.order.order_id })),
         })
       }
-
-      onClose()
     } finally {
       setIsLoading(false)
     }
