@@ -5,7 +5,7 @@ import useSWR from 'swr'
 import { BN } from 'utils/helpers'
 import { convertAprToApy } from 'utils/parsers'
 
-export default function useHistoricalVaultData(vaultAddress: string, timeframe: number | 'all') {
+export default function useHistoricalVaultData(vaultAddress: string, timeframe: number) {
   const chainConfig = useChainConfig()
 
   return useSWR(
