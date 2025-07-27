@@ -3,7 +3,7 @@ import moment from 'moment'
 import useHistoricalVaultData from 'hooks/managedVaults/useHistoricalVaultData'
 
 export default function useManagedVaultAge(vaultAddress: string) {
-  const { data: historicalDataAll } = useHistoricalVaultData(vaultAddress, 'all')
+  const { data: historicalDataAll } = useHistoricalVaultData(vaultAddress, 365)
 
   const vaultAge = useMemo(() => {
     if (!historicalDataAll || historicalDataAll.length === 0) return 0
