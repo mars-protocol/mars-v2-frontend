@@ -25,8 +25,11 @@
   --ui-lib-button-default-color-content: #fff;
   --ui-lib-button-default-color-border: var(--tv-form-background);
   --ui-lib-button-default-color-bg: var(--tv-button-background);
+  --tv-color-popup-element-text-active: #fff;
+  --themed-color-content-primary-inverse: #fff;
+  --tv-color-popup-element-toolbox-text-active-hover: #fff;
+  --themed-color-content-secondary-inverse: #fff;
 }
-
 
 /* Favorited menus */
 .tv-floating-toolbar__widget-wrapper > div {
@@ -333,7 +336,7 @@ button[class^='button-'][class*='secondary-']:hover {
 }
 
 [class^='noWrapWrapper-'] * {
-  pointer-events: none !important; 
+  pointer-events: none !important;
   background: transparent !important;
 }
 

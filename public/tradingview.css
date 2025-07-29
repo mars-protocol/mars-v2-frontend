@@ -1,5 +1,5 @@
 .theme-dark:root {
-  --tv-background: #000;
+  --tv-background: #220e1d;
   --tv-form-background: #7f78e8;
   --tv-button-background: linear-gradient(180deg, #7f78e8 0%, #926ac8 100%);
   --tv-button-background-hover: linear-gradient(180deg, #926ac8 0%, #7f78e8 100%);
@@ -25,8 +25,11 @@
   --ui-lib-button-default-color-content: #fff;
   --ui-lib-button-default-color-border: var(--tv-form-background);
   --ui-lib-button-default-color-bg: var(--tv-button-background);
+  --tv-color-popup-element-text-active: #fff;
+  --themed-color-content-primary-inverse: #fff;
+  --tv-color-popup-element-toolbox-text-active-hover: #fff;
+  --themed-color-content-secondary-inverse: #fff;
 }
-
 
 /* Favorited menus */
 .tv-floating-toolbar__widget-wrapper > div {
@@ -333,7 +336,7 @@ button[class^='button-'][class*='secondary-']:hover {
 }
 
 [class^='noWrapWrapper-'] * {
-  pointer-events: none !important; 
+  pointer-events: none !important;
   background: transparent !important;
 }
 
