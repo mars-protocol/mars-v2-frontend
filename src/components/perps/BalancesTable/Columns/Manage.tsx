@@ -2,34 +2,30 @@ import { useCallback, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 import AlertDialog from 'components/common/AlertDialog'
+import ActionButton from 'components/common/Button/ActionButton'
 import DropDownButton from 'components/common/Button/DropDownButton'
-import { ArrowRight, Cross, Edit, SwapIcon } from 'components/common/Icons'
+import { ArrowRight, Cross, Edit, Shield, SwapIcon } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import PerpsSlTpModal from 'components/Modals/PerpsSlTpModal'
 import ConfirmationSummary from 'components/perps/Module/ConfirmationSummary'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import useChildOrders from 'hooks/perps/useChildOrders'
 import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { SearchParams } from 'types/enums'
 import { getSearchParamsObject } from 'utils/route'
-import ActionButton from 'components/common/Button/ActionButton'
 
 export const MANAGE_META = { id: 'manage', header: 'Manage', meta: { className: 'w-40 min-w-30' } }
 
+type DialogType = 'closeWarning' | 'closeSummary' | 'flipWarning' | 'flipSummary' | null
+
 interface Props {
   perpPosition: PerpPositionRow
-}
-
-interface AlertState {
-  isOpen: boolean
-  type: 'warning' | 'summary' | 'flip-warning' | 'flip-summary'
-  flipDirection?: 'long' | 'short'
 }
 
 export default function Manage(props: Props) {
@@ -40,39 +36,27 @@ export default function Manage(props: Props) {
   const [searchParams, setSearchParams] = useSearchParams()
   const [isConfirming, setIsConfirming] = useState<boolean>(false)
   const { data: limitOrders } = usePerpsLimitOrders()
+  const { hasChildOrders } = useChildOrders()
   const [showSummary, setShowSummary] = useLocalStorage<boolean>(
     `${chainConfig.id}/${LocalStorageKeys.SHOW_SUMMARY}`,
     getDefaultChainSettings(chainConfig).showSummary,
   )
-  const [alertState, setAlertState] = useState<AlertState>({
-    isOpen: false,
-    type: 'warning',
-  })
 
   const cancelTriggerOrder = useStore((s) => s.cancelTriggerOrder)
   const closePerpPosition = useStore((s) => s.closePerpPosition)
 
+  // Single dialog state
+  const [currentDialog, setCurrentDialog] = useState<DialogType>(null)
+  const [flipDirection, setFlipDirection] = useState<'long' | 'short' | null>(null)
+
   const closePosition = useCallback(() => {
     if (!currentAccount || !limitOrders) return
-
-    const relevantOrderIds = limitOrders
-      .filter((order) =>
-        order.order.actions.some(
-          (action) =>
-            'execute_perp_order' in action &&
-            action.execute_perp_order.denom === perpPosition.asset.denom,
-        ),
-      )
-      .map((order) => order.order.order_id)
 
     closePerpPosition({
       accountId: currentAccount.id,
       coin: BNCoin.fromDenomAndBigNumber(perpPosition.asset.denom, perpPosition.amount.negated()),
       autolend: isAutoLendEnabledForCurrentAccount,
       baseDenom: perpPosition.baseDenom,
-      orderIds: relevantOrderIds,
-      position: perpPosition,
-      debt: currentAccount.debts.find((debt) => debt.denom === perpPosition.baseDenom),
     })
   }, [
     currentAccount,
@@ -81,8 +65,6 @@ export default function Manage(props: Props) {
     perpPosition,
     limitOrders,
   ])
-
-  const isPerpsSlTpModalOpen = useStore((s) => s.addSLTPModal)
 
   const handleCloseClick = useCallback(() => {
     if (!currentAccount) return
@@ -96,7 +78,7 @@ export default function Manage(props: Props) {
     )
 
     if (!showSummary && hasOpenOrders) {
-      setAlertState({ isOpen: true, type: 'warning' })
+      setCurrentDialog('closeWarning')
       return
     }
 
@@ -105,14 +87,30 @@ export default function Manage(props: Props) {
       return
     }
 
-    setAlertState({ isOpen: true, type: 'summary' })
+    setCurrentDialog('closeSummary')
   }, [closePosition, currentAccount, perpPosition, showSummary, limitOrders])
+
+  const executeFlip = useCallback(
+    (direction: 'long' | 'short') => {
+      if (!currentAccount) return
+
+      const flipAmount = perpPosition.amount.times(2)
+      const signedAmount = direction === 'long' ? flipAmount.abs() : flipAmount.abs().negated()
+
+      closePerpPosition({
+        accountId: currentAccount.id,
+        coin: BNCoin.fromDenomAndBigNumber(perpPosition.asset.denom, signedAmount),
+        autolend: isAutoLendEnabledForCurrentAccount,
+        baseDenom: perpPosition.baseDenom,
+      })
+    },
+    [currentAccount, perpPosition, closePerpPosition, isAutoLendEnabledForCurrentAccount],
+  )
 
   const handleFlipPosition = useCallback(
     (newDirection: 'long' | 'short') => {
       if (!currentAccount) return
-      const flipAmount = perpPosition.amount.times(2)
-      const signedAmount = newDirection === 'long' ? flipAmount.abs() : flipAmount.abs().negated()
+      setFlipDirection(newDirection)
 
       const hasOpenOrders = limitOrders?.some((order) =>
         order.order.actions.some(
@@ -122,69 +120,176 @@ export default function Manage(props: Props) {
         ),
       )
 
-      const executeFlip = () => {
-        closePerpPosition({
-          accountId: currentAccount.id,
-          coin: BNCoin.fromDenomAndBigNumber(perpPosition.asset.denom, signedAmount),
-          autolend: isAutoLendEnabledForCurrentAccount,
-          baseDenom: perpPosition.baseDenom,
-          position: perpPosition,
-          debt: currentAccount.debts.find((debt) => debt.denom === perpPosition.baseDenom),
-        })
-      }
-
       if (!showSummary && hasOpenOrders) {
-        setAlertState({ isOpen: true, type: 'flip-warning', flipDirection: newDirection })
+        setCurrentDialog('flipWarning')
         return
       }
 
       if (!showSummary) {
-        executeFlip()
+        executeFlip(newDirection)
         return
       }
 
-      setAlertState({ isOpen: true, type: 'flip-summary', flipDirection: newDirection })
+      setCurrentDialog('flipSummary')
     },
-    [
-      currentAccount,
-      perpPosition,
-      limitOrders,
-      showSummary,
-      closePerpPosition,
-      isAutoLendEnabledForCurrentAccount,
-    ],
+    [currentAccount, limitOrders, showSummary, perpPosition.asset.denom, executeFlip],
   )
 
-  const handleAlertClose = () => {
-    setAlertState({ isOpen: false, type: 'warning' })
-  }
+  const closeDialog = useCallback(() => {
+    setCurrentDialog(null)
+    setFlipDirection(null)
+  }, [])
 
-  const handleAlertConfirm = () => {
-    if (alertState.type === 'warning' || alertState.type === 'summary') {
-      closePosition()
-    } else if (alertState.type === 'flip-warning' || alertState.type === 'flip-summary') {
-      if (alertState.flipDirection && currentAccount) {
+  const getDialogProps = useCallback(() => {
+    if (!currentDialog) return null
+
+    const baseProps = {
+      isOpen: true,
+      onClose: closeDialog,
+      showCloseButton: true,
+    }
+
+    switch (currentDialog) {
+      case 'closeWarning':
+        return {
+          ...baseProps,
+          header: <Text size='2xl'>Warning</Text>,
+          content: (
+            <Text>
+              Closing this position will also cancel all related limit orders. Do you want to
+              continue?
+            </Text>
+          ),
+          positiveButton: {
+            text: 'Continue',
+            icon: <ArrowRight />,
+            onClick: () => {
+              closeDialog()
+              closePosition()
+            },
+          },
+          negativeButton: {
+            text: 'Cancel',
+            onClick: closeDialog,
+          },
+        }
+
+      case 'closeSummary':
+        return {
+          ...baseProps,
+          header: <Text size='2xl'>Order Summary</Text>,
+          content: (
+            <ConfirmationSummary
+              amount={perpPosition.amount.negated()}
+              accountId={currentAccount?.id || ''}
+              asset={perpPosition.asset}
+              leverage={perpPosition.leverage}
+            />
+          ),
+          positiveButton: {
+            text: 'Confirm',
+            icon: <ArrowRight />,
+            onClick: () => {
+              closeDialog()
+              closePosition()
+            },
+          },
+          checkbox: {
+            text: 'Hide summary in the future',
+            onClick: (isChecked: boolean) => setShowSummary(!isChecked),
+          },
+          isSingleButtonLayout: true,
+        }
+
+      case 'flipWarning':
+        return {
+          ...baseProps,
+          header: <Text size='2xl'>Warning</Text>,
+          content: (
+            <Text>
+              Flipping this position will also cancel all related limit orders. Do you want to
+              continue?
+            </Text>
+          ),
+          positiveButton: {
+            text: 'Continue',
+            icon: <ArrowRight />,
+            onClick: () => {
+              closeDialog()
+              if (flipDirection) {
+                executeFlip(flipDirection)
+              }
+            },
+          },
+          negativeButton: {
+            text: 'Cancel',
+            onClick: closeDialog,
+          },
+        }
+
+      case 'flipSummary':
+        if (!flipDirection || !currentAccount) return null
+
         const flipAmount = perpPosition.amount.times(2)
         const signedAmount =
-          alertState.flipDirection === 'long' ? flipAmount.abs() : flipAmount.abs().negated()
+          flipDirection === 'long' ? flipAmount.abs() : flipAmount.abs().negated()
 
-        closePerpPosition({
-          accountId: currentAccount.id,
-          coin: BNCoin.fromDenomAndBigNumber(perpPosition.asset.denom, signedAmount),
-          autolend: isAutoLendEnabledForCurrentAccount,
-          baseDenom: perpPosition.baseDenom,
-          position: perpPosition,
-          debt: currentAccount.debts.find((debt) => debt.denom === perpPosition.baseDenom),
-        })
-      }
+        return {
+          ...baseProps,
+          header: <Text size='2xl'>Order Summary</Text>,
+          content: (
+            <ConfirmationSummary
+              amount={signedAmount}
+              accountId={currentAccount.id}
+              asset={perpPosition.asset}
+              leverage={perpPosition.leverage}
+            />
+          ),
+          positiveButton: {
+            text: 'Continue',
+            icon: <ArrowRight />,
+            onClick: () => {
+              closeDialog()
+              if (flipDirection) {
+                executeFlip(flipDirection)
+              }
+            },
+          },
+          checkbox: {
+            text: 'Hide summary in the future',
+            onClick: (isChecked: boolean) => setShowSummary(!isChecked),
+          },
+          isSingleButtonLayout: true,
+        }
+
+      default:
+        return null
     }
-    handleAlertClose()
-  }
+  }, [
+    currentDialog,
+    closeDialog,
+    closePosition,
+    perpPosition,
+    currentAccount,
+    flipDirection,
+    executeFlip,
+    setShowSummary,
+  ])
+
+  const getStopLossTakeProfitAction = useMemo(() => {
+    return {
+      icon: <Shield />,
+      text: hasChildOrders(limitOrders, perpPosition.asset.denom) ? 'Edit SL/TP' : 'Add SL/TP',
+      onClick: () => {
+        useStore.setState({ addSLTPModal: { parentPosition: perpPosition } })
+      },
+    }
+  }, [hasChildOrders, limitOrders, perpPosition])
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [
       ...(perpPosition.asset.isDeprecated
-        ? []
+        ? [getStopLossTakeProfitAction]
         : [
             ...(searchParams.get(SearchParams.PERPS_MARKET) === perpPosition.asset.denom
               ? []
@@ -209,25 +314,70 @@ export default function Manage(props: Props) {
                 handleFlipPosition(newDirection)
               },
             },
+            getStopLossTakeProfitAction,
           ]),
       {
-        icon: <Cross />,
+        icon: <Cross width={16} />,
         text: 'Close Position',
-        onClick: handleCloseClick,
+        onClick: () => handleCloseClick(),
       },
     ],
     [
+      getStopLossTakeProfitAction,
       handleCloseClick,
       handleFlipPosition,
-      perpPosition.asset.denom,
-      perpPosition.asset.isDeprecated,
-      perpPosition.tradeDirection,
+      perpPosition,
       searchParams,
       setSearchParams,
     ],
   )
 
-  if (props.perpPosition.type === 'limit' || props.perpPosition.type === 'stop')
+  if (props.perpPosition.type === 'limit' || props.perpPosition.type === 'stop') {
+    const hasPositionChildOrders = () => {
+      if (!props.perpPosition.orderId || !limitOrders) return false
+
+      return limitOrders.some((order) =>
+        order.order.conditions.some(
+          (condition) =>
+            'trigger_order_executed' in condition &&
+            condition.trigger_order_executed.trigger_order_id === props.perpPosition.orderId,
+        ),
+      )
+    }
+
+    if (hasPositionChildOrders()) {
+      return (
+        <div className='flex justify-end gap-2'>
+          <ActionButton
+            text='View'
+            onClick={() => {
+              if (!props.perpPosition.orderId) return
+              useStore.setState({ triggerOrdersModal: props.perpPosition.orderId })
+            }}
+            className='min-w-[105px]'
+            color='primary'
+          />
+          <ActionButton
+            text='Cancel'
+            onClick={async () => {
+              if (!props.perpPosition.orderId || !currentAccount) return
+              setIsConfirming(true)
+              await cancelTriggerOrder({
+                accountId: currentAccount.id,
+                orderId: props.perpPosition.orderId,
+                autolend: isAutoLendEnabledForCurrentAccount,
+                baseDenom: perpPosition.baseDenom,
+              })
+              setIsConfirming(false)
+            }}
+            className='min-w-[105px]'
+            color='tertiary'
+            showProgressIndicator={isConfirming}
+          />
+        </div>
+      )
+    }
+
     return (
       <div className='flex justify-end'>
         <ActionButton
@@ -249,108 +399,14 @@ export default function Manage(props: Props) {
         />
       </div>
     )
-
-  const getAlertContent = () => {
-    if (!currentAccount) return null
-
-    switch (alertState.type) {
-      case 'warning':
-        return (
-          <Text>
-            Closing this position will also cancel all related limit orders. Do you want to
-            continue?
-          </Text>
-        )
-      case 'summary':
-        return (
-          <ConfirmationSummary
-            amount={perpPosition.amount.negated()}
-            accountId={currentAccount.id}
-            asset={perpPosition.asset}
-            leverage={perpPosition.leverage}
-          />
-        )
-      case 'flip-warning':
-        return (
-          <Text>
-            Flipping this position will also cancel all related limit orders. Do you want to
-            continue?
-          </Text>
-        )
-      case 'flip-summary':
-        if (alertState.flipDirection) {
-          const flipAmount = perpPosition.amount.times(2)
-          const signedAmount =
-            alertState.flipDirection === 'long' ? flipAmount.abs() : flipAmount.abs().negated()
-          return (
-            <ConfirmationSummary
-              amount={signedAmount}
-              accountId={currentAccount.id}
-              asset={perpPosition.asset}
-              leverage={perpPosition.leverage}
-            />
-          )
-        }
-        return null
-      default:
-        return null
-    }
   }
 
-  const getAlertTitle = () => {
-    switch (alertState.type) {
-      case 'warning':
-      case 'flip-warning':
-        return 'Warning'
-      case 'summary':
-      case 'flip-summary':
-        return 'Order Summary'
-      default:
-        return ''
-    }
-  }
+  const dialogProps = getDialogProps()
 
   return (
-    <>
-      <div className='flex justify-end'>
-        {isConfirming ? (
-          <div className='text-white/60'>Confirming...</div>
-        ) : (
-          <DropDownButton
-            items={ITEMS}
-            color='tertiary'
-            text='Manage'
-            className='w-full min-w-20'
-          />
-        )}
-        {isPerpsSlTpModalOpen && <PerpsSlTpModal />}
-      </div>
-
-      <AlertDialog
-        isOpen={alertState.isOpen}
-        onClose={handleAlertClose}
-        header={<Text size='2xl'>{getAlertTitle()}</Text>}
-        content={getAlertContent() || <Text>Error loading content</Text>}
-        positiveButton={{
-          text: alertState.type.includes('summary') ? 'Confirm' : 'Continue',
-          icon: <ArrowRight />,
-          onClick: handleAlertConfirm,
-        }}
-        negativeButton={{
-          text: 'Cancel',
-          onClick: handleAlertClose,
-        }}
-        checkbox={
-          alertState.type.includes('summary')
-            ? {
-                text: 'Hide summary in the future',
-                onClick: (isChecked: boolean) => setShowSummary(!isChecked),
-              }
-            : undefined
-        }
-        isSingleButtonLayout={alertState.type.includes('summary')}
-        showCloseButton
-      />
-    </>
+    <div className='flex justify-end' onClick={(e) => e.stopPropagation()}>
+      <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
+      {dialogProps && <AlertDialog {...dialogProps} />}
+    </div>
   )
 }

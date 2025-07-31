@@ -118,7 +118,19 @@ export default function useHealthComputer(account?: Account) {
       assetParams.reduce(
         (prev, curr) => {
           // Close factor is not important for any HC calculation
-          prev[curr.denom] = { ...curr, close_factor: '0.9' }
+          // Set reserve_factor to 0.1 if not present
+          // Set interest_rate_model if not present
+          prev[curr.denom] = {
+            ...curr,
+            close_factor: '0.9',
+            reserve_factor: curr.reserve_factor || '0.1',
+            interest_rate_model: curr.interest_rate_model || {
+              optimal_utilization_rate: '0.6',
+              base: '0',
+              slope_1: '0.15',
+              slope_2: '3',
+            },
+          }
           return prev
         },
         {} as { [key: string]: AssetParamsBaseForAddr },

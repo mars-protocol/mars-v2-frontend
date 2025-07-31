@@ -1,14 +1,12 @@
-import Button from 'components/common/Button'
 import classNames from 'classnames'
+import Button from 'components/common/Button'
+import { Callout, CalloutType } from 'components/common/Callout'
+import { ExternalLink } from 'components/common/Icons'
 import NumberInput from 'components/common/NumberInput'
 import Text from 'components/common/Text'
-import { Callout, CalloutType } from 'components/common/Callout'
 import { TextLink } from 'components/common/TextLink'
-import { ExternalLink } from 'components/common/Icons'
-import { BN } from 'utils/helpers'
-import { BN_ZERO } from 'constants/math'
-import DocsLink from 'components/common/DocsLink'
 import { DocURL } from 'types/enums'
+import { BN } from 'utils/helpers'
 
 const fees = [
   { label: '1%', value: BN(1) },
@@ -45,9 +43,7 @@ export default function PerformanceFee(props: Props) {
         onChange={onChange}
         asset={{ decimals: 0, symbol: '%' }}
         maxDecimals={0}
-        min={BN_ZERO}
         max={BN(40)}
-        maxLength={2}
         placeholder='Enter fee'
         className='px-4 py-3 rounded-sm bg-white/5 !border-solid border border-white/10 focus:border-white/20 focus:bg-white/10 !text-left text-sm'
       />

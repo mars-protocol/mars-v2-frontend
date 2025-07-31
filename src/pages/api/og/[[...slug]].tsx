@@ -52,7 +52,7 @@ export default async function handler(req: NextRequest) {
 
     const showApyNote = !apy
 
-    const imageDataUrl = 'https://app.marsprotocol.io/vaults_banner.png'
+    const imageDataUrl = 'https://app.marsprotocol.io/vaults_banner.jpg'
 
     return new ImageResponse(
       (
@@ -195,7 +195,7 @@ export default async function handler(req: NextRequest) {
         status: 200,
         headers: {
           'content-type': 'image/png',
-          'cache-control': 'public, max-age=8640, s-maxage=8640, must-revalidate',
+          'cache-control': 'public, max-age=600, s-maxage=600, must-revalidate',
         },
       },
     )

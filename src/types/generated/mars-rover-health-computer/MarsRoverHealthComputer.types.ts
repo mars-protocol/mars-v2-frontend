@@ -20,7 +20,7 @@ export type HlsAssetTypeForAddr =
 export type Addr = string
 export type Uint128 = string
 export type AccountKind =
-  | ('default' | 'high_levered_strategy')
+  | ('default' | 'usdc_margin' | 'high_levered_strategy')
   | {
       fund_manager: {
         vault_addr: string
@@ -54,11 +54,13 @@ export interface AssetParamsBaseForAddr {
   credit_manager: CmSettingsForAddr
   denom: string
   deposit_cap: Uint128
+  interest_rate_model: InterestRateModel
   liquidation_bonus: LiquidationBonus
   liquidation_threshold: Decimal
   max_loan_to_value: Decimal
   protocol_liquidation_fee: Decimal
   red_bank: RedBankSettings
+  reserve_factor: Decimal
 }
 export interface CmSettingsForAddr {
   hls?: HlsParamsBaseForAddr | null
@@ -69,6 +71,12 @@ export interface HlsParamsBaseForAddr {
   correlations: HlsAssetTypeForAddr[]
   liquidation_threshold: Decimal
   max_loan_to_value: Decimal
+}
+export interface InterestRateModel {
+  base: Decimal
+  optimal_utilization_rate: Decimal
+  slope_1: Decimal
+  slope_2: Decimal
 }
 export interface LiquidationBonus {
   max_lb: Decimal
@@ -91,8 +99,10 @@ export interface PerpParams {
   denom: string
   enabled: boolean
   liquidation_threshold: Decimal
+  liquidation_threshold_usdc?: Decimal | null
   max_funding_velocity: Decimal
   max_loan_to_value: Decimal
+  max_loan_to_value_usdc?: Decimal | null
   max_long_oi_value: Uint128
   max_net_oi_value: Uint128
   max_position_value?: Uint128 | null

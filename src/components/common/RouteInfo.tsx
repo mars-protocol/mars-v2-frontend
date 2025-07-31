@@ -1,13 +1,13 @@
 import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
+import { FormattedNumber } from 'components/common/FormattedNumber'
+import { ChevronDown } from 'components/common/Icons'
 import SummaryLine from 'components/common/SummaryLine'
 import Text from 'components/common/Text'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import { BNCoin } from 'types/classes/BNCoin'
-import { ChevronDown } from 'components/common/Icons'
-import { FormattedNumber } from 'components/common/FormattedNumber'
 import { formatValue } from 'utils/formatters'
 
 interface Props {
@@ -57,7 +57,7 @@ export function RouteInfo(props: Props) {
               amount={props.route.priceImpact.toNumber() || 0}
               options={{ suffix: '%' }}
               className={classNames({
-                'text-info': props.route.priceImpact.toNumber() > 5,
+                'text-info': props.route.priceImpact.abs().toNumber() > 5,
               })}
             />
           </SummaryLine>
@@ -98,7 +98,7 @@ export function RouteInfo(props: Props) {
                       props.tradeInfo.minReceive,
                     )}
                     className='text-xs text-white/60'
-                    options={{ maxDecimals: 2, abbreviated: true }}
+                    options={{ abbreviated: false }}
                   />
                 </div>
               )}

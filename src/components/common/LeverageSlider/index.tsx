@@ -3,6 +3,7 @@ import debounce from 'lodash.debounce'
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 
 import InputOverlay from 'components/common/LeverageSlider/InputOverlay'
+import { formatValue } from 'utils/formatters'
 
 const LEFT_MARGIN = 5
 
@@ -88,7 +89,7 @@ function LeverageSlider(props: Props) {
       </div>
       <div className={'flex w-full justify-between text-xs text-opacity-50 text-white font-bold'}>
         <span>{markPosPercent > LEFT_MARGIN ? min : ''}</span>
-        <span>{max.toFixed(2)}</span>
+        <span>{formatValue(max, { abbreviated: false, maxDecimals: 2 })}</span>
       </div>
     </div>
   )

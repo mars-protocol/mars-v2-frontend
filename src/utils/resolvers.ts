@@ -33,7 +33,7 @@ export function resolveMarketResponse(
       cap: {
         denom: assetCapResponse.denom,
         used: BN(assetCapResponse.amount),
-        // add a 0.5% cap buffer for assets, so that farms can still be swapped into on leverage
+        // add a 5% cap buffer for assets, so that farms can still be swapped into on leverage
         max: asset.isDeprecated ? BN_ZERO : BN(assetParamsResponse.deposit_cap).times(0.95),
       },
       ltv: {

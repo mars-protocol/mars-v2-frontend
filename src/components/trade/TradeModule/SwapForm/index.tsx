@@ -88,7 +88,7 @@ export default function SwapForm(props: Props) {
   const depositCapReachedCoins: BNCoin[] = useMemo(() => {
     const outputMarketAsset = markets.find((market) => market.asset.denom === outputAsset.denom)
 
-    if (!outputMarketAsset || !outputMarketAsset.cap) return []
+    if (!outputMarketAsset?.cap) return []
 
     let depositCapLeft = getCapLeftWithBuffer(outputMarketAsset.cap)
     if (isAutoRepayChecked && account) {
@@ -141,7 +141,7 @@ export default function SwapForm(props: Props) {
       : undefined
 
     return swap({
-      accountId: account?.id || '',
+      accountId: account?.id ?? '',
       coinIn: BNCoin.fromDenomAndBigNumber(inputAsset.denom, inputAssetAmount.integerValue()),
       reclaim: removedLends[0],
       borrow: borrowCoin,
@@ -369,6 +369,7 @@ export default function SwapForm(props: Props) {
             asset={inputAsset}
             maxButtonLabel='Balance:'
             disabled={isConfirming}
+            isUSD={false}
           />
           <Divider />
           <LeverageSlider
@@ -417,7 +418,7 @@ export default function SwapForm(props: Props) {
                 <DisplayCurrency
                   coin={BNCoin.fromDenomAndBigNumber(outputAsset.denom, outputAssetAmount)}
                   className='text-xs text-white/60'
-                  options={{ maxDecimals: 2, abbreviated: true }}
+                  options={{ abbreviated: false }}
                 />
               </div>
             )}

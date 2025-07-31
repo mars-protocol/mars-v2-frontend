@@ -1,5 +1,6 @@
 import { pythEndpoints } from 'constants/pyth'
 import { FETCH_TIMEOUT } from 'constants/query'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 import useSWR from 'swr'
 import { logApiError } from 'utils/error'
@@ -8,6 +9,7 @@ import { BN } from 'utils/helpers'
 
 export default function usePrices() {
   const assetsFromStore = useStore((s) => s?.assets) || []
+  const chainConfig = useChainConfig()
 
   return useSWR<PricesResponse>(
     'token-prices',
@@ -24,7 +26,7 @@ export default function usePrices() {
           }
         }
 
-        return await fetchFeeMarketPrices()
+        return await fetchFeeMarketPrices(chainConfig)
       } catch (error) {
         logApiError('price-api', error, 'Failed to fetch token prices')
 
@@ -97,8 +99,8 @@ async function fetchPythPrices(assets: Asset[]): Promise<PricesResponse> {
   }
 }
 
-async function fetchFeeMarketPrices(): Promise<PricesResponse> {
-  const feeMarketUrl = `${process.env.NEXT_PUBLIC_NEUTRON_REST}/feemarket/v1/gas_prices`
+async function fetchFeeMarketPrices(chainConfig: ChainConfig): Promise<PricesResponse> {
+  const feeMarketUrl = chainConfig.endpoints.gasPrices
   try {
     const response = await fetchWithTimeout(feeMarketUrl, FETCH_TIMEOUT)
 

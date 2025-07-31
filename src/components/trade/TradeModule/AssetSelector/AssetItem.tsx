@@ -97,7 +97,7 @@ export default function AssetItem(props: Props) {
                     props.depositCap.denom,
                     props.depositCap.max.minus(props.depositCap.used),
                   )}
-                  options={{ suffix: ` (${capLeft.toFixed(2)}%)` }}
+                  options={{ suffix: ` (${capLeft.toFixed(2)}%)`, abbreviated: false }}
                 />
               </div>
             )}

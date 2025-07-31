@@ -1,4 +1,5 @@
 import {
+  AccountAssetsModal,
   AccountDeleteController,
   AddFarmAssetsModal,
   AstroLpModal,
@@ -11,6 +12,9 @@ import {
   KeeperFeeModal,
   LendAndReclaimModalController,
   MarsStakingModal,
+  PerpsConditionalTriggersModal,
+  PerpsSlTpModal,
+  PerpsTriggerOrdersModal,
   PerpsVaultModal,
   SettingsModal,
   UnlockModal,
@@ -21,10 +25,12 @@ import {
   WalletAssets,
   WithdrawFromVaultsModal,
 } from 'components/Modals'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 
 export default function ModalsContainer() {
   const store = useStore((s) => s)
+  const chainConfig = useChainConfig()
 
   return (
     <>
@@ -49,6 +55,10 @@ export default function ModalsContainer() {
       {store.keeperFeeModal && <KeeperFeeModal />}
       {store.vaultAssetsModal && <VaultAssets />}
       {store.marsStakingModal && <MarsStakingModal />}
+      {store.conditionalTriggersModal && <PerpsConditionalTriggersModal />}
+      {store.triggerOrdersModal && <PerpsTriggerOrdersModal />}
+      {store.addSLTPModal && <PerpsSlTpModal />}
+      {store.accountAssetsModal && <AccountAssetsModal />}
     </>
   )
 }

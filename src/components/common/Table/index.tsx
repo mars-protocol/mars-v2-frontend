@@ -119,7 +119,7 @@ export default function Table<T>(props: Props<T>) {
                                   ? ({
                                       asc: <SortAsc size={16} />,
                                       desc: <SortDesc />,
-                                      false: <SortNone />,
+                                      false: <SortNone className='opacity-20' />,
                                     }[header.column.getIsSorted() as string] ?? null)
                                   : null}
                               </span>

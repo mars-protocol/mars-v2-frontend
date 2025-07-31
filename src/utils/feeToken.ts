@@ -148,8 +148,8 @@ export function deductFeeFromMax(
   if (tokenDenom.includes('usdc') || tokenDenom.includes('uusdc')) {
     feeReserveAmount = MIN_FEE_AMOUNT
   } else {
-    const decimalAdjustment = tokenDecimals / 6
-    feeReserveAmount = BN(MIN_FEE_AMOUNT).multipliedBy(decimalAdjustment).toFixed(0)
+    const decimalAdjustment = tokenDecimals - 6
+    feeReserveAmount = BN(MIN_FEE_AMOUNT).shiftedBy(decimalAdjustment).toFixed(0)
   }
 
   if (maxAmount.isLessThanOrEqualTo(feeReserveAmount)) {

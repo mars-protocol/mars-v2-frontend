@@ -103,7 +103,7 @@ export default function Toaster() {
       <div className='relative flex flex-wrap w-full m-0 isolate'>
         <div className='flex items-center w-full gap-2 mb-2'>
           <div className='flex items-center justify-center rounded-sm bg-info w-7 h-7'>
-            <div className='w-4 h-4 -ml-1'>
+            <div className='w-4 h-4 -ml-1 -mt-1'>
               <CircularProgress />
             </div>
           </div>

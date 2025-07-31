@@ -76,15 +76,20 @@ export const formatValue = (amount: number | string, options?: FormatOptions): s
   let convertedAmount: BigNumber | string = BN(amount).dividedBy(10 ** (options?.decimals ?? 0))
 
   const amountSuffix = options?.abbreviated
-    ? convertedAmount.isGreaterThanOrEqualTo(1_000_000_000_000_000)
+    ? convertedAmount.isGreaterThanOrEqualTo(1_000_000_000_000_000) ||
+      convertedAmount.isLessThanOrEqualTo(-1_000_000_000_000_000)
       ? 'Q'
-      : convertedAmount.isGreaterThanOrEqualTo(1_000_000_000_000)
+      : convertedAmount.isGreaterThanOrEqualTo(1_000_000_000_000) ||
+          convertedAmount.isLessThanOrEqualTo(-1_000_000_000_000)
         ? 'T'
-        : convertedAmount.isGreaterThanOrEqualTo(1_000_000_000)
+        : convertedAmount.isGreaterThanOrEqualTo(1_000_000_000) ||
+            convertedAmount.isLessThanOrEqualTo(-1_000_000_000)
           ? 'B'
-          : convertedAmount.isGreaterThanOrEqualTo(1_000_000)
+          : convertedAmount.isGreaterThanOrEqualTo(1_000_000) ||
+              convertedAmount.isLessThanOrEqualTo(-1_000_000)
             ? 'M'
-            : convertedAmount.isGreaterThanOrEqualTo(1_000)
+            : convertedAmount.isGreaterThanOrEqualTo(1_000) ||
+                convertedAmount.isLessThanOrEqualTo(-1_000)
               ? 'K'
               : false
     : ''

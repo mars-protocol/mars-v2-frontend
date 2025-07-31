@@ -64,7 +64,7 @@ export default function TradeSummary(props: Props) {
 
   return (
     <div className='flex flex-col w-full space-y-2'>
-      {routeInfo && routeInfo.priceImpact.toNumber() > 5 && (
+      {routeInfo && routeInfo.priceImpact.abs().toNumber() > 5 && (
         <Callout type={CalloutType.WARNING}>
           Your trade's price impact exceeds 5%. Please review the Summary before submitting the
           transaction.

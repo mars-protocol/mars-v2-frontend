@@ -71,7 +71,7 @@ export default function AssetSelectorItem(props: Props) {
   }, [props.depositCap])
 
   const shouldShowBalance = balances.length > 0 && (type !== 'perps' || perpsInfo.hasPosition)
-  const balanceLabel = type === 'perps' ? 'Size ' : 'Balance: '
+  const balanceLabel = type === 'perps' ? 'Size: ' : 'Balance: '
 
   const positionValue = useMemo(() => {
     if (type === 'perps' && perpsInfo.position && asset.price) {
@@ -163,7 +163,7 @@ export default function AssetSelectorItem(props: Props) {
                     depositCap.denom,
                     BN(Math.max(depositCap.max.minus(depositCap.used).toNumber(), 0)),
                   )}
-                  options={{ suffix: ` (${Math.max(capLeft, 0).toFixed(2)}%)` }}
+                  options={{ suffix: ` (${Math.max(capLeft, 0).toFixed(2)}%)`, abbreviated: false }}
                 />
               </div>
             )}

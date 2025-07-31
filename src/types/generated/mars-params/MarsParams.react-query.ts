@@ -22,9 +22,11 @@ import {
   CmEmergencyUpdate,
   RedBankEmergencyUpdate,
   PerpsEmergencyUpdate,
+  ManagedVaultConfigUpdate,
   AssetParamsBaseForString,
   CmSettingsForString,
   HlsParamsBaseForString,
+  InterestRateModel,
   LiquidationBonus,
   RedBankSettings,
   VaultConfigBaseForString,
@@ -48,6 +50,7 @@ import {
   PaginationResponseForVaultConfigBaseForAddr,
   NullableAssetParamsBaseForAddr,
   ConfigResponse,
+  ManagedVaultConfigResponse,
   OwnerResponse,
 } from './MarsParams.types'
 import { MarsParamsQueryClient, MarsParamsClient } from './MarsParams.client'
@@ -85,6 +88,14 @@ export const marsParamsQueryKeys = {
       {
         ...marsParamsQueryKeys.address(contractAddress)[0],
         method: 'config',
+        args,
+      },
+    ] as const,
+  managedVaultConfig: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
+    [
+      {
+        ...marsParamsQueryKeys.address(contractAddress)[0],
+        method: 'managed_vault_config',
         args,
       },
     ] as const,
@@ -468,6 +479,21 @@ export function useMarsParamsAssetParamsQuery<TData = NullableAssetParamsBaseFor
     },
   )
 }
+export interface MarsParamsManagedVaultConfigQuery<TData>
+  extends MarsParamsReactQuery<ManagedVaultConfigResponse, TData> {}
+export function useMarsParamsManagedVaultConfigQuery<TData = ManagedVaultConfigResponse>({
+  client,
+  options,
+}: MarsParamsManagedVaultConfigQuery<TData>) {
+  return useQuery<ManagedVaultConfigResponse, Error, TData>(
+    marsParamsQueryKeys.managedVaultConfig(client?.contractAddress),
+    () => (client ? client.managedVaultConfig() : Promise.reject(new Error('Invalid client'))),
+    {
+      ...options,
+      enabled: !!client && (options?.enabled != undefined ? options.enabled : true),
+    },
+  )
+}
 export interface MarsParamsConfigQuery<TData> extends MarsParamsReactQuery<ConfigResponse, TData> {}
 export function useMarsParamsConfigQuery<TData = ConfigResponse>({
   client,
@@ -509,6 +535,27 @@ export function useMarsParamsOwnerQuery<TData = OwnerResponse>({
       ...options,
       enabled: !!client && (options?.enabled != undefined ? options.enabled : true),
     },
+  )
+}
+export interface MarsParamsUpdateManagedVaultConfigMutation {
+  client: MarsParamsClient
+  msg: ManagedVaultConfigUpdate
+  args?: {
+    fee?: number | StdFee | 'auto'
+    memo?: string
+    funds?: Coin[]
+  }
+}
+export function useMarsParamsUpdateManagedVaultConfigMutation(
+  options?: Omit<
+    UseMutationOptions<ExecuteResult, Error, MarsParamsUpdateManagedVaultConfigMutation>,
+    'mutationFn'
+  >,
+) {
+  return useMutation<ExecuteResult, Error, MarsParamsUpdateManagedVaultConfigMutation>(
+    ({ client, msg, args: { fee, memo, funds } = {} }) =>
+      client.updateManagedVaultConfig(msg, fee, memo, funds),
+    options,
   )
 }
 export interface MarsParamsEmergencyUpdateMutation {

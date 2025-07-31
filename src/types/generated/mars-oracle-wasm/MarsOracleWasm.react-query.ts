@@ -22,6 +22,7 @@ import {
   QueryMsg,
   ActionKind,
   ConfigResponse,
+  HasPriceSourceResponse,
   PriceResponse,
   PriceSourceResponseForString,
   ArrayOfPriceSourceResponseForString,
@@ -89,6 +90,14 @@ export const marsOracleWasmQueryKeys = {
         args,
       },
     ] as const,
+  hasPriceSource: (contractAddress: string | undefined, args?: Record<string, unknown>) =>
+    [
+      {
+        ...marsOracleWasmQueryKeys.address(contractAddress)[0],
+        method: 'has_price_source',
+        args,
+      },
+    ] as const,
 }
 export interface MarsOracleWasmReactQuery<TResponse, TData = TResponse> {
   client: MarsOracleWasmQueryClient | undefined
@@ -98,6 +107,31 @@ export interface MarsOracleWasmReactQuery<TResponse, TData = TResponse> {
   > & {
     initialData?: undefined
   }
+}
+export interface MarsOracleWasmHasPriceSourceQuery<TData>
+  extends MarsOracleWasmReactQuery<HasPriceSourceResponse, TData> {
+  args: {
+    denom: string
+  }
+}
+export function useMarsOracleWasmHasPriceSourceQuery<TData = HasPriceSourceResponse>({
+  client,
+  args,
+  options,
+}: MarsOracleWasmHasPriceSourceQuery<TData>) {
+  return useQuery<HasPriceSourceResponse, Error, TData>(
+    marsOracleWasmQueryKeys.hasPriceSource(client?.contractAddress, args),
+    () =>
+      client
+        ? client.hasPriceSource({
+            denom: args.denom,
+          })
+        : Promise.reject(new Error('Invalid client')),
+    {
+      ...options,
+      enabled: !!client && (options?.enabled != undefined ? options.enabled : true),
+    },
+  )
 }
 export interface MarsOracleWasmPricesByDenomsQuery<TData>
   extends MarsOracleWasmReactQuery<ArrayOfPriceResponse, TData> {

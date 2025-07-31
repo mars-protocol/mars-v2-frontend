@@ -8,6 +8,13 @@ import { CircularProgress } from 'components/common/CircularProgress'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { VAULT_DETAILS_TABS } from 'constants/pages'
+import AlertDialog from 'components/common/AlertDialog'
+import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
+import { ArrowRight } from 'components/common/Icons'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
+import { INFO_ITEMS } from 'constants/warningDialog'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import { useCallback, useEffect, useState } from 'react'
 
 function VaultLoadingState() {
   return (
@@ -30,8 +37,34 @@ export default function VaultDetails(props: Props) {
   const [searchParams, setSearchParams] = useSearchParams()
   const activeTabIdx = searchParams.get('tab') === 'performance' ? 1 : 0
   const focusComponent = useStore((s) => s.focusComponent)
+  const [showVaultWarning, setShowVaultWarning] = useLocalStorage<boolean>(
+    LocalStorageKeys.VAULT_PAGE_WARNING,
+    true,
+  )
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const vaultAddress = propVaultAddress || urlVaultAddress
+
+  const showDialog = useCallback(() => {
+    if (!showVaultWarning) return
+    setIsDialogOpen(true)
+  }, [showVaultWarning])
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false)
+  }
+
+  const handleCancel = () => {
+    setShowVaultWarning(true)
+    setIsDialogOpen(false)
+  }
+
+  useEffect(() => {
+    const vaultWarning = localStorage.getItem(LocalStorageKeys.VAULT_PAGE_WARNING)
+    if (vaultWarning === null || vaultWarning === 'true') {
+      showDialog()
+    }
+  }, [showDialog])
 
   const handleTabChange = (index: number) => {
     const newParams = new URLSearchParams(searchParams)
@@ -59,6 +92,28 @@ export default function VaultDetails(props: Props) {
         </div>
       </div>
       <VaultDetailsContent vaultAddress={vaultAddress} activeTabIdx={activeTabIdx} />
+
+      <AlertDialog
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+        title='Proceed with caution'
+        content={<AlertDialogItems items={INFO_ITEMS} />}
+        positiveButton={{
+          text: 'Continue',
+          icon: <ArrowRight />,
+          onClick: handleDialogClose,
+        }}
+        negativeButton={{
+          text: 'Cancel',
+          onClick: handleCancel,
+        }}
+        checkbox={{
+          text: "Don't show again",
+          onClick: (isChecked: boolean) => setShowVaultWarning(!isChecked),
+        }}
+        modalClassName='!bg-info/20 max-w-modal-md'
+        titleClassName='text-info'
+      />
     </section>
   )
 }

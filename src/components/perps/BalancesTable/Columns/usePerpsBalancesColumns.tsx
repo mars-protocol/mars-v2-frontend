@@ -12,10 +12,10 @@ import TradeDirection, {
   TRADE_DIRECTION_META,
 } from 'components/perps/BalancesTable/Columns/TradeDirection'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
-import usePerpsLimitOrderRows from 'hooks/perps/usePerpsLimitOrdersRows'
+import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 import { demagnify } from 'utils/formatters'
 import { BN } from 'utils/helpers'
-import { checkStopLossAndTakeProfit } from 'utils/perps'
+import { buildParentChildMapping, getPositionSLTPIndicators } from 'utils/perps'
 
 interface Props {
   isOrderTable: boolean
@@ -24,12 +24,19 @@ interface Props {
 export default function usePerpsBalancesColumns(props: Props) {
   const { isOrderTable } = props
 
-  const activeLimitOrders = usePerpsLimitOrderRows()
+  const { data: rawLimitOrders } = usePerpsLimitOrders()
+
+  const parentChildMapping = useMemo(() => {
+    if (!rawLimitOrders) return {}
+    return buildParentChildMapping(rawLimitOrders)
+  }, [rawLimitOrders])
+
   const staticColumns = useMemo<ColumnDef<PerpPositionRow>[]>(
     () => [
       {
         ...PERP_NAME_META,
         cell: ({ row }) => <PerpName asset={row.original.asset} />,
+        meta: { className: 'min-w-32 w-32' },
       },
       {
         ...TRADE_DIRECTION_META,
@@ -46,6 +53,7 @@ export default function usePerpsBalancesColumns(props: Props) {
             />
           )
         },
+        meta: { className: 'min-w-28 w-28' },
       },
       {
         ...SIZE_META,
@@ -63,7 +71,14 @@ export default function usePerpsBalancesColumns(props: Props) {
               .shiftedBy(asset.decimals - PRICE_ORACLE_DECIMALS)
           }
 
-          return <Size amount={row.original.amount} asset={row.original.asset} value={value} />
+          return (
+            <Size
+              type={type}
+              amount={row.original.amount}
+              asset={row.original.asset}
+              value={value}
+            />
+          )
         },
         sortingFn: sizeSortingFn,
       },
@@ -104,6 +119,7 @@ export default function usePerpsBalancesColumns(props: Props) {
       {
         ...MANAGE_META,
         cell: ({ row }) => <Manage perpPosition={row.original} />,
+        meta: { className: 'w-48 min-w-48' },
       },
     ],
     [isOrderTable],
@@ -114,21 +130,31 @@ export default function usePerpsBalancesColumns(props: Props) {
       ...STATUS_META,
       cell: ({ row }) => {
         const position = row.original
-        const { hasStopLoss, hasTakeProfit } = checkStopLossAndTakeProfit(
-          position,
-          activeLimitOrders,
-        )
+
+        let indicators
+        if (position.orderId && parentChildMapping[position.orderId]) {
+          indicators = parentChildMapping[position.orderId]
+        } else if (rawLimitOrders) {
+          indicators = getPositionSLTPIndicators(position, rawLimitOrders)
+        } else {
+          indicators = { hasSL: false, hasTP: false }
+        }
+
+        const shouldShowIndicators =
+          position.type === 'market' ||
+          (!!position.orderId && (indicators.hasSL || indicators.hasTP))
+
         return (
           <Status
             type={position.type}
-            hasStopLoss={hasStopLoss}
-            hasTakeProfit={hasTakeProfit}
-            showIndicators={position.type !== 'limit'}
+            hasStopLoss={indicators.hasSL}
+            hasTakeProfit={indicators.hasTP}
+            showIndicators={shouldShowIndicators}
           />
         )
       },
     }),
-    [activeLimitOrders],
+    [parentChildMapping, rawLimitOrders],
   )
 
   return useMemo(() => {
