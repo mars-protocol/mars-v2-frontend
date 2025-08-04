@@ -81,7 +81,7 @@
     "@typescript-eslint/parser": "^8.38.0",
     "autoprefixer": "^10.4.21",
     "dotenv": "^17.2.1",
-    "dotenv-cli": "^9.0.0",
+    "dotenv-cli": "^10.0.0",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-functional": "^9.0.2",
