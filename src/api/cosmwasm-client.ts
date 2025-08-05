@@ -181,22 +181,26 @@ const getManagedVaultQueryClient = async (chainConfig: ChainConfig, address: str
 
     return _managedVaultQueryClient.get(key)!
   } catch (error) {
-    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
+    console.error(`Error creating managed vault query client for ${address}:`, error)
     throw error
   }
 }
+
 const getManagedVaultOwnerAddress = async (chainConfig: ChainConfig, address: string) => {
   try {
     const client = await getClient(getUrl(chainConfig.endpoints.rpc))
     const contractInfo = await client.getContract(address)
     return contractInfo.creator
   } catch (error) {
-    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
-    throw error
+    console.error(`Error fetching owner address for vault ${address}:`, error)
+    return undefined
   }
 }
 
-const getManagedVaultDetails = async (chainConfig: ChainConfig, vaultAddress: string) => {
+const getManagedVaultDetails = async (
+  chainConfig: ChainConfig,
+  vaultAddress: string,
+): Promise<ManagedVaultSCDetailsResponse | null> => {
   try {
     const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
     const response = await client.vaultExtension({
@@ -217,8 +221,8 @@ const getManagedVaultPnl = async (chainConfig: ChainConfig, vaultAddress: string
     })
     return response as unknown as ManagedVaultPnlResponse
   } catch (error) {
-    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
-    throw error
+    console.error(`Error fetching PnL for vault ${vaultAddress}:`, error)
+    return null
   }
 }
 
@@ -236,8 +240,8 @@ const getManagedVaultUserPosition = async (
     })
     return response as unknown as ManagedVaultUserPositionResponse
   } catch (error) {
-    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
-    throw error
+    console.error(`Error fetching user position for vault ${vaultAddress}:`, error)
+    return null
   }
 }
 
@@ -252,8 +256,8 @@ const getManagedVaultPerformanceFeeState = async (
     })
     return response as unknown as PerformanceFeeState
   } catch (error) {
-    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
-    throw error
+    console.error(`Error fetching performance fee state for vault ${vaultAddress}:`, error)
+    return null
   }
 }
 
@@ -271,8 +275,8 @@ const getManagedVaultUserUnlocks = async (
     })
     return response as unknown as UserManagedVaultUnlockResponse[]
   } catch (error) {
-    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
-    throw error
+    console.error(`Error fetching user unlocks for vault ${vaultAddress}:`, error)
+    return []
   }
 }
 
@@ -295,8 +299,8 @@ const getManagedVaultAllUnlocks = async (
       metadata: { has_more: boolean }
     }
   } catch (error) {
-    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
-    throw error
+    console.error(`Error fetching all unlocks for vault ${vaultAddress}:`, error)
+    return { data: [], metadata: { has_more: false } }
   }
 }
 
@@ -312,8 +316,8 @@ const getManagedVaultPreviewRedeem = async (
     })
     return response
   } catch (error) {
-    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
-    throw error
+    console.error(`Error fetching preview redeem for vault ${vaultAddress}:`, error)
+    return null
   }
 }
 
@@ -329,8 +333,8 @@ const getManagedVaultConvertToTokens = async (
     })
     return response
   } catch (error) {
-    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
-    throw error
+    console.error(`Error fetching convert to tokens for vault ${vaultAddress}:`, error)
+    return null
   }
 }
 
@@ -346,8 +350,8 @@ const getManagedVaultConvertToShares = async (
     })
     return response
   } catch (error) {
-    setNodeError(getUrl(chainConfig.endpoints.rpc), error)
-    throw error
+    console.error(`Error fetching convert to shares for vault ${vaultAddress}:`, error)
+    return null
   }
 }
 
