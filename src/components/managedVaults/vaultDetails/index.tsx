@@ -18,10 +18,10 @@ import { useCallback, useEffect, useState } from 'react'
 
 function VaultLoadingState() {
   return (
-    <div className='flex flex-wrap justify-center w-full gap-4'>
-      <CircularProgress size={60} />
-      <Text className='w-full text-center' size='2xl'>
-        Fetching on-chain data...
+    <div className='flex flex-wrap justify-center w-full gap-4 mt-20'>
+      <CircularProgress size={40} />
+      <Text className='w-full text-center' size='xl'>
+        Fetching vault data...
       </Text>
     </div>
   )
