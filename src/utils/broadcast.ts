@@ -186,6 +186,12 @@ function getTransactionCoinsGrouped(
   filteredEvents.forEach((event: TransactionEvent) => {
     if (!Array.isArray(event.attributes)) return
 
+    // Skip CancelLimitOrder events entirely as they are internal DEX operations
+    const action = event.attributes.find((a) => a.key === 'action')?.value
+    if (action === 'CancelLimitOrder') {
+      return
+    }
+
     // Check if the event type is a token_swapped and get coins from the event
     // This is needed for the "old" swap event, while the new swap event has an action attribute
     if (event.type === 'token_swapped') {
@@ -200,6 +206,12 @@ function getTransactionCoinsGrouped(
     // Check if the event type is a message event with PlaceLimitOrder action (Duality swap)
     if (event.type === 'message') {
       const action = event.attributes.find((a) => a.key === 'action')?.value
+
+      // Skip CancelLimitOrder events as they are internal DEX operations, not user swaps
+      if (action === 'CancelLimitOrder') {
+        return
+      }
+
       if (action === 'PlaceLimitOrder') {
         const requestAmountIn = event.attributes.find((a) => a.key === 'RequestAmountIn')?.value
         const swapAmountOut = event.attributes.find((a) => a.key === 'SwapAmountOut')?.value
@@ -232,6 +244,9 @@ function getTransactionCoinsGrouped(
     // Check all other events for coins
     event.attributes.forEach((attr: TransactionEventAttribute) => {
       if (attr.key !== 'action') return
+
+      // Skip CancelLimitOrder actions as they are internal DEX operations
+      if (attr.value === 'CancelLimitOrder') return
 
       const coins = getCoinsFromEvent(event)
       if (!coins) return
