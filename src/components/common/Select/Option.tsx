@@ -34,7 +34,7 @@ export default function Option(props: Props) {
     const balance = props.amount ?? BN_ZERO
     const marketAsset = markets.find((market) => market.asset.denom === props.denom)
 
-    if (!asset || !marketAsset) return null
+    if (!asset) return null
 
     if (props.isDisplay) {
       return (
