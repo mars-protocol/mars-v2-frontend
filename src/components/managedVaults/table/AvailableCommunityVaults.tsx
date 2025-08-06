@@ -49,22 +49,14 @@ export default function AvailableCommunityVaults() {
     return tabs
   }, [data.depositedVaults, data.ownedVaults, isLoading])
 
-  if (isLoading) {
+  const hasNoVaults =
+    !data.ownedVaults.length && !data.depositedVaults.length && !data.availableVaults.length
+
+  if (isLoading || hasNoVaults) {
     return (
       <div className='flex justify-center w-full mt-10'>
         <CircularProgress size={50} />
       </div>
-    )
-  }
-
-  const hasNoVaults =
-    !data.ownedVaults.length && !data.depositedVaults.length && !data.availableVaults.length
-
-  if (hasNoVaults) {
-    return (
-      <Text size='lg' className='text-center w-full p-8 text-white/60'>
-        No community vaults have been created yet
-      </Text>
     )
   }
 

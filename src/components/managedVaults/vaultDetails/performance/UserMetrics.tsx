@@ -49,7 +49,7 @@ export default function UserMetrics(props: Props) {
       showSignPrefix: true,
     },
     {
-      value: calculateROI(userVaultTokensAmount),
+      value: calculateROI(userVaultTokensAmount ?? 0),
       label: 'Your ROI',
       formatOptions: { maxDecimals: 2, minDecimals: 2, suffix: '%' },
       isProfitOrLoss: true,
