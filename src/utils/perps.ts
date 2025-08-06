@@ -132,6 +132,30 @@ export const isStopOrder = (
     : ('limit' as PositionType)
 }
 
+export const getOrderComparison = (
+  triggerPrice: BigNumber,
+  currentPrice: BigNumber,
+  tradeDirection: TradeDirection,
+): { comparison: 'less_than' | 'greater_than'; orderType: 'limit' | 'stop' } => {
+  const isLong = tradeDirection === 'long'
+
+  const isStopOrder =
+    (triggerPrice.isLessThan(currentPrice) && !isLong) ||
+    (triggerPrice.isGreaterThan(currentPrice) && isLong)
+
+  if (isStopOrder) {
+    return {
+      comparison: isLong ? 'greater_than' : 'less_than',
+      orderType: 'stop',
+    }
+  } else {
+    return {
+      comparison: isLong ? 'less_than' : 'greater_than',
+      orderType: 'limit',
+    }
+  }
+}
+
 export const convertTriggerOrderResponseToPerpPosition = (
   limitOrder: { order: TriggerOrder },
   perpAssets: Asset[],
