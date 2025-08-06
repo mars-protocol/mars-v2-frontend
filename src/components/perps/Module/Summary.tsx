@@ -33,6 +33,7 @@ import { BNCoin } from 'types/classes/BNCoin'
 import { OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
 import { formatLeverage, getPerpsPriceDecimals } from 'utils/formatters'
+import { getOrderComparison } from 'utils/perps'
 
 type Props = {
   leverage: number
@@ -139,46 +140,19 @@ export default function PerpsSummary(props: Props) {
     calculateKeeperFee,
   ])
 
-  const handleStopOrder = useCallback(async () => {
-    if (!calculateKeeperFee) return false
+  const handleSmartOrder = useCallback(async () => {
+    if (!calculateKeeperFee || !asset.price) return false
 
-    let comparison: 'less_than' | 'greater_than'
-    let stopTradeDirection: 'long' | 'short'
-
-    if (tradeDirection === 'long') {
-      comparison = 'less_than'
-      stopTradeDirection = 'short'
-    } else {
-      comparison = 'greater_than'
-      stopTradeDirection = 'long'
-    }
-
+    const currentPrice = asset.price.amount
+    const triggerPrice = isLimitOrder ? limitPrice : stopPrice
     const orderSize = tradeDirection === 'short' && amount.isPositive() ? amount.negated() : amount
 
-    await submitLimitOrder({
-      asset,
-      orderSize: orderSize,
-      limitPrice: stopPrice,
-      tradeDirection: stopTradeDirection,
-      baseDenom,
-      keeperFee: calculateKeeperFee,
-      reduceOnly: true,
-      comparison,
-    })
-    return true
-  }, [tradeDirection, amount, asset, stopPrice, baseDenom, calculateKeeperFee, submitLimitOrder])
-
-  const handleLimitOrder = useCallback(async () => {
-    if (!calculateKeeperFee) return false
-
-    const comparison = tradeDirection === 'long' ? 'less_than' : 'greater_than'
-
-    const orderSize = tradeDirection === 'short' && amount.isPositive() ? amount.negated() : amount
+    const { comparison } = getOrderComparison(triggerPrice, currentPrice, tradeDirection)
 
     await submitLimitOrder({
       asset,
       orderSize,
-      limitPrice,
+      limitPrice: triggerPrice,
       tradeDirection,
       baseDenom,
       comparison,
@@ -188,10 +162,12 @@ export default function PerpsSummary(props: Props) {
     return true
   }, [
     calculateKeeperFee,
+    asset,
+    isLimitOrder,
+    limitPrice,
+    stopPrice,
     tradeDirection,
     amount,
-    asset,
-    limitPrice,
     baseDenom,
     isReduceOnly,
     submitLimitOrder,
@@ -236,10 +212,8 @@ export default function PerpsSummary(props: Props) {
 
     if (hasTriggers) {
       success = await handleTriggerOrder()
-    } else if (isStopOrder) {
-      success = await handleStopOrder()
-    } else if (isLimitOrder) {
-      success = await handleLimitOrder()
+    } else if (isStopOrder || isLimitOrder) {
+      success = await handleSmartOrder()
     } else {
       success = await handleMarketOrder()
     }
@@ -256,8 +230,7 @@ export default function PerpsSummary(props: Props) {
     isStopOrder,
     isLimitOrder,
     handleTriggerOrder,
-    handleStopOrder,
-    handleLimitOrder,
+    handleSmartOrder,
     handleMarketOrder,
     onTxExecuted,
   ])
