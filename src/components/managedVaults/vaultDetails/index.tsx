@@ -131,8 +131,6 @@ export function VaultDetailsContent({
     return <VaultLoadingState />
   }
 
-  if (!vaultDetails) return null
-
   return (
     <>
       {activeTabIdx === 0 ? (

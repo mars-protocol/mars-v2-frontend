@@ -169,7 +169,10 @@ const getRedBankQueryClient = async (chainConfig: ChainConfig) => {
   }
 }
 
-const getManagedVaultQueryClient = async (chainConfig: ChainConfig, address: string) => {
+const getManagedVaultQueryClient = async (
+  chainConfig: ChainConfig,
+  address: string,
+): Promise<MarsVaultQueryClient | null> => {
   try {
     const rpc = getUrl(chainConfig.endpoints.rpc)
     const key = rpc + address
@@ -182,7 +185,7 @@ const getManagedVaultQueryClient = async (chainConfig: ChainConfig, address: str
     return _managedVaultQueryClient.get(key)!
   } catch (error) {
     console.error(`Error creating managed vault query client for ${address}:`, error)
-    throw error
+    return null
   }
 }
 
@@ -203,6 +206,8 @@ const getManagedVaultDetails = async (
 ): Promise<ManagedVaultSCDetailsResponse | null> => {
   try {
     const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    if (!client) return null
+
     const response = await client.vaultExtension({
       vault_info: {},
     })
@@ -216,6 +221,8 @@ const getManagedVaultDetails = async (
 const getManagedVaultPnl = async (chainConfig: ChainConfig, vaultAddress: string) => {
   try {
     const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    if (!client) return null
+
     const response = await client.vaultExtension({
       vault_pnl: {},
     })
@@ -233,6 +240,8 @@ const getManagedVaultUserPosition = async (
 ) => {
   try {
     const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    if (!client) return null
+
     const response = await client.vaultExtension({
       user_pnl: {
         user_address: userAddress,
@@ -251,6 +260,8 @@ const getManagedVaultPerformanceFeeState = async (
 ) => {
   try {
     const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    if (!client) return null
+
     const response = await client.vaultExtension({
       performance_fee_state: {},
     })
@@ -268,6 +279,8 @@ const getManagedVaultUserUnlocks = async (
 ) => {
   try {
     const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    if (!client) return []
+
     const response = await client.vaultExtension({
       user_unlocks: {
         user_address: userAddress,
@@ -288,6 +301,8 @@ const getManagedVaultAllUnlocks = async (
 ) => {
   try {
     const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    if (!client) return { data: [], metadata: { has_more: false } }
+
     const response = await client.vaultExtension({
       all_unlocks: {
         limit,
@@ -311,6 +326,8 @@ const getManagedVaultPreviewRedeem = async (
 ) => {
   try {
     const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    if (!client) return null
+
     const response = await client.previewRedeem({
       amount,
     })
@@ -328,6 +345,8 @@ const getManagedVaultConvertToTokens = async (
 ) => {
   try {
     const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    if (!client) return null
+
     const response = await client.convertToAssets({
       amount,
     })
@@ -345,6 +364,8 @@ const getManagedVaultConvertToShares = async (
 ) => {
   try {
     const client = await getManagedVaultQueryClient(chainConfig, vaultAddress)
+    if (!client) return null
+
     const response = await client.convertToShares({
       amount,
     })
