@@ -26,6 +26,10 @@ export default async function getOraclePrices(
   assets: Asset[],
 ): Promise<BNCoin[]> {
   if (!assets.length) return []
+
+  const problematicDenoms = ['perps/ufxs', 'perps/uom', 'perps/unil']
+  const filteredAssets = assets.filter((asset) => !problematicDenoms.includes(asset.denom))
+
   try {
     let priceResults: PriceResponse[] = []
     if (chainConfig.isOsmosis) {
@@ -35,8 +39,8 @@ export default async function getOraclePrices(
       const neutronOracleQueryClient = await getOracleQueryClientNeutron(chainConfig)
 
       // Filter assets: separate those with 'share' in denom from others
-      const shareAssets = assets.filter((asset) => asset.denom.endsWith('share'))
-      const nonShareAssets = assets.filter((asset) => !asset.denom.endsWith('share'))
+      const shareAssets = filteredAssets.filter((asset) => asset.denom.endsWith('share'))
+      const nonShareAssets = filteredAssets.filter((asset) => !asset.denom.endsWith('share'))
 
       let batchPriceResults: PriceResponse[] = []
       let individualPriceResults: PriceResponse[] = []
@@ -84,6 +88,9 @@ export default async function getOraclePrices(
     }
 
     return assets.map((asset) => {
+      if (problematicDenoms.includes(asset.denom)) {
+        return BNCoin.fromDenomAndBigNumber(asset.denom, BN_ZERO)
+      }
       const priceResponse = priceResults.find(byDenom(asset.denom)) as PriceResponse
       return getAssetPrice(asset, priceResponse)
     })
@@ -95,6 +102,9 @@ export default async function getOraclePrices(
         : await getOracleQueryClientNeutron(chainConfig)
       return Promise.all(
         assets.map(async (asset) => {
+          if (problematicDenoms.includes(asset.denom)) {
+            return BNCoin.fromDenomAndBigNumber(asset.denom, BN_ZERO)
+          }
           const priceResponse = await queryClient.price({ denom: asset.denom })
           return getAssetPrice(asset, priceResponse)
         }),
