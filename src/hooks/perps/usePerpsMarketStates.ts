@@ -27,11 +27,7 @@ export default function usePerpsMarketStates() {
             error.message.includes('price is older than') ||
             error.message.includes('Invalid price'))
         ) {
-          const problematicDenoms = ['perps/ufxs', 'perps/uom', 'perps/unil']
-          const enabledDenoms =
-            perpsParams
-              ?.map((param) => param.denom)
-              .filter((denom) => !problematicDenoms.includes(denom)) || []
+          const enabledDenoms = perpsParams?.map((param) => param.denom) || []
           const individualResults: MarketResponse[] = []
           for (const denom of enabledDenoms) {
             try {
