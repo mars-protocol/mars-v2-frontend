@@ -49,10 +49,7 @@ export default function AvailableCommunityVaults() {
     return tabs
   }, [data.depositedVaults, data.ownedVaults, isLoading])
 
-  const hasNoVaults =
-    !data.ownedVaults.length && !data.depositedVaults.length && !data.availableVaults.length
-
-  if (isLoading || hasNoVaults) {
+  if (isLoading) {
     return (
       <div className='flex justify-center w-full mt-10'>
         <CircularProgress size={50} />
