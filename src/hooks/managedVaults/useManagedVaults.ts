@@ -123,13 +123,21 @@ export default function useManagedVaults() {
       revalidateOnFocus: false,
       suspense: false,
       refreshInterval: (latestData) => {
-        if (Array.isArray(latestData) && latestData.length === 0) {
+        if (
+          Array.isArray(latestData) &&
+          (latestData.length === 0 ||
+            !latestData.some((vault) => BN(vault.base_tokens_amount).isGreaterThan(0)))
+        ) {
           return 2000 // 2 seconds if empty
         }
         return 120000 // else 120 seconds
       },
       onSuccess: (data) => {
-        if (Array.isArray(data) && data.length === 0) {
+        if (
+          Array.isArray(data) &&
+          (data.length === 0 ||
+            !data.some((vault) => BN(vault.base_tokens_amount).isGreaterThan(0)))
+        ) {
           setTimeout(() => mutate(`chains/${chainConfig.id}/managedVaults`), 2000)
         }
       },
