@@ -4,8 +4,8 @@ import { useManagedVaultDeposits } from 'hooks/managedVaults/useManagedVaultDepo
 import { useDepositedManagedVaultsFallback } from 'hooks/managedVaults/useDepositedManagedVaultsFallback'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
-import useSWR from 'swr'
-import { useMemo } from 'react'
+import useSWR, { mutate } from 'swr'
+import { useEffect, useMemo, useState } from 'react'
 import BN from 'bignumber.js'
 
 export default function useManagedVaults() {
@@ -121,30 +121,55 @@ export default function useManagedVaults() {
     },
     {
       revalidateOnFocus: false,
-      refreshInterval: 60_000,
       suspense: false,
+      refreshInterval: (latestData) => {
+        if (
+          Array.isArray(latestData) &&
+          (latestData.length === 0 ||
+            !latestData.some((vault) => BN(vault.base_tokens_amount).isGreaterThan(0)))
+        ) {
+          return 2000 // 2 seconds if empty
+        }
+        return 120000 // else 120 seconds
+      },
     },
   )
 
-  const vaultDeposits = useManagedVaultDeposits(address, vaultsResponse ?? [])
+  // Add local state for last valid (non-empty) vaults
+  const [lastValidVaults, setLastValidVaults] = useState<ManagedVaultWithDetails[]>([])
+  useEffect(() => {
+    if (
+      vaultsResponse &&
+      vaultsResponse.length > 0 &&
+      vaultsResponse.some((vault) => BN(vault.base_tokens_amount).isGreaterThan(0))
+    ) {
+      setLastValidVaults(vaultsResponse)
+    }
+  }, [vaultsResponse])
+
+  // Use last valid data if current response is empty or returns no funded vaults
+  const dataToUse =
+    vaultsResponse &&
+    vaultsResponse.length > 0 &&
+    vaultsResponse.some((vault) => BN(vault.base_tokens_amount).isGreaterThan(0))
+      ? vaultsResponse
+      : lastValidVaults
+
+  const vaultDeposits = useManagedVaultDeposits(address, dataToUse ?? [])
   const result = useMemo(() => {
-    if (error || !vaultsResponse || vaultsResponse.length === 0) {
+    if (error || !dataToUse || dataToUse.length === 0) {
       return {
         ownedVaults: fallbackUserVaults.filter((vault) => vault.isOwner) || [],
         depositedVaults: fallbackUserVaults.filter((vault) => !vault.isOwner) || [],
         availableVaults: [],
       }
     }
-
     // Filter out unfunded vaults (those with zero total_base_tokens) for available vaults table
-    const fundedVaults = vaultsResponse.filter((vault) =>
-      BN(vault.base_tokens_amount).isGreaterThan(0),
-    )
-
+    const fundedVaults = dataToUse.filter((vault) => BN(vault.base_tokens_amount).isGreaterThan(0))
     return {
-      ownedVaults: address ? vaultsResponse.filter((vault) => vault.isOwner) : [],
+      ownedVaults: address ? dataToUse.filter((vault) => vault.isOwner) : [],
       depositedVaults: address
-        ? vaultsResponse.filter(
+        ? dataToUse.filter(
             (vault) => !vault.isOwner && vaultDeposits.get(vault.vault_tokens_denom) === true,
           )
         : [],
@@ -154,10 +179,10 @@ export default function useManagedVaults() {
           )
         : fundedVaults,
     }
-  }, [vaultsResponse, vaultDeposits, address, error, fallbackUserVaults])
+  }, [dataToUse, vaultDeposits, address, error, fallbackUserVaults])
 
   return {
     data: result,
-    isLoading: isLoading || isFallbackLoading,
+    isLoading: (isLoading || isFallbackLoading) && dataToUse.length === 0,
   }
 }
