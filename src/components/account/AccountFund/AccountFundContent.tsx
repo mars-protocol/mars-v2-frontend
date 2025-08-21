@@ -39,11 +39,12 @@ interface Props {
   accountId: string
   isFullPage?: boolean
   onConnectWallet: () => Promise<boolean>
-  hasExistingAccount?: boolean
   isCreateAccount?: boolean
 }
 
 export default function AccountFundContent(props: Props) {
+  const { isCreateAccount = false } = props
+
   const deposit = useStore((s) => s.deposit)
   const walletAssetModal = useStore((s) => s.walletAssetsModal)
   const [isConfirming, setIsConfirming] = useState(false)
@@ -52,7 +53,6 @@ export default function AccountFundContent(props: Props) {
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const [isAutoLendEnabledGlobal] = useEnableAutoLendGlobal()
   const { data: walletBalances } = useWalletBalances(props.address)
-  const { isCreateAccount = false } = props
   const { simulateDeposits } = useUpdatedAccount(props.account)
   const { usdcBalances } = useUSDCBalances(walletBalances)
   const selectedDenoms = useMemo(() => {
@@ -138,10 +138,9 @@ export default function AccountFundContent(props: Props) {
 
     setIsConfirming(true)
     try {
-      const shouldAutoLend =
-        hasNoAccounts || !props.hasExistingAccount
-          ? isAutoLendEnabledGlobal
-          : isAutoLendEnabledForCurrentAccount
+      const shouldAutoLend = hasNoAccounts
+        ? isAutoLendEnabledGlobal
+        : isAutoLendEnabledForCurrentAccount
 
       const evmAssets = fundingAssets.filter(
         (asset) => asset.chain && chainNameToUSDCAttributes[asset.chain],
@@ -151,7 +150,7 @@ export default function AccountFundContent(props: Props) {
       )
 
       let accountId = props.accountId
-      const isNewAccount = hasNoAccounts || (isCreateAccount && !props.hasExistingAccount)
+      const isNewAccount = hasNoAccounts || isCreateAccount
       const hasEvmAssets = evmAssets.length > 0
 
       if (hasEvmAssets) {
@@ -234,7 +233,6 @@ export default function AccountFundContent(props: Props) {
     props.accountId,
     props.address,
     props.isFullPage,
-    props.hasExistingAccount,
     deposit,
     fundingAssets,
     isAutoLendEnabledForCurrentAccount,
