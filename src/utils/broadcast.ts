@@ -183,12 +183,84 @@ function getTransactionCoinsGrouped(
     .filter((event: TransactionEvent) => eventTypes.includes(event.type))
     .flat()
 
+  // First, collect all swap events to detect multi-hop swaps
+  const swapEvents = filteredEvents.filter((event: TransactionEvent) => {
+    if (!Array.isArray(event.attributes)) return false
+    const action = event.attributes.find(
+      (a: TransactionEventAttribute) => a.key === 'action',
+    )?.value
+    return action === 'swap'
+  })
+
+  // Process swap events to show complete multi-hop route
+  if (swapEvents.length > 1) {
+    // For multi-hop swaps, show the complete route: input -> output -> input -> output -> etc.
+    swapEvents.forEach((swapEvent: TransactionEvent, index: number) => {
+      const coinInDenom = swapEvent.attributes.find(
+        (a: TransactionEventAttribute) => a.key === 'offer_asset',
+      )?.value
+      const coinInAmount = swapEvent.attributes.find(
+        (a: TransactionEventAttribute) => a.key === 'offer_amount',
+      )?.value
+      const coinOutDenom = swapEvent.attributes.find(
+        (a: TransactionEventAttribute) => a.key === 'ask_asset',
+      )?.value
+      const coinOutAmount = swapEvent.attributes.find(
+        (a: TransactionEventAttribute) => a.key === 'return_amount',
+      )?.value
+
+      if (coinInDenom && coinInAmount && coinOutDenom && coinOutAmount) {
+        // Add input for each swap
+        transactionCoins.push({
+          type: 'swap',
+          coin: BNCoin.fromDenomAndBigNumber(coinInDenom, BN(coinInAmount)),
+        })
+        // Add output for each swap
+        transactionCoins.push({
+          type: 'swap',
+          coin: BNCoin.fromDenomAndBigNumber(coinOutDenom, BN(coinOutAmount)),
+        })
+      }
+    })
+  } else if (swapEvents.length === 1) {
+    // Single swap, process normally
+    const swapEvent = swapEvents[0]
+    const coinInDenom = swapEvent.attributes.find(
+      (a: TransactionEventAttribute) => a.key === 'offer_asset',
+    )?.value
+    const coinInAmount = swapEvent.attributes.find(
+      (a: TransactionEventAttribute) => a.key === 'offer_amount',
+    )?.value
+    const coinOutDenom = swapEvent.attributes.find(
+      (a: TransactionEventAttribute) => a.key === 'ask_asset',
+    )?.value
+    const coinOutAmount = swapEvent.attributes.find(
+      (a: TransactionEventAttribute) => a.key === 'return_amount',
+    )?.value
+
+    if (coinInDenom && coinInAmount && coinOutDenom && coinOutAmount) {
+      transactionCoins.push({
+        type: 'swap',
+        coin: BNCoin.fromDenomAndBigNumber(coinInDenom, BN(coinInAmount)),
+      })
+      transactionCoins.push({
+        type: 'swap',
+        coin: BNCoin.fromDenomAndBigNumber(coinOutDenom, BN(coinOutAmount)),
+      })
+    }
+  }
+
   filteredEvents.forEach((event: TransactionEvent) => {
     if (!Array.isArray(event.attributes)) return
 
     // Skip CancelLimitOrder events entirely as they are internal DEX operations
     const action = event.attributes.find((a) => a.key === 'action')?.value
     if (action === 'CancelLimitOrder') {
+      return
+    }
+
+    // Skip swap events as they are now handled above
+    if (action === 'swap') {
       return
     }
 
@@ -218,7 +290,14 @@ function getTransactionCoinsGrouped(
         const tokenIn = event.attributes.find((a) => a.key === 'TokenIn')?.value
         const tokenOut = event.attributes.find((a) => a.key === 'TokenOut')?.value
 
-        if (requestAmountIn && swapAmountOut && tokenIn && tokenOut) {
+        // Only process Duality swaps that actually resulted in a swap (SwapAmountOut > 0)
+        if (
+          requestAmountIn &&
+          swapAmountOut &&
+          tokenIn &&
+          tokenOut &&
+          BN(swapAmountOut).isGreaterThan(0)
+        ) {
           transactionCoins.push({
             type: 'swap',
             coin: BNCoin.fromDenomAndBigNumber(tokenIn, BN(requestAmountIn)),
@@ -382,25 +461,6 @@ function getCoinsFromEvent(event: TransactionEvent) {
   if (isProvideLiquidity) {
     const depositTokens = getVaultTokensFromEvent(event)
     if (depositTokens) depositTokens.map((coin) => coins.push({ coin: coin }))
-  }
-
-  // Check if the event is a swap event and then return the coins
-  const isSwap = event.attributes.find((a) => a.key === 'action')?.value === 'swap'
-  if (isSwap) {
-    const coinInDenom = event.attributes.find((a) => a.key === 'offer_asset')?.value
-    const coinInAmount = event.attributes.find((a) => a.key === 'offer_amount')?.value
-    const coinOutDenom = event.attributes.find((a) => a.key === 'ask_asset')?.value
-    const coinOutAmount = event.attributes.find((a) => a.key === 'return_amount')?.value
-    if (coinInDenom && coinInAmount && coinOutDenom && coinOutAmount) {
-      coins.push(
-        {
-          coin: BNCoin.fromDenomAndBigNumber(coinInDenom, BN(coinInAmount)),
-        },
-        {
-          coin: BNCoin.fromDenomAndBigNumber(coinOutDenom, BN(coinOutAmount)),
-        },
-      )
-    }
   }
 
   return coins
