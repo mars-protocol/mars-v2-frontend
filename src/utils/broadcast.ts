@@ -173,9 +173,9 @@ function getTransactionCoinsGrouped(
   perpsBaseDenom?: string,
 ) {
   const transactionCoins: TransactionCoin[] = []
-  // Event types that include coins are wasm, token_swapped, pool_joined, and message (for Duality swaps)
+  // Event types that include coins are wasm, token_swapped, pool_joined, message (for Duality swaps), and TickUpdate (for MultihopSwap)
   // This should be streamlined by SC one day
-  const eventTypes = ['wasm', 'token_swapped', 'pool_joined', 'message']
+  const eventTypes = ['wasm', 'token_swapped', 'pool_joined', 'message', 'TickUpdate']
 
   const coinRules = getRules()
 
@@ -191,6 +191,63 @@ function getTransactionCoinsGrouped(
     )?.value
     return action === 'swap'
   })
+
+  // Also collect MultihopSwap events (new pattern)
+  const multihopSwapEvents = filteredEvents.filter((event: TransactionEvent) => {
+    if (!Array.isArray(event.attributes)) return false
+    const action = event.attributes.find(
+      (a: TransactionEventAttribute) => a.key === 'action',
+    )?.value
+    return action === 'MultihopSwap'
+  })
+
+  // Process MultihopSwap events by looking for WASM events with coin_in/denom_out
+  if (multihopSwapEvents.length > 0) {
+    const wasmSwapEvents = filteredEvents.filter((event: TransactionEvent) => {
+      if (event.type !== 'wasm') return false
+      if (!Array.isArray(event.attributes)) return false
+      
+      const hasCoinIn = event.attributes.some(a => a.key === 'coin_in')
+      const hasDenomOut = event.attributes.some(a => a.key === 'denom_out')
+      
+      return hasCoinIn && hasDenomOut
+    })
+
+    wasmSwapEvents.forEach((event: TransactionEvent) => {
+      const coinInAttr = event.attributes.find(a => a.key === 'coin_in')?.value
+      const denomOut = event.attributes.find(a => a.key === 'denom_out')?.value
+
+      if (coinInAttr && denomOut) {
+        // Parse coin_in format: "amount+denom"
+        const coinInMatch = coinInAttr.match(/^(\d+)(.+)$/)
+        if (coinInMatch) {
+          const [, amount, denom] = coinInMatch
+          
+          // Add input coin
+          transactionCoins.push({
+            type: 'swap',
+            coin: BNCoin.fromDenomAndBigNumber(denom, BN(amount)),
+          })
+          
+          // For output, we need to find the actual output amount
+          // Look for SwapAmountOut in TickUpdate events
+          const tickUpdateEvent = filteredEvents.find((tickEvent: TransactionEvent) => {
+            if (tickEvent.type !== 'TickUpdate') return false
+            return tickEvent.attributes?.some((a: TransactionEventAttribute) => a.key === 'SwapAmountOut' && parseInt(a.value || '0') > 1000)
+          })
+          
+          const outputAmount = tickUpdateEvent?.attributes?.find((a: TransactionEventAttribute) => a.key === 'SwapAmountOut')?.value
+          
+          if (outputAmount) {
+            transactionCoins.push({
+              type: 'swap',
+              coin: BNCoin.fromDenomAndBigNumber(denomOut, BN(outputAmount)),
+            })
+          }
+        }
+      }
+    })
+  }
 
   // Process swap events to show complete multi-hop route
   if (swapEvents.length > 1) {
