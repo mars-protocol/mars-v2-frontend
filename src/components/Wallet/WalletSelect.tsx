@@ -71,7 +71,7 @@ export default function WalletSelect(props: Props) {
       },
     })
   }
-  // this is currently "true" for other embeded browsers like leap and compass mobile apps
+  // this is currently "true" for other embedded browsers like leap and compass mobile apps
   const isKeplrMobileInApp =
     /**
      * type here currently comes from shuttle and doesn't define the mode property

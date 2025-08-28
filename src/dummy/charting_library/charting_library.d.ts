@@ -25175,7 +25175,7 @@ export interface TimeFrameItem {
   text: string
   /** Resolution to be set */
   resolution: ResolutionString
-  /** Optional text displayed in the pop-up menu. If not set, `title` wil be used instead. */
+  /** Optional text displayed in the pop-up menu. If not set, `title` will be used instead. */
   description?: string
   /** Optional text representing the time frame. If not set a generated string will be set based on `text` property. */
   title?: string
