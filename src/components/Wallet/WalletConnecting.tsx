@@ -47,7 +47,7 @@ export default function WalletConnecting(props: Props) {
   const providerId = props.providerId ?? recentWallet?.providerId
   const client = useStore((s) => s.client)
 
-  // this is currently "true" for other embeded browsers like leap and compass mobile apps
+  // this is currently "true" for other embedded browsers like leap and compass mobile apps
   const isKeplrMobileInApp =
     /**
      * type here currently comes from shuttle and doesn't define the mode property
