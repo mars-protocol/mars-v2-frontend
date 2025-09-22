@@ -26,15 +26,13 @@ export default function AccountCreateFirst() {
   const [isCreating, setIsCreating] = useToggle(false)
   const [isAutoLendEnabled] = useEnableAutoLendGlobal()
 
-  const { data: accounts, isLoading } = useAccounts('default', address)
+  const { isLoading } = useAccounts('default', address)
   const currentAccount = useCurrentAccount()
   const { handleConnectWallet } = useWeb3WalletConnection()
 
   useEffect(() => {
     if (!address) useStore.setState({ focusComponent: { component: <WalletSelect /> } })
   }, [address])
-
-  const hasExistingAccount = useMemo(() => accounts && accounts.length > 0, [accounts])
 
   const handleClick = useCallback(async () => {
     setIsCreating(true)
@@ -96,7 +94,6 @@ export default function AccountCreateFirst() {
             accountId=''
             isFullPage
             onConnectWallet={handleConnectWallet}
-            hasExistingAccount={hasExistingAccount}
             isCreateAccount
           />
         </Card>

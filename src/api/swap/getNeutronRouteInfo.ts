@@ -185,6 +185,11 @@ async function getNeutronRouteInfoInternal(
 
     const routeInfo = buildSwapRouteInfo(skipRouteResponse, route, description, isReverse)
 
+    if (!routeInfo.amountOut.gt(0))
+      routeInfo.amountOut = routeInfo.amountOut
+        .times(1 - chainConfig.swapFee)
+        .integerValue(BigNumber.ROUND_FLOOR)
+
     return routeInfo
   } catch (error) {
     if (shouldFallbackToAstroport && !isReverse) {

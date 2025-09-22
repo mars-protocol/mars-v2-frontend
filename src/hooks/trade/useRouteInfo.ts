@@ -26,7 +26,7 @@ export default function useRouteInfo(denomIn: string, denomOut: string, amount: 
     isOsmosis && debouncedAmount !== '0' && osmosisUrl
       ? ['route', denomIn, denomOut, debouncedAmount, chainConfig.id]
       : null,
-    async () => getOsmosisRouteInfo(osmosisUrl, denomIn, assets),
+    async () => getOsmosisRouteInfo(osmosisUrl, denomIn, assets, chainConfig),
   )
 
   return isOsmosis ? osmosisRoute : neutronRoute
