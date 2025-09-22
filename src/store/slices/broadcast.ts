@@ -872,7 +872,7 @@ export default function createBroadcastSlice(
                       coin: BNCoin.fromDenomAndBigNumber(
                         options.denomOut,
                         options.routeInfo.amountOut,
-                      ).toActionCoin(true), // Use exact amount from swap output
+                      ).toActionCoin(true),
                     },
                   },
                 ]
