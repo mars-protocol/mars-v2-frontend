@@ -697,7 +697,7 @@ export default function createBroadcastSlice(
 
         const osmosisUrl = `${chainConfig.endpoints.routes}/quote?tokenIn=${amount}${options.swapFromDenom}&tokenOutDenom=${options.debtDenom}`
         const routeInfo = isOsmosis
-          ? await getOsmosisRouteInfo(osmosisUrl, options.swapFromDenom, get().assets)
+          ? await getOsmosisRouteInfo(osmosisUrl, options.swapFromDenom, get().assets, chainConfig)
           : await getNeutronRouteInfo(
               options.swapFromDenom,
               options.debtDenom,

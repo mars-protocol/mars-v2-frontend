@@ -372,6 +372,7 @@ interface ChainConfig {
   campaignAssets?: AssetCampaignInfo[]
   slinky: boolean
   managedVaults: boolean
+  swapFee: number
 }
 
 interface AssetCampaignInfo {
