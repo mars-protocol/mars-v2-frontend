@@ -7,6 +7,8 @@ import moment from 'moment'
 import { StoreApi } from 'zustand'
 
 import getPythPriceData from 'api/prices/getPythPriceData'
+import getNeutronRouteInfo from 'api/swap/getNeutronRouteInfo'
+import getOsmosisRouteInfo from 'api/swap/getOsmosisRouteInfo'
 import { BN_ZERO } from 'constants/math'
 import { BNCoin } from 'types/classes/BNCoin'
 import { ExecuteMsg as AccountNftExecuteMsg } from 'types/generated/mars-account-nft/MarsAccountNft.types'
@@ -32,8 +34,6 @@ import { getCurrentFeeToken } from 'utils/feeToken'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
 import { getSwapExactInAction } from 'utils/swap'
-import getOsmosisRouteInfo from 'api/swap/getOsmosisRouteInfo'
-import getNeutronRouteInfo from 'api/swap/getNeutronRouteInfo'
 
 interface ExecuteMsgOptions {
   messages: MsgExecuteContract[]
@@ -717,6 +717,12 @@ export default function createBroadcastSlice(
 
         const actions: Action[] = []
 
+        if (options.fromWallet) {
+          actions.push({
+            deposit: options.coin.toCoin(),
+          })
+        }
+
         if (options.lend && options.lend.amount.isGreaterThan(0)) {
           actions.push({ reclaim: options.lend.toActionCoin() })
         }
@@ -739,7 +745,14 @@ export default function createBroadcastSlice(
         }
 
         const cmContract = get().chainConfig.contracts.creditManager
-        const messages = [generateExecutionMessage(get().address, cmContract, msg, [])]
+        const messages = [
+          generateExecutionMessage(
+            get().address,
+            cmContract,
+            msg,
+            options.fromWallet ? [options.coin.toCoin()] : [],
+          ),
+        ]
 
         const response = get().executeMsg({ messages })
         get().handleTransaction({ response })
@@ -859,7 +872,7 @@ export default function createBroadcastSlice(
                       coin: BNCoin.fromDenomAndBigNumber(
                         options.denomOut,
                         options.routeInfo.amountOut,
-                      ).toActionCoin(false), // Use exact amount from swap output
+                      ).toActionCoin(true),
                     },
                   },
                 ]
