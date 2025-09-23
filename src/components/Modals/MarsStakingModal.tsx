@@ -1,24 +1,24 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
 import BigNumber from 'bignumber.js'
-import classNames from 'classnames'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-import useStore from 'store'
 import Button from 'components/common/Button'
-import Card from 'components/common/Card'
 import { Callout, CalloutType } from 'components/common/Callout'
+import Card from 'components/common/Card'
 import { FormattedNumber } from 'components/common/FormattedNumber'
+import SwitchWithText from 'components/common/Switch/SwitchWithText'
 import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import Modal from 'components/Modals/Modal'
 import { BN_ZERO } from 'constants/math'
-import { useStakedMars, useUnstakedMars } from 'hooks/staking/useNeutronStakingData'
-import { formatReleaseDate } from 'utils/dateTime'
-import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
-import { BN } from 'utils/helpers'
-import { MARS_DECIMALS, MARS_DENOM } from 'utils/constants'
 import useAsset from 'hooks/assets/useAsset'
+import { useStakedMars, useUnstakedMars } from 'hooks/staking/useNeutronStakingData'
+import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { MARS_DECIMALS, MARS_DENOM } from 'utils/constants'
+import { formatReleaseDate } from 'utils/dateTime'
+import { BN } from 'utils/helpers'
 
 export default function MarsStakingModal() {
   const { marsStakingModal: modal } = useStore()
@@ -148,26 +148,15 @@ export default function MarsStakingModal() {
       contentClassName='px-6 pb-6'
     >
       <div className='space-y-6'>
-        <div className='flex bg-white/10 rounded-lg p-1'>
-          <button
-            onClick={() => handleModeChange('stake')}
-            className={classNames(
-              'flex-1 py-2 px-4 rounded-md text-sm font-medium',
-              modalType === 'stake' ? 'bg-white text-black' : 'text-white/60 hover:text-white',
-            )}
-          >
-            Stake
-          </button>
-          <button
-            onClick={() => handleModeChange('unstake')}
-            className={classNames(
-              'flex-1 py-2 px-4 rounded-md text-sm font-medium',
-              modalType === 'unstake' ? 'bg-white text-black' : 'text-white/60 hover:text-white',
-            )}
-          >
-            Unstake
-          </button>
-        </div>
+        <SwitchWithText
+          options={[
+            { text: 'Stake', value: 'stake' },
+            { text: 'Unstake', value: 'unstake' },
+          ]}
+          selected={modalType}
+          onChange={(v) => handleModeChange(v as 'stake' | 'unstake')}
+          className='bg-white/10 rounded-lg'
+        />
 
         <div className='space-y-2'>
           <div className='flex justify-between'>

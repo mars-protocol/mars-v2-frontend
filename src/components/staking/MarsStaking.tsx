@@ -1,22 +1,24 @@
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { useCallback } from 'react'
-import { useSWRConfig } from 'swr'
+import chains from 'chains'
 import Button from 'components/common/Button'
+import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
 import { FormattedNumber } from 'components/common/FormattedNumber'
+import { MarsToken } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import WalletConnectButton from 'components/Wallet/WalletConnectButton'
 import MarsStakingModal from 'components/Modals/MarsStakingModal'
-import { useStakedMars, useUnstakedMars } from 'hooks/staking/useNeutronStakingData'
+import TierProgressBar from 'components/staking/TierProgressBar'
+import WalletConnectButton from 'components/Wallet/WalletConnectButton'
 import { BN_ZERO } from 'constants/math'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
-import chains from 'chains'
-import { ChainInfoID } from 'types/enums'
-import { getRoute } from 'utils/route'
-import { formatReleaseDate } from 'utils/dateTime'
+import { useStakedMars, useUnstakedMars } from 'hooks/staking/useNeutronStakingData'
+import { useCallback } from 'react'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
-import MarsProtocolLogo from 'components/common/Icons/Logo.svg'
+import { useSWRConfig } from 'swr'
+import { ChainInfoID } from 'types/enums'
+import { formatReleaseDate } from 'utils/dateTime'
+import { getRoute } from 'utils/route'
 
 export default function MarsStaking({ className }: { className?: string }) {
   const { address: urlAddress } = useParams()
@@ -107,8 +109,8 @@ export default function MarsStaking({ className }: { className?: string }) {
       <Card
         className={className}
         title={
-          <div className='flex items-center gap-2 flex w-full p-4 font-semibold bg-white/10'>
-            <MarsProtocolLogo className='w-6 h-6' />
+          <div className='flex items-center gap-2 w-full p-4 font-semibold bg-white/10'>
+            <MarsToken className='w-6 h-6' />
             <Text size='lg' className=''>
               MARS Staking
             </Text>
@@ -116,6 +118,19 @@ export default function MarsStaking({ className }: { className?: string }) {
         }
         contentClassName='px-4 py-2 space-y-6'
       >
+        <TierProgressBar />
+        <Callout type={CalloutType.INFO}>
+          If you want to learn more about the Mars Staking Tiers. You can find the details on our{' '}
+          <a
+            className='underline hover:no-underline'
+            href='https://docs.marsprotocol.io/governance/mars-staking'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            MARS Staking Docs Page
+          </a>
+          .
+        </Callout>
         <div className='space-y-3'>
           <div className='flex justify-between items-center'>
             <Text size='sm' className='text-white/60'>
@@ -123,7 +138,7 @@ export default function MarsStaking({ className }: { className?: string }) {
             </Text>
             <FormattedNumber
               amount={stakedAmount?.toNumber() || 0}
-              options={{ abbreviated: true, suffix: ' MARS' }}
+              options={{ abbreviated: false, suffix: ' MARS', maxDecimals: 6 }}
               className='text-sm font-medium'
             />
           </div>
@@ -135,7 +150,7 @@ export default function MarsStaking({ className }: { className?: string }) {
               </Text>
               <FormattedNumber
                 amount={unstakedData.totalUnstaked.toNumber()}
-                options={{ abbreviated: true, suffix: ' MARS' }}
+                options={{ abbreviated: false, suffix: ' MARS', maxDecimals: 6 }}
                 className='text-sm font-medium text-warning'
               />
             </div>
@@ -148,7 +163,7 @@ export default function MarsStaking({ className }: { className?: string }) {
               </Text>
               <FormattedNumber
                 amount={unstakedData.totalReady.toNumber()}
-                options={{ abbreviated: true, suffix: ' MARS' }}
+                options={{ abbreviated: false, suffix: ' MARS', maxDecimals: 6 }}
                 className='text-sm font-medium text-success'
               />
             </div>
