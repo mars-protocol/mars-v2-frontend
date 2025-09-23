@@ -117,9 +117,9 @@ export default function MarsStaking({ className }: { className?: string }) {
             </Text>
           </div>
         }
-        contentClassName='px-4 py-2 space-y-6'
+        contentClassName='p-4 space-y-6'
       >
-        <TierProgressBar />
+        {connectedAddress && <TierProgressBar />}
         <Callout type={CalloutType.INFO}>
           If you want to learn more about the Mars Staking Tiers. You can find the details on our{' '}
           <a

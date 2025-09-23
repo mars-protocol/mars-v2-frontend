@@ -12,7 +12,7 @@ export default function TierProgressBar({ className }: { className?: string }) {
   return (
     <div className={classNames('w-full', className)}>
       <div className='flex flex-col gap-2'>
-        <div className='flex items-center justify-between py-2'>
+        <div className='flex items-center justify-between pb-2'>
           <div className='py-1'>
             <Text size='sm' className='text-white/60'>
               Staked MARS
