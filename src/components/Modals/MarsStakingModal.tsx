@@ -11,7 +11,9 @@ import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import Modal from 'components/Modals/Modal'
 import { BN_ZERO } from 'constants/math'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAsset from 'hooks/assets/useAsset'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import { useStakedMars, useUnstakedMars } from 'hooks/staking/useNeutronStakingData'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import useStore from 'store'
@@ -45,10 +47,26 @@ export default function MarsStakingModal() {
 
   const marsAsset = useAsset(MARS_DENOM)
 
+  // Selected Credit Account and withdrawable amount
+  const account = useCurrentAccount()
+  const { computeMaxWithdrawAmount } = useHealthComputer(account)
+  const accountDeposit = account?.deposits.find((c) => c.denom === MARS_DENOM)?.amount || BN_ZERO
+  const rawAccountLent = account?.lends.find((c) => c.denom === MARS_DENOM)?.amount || BN_ZERO
+  const isBorrowEnabled = !!marsAsset?.isBorrowEnabled
+  const accountLent = isBorrowEnabled ? rawAccountLent : BN_ZERO
+  const accountBalance = useMemo(
+    () => accountDeposit.plus(accountLent).shiftedBy(-MARS_DECIMALS),
+    [accountDeposit, accountLent],
+  )
+  const accountAvailable = useMemo(() => {
+    if (!account) return BN_ZERO
+    return computeMaxWithdrawAmount(MARS_DENOM).shiftedBy(-MARS_DECIMALS)
+  }, [account, computeMaxWithdrawAmount])
+
   const maxAmount = useMemo(() => {
     if (!modal) return BN_ZERO
-    return modalType === 'stake' ? walletBalance : stakedAmount
-  }, [modal, modalType, walletBalance, stakedAmount])
+    return modalType === 'stake' ? walletBalance.plus(accountAvailable) : stakedAmount
+  }, [modal, modalType, walletBalance, stakedAmount, accountAvailable])
 
   const handleAmountChange = useCallback((newAmount: BigNumber) => {
     setAmount(newAmount.shiftedBy(-MARS_DECIMALS))
@@ -81,7 +99,27 @@ export default function MarsStakingModal() {
     try {
       if (modalType === 'stake') {
         const stakingAmount = BNCoin.fromDenomAndBigNumber(MARS_DENOM, actualAmount)
-        await stakeMars(stakingAmount)
+        const shortfall = amount.minus(walletBalance)
+        const shouldWithdrawFromAccount = !!account && shortfall.isGreaterThan(0)
+
+        if (shouldWithdrawFromAccount) {
+          const withdrawAmount = BNCoin.fromDenomAndBigNumber(
+            MARS_DENOM,
+            shortfall.shiftedBy(MARS_DECIMALS),
+          )
+
+          await stakeMars(
+            stakingAmount as any,
+            {
+              withdrawFromAccount: {
+                accountId: account.id,
+                amount: withdrawAmount,
+              },
+            } as any,
+          )
+        } else {
+          await stakeMars(stakingAmount)
+        }
       } else {
         const unstakingAmount = BNCoin.fromDenomAndBigNumber(MARS_DENOM, actualAmount)
         await unstakeMars(unstakingAmount)
@@ -91,7 +129,17 @@ export default function MarsStakingModal() {
     } finally {
       setIsLoading(false)
     }
-  }, [isValidAmount, modal, modalType, actualAmount, stakeMars, unstakeMars])
+  }, [
+    isValidAmount,
+    modal,
+    modalType,
+    actualAmount,
+    stakeMars,
+    unstakeMars,
+    amount,
+    walletBalance,
+    account,
+  ])
 
   const handleClose = useCallback(() => {
     useStore.setState({ marsStakingModal: null })
@@ -169,6 +217,18 @@ export default function MarsStakingModal() {
               className='text-sm'
             />
           </div>
+          {account && (
+            <div className='flex justify-between'>
+              <Text size='sm' className='text-white/60'>
+                {`Account #${account.id} Balance`}
+              </Text>
+              <FormattedNumber
+                amount={accountBalance.toNumber()}
+                options={{ abbreviated: true, suffix: ' MARS' }}
+                className='text-sm'
+              />
+            </div>
+          )}
           <div className='flex justify-between'>
             <Text size='sm' className='text-white/60'>
               Wallet Balance
@@ -179,6 +239,7 @@ export default function MarsStakingModal() {
               className='text-sm'
             />
           </div>
+
           {unstakedData?.totalUnstaked?.gt(0) && (
             <div className='flex justify-between'>
               <Text size='sm' className='text-white/60'>
@@ -290,7 +351,7 @@ export default function MarsStakingModal() {
           asset={marsAsset as Asset}
           max={maxAmount.shiftedBy(MARS_DECIMALS)}
           onChange={handleAmountChange}
-          maxText='Available:'
+          maxText='Available'
           warningMessages={[]}
         />
 

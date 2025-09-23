@@ -1129,7 +1129,10 @@ interface BroadcastSlice {
     depositCoin: BNCoin
     borrowCoin: BNCoin
   }) => Promise<boolean>
-  stakeMars: (amount: BNCoin) => Promise<boolean>
+  stakeMars: (
+    amount: BNCoin,
+    options?: { withdrawFromAccount?: { accountId: string; amount: BNCoin } },
+  ) => Promise<boolean>
   unstakeMars: (amount: BNCoin) => Promise<boolean>
   withdrawMars: (amount?: BNCoin) => Promise<boolean>
   borrow: (options: {

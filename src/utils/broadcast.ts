@@ -206,38 +206,43 @@ function getTransactionCoinsGrouped(
     const wasmSwapEvents = filteredEvents.filter((event: TransactionEvent) => {
       if (event.type !== 'wasm') return false
       if (!Array.isArray(event.attributes)) return false
-      
-      const hasCoinIn = event.attributes.some(a => a.key === 'coin_in')
-      const hasDenomOut = event.attributes.some(a => a.key === 'denom_out')
-      
+
+      const hasCoinIn = event.attributes.some((a) => a.key === 'coin_in')
+      const hasDenomOut = event.attributes.some((a) => a.key === 'denom_out')
+
       return hasCoinIn && hasDenomOut
     })
 
     wasmSwapEvents.forEach((event: TransactionEvent) => {
-      const coinInAttr = event.attributes.find(a => a.key === 'coin_in')?.value
-      const denomOut = event.attributes.find(a => a.key === 'denom_out')?.value
+      const coinInAttr = event.attributes.find((a) => a.key === 'coin_in')?.value
+      const denomOut = event.attributes.find((a) => a.key === 'denom_out')?.value
 
       if (coinInAttr && denomOut) {
         // Parse coin_in format: "amount+denom"
         const coinInMatch = coinInAttr.match(/^(\d+)(.+)$/)
         if (coinInMatch) {
           const [, amount, denom] = coinInMatch
-          
+
           // Add input coin
           transactionCoins.push({
             type: 'swap',
             coin: BNCoin.fromDenomAndBigNumber(denom, BN(amount)),
           })
-          
+
           // For output, we need to find the actual output amount
           // Look for SwapAmountOut in TickUpdate events
           const tickUpdateEvent = filteredEvents.find((tickEvent: TransactionEvent) => {
             if (tickEvent.type !== 'TickUpdate') return false
-            return tickEvent.attributes?.some((a: TransactionEventAttribute) => a.key === 'SwapAmountOut' && parseInt(a.value || '0') > 1000)
+            return tickEvent.attributes?.some(
+              (a: TransactionEventAttribute) =>
+                a.key === 'SwapAmountOut' && parseInt(a.value || '0') > 1000,
+            )
           })
-          
-          const outputAmount = tickUpdateEvent?.attributes?.find((a: TransactionEventAttribute) => a.key === 'SwapAmountOut')?.value
-          
+
+          const outputAmount = tickUpdateEvent?.attributes?.find(
+            (a: TransactionEventAttribute) => a.key === 'SwapAmountOut',
+          )?.value
+
           if (outputAmount) {
             transactionCoins.push({
               type: 'swap',

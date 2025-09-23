@@ -130,21 +130,51 @@ export default function createBroadcastSlice(
 
       return response.then((response) => !!response.result)
     },
-    stakeMars: async (amount: BNCoin) => {
+    stakeMars: async (
+      amount: BNCoin,
+      options?: { withdrawFromAccount?: { accountId: string; amount: BNCoin } },
+    ) => {
       const marsStakingContract = get().chainConfig.contracts.marsStaking
       if (!marsStakingContract || !get().address) {
         throw new Error('Mars staking contract not available or wallet not connected')
       }
 
-      const stakeMsg = {
-        stake: {},
-      } as any
+      const stakeMsg = { stake: {} } as any
 
-      const funds = [amount.toCoin()]
+      const messages: MsgExecuteContract[] = []
 
-      const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, marsStakingContract, stakeMsg, funds)],
-      })
+      if (options?.withdrawFromAccount) {
+        const cmContract = get().chainConfig.contracts.creditManager
+        if (!cmContract) {
+          throw new Error('Credit Manager contract not available')
+        }
+        const updateAccountMsg = generateExecutionMessage(
+          get().address,
+          cmContract,
+          {
+            update_credit_account: {
+              account_id: options.withdrawFromAccount.accountId,
+              actions: [
+                {
+                  withdraw: options.withdrawFromAccount.amount.toActionCoin(false),
+                },
+              ],
+            },
+          } as CreditManagerExecuteMsg,
+          [],
+        )
+        messages.push(updateAccountMsg)
+      }
+
+      const stakeExecuteMsg = generateExecutionMessage(
+        get().address,
+        marsStakingContract,
+        stakeMsg,
+        [amount.toCoin()],
+      )
+      messages.push(stakeExecuteMsg)
+
+      const response = get().executeMsg({ messages })
 
       const formattedAmount = amount.amount.shiftedBy(-MARS_DECIMALS).toFixed(2)
       get().handleTransaction({

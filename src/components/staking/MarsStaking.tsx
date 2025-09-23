@@ -17,6 +17,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { useSWRConfig } from 'swr'
 import { ChainInfoID } from 'types/enums'
+import { MARS_DECIMALS } from 'utils/constants'
 import { formatReleaseDate } from 'utils/dateTime'
 import { getRoute } from 'utils/route'
 
@@ -138,7 +139,7 @@ export default function MarsStaking({ className }: { className?: string }) {
             </Text>
             <FormattedNumber
               amount={stakedAmount?.toNumber() || 0}
-              options={{ abbreviated: false, suffix: ' MARS', maxDecimals: 6 }}
+              options={{ abbreviated: false, suffix: ' MARS', maxDecimals: MARS_DECIMALS }}
               className='text-sm font-medium'
             />
           </div>
@@ -150,7 +151,7 @@ export default function MarsStaking({ className }: { className?: string }) {
               </Text>
               <FormattedNumber
                 amount={unstakedData.totalUnstaked.toNumber()}
-                options={{ abbreviated: false, suffix: ' MARS', maxDecimals: 6 }}
+                options={{ abbreviated: false, suffix: ' MARS', maxDecimals: MARS_DECIMALS }}
                 className='text-sm font-medium text-warning'
               />
             </div>
@@ -163,7 +164,7 @@ export default function MarsStaking({ className }: { className?: string }) {
               </Text>
               <FormattedNumber
                 amount={unstakedData.totalReady.toNumber()}
-                options={{ abbreviated: false, suffix: ' MARS', maxDecimals: 6 }}
+                options={{ abbreviated: false, suffix: ' MARS', maxDecimals: MARS_DECIMALS }}
                 className='text-sm font-medium text-success'
               />
             </div>
