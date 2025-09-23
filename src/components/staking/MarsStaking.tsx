@@ -121,7 +121,7 @@ export default function MarsStaking({ className }: { className?: string }) {
       >
         {connectedAddress && <TierProgressBar />}
         <Callout type={CalloutType.INFO}>
-          If you want to learn more about the Mars Staking Tiers. You can find the details on our{' '}
+          If you want to learn more about the Mars Staking Tiers, you can find the details on our{' '}
           <a
             className='underline hover:no-underline'
             href='https://docs.marsprotocol.io/governance/mars-staking'
