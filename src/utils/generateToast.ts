@@ -107,8 +107,36 @@ export async function generateToast(
       break
 
     case 'mars-stake':
-      toast.target = 'Mars Staking'
-      toast.message = toastOptions?.message || 'Staked MARS'
+      // If no coin movements (staking from wallet), set target to "Mars Staking"
+      if (txCoinGroups.length === 0) {
+        toast.target = 'Mars Staking'
+        toast.message = toastOptions?.message || 'Staked MARS'
+      } else {
+        // Clear the message since we'll add it to content instead for combined transactions
+        toast.message = undefined
+
+        // Process any coin movements (like withdrawals) FIRST, in the correct order
+        txCoinGroups.forEach((txCoinGroup: GroupedTransactionCoin) => {
+          const contentsAndKeys = getToastContentsAndMutationKeysFromGroupedTransactionCoin(
+            txCoinGroup,
+            isHls,
+            target,
+            chainConfig,
+            assets,
+            accountId,
+          )
+          toast.content.push(...contentsAndKeys.content)
+          mutationKeys.push(...contentsAndKeys.mutationKeys)
+        })
+
+        // Add the staking message as content AFTER the withdrawals
+        const stakingText = toastOptions?.message || 'Staked MARS'
+        toast.content.push({
+          text: stakingText,
+          coins: [],
+        })
+      }
+
       mutationKeys.push(`neutron-staked-mars/##ADDRESS##`, `neutron-unstaked-mars/##ADDRESS##`)
       break
 

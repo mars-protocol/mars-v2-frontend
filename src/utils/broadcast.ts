@@ -96,10 +96,14 @@ export async function analizeTransaction(
   // Fetch all coins from the BroadcastResult
   const txCoinGroups = getTransactionCoinsGrouped(result, address, isHls, perpsBaseDenom)
 
-  // If there are no coins involved, try to identify the transaction type, otherwise set it to 'transaction'
-  const transactionType = txCoinGroups.length
-    ? 'transaction'
-    : getTransactionTypeFromBroadcastResult(result)
+  // Check for specific transaction types first, even if there are coin movements
+  const specificTransactionType = getTransactionTypeFromBroadcastResult(result)
+  const transactionType =
+    specificTransactionType !== 'default'
+      ? specificTransactionType
+      : txCoinGroups.length
+        ? 'transaction'
+        : 'default'
 
   return {
     target,

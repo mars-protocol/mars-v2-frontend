@@ -58,7 +58,7 @@ export function generateToastContent(content: ToastSuccess['content'], assets: A
     <React.Fragment key={index}>
       {item.text && (
         <div className='flex flex-wrap w-full mb-1'>
-          {(!item.coins || item.coins.length > 0) && (
+          {(!item.coins || item.coins.length > 0 || item.text.includes('Staked')) && (
             <Text size='sm' className='w-full mb-1 text-white'>
               {item.text}
             </Text>
