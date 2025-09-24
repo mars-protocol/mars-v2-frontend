@@ -7,11 +7,13 @@ import { ChevronDown, ChevronRight, MarsToken } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import TierProgressBar from 'components/staking/TierProgressBar'
 import WalletConnectButton from 'components/Wallet/WalletConnectButton'
+import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
+import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { useStakedMars, useUnstakedMars } from 'hooks/staking/useNeutronStakingData'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
 import { useSWRConfig } from 'swr'
@@ -21,7 +23,10 @@ import { formatReleaseDate } from 'utils/dateTime'
 import { getRoute } from 'utils/route'
 
 export default function MarsStaking({ className }: { className?: string }) {
-  const [isExpanded, setIsExpanded] = useState(true)
+  const [isExpanded, setIsExpanded] = useLocalStorage<boolean>(
+    LocalStorageKeys.MARS_STAKING_EXPANDED,
+    true,
+  )
   const { address: urlAddress } = useParams()
   const connectedAddress = useStore((s) => s.address)
   const chainConfig = useChainConfig()
