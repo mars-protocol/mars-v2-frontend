@@ -8,6 +8,18 @@ import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
 
+// Exported function to calculate tier based on amount
+export function calculateTier(amount: number): TierConfig {
+  let tier = TIER_CONFIGS[0]
+  for (let i = TIER_CONFIGS.length - 1; i >= 0; i--) {
+    if (amount >= TIER_CONFIGS[i].minAmount) {
+      tier = TIER_CONFIGS[i]
+      break
+    }
+  }
+  return tier
+}
+
 export interface TierSystemData {
   currentTier: TierConfig
   nextTier: TierConfig | null
@@ -26,7 +38,11 @@ export interface TierSystemActions {
   setStakedAmount: (amount: BigNumber) => void
 }
 
-export default function useTierSystem(): [TierSystemData, TierSystemActions] {
+export default function useTierSystem(): {
+  data: TierSystemData
+  actions: TierSystemActions
+  calculateTier: (amount: number) => TierConfig
+} {
   const { data: stakedMarsData } = useStakedMars()
   const [localStakedAmount, setLocalStakedAmount] = useState<BigNumber | null>(null)
 
@@ -133,5 +149,9 @@ export default function useTierSystem(): [TierSystemData, TierSystemActions] {
     },
   }
 
-  return [tierData, actions]
+  return {
+    data: tierData,
+    actions,
+    calculateTier,
+  }
 }

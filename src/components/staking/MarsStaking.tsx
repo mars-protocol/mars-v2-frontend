@@ -5,7 +5,6 @@ import Card from 'components/common/Card'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { MarsToken } from 'components/common/Icons'
 import Text from 'components/common/Text'
-import MarsStakingModal from 'components/Modals/MarsStakingModal'
 import TierProgressBar from 'components/staking/TierProgressBar'
 import WalletConnectButton from 'components/Wallet/WalletConnectButton'
 import { BN_ZERO } from 'constants/math'
@@ -184,8 +183,6 @@ export default function MarsStaking({ className }: { className?: string }) {
 
         {renderActionButton()}
       </Card>
-
-      {connectedAddress && isOwnWallet && <MarsStakingModal />}
     </>
   )
 }

@@ -10,6 +10,7 @@ import SwitchWithText from 'components/common/Switch/SwitchWithText'
 import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import Modal from 'components/Modals/Modal'
+import TierLabel from 'components/staking/TierLabel'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAsset from 'hooks/assets/useAsset'
@@ -185,12 +186,13 @@ export default function MarsStakingModal() {
   return (
     <Modal
       onClose={handleClose}
+      dialogId='mars-staking-modal'
       header={
         <Text size='lg' className='font-semibold text-white'>
           Manage your MARS stake
         </Text>
       }
-      className='w-full max-w-md'
+      className='w-full max-w-md relative'
       modalClassName='max-w-modal-sm'
       headerClassName='p-6'
       contentClassName='px-6 pb-6'
@@ -217,7 +219,7 @@ export default function MarsStakingModal() {
               className='text-sm'
             />
           </div>
-          {account && (
+          {account && modalType === 'stake' && (
             <div className='flex justify-between'>
               <Text size='sm' className='text-white/60'>
                 {`Account #${account.id} Balance`}
@@ -367,6 +369,10 @@ export default function MarsStakingModal() {
                 options={{ abbreviated: true, suffix: ' MARS' }}
                 className='text-sm'
               />
+            </div>
+            <div className='flex justify-between'>
+              <Text size='sm'>Staking Tier</Text>
+              <TierLabel amount={newStakedAmount.toNumber()} withTooltip />
             </div>
           </div>
         )}

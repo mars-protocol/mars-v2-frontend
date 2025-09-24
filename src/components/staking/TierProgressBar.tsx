@@ -3,9 +3,10 @@ import classNames from 'classnames'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import useTierSystem from 'hooks/staking/useTierSystem'
+import TierLabel from 'components/staking/TierLabel'
 
 export default function TierProgressBar({ className }: { className?: string }) {
-  const [tierData] = useTierSystem()
+  const { data: tierData } = useTierSystem()
   const { currentTier, stakedAmount, progressToNextTier, marsNeededForNextTier, nextTier } =
     tierData
 
@@ -23,12 +24,7 @@ export default function TierProgressBar({ className }: { className?: string }) {
                 options={{ abbreviated: true, suffix: ' MARS' }}
                 className='text-lg font-semibold text-white'
               />
-              <div
-                className='px-2 py-1 rounded text-xs font-medium'
-                style={{ backgroundColor: currentTier.color + '20', color: currentTier.color }}
-              >
-                {currentTier.name}
-              </div>
+              <TierLabel amount={stakedAmount.toNumber()} className='mt-1' />
             </div>
           </div>
 
@@ -37,12 +33,7 @@ export default function TierProgressBar({ className }: { className?: string }) {
               <Text size='sm' className='text-white/60'>
                 Next Tier
               </Text>
-              <div
-                className='px-2 py-1 rounded text-xs font-medium mt-1 inline-block'
-                style={{ backgroundColor: nextTier.color + '20', color: nextTier.color }}
-              >
-                {nextTier.name}
-              </div>
+              <TierLabel amount={nextTier.minAmount} className='mt-1' />
             </div>
           )}
         </div>

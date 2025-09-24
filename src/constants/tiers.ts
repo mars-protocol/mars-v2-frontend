@@ -11,7 +11,7 @@ export const TIER_CONFIGS: TierConfig[] = [
     id: 1,
     name: 'Tier 1',
     minAmount: 0,
-    color: '#444444',
+    color: '#EEEEEE',
     benefits: ['0% Trading Fee Discount'],
   },
   {
