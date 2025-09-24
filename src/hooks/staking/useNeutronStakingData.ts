@@ -1,11 +1,12 @@
-import useSWR from 'swr'
-import useStore from 'store'
-import { BN } from 'utils/helpers'
-import { BN_ZERO } from 'constants/math'
-import { convertToNeutronAddress } from 'utils/wallet'
 import chains from 'chains'
+import { BN_ZERO } from 'constants/math'
+import { useParams } from 'react-router-dom'
+import useStore from 'store'
+import useSWR from 'swr'
 import { ChainInfoID } from 'types/enums'
 import { MARS_DECIMALS } from 'utils/constants'
+import { BN } from 'utils/helpers'
+import { convertToNeutronAddress } from 'utils/wallet'
 
 interface ProcessedClaim {
   amount: BigNumber
@@ -37,7 +38,10 @@ async function queryNeutronContract(contractAddress: string, queryMsg: any) {
 
 export function useStakedMars(addressOverride?: string) {
   const connectedAddress = useStore((s) => s.address)
-  const address = addressOverride ?? connectedAddress
+  const { address: urlAddress } = useParams()
+
+  const displayAddress = urlAddress ?? connectedAddress
+  const address = addressOverride ?? displayAddress
   const neutronAddress = convertToNeutronAddress(address)
 
   return useSWR(

@@ -207,7 +207,7 @@ export async function getFarmSwapActionsAndOutputCoins(
 
       const primarySwapUrl = `${chainConfig.endpoints.routes}/quote?tokenIn=${swapAmount}${bnCoin.denom}&tokenOutDenom=${farm.denoms.primary}`
       const primarySwapRouteInfo = chainConfig.isOsmosis
-        ? await getOsmosisRouteInfo(primarySwapUrl, farm.denoms.primary, assets)
+        ? await getOsmosisRouteInfo(primarySwapUrl, farm.denoms.primary, assets, chainConfig)
         : await getNeutronRouteInfo(
             bnCoin.denom,
             farm.denoms.primary,
@@ -238,7 +238,7 @@ export async function getFarmSwapActionsAndOutputCoins(
       const secondarySwapUrl = `${chainConfig.endpoints.routes}/quote?tokenIn=${amount}${bnCoin.denom}&tokenOutDenom=${farm.denoms.secondary}`
 
       const secondarySwapRouteInfo = chainConfig.isOsmosis
-        ? await getOsmosisRouteInfo(secondarySwapUrl, farm.denoms.primary, assets)
+        ? await getOsmosisRouteInfo(secondarySwapUrl, farm.denoms.primary, assets, chainConfig)
         : await getNeutronRouteInfo(
             bnCoin.denom,
             farm.denoms.secondary,

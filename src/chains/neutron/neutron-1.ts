@@ -187,6 +187,7 @@ const Neutron1: ChainConfig = {
   evmAssetSupport: true,
   slinky: true,
   managedVaults: true,
+  swapFee: 0.005,
 }
 
 export default Neutron1
