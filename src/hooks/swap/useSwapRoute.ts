@@ -64,7 +64,7 @@ export default function useSwapRoute(
 
       try {
         const routeInfo = isOsmosis
-          ? await getOsmosisRouteInfo(osmosisUrl, fromDenom, assets)
+          ? await getOsmosisRouteInfo(osmosisUrl, fromDenom, assets, chainConfig)
           : await getNeutronRouteInfo(fromDenom, toDenom, amount, assets, chainConfig)
 
         if (routeInfo) {

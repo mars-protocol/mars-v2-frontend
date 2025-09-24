@@ -16,8 +16,12 @@ export default async function getRouteInfo(
     const resp = await fetchWithTimeout(astroportUrl, FETCH_TIMEOUT)
     const route = (await resp.json())[0] as AstroportRouteResponse
 
+    let amountOut = BN(route.amount_out)
+    if (!amountOut.gt(0))
+      amountOut = amountOut.times(1 - chainConfig.swapFee).integerValue(BigNumber.ROUND_FLOOR)
+
     return {
-      amountOut: BN(route.amount_out),
+      amountOut,
       priceImpact: BN(route.price_impact),
       fee: BN(0), // TODO: Fees are not implemented yet on Astroport endpoint
       description: [
