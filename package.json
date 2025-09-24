@@ -20,7 +20,7 @@
     ]
   },
   "dependencies": {
-    "@cosmjs/cosmwasm-stargate": "^0.34.0",
+    "@cosmjs/cosmwasm-stargate": "^0.36.0",
     "@delphi-labs/shuttle-react": "^4.3.0",
     "@keplr-wallet/cosmos": "^0.12.262",
     "@next/eslint-plugin-next": "^15.4.6",
