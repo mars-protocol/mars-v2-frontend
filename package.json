@@ -1,6 +1,6 @@
 {
   "name": "mars-v2-frontend",
-  "version": "2.11.3",
+  "version": "2.11.4",
   "homepage": "./",
   "private": false,
   "license": "SEE LICENSE IN LICENSE FILE",
@@ -20,7 +20,7 @@
     ]
   },
   "dependencies": {
-    "@cosmjs/cosmwasm-stargate": "^0.34.0",
+    "@cosmjs/cosmwasm-stargate": "^0.36.0",
     "@delphi-labs/shuttle-react": "^4.3.0",
     "@keplr-wallet/cosmos": "^0.12.262",
     "@next/eslint-plugin-next": "^15.4.6",
@@ -62,7 +62,7 @@
     "swr": "^2.3.4",
     "viem": "^2.33.3",
     "wagmi": "^2.16.1",
-    "zustand": "5.0.7"
+    "zustand": "5.0.8"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.28.0",
@@ -74,8 +74,8 @@
     "@types/lodash.debounce": "^4.0.9",
     "@types/lodash.throttle": "^4.1.9",
     "@types/node": "^24.2.0",
-    "@types/react": "19.1.9",
-    "@types/react-dom": "19.1.7",
+    "@types/react": "19.1.13",
+    "@types/react-dom": "19.1.9",
     "@types/react-helmet": "^6.1.11",
     "@typescript-eslint/eslint-plugin": "^8.39.0",
     "@typescript-eslint/parser": "^8.39.0",
