@@ -9,7 +9,7 @@ export default function InfoRow(props: Props) {
   const { label, children } = props
 
   return (
-    <div className='flex justify-between'>
+    <div className='flex justify-between items-center'>
       <Text size='sm' className='text-white/60'>
         {label}
       </Text>

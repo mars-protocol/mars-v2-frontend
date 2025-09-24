@@ -8,10 +8,12 @@ export default function TierLabel({
   amount,
   className,
   withTooltip = false,
+  wrapperClassName,
 }: {
   amount: number
   withTooltip?: boolean
   className?: string
+  wrapperClassName?: string
 }) {
   const { calculateTier } = useTierSystem()
   const tier = calculateTier(amount)
@@ -30,7 +32,7 @@ export default function TierLabel({
   }
 
   return (
-    <div className='flex items-center gap-1'>
+    <div className={classNames('flex items-center gap-1', wrapperClassName)}>
       {tierLabel}
       <Tooltip
         type='info'
