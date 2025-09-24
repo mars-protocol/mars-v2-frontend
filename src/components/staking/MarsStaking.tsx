@@ -116,10 +116,10 @@ export default function MarsStaking({ className }: { className?: string }) {
             </Text>
           </div>
         }
-        contentClassName='p-4 space-y-6'
+        contentClassName='p-4 space-y-4'
       >
-        {connectedAddress && <TierProgressBar />}
-        <Callout type={CalloutType.INFO}>
+        {(connectedAddress || displayAddress) && <TierProgressBar connected={!!connectedAddress} />}
+        <Callout type={CalloutType.INFO} className='justify-center'>
           If you want to learn more about the Mars Staking Tiers, you can find the details on our{' '}
           <a
             className='underline hover:no-underline'
