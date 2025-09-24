@@ -60,7 +60,7 @@ export default function MarsStakingModal() {
     [accountDeposit, accountLent],
   )
   const accountAvailable = useMemo(() => {
-    if (!account) return BN_ZERO
+    if (!account || account.kind !== 'default') return BN_ZERO
     return computeMaxWithdrawAmount(MARS_DENOM).shiftedBy(-MARS_DECIMALS)
   }, [account, computeMaxWithdrawAmount])
 
@@ -219,10 +219,10 @@ export default function MarsStakingModal() {
               className='text-sm'
             />
           </div>
-          {account && modalType === 'stake' && (
+          {account && modalType === 'stake' && account.kind === 'default' && (
             <div className='flex justify-between'>
               <Text size='sm' className='text-white/60'>
-                {`Account #${account.id} Balance`}
+                {`Credit Account ${account.id} Balance`}
               </Text>
               <FormattedNumber
                 amount={accountBalance.toNumber()}
