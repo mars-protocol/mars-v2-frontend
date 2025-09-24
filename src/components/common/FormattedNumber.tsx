@@ -25,7 +25,7 @@ export const FormattedNumber = React.memo(
     }
 
     return (
-      <p
+      <span
         className={classNames(
           'number',
           props.parentheses && 'before:content-["("] after:content-[")"]',
@@ -33,7 +33,7 @@ export const FormattedNumber = React.memo(
         )}
       >
         {formatValue(props.amount.toString(), options)}
-      </p>
+      </span>
     )
   },
   (prevProps, nextProps) => _.isEqual(prevProps, nextProps),
