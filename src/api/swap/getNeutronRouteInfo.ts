@@ -89,7 +89,7 @@ function buildSwapRouteInfo(
   skipRouteResponse: any,
   route: any,
   description: string,
-  isReverse: boolean = false,
+  chainConfig: ChainConfig,
 ): SwapRouteInfo {
   let priceImpact = BN('0')
 
@@ -106,7 +106,7 @@ function buildSwapRouteInfo(
   }
 
   const routeInfo: SwapRouteInfo = {
-    amountOut: BN(skipRouteResponse.amountOut || '0'),
+    amountOut: BN(skipRouteResponse.amountOut.times(1 - chainConfig.swapFee) || '0'),
     priceImpact,
     fee: BN('0'),
     description,
@@ -183,7 +183,12 @@ async function getNeutronRouteInfoInternal(
 
     const description = createSwapDescription(denomIn, denomOut, assets)
 
-    const routeInfo = buildSwapRouteInfo(skipRouteResponse, route, description, isReverse)
+    const routeInfo = buildSwapRouteInfo(skipRouteResponse, route, description, chainConfig)
+
+    if (!routeInfo.amountOut.gt(0))
+      routeInfo.amountOut = routeInfo.amountOut
+        .times(1 - chainConfig.swapFee)
+        .integerValue(BigNumber.ROUND_FLOOR)
 
     return routeInfo
   } catch (error) {
@@ -256,7 +261,7 @@ export async function getNeutronRouteInfoReverse(
 
     const description = createSwapDescription(denomIn, denomOut, assets)
 
-    const routeInfo = buildSwapRouteInfo(skipRouteResponse, route, description, false)
+    const routeInfo = buildSwapRouteInfo(skipRouteResponse, route, description, chainConfig)
 
     // For reverse routing, add the amountIn that Skip calculated
     if (skipRouteResponse.amountIn) {

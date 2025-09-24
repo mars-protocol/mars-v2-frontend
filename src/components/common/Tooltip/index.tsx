@@ -30,10 +30,12 @@ export const Tooltip = (props: Props) => {
 
   const isInWalletAssetModal = document.getElementById('wallet-assets-modal')
   const isInModal = document.getElementById('modal')
+  const isInMarsStakingModal = document.getElementById('mars-staking-modal')
 
   return (
     <Tippy
-      appendTo={() => isInWalletAssetModal ?? isInModal ?? document.body}
+      appendTo={() => isInWalletAssetModal ?? isInMarsStakingModal ?? isInModal ?? document.body}
+      zIndex={isInWalletAssetModal || isInMarsStakingModal || isInModal ? 9999 : undefined}
       interactive={props.interactive}
       animation={false}
       delay={[props.delay ?? 0, 0]}

@@ -1,24 +1,27 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
 import BigNumber from 'bignumber.js'
-import classNames from 'classnames'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-import useStore from 'store'
 import Button from 'components/common/Button'
-import Card from 'components/common/Card'
 import { Callout, CalloutType } from 'components/common/Callout'
+import Card from 'components/common/Card'
 import { FormattedNumber } from 'components/common/FormattedNumber'
+import SwitchWithText from 'components/common/Switch/SwitchWithText'
 import Text from 'components/common/Text'
 import TokenInputWithSlider from 'components/common/TokenInput/TokenInputWithSlider'
 import Modal from 'components/Modals/Modal'
+import TierLabel from 'components/staking/TierLabel'
 import { BN_ZERO } from 'constants/math'
-import { useStakedMars, useUnstakedMars } from 'hooks/staking/useNeutronStakingData'
-import { formatReleaseDate } from 'utils/dateTime'
-import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
-import { BN } from 'utils/helpers'
-import { MARS_DECIMALS, MARS_DENOM } from 'utils/constants'
+import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useAsset from 'hooks/assets/useAsset'
+import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import { useStakedMars, useUnstakedMars } from 'hooks/staking/useNeutronStakingData'
+import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
+import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
+import { MARS_DECIMALS, MARS_DENOM } from 'utils/constants'
+import { formatReleaseDate } from 'utils/dateTime'
+import { BN } from 'utils/helpers'
 
 export default function MarsStakingModal() {
   const { marsStakingModal: modal } = useStore()
@@ -45,10 +48,26 @@ export default function MarsStakingModal() {
 
   const marsAsset = useAsset(MARS_DENOM)
 
+  // Selected Credit Account and withdrawable amount
+  const account = useCurrentAccount()
+  const { computeMaxWithdrawAmount } = useHealthComputer(account)
+  const accountDeposit = account?.deposits.find((c) => c.denom === MARS_DENOM)?.amount || BN_ZERO
+  const rawAccountLent = account?.lends.find((c) => c.denom === MARS_DENOM)?.amount || BN_ZERO
+  const isBorrowEnabled = !!marsAsset?.isBorrowEnabled
+  const accountLent = isBorrowEnabled ? rawAccountLent : BN_ZERO
+  const accountBalance = useMemo(
+    () => accountDeposit.plus(accountLent).shiftedBy(-MARS_DECIMALS),
+    [accountDeposit, accountLent],
+  )
+  const accountAvailable = useMemo(() => {
+    if (!account || account.kind !== 'default') return BN_ZERO
+    return computeMaxWithdrawAmount(MARS_DENOM).shiftedBy(-MARS_DECIMALS)
+  }, [account, computeMaxWithdrawAmount])
+
   const maxAmount = useMemo(() => {
     if (!modal) return BN_ZERO
-    return modalType === 'stake' ? walletBalance : stakedAmount
-  }, [modal, modalType, walletBalance, stakedAmount])
+    return modalType === 'stake' ? walletBalance.plus(accountAvailable) : stakedAmount
+  }, [modal, modalType, walletBalance, stakedAmount, accountAvailable])
 
   const handleAmountChange = useCallback((newAmount: BigNumber) => {
     setAmount(newAmount.shiftedBy(-MARS_DECIMALS))
@@ -81,7 +100,27 @@ export default function MarsStakingModal() {
     try {
       if (modalType === 'stake') {
         const stakingAmount = BNCoin.fromDenomAndBigNumber(MARS_DENOM, actualAmount)
-        await stakeMars(stakingAmount)
+        const shortfall = amount.minus(walletBalance)
+        const shouldWithdrawFromAccount = !!account && shortfall.isGreaterThan(0)
+
+        if (shouldWithdrawFromAccount) {
+          const withdrawAmount = BNCoin.fromDenomAndBigNumber(
+            MARS_DENOM,
+            shortfall.shiftedBy(MARS_DECIMALS),
+          )
+
+          await stakeMars(
+            stakingAmount as any,
+            {
+              withdrawFromAccount: {
+                accountId: account.id,
+                amount: withdrawAmount,
+              },
+            } as any,
+          )
+        } else {
+          await stakeMars(stakingAmount)
+        }
       } else {
         const unstakingAmount = BNCoin.fromDenomAndBigNumber(MARS_DENOM, actualAmount)
         await unstakeMars(unstakingAmount)
@@ -91,7 +130,17 @@ export default function MarsStakingModal() {
     } finally {
       setIsLoading(false)
     }
-  }, [isValidAmount, modal, modalType, actualAmount, stakeMars, unstakeMars])
+  }, [
+    isValidAmount,
+    modal,
+    modalType,
+    actualAmount,
+    stakeMars,
+    unstakeMars,
+    amount,
+    walletBalance,
+    account,
+  ])
 
   const handleClose = useCallback(() => {
     useStore.setState({ marsStakingModal: null })
@@ -137,37 +186,27 @@ export default function MarsStakingModal() {
   return (
     <Modal
       onClose={handleClose}
+      dialogId='mars-staking-modal'
       header={
         <Text size='lg' className='font-semibold text-white'>
           Manage your MARS stake
         </Text>
       }
-      className='w-full max-w-md'
+      className='w-full max-w-md relative'
       modalClassName='max-w-modal-sm'
       headerClassName='p-6'
       contentClassName='px-6 pb-6'
     >
       <div className='space-y-6'>
-        <div className='flex bg-white/10 rounded-lg p-1'>
-          <button
-            onClick={() => handleModeChange('stake')}
-            className={classNames(
-              'flex-1 py-2 px-4 rounded-md text-sm font-medium',
-              modalType === 'stake' ? 'bg-white text-black' : 'text-white/60 hover:text-white',
-            )}
-          >
-            Stake
-          </button>
-          <button
-            onClick={() => handleModeChange('unstake')}
-            className={classNames(
-              'flex-1 py-2 px-4 rounded-md text-sm font-medium',
-              modalType === 'unstake' ? 'bg-white text-black' : 'text-white/60 hover:text-white',
-            )}
-          >
-            Unstake
-          </button>
-        </div>
+        <SwitchWithText
+          options={[
+            { text: 'Stake', value: 'stake' },
+            { text: 'Unstake', value: 'unstake' },
+          ]}
+          selected={modalType}
+          onChange={(v) => handleModeChange(v as 'stake' | 'unstake')}
+          className='bg-white/10 rounded-lg'
+        />
 
         <div className='space-y-2'>
           <div className='flex justify-between'>
@@ -180,6 +219,18 @@ export default function MarsStakingModal() {
               className='text-sm'
             />
           </div>
+          {account && modalType === 'stake' && account.kind === 'default' && (
+            <div className='flex justify-between'>
+              <Text size='sm' className='text-white/60'>
+                {`Credit Account ${account.id} Balance`}
+              </Text>
+              <FormattedNumber
+                amount={accountBalance.toNumber()}
+                options={{ abbreviated: true, suffix: ' MARS' }}
+                className='text-sm'
+              />
+            </div>
+          )}
           <div className='flex justify-between'>
             <Text size='sm' className='text-white/60'>
               Wallet Balance
@@ -190,6 +241,7 @@ export default function MarsStakingModal() {
               className='text-sm'
             />
           </div>
+
           {unstakedData?.totalUnstaked?.gt(0) && (
             <div className='flex justify-between'>
               <Text size='sm' className='text-white/60'>
@@ -301,7 +353,7 @@ export default function MarsStakingModal() {
           asset={marsAsset as Asset}
           max={maxAmount.shiftedBy(MARS_DECIMALS)}
           onChange={handleAmountChange}
-          maxText='Available:'
+          maxText='Available'
           warningMessages={[]}
         />
 
@@ -317,6 +369,10 @@ export default function MarsStakingModal() {
                 options={{ abbreviated: true, suffix: ' MARS' }}
                 className='text-sm'
               />
+            </div>
+            <div className='flex justify-between'>
+              <Text size='sm'>Staking Tier</Text>
+              <TierLabel amount={newStakedAmount.toNumber()} withTooltip />
             </div>
           </div>
         )}
