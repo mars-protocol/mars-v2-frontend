@@ -73,7 +73,7 @@ export default function TierProgressBar({
           )}
         </div>
         {connected && (
-          <div className='mt-4'>
+          <div className='my-4'>
             {nextTier ? (
               <div className='space-y-2'>
                 <div className='flex items-center justify-between text-sm'>
@@ -128,7 +128,7 @@ export default function TierProgressBar({
           </div>
         )}
       </div>
-      <Callout type={CalloutType.WARNING} className='mt-4 justify-center'>
+      <Callout type={CalloutType.WARNING}>
         Tier Benefits are not in effect yet. They will be activated in early October.
       </Callout>
     </div>
