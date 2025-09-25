@@ -15,11 +15,13 @@ import { TextLink } from 'components/common/TextLink'
 import { Tooltip } from 'components/common/Tooltip'
 import FeeTag from 'components/managedVaults/vaultDetails/profileVaultCard/FeeTag'
 import InfoRow from 'components/managedVaults/vaultDetails/profileVaultCard/InfoRow'
+import TierLabel from 'components/staking/TierLabel'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import useManagedVaultOwnerInfo from 'hooks/managedVaults/useManagedVaultOwnerInfo'
-import useManagedVaultPnl from 'hooks/managedVaults/useManagedVaultPnl'
 import useManagedVaultAge from 'hooks/managedVaults/useManagedVaultAge'
+import useManagedVaultOwnerInfo from 'hooks/managedVaults/useManagedVaultOwnerInfo'
 import useManagedVaultOwnerPosition from 'hooks/managedVaults/useManagedVaultOwnerPosition'
+import useManagedVaultPnl from 'hooks/managedVaults/useManagedVaultPnl'
+import { useStakedMars } from 'hooks/staking/useNeutronStakingData'
 import moment from 'moment'
 import Image from 'next/image'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -50,6 +52,7 @@ export default function ProfileVaultCard(props: Props) {
     details.ownerAddress,
   )
   const ownerSharesPercentage = calculateOwnerVaultShare(details.vault_tokens_amount)
+  const { data: stakedMarsData } = useStakedMars(details.ownerAddress)
 
   const handleManageVault = () => {
     navigate(
@@ -203,6 +206,31 @@ export default function ProfileVaultCard(props: Props) {
                 <ExternalLink className='ml-2 inline w-4' />
               </TextLink>
             </div>
+          </InfoRow>
+          <InfoRow label='Staked Mars'>
+            {!stakedMarsData ? (
+              <Loading className='h-4 w-20' />
+            ) : (
+              <FormattedNumber
+                amount={stakedMarsData.stakedAmount.toNumber()}
+                options={{
+                  suffix: ' MARS',
+                  abbreviated: true,
+                }}
+                className='text-sm'
+              />
+            )}
+          </InfoRow>
+          <InfoRow label='Active Staking Benefits'>
+            {!stakedMarsData ? (
+              <Loading className='h-4 w-20' />
+            ) : (
+              <TierLabel
+                amount={stakedMarsData.stakedAmount.toNumber()}
+                withTooltip
+                className='text-xs'
+              />
+            )}
           </InfoRow>
           {vaultOwnerInfo.socials.length > 0 && (
             <InfoRow label='Contact'>

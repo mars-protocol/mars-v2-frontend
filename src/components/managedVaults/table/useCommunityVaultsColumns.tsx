@@ -1,5 +1,8 @@
 import { ColumnDef, Row } from '@tanstack/react-table'
 import Button from 'components/common/Button'
+import ActiveBenefits, {
+  ACTIVE_BENEFITS_META,
+} from 'components/managedVaults/table/column/ActiveBenefits'
 import Apy, { APY_META } from 'components/managedVaults/table/column/Apy'
 import Details, { DETAILS_META } from 'components/managedVaults/table/column/Details'
 import Fee, { FEE_META } from 'components/managedVaults/table/column/Fee'
@@ -57,6 +60,12 @@ export default function useCommunityVaultsColumns(props: Props) {
             },
           ]
         : []),
+      {
+        ...ACTIVE_BENEFITS_META,
+        cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => (
+          <ActiveBenefits vault={row.original} />
+        ),
+      },
       {
         ...TVL_META,
         cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => (
