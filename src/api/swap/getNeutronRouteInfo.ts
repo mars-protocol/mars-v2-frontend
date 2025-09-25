@@ -296,7 +296,7 @@ export async function getNeutronRouteInfoReverse(
 
     // For reverse routing, add the amountIn that Skip calculated
     // Check both camelCase and snake_case for amount in
-    const amountIn = skipRouteResponse.amountIn || skipRouteResponse.amount_in
+    const amountIn = skipRouteResponse.amountIn || (skipRouteResponse as any).amount_in
     if (amountIn) {
       ;(routeInfo as any).amountIn = BN(amountIn)
     } else {
