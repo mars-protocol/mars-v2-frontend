@@ -7,9 +7,10 @@ import useAvailableVaults from 'hooks/vaults/useAvailableVaults'
 import useVaultAprs from 'hooks/vaults/useVaultAprs'
 
 export default function AvailableVaultsTable() {
-  const { data: availableVaultsWithoutApr, isLoading: isAvailableVaultsLoading } = useAvailableVaults()
+  const { data: availableVaultsWithoutApr, isLoading: isAvailableVaultsLoading } =
+    useAvailableVaults()
   const { data: vaultAprs, isLoading: isVaultAprsLoading } = useVaultAprs()
-  
+
   const isLoading = isAvailableVaultsLoading || isVaultAprsLoading
   const columns = useAvailableColumns({ isLoading })
 
