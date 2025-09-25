@@ -10,16 +10,26 @@ type VenueType = 'duality' | 'astroport' | 'mixed' | 'unknown'
 
 function analyzeVenues(skipRouteResponse: any): VenueType {
   if (!skipRouteResponse) return 'unknown'
-  if (!skipRouteResponse.swapVenues && !skipRouteResponse.operations) return 'unknown'
+  // Check both camelCase and snake_case property names for compatibility
+  if (
+    !skipRouteResponse.swapVenues &&
+    !skipRouteResponse.swap_venues &&
+    !skipRouteResponse.operations
+  )
+    return 'unknown'
 
   const venuesUsed = new Set<string>()
 
-  skipRouteResponse.swapVenues?.forEach((venue: any) => {
+  // Check both camelCase and snake_case for swap venues
+  const swapVenues = skipRouteResponse.swapVenues || skipRouteResponse.swap_venues
+  swapVenues?.forEach((venue: any) => {
     if (venue?.name) venuesUsed.add(venue.name)
   })
 
   skipRouteResponse.operations?.forEach((operation: any) => {
-    const venueName = operation?.swap?.swapIn?.swapVenue?.name
+    // Check both camelCase and snake_case for nested properties
+    const venueName =
+      operation?.swap?.swapIn?.swapVenue?.name || operation?.swap?.swap_in?.swap_venue?.name
     if (venueName) venuesUsed.add(venueName)
   })
 
@@ -34,7 +44,10 @@ function analyzeVenues(skipRouteResponse: any): VenueType {
 }
 
 function extractSwapOperations(skipRouteResponse: any): any[] {
-  const firstOperation = (skipRouteResponse.operations?.[0] as any)?.swap?.swapIn?.swapOperations
+  // Check both camelCase and snake_case for swap operations
+  const firstOperation =
+    (skipRouteResponse.operations?.[0] as any)?.swap?.swapIn?.swapOperations ||
+    (skipRouteResponse.operations?.[0] as any)?.swap?.swap_in?.swap_operations
   return firstOperation || []
 }
 
@@ -42,8 +55,10 @@ function createDualityRoute(denomIn: string, denomOut: string, swapOperations: a
   const swapDenoms: string[] = [denomIn]
 
   swapOperations.forEach((op: any) => {
-    if (op.denomOut && !swapDenoms.includes(op.denomOut)) {
-      swapDenoms.push(op.denomOut)
+    // Check both camelCase and snake_case for denom_out
+    const denomOut = op.denomOut || op.denom_out
+    if (denomOut && !swapDenoms.includes(denomOut)) {
+      swapDenoms.push(denomOut)
     }
   })
 
@@ -66,8 +81,9 @@ function createAstroportRoute(denomIn: string, denomOut: string, swapOperations:
 
   swapOperations.forEach((op: any) => {
     swaps.push({
-      from: op.denomIn,
-      to: op.denomOut,
+      // Check both camelCase and snake_case for denom properties
+      from: op.denomIn || op.denom_in,
+      to: op.denomOut || op.denom_out,
     })
   })
 
@@ -93,20 +109,35 @@ function buildSwapRouteInfo(
 ): SwapRouteInfo {
   let priceImpact = BN('0')
 
-  if (skipRouteResponse.swapPriceImpactPercent) {
-    priceImpact = BN(skipRouteResponse.swapPriceImpactPercent)
-  } else if (skipRouteResponse.usdAmountIn && skipRouteResponse.usdAmountOut) {
-    const usdAmountIn = BN(skipRouteResponse.usdAmountIn)
-    const usdAmountOut = BN(skipRouteResponse.usdAmountOut)
+  // Check both camelCase and snake_case for price impact
+  const priceImpactPercent =
+    skipRouteResponse.swapPriceImpactPercent || skipRouteResponse.swap_price_impact_percent
+  if (priceImpactPercent) {
+    priceImpact = BN(priceImpactPercent)
+  } else {
+    // Check both camelCase and snake_case for USD amounts
+    const usdAmountIn = skipRouteResponse.usdAmountIn || skipRouteResponse.usd_amount_in
+    const usdAmountOut = skipRouteResponse.usdAmountOut || skipRouteResponse.usd_amount_out
 
-    if (usdAmountIn.gt(0)) {
-      // Price impact = ((usdAmountOut - usdAmountIn) / usdAmountIn) * 100
-      priceImpact = usdAmountOut.minus(usdAmountIn).dividedBy(usdAmountIn).multipliedBy(100)
+    if (usdAmountIn && usdAmountOut) {
+      const amountIn = BN(usdAmountIn)
+      const amountOut = BN(usdAmountOut)
+
+      if (amountIn.gt(0)) {
+        // Price impact = ((usdAmountOut - usdAmountIn) / usdAmountIn) * 100
+        priceImpact = amountOut.minus(amountIn).dividedBy(amountIn).multipliedBy(100)
+      }
     }
   }
 
+  // Check both camelCase and snake_case for amount out
+  const amountOut =
+    skipRouteResponse.amountOut ||
+    skipRouteResponse.amount_out ||
+    skipRouteResponse.estimated_amount_out
+
   const routeInfo: SwapRouteInfo = {
-    amountOut: BN(skipRouteResponse.amountOut.times(1 - chainConfig.swapFee) || '0'),
+    amountOut: BN(amountOut || '0').times(1 - chainConfig.swapFee),
     priceImpact,
     fee: BN('0'),
     description,
@@ -264,8 +295,10 @@ export async function getNeutronRouteInfoReverse(
     const routeInfo = buildSwapRouteInfo(skipRouteResponse, route, description, chainConfig)
 
     // For reverse routing, add the amountIn that Skip calculated
-    if (skipRouteResponse.amountIn) {
-      ;(routeInfo as any).amountIn = BN(skipRouteResponse.amountIn)
+    // Check both camelCase and snake_case for amount in
+    const amountIn = skipRouteResponse.amountIn || skipRouteResponse.amount_in
+    if (amountIn) {
+      ;(routeInfo as any).amountIn = BN(amountIn)
     } else {
       ;(routeInfo as any).amountIn = null
     }
