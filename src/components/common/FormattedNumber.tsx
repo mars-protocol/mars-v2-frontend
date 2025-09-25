@@ -27,7 +27,7 @@ export const FormattedNumber = React.memo(
     return (
       <span
         className={classNames(
-          'number',
+          'number inline-block',
           props.parentheses && 'before:content-["("] after:content-[")"]',
           props.className,
         )}

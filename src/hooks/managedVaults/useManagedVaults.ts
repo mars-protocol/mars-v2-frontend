@@ -1,12 +1,12 @@
 import { getManagedVaultDetails, getManagedVaultOwnerAddress } from 'api/cosmwasm-client'
 import getManagedVaults from 'api/managedVaults/getManagedVaults'
-import { useManagedVaultDeposits } from 'hooks/managedVaults/useManagedVaultDeposits'
-import { useDepositedManagedVaultsFallback } from 'hooks/managedVaults/useDepositedManagedVaultsFallback'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import useStore from 'store'
-import useSWR, { mutate } from 'swr'
-import { useEffect, useMemo, useState } from 'react'
 import BN from 'bignumber.js'
+import useChainConfig from 'hooks/chain/useChainConfig'
+import { useDepositedManagedVaultsFallback } from 'hooks/managedVaults/useDepositedManagedVaultsFallback'
+import { useManagedVaultDeposits } from 'hooks/managedVaults/useManagedVaultDeposits'
+import { useEffect, useMemo, useState } from 'react'
+import useStore from 'store'
+import useSWR from 'swr'
 
 export default function useManagedVaults() {
   const chainConfig = useChainConfig()
@@ -43,10 +43,7 @@ export default function useManagedVaults() {
             try {
               const details = await getManagedVaultDetails(chainConfig, vault.vault_address)
               if (!details) return null
-              let owner = null
-              if (address) {
-                owner = await getManagedVaultOwnerAddress(chainConfig, vault.vault_address)
-              }
+              const owner = await getManagedVaultOwnerAddress(chainConfig, vault.vault_address)
 
               return {
                 ...vault,
@@ -59,7 +56,8 @@ export default function useManagedVaults() {
                 base_tokens_amount: details.total_base_tokens,
                 vault_tokens_denom: details.vault_token,
                 vault_tokens_amount: details.total_vault_tokens,
-                isOwner: owner === address,
+                ownerAddress: owner,
+                isOwner: address ? owner === address : false,
                 isPending: pendingVault?.address === vault.vault_address,
               } as ManagedVaultWithDetails
             } catch (error) {
