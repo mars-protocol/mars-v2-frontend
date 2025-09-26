@@ -297,11 +297,14 @@ export function convertAccountToPositions(account: Account, assets: Asset[]): Po
         },
         amount: {
           locking: {
-            locked: vault.amounts.locked.toString(),
+            locked: vault.amounts.locked.integerValue().toString(),
             unlocking: [
               {
                 id: 0,
-                coin: { amount: vault.amounts.unlocking.toString(), denom: vault.denoms.lp },
+                coin: {
+                  amount: vault.amounts.unlocking.integerValue().toString(),
+                  denom: vault.denoms.lp,
+                },
               },
             ],
           },
@@ -314,16 +317,23 @@ export function convertAccountToPositions(account: Account, assets: Asset[]): Po
     account_id: account.id,
     debts: account.debts.map((debt) => ({
       shares: '0', // This is not needed, but required by the contract
-      amount: debt.amount.toString(),
+      amount: debt.amount.integerValue().toString(),
       denom: debt.denom,
     })),
-    deposits: account.deposits.map((deposit) => deposit.toCoin()),
+    deposits: account.deposits.map((deposit) => ({
+      denom: deposit.denom,
+      amount: deposit.amount.integerValue().toString(),
+    })),
     lends: account.lends.map((lend) => ({
       shares: '0', // This is not needed, but required by the contract
-      amount: lend.amount.toString(),
+      amount: lend.amount.integerValue().toString(),
       denom: lend.denom,
     })),
-    staked_astro_lps: account.stakedAstroLps?.map((stakedAstroLp) => stakedAstroLp.toCoin()) ?? [],
+    staked_astro_lps:
+      account.stakedAstroLps?.map((stakedAstroLp) => ({
+        denom: stakedAstroLp.denom,
+        amount: stakedAstroLp.amount.integerValue().toString(),
+      })) ?? [],
     perps: account.perps.map((perpPosition) => {
       const perpAsset = assets.find(byDenom(perpPosition.denom))
       const perpAssetDecimals = perpAsset?.decimals ?? PRICE_ORACLE_DECIMALS

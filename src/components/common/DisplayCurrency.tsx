@@ -116,7 +116,7 @@ export default function DisplayCurrency(props: Props) {
       options={{
         minDecimals: isUSD ? 2 : 0,
         maxDecimals: isLessThanACent && showDetailedPrice ? 6 : 2,
-        abbreviated: true,
+        abbreviated: (absoluteAmount ?? 0) >= 10000,
         suffix,
         ...options,
         prefix,

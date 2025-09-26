@@ -10,6 +10,7 @@ import MyPosition, { MY_POSITION_META } from 'components/managedVaults/table/col
 import Title, { TITLE_META } from 'components/managedVaults/table/column/Title'
 import TVL, { TVL_META } from 'components/managedVaults/table/column/TVL'
 import useChainConfig from 'hooks/chain/useChainConfig'
+import useVaultOwnerTier from 'hooks/staking/useVaultOwnerTier'
 import { useCallback, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
@@ -27,6 +28,7 @@ export default function useCommunityVaultsColumns(props: Props) {
   const chainConfig = useChainConfig()
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
+  const { getVaultOwnerTier } = useVaultOwnerTier()
 
   const handleContinueSetup = useCallback(() => {
     const storedVault = localStorage.getItem('pendingVaultMint')
@@ -62,6 +64,7 @@ export default function useCommunityVaultsColumns(props: Props) {
         : []),
       {
         ...ACTIVE_BENEFITS_META,
+        accessorFn: (vault: ManagedVaultWithDetails) => getVaultOwnerTier(vault.ownerAddress),
         cell: ({ row }: { row: Row<ManagedVaultWithDetails> }) => (
           <ActiveBenefits vault={row.original} />
         ),
@@ -96,5 +99,5 @@ export default function useCommunityVaultsColumns(props: Props) {
           ),
       },
     ]
-  }, [isLoading, showPosition, handleContinueSetup])
+  }, [isLoading, showPosition, handleContinueSetup, getVaultOwnerTier])
 }
