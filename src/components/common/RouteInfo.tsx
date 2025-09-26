@@ -28,7 +28,7 @@ export interface SwapAssets {
 }
 
 export function RouteInfo(props: Props) {
-  const [showSummary, setShowSummary] = useToggle()
+  const [showSummary, setShowSummary] = useToggle(true)
   const chainConfig = useChainConfig()
 
   return (

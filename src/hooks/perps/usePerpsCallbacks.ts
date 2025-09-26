@@ -199,10 +199,19 @@ export const usePerpsCallbacks = ({
       updateLeverage(newLeverage)
       setIsMaxSelected(newLeverage === maxLeverage)
       if (isAmountInUSD) {
+        // Clear stored USD value so that convertToDisplayAmount calculates it fresh from the new asset amount
+        setStoredUsdValue(null)
         setTimeout(() => setIsAmountInUSD(true), 0)
       }
     },
-    [updateLeverage, maxLeverage, setIsMaxSelected, setIsAmountInUSD, isAmountInUSD],
+    [
+      updateLeverage,
+      maxLeverage,
+      setIsMaxSelected,
+      setIsAmountInUSD,
+      isAmountInUSD,
+      setStoredUsdValue,
+    ],
   )
 
   const handleAmountTypeChange = useCallback(
