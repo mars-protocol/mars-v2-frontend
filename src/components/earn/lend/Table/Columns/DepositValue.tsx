@@ -7,7 +7,7 @@ import { BN } from 'utils/helpers'
 export const DEPOSIT_VALUE_META = {
   id: 'accountLentValue',
   accessorKey: 'accountLentValue',
-  header: 'Deposited',
+  header: 'Your Deposits',
 }
 
 export const depositedSortingFn = (

@@ -47,21 +47,21 @@ export default function Size(props: Props) {
   return (
     <TitleAndSubCell
       title={
-        <FormattedNumber
-          amount={Math.abs(Number(demagnify(amount, asset)))}
-          options={{
-            maxDecimals: props.asset.decimals,
-            abbreviated: options?.abbreviated,
-          }}
-          className='text-xs'
-        />
-      }
-      sub={
         <DisplayCurrency
+          className='text-xs'
           coin={BNCoin.fromDenomAndBigNumber('usd', scaledValue)}
           options={{
             maxDecimals: getPerpsPriceDecimals(value),
             minDecimals: 0,
+            abbreviated: options?.abbreviated,
+          }}
+        />
+      }
+      sub={
+        <FormattedNumber
+          amount={Math.abs(Number(demagnify(amount, asset)))}
+          options={{
+            maxDecimals: props.asset.decimals,
             abbreviated: options?.abbreviated,
           }}
         />
