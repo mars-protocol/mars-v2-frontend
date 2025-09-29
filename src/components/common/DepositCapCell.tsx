@@ -1,8 +1,5 @@
-import classNames from 'classnames'
-
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { Tooltip } from 'components/common/Tooltip'
-import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import AnimatedCircularProgressBar from 'components/common/ProgressBars/AnimatedCircularProgressBar'
 import Text from 'components/common/Text'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -12,6 +9,7 @@ import useDisplayCurrencyAssets from 'hooks/assets/useDisplayCurrencyAssets'
 import { getCoinValueWithoutFallback } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 import { FormattedNumber } from './FormattedNumber'
+import classNames from 'classnames'
 
 interface Props {
   depositCap: DepositCap
@@ -33,8 +31,8 @@ export default function DepositCapCell(props: Props) {
 
   const capUsedPercent = percent.toNumber()
   const depositCapUsed = Number.isFinite(capUsedPercent) ? Math.min(capUsedPercent, 100) : 0
-
-  const valueClassName = 'text-xs text-white font-semibold whitespace-nowrap text-right'
+  const textBase = 'text-xs font-semibold whitespace-nowrap text-right'
+  const valueClassName = `${textBase} text-white`
 
   const depositedValue = getCoinValueWithoutFallback(depositedCoin, assets)
   const depositCapValue = getCoinValueWithoutFallback(depositCapCoin, assets)
@@ -50,19 +48,19 @@ export default function DepositCapCell(props: Props) {
   if (depositCapUsed >= 100) {
     gaugePrimaryColor = '#F87171'
   } else if (depositCapUsed > 90) {
-    gaugePrimaryColor = '#38BDF8'
+    gaugePrimaryColor = '#F59E0B'
   }
 
   let displayCurrencyColorClass = 'text-white/40'
   if (depositCapUsed >= 100) {
-    displayCurrencyColorClass = 'text-loss'
+    displayCurrencyColorClass = 'text-loss/40'
   } else if (depositCapUsed > 90) {
-    displayCurrencyColorClass = 'text-info'
+    displayCurrencyColorClass = 'text-warning/40'
   }
 
   const tooltipContent = (
     <div className='flex flex-col gap-3 p-1'>
-      <div className='flex flex-col gap-1'>
+      <div className='flex flex-col gap-2'>
         <div className='flex items-start justify-between gap-6 whitespace-nowrap'>
           <Text size='2xs' className='text-white/60'>
             Deposits
@@ -77,6 +75,7 @@ export default function DepositCapCell(props: Props) {
                   options={{
                     abbreviated: true,
                     decimals: asset?.decimals,
+                    suffix: ` ${asset?.symbol}`,
                     minDecimals: 0,
                     maxDecimals: Math.min(asset?.decimals, 6),
                   }}
@@ -99,6 +98,7 @@ export default function DepositCapCell(props: Props) {
                   options={{
                     abbreviated: true,
                     decimals: asset?.decimals,
+                    suffix: ` ${asset?.symbol}`,
                     minDecimals: 0,
                     maxDecimals: Math.min(asset?.decimals, 6),
                   }}
@@ -127,6 +127,7 @@ export default function DepositCapCell(props: Props) {
                   options={{
                     abbreviated: true,
                     decimals: asset?.decimals,
+                    suffix: ` ${asset?.symbol}`,
                     minDecimals: 0,
                     maxDecimals: Math.min(asset?.decimals, 6),
                   }}
@@ -148,20 +149,46 @@ export default function DepositCapCell(props: Props) {
   )
 
   return (
-    <TitleAndSubCell
-      containerClassName='gap-0'
-      className='w-full text-xs leading-tight'
-      title={<DisplayCurrency coin={depositedCoin} className={valueClassName} />}
-      sub={
-        <div className='flex justify-end'>
-          <Tooltip type='info' content={tooltipContent} underline>
+    <Tooltip type='info' content={tooltipContent}>
+      <div className='flex items-center justify-end w-full gap-3'>
+        {/* Deposits and Cap Info */}
+        <div className='flex flex-col gap-0.5'>
+          <div className='flex items-center justify-end'>
+            <DisplayCurrency coin={depositedCoin} className={valueClassName} />
+          </div>
+          <div className='flex items-center justify-end'>
             <DisplayCurrency
               coin={depositCapCoin}
               className={classNames(valueClassName, displayCurrencyColorClass)}
             />
-          </Tooltip>
+          </div>
         </div>
-      }
-    />
+
+        {/* Circular Progress */}
+        <div className='relative flex-shrink-0'>
+          <svg className='h-3 w-3 transform -rotate-90' viewBox='0 0 24 24'>
+            <circle
+              cx='12'
+              cy='12'
+              r='10'
+              fill='none'
+              stroke='rgba(255, 255, 255, 0.1)'
+              strokeWidth='2'
+            />
+            <circle
+              cx='12'
+              cy='12'
+              r='10'
+              fill='none'
+              stroke={gaugePrimaryColor}
+              strokeWidth='2'
+              strokeDasharray={`${2 * Math.PI * 10}`}
+              strokeDashoffset={`${2 * Math.PI * 10 * (1 - depositCapUsed / 100)}`}
+              className='transition-all duration-300'
+            />
+          </svg>
+        </div>
+      </div>
+    </Tooltip>
   )
 }
