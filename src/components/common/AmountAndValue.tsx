@@ -38,10 +38,14 @@ export default function AmountAndValue(props: Props) {
           : 'flex-row items-center gap-1.5 [&>div]:before:content-["|"] [&>div]:before:mx-0.5 [&>div]:before:text-white/10',
       )}
     >
-      <FormattedNumber
-        amount={isZero ? 0 : displayAmount}
-        smallerThanThreshold={!isZero && isBelowMinAmount}
-        options={{ abbreviated: abbreviated ?? true, maxDecimals: MAX_AMOUNT_DECIMALS }}
+      <DisplayCurrency
+        className=''
+        coin={BNCoin.fromDenomAndBigNumber(
+          priceOverride ? 'usd' : asset.denom,
+          priceOverride ? amount.times(priceOverride).shiftedBy(-asset.decimals) : amount,
+        )}
+        isApproximation={isApproximation}
+        options={{ abbreviated: abbreviated ?? true }}
       />
       <div className={classNames('flex', layout === 'horizontal' && 'items-center gap-2')}>
         {changePercentage && (
@@ -59,14 +63,11 @@ export default function AmountAndValue(props: Props) {
             }}
           />
         )}
-        <DisplayCurrency
+        <FormattedNumber
           className='justify-end text-xs text-white/50'
-          coin={BNCoin.fromDenomAndBigNumber(
-            priceOverride ? 'usd' : asset.denom,
-            priceOverride ? amount.times(priceOverride).shiftedBy(-asset.decimals) : amount,
-          )}
-          isApproximation={isApproximation}
-          options={{ abbreviated: abbreviated ?? true }}
+          amount={isZero ? 0 : displayAmount}
+          smallerThanThreshold={!isZero && isBelowMinAmount}
+          options={{ abbreviated: abbreviated ?? true, maxDecimals: MAX_AMOUNT_DECIMALS }}
         />
       </div>
     </div>

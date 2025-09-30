@@ -22,6 +22,41 @@ interface Props {
   routeDescription?: string
 }
 
+const getMinReceivedDisplay = ({
+  isAmountZero,
+  isLoading,
+  minReceived,
+  toAsset,
+}: {
+  isAmountZero: boolean
+  isLoading: boolean
+  minReceived: BigNumber | undefined
+  toAsset: Asset
+}) => {
+  if (isAmountZero) return '-'
+  if (isLoading) return 'Calculating...'
+  if (minReceived) {
+    return (
+      <FormattedNumber
+        amount={minReceived.toNumber()}
+        options={{
+          decimals: toAsset.decimals,
+          maxDecimals: MAX_AMOUNT_DECIMALS,
+          abbreviated: false,
+          suffix: ` ${toAsset.symbol}`,
+        }}
+      />
+    )
+  }
+  return 'Calculating...'
+}
+
+const getPriceImpactColor = (priceImpact: number) => {
+  if (priceImpact > 1) return 'text-loss'
+  if (priceImpact > 0.5) return 'text-warning'
+  return 'text-success'
+}
+
 export default function SwapDetails({
   fromAsset,
   toAsset,
@@ -34,6 +69,7 @@ export default function SwapDetails({
   routeDescription,
 }: Props) {
   const isAmountZero = amount.isZero() || amount.isLessThanOrEqualTo(0)
+  const roundedPriceImpact = priceImpact.toPrecision(2)
 
   const minReceived = useMemo(() => {
     if (!expectedOutput) return undefined
@@ -70,23 +106,7 @@ export default function SwapDetails({
             Min. Receive ({slippage * 100}% slippage):
           </Text>
           <Text size='xs' className='text-right'>
-            {isAmountZero ? (
-              '-'
-            ) : isLoading ? (
-              'Calculating...'
-            ) : minReceived ? (
-              <FormattedNumber
-                amount={minReceived.toNumber()}
-                options={{
-                  decimals: toAsset.decimals,
-                  maxDecimals: MAX_AMOUNT_DECIMALS,
-                  abbreviated: false,
-                  suffix: ` ${toAsset.symbol}`,
-                }}
-              />
-            ) : (
-              'Calculating...'
-            )}
+            {getMinReceivedDisplay({ isAmountZero, isLoading, minReceived, toAsset })}
           </Text>
 
           {!isAmountZero && !isLoading && (
@@ -94,11 +114,8 @@ export default function SwapDetails({
               <Text size='xs' className='text-white/50'>
                 Price Impact:
               </Text>
-              <Text
-                size='xs'
-                className={`text-right ${priceImpact > 1 ? 'text-red-400' : priceImpact > 0.5 ? 'text-yellow-400' : 'text-green-400'}`}
-              >
-                {priceImpact <= 0 ? '-' : `${priceImpact.toFixed(2)}%`}
+              <Text size='xs' className={`text-right ${getPriceImpactColor(priceImpact)}`}>
+                {priceImpact <= 0 ? '-' : `${roundedPriceImpact}%`}
               </Text>
             </>
           )}

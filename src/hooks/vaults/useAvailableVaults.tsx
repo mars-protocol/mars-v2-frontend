@@ -7,7 +7,11 @@ import useVaults from 'hooks/vaults/useVaults'
 export default function useAvailableVaults() {
   const accountId = useAccountId()
   const { data: vaults, isLoading: isVaultsLoading, error: vaultsError } = useVaults(false)
-  const { data: activeVaults, isLoading: isActiveVaultsLoading, error: activeVaultsError } = useDepositedVaults(accountId || '')
+  const {
+    data: activeVaults,
+    isLoading: isActiveVaultsLoading,
+    error: activeVaultsError,
+  } = useDepositedVaults(accountId || '')
 
   const activeVaultAddresses = useMemo(
     () => activeVaults?.map((vault) => vault.address) || [],
