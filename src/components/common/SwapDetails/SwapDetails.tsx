@@ -52,9 +52,9 @@ const getMinReceivedDisplay = ({
 }
 
 const getPriceImpactColor = (priceImpact: number) => {
-  if (priceImpact > 1) return 'text-red-400'
-  if (priceImpact > 0.5) return 'text-yellow-400'
-  return 'text-green-400'
+  if (priceImpact > 1) return 'text-loss'
+  if (priceImpact > 0.5) return 'text-warning'
+  return 'text-success'
 }
 
 export default function SwapDetails({
