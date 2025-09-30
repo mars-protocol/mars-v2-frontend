@@ -38,13 +38,13 @@ export default function ModalContentWithSummary(props: Props) {
     <Modal
       {...props}
       headerClassName={classNames(
-        'gradient-header border-b-white/5 border-b',
+        'bg-surface-dark border-b-white/5 border-b',
         props.headerClassName,
       )}
       contentClassName={classNames(
-        'flex items-start flex-1 p-2 gap-4 flex-wrap',
-        'md:p-4 md:gap-6',
-        'lg:flex-nowrap lg:p-6',
+        'flex items-start flex-1 p-2 gap-1 flex-wrap',
+        'md:p-3 md:gap-2',
+        'lg:flex-nowrap lg:p-3',
         props.contentClassName,
       )}
     >

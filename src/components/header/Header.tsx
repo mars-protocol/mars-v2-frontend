@@ -4,7 +4,7 @@ import { isMobile } from 'react-device-detect'
 
 import AccountMenu from 'components/account/AccountMenu'
 import EscButton from 'components/common/Button/EscButton'
-import { ArrowChartLineUp, Coins, CoinsSwap, Logo } from 'components/common/Icons'
+import { ArrowChartLineUp, Coins, CoinsSwap, MarsToken } from 'components/common/Icons'
 import Settings from 'components/common/Settings'
 import ChainSelect from 'components/header/ChainSelect'
 import DesktopNavigation from 'components/header/navigation/desktop/DesktopNavigation'
@@ -94,15 +94,10 @@ export default function Header() {
   )
   return (
     <>
-      <header
-        className={classNames(
-          'fixed left-0 top-0 z-50 w-full max-w-screen-full',
-          'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:h-full before:w-full before:rounded-sm before:backdrop-blur-xl before:bg-black/30',
-        )}
-      >
+      <header className='fixed left-0 top-0 z-50 w-full max-w-screen-full bg-surface'>
         <div
           className={classNames(
-            'flex items-center justify-between px-4 py-4 h-18 border-b border-white/20',
+            'flex items-center justify-between px-4 py-4 h-18',
             focusComponent && 'relative isolate md:border-none',
           )}
         >
@@ -118,7 +113,7 @@ export default function Header() {
               item={{ pages: chainConfig.perps ? ['perps'] : ['trade'], label: 'home' }}
             >
               <span className='block w-10 h-10'>
-                <Logo className='text-white' />
+                <MarsToken className='text-white' />
               </span>
             </NavLink>
             {!isMobile && <DesktopNavigation menuTree={isV1 ? menuTreeV1 : menuTree} />}

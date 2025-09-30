@@ -19,9 +19,9 @@ interface Props {
 }
 
 const accountCardHeaderClasses = classNames(
-  'flex w-full items-center justify-between bg-white/20 px-4 py-2.5 text-white/70',
-  'border border-transparent border-b-white/20',
-  'group-hover/account:bg-white/30',
+  'flex w-full items-center justify-between bg-surface-dark px-4 py-2.5 text-white/70',
+  'border-b border-white/10',
+  'group-hover/account:bg-surface',
 )
 
 export default function AccountList(props: Props) {
@@ -60,16 +60,21 @@ export default function AccountList(props: Props) {
   if (!filteredAccounts || !filteredAccounts.length) return null
 
   return (
-    <div className='flex flex-wrap w-full px-4 pb-4'>
+    <div className='flex flex-wrap w-full px-2 pb-2'>
       {filteredAccounts.map((account) => {
         const isActive = currentAccountId === account.id
         return (
-          <div key={account.id} id={`account-${account.id}`} className='w-full pt-4'>
+          <div key={account.id} id={`account-${account.id}`} className='w-full pt-2'>
             <Card
               id={`account-${account.id}`}
               key={account.id}
-              className={classNames('w-full', !isActive && 'group/account hover:cursor-pointer')}
-              contentClassName='bg-white/10 group-hover/account:bg-white/20'
+              className={classNames(
+                'w-full border border-white/10',
+                !isActive &&
+                  'group/account hover:cursor-pointer hover:border-white/30 opacity-80 hover:opacity-100',
+                isActive && 'border-white/20',
+              )}
+              contentClassName='bg-surface group-hover/account:bg-surface-dark'
               onClick={() => {
                 if (isActive) return
                 if (isMobile) setShowMenu(false)

@@ -42,7 +42,7 @@ export default function AssetSelectorPair(props: Props) {
         color='quaternary'
         variant='transparent'
         onClick={() => useStore.setState({ assetOverlayState: 'pair' })}
-        className='flex items-center justify-between w-full py-5 rounded-b-none bg-white/10'
+        className='flex items-center justify-between w-full py-4 bg-white/10'
       >
         <div className='flex items-center gap-1'>
           <AssetImage asset={buyAsset} className='w-5 h-5' />

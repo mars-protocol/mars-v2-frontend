@@ -22,7 +22,7 @@ export function BridgeRow<T>({ row, spacingClassName, type }: BridgeRowProps<T>)
           key={cell.id}
           className={classNames(
             LEFT_ALIGNED_ROWS.includes(cell.column.id) ? 'text-left' : 'text-right',
-            spacingClassName ?? 'px-3 py-4',
+            spacingClassName ?? 'px-4 py-2.5',
             type &&
               type !== 'strategies' &&
               LEFT_ALIGNED_ROWS.includes(cell.column.id) &&

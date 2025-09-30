@@ -1,11 +1,11 @@
 .theme-dark:root {
-  --tv-background: #220e1d;
-  --tv-form-background: #7f78e8;
-  --tv-button-background: linear-gradient(180deg, #7f78e8 0%, #926ac8 100%);
-  --tv-button-background-hover: linear-gradient(180deg, #926ac8 0%, #7f78e8 100%);
-  --tv-menu-background: #31142a;
-  --tv-menu-text: rgba(255, 255, 255, 0.3);
-  --tv-menu-text-hover: rgba(255, 255, 255, 1);
+  --tv-background: #1a1a1a;
+  --tv-form-background: #1a1a1a;
+  --tv-button-background: #1a1a1a;
+  --tv-button-background-hover: #0d0d0d;
+  --tv-menu-background: #0d0d0d;
+  --tv-menu-text: rgba(255, 255, 255, 0.6);
+  --tv-menu-text-hover: rgba(255, 255, 255, 0.9);
   --tv-color-pane-background: var(--tv-background);
   --tv-color-platform-background: var(--tv-background);
   --tv-color-toolbar-button-text: var(--tv-menu-text);
@@ -208,7 +208,7 @@ button:hover {
 
 [class^='button-'] {
   background-color: transparent !important;
-  border-radius: 4px !important;
+  border-radius: 0 !important;
 }
 
 [class^='button-']:hover {
@@ -220,23 +220,27 @@ button[class^='button-'][class*='primary-'] {
   border: none !important;
   color: var(--tv-menu-text-hover) !important;
   background: var(--tv-button-background) !important;
+  border-radius: 0 !important;
 }
 
 button[class^='button-'][class*='primary-']:hover {
   color: var(--tv-menu-text-hover) !important;
   background: var(--tv-button-background-hover) !important;
+  border-radius: 0 !important;
 }
 
 button[class^='button-'][class*='secondary-'] {
   border: 1px solid var(--tv-menu-text) !important;
   color: var(--tv-menu-text-hover) !important;
   background: none !important;
+  border-radius: 0 !important;
 }
 
 button[class^='button-'][class*='secondary-']:hover {
   border: 1px solid var(--tv-menu-text-hover) !important;
   color: var(--tv-menu-text-hover) !important;
   background: none !important;
+  border-radius: 0 !important;
 }
 
 /* Checkbox */
@@ -315,12 +319,12 @@ button[class^='button-'][class*='secondary-']:hover {
 [class^='tabContent-']::-webkit-scrollbar-thumb {
   background-color: var(--tv-menu-text) !important;
   border: transparent !important;
-  border-radius: 2px;
+  border-radius: 0;
 }
 
 [class^='scrollWrap-']::-webkit-scrollbar-track,
 [class^='tabContent-']::-webkit-scrollbar-track {
-  border-radius: 2px;
+  border-radius: 0;
 }
 
 [class^='fadeTop-'] {

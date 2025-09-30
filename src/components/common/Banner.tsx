@@ -19,17 +19,11 @@ export default function Banner(props: Props) {
   return (
     <div
       className={classNames(
-        'flex flex-col sm:flex-row justify-between items-center w-full p-2 md:p-6 gap-4 mb-4 bg-white/10',
+        'flex flex-col sm:flex-row justify-between items-center w-full p-2 md:p-4 md:pr-8 gap-4 mb-1',
         'relative isolate overflow-hidden rounded-base',
         'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
       )}
     >
-      <div
-        className={classNames(
-          'absolute h-[20vw] w-[40vw] bottom-[0] right-[-10vw] rounded-full opacity-30',
-          'blur-orb-secondary bg-purple',
-        )}
-      />
       {onClose && (
         <div className='absolute top-0 right-1'>
           <Button

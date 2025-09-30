@@ -13,11 +13,11 @@ import VaultStats from 'components/managedVaults/vaultDetails/common/VaultStats'
 import WithdrawButton from 'components/managedVaults/vaultDetails/table/columns/WithdrawButton'
 import useQueuedWithdrawals from 'components/managedVaults/vaultDetails/table/useQueuedWithdrawals'
 import useUserWithdrawals from 'components/managedVaults/vaultDetails/table/useUserWithdrawals'
-import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import { BN_ZERO } from 'constants/math'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import { useAllUnlocks } from 'hooks/managedVaults/useAllUnlocks'
 import { useUserUnlocks } from 'hooks/managedVaults/useUserUnlocks'
+import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import moment from 'moment'
 import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -104,7 +104,7 @@ export default function Withdrawals(props: Props) {
           data={userUnlocksData}
           initialSorting={[{ id: 'initiated', desc: true }]}
           tableBodyClassName='bg-white/5'
-          spacingClassName='p-3'
+          spacingClassName='px-4 py-2.5'
           titleComponent={
             userUnlocksData.length === 0 ? (
               <div className='h-50 flex items-center justify-center'>
@@ -240,7 +240,7 @@ export default function Withdrawals(props: Props) {
                   columns={queuedWithdrawalcolumns}
                   data={unlocksData}
                   initialSorting={[]}
-                  spacingClassName='p-3'
+                  spacingClassName='px-4 py-2.5'
                 />
               </div>
               <TablePagination
@@ -271,7 +271,7 @@ export default function Withdrawals(props: Props) {
                 columns={userWithdrawalColumns}
                 data={userUnlocksData}
                 initialSorting={[{ id: 'initiated', desc: true }]}
-                spacingClassName='p-3'
+                spacingClassName='px-4 py-2.5'
               />
             ) : (
               <div className='h-full flex items-center justify-center'>

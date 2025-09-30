@@ -435,14 +435,11 @@ export default function TradeChart(props: Props) {
           )}
         </div>
       }
-      contentClassName='pb-0.5 h-full !w-[calc(100%-2px)] ml-[1px] bg-chart'
-      className={classNames(
-        'h-[500px]',
-        'md:h-screen/70 md:max-h-[980px] md:min-h-[560px] order-1 w-full',
-      )}
+      contentClassName='flex flex-col h-full w-full bg-surface'
+      className={classNames('w-full h-full')}
       isTab={isTab}
     >
-      <div ref={chartContainerRef ?? undefined} className='h-[calc(100%-32px)] overflow-hidden'>
+      <div ref={chartContainerRef ?? undefined} className='flex-1 overflow-hidden'>
         <div className='flex items-center w-full h-full'>
           <div className='flex flex-col flex-wrap items-center w-full gap-2'>
             <div className='w-8 mb-2'>

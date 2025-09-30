@@ -19,10 +19,8 @@ export default function Overlay(props: Props) {
     <>
       <div
         className={classNames(
-          'max-w-screen-full fixed isolate z-50 rounded-base shadow-overlay backdrop-blur-lg',
-          props.hasBackdropIsolation ? 'bg-body' : 'gradient-popover',
+          'max-w-screen-full fixed isolate z-50 shadow-overlay bg-surface border border-white/20',
           'md:absolute',
-          'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
           props.className,
         )}
       >

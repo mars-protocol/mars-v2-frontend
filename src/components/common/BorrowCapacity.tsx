@@ -84,10 +84,10 @@ export const BorrowCapacity = ({
               className='overflow-hidden border-r-2 rounded-3xl border-r-loss '
               style={{ height: barHeight }}
             >
-              <div className='absolute w-full h-full rounded-lg shadow-inset gradient-hatched '>
+              <div className='absolute w-full h-full shadow-inset gradient-hatched '>
                 <div
                   className={classNames(
-                    'absolute left-0 h-full max-w-full rounded-l-3xl bg-body-dark',
+                    'absolute left-0 h-full max-w-full bg-body-dark',
                     !reduceMotion && 'transition-[right] duration-1000 ease-linear',
                   )}
                   style={{
@@ -98,7 +98,7 @@ export const BorrowCapacity = ({
                 <div className='absolute top-0 w-full h-full'>
                   <div
                     className={classNames(
-                      'h-full rounded-lg',
+                      'h-full',
                       !reduceMotion && 'transition-[width] duration-1000 ease-linear',
                     )}
                     style={{

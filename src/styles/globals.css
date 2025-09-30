@@ -50,10 +50,10 @@
   --color-accent-highlight: 327deg 36% 19%;
   --color-atom: 233deg 13% 50%;
   --color-axlusdc: 211deg 68% 57%;
-  --color-body: 283deg 100% 4%;
-  --color-body-hls: 0deg 100% 2%;
-  --color-body-dark: 231deg 25% 10%;
-  --color-chart: 315deg 42% 9%;
+  --color-body: 0deg 0% 0%;
+  --color-body-hls: 0deg 0% 0%;
+  --color-body-dark: 0deg 0% 0%;
+  --color-chart: 0deg 0% 7%;
   --color-error: 4deg 86% 58%;
   --color-error-bg: 4deg 96% 80%;
   --color-fuchsia: 312deg 46% 49%;
@@ -115,13 +115,17 @@
   --color-active-tab-primary: 299deg 92% 39%;
   --color-active-tab-secondary: 343deg 100% 81%;
   --color-active-tab-tertiary: 13deg 33% 14%;
+  --color-card-bg: 0deg 0% 5%;
+  --color-card-border: 0deg 0% 10%;
+  --color-surface: 0deg 0% 7%;
+  --color-surface-dark: 0deg 0% 5%;
 }
 
 :root[data-theme='light'] {
   --color-body: 0deg 0% 100%;
   --color-body-hls: 0deg 0% 100%;
   --color-white: 0deg 0% 20%;
-  --color-chart: 0deg 0% 100%;
+  --color-chart: 0deg 0% 93%;
   --color-black: 0deg 0% 100%;
   --color-purple: 47deg 97% 67%;
   --color-purple-dark: 36deg 99% 65%;
@@ -150,18 +154,26 @@
   --color-active-tab-primary: 47deg 97% 79%;
   --color-active-tab-secondary: 36deg 99% 65%;
   --color-active-tab-tertiary: 57deg 97% 85%;
+  --color-card-bg: 0deg 0% 95%;
+  --color-card-border: 0deg 0% 85%;
+  --color-surface: 0deg 0% 93%;
+  --color-surface-dark: 0deg 0% 90%;
 }
 
 :root[data-theme='dark'] {
   --color-body: 0deg 0% 0%;
   --color-body-hls: 0deg 0% 0%;
-  --color-chart: 0deg 0% 0%;
+  --color-chart: 0deg 0% 7%;
   --color-orb-primary: 0deg 0% 0%;
   --color-orb-primary-hls: 0deg 0% 0%;
   --color-orb-secondary: 0deg 0% 0%;
   --color-orb-secondary-hls: 0deg 0% 0%;
   --color-orb-tertiary: 0deg 0% 0%;
   --color-orb-tertiary-hls: 0deg 0% 0%;
+  --color-card-bg: 0deg 0% 5%;
+  --color-card-border: 0deg 0% 10%;
+  --color-surface: 0deg 0% 7%;
+  --color-surface-dark: 0deg 0% 5%;
 }
 
 .Toastify__toast {

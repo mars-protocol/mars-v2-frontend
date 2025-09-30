@@ -13,7 +13,6 @@ import {
   circularProgressSize,
   focusClasses,
 } from 'components/common/Button/constants'
-import { glowElement } from 'components/common/Button/utils'
 import { CircularProgress } from 'components/common/CircularProgress'
 import { ChevronDown } from 'components/common/Icons'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
@@ -53,7 +52,6 @@ const Button = React.forwardRef(function Button(
   )
   const isDisabled = disabled || showProgressIndicator
   const shouldShowText = text && !children
-  const shouldShowGlowElement = variant === 'solid' && !isDisabled && !reduceMotion
 
   const buttonClassNames = useMemo(() => {
     const buttonClasses = [
@@ -119,7 +117,6 @@ const Button = React.forwardRef(function Button(
           )}
         </>
       )}
-      {shouldShowGlowElement && glowElement(!reduceMotion)}
     </button>
   )
 })

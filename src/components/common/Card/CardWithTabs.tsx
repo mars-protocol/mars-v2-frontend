@@ -23,7 +23,8 @@ export function CardWithTabs(props: Props) {
           {...props}
         />
       }
-      className='w-full'
+      className='w-full h-full'
+      contentClassName='flex-1 h-full'
     >
       {props.tabs[activeIdx].renderContent()}
     </Card>
@@ -39,7 +40,7 @@ type TabsProps = {
 
 function Tabs(props: TabsProps) {
   return (
-    <div className='flex items-center w-full gap-6 px-4 font-semibold bg-white/10'>
+    <div className='flex items-center w-full gap-6 px-4 font-semibold bg-surface-dark'>
       {props.tabs.map((tab, index) => {
         return (
           <button

@@ -397,7 +397,7 @@ export function PerpsModule() {
         {renderOpenInterestInfo()}
         {renderLeverageSection()}
       </div>
-      <div className='flex flex-wrap w-full gap-4 mt-4'>
+      <div className='flex flex-wrap w-full gap-4 mt-4 md:mt-20'>
         <PerpsOrderOptions
           isReduceOnly={isReduceOnly}
           setIsReduceOnly={setIsReduceOnly}
@@ -438,7 +438,7 @@ export function PerpsModule() {
 
   return (
     <Card
-      contentClassName='p-4 px-3 h-auto flex flex-grow flex-col justify-between h-full'
+      contentClassName='p-4 px-3 h-auto flex flex-grow flex-col h-full'
       title={
         <AssetSelectorPerps
           asset={perpsAsset}
@@ -448,7 +448,7 @@ export function PerpsModule() {
       }
       className={classNames(
         'mb-4 md:mb-0',
-        'md:min-h-[850px]',
+        'md:min-h-[850px] md:h-full',
         'relative isolate overflow-hidden rounded-base z-30',
       )}
     >

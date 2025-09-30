@@ -134,7 +134,7 @@ export default function AccountBalancesTable(props: Props) {
       data={dynamicAssets}
       tableBodyClassName={classNames(tableBodyClassName, 'text-white/60')}
       initialSorting={[{ id: VALUE_META.accessorKey, desc: true }]}
-      spacingClassName='p-2'
+      spacingClassName='px-4 py-2.5'
       hideCard={hideCard}
       type='balances'
       isBalancesTable

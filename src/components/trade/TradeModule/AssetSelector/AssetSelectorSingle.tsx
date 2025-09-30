@@ -53,7 +53,7 @@ export default function AssetSelectorSingle(props: Props) {
   }, [])
 
   return (
-    <div className='grid-rows-auto grid grid-cols-[1fr_min-content_1fr] gap-y-2 bg-white/10 p-3 w-full rounded-b-none'>
+    <div className='grid-rows-auto grid grid-cols-[1fr_min-content_1fr] gap-y-2 bg-white/10 p-3 w-full'>
       <Text size='sm'>Buy</Text>
       <Text size='sm' className='col-start-3'>
         Sell

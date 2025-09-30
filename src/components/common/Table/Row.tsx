@@ -83,8 +83,8 @@ export default function Row<T>(props: Props<T>) {
             'transition-bg duration-100 border-white/10',
             (renderExpanded || isSelectable || props.onClick) && 'hover:cursor-pointer',
             canExpand && row.getIsExpanded()
-              ? 'is-expanded border-t gradient-header'
-              : 'hover:bg-white/5',
+              ? 'is-expanded bg-surface-dark'
+              : 'hover:bg-surface-dark',
             'group/assetRow',
             !isWhitelisted && 'relative',
           )}
@@ -96,7 +96,7 @@ export default function Row<T>(props: Props<T>) {
                 key={cell.id}
                 className={classNames(
                   LEFT_ALIGNED_ROWS.includes(cell.column.id) ? 'text-left' : 'text-right',
-                  spacingClassName ?? 'px-3 py-4',
+                  spacingClassName ?? 'px-4 py-2.5',
                   type &&
                     type !== 'strategies' &&
                     LEFT_ALIGNED_ROWS.includes(cell.column.id) &&

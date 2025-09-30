@@ -81,7 +81,7 @@ export default function TokenInput(props: Props) {
             onChange={onChangeAsset}
             title={props.accountId ? `Credit Account ${props.accountId}` : 'Your Wallet'}
             className='h-full border-r border-white/20 bg-white/5'
-            displayClassName='rounded-l-sm'
+            displayClassName=''
           />
         ) : (
           <div className='flex items-center gap-2 p-3 border-r min-w-fit border-white/20 bg-white/5'>
