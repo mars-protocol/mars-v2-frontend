@@ -1,17 +1,19 @@
 import { Row } from '@tanstack/react-table'
-import classNames from 'classnames'
-import DisplayCurrency from 'components/common/DisplayCurrency'
-
-import { FormattedNumber } from 'components/common/FormattedNumber'
+import DepositCapCell from 'components/common/DepositCapCell'
 import Loading from 'components/common/Loading'
-import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import { BN_ZERO } from 'constants/math'
-import { BNCoin } from 'types/classes/BNCoin'
+import Text from 'components/common/Text'
 import { demagnify } from 'utils/formatters'
 
 export const DEPOSIT_CAP_META = {
   accessorKey: 'marketDepositCap',
-  header: 'Deposit Cap',
+  header: () => (
+    <div className='flex flex-col gap-1 text-xs leading-tight'>
+      <Text size='xs'>Deposits</Text>
+      <Text size='xs' className='text-white/40'>
+        Deposit Cap
+      </Text>
+    </div>
+  ),
   id: 'marketDepositCap',
   meta: {
     className: 'w-40 min-w-30',
@@ -39,27 +41,7 @@ interface Props {
 export default function DepositCap(props: Props) {
   if (props.isLoading) return <Loading />
   const { cap } = props.data
-  const percent = cap ? cap.used.dividedBy(cap.max).multipliedBy(100) : BN_ZERO
-  const depositCapUsed = Math.min(percent.toNumber(), 100)
+  if (!cap) return null
 
-  return (
-    <TitleAndSubCell
-      className='text-xs'
-      title={
-        <DisplayCurrency
-          coin={BNCoin.fromDenomAndBigNumber(cap?.denom ?? '', cap?.max ?? BN_ZERO)}
-          className='text-xs'
-        />
-      }
-      sub={
-        <FormattedNumber
-          amount={depositCapUsed}
-          options={{ minDecimals: 2, maxDecimals: 2, suffix: '% used' }}
-          className={classNames(
-            depositCapUsed >= 100 ? 'text-loss/60' : depositCapUsed > 90 ? 'text-info/60' : '',
-          )}
-        />
-      }
-    />
-  )
+  return <DepositCapCell depositCap={cap} />
 }

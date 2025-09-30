@@ -2,10 +2,18 @@ import { Row } from '@tanstack/react-table'
 
 import DepositCapCell from 'components/common/DepositCapCell'
 import Loading from 'components/common/Loading'
+import Text from 'components/common/Text'
 
 export const DEPOSIT_CAP_META = {
   accessorKey: 'cap',
-  header: 'Deposit Cap',
+  header: () => (
+    <div className='flex flex-col gap-1 text-xs leading-tight'>
+      <Text size='xs'>Deposits</Text>
+      <Text size='xs' className='text-white/40'>
+        Deposit Cap
+      </Text>
+    </div>
+  ),
   meta: { className: 'w-35' },
 }
 

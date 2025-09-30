@@ -206,13 +206,68 @@ export default function SwapForm(props: Props) {
   const liquidationPrice = useMemo(() => {
     if (!outputAsset.isWhitelisted) return 0
 
-    const debtAmount = account?.debts.find(byDenom(outputAsset.denom))?.amount ?? BN_ZERO
-    if (isAutoRepayChecked && outputAssetAmount.isLessThan(debtAmount))
-      return computeLiquidationPrice(outputAsset.denom, 'debt')
-    if (isAutoRepayChecked && outputAssetAmount.isEqualTo(debtAmount)) return 0
-    return computeLiquidationPrice(outputAsset.denom, 'asset')
+    // Use the updatedAccount (which includes trade simulation) for more accurate calculations
+    const accountToUse = updatedAccount ?? account
+    if (!accountToUse) return 0
+
+    const debtAmount = accountToUse.debts.find(byDenom(outputAsset.denom))?.amount ?? BN_ZERO
+    const depositAmount = accountToUse.deposits.find(byDenom(outputAsset.denom))?.amount ?? BN_ZERO
+    const lendAmount = accountToUse.lends.find(byDenom(outputAsset.denom))?.amount ?? BN_ZERO
+
+    // Check for perp positions to determine if this is a complex account state
+    const hasPerps = accountToUse.perps && accountToUse.perps.length > 0
+
+    // Handle auto-repay scenarios first
+    if (isAutoRepayChecked && debtAmount.isGreaterThan(0)) {
+      if (outputAssetAmount.isLessThan(debtAmount)) {
+        try {
+          return computeLiquidationPrice(outputAsset.denom, 'debt')
+        } catch (error) {
+          console.warn('Debt liquidation price calculation failed:', error)
+          return 0
+        }
+      }
+      if (outputAssetAmount.isEqualTo(debtAmount)) {
+        return 0 // Full repayment, no liquidation risk
+      }
+    }
+
+    // For complex account states with perps and lend-only positions, be very conservative
+    // to avoid health computer "unreachable" errors
+    const onlyHasLends = lendAmount.isGreaterThan(0) && depositAmount.isZero()
+    const hasComplexState = hasPerps && (onlyHasLends || debtAmount.isGreaterThan(0))
+
+    if (hasComplexState) {
+      // For complex states, only calculate liquidation price if there's clear debt to repay
+      if (debtAmount.isGreaterThan(0) && isAutoRepayChecked) {
+        try {
+          return computeLiquidationPrice(outputAsset.denom, 'debt')
+        } catch (error) {
+          console.warn('Complex state debt liquidation failed:', error)
+          return 0
+        }
+      }
+      // Skip asset calculation for complex states to avoid "unreachable" errors
+      return 0
+    }
+
+    // Standard case: simple spot positions without complex perp interactions
+    const willHaveSpotPosition = outputAssetAmount.isGreaterThan(0)
+    const hasDeposits = depositAmount.isGreaterThan(0)
+
+    if (hasDeposits || willHaveSpotPosition) {
+      try {
+        return computeLiquidationPrice(outputAsset.denom, 'asset')
+      } catch (error) {
+        console.warn('Asset liquidation price calculation failed:', error)
+        return 0
+      }
+    }
+
+    return 0
   }, [
-    account?.debts,
+    account,
+    updatedAccount,
     computeLiquidationPrice,
     isAutoRepayChecked,
     outputAsset.denom,
