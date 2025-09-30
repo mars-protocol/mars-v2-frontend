@@ -30,8 +30,8 @@ export default function Card(props: Props) {
     >
       {typeof props.title === 'string' ? (
         <Text
-          size='xs'
-            className='flex items-center w-full px-3 py-2 font-semibold bg-surface-dark'
+          size='base'
+          className='flex items-center w-full px-4 py-3 font-semibold bg-surface-dark border-b border-white/10'
         >
           {props.title}
         </Text>
