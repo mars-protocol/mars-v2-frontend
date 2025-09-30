@@ -78,9 +78,7 @@ export const usePerpsCallbacks = ({
   useEffect(() => {
     if (isAmountInUSD && !assetPrice.isZero() && storedUsdValue) {
       const newAssetAmount = calculateAssetAmount(storedUsdValue, assetPrice, perpsAsset.decimals)
-      onChangeAmount(
-        getDirectionalAmount(newAssetAmount, isStopOrder ? stopTradeDirection : tradeDirection),
-      )
+      onChangeAmount(newAssetAmount)
     }
   }, [
     assetPrice,
@@ -104,9 +102,7 @@ export const usePerpsCallbacks = ({
       if (isAmountInUSD && !assetPrice.isZero()) {
         setStoredUsdValue(newAmount)
         const assetAmount = calculateAssetAmount(newAmount, assetPrice, perpsAsset.decimals)
-        onChangeAmount(
-          getDirectionalAmount(assetAmount, isStopOrder ? stopTradeDirection : tradeDirection),
-        )
+        onChangeAmount(assetAmount)
       } else {
         onChangeAmount(newAmount.integerValue(BigNumber.ROUND_DOWN))
         setStoredUsdValue(null)
