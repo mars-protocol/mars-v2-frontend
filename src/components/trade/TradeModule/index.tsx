@@ -19,7 +19,6 @@ export default function TradeModule(props: Props) {
         className={classNames(
           'md:min-h-[850px] md:h-full',
           'relative isolate max-w-full overflow-hidden rounded-base pb-4 z-30 flex flex-wrap flex-col',
-          'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
         )}
       >
         <SwapForm

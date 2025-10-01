@@ -56,7 +56,7 @@ export default function TextInput(props: Props) {
           props.disabled && 'pointer-events-none',
           props.error
             ? ' bg-loss/5 border-loss/10 focus:border-loss/20 focus:bg-loss/10'
-            : 'bg-white/5 border-white/10 focus:border-white/20 focus:bg-white/10',
+            : 'bg-white/5 border-white/10 focus:border-white/20 focus:',
         )}
         placeholder={props.placeholder ?? '0'}
       />

@@ -449,10 +449,7 @@ export default function SettingsModal() {
             onClick={() => {
               handleSlippage(value)
             }}
-            className={classNames(
-              'mr-3 text-[16px]',
-              slippage === value && !isCustom && 'bg-white/10',
-            )}
+            className={classNames('mr-3 text-[16px]', slippage === value && !isCustom && '')}
             text={`${value * 100}%`}
           />
         ))}
@@ -460,7 +457,7 @@ export default function SettingsModal() {
           onClick={() => inputRef?.current?.focus()}
           color='secondary'
           variant='rounded'
-          className={classNames('w-16', !slippages.includes(slippage) && 'bg-white/10')}
+          className={classNames('w-16', !slippages.includes(slippage) && '')}
         >
           <NumberInput
             asset={{ decimals: 0, symbol: '%' }}

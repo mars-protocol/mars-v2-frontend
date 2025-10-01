@@ -20,8 +20,7 @@ export default function Banner(props: Props) {
     <div
       className={classNames(
         'flex flex-col sm:flex-row justify-between items-center w-full p-2 md:p-4 md:pr-8 gap-4 mb-1',
-        'relative isolate overflow-hidden rounded-base',
-        'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
+        'relative isolate overflow-hidden rounded-base bg-surface-dark',
       )}
     >
       {onClose && (

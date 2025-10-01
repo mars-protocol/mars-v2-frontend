@@ -29,7 +29,7 @@ export default function HlsFarmPage() {
 
   if (isOsmosis) return
   return (
-    <div className='flex flex-wrap w-full gap-6'>
+    <div className='flex flex-wrap w-full gap-2 py-8'>
       <Tab tabs={HLS_TABS} activeTabIdx={1} />
       <HlsFarmIntro />
       <AvailableHlsFarms />

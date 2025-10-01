@@ -134,7 +134,7 @@ function InputElement(props: InputElementProps) {
           maxLength={maxLength}
           placeholder={placeholder}
           className={classNames(
-            'w-full px-4 py-3 outline-none border rounded-sm bg-white/5 border-white/10 text-sm focus:border-white/20 focus:bg-white/10 hover:cursor-pointer placeholder:text-white/60',
+            'w-full px-4 py-3 outline-none border rounded-sm bg-white/5 border-white/10 text-sm focus:border-white/20 focus: hover:cursor-pointer placeholder:text-white/60',
             suffix && 'pr-6',
           )}
         />

@@ -1,14 +1,14 @@
 import FeeAction from 'components/managedVaults/vaultDetails/common/Overlays/FeeAction'
-import ProfileVaultCard from 'components/managedVaults/vaultDetails/profileVaultCard/ProfileVaultCard'
-import OwnerVaultPosition from 'components/managedVaults/vaultDetails/overview/OwnerVaultPosition'
-import useToggle from 'hooks/common/useToggle'
-import useVaultAssets from 'hooks/assets/useVaultAssets'
 import VaultAction from 'components/managedVaults/vaultDetails/common/Overlays/VaultAction'
+import OwnerVaultPosition from 'components/managedVaults/vaultDetails/overview/OwnerVaultPosition'
 import VaultPosition from 'components/managedVaults/vaultDetails/overview/VaultPosition'
 import VaultSummary from 'components/managedVaults/vaultDetails/overview/VaultSummary'
 import Withdrawals from 'components/managedVaults/vaultDetails/overview/Withdrawals'
-import { byDenom } from 'utils/array'
+import ProfileVaultCard from 'components/managedVaults/vaultDetails/profileVaultCard/ProfileVaultCard'
+import useVaultAssets from 'hooks/assets/useVaultAssets'
+import useToggle from 'hooks/common/useToggle'
 import { useState } from 'react'
+import { byDenom } from 'utils/array'
 
 interface Props {
   vaultDetails: ManagedVaultsData
@@ -38,7 +38,7 @@ export default function VaultOverview(props: Props) {
   }
 
   return (
-    <div className='flex flex-col justify-center gap-4 md:flex-row'>
+    <div className='flex flex-col justify-center gap-1 md:flex-row'>
       <div className='md:w-100'>
         <ProfileVaultCard
           details={vaultDetails}
@@ -64,8 +64,8 @@ export default function VaultOverview(props: Props) {
         type={modalType || 'deposit'}
       />
 
-      <div className='md:w-180'>
-        <div className='relative flex flex-wrap justify-center w-full gap-4'>
+      <div className='w-full'>
+        <div className='relative flex flex-wrap justify-center w-full gap-1'>
           {isOwner ? (
             <OwnerVaultPosition
               vaultDetails={vaultDetails}

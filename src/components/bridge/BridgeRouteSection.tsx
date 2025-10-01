@@ -1,9 +1,9 @@
 import { RouteResponse } from '@skip-go/client'
 import classNames from 'classnames'
-import Text from 'components/common/Text'
 import BridgeRouteVisualizer from 'components/account/AccountFund/BridgeContent/BridgeRouteVisualizer'
-import { getChainLogoByName } from 'utils/chainLogos'
+import Text from 'components/common/Text'
 import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
+import { getChainLogoByName } from 'utils/chainLogos'
 
 interface BridgeRouteSectionProps {
   currentRoute: RouteResponse | undefined
@@ -36,7 +36,7 @@ export default function BridgeRouteSection({
             className={classNames(
               'flex-1 px-4 py-2 rounded text-sm transition-colors duration-200',
               goFast
-                ? 'bg-white/10 text-white'
+                ? ' text-white'
                 : 'bg-transparent text-white/60 hover:text-white hover:bg-white/5',
             )}
           >
@@ -47,7 +47,7 @@ export default function BridgeRouteSection({
             className={classNames(
               'flex-1 px-4 py-2 rounded text-sm transition-colors duration-200',
               !goFast
-                ? 'bg-white/10 text-white'
+                ? ' text-white'
                 : 'bg-transparent text-white/60 hover:text-white hover:bg-white/5',
             )}
           >

@@ -94,7 +94,7 @@ export default function Header() {
   )
   return (
     <>
-      <header className='fixed left-0 top-0 z-50 w-full max-w-screen-full bg-surface'>
+      <header className='fixed left-0 top-0 z-50 w-full max-w-screen-full bg-surface-dark'>
         <div
           className={classNames(
             'flex items-center justify-between px-4 py-4 h-18',

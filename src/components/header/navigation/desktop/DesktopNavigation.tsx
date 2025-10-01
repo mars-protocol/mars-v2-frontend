@@ -57,9 +57,8 @@ export default function DesktopNavigation(props: Props) {
             <div className='absolute left-0 top-[calc(100%+4px)] z-50'>
               <ul
                 className={classNames(
-                  'py-4 list-none flex flex-wrap gap-2 bg-white/10 backdrop-blur-lg',
+                  'py-4 list-none flex flex-wrap gap-2  backdrop-blur-lg',
                   'relative isolate max-w-full overflow-hidden rounded-sm',
-                  'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-sm before:p-[1px] before:border-glas',
                 )}
               >
                 {menu.map((item, index) => (

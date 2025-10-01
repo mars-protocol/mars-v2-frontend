@@ -57,13 +57,7 @@ export const ResizableGridLayout: React.FC<ResizableGridLayoutProps> = ({
         <GridItem
           key={item.id}
           gridArea={item.gridArea}
-          minWidth={item.minWidth}
-          minHeight={item.minHeight}
-          maxWidth={item.maxWidth}
-          maxHeight={item.maxHeight}
-          resizable={item.resizable}
           backgroundColor={item.backgroundColor}
-          onResize={(width, height) => handleItemResize(item.id, width, height)}
         >
           {item.component}
         </GridItem>

@@ -102,7 +102,7 @@ export default function Borrow(props: Props) {
         <TitleAndSubCell title={formatPercent(apy)} sub={'Borrow Rate APY'} />
         {accountDebt.isGreaterThan(0) && (
           <>
-            <div className='h-100 w-[1px] bg-white/10' />
+            <div className='h-100 w-[1px] ' />
             <div className='flex flex-col gap-0.5'>
               <div className='flex gap-2'>
                 <FormattedNumber
@@ -126,7 +126,7 @@ export default function Borrow(props: Props) {
             </div>
           </>
         )}
-        <div className='h-100 w-[1px] bg-white/10' />
+        <div className='h-100 w-[1px] ' />
         <div className='flex flex-col gap-0.5'>
           <div className='flex gap-2'>
             <FormattedNumber

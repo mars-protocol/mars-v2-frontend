@@ -19,7 +19,7 @@ interface Props {
 }
 
 const accountCardHeaderClasses = classNames(
-  'flex w-full items-center justify-between bg-surface-dark px-4 py-2.5 text-white/70',
+  'flex w-full items-center justify-between bg-surface px-4 py-2.5 text-white/70',
   'border-b border-white/10',
   'group-hover/account:bg-surface',
 )
@@ -74,7 +74,7 @@ export default function AccountList(props: Props) {
                   'group/account hover:cursor-pointer hover:border-white/30 opacity-80 hover:opacity-100',
                 isActive && 'border-white/20',
               )}
-              contentClassName='bg-surface group-hover/account:bg-surface-dark'
+              contentClassName='bg-surface group-hover/account:bg-surface'
               onClick={() => {
                 if (isActive) return
                 if (isMobile) setShowMenu(false)

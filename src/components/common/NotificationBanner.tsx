@@ -42,7 +42,6 @@ export default function NotificationBanner(props: Props) {
     <div
       className={classNames(
         'relative isolate m-0 flex w-full flex-wrap rounded-sm px-4 py-3',
-        'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-sm before:p-[1px] before:border-glas',
         glasColor,
       )}
     >

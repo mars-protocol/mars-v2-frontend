@@ -124,7 +124,7 @@ export default function AccountBalancesTable(props: Props) {
       title={
         <Text
           size='lg'
-          className='flex items-center justify-between w-full p-4 font-semibold bg-white/10'
+          className='flex items-center justify-between w-full p-4 font-semibold bg-card-bg'
         >
           <span>Balances</span>
           <span className='text-white/60'>{accountTitle}</span>

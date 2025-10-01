@@ -1,6 +1,5 @@
 import classNames from 'classnames'
 
-import Divider from 'components/common/Divider'
 import { ChevronDown } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { getIsActive } from 'components/header/navigation/desktop/DesktopNavigation'
@@ -52,14 +51,15 @@ export const NavMenu = (props: Props) => {
           >
             <ul
               className={classNames(
-                'list-none flex flex-wrap  bg-white/10 backdrop-blur-lg',
+                'list-none flex flex-wrap bg-surface border border-white/10',
                 'relative isolate max-w-full overflow-hidden rounded-sm',
-                'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-sm before:p-[1px] before:border-glas',
               )}
             >
               {item.submenu.map((submenuitem, index) => (
-                <li className='w-full p-0 m-0 group/submenuitem' key={index}>
-                  {index !== 0 && <Divider />}
+                <li
+                  className='w-full p-0 m-0 group/submenuitem border-b border-white/10 last:border-b-0'
+                  key={index}
+                >
                   <NavLink
                     item={{ pages: [submenuitem.page], label: submenuitem.label }}
                     onClick={() => {
@@ -67,13 +67,13 @@ export const NavMenu = (props: Props) => {
                     }}
                     className='flex items-center w-full gap-4 p-4 whitespace-nowrap'
                   >
-                    {submenuitem.icon && <div className='w-6'>{submenuitem.icon}</div>}
-                    <Text className='flex flex-wrap'>
+                    {submenuitem.icon && <div className='w-4'>{submenuitem.icon}</div>}
+                    <Text className='flex flex-wrap' size='sm'>
                       {submenuitem.label}
                       {submenuitem.subtitle && (
                         <span
                           className={classNames(
-                            'w-full text-sm group-hover/submenuitem:text-white',
+                            'w-full text-xs group-hover/submenuitem:text-white',
                             getIsActive([submenuitem.page]) ? 'text-white' : 'text-white/40',
                           )}
                         >

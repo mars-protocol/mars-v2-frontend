@@ -103,7 +103,7 @@ export default function AccountMenuContent(props: Props) {
       >
         <div
           className={classNames(
-            'flex h-[54px] w-full items-center justify-between bg-surface-dark px-4 py-3',
+            'flex h-[54px] w-full items-center justify-between bg-surface px-4 py-3',
             'border border-transparent border-b-white/10',
           )}
         >

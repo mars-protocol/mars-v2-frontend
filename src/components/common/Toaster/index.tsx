@@ -20,7 +20,6 @@ import { BN } from 'utils/helpers'
 const toastBodyClasses = classNames(
   'flex flex-wrap w-full group/transaction',
   'p-4 shadow-overlay backdrop-blur-lg',
-  'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:p-[1px] before:border-glas',
 )
 
 function isPromise(object?: any): object is ToastPending {

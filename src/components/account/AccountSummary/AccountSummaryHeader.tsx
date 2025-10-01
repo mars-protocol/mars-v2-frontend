@@ -58,7 +58,7 @@ export default function AccountSummaryHeader(props: Props) {
   const accountTitle = useAccountTitle(account, true)
 
   return (
-    <div className='relative flex flex-wrap w-full p-4 pb-2 bg-surface-dark'>
+    <div className='relative flex flex-wrap w-full p-4 pb-2 bg-surface-dark border-b border-white/10'>
       {!isInModal && (
         <Button
           onClick={onClose}

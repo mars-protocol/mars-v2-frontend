@@ -16,7 +16,7 @@ export default function Track(props: Props) {
     percentage = ((props.sliderValue - minValue) / (props.maxValue - minValue)) * 100
   }
   return (
-    <div className='relative flex-1 w-1 h-1 rounded-sm bg-white/20'>
+    <div className='relative flex-1 w-1 h-1 rounded-sm bg-white/10'>
       <div
         className={classNames(
           'relative z-1',

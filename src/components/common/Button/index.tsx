@@ -2,7 +2,6 @@ import classNames from 'classnames'
 import React, { LegacyRef, useMemo } from 'react'
 
 import {
-  buttonBorderClasses,
   buttonColorClasses,
   buttonGradientClasses,
   buttonPaddingClasses,
@@ -74,7 +73,6 @@ const Button = React.forwardRef(function Button(
       !reduceMotion && 'transition-color',
       buttonClasses,
       buttonVariantClasses[variant],
-      variant === 'solid' && color === 'tertiary' && buttonBorderClasses,
       variant === 'solid' && color === 'primary' && buttonGradientClasses,
       isDisabled && 'pointer-events-none opacity-50',
       hasFocus && focusClasses[color],

@@ -1,21 +1,18 @@
 export const buttonColorClasses = {
   primary:
-    'font-bold gradient-primary-to-secondary hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
+    'font-bold gradient-primary-to-secondary hover:bg-surface active:bg-card-bg focus:bg-surface',
   secondary:
-    'border border-white/30 bg-transparent hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
-  tertiary: 'bg-white/10 hover:bg-white/20 active:bg-white/40 focus:bg-white/20',
+    'border border-white/30 bg-transparent hover:bg-surface active:bg-card-bg focus:bg-surface',
+  tertiary: 'bg-card-bg hover:bg-surface active:bg-card-border focus:bg-surface',
   quaternary: 'bg-transparent text-white/60 hover:text-white active:text-white',
 }
 
 export const focusClasses = {
-  primary: 'bg-white/20 hover:border hover:border-white/40',
-  secondary: 'bg-white/20 hover:border hover:border-white/40',
-  tertiary: 'bg-white/20 hover:border hover:border-white/40',
+  primary: 'bg-surface hover:border hover:border-white/40',
+  secondary: 'bg-surface hover:border hover:border-white/40',
+  tertiary: 'bg-surface hover:border hover:border-white/40',
   quaternary: 'text-white',
 }
-
-export const buttonBorderClasses =
-  'before:content-[" "] before:absolute before:inset-0 before:p-[1px] before:border-glas before:-z-1'
 
 export const buttonGradientClasses = [
   'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:opacity-0',

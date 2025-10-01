@@ -149,8 +149,8 @@ function AccountDetails(props: Props) {
       <div
         data-testid='account-details'
         className={classNames(
-          accountDetailsExpanded ? 'right-1' : '-right-77',
-          'w-94 hidden items-start gap-4 absolute top-0.5 z-2',
+          accountDetailsExpanded ? 'right-1' : '-right-88',
+          'w-105 hidden items-start gap-4 absolute top-0.5 z-2',
           'md:flex',
           !reduceMotion && 'transition-all duration-500',
         )}
@@ -162,7 +162,7 @@ function AccountDetails(props: Props) {
             !reduceMotion && 'transition-all duration-500',
             accountDetailsExpanded
               ? 'is-expanded w-full h-auto'
-              : 'w-16 hover:bg-surface-dark hover:cursor-pointer bg-surface',
+              : 'w-16 hover:bg-surface hover:cursor-pointer bg-surface',
           )}
           onClick={() => {
             if (accountDetailsExpanded) return
@@ -232,7 +232,7 @@ function AccountDetails(props: Props) {
             <div
               className={classNames(
                 'absolute inset-0 -z-1',
-                'before:content-[""] before:transition-opacity before:-z-1 before:absolute before:left-0 before:h-full before:w-full before:bg-white/10 before:border-t before:border-white/10',
+                'before:content-[""] before:transition-opacity before:-z-1 before:absolute before:left-0 before:h-full before:w-full before: before:border-t before:border-white/10',
                 accountDetailsExpanded
                   ? 'before:opacity-100 before:delay-500 before:top-full'
                   : 'before:opacity-0 before:duration-0',

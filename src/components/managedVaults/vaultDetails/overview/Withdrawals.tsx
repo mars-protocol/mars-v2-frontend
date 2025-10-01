@@ -90,7 +90,7 @@ export default function Withdrawals(props: Props) {
       <div className='w-full max-h-75'>
         <Table
           title={
-            <div className='flex justify-between items-center w-full py-3 px-4 bg-white/10'>
+            <div className='flex justify-between items-center w-full py-3 px-4 '>
               <Text size='lg'>Withdrawals</Text>
               <WithdrawButton
                 totalUnlockedAmount={totalUnlockedAmount.toString()}

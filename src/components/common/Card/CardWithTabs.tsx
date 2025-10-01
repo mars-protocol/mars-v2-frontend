@@ -40,7 +40,7 @@ type TabsProps = {
 
 function Tabs(props: TabsProps) {
   return (
-    <div className='flex items-center w-full gap-6 px-4 font-semibold bg-surface-dark  border-b border-white/10'>
+    <div className='flex items-center w-full gap-6 px-4 font-semibold bg-surface-dark h-13'>
       {props.tabs.map((tab, index) => {
         return (
           <button

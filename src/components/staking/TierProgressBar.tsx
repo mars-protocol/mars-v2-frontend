@@ -90,7 +90,7 @@ export default function TierProgressBar({
                   </Text>
                 </div>
                 <div className='relative'>
-                  <div className='w-full bg-white/10 rounded-full h-3'>
+                  <div className='w-full rounded-full h-3'>
                     <div
                       className='h-3 rounded-full transition-all duration-500 ease-out'
                       style={{

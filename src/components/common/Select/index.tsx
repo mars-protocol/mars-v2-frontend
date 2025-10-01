@@ -6,10 +6,10 @@ import { ChevronDown } from 'components/common/Icons'
 import Overlay from 'components/common/Overlay'
 import Option from 'components/common/Select/Option'
 import Text from 'components/common/Text'
-import useToggle from 'hooks/common/useToggle'
-import { getCoinValue } from 'utils/formatters'
 import useAssets from 'hooks/assets/useAssets'
+import useToggle from 'hooks/common/useToggle'
 import { BNCoin } from 'types/classes/BNCoin'
+import { getCoinValue } from 'utils/formatters'
 
 interface Props {
   options: SelectOption[]
@@ -121,7 +121,7 @@ export default function Select(props: Props) {
         data-testid='select-component'
         className={classNames(
           props.isParent && 'relative',
-          'flex min-w-fit items-center gap-2 bg-white/10',
+          'flex min-w-fit items-center gap-2 ',
           props.className,
         )}
         role='select'
@@ -135,12 +135,7 @@ export default function Select(props: Props) {
             isDisplay
           />
         ) : (
-          <div
-            className={classNames(
-              'flex items-center gap-2 bg-white/10 p-3',
-              'hover:cursor-pointer',
-            )}
-          >
+          <div className={classNames('flex items-center gap-2 p-3', 'hover:cursor-pointer')}>
             <Text className='w-full opacity-50 hover:cursor-pointer'>Select</Text>
             <span
               className={classNames(

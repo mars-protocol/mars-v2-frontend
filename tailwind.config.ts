@@ -164,6 +164,7 @@ module.exports = {
         'card-bg': 'hsl(var(--color-card-bg) / <alpha-value>)',
         'card-border': 'hsl(var(--color-card-border) / <alpha-value>)',
         surface: 'hsl(var(--color-surface) / <alpha-value>)',
+        'surface-light': 'hsl(var(--color-surface-light) / <alpha-value>)',
         'surface-dark': 'hsl(var(--color-surface-dark) / <alpha-value>)',
       },
       containers: {
@@ -179,15 +180,15 @@ module.exports = {
         sans: ['Inter', 'sans-serif'],
       },
       fontSize: {
-        '2xs': ['10px', '14px'],
-        xs: ['11px', '15px'],
-        sm: ['13px', '17px'],
-        base: ['14px', '18px'],
-        lg: ['15px', '20px'],
-        xl: ['16px', '22px'],
-        '2xl': ['18px', '24px'],
-        '3xl': ['20px', '28px'],
-        '4xl': ['24px', '32px'],
+        '2xs': ['11px', '15px'],
+        xs: ['12px', '16px'],
+        sm: ['14px', '18px'],
+        base: ['15px', '19px'],
+        lg: ['16px', '21px'],
+        xl: ['17px', '23px'],
+        '2xl': ['19px', '25px'],
+        '3xl': ['22px', '30px'],
+        '4xl': ['26px', '34px'],
         '5xl': ['32px', '44px'],
         '6xl': ['48px', '64px'],
       },
@@ -203,6 +204,7 @@ module.exports = {
       height: {
         4.5: '18px',
         9: '36px',
+        13: '52px',
         15: '60px',
         18: '72px',
         45: '180px',
@@ -294,7 +296,7 @@ module.exports = {
         'screen/10': '10dvh',
       },
       maxWidth: {
-        content: '1024px',
+        content: '1288px',
         v1: '1248px',
         modal: '895px',
         'modal-lg': '650px',
@@ -359,9 +361,14 @@ module.exports = {
         70: '280px',
         77: '308px',
         80: '320px',
+        88: '352px',
+        89: '356px',
         90: '360px',
+        94: '376px',
         96: '384px',
+        97: '388px',
         98: '392px',
+        107: '428px',
         118: '472px',
         full: '100%',
       },
@@ -390,7 +397,9 @@ module.exports = {
         90: '360px',
         92.5: '370px',
         94: '376px',
+        97: '388px',
         100: '400px',
+        105: '420px',
         110: '440px',
         120: '480px',
         140: '560px',
@@ -432,9 +441,6 @@ module.exports = {
         },
         '.blur-orb-tertiary': {
           filter: 'blur(clamp(60px, 10vw, 150px))',
-        },
-        '.border-glas': {
-          background: 'transparent',
         },
         '.glow-line': {
           fill: 'transparent',
@@ -516,10 +522,6 @@ module.exports = {
         '.gradient-slider-red': {
           background:
             'linear-gradient(270deg, hsl(var(--color-slider-red-primary) /0.886) 0%, hsl(var(--color-slider-red-secondary) /0.051) 100%)',
-        },
-        '.gradient-tooltip': {
-          background:
-            'linear-gradient(77.47deg, hsl(var(--color-tooltip-primary) /0.9) 11.58%, hsl(var(--color-tooltip-secondary) /0.9) 93.89%)',
         },
         '.gradient-active-tab': {
           background:

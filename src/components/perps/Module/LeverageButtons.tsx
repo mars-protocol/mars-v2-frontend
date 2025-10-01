@@ -24,7 +24,7 @@ export function LeverageButtons(props: Props) {
         <button
           key={`${index}-${leverage}`}
           onClick={() => props.onChange(leverage)}
-          className='w-12 !border:none bg-white/10 rounded-sm py-1 text-xs hover:bg-white/20'
+          className='w-12 !border:none rounded-sm py-1 text-xs hover:bg-white/10'
         >
           {leverage.toFixed(1)}x
         </button>

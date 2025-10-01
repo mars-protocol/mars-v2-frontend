@@ -3,22 +3,22 @@ export function getTradingViewSettings(theme: string): TradingViewSettings {
     case 'dark':
       return {
         theme: 'dark',
-        backgroundColor: '#1a1a1a',
+        backgroundColor: '#1B1B1B',
         stylesheet: '/tradingview.css',
         overrides: {
-          'paneProperties.background': '#1a1a1a',
+          'paneProperties.background': '#1B1B1B',
           'linetooltrendline.linecolor': 'rgba(255, 255, 255, 0.8)',
           'paneProperties.backgroundType': 'solid',
           'scalesProperties.fontSize': 12,
         },
         loadingScreen: {
-          backgroundColor: '#1a1a1a',
+          backgroundColor: '#1B1B1B',
           foregroundColor: '#FFFFFF',
         },
         chartStyle: {
           upColor: '#3DAE9A',
           downColor: '#AE3D3D',
-          borderColor: '#1a1a1a',
+          borderColor: '#1B1B1B',
           borderUpColor: '#3DAE9A',
           borderDownColor: '#AE3D3D',
           wickUpColor: '#3DAE9A',
@@ -55,22 +55,22 @@ export function getTradingViewSettings(theme: string): TradingViewSettings {
     default:
       return {
         theme: 'dark',
-        backgroundColor: '#1a1a1a',
+        backgroundColor: '#1B1B1B',
         stylesheet: '/tradingview_default.css',
         overrides: {
-          'paneProperties.background': '#1a1a1a',
+          'paneProperties.background': '#1B1B1B',
           'linetooltrendline.linecolor': 'rgba(255, 255, 255, 0.8)',
           'paneProperties.backgroundType': 'solid',
           'scalesProperties.fontSize': 12,
         },
         loadingScreen: {
-          backgroundColor: '#1a1a1a',
+          backgroundColor: '#1B1B1B',
           foregroundColor: 'rgba(255, 255, 255, 0.6)',
         },
         chartStyle: {
           upColor: '#3DAE9A',
           downColor: '#AE3D3D',
-          borderColor: '#1a1a1a',
+          borderColor: '#1B1B1B',
           borderUpColor: '#3DAE9A',
           borderDownColor: '#AE3D3D',
           wickUpColor: '#3DAE9A',

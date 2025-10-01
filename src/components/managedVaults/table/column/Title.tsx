@@ -1,8 +1,8 @@
-import Image from 'next/image'
 import Loading from 'components/common/Loading'
-import useManagedVaultOwnerInfo from 'hooks/managedVaults/useManagedVaultOwnerInfo'
 import Text from 'components/common/Text'
 import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
+import useManagedVaultOwnerInfo from 'hooks/managedVaults/useManagedVaultOwnerInfo'
+import Image from 'next/image'
 import { truncate } from 'utils/formatters'
 
 export const TITLE_META = {
@@ -47,7 +47,7 @@ export default function Title(props: Props) {
       <div className='flex flex-col gap-0.5'>
         <Text size='xs'>{value.title}</Text>
         <div>
-          <Text size='xs' className='inline-block text-white/60 bg-white/10 rounded px-1.5 py-0.5'>
+          <Text size='xs' className='inline-block text-white/60 rounded px-1.5 py-0.5'>
             {value.isPending ? truncate(value.ownerAddress, [2, 6]) : vaultOwnerInfo.name}
           </Text>
         </div>

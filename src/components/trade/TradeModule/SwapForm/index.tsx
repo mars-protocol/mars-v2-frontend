@@ -442,7 +442,7 @@ export default function SwapForm(props: Props) {
           <DepositCapMessage
             action='buy'
             coins={depositCapReachedCoins}
-            className='p-4 bg-white/5'
+            className='p-4 bg-surface'
           />
 
           {isMarginChecked &&

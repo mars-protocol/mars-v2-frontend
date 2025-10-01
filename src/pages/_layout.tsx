@@ -123,7 +123,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   isFullWidth &&
                   accountId &&
                   hasCreditAccounts &&
-                  (accountDetailsExpanded && !isMobile ? 'md:pr-96' : 'md:pr-18'),
+                  (accountDetailsExpanded && !isMobile ? 'md:pr-107' : 'md:pr-18'),
                 !reduceMotion && isFullWidth && 'transition-all duration-500',
                 'justify-center',
                 focusComponent && 'items-center',

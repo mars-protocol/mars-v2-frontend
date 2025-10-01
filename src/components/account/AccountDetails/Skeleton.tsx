@@ -17,7 +17,7 @@ export default function Skeleton(props: Props) {
         props.className,
       )}
     >
-      <div className='group/accountdetail relative min-h-75 bg-surface z-3 overflow-hidden w-16 hover:bg-surface-dark hover:cursor-pointer'>
+      <div className='group/accountdetail relative min-h-75 bg-surface z-3 overflow-hidden w-16 hover:bg-surface hover:cursor-pointer'>
         <div className='flex flex-wrap justify-center w-full py-4'>
           <HealthGauge health={0} healthFactor={0} />
           <Text size='2xs' className='mb-0.5 mt-1 w-full text-center text-white/50'>

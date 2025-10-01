@@ -50,7 +50,7 @@ export function PercentageButtons({
           <button
             key={`percentage-${percentage}`}
             onClick={() => handlePercentageClick(percentage)}
-            className='flex-1 px-1 py-1.5 text-xs bg-white/10 rounded hover:bg-white/20 transition-colors'
+            className='flex-1 px-1 py-1.5 text-xs rounded hover:bg-white/10 transition-colors'
           >
             {percentage}%
           </button>

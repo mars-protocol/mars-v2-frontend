@@ -1,20 +1,20 @@
-import NavigateBackButton from 'components/managedVaults/NavigateBackButton'
-import Tab from 'components/earn/Tab'
-import Text from 'components/common/Text'
-import useStore from 'store'
-import VaultPerformance from 'components/managedVaults/vaultDetails/performance/VaultPerformance'
-import VaultOverview from 'components/managedVaults/vaultDetails/overview/VaultOverview'
-import { CircularProgress } from 'components/common/CircularProgress'
-import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
-import { useParams, useSearchParams } from 'react-router-dom'
-import { VAULT_DETAILS_TABS } from 'constants/pages'
 import AlertDialog from 'components/common/AlertDialog'
-import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
+import { CircularProgress } from 'components/common/CircularProgress'
 import { ArrowRight } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import Tab from 'components/earn/Tab'
+import NavigateBackButton from 'components/managedVaults/NavigateBackButton'
+import VaultOverview from 'components/managedVaults/vaultDetails/overview/VaultOverview'
+import VaultPerformance from 'components/managedVaults/vaultDetails/performance/VaultPerformance'
+import { AlertDialogItems } from 'components/Modals/AlertDialog/AlertDialogItems'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
+import { VAULT_DETAILS_TABS } from 'constants/pages'
 import { INFO_ITEMS } from 'constants/warningDialog'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
+import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetails'
 import { useCallback, useEffect, useState } from 'react'
+import { useParams, useSearchParams } from 'react-router-dom'
+import useStore from 'store'
 
 function VaultLoadingState() {
   return (
@@ -79,7 +79,7 @@ export default function VaultDetails(props: Props) {
   if (!vaultAddress) return <VaultLoadingState />
 
   return (
-    <section className='container mx-auto'>
+    <section className='container mx-auto flex flex-wrap w-full gap-2 py-8'>
       <div className='flex mb-6 w-full'>
         {!focusComponent && <NavigateBackButton />}
         <div className='ml-auto'>

@@ -33,9 +33,7 @@ export default function Checkbox(props: Props) {
           className={classNames(
             'h-5 w-5 rounded-sm p-0.5',
             props.checked && 'relative isolate overflow-hidden rounded-sm',
-            props.checked &&
-              'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-sm before:p-[1px] before:border-glas',
-            props.checked ? 'bg-white/20' : 'border border-white/60',
+            props.checked ? 'bg-white/10' : 'border border-white/60',
           )}
         >
           {props.checked && <Check />}

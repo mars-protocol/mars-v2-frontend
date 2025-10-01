@@ -71,7 +71,7 @@ export default function SwitchWithText(props: Props) {
     >
       <span
         className={classNames(
-          'absolute left-0 top-0 z-1 h-full w-1/2 rounded-md bg-white/20 transition-transform',
+          'absolute left-0 top-0 z-1 h-full w-1/2 rounded-md bg-white/10 transition-transform',
           props.selected === props.options[1].value && 'translate-x-full',
         )}
       />

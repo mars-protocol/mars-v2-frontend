@@ -49,7 +49,7 @@ function Direction(props: DirectionProps) {
     <button
       className={classNames(
         'px-4 py-3 rounded-sm flex-1',
-        props.isActive && `border bg-white/10 text-${classString}`,
+        props.isActive && `border  text-${classString}`,
 
         !props.isActive && 'text-white/20 hover:text-white',
         `border-${classString}`,
