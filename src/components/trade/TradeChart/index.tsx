@@ -135,6 +135,9 @@ export default function TradeChart(props: Props) {
 
   const intitalChartLoad = useCallback(() => {
     try {
+      // Check if chartWidget is valid before accessing its methods
+      if (!chartWidget) return
+
       const chart = chartWidget.activeChart()
       if (!chart) return
       const chartStore = JSON.parse(localStorage.getItem(LocalStorageKeys.TV_CHART_STORE) ?? '{}')
@@ -154,24 +157,26 @@ export default function TradeChart(props: Props) {
         chart.createStudy(studyName)
       })
       if (!isPerps || !onCreateLimitOrder || !onCreateStopOrder) return
-      chartWidget.onContextMenu((unixTime, price) => {
-        return [
-          {
-            position: 'top',
-            text: 'Set Limit Order Price',
-            click: () => {
-              onCreateLimitOrder?.(BN(price))
+      if (chartWidget && chartWidget.onContextMenu) {
+        chartWidget.onContextMenu((unixTime, price) => {
+          return [
+            {
+              position: 'top',
+              text: 'Set Limit Order Price',
+              click: () => {
+                onCreateLimitOrder?.(BN(price))
+              },
             },
-          },
-          {
-            position: 'top',
-            text: 'Set Stop Order Price',
-            click: () => {
-              onCreateStopOrder?.(BN(price))
+            {
+              position: 'top',
+              text: 'Set Stop Order Price',
+              click: () => {
+                onCreateStopOrder?.(BN(price))
+              },
             },
-          },
-        ]
-      })
+          ]
+        })
+      }
     } catch (e) {
       console.info('Error on loading chart', e)
       return
@@ -180,7 +185,9 @@ export default function TradeChart(props: Props) {
 
   const updateShapesAndStudies = useCallback(() => {
     try {
+      // Check if chartWidget is valid before accessing its methods
       if (!chartWidget) return
+
       const chart = chartWidget.activeChart()
       if (!chart) return
       const settings = getTradingViewSettings(theme)
@@ -350,7 +357,14 @@ export default function TradeChart(props: Props) {
     }
 
     return () => {
-      chartWidget.remove()
+      // Safely remove chartWidget if it exists
+      if (chartWidget && chartWidget.remove) {
+        try {
+          chartWidget.remove()
+        } catch (error) {
+          console.warn('Error removing chartWidget:', error)
+        }
+      }
     }
   }, [
     chartInterval,
@@ -366,15 +380,35 @@ export default function TradeChart(props: Props) {
   // ChartWidget listeners
   useEffect(() => {
     if (!chartWidget) return
-    chartWidget.onChartReady(() => {
-      updateShapesAndStudies()
-      const chart = chartWidget?.activeChart()
-      if (chart) {
-        chart.onIntervalChanged().subscribe(null, () => {
-          updateShapesAndStudies()
-        })
+
+    const handleChartReady = () => {
+      try {
+        // Check if chartWidget is still valid before accessing its methods
+        if (!chartWidget) return
+
+        updateShapesAndStudies()
+        const chart = chartWidget.activeChart()
+        if (chart && chart.onIntervalChanged) {
+          chart.onIntervalChanged().subscribe(null, () => {
+            // Double-check chartWidget is still valid in the callback
+            if (chartWidget) {
+              try {
+                const currentChart = chartWidget.activeChart()
+                if (currentChart) {
+                  updateShapesAndStudies()
+                }
+              } catch (error) {
+                console.warn('Error accessing activeChart in interval callback:', error)
+              }
+            }
+          })
+        }
+      } catch (error) {
+        console.warn('Error in chartWidget.onChartReady:', error)
       }
-    })
+    }
+
+    chartWidget.onChartReady(handleChartReady)
   }, [updateShapesAndStudies])
 
   const { isTab = false } = props
