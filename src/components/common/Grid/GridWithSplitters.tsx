@@ -159,69 +159,79 @@ export default function GridWithSplitters({ className, chartArea, rightArea, bot
 
   return (
     <div ref={containerRef} className={classNames('relative w-full h-full', className)}>
-      {/* Chart Area */}
-      <div className='absolute' style={layoutStyles.chart}>
-        {chartArea}
+      {/* Mobile Layout - Stacked */}
+      <div className='flex flex-col w-full h-full gap-1 md:hidden'>
+        <div className='bg-surface w-full flex-1'>{chartArea}</div>
+        <div className='bg-surface w-full flex-1'>{rightArea}</div>
+        <div className='bg-surface w-full flex-1'>{bottomArea}</div>
       </div>
 
-      {/* Right Panel */}
-      <div className='absolute' style={layoutStyles.right}>
-        {rightArea}
-      </div>
+      {/* Desktop Layout - Grid with Splitters */}
+      <div className='hidden md:block relative w-full h-full'>
+        {/* Chart Area */}
+        <div className='absolute' style={layoutStyles.chart}>
+          {chartArea}
+        </div>
 
-      {/* Bottom Panel */}
-      <div className='absolute bg-surface' style={layoutStyles.bottom}>
-        {bottomArea}
-      </div>
+        {/* Right Panel */}
+        <div className='absolute' style={layoutStyles.right}>
+          {rightArea}
+        </div>
 
-      {/* Vertical Splitter - between chart and right panel */}
-      <div
-        className='absolute top-0 bottom-0 w-1 bg-body transition-colors z-50 group'
-        style={layoutStyles.verticalSplitter}
-      >
-        {/* Vertical Drag Knob */}
+        {/* Bottom Panel */}
+        <div className='absolute bg-surface' style={layoutStyles.bottom}>
+          {bottomArea}
+        </div>
+
+        {/* Vertical Splitter - between chart and right panel */}
         <div
-          className={classNames(
-            'absolute top-1/2 left-1/2 w-6 h-6 rounded-full cursor-col-resize transition-all duration-200 z-[60]',
-            'transform -translate-x-1/2 -translate-y-1/2',
-            'opacity-0 group-hover:opacity-50 hover:!opacity-75',
-            'bg-white shadow-lg border border-white/20',
-            'flex items-center justify-center',
-            isDragging === 'vertical' && '!opacity-100 scale-110',
-          )}
-          onMouseDown={handleVerticalKnobDrag}
+          className='absolute top-0 bottom-0 w-1 bg-body transition-colors z-50 group'
+          style={layoutStyles.verticalSplitter}
         >
-          {/* Vertical grip lines */}
-          <div className='flex space-x-0.5'>
-            <div className='w-px h-3 bg-gray-400'></div>
-            <div className='w-px h-3 bg-gray-400'></div>
-            <div className='w-px h-3 bg-gray-400'></div>
+          {/* Vertical Drag Knob */}
+          <div
+            className={classNames(
+              'absolute top-1/2 left-1/2 w-6 h-6 rounded-full cursor-col-resize transition-all duration-200 z-[60]',
+              'transform -translate-x-1/2 -translate-y-1/2',
+              'opacity-0 group-hover:opacity-50 hover:!opacity-75',
+              'bg-white shadow-lg border border-white/20',
+              'flex items-center justify-center',
+              isDragging === 'vertical' && '!opacity-100 scale-110',
+            )}
+            onMouseDown={handleVerticalKnobDrag}
+          >
+            {/* Vertical grip lines */}
+            <div className='flex space-x-0.5'>
+              <div className='w-px h-3 bg-gray-400'></div>
+              <div className='w-px h-3 bg-gray-400'></div>
+              <div className='w-px h-3 bg-gray-400'></div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Horizontal Splitter - between chart and bottom panel */}
-      <div
-        className='absolute left-0 h-1 bg-body transition-colors z-50 group'
-        style={layoutStyles.horizontalSplitter}
-      >
-        {/* Horizontal Drag Knob */}
+        {/* Horizontal Splitter - between chart and bottom panel */}
         <div
-          className={classNames(
-            'absolute top-1/2 left-1/2 w-6 h-6 rounded-full cursor-row-resize transition-all duration-200 z-[60]',
-            'transform -translate-x-1/2 -translate-y-1/2',
-            'opacity-0 group-hover:opacity-50 hover:!opacity-75',
-            'bg-white shadow-lg border border-white/20',
-            'flex items-center justify-center',
-            isDragging === 'horizontal' && '!opacity-100 scale-110',
-          )}
-          onMouseDown={handleHorizontalKnobDrag}
+          className='absolute left-0 h-1 bg-body transition-colors z-50 group'
+          style={layoutStyles.horizontalSplitter}
         >
-          {/* Horizontal grip lines */}
-          <div className='flex flex-col space-y-0.5'>
-            <div className='w-3 h-px bg-gray-400'></div>
-            <div className='w-3 h-px bg-gray-400'></div>
-            <div className='w-3 h-px bg-gray-400'></div>
+          {/* Horizontal Drag Knob */}
+          <div
+            className={classNames(
+              'absolute top-1/2 left-1/2 w-6 h-6 rounded-full cursor-row-resize transition-all duration-200 z-[60]',
+              'transform -translate-x-1/2 -translate-y-1/2',
+              'opacity-0 group-hover:opacity-50 hover:!opacity-75',
+              'bg-white shadow-lg border border-white/20',
+              'flex items-center justify-center',
+              isDragging === 'horizontal' && '!opacity-100 scale-110',
+            )}
+            onMouseDown={handleHorizontalKnobDrag}
+          >
+            {/* Horizontal grip lines */}
+            <div className='flex flex-col space-y-0.5'>
+              <div className='w-3 h-px bg-gray-400'></div>
+              <div className='w-3 h-px bg-gray-400'></div>
+              <div className='w-3 h-px bg-gray-400'></div>
+            </div>
           </div>
         </div>
       </div>

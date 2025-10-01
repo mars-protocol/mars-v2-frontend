@@ -348,7 +348,7 @@ export default function SettingsModal() {
           }))}
           defaultValue={theme}
           onChange={handleTheme}
-          className='relative border w-60 rounded-base border-white/10'
+          className='relative border w-60 border-white/10'
           containerClassName='justify-end'
         />
       </SettingsOptions>
@@ -422,7 +422,7 @@ export default function SettingsModal() {
           options={displayCurrenciesOptions}
           defaultValue={displayCurrency}
           onChange={handleDisplayCurrency}
-          className='relative border w-60 rounded-base border-white/10'
+          className='relative border w-60 border-white/10'
           containerClassName='justify-end'
         />
       </SettingsOptions>

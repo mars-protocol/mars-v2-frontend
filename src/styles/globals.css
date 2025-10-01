@@ -123,43 +123,43 @@
 }
 
 :root[data-theme='light'] {
-  --color-body: 0deg 29% 4%;
-  --color-body-hls: 0deg 29% 4%;
-  --color-white: 0deg 0% 90%;
-  --color-chart: 0deg 0% 11%;
-  --color-black: 0deg 29% 4%;
+  --color-body: 0deg 0% 96%;
+  --color-body-hls: 0deg 0% 96%;
+  --color-white: 0deg 0% 10%;
+  --color-chart: 0deg 0% 98%;
+  --color-black: 0deg 0% 100%;
   --color-purple: 47deg 97% 67%;
   --color-purple-dark: 36deg 99% 65%;
-  --color-martian-red: 40deg 100% 73%;
-  --color-pink: 2deg 99% 68%;
-  --color-fuchsia: 2deg 99% 68%;
-  --color-slider-pink-primary: 2deg 99% 68%;
-  --color-slider-pink-secondary: 2deg 99% 68%;
-  --color-green: 124deg 57% 79%;
-  --color-warning: 40deg 100% 79%;
-  --color-orb-primary: 0deg 0% 70%;
-  --color-orb-primary-hls: 0deg 0% 70%;
-  --color-orb-secondary: 0deg 0% 70%;
-  --color-orb-secondary-hls: 0deg 0% 70%;
-  --color-orb-tertiary: 0deg 0% 70%;
-  --color-orb-tertiary-hls: 0deg 0% 70%;
-  --color-error: 0deg 97% 75%;
-  --color-slider-1: 57deg 97% 85%;
-  --color-slider-2: 57deg 97%, 75%;
-  --color-slider-3: 47deg 97% 79%;
-  --color-slider-4: 47deg 97% 67%;
-  --color-slider-5: 36deg 97% 77%;
-  --color-slider-6: 36deg 97% 65%;
-  --color-slider-7: 36deg 99% 65%;
-  --color-slider-8: 36deg 99% 65%;
-  --color-active-tab-primary: 47deg 97% 79%;
-  --color-active-tab-secondary: 36deg 99% 65%;
-  --color-active-tab-tertiary: 57deg 97% 85%;
-  --color-card-bg: 30deg 4% 9%;
-  --color-card-border: 0deg 0% 13%;
-  --color-surface: 0deg 0% 11%;
-  --color-surface-light: 0deg 0% 15%;
-  --color-surface-dark: 0deg 0% 7%;
+  --color-martian-red: 2deg 100% 60%;
+  --color-pink: 343deg 67% 55%;
+  --color-fuchsia: 312deg 46% 45%;
+  --color-slider-pink-primary: 343deg 100% 60%;
+  --color-slider-pink-secondary: 280deg 9% 75%;
+  --color-green: 153deg 96% 30%;
+  --color-warning: 34deg 94% 50%;
+  --color-orb-primary: 4deg 65% 42%;
+  --color-orb-primary-hls: 2deg 100% 60%;
+  --color-orb-secondary: 277deg 90% 27%;
+  --color-orb-secondary-hls: 354deg 46% 43%;
+  --color-orb-tertiary: 313deg 100% 50%;
+  --color-orb-tertiary-hls: 20deg 95% 60%;
+  --color-error: 4deg 86% 58%;
+  --color-slider-1: 334deg 6% 53%;
+  --color-slider-2: 341deg 25% 62%;
+  --color-slider-3: 342deg 31% 64%;
+  --color-slider-4: 340deg 58% 71%;
+  --color-slider-5: 335deg 54% 67%;
+  --color-slider-6: 315deg 44% 51%;
+  --color-slider-7: 313deg 47% 48%;
+  --color-slider-8: 301deg 79% 33%;
+  --color-active-tab-primary: 299deg 92% 39%;
+  --color-active-tab-secondary: 343deg 100% 75%;
+  --color-active-tab-tertiary: 0deg 0% 93%;
+  --color-card-bg: 0deg 0% 98%;
+  --color-card-border: 0deg 0% 87%;
+  --color-surface: 0deg 0% 92%;
+  --color-surface-light: 0deg 0% 94%;
+  --color-surface-dark: 0deg 0% 88%;
 }
 
 :root[data-theme='dark'] {

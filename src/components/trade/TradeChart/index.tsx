@@ -180,7 +180,9 @@ export default function TradeChart(props: Props) {
 
   const updateShapesAndStudies = useCallback(() => {
     try {
+      if (!chartWidget) return
       const chart = chartWidget.activeChart()
+      if (!chart) return
       const settings = getTradingViewSettings(theme)
       const oraclePriceDecimalDiff = props.buyAsset.decimals - PRICE_ORACLE_DECIMALS
       const { downColor, upColor } = settings.chartStyle
@@ -366,12 +368,12 @@ export default function TradeChart(props: Props) {
     if (!chartWidget) return
     chartWidget.onChartReady(() => {
       updateShapesAndStudies()
-      chartWidget
-        .activeChart()
-        .onIntervalChanged()
-        .subscribe(null, () => {
+      const chart = chartWidget?.activeChart()
+      if (chart) {
+        chart.onIntervalChanged().subscribe(null, () => {
           updateShapesAndStudies()
         })
+      }
     })
   }, [updateShapesAndStudies])
 
@@ -435,7 +437,7 @@ export default function TradeChart(props: Props) {
           )}
         </div>
       }
-      contentClassName='flex flex-col h-full w-full bg-surface-dark'
+      contentClassName='flex flex-col md:h-full w-full bg-surface-dark h-[500px]'
       className={classNames('w-full h-full')}
       isTab={isTab}
     >

@@ -103,7 +103,7 @@ export default function FeeTokenSelect() {
       options={feeTokenOptions}
       defaultValue={currentFeeToken?.coinMinimalDenom || feeToken.coinMinimalDenom}
       onChange={handleSelectToken}
-      className='relative border w-60 rounded-base border-white/10'
+      className='relative border w-60 border-white/10'
       containerClassName='justify-end'
     />
   )

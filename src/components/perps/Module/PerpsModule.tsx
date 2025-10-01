@@ -449,7 +449,7 @@ export function PerpsModule() {
       className={classNames(
         'mb-4 md:mb-0',
         'md:min-h-[850px] md:h-full',
-        'relative isolate overflow-hidden rounded-base z-30',
+        'relative isolate overflow-hidden z-30',
       )}
     >
       {perpsAsset.isDeprecated ? renderDeprecatedMarketContent() : renderActiveMarketContent()}
