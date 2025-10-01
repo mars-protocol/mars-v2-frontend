@@ -160,12 +160,12 @@ export default function GridWithSplitters({ className, chartArea, rightArea, bot
   return (
     <div ref={containerRef} className={classNames('relative w-full h-full', className)}>
       {/* Chart Area */}
-      <div className='absolute bg-surface' style={layoutStyles.chart}>
+      <div className='absolute' style={layoutStyles.chart}>
         {chartArea}
       </div>
 
       {/* Right Panel */}
-      <div className='absolute bg-surface' style={layoutStyles.right}>
+      <div className='absolute' style={layoutStyles.right}>
         {rightArea}
       </div>
 
@@ -176,7 +176,7 @@ export default function GridWithSplitters({ className, chartArea, rightArea, bot
 
       {/* Vertical Splitter - between chart and right panel */}
       <div
-        className='absolute top-0 bottom-0 w-1 bg-background transition-colors z-50 group'
+        className='absolute top-0 bottom-0 w-1 bg-body transition-colors z-50 group'
         style={layoutStyles.verticalSplitter}
       >
         {/* Vertical Drag Knob */}
@@ -202,7 +202,7 @@ export default function GridWithSplitters({ className, chartArea, rightArea, bot
 
       {/* Horizontal Splitter - between chart and bottom panel */}
       <div
-        className='absolute left-0 h-1 bg-background transition-colors z-50 group'
+        className='absolute left-0 h-1 bg-body transition-colors z-50 group'
         style={layoutStyles.horizontalSplitter}
       >
         {/* Horizontal Drag Knob */}

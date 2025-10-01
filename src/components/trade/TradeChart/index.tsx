@@ -379,7 +379,7 @@ export default function TradeChart(props: Props) {
   return (
     <Card
       title={
-        <div className='flex flex-wrap items-center justify-between w-full p-4 '>
+        <div className='flex flex-wrap items-center justify-between w-full p-4 bg-surface'>
           {props.title ? (
             props.title
           ) : (

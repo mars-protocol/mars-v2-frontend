@@ -76,7 +76,7 @@ export default function Table<T>(props: Props<T>) {
         <div className='w-full overflow-x-auto scrollbar-hide'>
           <table className={classNames('w-[calc(100%-1px)]', props?.tableBodyClassName)}>
             {!props.disableSortingRow && (
-              <thead className='bg-surface-dark'>
+              <thead className='bg-surface-dark border-b border-white/10'>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => {

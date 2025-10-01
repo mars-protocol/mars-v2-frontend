@@ -41,7 +41,7 @@ export default function SummarySkeleton(props: Props) {
       </div>
       <div className='grid grid-cols-1 gap-1 sm:grid-cols-2 md:grid-cols-3 w-full'>
         {stats.map((stat) => (
-          <Card key={stat.sub} className='p-6 text-center bg-surface flex-grow-1'>
+          <Card key={stat.sub} className='p-6 text-center bg-surface-dark flex-grow-1'>
             <TitleAndSubCell
               title={stat.title || <Loading className='w-20 h-6 mx-auto mb-2' />}
               sub={stat.sub}

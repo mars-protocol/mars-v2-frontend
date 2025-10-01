@@ -30,9 +30,7 @@ export default function PerpsPage() {
         className='flex-1'
         chartArea={
           <div className='w-full h-full flex flex-col'>
-            <div className='bg-surface'>
-              <PerpsBanner />
-            </div>
+            <PerpsBanner />
             <div className='flex-1 bg-surface h-full'>
               <div className='w-full h-full'>
                 <PerpsTabs />

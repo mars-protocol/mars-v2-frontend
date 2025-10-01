@@ -79,7 +79,7 @@ export default function Intro(props: Props) {
   return (
     <Card
       className={classNames(
-        'relative w-full bg-cover',
+        'relative w-full bg-surface-dark',
         props.isCompact ? 'md:h-32' : 'md:h-48 min-h-48',
       )}
       contentClassName='flex w-full h-full flex-col justify-between p-6'

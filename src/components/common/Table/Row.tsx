@@ -80,7 +80,7 @@ export default function Row<T>(props: Props<T>) {
         <tr
           key={`${row.id}-row`}
           className={classNames(
-            'transition-bg duration-100 border-white/10',
+            'transition-bg duration-100 border-white/10 border-b last:border-b-0',
             (renderExpanded || isSelectable || props.onClick) && 'hover:cursor-pointer',
             canExpand && row.getIsExpanded()
               ? 'is-expanded bg-surface-dark'

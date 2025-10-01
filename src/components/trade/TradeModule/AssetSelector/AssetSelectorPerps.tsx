@@ -49,7 +49,7 @@ export default function AssetSelectorPerps(props: Props) {
           color='quaternary'
           variant='transparent'
           onClick={() => useStore.setState({ assetOverlayState: 'pair' })}
-          className='flex items-center justify-between w-full py-4 h-13'
+          className='flex items-center justify-between w-full py-4 h-14'
         >
           <div className='flex items-center gap-2'>
             <AssetImage asset={perpsAsset} className='w-5 h-5' />

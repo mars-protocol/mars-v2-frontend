@@ -117,7 +117,7 @@ export default function MarsStaking({ className }: { className?: string }) {
         className={classNames(className, 'bg-surface')}
         title={
           <div
-            className='flex items-center gap-3 w-full p-4 font-semibold bg-card-bg cursor-pointer hover:bg-surface transition-colors rounded-t-lg'
+            className='flex items-center gap-3 w-full p-4 font-semibold bg-surface-dark cursor-pointer transition-colors rounded-t-lg'
             onClick={() => setIsExpanded(!isExpanded)}
           >
             <MarsToken className='w-6 h-6 text-primary' />

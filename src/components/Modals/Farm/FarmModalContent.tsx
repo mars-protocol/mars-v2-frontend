@@ -1,4 +1,3 @@
-import classNames from 'classnames'
 import { useCallback, useMemo, useState } from 'react'
 
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
@@ -238,13 +237,7 @@ export default function FarmModalContent(props: Props) {
 
   if (!items) return null
   return (
-    <div
-      className={classNames(
-        'flex items-start flex-1 p-2 gap-4 flex-wrap',
-        'md:p-4 md:gap-6',
-        'lg:flex-nowrap lg:p-6',
-      )}
-    >
+    <div className='flex items-start flex-1 p-2 gap-1 flex-wrap bg-body'>
       <Accordion className='h-[546px] overflow-y-scroll scrollbar-hide flex-1' items={items} />
       <AccountSummaryInModal account={account} />
     </div>

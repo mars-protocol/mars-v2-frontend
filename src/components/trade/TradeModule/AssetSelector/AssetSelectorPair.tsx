@@ -38,23 +38,25 @@ export default function AssetSelectorPair(props: Props) {
 
   return (
     <>
-      <Button
-        color='quaternary'
-        variant='transparent'
-        onClick={() => useStore.setState({ assetOverlayState: 'pair' })}
-        className='flex items-center justify-between w-full py-4 bg-card-bg'
-      >
-        <div className='flex items-center gap-1'>
-          <AssetImage asset={buyAsset} className='w-5 h-5' />
-          <Text size='sm' className='text-white/60'>
-            <span className='text-white'>{buyAsset.symbol}</span>/{sellAsset.symbol}
-          </Text>
-        </div>
-        <div className='flex items-center gap-2'>
-          <Text>All markets</Text>
-          <ChevronDown className='w-3 h-3' />
-        </div>
-      </Button>
+      <div className='w-full bg-surface-dark'>
+        <Button
+          color='quaternary'
+          variant='transparent'
+          onClick={() => useStore.setState({ assetOverlayState: 'pair' })}
+          className='flex items-center justify-between w-full py-4 h-14'
+        >
+          <div className='flex items-center gap-1'>
+            <AssetImage asset={buyAsset} className='w-5 h-5' />
+            <Text size='sm' className='text-white/60'>
+              <span className='text-white'>{buyAsset.symbol}</span>/{sellAsset.symbol}
+            </Text>
+          </div>
+          <div className='flex items-center gap-2'>
+            <Text>All markets</Text>
+            <ChevronDown className='w-3 h-3' />
+          </div>
+        </Button>
+      </div>
       {assetOverlayState === 'pair' && (
         <AssetOverlay
           state={assetOverlayState}
