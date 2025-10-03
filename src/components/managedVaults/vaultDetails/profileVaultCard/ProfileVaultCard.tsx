@@ -149,18 +149,25 @@ export default function ProfileVaultCard(props: Props) {
             {!vaultPnl ? (
               <Loading className='h-4 w-20' />
             ) : (
-              <DisplayCurrency
-                coin={BNCoin.fromDenomAndBigNumber(
-                  details.base_tokens_denom,
-                  BN(vaultPnl.total_pnl),
-                )}
-                showSignPrefix
-                className={classNames(
-                  'text-sm',
-                  BN(vaultPnl.total_pnl).isGreaterThan(0) && 'text-profit',
-                  BN(vaultPnl.total_pnl).isLessThan(0) && 'text-loss',
-                )}
-              />
+              <Tooltip
+                content={`Total profit/loss in ${depositAsset?.symbol || 'vault token'}`}
+                type='info'
+              >
+                <div className='border-b border-dashed border-white/40'>
+                  <DisplayCurrency
+                    coin={BNCoin.fromDenomAndBigNumber(
+                      details.base_tokens_denom,
+                      BN(vaultPnl.total_pnl),
+                    )}
+                    showSignPrefix
+                    className={classNames(
+                      'text-sm cursor-help',
+                      BN(vaultPnl.total_pnl).isGreaterThan(0) && 'text-profit',
+                      BN(vaultPnl.total_pnl).isLessThan(0) && 'text-loss',
+                    )}
+                  />
+                </div>
+              </Tooltip>
             )}
           </InfoRow>
           <InfoRow label='Vault Owner Shares'>
