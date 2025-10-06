@@ -346,6 +346,9 @@ export default function TradeChart(props: Props) {
       intitalChartLoad()
     })
 
+    // Clear cached chart properties to ensure new colors are applied
+    localStorage.removeItem('tradingview.chartproperties')
+
     const chartProperties = localStorage.getItem('tradingview.chartproperties')
     if (chartProperties) {
       const newChartProperties = JSON.parse(chartProperties)

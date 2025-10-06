@@ -33,9 +33,11 @@ module.exports = {
     'text-5xl',
     'text-yellow-300',
     'text-violet-500',
+    'text-green',
     'text-grey-light',
     'fill-yellow-300',
     'fill-violet-500',
+    'fill-green',
     'fill-martian-red',
     'fill-grey-light',
     'w-2',
@@ -116,8 +118,6 @@ module.exports = {
         'accent-inverted': 'hsl(var(--color-accent-inverted) / <alpha-value>)',
         'accent-highlight': 'hsl(var(--color-accent-highlight) / <alpha-value>)',
         body: 'hsl(var(--color-body) / <alpha-value>)',
-        'body-hls': 'hsl(var(--color-body-hls) / <alpha-value>)',
-        'body-dark': 'hsl(var(--color-body-dark) / <alpha-value>)',
         chart: 'hsl(var(--color-chart) / <alpha-value>)',
         error: 'hsl(var(--color-error) / <alpha-value>)',
         'error-bg': 'hsl(var(--color-error-bg) / <alpha-value>)',
@@ -134,12 +134,6 @@ module.exports = {
         loss: 'hsl(var(--color-loss) / <alpha-value>)',
         mars: 'hsl(var(--color-mars) / <alpha-value>)',
         'martian-red': 'hsl(var(--color-martian-red) / <alpha-value>)',
-        'orb-primary': 'hsl(var(--color-orb-primary) / <alpha-value>)',
-        'orb-primary-hls': 'hsl(var(--color-orb-primary-hls) / <alpha-value>)',
-        'orb-secondary': 'hsl(var(--color-orb-secondary) / <alpha-value>)',
-        'orb-secondary-hls': 'hsl(var(--color-orb-secondary-hls) / <alpha-value>)',
-        'orb-tertiary': 'hsl(var(--color-orb-tertiary) / <alpha-value>)',
-        'orb-tertiary-hls': 'hsl(var(--color-orb-tertiary-hls) / <alpha-value>)',
         profit: 'hsl(var(--color-profit) / <alpha-value>)',
         primary: 'hsl(var(--color-primary) / <alpha-value>)',
         purple: 'hsl(var(--color-purple) / <alpha-value>)',
@@ -434,15 +428,6 @@ module.exports = {
       })
 
       addUtilities({
-        '.blur-orb-primary': {
-          filter: 'blur(clamp(50px, 8vw, 30px))',
-        },
-        '.blur-orb-secondary': {
-          filter: 'blur(clamp(60px, 20vw, 160px))',
-        },
-        '.blur-orb-tertiary': {
-          filter: 'blur(clamp(60px, 10vw, 150px))',
-        },
         '.glow-line': {
           fill: 'transparent',
           stroke: 'hsl(var(--color-white))',
@@ -471,18 +456,6 @@ module.exports = {
         '.gradient-hls': {
           background:
             'linear-gradient(180deg, hsl(var(--color-hls-primary)) 0%, hsl(var(--color-hls-secondary)) 50%)',
-        },
-        '.bg-orb-primary-vaults': {
-          background:
-            'linear-gradient(180deg, hsl(var(--color-vault-blue-primary)) 0%, hsl(var(--color-vault-blue-secondary)) 65%)',
-        },
-        '.bg-orb-secondary-vaults': {
-          background:
-            'linear-gradient(90deg, hsl(var(--color-vault-purple-primary)) 50%, hsl(var(--color-vault-purple-secondary)) 127%)',
-        },
-        '.bg-orb-tertiary-vaults': {
-          background:
-            'linear-gradient(180deg, hsl(var(--color-vault-pink-primary)) 0%, hsl(var(--color-vault-blue-tertiary)) 65%)',
         },
         '.gradient-popover': {
           background:

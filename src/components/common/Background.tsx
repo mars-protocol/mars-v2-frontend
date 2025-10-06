@@ -26,37 +26,13 @@ export default function Background() {
     useStore.setState({ isHls, isV1, isVaults })
   }, [isHls, isV1, isVaults])
 
-  const [primaryOrbClassName, secondaryOrbClassName, tertiaryOrbClassName, bodyClassName] =
-    useMemo(() => {
-      if (isHls) {
-        return ['bg-orb-primary-hls', 'bg-orb-secondary-hls', 'bg-orb-tertiary-hls', 'bg-body-hls']
-      }
-      if (isV1) {
-        return [
-          'bg-transparent',
-          'bg-transparent',
-          'bg-transparent',
-          'bg-body md:bg-v1 md:blur-[2px]',
-        ]
-      }
-      if (isVaults) {
-        return [
-          'bg-orb-primary-vaults',
-          'bg-orb-secondary-vaults',
-          'bg-orb-tertiary-vaults',
-          'bg-body',
-        ]
-      }
-      return ['bg-orb-primary', 'bg-orb-secondary', 'bg-orb-tertiary', 'bg-body']
-    }, [isHls, isV1, isVaults])
-
   return (
     <div
       className={classNames(
         'fixed inset-0',
         'w-screen-full h-screen-full',
         'overflow-hidden pointer-events-none background',
-        bodyClassName,
+        'bg-body',
         !reduceMotion && 'transition-bg duration-1000 delay-300',
       )}
     />

@@ -44,37 +44,36 @@
 }
 
 :root {
+  /* Current Palette Variables */
+  --palette-background: #171317;
+  --palette-surface-light: #211b23;
+  --palette-surface: #171519;
+  --palette-surface-dark: #0e0d0f;
+  --palette-white: #f7f7f3;
+
   --color-accent: 291deg 27% 15%;
   --color-accent-dark: 323deg 33% 15%;
   --color-accent-inverted: 228deg 100% 60%;
   --color-accent-highlight: 327deg 36% 19%;
   --color-atom: 233deg 13% 50%;
   --color-axlusdc: 211deg 68% 57%;
-  --color-body: 0deg 29% 4%;
-  --color-body-hls: 0deg 29% 4%;
-  --color-body-dark: 0deg 29% 4%;
-  --color-chart: 0deg 0% 11%;
+  --color-body: 252deg 12% 8%;
+  --color-chart: 270deg 12% 10%;
   --color-error: 4deg 86% 58%;
   --color-error-bg: 4deg 96% 80%;
   --color-fuchsia: 312deg 46% 49%;
   --color-green: 153deg 96% 30%;
-  --color-grey: 0deg 0% 11%;
-  --color-grey-dark: 0deg 0% 7%;
-  --color-grey-highlight: 0deg 0% 15%;
-  --color-grey-light: 0deg 0% 25%;
-  --color-grey-medium: 0deg 0% 9%;
+  --color-grey: 270deg 12% 10%;
+  --color-grey-dark: 280deg 15% 6%;
+  --color-grey-highlight: 270deg 12% 15%;
+  --color-grey-light: 290deg 10% 14%;
+  --color-grey-medium: 270deg 12% 12%;
   --color-info: 39deg 98% 56%;
   --color-info-bg: 44deg 98% 74%;
-  --color-input: 0deg 0% 9%;
+  --color-input: 270deg 12% 12%;
   --color-loss: 11deg 96% 46%;
   --color-mars: 354deg 46% 43%;
   --color-martian-red: 2deg 100% 69%;
-  --color-orb-primary: 4deg 65% 42%;
-  --color-orb-primary-hls: 2deg 100% 69%;
-  --color-orb-secondary: 277deg 90% 27%;
-  --color-orb-secondary-hls: 354deg 46% 43%;
-  --color-orb-tertiary: 313deg 100% 50%;
-  --color-orb-tertiary-hls: 20deg 95% 68%;
   --color-profit: 95deg 85% 35%;
   --color-primary: 1deg 100% 68%;
   --color-purple: 244deg 71% 69%;
@@ -85,7 +84,7 @@
   --color-vote-against: 31deg 80% 60%;
   --color-warning: 34deg 94% 50%;
   --color-warning-bg: 42deg 99% 65%;
-  --color-white: 0deg 0% 100%;
+  --color-white: 50deg 70% 96%;
   --color-pink: 343deg 67% 61%;
   --color-black: 0deg 0% 0%;
   --color-vault-blue-primary: 184deg 66% 61%;
@@ -114,20 +113,19 @@
   --color-slider-tooltip-secondary: 266deg 56% 14%;
   --color-active-tab-primary: 299deg 92% 39%;
   --color-active-tab-secondary: 343deg 100% 81%;
-  --color-active-tab-tertiary: 0deg 0% 7%;
-  --color-card-bg: 30deg 4% 9%;
-  --color-card-border: 0deg 0% 13%;
-  --color-surface: 0deg 0% 11%;
-  --color-surface-light: 0deg 0% 15%;
-  --color-surface-dark: 0deg 0% 7%;
+  --color-active-tab-tertiary: 330deg 12% 10%;
+  --color-card-bg: 240deg 12% 10%;
+  --color-card-border: 330deg 12% 15%;
+  --color-surface: 225deg 9% 9%;
+  --color-surface-light: 231deg 11% 12%;
+  --color-surface-dark: 220deg 9% 7%;
 }
 
 :root[data-theme='light'] {
-  --color-body: 0deg 0% 96%;
-  --color-body-hls: 0deg 0% 96%;
-  --color-white: 0deg 0% 10%;
-  --color-chart: 0deg 0% 98%;
-  --color-black: 0deg 0% 100%;
+  --color-body: 252deg 12% 8%;
+  --color-white: 50deg 70% 96%;
+  --color-chart: 300deg 11% 9%;
+  --color-black: 300deg 12% 8%;
   --color-purple: 47deg 97% 67%;
   --color-purple-dark: 36deg 99% 65%;
   --color-martian-red: 2deg 100% 60%;
@@ -157,26 +155,25 @@
   --color-active-tab-tertiary: 0deg 0% 93%;
   --color-card-bg: 0deg 0% 98%;
   --color-card-border: 0deg 0% 87%;
-  --color-surface: 0deg 0% 92%;
-  --color-surface-light: 0deg 0% 94%;
-  --color-surface-dark: 0deg 0% 88%;
+  --color-surface: 225deg 9% 9%;
+  --color-surface-light: 231deg 11% 12%;
+  --color-surface-dark: 220deg 9% 7%;
 }
 
 :root[data-theme='dark'] {
-  --color-body: 0deg 29% 4%;
-  --color-body-hls: 0deg 29% 4%;
-  --color-chart: 0deg 0% 11%;
-  --color-orb-primary: 0deg 29% 4%;
-  --color-orb-primary-hls: 0deg 29% 4%;
-  --color-orb-secondary: 0deg 29% 4%;
-  --color-orb-secondary-hls: 0deg 29% 4%;
-  --color-orb-tertiary: 0deg 29% 4%;
-  --color-orb-tertiary-hls: 0deg 29% 4%;
+  --color-body: 252deg 12% 8%;
+  --color-chart: 300deg 11% 9%;
+  --color-orb-primary: 330deg 12% 9%;
+  --color-orb-primary-hls: 330deg 12% 9%;
+  --color-orb-secondary: 330deg 12% 9%;
+  --color-orb-secondary-hls: 330deg 12% 9%;
+  --color-orb-tertiary: 330deg 12% 9%;
+  --color-orb-tertiary-hls: 330deg 12% 9%;
   --color-card-bg: 30deg 4% 9%;
   --color-card-border: 0deg 0% 13%;
-  --color-surface: 0deg 0% 11%;
-  --color-surface-light: 0deg 0% 15%;
-  --color-surface-dark: 0deg 0% 7%;
+  --color-surface: 225deg 9% 9%;
+  --color-surface-light: 231deg 11% 12%;
+  --color-surface-dark: 220deg 9% 7%;
 }
 
 .Toastify__toast {

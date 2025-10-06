@@ -1684,6 +1684,11 @@ interface TradingViewSettings {
     'linetooltrendline.linecolor': string
     'paneProperties.backgroundType': string
     'scalesProperties.fontSize': number
+    'scalesProperties.textColor': string
+    'paneProperties.gridProperties.color': string
+    'paneProperties.vertGridProperties.color': string
+    'paneProperties.horzGridProperties.color': string
+    'scalesProperties.lineColor': string
   }
   loadingScreen: {
     backgroundColor: string

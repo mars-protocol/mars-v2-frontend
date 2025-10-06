@@ -84,7 +84,7 @@ export default function Row<T>(props: Props<T>) {
             (renderExpanded || isSelectable || props.onClick) && 'hover:cursor-pointer',
             canExpand && row.getIsExpanded()
               ? 'is-expanded bg-surface-dark'
-              : 'hover:bg-surface-dark',
+              : 'bg-surface hover:bg-surface-dark',
             'group/assetRow',
             !isWhitelisted && 'relative',
           )}

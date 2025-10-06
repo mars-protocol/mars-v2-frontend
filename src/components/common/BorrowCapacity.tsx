@@ -87,7 +87,7 @@ export const BorrowCapacity = ({
               <div className='absolute w-full h-full shadow-inset gradient-hatched '>
                 <div
                   className={classNames(
-                    'absolute left-0 h-full max-w-full bg-body-dark',
+                    'absolute left-0 h-full max-w-full bg-body',
                     !reduceMotion && 'transition-[right] duration-1000 ease-linear',
                   )}
                   style={{
