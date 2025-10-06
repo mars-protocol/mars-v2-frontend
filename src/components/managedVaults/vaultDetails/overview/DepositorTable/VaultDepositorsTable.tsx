@@ -7,19 +7,18 @@ interface Props {
   vaultTokensDenom: string
   vaultAddress: string
   baseTokensDenom: string
-  vault_tokens_amount: string
+  vaultTokensAmount: string
   ownerAddress: string
 }
 
 export default function VaultDepositorsTable(props: Props) {
-  const { vaultTokensDenom, vaultAddress, baseTokensDenom, vault_tokens_amount, ownerAddress } =
-    props
+  const { vaultTokensDenom, vaultAddress, baseTokensDenom, vaultTokensAmount, ownerAddress } = props
   const managedVaultDepositorsData = useManagedVaultDepositors(vaultTokensDenom)
 
   const columns = useVaultDepositorsColumns(
     vaultAddress,
     baseTokensDenom,
-    vault_tokens_amount,
+    vaultTokensAmount,
     ownerAddress,
   )
 

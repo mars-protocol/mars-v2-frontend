@@ -173,7 +173,7 @@ export default function VaultSummary(props: Props) {
               vaultTokensDenom={details.vault_tokens_denom}
               vaultAddress={details.vault_address}
               baseTokensDenom={details.base_tokens_denom}
-              vault_tokens_amount={details.vault_tokens_amount}
+              vaultTokensAmount={details.vault_tokens_amount}
               ownerAddress={details.ownerAddress || ''}
             />
           </div>

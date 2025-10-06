@@ -1,28 +1,21 @@
-import { ColumnDef, Row } from '@tanstack/react-table'
+import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 import UserAddress from 'components/managedVaults/vaultDetails/overview/DepositorTable/column/UserAddress'
 import UserValue from 'components/managedVaults/vaultDetails/overview/DepositorTable/column/UserValue'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 
-const createCalculatePercentage =
-  (vault_tokens_amount: string) => (row: Row<ManagedVaultDepositor>) => {
-    const userBalance = row.original?.balance?.amount || '0'
-    const totalVaultTokens = vault_tokens_amount || '0'
-
-    const percentage =
-      totalVaultTokens && userBalance ? (Number(userBalance) / Number(totalVaultTokens)) * 100 : 0
-
-    return percentage
-  }
+const calculatePercentage = (userBalance: string, totalVaultTokens: string): number => {
+  return totalVaultTokens && userBalance
+    ? (Number(userBalance) / Number(totalVaultTokens)) * 100
+    : 0
+}
 
 export default function useVaultDepositorsColumns(
   vaultAddress: string,
   baseTokensDenom: string,
-  vault_tokens_amount: string,
+  vaultTokensAmount: string,
   ownerAddress: string,
 ) {
-  const calculatePercentage = createCalculatePercentage(vault_tokens_amount)
-
   return useMemo<ColumnDef<ManagedVaultDepositor>[]>(() => {
     return [
       {
@@ -40,14 +33,16 @@ export default function useVaultDepositorsColumns(
         header: 'Percent of Vault Shares',
         id: 'percentage',
         enableSorting: true,
-        accessorFn: calculatePercentage,
-        cell: ({ row }) => (
-          <FormattedNumber
-            amount={calculatePercentage(row)}
-            options={{ suffix: '%' }}
-            className='text-xs'
-          />
-        ),
+        accessorFn: (row) => calculatePercentage(row.balance?.amount || '0', vaultTokensAmount),
+        cell: ({ row }) => {
+          const percentage = calculatePercentage(
+            row.original.balance?.amount || '0',
+            vaultTokensAmount,
+          )
+          return (
+            <FormattedNumber amount={percentage} options={{ suffix: '%' }} className='text-xs' />
+          )
+        },
       },
       {
         header: 'Value',
@@ -62,5 +57,5 @@ export default function useVaultDepositorsColumns(
       },
     ]
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vaultAddress, baseTokensDenom, vault_tokens_amount])
+  }, [vaultAddress, baseTokensDenom, vaultTokensAmount])
 }
