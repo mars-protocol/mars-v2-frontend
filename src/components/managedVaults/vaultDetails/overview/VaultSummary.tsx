@@ -17,6 +17,7 @@ import { ORACLE_DENOM } from 'constants/oracle'
 import { useMemo } from 'react'
 import { useAccountSummaryStats } from 'hooks/accounts/useAccountSummaryStats'
 import { formatValue } from 'utils/formatters'
+import VaultDepositorsTable from 'components/managedVaults/vaultDetails/overview/DepositorTable/VaultDepositorsTable'
 interface Props {
   details: ManagedVaultsData
 }
@@ -115,7 +116,7 @@ export default function VaultSummary(props: Props) {
         title: 'Balances',
         renderContent: () =>
           accountData ? (
-            <div className='h-64 overflow-y-auto bg-white/5 scrollbar-hide'>
+            <div className='h-74 overflow-y-auto bg-white/5 scrollbar-hide'>
               <AccountBalancesTable
                 account={accountData}
                 borrowingData={borrowAssetsData}
@@ -141,7 +142,7 @@ export default function VaultSummary(props: Props) {
       tabsArray.push({
         title: 'Strategies',
         renderContent: () => (
-          <div className='h-64 overflow-y-auto bg-white/5 scrollbar-hide'>
+          <div className='h-74 overflow-y-auto bg-white/5 scrollbar-hide'>
             <AccountStrategiesTable account={accountData} hideCard />
           </div>
         ),
@@ -155,11 +156,27 @@ export default function VaultSummary(props: Props) {
       tabsArray.push({
         title: 'Perp Positions',
         renderContent: () => (
-          <div className='h-64 overflow-y-auto bg-white/5 scrollbar-hide'>
+          <div className='h-74 overflow-y-auto bg-white/5 scrollbar-hide'>
             <AccountPerpPositionTable account={accountData} hideCard />
           </div>
         ),
         notificationCount: perpsCount,
+      })
+    }
+
+    if (accountData) {
+      tabsArray.push({
+        title: 'Depositors',
+        renderContent: () => (
+          <div className='h-74 overflow-y-auto bg-white/5 scrollbar-hide'>
+            <VaultDepositorsTable
+              vaultTokensDenom={details.vault_tokens_denom}
+              vaultAddress={details.vault_address}
+              baseTokensDenom={details.base_tokens_denom}
+              vault_tokens_amount={details.vault_tokens_amount}
+            />
+          </div>
+        ),
       })
     }
 
@@ -175,6 +192,10 @@ export default function VaultSummary(props: Props) {
     leverage,
     netWorth.amount,
     positionValue.amount,
+    details.vault_tokens_denom,
+    details.vault_address,
+    details.base_tokens_denom,
+    details.vault_tokens_amount,
   ])
 
   return <CardWithTabs tabs={tabs} textSizeClass='text-base' />
