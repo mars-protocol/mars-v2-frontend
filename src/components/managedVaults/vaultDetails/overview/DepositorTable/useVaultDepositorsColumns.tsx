@@ -19,6 +19,7 @@ export default function useVaultDepositorsColumns(
   vaultAddress: string,
   baseTokensDenom: string,
   vault_tokens_amount: string,
+  ownerAddress: string,
 ) {
   const calculatePercentage = createCalculatePercentage(vault_tokens_amount)
 
@@ -27,7 +28,13 @@ export default function useVaultDepositorsColumns(
       {
         header: 'Depositor',
         id: 'depositor',
-        cell: ({ row }) => <UserAddress address={row.original.address} />,
+        cell: ({ row }) => (
+          <UserAddress
+            address={row.original.address}
+            vaultAddress={vaultAddress}
+            ownerAddress={ownerAddress}
+          />
+        ),
       },
       {
         header: 'Percent of Vault Shares',

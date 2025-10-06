@@ -174,6 +174,7 @@ export default function VaultSummary(props: Props) {
               vaultAddress={details.vault_address}
               baseTokensDenom={details.base_tokens_denom}
               vault_tokens_amount={details.vault_tokens_amount}
+              ownerAddress={details.ownerAddress || ''}
             />
           </div>
         ),
@@ -196,6 +197,7 @@ export default function VaultSummary(props: Props) {
     details.vault_address,
     details.base_tokens_denom,
     details.vault_tokens_amount,
+    details.ownerAddress,
   ])
 
   return <CardWithTabs tabs={tabs} textSizeClass='text-base' />
