@@ -122,10 +122,10 @@
 }
 
 :root[data-theme='light'] {
-  --color-body: 252deg 12% 8%;
-  --color-white: 50deg 70% 96%;
-  --color-chart: 300deg 11% 9%;
-  --color-black: 300deg 12% 8%;
+  --color-body: 0deg 0% 98%;
+  --color-white: 0deg 0% 20%;
+  --color-chart: 0deg 0% 95%;
+  --color-black: 0deg 0% 100%;
   --color-purple: 47deg 97% 67%;
   --color-purple-dark: 36deg 99% 65%;
   --color-martian-red: 2deg 100% 60%;
@@ -155,9 +155,9 @@
   --color-active-tab-tertiary: 0deg 0% 93%;
   --color-card-bg: 0deg 0% 98%;
   --color-card-border: 0deg 0% 87%;
-  --color-surface: 225deg 9% 9%;
-  --color-surface-light: 231deg 11% 12%;
-  --color-surface-dark: 220deg 9% 7%;
+  --color-surface: 0deg 0% 92%;
+  --color-surface-light: 0deg 0% 96%;
+  --color-surface-dark: 0deg 0% 88%;
 }
 
 :root[data-theme='dark'] {
