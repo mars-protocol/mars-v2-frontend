@@ -45,11 +45,6 @@
 
 :root {
   /* Current Palette Variables */
-  --palette-background: #171317;
-  --palette-surface-light: #211b23;
-  --palette-surface: #171519;
-  --palette-surface-dark: #0e0d0f;
-  --palette-white: #f7f7f3;
 
   --color-accent: 291deg 27% 15%;
   --color-accent-dark: 323deg 33% 15%;
