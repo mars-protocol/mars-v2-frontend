@@ -1,11 +1,11 @@
-import useVaultAssets from 'hooks/assets/useVaultAssets'
-import { byDenom } from 'utils/array'
-import { BNCoin } from 'types/classes/BNCoin'
-import { BN } from 'utils/helpers'
 import AssetImage from 'components/common/assets/AssetImage'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import { useManagedVaultConvertToBaseTokens } from 'hooks/managedVaults/useManagedVaultConvertToBaseTokens'
 import Loading from 'components/common/Loading'
+import useVaultAssets from 'hooks/assets/useVaultAssets'
+import { BN } from 'utils/helpers'
+import { BNCoin } from 'types/classes/BNCoin'
+import { byDenom } from 'utils/array'
+import { useManagedVaultConvertToBaseTokens } from 'hooks/managedVaults/useManagedVaultConvertToBaseTokens'
 
 interface Props {
   value: ManagedVaultDepositor

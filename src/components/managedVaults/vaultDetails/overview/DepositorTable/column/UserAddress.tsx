@@ -1,9 +1,9 @@
+import Image from 'next/image'
 import Text from 'components/common/Text'
 import useManagedVaultOwnerInfo from 'hooks/managedVaults/useManagedVaultOwnerInfo'
 import useManagedVaultOwnerPosition from 'hooks/managedVaults/useManagedVaultOwnerPosition'
-import Image from 'next/image'
-import { truncate } from 'utils/formatters'
 import { BN } from 'utils/helpers'
+import { truncate } from 'utils/formatters'
 
 interface Props {
   address: string
@@ -31,21 +31,19 @@ export default function UserAddress(props: Props) {
           className='rounded-full w-8 h-8'
         />
       </span>
-      <div className='flex flex-col gap-0.5'>
-        <div className='flex items-center gap-1.5'>
-          <Text size='xs' className='inline-block text-white/60 bg-white/10 rounded px-1.5 py-0.5'>
-            {isOwnerInfoLoading ? truncate(address, [2, 6]) : vaultOwnerInfo.name}
+      <div className='flex items-center gap-1.5'>
+        <Text size='xs' className='inline-block text-white/60 bg-white/10 rounded px-1.5 py-0.5'>
+          {isOwnerInfoLoading ? truncate(address, [2, 6]) : vaultOwnerInfo.name}
+        </Text>
+        {hasHoldings && (
+          <Text
+            size='xs'
+            tag='div'
+            className='px-1.5 py-0.5 rounded flex items-center justify-center text-success bg-success/20'
+          >
+            Vault Owner
           </Text>
-          {hasHoldings && (
-            <Text
-              size='xs'
-              tag='div'
-              className='px-1.5 py-0.5 rounded-sm flex items-center justify-center text-success bg-success/20'
-            >
-              Vault Owner
-            </Text>
-          )}
-        </div>
+        )}
       </div>
     </div>
   )

@@ -9,6 +9,7 @@ import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMar
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import useAccount from 'hooks/accounts/useAccount'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import VaultDepositorsTable from 'components/managedVaults/vaultDetails/overview/DepositorTable/VaultDepositorsTable'
 import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
@@ -17,7 +18,6 @@ import { ORACLE_DENOM } from 'constants/oracle'
 import { useMemo } from 'react'
 import { useAccountSummaryStats } from 'hooks/accounts/useAccountSummaryStats'
 import { formatValue } from 'utils/formatters'
-import VaultDepositorsTable from 'components/managedVaults/vaultDetails/overview/DepositorTable/VaultDepositorsTable'
 interface Props {
   details: ManagedVaultsData
 }

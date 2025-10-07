@@ -1,8 +1,8 @@
-import { ColumnDef } from '@tanstack/react-table'
-import { useMemo } from 'react'
 import UserAddress from 'components/managedVaults/vaultDetails/overview/DepositorTable/column/UserAddress'
 import UserValue from 'components/managedVaults/vaultDetails/overview/DepositorTable/column/UserValue'
+import { ColumnDef } from '@tanstack/react-table'
 import { FormattedNumber } from 'components/common/FormattedNumber'
+import { useMemo } from 'react'
 
 const calculatePercentage = (userBalance: string, totalVaultTokens: string): number => {
   return totalVaultTokens && userBalance
@@ -56,6 +56,5 @@ export default function useVaultDepositorsColumns(
         ),
       },
     ]
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vaultAddress, baseTokensDenom, vaultTokensAmount])
+  }, [vaultAddress, baseTokensDenom, vaultTokensAmount, ownerAddress])
 }
