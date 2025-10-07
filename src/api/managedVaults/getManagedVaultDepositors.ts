@@ -4,6 +4,10 @@ import { getUrl } from 'utils/url'
 
 interface ManagedVaultDepositorsApiResponse {
   denom_owners: ManagedVaultDepositor[]
+  pagination: {
+    next_key: string | null
+    total: string
+  }
 }
 
 export default async function getManagedVaultDepositors(vaultTokensDenom: string) {

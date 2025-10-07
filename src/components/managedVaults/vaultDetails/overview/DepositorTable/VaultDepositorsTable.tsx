@@ -2,6 +2,7 @@ import useVaultDepositorsColumns from 'components/managedVaults/vaultDetails/ove
 import Table from 'components/common/Table'
 import useManagedVaultDepositors from 'hooks/managedVaults/useManagedVaultDepositors'
 import { CircularProgress } from 'components/common/CircularProgress'
+import Text from 'components/common/Text'
 
 interface Props {
   vaultTokensDenom: string
@@ -26,6 +27,16 @@ export default function VaultDepositorsTable(props: Props) {
     return (
       <div className='flex justify-center items-center h-full w-full'>
         <CircularProgress size={50} />
+      </div>
+    )
+  }
+
+  if ((managedVaultDepositorsData.data || []).length === 0) {
+    return (
+      <div className='flex justify-center items-center h-full w-full'>
+        <Text size='sm' className='text-white/60'>
+          This vault has no depositors.
+        </Text>
       </div>
     )
   }
