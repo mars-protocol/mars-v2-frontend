@@ -150,7 +150,7 @@ export default function ProfileVaultCard(props: Props) {
               <Loading className='h-4 w-20' />
             ) : (
               <Tooltip
-                content={`Total profit/loss in ${depositAsset?.symbol || 'vault token'}`}
+                content={`Value of total profit/loss in ${depositAsset?.symbol || 'vault token'}`}
                 type='info'
               >
                 <div className='border-b border-dashed border-white/40'>

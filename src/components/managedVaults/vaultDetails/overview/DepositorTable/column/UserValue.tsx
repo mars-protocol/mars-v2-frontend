@@ -1,10 +1,7 @@
-import AssetImage from 'components/common/assets/AssetImage'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Loading from 'components/common/Loading'
-import useVaultAssets from 'hooks/assets/useVaultAssets'
 import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
-import { byDenom } from 'utils/array'
 import { useManagedVaultConvertToBaseTokens } from 'hooks/managedVaults/useManagedVaultConvertToBaseTokens'
 
 interface Props {
@@ -15,8 +12,6 @@ interface Props {
 
 export default function UserValue(props: Props) {
   const { value, baseTokensDenom, vaultAddress } = props
-  const vaultAssets = useVaultAssets()
-  const asset = vaultAssets.find(byDenom(baseTokensDenom))
 
   const { data: userVaultTokensAmount, isLoading } = useManagedVaultConvertToBaseTokens(
     vaultAddress,
@@ -32,12 +27,9 @@ export default function UserValue(props: Props) {
   }
 
   return (
-    <div className='flex items-center justify-end gap-2'>
-      <AssetImage asset={asset} className='w-4 h-4' />
-      <DisplayCurrency
-        coin={BNCoin.fromDenomAndBigNumber(baseTokensDenom, BN(userVaultTokensAmount ?? 0))}
-        className='text-xs'
-      />
-    </div>
+    <DisplayCurrency
+      coin={BNCoin.fromDenomAndBigNumber(baseTokensDenom, BN(userVaultTokensAmount ?? 0))}
+      className='text-xs'
+    />
   )
 }
