@@ -86,6 +86,7 @@ function getAssetNameOrSymbolFromUnknownAsset({
 
   if (!symbolOrName) return 'UNKNOWN'
   const symbolParts = symbolOrName.split('/')
+  if (symbolOrName === 'Cosmos-Hub Wrapped Bitcoin') return 'Wrapped Bitcoin'
   if (symbolParts.length === 1 && symbol && symbolOrName.length < 13) return symbol
   if (symbolParts.length === 1 && name && symbolOrName.length < 26) return name
   if (symbolParts[0] === 'factory') return symbolParts[symbolParts.length - 1]
