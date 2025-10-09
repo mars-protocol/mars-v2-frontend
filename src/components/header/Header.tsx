@@ -133,7 +133,7 @@ export default function Header() {
               </div>
             </div>
           ) : (
-            <div className='flex gap-4'>
+            <div className='flex gap-2'>
               {showStaleOracle && <OracleResyncInfo />}
               {showRewardsCenter && <RewardsCenter className='hidden lg:flex' />}
               {showAccountMenu && <AccountMenu className='hidden md:flex' />}

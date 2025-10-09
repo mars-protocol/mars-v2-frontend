@@ -14,7 +14,7 @@ export function glowElement(enableAnimations: boolean, className?: string) {
         strokeLinecap='round'
         width='100%'
         height='100%'
-        rx='4'
+        rx='2'
         x='0'
         y='0'
         className='absolute glow-line group-hover:glow-hover group-focus:glow-hover'

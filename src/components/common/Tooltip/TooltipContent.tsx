@@ -16,9 +16,9 @@ export default function TooltipContent(props: Props) {
     <div>
       <div
         className={classNames(
-          'flex max-w-[320px] flex-1 gap-2 p-3 text-sm shadow-tooltip',
+          'flex max-w-[320px] flex-1 gap-2 rounded-sm p-3 text-sm shadow-tooltip border border-white/10',
           'relative isolate max-w-full overflow-hidden',
-          props.type === 'info' && ' bg-surface-light',
+          props.type === 'info' && 'bg-surface-light',
           props.type === 'warning' && 'bg-warning',
           props.type === 'error' && 'bg-error',
           props.className,
@@ -31,7 +31,7 @@ export default function TooltipContent(props: Props) {
           <TooltipArrow
             width={8}
             className={classNames(
-              props.type === 'info' && 'text-surface-light',
+              props.type === 'info' && 'text-white/10',
               props.type === 'warning' && 'text-warning',
               props.type === 'error' && 'text-error',
             )}

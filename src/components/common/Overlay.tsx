@@ -19,7 +19,7 @@ export default function Overlay(props: Props) {
     <>
       <div
         className={classNames(
-          'max-w-screen-full fixed isolate z-50 shadow-overlay bg-surface border border-white/20',
+          'max-w-screen-full fixed isolate z-50 shadow-overlay bg-surface border border-white/20 rounded-sm',
           'md:absolute',
           props.className,
         )}

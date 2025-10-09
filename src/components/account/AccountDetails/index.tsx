@@ -158,7 +158,7 @@ function AccountDetails(props: Props) {
         <div
           className={classNames(
             'group/accountdetail relative min-h-75',
-            'bg-surface z-3 overflow-hidden',
+            'bg-surface rounded-sm border border-surface-light z-3 overflow-hidden',
             !reduceMotion && 'transition-all duration-500',
             accountDetailsExpanded
               ? 'is-expanded w-full h-auto'
@@ -188,7 +188,7 @@ function AccountDetails(props: Props) {
                 Health
               </Text>
             </div>
-            <div className='w-full py-4 border-t border-white/20'>
+            <div className='w-full py-4 border-t border-white/10'>
               <Text
                 size='2xs'
                 className='mb-0.5 w-full text-center text-white/50 whitespace-nowrap'
@@ -197,7 +197,7 @@ function AccountDetails(props: Props) {
               </Text>
               <DisplayCurrency coin={coin} className='w-full text-center truncate text-2xs' />
             </div>
-            <div className='w-full py-4 border-t border-white/20'>
+            <div className='w-full py-4 border-t border-white/10'>
               <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
                 Leverage
               </Text>
@@ -206,7 +206,7 @@ function AccountDetails(props: Props) {
                 updatedLeverage={updatedLeverage?.toNumber() || null}
               />
             </div>
-            <div className='w-full py-4 border-t border-white/20'>
+            <div className='w-full py-4 border-t border-white/10'>
               <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
                 APY
               </Text>

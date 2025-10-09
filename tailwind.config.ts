@@ -93,7 +93,7 @@ module.exports = {
       borderRadius: {
         none: '0px',
         xs: '0px',
-        sm: '0px',
+        sm: '2px',
         base: '0px',
         lg: '0px',
         xl: '0px',
@@ -463,11 +463,11 @@ module.exports = {
         },
         '.gradient-primary-to-secondary': {
           background:
-            'linear-gradient(180deg, hsl(var(--color-purple)) 0%, hsl(var(--color-purple-dark)) 100%)',
+            'linear-gradient(180deg, hsl(var(--color-martian-red)) 0%, hsl(var(--color-mars)) 100%)',
         },
         '.gradient-secondary-to-primary': {
           background:
-            'linear-gradient(180deg, hsl(var(--color-purple-dark)) 100%, hsl(var(--color-purple)) 0%)',
+            'linear-gradient(180deg, hsl(var(--color-martian-red)) 100%, hsl(var(--color-mars)) 0%)',
         },
         '.gradient-slider-1': {
           background:
@@ -488,6 +488,10 @@ module.exports = {
         '.gradient-slider-pink': {
           background:
             'linear-gradient(270deg, hsl(var(--color-slider-pink-primary) /0.89) 0%, hsl(var(--color-slider-pink-secondary) /0.05) 100%)',
+        },
+        '.gradient-slider-martian-red': {
+          background:
+            'linear-gradient(270deg, hsl(var(--color-martian-red) /0.886) 0%, hsl(var(--color-martian-red) /0.051) 100%)',
         },
         '.gradient-slider-green': {
           background:

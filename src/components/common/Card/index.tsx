@@ -25,7 +25,7 @@ export default function Card(props: Props) {
         'flex flex-col',
         'relative isolate max-w-full max-h-full',
         !props.showOverflow && 'overflow-hidden',
-        isTab ? '' : 'bg-surface',
+        isTab ? '' : 'bg-surface rounded-sm border border-surface-light',
       )}
     >
       {typeof props.title === 'string' ? (

@@ -31,7 +31,7 @@ function InputOverlay({ max, value, marginThreshold, type, min }: Props) {
           'slider-mask',
           type === 'long' && 'before:gradient-slider-green',
           type === 'short' && 'before:gradient-slider-red',
-          type === 'margin' && 'before:gradient-slider-pink',
+          type === 'margin' && 'before:gradient-slider-martian-red',
         )}
         style={{ width: `${thumbPosPercent}%` }}
       />
@@ -60,7 +60,7 @@ function InputOverlay({ max, value, marginThreshold, type, min }: Props) {
           'border rounded-sm border-white/20',
           type === 'long' && 'bg-green',
           type === 'short' && 'bg-error',
-          type === 'margin' && 'bg-pink',
+          type === 'margin' && 'bg-martian-red',
         )}
         style={{ left: `calc(${thumbPosPercent}% - ${thumbPadRight}px)` }}
       >

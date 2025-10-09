@@ -174,7 +174,7 @@ export default function GridWithSplitters({ className, chartArea, rightArea, bot
         </div>
 
         {/* Right Panel */}
-        <div className='absolute' style={layoutStyles.right}>
+        <div className='absolute rounded-sm border border-surface-light' style={layoutStyles.right}>
           {rightArea}
         </div>
 
@@ -185,7 +185,7 @@ export default function GridWithSplitters({ className, chartArea, rightArea, bot
 
         {/* Vertical Splitter - between chart and right panel */}
         <div
-          className='absolute top-0 bottom-0 w-1 bg-body transition-colors z-50 group'
+          className='absolute top-0 bottom-0 w-1 bg-body transition-colors z-30 group'
           style={layoutStyles.verticalSplitter}
         >
           {/* Vertical Drag Knob */}
