@@ -9,6 +9,7 @@ import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMar
 import useLendingMarketAssetsTableData from 'components/earn/lend/Table/useLendingMarketAssetsTableData'
 import useAccount from 'hooks/accounts/useAccount'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import VaultDepositorsTable from 'components/managedVaults/vaultDetails/overview/DepositorTable/VaultDepositorsTable'
 import { BN } from 'utils/helpers'
 import { BNCoin } from 'types/classes/BNCoin'
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
@@ -115,7 +116,7 @@ export default function VaultSummary(props: Props) {
         title: 'Balances',
         renderContent: () =>
           accountData ? (
-            <div className='h-64 overflow-y-auto bg-white/5 scrollbar-hide'>
+            <div className='h-74 overflow-y-auto bg-white/5 scrollbar-hide'>
               <AccountBalancesTable
                 account={accountData}
                 borrowingData={borrowAssetsData}
@@ -141,7 +142,7 @@ export default function VaultSummary(props: Props) {
       tabsArray.push({
         title: 'Strategies',
         renderContent: () => (
-          <div className='h-64 overflow-y-auto bg-white/5 scrollbar-hide'>
+          <div className='h-74 overflow-y-auto bg-white/5 scrollbar-hide'>
             <AccountStrategiesTable account={accountData} hideCard />
           </div>
         ),
@@ -155,11 +156,28 @@ export default function VaultSummary(props: Props) {
       tabsArray.push({
         title: 'Perp Positions',
         renderContent: () => (
-          <div className='h-64 overflow-y-auto bg-white/5 scrollbar-hide'>
+          <div className='h-74 overflow-y-auto bg-white/5 scrollbar-hide'>
             <AccountPerpPositionTable account={accountData} hideCard />
           </div>
         ),
         notificationCount: perpsCount,
+      })
+    }
+
+    if (accountData) {
+      tabsArray.push({
+        title: 'Depositors',
+        renderContent: () => (
+          <div className='h-74 overflow-y-auto bg-white/5 scrollbar-hide'>
+            <VaultDepositorsTable
+              vaultTokensDenom={details.vault_tokens_denom}
+              vaultAddress={details.vault_address}
+              baseTokensDenom={details.base_tokens_denom}
+              vaultTokensAmount={details.vault_tokens_amount}
+              ownerAddress={details.ownerAddress || ''}
+            />
+          </div>
+        ),
       })
     }
 
@@ -175,6 +193,11 @@ export default function VaultSummary(props: Props) {
     leverage,
     netWorth.amount,
     positionValue.amount,
+    details.vault_tokens_denom,
+    details.vault_address,
+    details.base_tokens_denom,
+    details.vault_tokens_amount,
+    details.ownerAddress,
   ])
 
   return <CardWithTabs tabs={tabs} textSizeClass='text-base' />

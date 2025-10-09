@@ -2252,3 +2252,11 @@ interface HistoricalVaultChartData {
 interface MarsStakingModal {
   type: 'stake' | 'unstake'
 }
+
+interface ManagedVaultDepositor {
+  address: string
+  balance: {
+    denom: string
+    amount: string
+  }
+}
