@@ -39,7 +39,12 @@ export default function useManagedVaultUserPosition(
     if (!data?.pnl || !currentBalance || BN(currentBalance).isZero()) {
       return 0
     }
-    return BN(data.pnl).multipliedBy(100).dividedBy(currentBalance).toNumber()
+    // Calculate initial deposit as current balance minus PnL
+    const initialDeposit = BN(currentBalance).minus(data.pnl)
+    if (initialDeposit.isLessThanOrEqualTo(0)) {
+      return 0
+    }
+    return BN(data.pnl).multipliedBy(100).dividedBy(initialDeposit).toNumber()
   }
 
   return {
