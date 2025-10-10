@@ -3,6 +3,7 @@ import AssetImage from 'components/common/assets/AssetImage'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
+import { Tooltip } from 'components/common/Tooltip'
 import useVaultAssets from 'hooks/assets/useVaultAssets'
 import { useManagedVaultConvertToBaseTokens } from 'hooks/managedVaults/useManagedVaultConvertToBaseTokens'
 import useManagedVaultUserPosition from 'hooks/managedVaults/useManagedVaultUserPosition'
@@ -42,15 +43,16 @@ export default function UserMetrics(props: Props) {
     },
     {
       value: userPosition?.pnl || 0,
-      label: 'Your Total Earnings',
+      label: 'Your Estimated PnL',
       isCurrency: true,
       formatOptions: { maxDecimals: 2, minDecimals: 2 },
       isProfitOrLoss: true,
       showSignPrefix: true,
+      hasTooltip: true,
     },
     {
       value: calculateROI(userVaultTokensAmount ?? 0),
-      label: 'Your ROI',
+      label: 'Your Estimated ROI',
       formatOptions: { maxDecimals: 2, minDecimals: 2, suffix: '%' },
       isProfitOrLoss: true,
     },
@@ -88,7 +90,16 @@ export default function UserMetrics(props: Props) {
 
         return (
           <div key={index} className='relative text-center py-4 sm:flex-1'>
-            <TitleAndSubCell title={value} sub={metric.label} />
+            {metric.hasTooltip ? (
+              <Tooltip
+                content='This is an estimate based on average vault performance, not your actual earnings.'
+                type='info'
+              >
+                {<TitleAndSubCell title={value} sub={metric.label} />}
+              </Tooltip>
+            ) : (
+              <TitleAndSubCell title={value} sub={metric.label} />
+            )}
             {index < metrics.length - 1 && (
               <div className='hidden sm:block absolute right-0 top-1/2 h-8 w-[1px] -translate-y-1/2' />
             )}
