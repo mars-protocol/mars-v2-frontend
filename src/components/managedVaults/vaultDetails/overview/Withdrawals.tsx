@@ -90,7 +90,7 @@ export default function Withdrawals(props: Props) {
       <div className='w-full max-h-75'>
         <Table
           title={
-            <div className='flex justify-between items-center w-full py-3 px-4 '>
+            <div className='flex justify-between items-center w-full py-3 px-4 bg-surface-dark'>
               <Text size='lg'>Withdrawals</Text>
               <WithdrawButton
                 totalUnlockedAmount={totalUnlockedAmount.toString()}
@@ -103,7 +103,7 @@ export default function Withdrawals(props: Props) {
           columns={userWithdrawalColumns}
           data={userUnlocksData}
           initialSorting={[{ id: 'initiated', desc: true }]}
-          tableBodyClassName='bg-white/5'
+          tableBodyClassName='bg-surface'
           spacingClassName='px-4 py-2.5'
           titleComponent={
             userUnlocksData.length === 0 ? (
@@ -123,7 +123,7 @@ export default function Withdrawals(props: Props) {
     {
       title: 'Withdrawal Summary',
       renderContent: () => (
-        <div className='h-64 bg-white/5'>
+        <div className='h-75'>
           <VaultStats
             stats={[
               {
@@ -226,7 +226,7 @@ export default function Withdrawals(props: Props) {
     {
       title: 'Queued Withdrawals',
       renderContent: () => (
-        <div className='flex flex-col h-64 bg-white/5'>
+        <div className='flex flex-col h-64'>
           {isLoadingAllUnlocks ? (
             <div className='flex flex-col justify-evenly h-full px-3'>
               <Loading count={5} className='h-6 w-full' />
@@ -262,7 +262,7 @@ export default function Withdrawals(props: Props) {
     {
       title: 'My Withdrawals',
       renderContent: () => (
-        <div className='flex flex-col h-64 bg-white/5'>
+        <div className='flex flex-col h-64'>
           <div className='flex-1 overflow-auto scrollbar-hide'>
             {userUnlocksData.length > 0 ? (
               <Table

@@ -174,7 +174,7 @@ export default function GridWithSplitters({ className, chartArea, rightArea, bot
         </div>
 
         {/* Right Panel */}
-        <div className='absolute rounded-sm border border-surface-light' style={layoutStyles.right}>
+        <div className='absolute' style={layoutStyles.right}>
           {rightArea}
         </div>
 

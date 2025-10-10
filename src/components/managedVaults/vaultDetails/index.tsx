@@ -80,7 +80,7 @@ export default function VaultDetails(props: Props) {
 
   return (
     <section className='container mx-auto flex flex-wrap w-full gap-2 py-8'>
-      <div className='flex mb-6 w-full'>
+      <div className='flex w-full'>
         {!focusComponent && <NavigateBackButton />}
         <div className='ml-auto'>
           <Tab

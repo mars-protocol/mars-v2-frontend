@@ -32,7 +32,7 @@ export default function PerpsPage() {
           <div className='w-full h-full flex flex-col'>
             <PerpsBanner />
             <div className='flex-1 bg-surface h-full'>
-              <div className='w-full h-full rounded-sm border border-surface-light'>
+              <div className='w-full h-full'>
                 <PerpsTabs />
               </div>
             </div>

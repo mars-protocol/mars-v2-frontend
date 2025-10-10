@@ -87,7 +87,7 @@ export default function AccountBalancesTable(props: Props) {
           </Card>
         )}
       >
-        <div className='w-full p-4'>
+        <div className='h-full w-full p-4'>
           {isUsersAccount && !isHls ? (
             <ActionButton
               className='w-full'
@@ -110,9 +110,11 @@ export default function AccountBalancesTable(props: Props) {
               }}
             />
           ) : (
-            <Text size='sm' className='text-center'>
-              This account has no balances.
-            </Text>
+            <div className='flex justify-center items-center h-full w-full'>
+              <Text size='sm' className='text-white/60'>
+                This account has no balances.
+              </Text>
+            </div>
           )}
         </div>
       </ConditionalWrapper>

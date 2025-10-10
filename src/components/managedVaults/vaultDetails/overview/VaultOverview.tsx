@@ -39,7 +39,7 @@ export default function VaultOverview(props: Props) {
 
   return (
     <div className='flex flex-col justify-center gap-1 md:flex-row'>
-      <div className='md:w-100'>
+      <div className='md:w-140'>
         <ProfileVaultCard
           details={vaultDetails}
           depositAsset={depositAsset}
