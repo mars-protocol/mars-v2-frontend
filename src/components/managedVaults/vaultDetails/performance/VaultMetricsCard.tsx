@@ -87,7 +87,7 @@ export default function VaultMetricsCard(props: Props) {
     },
   ]
   return (
-    <div className='flex flex-wrap sm:flex-nowrap justify-center gap-1 w-full'>
+    <div className='flex flex-wrap sm:flex-nowrap justify-center gap-2 w-full'>
       {metrics.map((metric, index) => {
         const value = metric.isCurrency ? (
           <DisplayCurrency
@@ -105,7 +105,7 @@ export default function VaultMetricsCard(props: Props) {
         )
         return (
           <Card
-            className='text-center py-3 w-[calc(50%-0.5rem)] md:w-45 bg-white/5'
+            className='text-center py-3 w-[calc(50%-0.5rem)] md:w-45 bg-surface'
             key={`${metric.label}-${index}`}
           >
             <TitleAndSubCell

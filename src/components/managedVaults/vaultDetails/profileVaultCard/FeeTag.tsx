@@ -11,7 +11,7 @@ export default function FeeTag(props: Props) {
 
   return (
     <div className='flex items-center gap-1'>
-      <Text tag='span' className='rounded-sm px-2 py-0.5 text-white/60' size='xs'>
+      <Text tag='span' className='rounded-sm px-2 py-0.5 text-white/60 bg-white/10' size='xs'>
         <FormattedNumber
           amount={fee}
           options={{ minDecimals: 0, maxDecimals: 0, suffix: '% Fee' }}

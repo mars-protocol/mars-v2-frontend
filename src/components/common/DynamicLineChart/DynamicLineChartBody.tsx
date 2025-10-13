@@ -164,8 +164,8 @@ export default function DynamicLineChartBody(props: Props) {
           margin={{
             top: 10,
             right: 10,
-            left: 0,
-            bottom: 0,
+            left: 10,
+            bottom: 10,
           }}
         >
           <defs>

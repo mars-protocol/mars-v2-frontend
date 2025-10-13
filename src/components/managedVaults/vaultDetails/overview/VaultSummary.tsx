@@ -142,7 +142,7 @@ export default function VaultSummary(props: Props) {
       tabsArray.push({
         title: 'Strategies',
         renderContent: () => (
-          <div className='h-75 overflow-y-auto bg-white/5 scrollbar-hide'>
+          <div className='h-75 overflow-y-auto bg-surface scrollbar-hide'>
             <AccountStrategiesTable account={accountData} hideCard />
           </div>
         ),
