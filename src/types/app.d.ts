@@ -930,7 +930,7 @@ interface ButtonProps {
   autoFocus?: boolean
   children?: string | ReactNode
   className?: string
-  color?: 'primary' | 'secondary' | 'tertiary' | 'quaternary'
+  color?: 'primary' | 'secondary' | 'tertiary' | 'quaternary' | 'long' | 'short'
   disabled?: boolean
   id?: string
   showProgressIndicator?: boolean
@@ -997,10 +997,13 @@ interface MenuTreeEntry {
 }
 
 interface MenuTreeSubmenuEntry {
-  page: Page
+  page?: Page
   label: string
   subtitle?: string
   icon?: React.ReactNode
+  externalUrl?: string
+  isSeparator?: boolean
+  hideOnDesktop?: boolean
 }
 
 interface RiskTimePair {
