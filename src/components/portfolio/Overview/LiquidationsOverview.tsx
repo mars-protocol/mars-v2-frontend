@@ -1,7 +1,8 @@
 import Text from 'components/common/Text'
-import useLiquidations from 'hooks/liquidations/useLiquidations'
+import useInfiniteLiquidations from 'hooks/liquidations/useInfiniteLiquidations'
 import useLiquidationsColumns from 'components/portfolio/Liquidations/useLiquidationsColumns'
 import Table from 'components/common/Table'
+import { useCallback, useEffect, useRef } from 'react'
 
 interface Props {
   accountIds: string[]
@@ -10,13 +11,34 @@ interface Props {
 export default function LiquidationsOverview(props: Props) {
   const { accountIds } = props
   const columns = useLiquidationsColumns()
-  const { data: liquidations, isLoading: isLiquidationsDataLoading } = useLiquidations(
-    1,
-    25,
-    accountIds,
-  )
+  const {
+    data: liquidations,
+    isLoading,
+    hasMore,
+    loadMore,
+  } = useInfiniteLiquidations(25, ['1229', '4880'])
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
 
-  if (liquidations?.data.length === 0) {
+  const handleScroll = useCallback(() => {
+    const container = scrollContainerRef.current
+    if (!container) return
+
+    const { scrollTop, scrollHeight, clientHeight } = container
+    // Load more when user scrolls to within 100px of the bottom
+    if (scrollHeight - scrollTop - clientHeight < 100 && hasMore && !isLoading) {
+      loadMore()
+    }
+  }, [hasMore, isLoading, loadMore])
+
+  useEffect(() => {
+    const container = scrollContainerRef.current
+    if (!container) return
+
+    container.addEventListener('scroll', handleScroll)
+    return () => container.removeEventListener('scroll', handleScroll)
+  }, [handleScroll])
+
+  if (liquidations.length === 0 && !isLoading) {
     return null
   }
 
@@ -25,7 +47,16 @@ export default function LiquidationsOverview(props: Props) {
       <Text size='2xl' className='mb-2'>
         Liquidations Overview
       </Text>
-      <Table title='' columns={columns} data={liquidations?.data ?? []} initialSorting={[]} />
+      <div ref={scrollContainerRef} className='max-h-[600px] overflow-y-auto'>
+        <Table title='' columns={columns} data={liquidations} initialSorting={[]} />
+        {isLoading && (
+          <div className='flex justify-center py-4'>
+            <Text size='sm' className='text-white/60'>
+              Loading more...
+            </Text>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
