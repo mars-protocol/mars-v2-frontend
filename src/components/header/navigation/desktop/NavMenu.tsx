@@ -113,6 +113,9 @@ export const NavMenu = (props: Props) => {
                 }
               }
 
+              // Skip items without a page (shouldn't happen in this branch but for type safety)
+              if (!submenuitem.page) return null
+
               return (
                 <li
                   className={classNames(
@@ -131,7 +134,7 @@ export const NavMenu = (props: Props) => {
                     {submenuitem.icon && <div className='w-4'>{submenuitem.icon}</div>}
                     <Text className='flex flex-wrap' size='sm'>
                       {submenuitem.label}
-                      {submenuitem.subtitle && (
+                      {submenuitem.subtitle && submenuitem.page && (
                         <span
                           className={classNames(
                             'w-full text-xs group-hover/submenuitem:text-white',
