@@ -355,6 +355,7 @@ interface ChainConfig {
       vaults: string
       perpsVault?: string
     }
+    liquidations?: string
   }
   dexName: string
   explorerName: string
@@ -2264,4 +2265,20 @@ interface ManagedVaultDepositor {
     denom: string
     amount: string
   }
+}
+
+interface LiquidationDataItem {
+  liquidatee_account_id: string
+  collateral_asset_won?: BNCoin
+  debt_asset_repaid?: BNCoin
+  price_debt_repaid?: string
+  protocol_fee_coin?: BNCoin
+  price_protocol_fee_coin?: string
+  price_liquidated?: string
+  timestamp: string
+  tx_hash: string
+}
+interface LiquidationsResponse {
+  data: LiquidationDataItem[]
+  total: number
 }

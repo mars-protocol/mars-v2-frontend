@@ -134,9 +134,10 @@ export default function MarsStaking({ className }: { className?: string }) {
         contentClassName=''
       >
         <div
-          className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
-            isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
-          }`}
+          className={classNames(
+            'grid transition-[grid-template-rows] duration-300 ease-in-out',
+            isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
+          )}
         >
           <div className='overflow-hidden'>
             <div className='p-6 space-y-6'>
