@@ -17,22 +17,22 @@
  */
 export const buttonColorClasses = {
   primary:
-    'relative bg-zinc-900 dark:bg-zinc-900 light:bg-white outline outline-[1.50px] outline-offset-[-1.50px] outline-primary/60 dark:outline-primary/60 light:outline-primary/70 overflow-hidden shadow-[0_0_20px_rgba(255,99,99,0.15)] dark:shadow-[0_0_20px_rgba(255,99,99,0.15)] light:shadow-[0_0_20px_rgba(255,99,99,0.2)]',
+    'relative bg-zinc-900 light:bg-zinc-100 outline outline-[1.50px] outline-offset-[-1.50px] outline-primary/60 light:outline-primary/70 overflow-hidden shadow-[0_0_20px_rgba(255,99,99,0.15)] light:shadow-[0_0_20px_rgba(255,99,99,0.2)]',
   secondary:
-    'relative bg-transparent outline outline-[1.50px] outline-offset-[-1.50px] outline-zinc-700 dark:outline-zinc-700 light:outline-zinc-400 hover:outline-primary/50 dark:hover:outline-primary/50 light:hover:outline-primary/60 overflow-hidden transition-all duration-300',
+    'relative bg-transparent outline outline-[1.50px] outline-offset-[-1.50px] outline-zinc-700 light:outline-zinc-400 hover:outline-primary/50 light:hover:outline-primary/60 overflow-hidden transition-all duration-300',
   tertiary:
-    'relative bg-transparent outline outline-1 outline-offset-[-1px] outline-zinc-800 dark:outline-zinc-800 light:outline-zinc-300 hover:outline-primary/40 dark:hover:outline-primary/40 light:hover:outline-primary/50 overflow-hidden transition-all duration-300',
-  quaternary: 'bg-transparent text-white/60 hover:text-white active:text-white',
-  long: 'relative bg-green dark:bg-green light:bg-green hover:bg-green/90 active:bg-green/80 transition-colors duration-200',
-  short:
-    'relative bg-loss dark:bg-loss light:bg-loss hover:bg-loss/90 active:bg-loss/80 transition-colors duration-200',
+    'relative bg-transparent outline outline-1 outline-offset-[-1px] outline-zinc-800 light:outline-zinc-400 hover:outline-primary/40 light:hover:outline-primary/50 overflow-hidden transition-all duration-300',
+  quaternary:
+    'bg-transparent text-white/60 light:text-black/60 hover:text-white light:hover:text-black active:text-white light:active:text-black',
+  long: 'relative bg-green hover:bg-green/90 active:bg-green/80 transition-colors duration-200',
+  short: 'relative bg-loss hover:bg-loss/90 active:bg-loss/80 transition-colors duration-200',
 }
 
 export const focusClasses = {
-  primary: 'outline-primary/50 dark:outline-primary/50 light:outline-primary/60',
-  secondary: 'outline-white/40 dark:outline-white/40 light:outline-zinc-500',
-  tertiary: 'outline-white/40 dark:outline-white/40 light:outline-zinc-500',
-  quaternary: 'text-white dark:text-white light:text-black',
+  primary: 'outline-primary/50 light:outline-primary/60',
+  secondary: 'outline-white/40 light:outline-zinc-500',
+  tertiary: 'outline-white/40 light:outline-zinc-500',
+  quaternary: 'text-white light:text-black',
   long: 'outline-green/50',
   short: 'outline-loss/50',
 }
@@ -57,9 +57,10 @@ export const buttonTertiaryGradientClasses = [
 export const buttonTransparentColorClasses = {
   primary: 'hover:text-primary active:text-primary focus:text-primary',
   secondary: 'hover:text-secondary active:text-secondary focus:text-secondary',
-  tertiary: 'hover:text-white/80 active:text-white/80 focus:text-white/80',
+  tertiary:
+    'hover:text-white/80 light:hover:text-black/80 active:text-white/80 light:active:text-black/80 focus:text-white/80 light:focus:text-black/80',
   quaternary:
-    'text-white/60 dark:text-white/60 light:text-black/60 hover:text-white dark:hover:text-white light:hover:text-black active:text-white',
+    'text-white/60 light:text-black/60 hover:text-white light:hover:text-black active:text-white light:active:text-black',
   long: 'text-white hover:text-white active:text-white',
   short: 'text-white hover:text-white active:text-white',
 }

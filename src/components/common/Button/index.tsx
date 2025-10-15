@@ -67,18 +67,17 @@ const Button = React.forwardRef(function Button(
       buttonClasses.push(buttonTransparentColorClasses[color])
     }
 
-    let textColorClass = 'text-white dark:text-white light:text-black'
+    let textColorClass = 'text-white light:text-black'
     if (color === 'primary') {
       textColorClass =
-        'text-white dark:text-white light:text-black font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]'
+        'text-white light:text-primary font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] light:drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]'
     } else if (color === 'secondary') {
-      textColorClass =
-        'text-white dark:text-white light:text-black font-semibold transition-colors duration-300'
+      textColorClass = 'text-white light:text-black font-semibold transition-colors duration-300'
     } else if (color === 'tertiary') {
       textColorClass =
-        'text-zinc-400 dark:text-zinc-400 light:text-zinc-600 hover:text-white dark:hover:text-white light:hover:text-black font-medium transition-colors duration-300'
+        'text-zinc-400 light:text-zinc-600 hover:text-white light:hover:text-black font-medium transition-colors duration-300'
     } else if (color === 'long' || color === 'short') {
-      textColorClass = 'text-white dark:text-white light:text-white font-bold'
+      textColorClass = 'text-white font-bold'
     }
 
     let gradientClasses: string[] = []
