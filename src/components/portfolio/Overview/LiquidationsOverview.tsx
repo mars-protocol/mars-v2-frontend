@@ -16,7 +16,7 @@ export default function LiquidationsOverview(props: Props) {
     isLoading,
     hasMore,
     loadMore,
-  } = useInfiniteLiquidations(25, ['1229', '4880'])
+  } = useInfiniteLiquidations(25, accountIds)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   const handleScroll = useCallback(() => {
@@ -44,7 +44,7 @@ export default function LiquidationsOverview(props: Props) {
 
   return (
     <div className='w-full mt-6'>
-      <Text size='2xl' className='mb-2'>
+      <Text size='2xl' className='mb-4'>
         Liquidations Overview
       </Text>
       <div ref={scrollContainerRef} className='max-h-[600px] overflow-y-auto'>
