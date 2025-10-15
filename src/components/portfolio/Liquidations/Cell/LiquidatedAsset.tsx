@@ -16,7 +16,7 @@ interface Props {
   priceAtLiquidation?: string
 }
 
-export default function Asset(props: Props) {
+export default function LiquidatedAsset(props: Props) {
   const { value, assetData, priceAtLiquidation } = props
 
   const asset = assetData.find(byDenom(value.denom))
