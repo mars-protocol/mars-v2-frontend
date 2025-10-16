@@ -9,8 +9,10 @@ export default async function getRouteInfo(
   amount: BigNumber,
   assets: Asset[],
   chainConfig: ChainConfig,
+  adjustedSwapFee?: number,
 ): Promise<SwapRouteInfo | null> {
   const astroportUrl = `${chainConfig.endpoints.routes}?start=${denomIn}&end=${denomOut}&amount=${amount.toString()}&chainId=${chainConfig.id}&limit=1`
+  const swapFee = adjustedSwapFee ?? chainConfig.swapFee
 
   try {
     const resp = await fetchWithTimeout(astroportUrl, FETCH_TIMEOUT)
@@ -18,7 +20,7 @@ export default async function getRouteInfo(
 
     let amountOut = BN(route.amount_out)
     if (!amountOut.gt(0))
-      amountOut = amountOut.times(1 - chainConfig.swapFee).integerValue(BigNumber.ROUND_FLOOR)
+      amountOut = amountOut.times(1 - swapFee).integerValue(BigNumber.ROUND_FLOOR)
 
     return {
       amountOut,
