@@ -26,12 +26,12 @@ export default async function getLiquidations(
       }
     }
 
-    const url = `${chainConfig.endpoints.liquidations}&product=creditmanager&page=${page}&limit=${pageSize}&orders={"block_height":"desc"}${filterParam}`
+    const baseUrl = `${chainConfig.endpoints.liquidations}&product=creditmanager&page=${page}&limit=${pageSize}&orders={"block_height":"desc"}${filterParam}`
 
+    const url = getUrl(baseUrl, '')
     const response = await fetch(url)
     const data = await response.json()
 
-    console.log(data, 'data from liquidations')
     return { data: data.data, total: data.total } as LiquidationsResponse
   } catch (error) {
     console.error('Could not fetch liquidations data.', error)
