@@ -49,7 +49,10 @@ export default async function getOraclePrices(
 
         const chunkResults = await Promise.all(
           denomChunks.map(async (chunk) => {
-            return await neutronOracleQueryClient.pricesByDenoms({ denoms: chunk, kind: 'default' })
+            return await neutronOracleQueryClient.pricesByDenoms({
+              denoms: chunk,
+              kind: 'liquidation',
+            })
           }),
         )
 
@@ -70,7 +73,10 @@ export default async function getOraclePrices(
         const shareResults = await Promise.all(
           shareAssets.map(async (asset) => {
             try {
-              return await neutronOracleQueryClient.price({ denom: asset.denom })
+              return await neutronOracleQueryClient.price({
+                denom: asset.denom,
+                kind: 'liquidation',
+              })
             } catch (error) {
               console.warn(`Failed to fetch price for share asset ${asset.denom}:`, error)
               return { denom: asset.denom, price: '0' } as PriceResponse
@@ -96,7 +102,7 @@ export default async function getOraclePrices(
         : await getOracleQueryClientNeutron(chainConfig)
       return Promise.all(
         assets.map(async (asset) => {
-          const priceResponse = await queryClient.price({ denom: asset.denom })
+          const priceResponse = await queryClient.price({ denom: asset.denom, kind: 'liquidation' })
           return getAssetPrice(asset, priceResponse)
         }),
       )
