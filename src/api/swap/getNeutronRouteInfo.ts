@@ -106,7 +106,9 @@ function buildSwapRouteInfo(
   route: any,
   description: string,
   chainConfig: ChainConfig,
+  adjustedSwapFee?: number,
 ): SwapRouteInfo {
+  const swapFee = adjustedSwapFee ?? chainConfig.swapFee
   let priceImpact = BN('0')
 
   // Check both camelCase and snake_case for price impact
@@ -137,7 +139,7 @@ function buildSwapRouteInfo(
     skipRouteResponse.estimated_amount_out
 
   const routeInfo: SwapRouteInfo = {
-    amountOut: BN(amountOut || '0').times(1 - chainConfig.swapFee),
+    amountOut: BN(amountOut || '0').times(1 - swapFee),
     priceImpact,
     fee: BN('0'),
     description,
@@ -160,7 +162,9 @@ async function getNeutronRouteInfoInternal(
   routeParams: any,
   isReverse: boolean = false,
   shouldFallbackToAstroport: boolean = true,
+  adjustedSwapFee?: number,
 ): Promise<SwapRouteInfo | null> {
+  const swapFee = adjustedSwapFee ?? chainConfig.swapFee
   try {
     const skipRouteParams = {
       sourceAssetDenom: denomIn,
@@ -186,6 +190,7 @@ async function getNeutronRouteInfoInternal(
           routeParams.amountIn,
           assets,
           chainConfig,
+          adjustedSwapFee,
         )
       }
       return null
@@ -201,6 +206,7 @@ async function getNeutronRouteInfoInternal(
           routeParams.amountIn,
           assets,
           chainConfig,
+          adjustedSwapFee,
         )
       }
       return null
@@ -215,11 +221,17 @@ async function getNeutronRouteInfoInternal(
 
     const description = createSwapDescription(denomIn, denomOut, assets)
 
-    const routeInfo = buildSwapRouteInfo(skipRouteResponse, route, description, chainConfig)
+    const routeInfo = buildSwapRouteInfo(
+      skipRouteResponse,
+      route,
+      description,
+      chainConfig,
+      adjustedSwapFee,
+    )
 
     if (!routeInfo.amountOut.gt(0))
       routeInfo.amountOut = routeInfo.amountOut
-        .times(1 - chainConfig.swapFee)
+        .times(1 - swapFee)
         .integerValue(BigNumber.ROUND_FLOOR)
 
     return routeInfo
@@ -231,6 +243,7 @@ async function getNeutronRouteInfoInternal(
         routeParams.amountIn,
         assets,
         chainConfig,
+        adjustedSwapFee,
       )
     }
     return null
@@ -253,6 +266,7 @@ export async function getNeutronRouteInfoReverse(
   assets: Asset[],
   chainConfig: ChainConfig,
   slippage?: number, // Will use default from settings if not provided
+  adjustedSwapFee?: number,
 ): Promise<SwapRouteInfo | null> {
   // Use default slippage from settings if not provided
   const effectiveSlippage = slippage ?? getDefaultChainSettings(chainConfig).slippage
@@ -294,7 +308,13 @@ export async function getNeutronRouteInfoReverse(
 
     const description = createSwapDescription(denomIn, denomOut, assets)
 
-    const routeInfo = buildSwapRouteInfo(skipRouteResponse, route, description, chainConfig)
+    const routeInfo = buildSwapRouteInfo(
+      skipRouteResponse,
+      route,
+      description,
+      chainConfig,
+      adjustedSwapFee,
+    )
 
     // For reverse routing, add the amountIn that Skip calculated
     // Check both camelCase and snake_case for amount in
@@ -318,6 +338,7 @@ export async function getNeutronRouteInfoReverse(
       assets,
       chainConfig,
       effectiveSlippage,
+      adjustedSwapFee,
     )
   }
 }
@@ -333,6 +354,7 @@ async function binarySearchReverseRouting(
   assets: Asset[],
   chainConfig: ChainConfig,
   slippage: number,
+  adjustedSwapFee?: number,
 ): Promise<SwapRouteInfo | null> {
   // Work with integers from the start - convert target to integer
   const targetAmountOutInt = BN(toIntegerString(targetAmountOut))
@@ -358,6 +380,7 @@ async function binarySearchReverseRouting(
         { amountIn: mid.toString() },
         false,
         false,
+        adjustedSwapFee,
       )
 
       if (!route || route.amountOut.isZero()) {
@@ -406,6 +429,7 @@ export default async function getNeutronRouteInfo(
   amount: BigNumber,
   assets: Asset[],
   chainConfig: ChainConfig,
+  adjustedSwapFee?: number,
 ): Promise<SwapRouteInfo | null> {
   return getNeutronRouteInfoInternal(
     denomIn,
@@ -415,5 +439,6 @@ export default async function getNeutronRouteInfo(
     { amountIn: amount.toString() },
     false, // isReverse
     true, // shouldFallbackToAstroport
+    adjustedSwapFee,
   )
 }
