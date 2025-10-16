@@ -2,9 +2,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import TVL from 'components/earn/farm/common/Table/Columns/TVL'
 import Info, { INFO_META } from 'components/managedVaults/vaultDetails/table/columns/Info'
-import Timestamp, {
-  TIMESTAMP_META,
-} from 'components/managedVaults/vaultDetails/table/columns/Timestamp'
+import Timestamp, { TIMESTAMP_META } from 'components/common/Timestamp'
 import { useMemo } from 'react'
 import { BN } from 'utils/helpers'
 
@@ -21,7 +19,15 @@ export default function useQueuedWithdrawals(props: Props) {
     () => [
       {
         ...TIMESTAMP_META,
-        cell: ({ row }) => <Timestamp value={row.original.created_at} isLoading={isLoading} />,
+        cell: ({ row }) => (
+          <Timestamp
+            value={row.original.created_at}
+            isLoading={isLoading}
+            unit='seconds'
+            showUtc={false}
+            use24Hour={false}
+          />
+        ),
       },
       {
         ...INFO_META,

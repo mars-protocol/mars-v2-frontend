@@ -125,6 +125,7 @@ const Osmosis1: ChainConfig = {
     aprs: {
       vaults: 'https://backend.prod.mars-dev.net/v1/vaults/osmosis',
     },
+    liquidations: 'https://backend.prod.mars-dev.net/v2/liquidations?chain=osmosis',
   },
   dexName: 'Osmosis Dex',
   explorerName: 'Mintscan',
