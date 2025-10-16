@@ -7,7 +7,7 @@ import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
-import { demagnify } from 'utils/formatters'
+import { demagnify, getSpotPriceDecimals } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
 interface Props {
@@ -46,7 +46,7 @@ export default function LiquidatedAsset(props: Props) {
           <FormattedNumber
             amount={amount}
             options={{
-              maxDecimals: 6,
+              maxDecimals: getSpotPriceDecimals(amount),
               minDecimals: 2,
               abbreviated: false,
             }}

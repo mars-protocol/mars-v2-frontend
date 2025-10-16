@@ -16,19 +16,25 @@ export default function LiquidationsOverview(props: Props) {
     isLoading,
     hasMore,
     loadMore,
+    isValidating,
   } = useInfiniteLiquidations(25, accountIds)
+
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
-  const handleScroll = useCallback(() => {
-    const container = scrollContainerRef.current
-    if (!container) return
+  const handleScroll = useCallback(
+    (e: Event) => {
+      const container = e.currentTarget as HTMLDivElement
+      if (!container) return
 
-    const { scrollTop, scrollHeight, clientHeight } = container
-    // Load more when user scrolls to within 100px of the bottom
-    if (scrollHeight - scrollTop - clientHeight < 100 && hasMore && !isLoading) {
-      loadMore()
-    }
-  }, [hasMore, isLoading, loadMore])
+      const { scrollTop, scrollHeight, clientHeight } = container
+      const distanceFromBottom = scrollHeight - scrollTop - clientHeight
+
+      if (distanceFromBottom < 100 && hasMore && !isValidating) {
+        loadMore()
+      }
+    },
+    [hasMore, isValidating, loadMore],
+  )
 
   useEffect(() => {
     const container = scrollContainerRef.current
@@ -47,9 +53,9 @@ export default function LiquidationsOverview(props: Props) {
       <Text size='2xl' className='mb-4'>
         Liquidations Overview
       </Text>
-      <div ref={scrollContainerRef} className='max-h-[600px] overflow-y-auto'>
+      <div ref={scrollContainerRef} className='max-h-[600px] overflow-y-auto scrollbar-dark'>
         <Table title='' columns={columns} data={liquidations} initialSorting={[]} />
-        {isLoading && (
+        {isValidating && (
           <div className='flex justify-center py-4'>
             <Text size='sm' className='text-white/60'>
               Loading more...
