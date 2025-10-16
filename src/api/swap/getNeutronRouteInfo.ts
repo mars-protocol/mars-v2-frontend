@@ -172,6 +172,7 @@ async function getNeutronRouteInfoInternal(
         { name: 'neutron-duality', chainId: chainConfig.id },
         { name: 'neutron-astroport', chainId: chainConfig.id },
       ],
+      experimentalFeatures: ['eureka'],
       ...routeParams,
     }
 
@@ -267,6 +268,7 @@ export async function getNeutronRouteInfoReverse(
         { name: 'neutron-duality', chainId: chainConfig.id },
         { name: 'neutron-astroport', chainId: chainConfig.id },
       ],
+      experimentalFeatures: ['eureka'],
       // Use reverse routing parameters
       amountOut: toIntegerString(amountOut),
     }
