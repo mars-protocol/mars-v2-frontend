@@ -14,6 +14,7 @@ export default function useLiquidationsColumns() {
   return useMemo<ColumnDef<LiquidationDataItem>[]>(() => {
     return [
       {
+        id: 'time',
         header: 'Time',
         meta: { className: 'min-w-20' },
         cell: ({ row }: { row: Row<LiquidationDataItem> }) => (

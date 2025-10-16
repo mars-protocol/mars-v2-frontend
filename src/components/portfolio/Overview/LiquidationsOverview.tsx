@@ -48,7 +48,7 @@ export default function LiquidationsOverview(props: Props) {
         Liquidations Overview
       </Text>
       <div className='max-h-[600px] overflow-y-auto scrollbar-dark'>
-        <Table title='' columns={columns} data={liquidations} initialSorting={[]} />
+        <Table title='' columns={columns} data={liquidations} initialSorting={[]} hideCard />
         {hasMore && (
           <div ref={observerRef} className='h-20 flex items-center justify-center'>
             {isValidating && (
