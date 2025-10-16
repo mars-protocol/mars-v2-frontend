@@ -4,7 +4,15 @@ import { isMobile } from 'react-device-detect'
 
 import AccountMenu from 'components/account/AccountMenu'
 import EscButton from 'components/common/Button/EscButton'
-import { ArrowChartLineUp, Coins, CoinsSwap, MarsToken } from 'components/common/Icons'
+import {
+  ArrowChartLineUp,
+  Coins,
+  CoinsSwap,
+  Discord,
+  MarsToken,
+  Telegram,
+  Twitter,
+} from 'components/common/Icons'
 import Settings from 'components/common/Settings'
 import ChainSelect from 'components/header/ChainSelect'
 import DesktopNavigation from 'components/header/navigation/desktop/DesktopNavigation'
@@ -54,12 +62,72 @@ const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
     label: 'Earn',
   },
   { pages: ['borrow'], label: 'Borrow' },
-  ...(chainConfig.managedVaults ? [{ pages: ['vaults'] as Page[], label: 'Vaults' }] : []),
+  { pages: ['portfolio'], label: 'Portfolio' },
   ...(chainConfig.hls
     ? [{ pages: ['hls-staking', 'hls-farm'] as Page[], label: 'High Leverage' }]
     : []),
-  { pages: ['portfolio'], label: 'Portfolio' },
-  { pages: ['governance'], label: 'Governance', externalUrl: DocURL.COUNCIL },
+  {
+    pages: ['portfolio', 'perps-vault', 'governance', 'vaults', 'hls-staking', 'hls-farm'],
+    label: 'More',
+    submenu: [
+      ...(chainConfig.hls
+        ? [
+            {
+              page: 'hls-staking' as Page,
+              label: 'High Leverage',
+              hideOnDesktop: true,
+            },
+          ]
+        : []),
+      ...(chainConfig.managedVaults
+        ? [
+            {
+              page: 'vaults' as Page,
+              label: 'Vaults',
+            },
+          ]
+        : []),
+      {
+        page: 'perps-vault',
+        label: 'Counterparty Vault',
+      },
+      {
+        label: 'Governance',
+        externalUrl: DocURL.COUNCIL,
+      },
+      {
+        label: 'Stats',
+        externalUrl: DocURL.STATS_URL,
+      },
+      {
+        label: 'Docs',
+        externalUrl: DocURL.DOCS_URL,
+      },
+      {
+        label: 'MARS Token',
+        externalUrl: DocURL.TOKENOMICS_URL,
+      },
+      {
+        label: '',
+        isSeparator: true,
+      },
+      {
+        label: 'X (Twitter)',
+        externalUrl: DocURL.X_URL,
+        icon: <Twitter className='w-4 h-4' />,
+      },
+      {
+        label: 'Telegram',
+        externalUrl: DocURL.TELEGRAM_URL,
+        icon: <Telegram className='w-4 h-4' />,
+      },
+      {
+        label: 'Discord',
+        externalUrl: DocURL.DISCORD_URL,
+        icon: <Discord className='w-4 h-4' />,
+      },
+    ],
+  },
 ]
 
 const menuTreeV1 = (): MenuTreeEntry[] => [
@@ -83,7 +151,7 @@ export default function Header() {
   const feeTokenInitiated = useInitFeeToken()
 
   function handleCloseFocusMode() {
-    if (focusComponent && focusComponent.onClose) focusComponent.onClose()
+    focusComponent?.onClose?.()
     useStore.setState({ focusComponent: null })
   }
 

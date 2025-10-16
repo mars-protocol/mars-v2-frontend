@@ -1,6 +1,5 @@
 import classNames from 'classnames'
 
-import { Callout, CalloutType } from 'components/common/Callout'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Text from 'components/common/Text'
 import TierLabel from 'components/staking/TierLabel'
@@ -128,9 +127,6 @@ export default function TierProgressBar({
           </div>
         )}
       </div>
-      <Callout type={CalloutType.WARNING}>
-        Tier Benefits are not in effect yet. They will be activated in early October.
-      </Callout>
     </div>
   )
 }

@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import AccountMenu from 'components/account/AccountMenu'
 import AccountSummary from 'components/account/AccountSummary'
 import Card from 'components/common/Card'
-import { ChevronDown } from 'components/common/Icons'
+import { ChevronDown, Discord, Telegram, Twitter } from 'components/common/Icons'
 import Settings from 'components/common/Settings'
 import Text from 'components/common/Text'
 import ChainSelect from 'components/header/ChainSelect'
@@ -16,6 +16,7 @@ import useV1Account from 'hooks/v1/useV1Account'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
+import { DocURL } from 'types/enums'
 import { getPage, getRoute } from 'utils/route'
 
 interface Props {
@@ -108,19 +109,22 @@ function Content(props: Props & { account?: Account }) {
               }
               defaultValue={currentPage}
             >
-              {menu.map((item, index) => {
+              {menu.map((item) => {
                 if (item.submenu) {
-                  return item.submenu.map((subItem, subIndex) => {
-                    return (
-                      <option key={subIndex} value={subItem.page}>
-                        {`${item.label} - ${subItem.label}`}
-                      </option>
-                    )
-                  })
+                  return item.submenu
+                    .filter((subItem) => !subItem.isSeparator && !subItem.icon)
+                    .map((subItem) => {
+                      const value = subItem.page || subItem.externalUrl || ''
+                      return (
+                        <option key={value} value={value}>
+                          {`${item.label} - ${subItem.label}`}
+                        </option>
+                      )
+                    })
                 }
 
                 return (
-                  <option key={index} value={item.pages[0]}>
+                  <option key={item.pages[0]} value={item.pages[0]}>
                     {item.label}
                   </option>
                 )
@@ -147,6 +151,35 @@ function Content(props: Props & { account?: Account }) {
             </div>
           </div>
         )}
+        <div className='flex items-center justify-between w-full'>
+          <Text size='sm'>Socials:</Text>
+          <div className='flex gap-4'>
+            <a
+              href={DocURL.DISCORD_URL}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='text-white/60 hover:text-white transition-colors'
+            >
+              <Discord className='w-6 h-6' />
+            </a>
+            <a
+              href={DocURL.TELEGRAM_URL}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='text-white/60 hover:text-white transition-colors'
+            >
+              <Telegram className='w-6 h-6' />
+            </a>
+            <a
+              href={DocURL.X_URL}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='text-white/60 hover:text-white transition-colors'
+            >
+              <Twitter className='w-6 h-6' />
+            </a>
+          </div>
+        </div>
         {account && (
           <div className='flex w-full'>
             <Card title={isV1 ? 'Red Bank' : accountTitle}>

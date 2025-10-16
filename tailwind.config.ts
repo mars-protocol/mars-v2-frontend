@@ -4,6 +4,7 @@ import scrollbarHide from 'tailwind-scrollbar-hide'
 import plugin from 'tailwindcss/plugin'
 
 module.exports = {
+  darkMode: ['selector', '[data-theme="dark"]'],
   content: ['./src/pages/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
   safelist: [
     'border-error',
@@ -419,6 +420,9 @@ module.exports = {
   plugins: [
     scrollbarHide,
     containerQueries,
+    plugin(function ({ addVariant }) {
+      addVariant('light', ':root[data-theme="light"] &')
+    }),
     plugin(function ({ addBase, addUtilities, theme }) {
       addBase({
         h1: { fontSize: '48px', lineHeight: '64px', fontWeight: theme('fontWeight.light') },

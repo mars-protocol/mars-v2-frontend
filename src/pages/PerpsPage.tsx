@@ -23,7 +23,6 @@ export default function PerpsPage() {
       navigate(getRoute(getPage('trade', chainConfig), searchParams, address, accountId))
     }
   }, [accountId, address, chainConfig, chainConfig.perps, navigate, searchParams])
-
   return (
     <div className='flex flex-col w-full h-full'>
       <GridWithSplitters

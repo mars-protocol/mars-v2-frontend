@@ -6,13 +6,14 @@ import {
   buttonGradientClasses,
   buttonPaddingClasses,
   buttonRoundSizeClasses,
+  buttonSecondaryGradientClasses,
   buttonSizeClasses,
+  buttonTertiaryGradientClasses,
   buttonTransparentColorClasses,
   buttonVariantClasses,
   circularProgressSize,
   focusClasses,
 } from 'components/common/Button/constants'
-import { glowElement } from 'components/common/Button/utils'
 import { CircularProgress } from 'components/common/CircularProgress'
 import { ChevronDown } from 'components/common/Icons'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
@@ -52,7 +53,6 @@ const Button = React.forwardRef(function Button(
   )
   const isDisabled = disabled || showProgressIndicator
   const shouldShowText = text && !children
-  const shouldShowGlowElement = variant === 'solid' && !isDisabled && !reduceMotion
 
   const buttonClassNames = useMemo(() => {
     const buttonClasses = [
@@ -67,16 +67,38 @@ const Button = React.forwardRef(function Button(
       buttonClasses.push(buttonTransparentColorClasses[color])
     }
 
+    let textColorClass = 'text-white light:text-black'
+    if (color === 'primary') {
+      textColorClass =
+        'text-white light:text-primary font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] light:drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]'
+    } else if (color === 'secondary') {
+      textColorClass = 'text-white light:text-black font-semibold transition-colors duration-300'
+    } else if (color === 'tertiary') {
+      textColorClass =
+        'text-zinc-400 light:text-zinc-600 hover:text-white light:hover:text-black font-medium transition-colors duration-300'
+    } else if (color === 'long' || color === 'short') {
+      textColorClass = 'text-white font-bold'
+    }
+
+    let gradientClasses: string[] = []
+    if (color === 'primary') {
+      gradientClasses = buttonGradientClasses
+    } else if (color === 'secondary') {
+      gradientClasses = buttonSecondaryGradientClasses
+    } else if (color === 'tertiary') {
+      gradientClasses = buttonTertiaryGradientClasses
+    }
+
     return classNames(
       'relative z-1 flex items-center',
-      'appearance-none break-normal outline-none',
-      'text-white transition-all',
-      'hover:cursor-pointer',
-      !reduceMotion && 'transition-color',
+      'appearance-none break-normal',
+      textColorClass,
+      isDisabled ? 'cursor-not-allowed' : 'hover:cursor-pointer',
+      !reduceMotion && 'transition-all duration-300',
       buttonClasses,
       buttonVariantClasses[variant],
-      variant === 'solid' && color === 'primary' && buttonGradientClasses,
-      isDisabled && 'pointer-events-none opacity-50',
+      variant === 'solid' && !isDisabled && gradientClasses,
+      isDisabled && 'pointer-events-none opacity-40 grayscale',
       hasFocus && focusClasses[color],
       className,
     )
@@ -102,22 +124,26 @@ const Button = React.forwardRef(function Button(
       tabIndex={tabIndex}
       autoFocus={autoFocus}
     >
-      {showProgressIndicator ? (
-        <CircularProgress size={circularProgressSize[size]} />
-      ) : (
-        <>
-          {leftIcon && <span className={classNames(leftIconClassNames)}>{leftIcon}</span>}
-          {shouldShowText && <span className={textClassNames}>{text}</span>}
-          {children && children}
-          {rightIcon && <span className={classNames(rightIconClassNames)}>{rightIcon}</span>}
-          {hasSubmenu && (
-            <span data-testid='button-submenu-indicator' className='ml-2 inline-block w-3 md:w-2.5'>
-              <ChevronDown />
-            </span>
-          )}
-        </>
-      )}
-      {shouldShowGlowElement && glowElement(!reduceMotion)}
+      <span className='relative z-10 flex items-center'>
+        {showProgressIndicator ? (
+          <CircularProgress size={circularProgressSize[size]} />
+        ) : (
+          <>
+            {leftIcon && <span className={classNames(leftIconClassNames)}>{leftIcon}</span>}
+            {shouldShowText && <span className={textClassNames}>{text}</span>}
+            {children}
+            {rightIcon && <span className={classNames(rightIconClassNames)}>{rightIcon}</span>}
+            {hasSubmenu && (
+              <span
+                data-testid='button-submenu-indicator'
+                className='ml-2 inline-block w-3 md:w-2.5'
+              >
+                <ChevronDown />
+              </span>
+            )}
+          </>
+        )}
+      </span>
     </button>
   )
 })

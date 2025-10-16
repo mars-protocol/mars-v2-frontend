@@ -41,7 +41,7 @@ export default function Title(props: Props) {
           alt={vaultOwnerInfo.name}
           width={vaultOwnerInfo.avatar.width}
           height={vaultOwnerInfo.avatar.height}
-          className='rounded-full'
+          className='rounded-full w-8 h-8'
         />
       </span>
       <div className='flex flex-col gap-0.5'>

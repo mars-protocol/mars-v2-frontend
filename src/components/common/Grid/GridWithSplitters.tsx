@@ -46,14 +46,12 @@ export default function GridWithSplitters({ className, chartArea, rightArea, bot
         cancelAnimationFrame(animationFrameId)
       }
       setIsDragging(null)
-      document.removeEventListener('mousemove', handleMouseMove, { passive: true } as any)
+      document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseup', handleMouseUp)
-      document.removeEventListener('mouseleave', handleMouseUp)
     }
 
-    document.addEventListener('mousemove', handleMouseMove, { passive: true } as any)
+    document.addEventListener('mousemove', handleMouseMove)
     document.addEventListener('mouseup', handleMouseUp)
-    document.addEventListener('mouseleave', handleMouseUp)
   }, [])
 
   const handleHorizontalKnobDrag = useCallback((e: React.MouseEvent) => {
@@ -88,14 +86,12 @@ export default function GridWithSplitters({ className, chartArea, rightArea, bot
         cancelAnimationFrame(animationFrameId)
       }
       setIsDragging(null)
-      document.removeEventListener('mousemove', handleMouseMove, { passive: true } as any)
+      document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseup', handleMouseUp)
-      document.removeEventListener('mouseleave', handleMouseUp)
     }
 
-    document.addEventListener('mousemove', handleMouseMove, { passive: true } as any)
+    document.addEventListener('mousemove', handleMouseMove)
     document.addEventListener('mouseup', handleMouseUp)
-    document.addEventListener('mouseleave', handleMouseUp)
   }, [])
 
   // Cleanup effect to ensure dragging state is always cleared
@@ -159,6 +155,17 @@ export default function GridWithSplitters({ className, chartArea, rightArea, bot
 
   return (
     <div ref={containerRef} className={classNames('relative w-full h-full', className)}>
+      {/* Drag Overlay - Prevents TradingView chart from capturing mouse events */}
+      {isDragging && (
+        <div
+          className={classNames(
+            'fixed inset-0 z-[9999]',
+            isDragging === 'vertical' ? 'cursor-col-resize' : 'cursor-row-resize',
+          )}
+          style={{ userSelect: 'none' }}
+        />
+      )}
+
       {/* Mobile Layout - Stacked */}
       <div className='flex flex-col w-full h-full gap-1 md:hidden'>
         <div className='bg-surface w-full flex-1'>{chartArea}</div>
