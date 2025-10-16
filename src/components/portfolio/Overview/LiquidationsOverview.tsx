@@ -38,7 +38,7 @@ export default function LiquidationsOverview(props: Props) {
     return () => observer.disconnect()
   }, [hasMore, isValidating, loadMore])
 
-  if (liquidations.length === 0 && !isLoading) {
+  if (liquidations.length === 0) {
     return null
   }
 
