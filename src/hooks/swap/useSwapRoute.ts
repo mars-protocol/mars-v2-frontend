@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import getNeutronRouteInfo from 'api/swap/getNeutronRouteInfo'
 import getOsmosisRouteInfo from 'api/swap/getOsmosisRouteInfo'
 import { getDepositAndLendCoinsToSpend } from 'hooks/accounts/useUpdatedAccount/functions'
+import useAdjustedSwapFee from 'hooks/staking/useAdjustedSwapFee'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -37,6 +38,7 @@ export default function useSwapRoute(
 ): SwapRouteDetails {
   const chainConfig = useStore((s) => s.chainConfig)
   const assets = useStore((s) => s.assets)
+  const adjustedSwapFee = useAdjustedSwapFee(chainConfig.swapFee)
   const [swapDetails, setSwapDetails] = useState<SwapRouteDetails>({
     expectedOutput: undefined,
     priceImpact: 0,
@@ -64,8 +66,15 @@ export default function useSwapRoute(
 
       try {
         const routeInfo = isOsmosis
-          ? await getOsmosisRouteInfo(osmosisUrl, fromDenom, assets, chainConfig)
-          : await getNeutronRouteInfo(fromDenom, toDenom, amount, assets, chainConfig)
+          ? await getOsmosisRouteInfo(osmosisUrl, fromDenom, assets, chainConfig, adjustedSwapFee)
+          : await getNeutronRouteInfo(
+              fromDenom,
+              toDenom,
+              amount,
+              assets,
+              chainConfig,
+              adjustedSwapFee,
+            )
 
         if (routeInfo) {
           const fromAsset = assets.find((a) => a.denom === fromDenom)
@@ -119,7 +128,7 @@ export default function useSwapRoute(
     }
 
     fetchSwapRoute()
-  }, [fromDenom, toDenom, amount, enabled, chainConfig, assets])
+  }, [fromDenom, toDenom, amount, enabled, chainConfig, assets, adjustedSwapFee])
 
   return swapDetails
 }

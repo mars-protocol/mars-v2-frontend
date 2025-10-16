@@ -4,6 +4,7 @@ export interface TierConfig {
   minAmount: number // in MARS tokens (not micro units)
   color: string
   benefits: string[]
+  swapFeeReduction: number // Decimal: 0.0 = 0%, 0.1 = 10%, 0.8 = 80%
 }
 
 export const TIER_CONFIGS: TierConfig[] = [
@@ -13,6 +14,7 @@ export const TIER_CONFIGS: TierConfig[] = [
     minAmount: 0,
     color: '#EEEEEE',
     benefits: ['0% Trading Fee Discount'],
+    swapFeeReduction: 0.0,
   },
   {
     id: 2,
@@ -20,6 +22,7 @@ export const TIER_CONFIGS: TierConfig[] = [
     minAmount: 10_000,
     color: '#10B981',
     benefits: ['10% Trading Fee Discount'],
+    swapFeeReduction: 0.1,
   },
   {
     id: 3,
@@ -27,6 +30,7 @@ export const TIER_CONFIGS: TierConfig[] = [
     minAmount: 50_000,
     color: '#3B82F6',
     benefits: ['20% Trading Fee Discount'],
+    swapFeeReduction: 0.2,
   },
   {
     id: 4,
@@ -34,6 +38,7 @@ export const TIER_CONFIGS: TierConfig[] = [
     minAmount: 100_000,
     color: '#a600b3',
     benefits: ['30% Trading Fee Discount'],
+    swapFeeReduction: 0.3,
   },
   {
     id: 5,
@@ -41,6 +46,7 @@ export const TIER_CONFIGS: TierConfig[] = [
     minAmount: 250_000,
     color: '#8B5CF6',
     benefits: ['45% Trading Fee Discount'],
+    swapFeeReduction: 0.45,
   },
   {
     id: 6,
@@ -48,6 +54,7 @@ export const TIER_CONFIGS: TierConfig[] = [
     minAmount: 500_000,
     color: '#F59E0B',
     benefits: ['60% Trading Fee Discount'],
+    swapFeeReduction: 0.6,
   },
   {
     id: 7,
@@ -55,6 +62,7 @@ export const TIER_CONFIGS: TierConfig[] = [
     minAmount: 1_000_000,
     color: '#ff6661',
     benefits: ['70% Trading Fee Discount'],
+    swapFeeReduction: 0.7,
   },
   {
     id: 8,
@@ -62,6 +70,7 @@ export const TIER_CONFIGS: TierConfig[] = [
     minAmount: 1_500_000,
     color: '#d31212',
     benefits: ['80% Trading Fee Discount'],
+    swapFeeReduction: 0.8,
   },
 ]
 
