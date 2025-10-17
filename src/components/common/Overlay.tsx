@@ -5,6 +5,7 @@ interface Props {
   children?: ReactNode | string
   content?: ReactNode | string
   className?: string
+  backdropClassName?: string
   hasBackdropIsolation?: boolean
   show: boolean
   setShow: (show: boolean) => void
@@ -27,7 +28,10 @@ export default function Overlay(props: Props) {
         {props.children ? props.children : props.content}
       </div>
       <div
-        className='fixed inset-0 z-40 block w-full h-full hover:cursor-pointer'
+        className={classNames(
+          'fixed inset-0 z-40 block w-full h-full hover:cursor-pointer',
+          props.backdropClassName,
+        )}
         onClick={onClickAway}
         role='button'
       />

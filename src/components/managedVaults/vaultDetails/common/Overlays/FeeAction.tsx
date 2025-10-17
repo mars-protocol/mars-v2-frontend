@@ -86,11 +86,11 @@ export default function FeeAction(props: Props) {
 
   return (
     <Overlay
-      className='fixed md:absolute top-[40vh] md:top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full md:w-100 h-auto overflow-hidden !bg-body'
+      className='fixed md:absolute top-[40vh] md:top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full md:w-100 h-auto overflow-hidden shadow-2xl'
+      backdropClassName='backdrop-blur-sm'
       show={showFeeActionModal}
       setShow={setShowFeeActionModal}
     >
-      <div className='gradient-description absolute h-full w-full opacity-30 pointer-events-none' />
       <div
         className={classNames(
           'p-4 z-10 min-h-90 h-full',
