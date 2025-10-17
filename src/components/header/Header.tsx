@@ -62,12 +62,13 @@ const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
     label: 'Earn',
   },
   { pages: ['borrow'], label: 'Borrow' },
+  ...(chainConfig.managedVaults ? [{ pages: ['vaults'] as Page[], label: 'Vaults' }] : []),
   { pages: ['portfolio'], label: 'Portfolio' },
   ...(chainConfig.hls
     ? [{ pages: ['hls-staking', 'hls-farm'] as Page[], label: 'High Leverage' }]
     : []),
   {
-    pages: ['portfolio', 'perps-vault', 'governance', 'vaults', 'hls-staking', 'hls-farm'],
+    pages: ['portfolio', 'governance', 'hls-staking', 'hls-farm'],
     label: 'More',
     submenu: [
       ...(chainConfig.hls
@@ -79,18 +80,6 @@ const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
             },
           ]
         : []),
-      ...(chainConfig.managedVaults
-        ? [
-            {
-              page: 'vaults' as Page,
-              label: 'Vaults',
-            },
-          ]
-        : []),
-      {
-        page: 'perps-vault',
-        label: 'Counterparty Vault',
-      },
       {
         label: 'Governance',
         externalUrl: DocURL.COUNCIL,

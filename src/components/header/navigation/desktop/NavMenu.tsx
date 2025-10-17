@@ -94,7 +94,10 @@ export const NavMenu = (props: Props) => {
                       )}
                     >
                       {submenuitem.icon && <div className='w-4'>{submenuitem.icon}</div>}
-                      <Text className='flex flex-wrap items-center gap-1' size='sm'>
+                      <Text
+                        className='flex flex-nowrap items-center gap-1 whitespace-nowrap'
+                        size='sm'
+                      >
                         {submenuitem.label}
                         <ExternalLink className='inline-block w-4 ml-1 mb-0.5' />
                       </Text>
