@@ -125,6 +125,7 @@ export default function AccountMenuContent(props: Props) {
             menuClasses,
             'overflow-y-scroll scroll-smooth',
             'top-[54px] h-[calc(100%-54px)] items-start',
+            'bg-surface-light',
           )}
         >
           {managedVaultsEnabled && hasVaults ? (

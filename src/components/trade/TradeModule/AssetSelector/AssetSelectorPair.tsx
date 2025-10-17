@@ -39,11 +39,9 @@ export default function AssetSelectorPair(props: Props) {
   return (
     <>
       <div className='w-full bg-surface-dark'>
-        <Button
-          color='quaternary'
-          variant='transparent'
+        <button
           onClick={() => useStore.setState({ assetOverlayState: 'pair' })}
-          className='flex items-center justify-between w-full py-4 h-14'
+          className='flex items-center justify-between w-full py-4 h-14 px-4 bg-transparent text-white/60 hover:text-white transition-colors duration-200'
         >
           <div className='flex items-center gap-1'>
             <AssetImage asset={buyAsset} className='w-5 h-5' />
@@ -55,7 +53,7 @@ export default function AssetSelectorPair(props: Props) {
             <Text>All markets</Text>
             <ChevronDown className='w-3 h-3' />
           </div>
-        </Button>
+        </button>
       </div>
       {assetOverlayState === 'pair' && (
         <AssetOverlay
