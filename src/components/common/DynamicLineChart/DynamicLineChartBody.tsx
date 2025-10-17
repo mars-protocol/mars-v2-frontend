@@ -126,6 +126,13 @@ export default function DynamicLineChartBody(props: Props) {
     LocalStorageKeys.REDUCE_MOTION,
     getDefaultChainSettings(chainConfig).reduceMotion,
   )
+  const [theme] = useLocalStorage<string>(
+    LocalStorageKeys.THEME,
+    getDefaultChainSettings(chainConfig).theme,
+  )
+
+  // Theme-aware axis colors
+  const axisColor = theme === 'light' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.4)'
 
   // domain setting for large percentage values and custom domains
   const getYAxisDomain = () => {
@@ -205,7 +212,7 @@ export default function DynamicLineChartBody(props: Props) {
             padding={{ left: 5, right: 10 }}
             dataKey='date'
             dy={10}
-            stroke='rgba(255, 255, 255, 0.4)'
+            stroke={axisColor}
             tickFormatter={(value) => {
               if (timeframe === '24') {
                 return moment(value).format('HH:mm')
@@ -220,7 +227,7 @@ export default function DynamicLineChartBody(props: Props) {
             fontSize={8}
             tickCount={8}
             domain={getYAxisDomain()}
-            stroke='rgba(255, 255, 255, 0.4)'
+            stroke={axisColor}
             tickFormatter={(value) => {
               if (lines[0]?.isPercentage) {
                 return formatValue(value, {
@@ -259,8 +266,12 @@ export default function DynamicLineChartBody(props: Props) {
           {legend && (
             <Legend content={<ChartLegend payload={[]} data={data} />} verticalAlign='top' />
           )}
-          <CartesianGrid opacity={0.1} vertical={false} />
-          <ReferenceLine y={0} stroke='rgba(255, 255, 255, 0.2)' strokeWidth={2} />
+          <CartesianGrid
+            opacity={theme === 'light' ? 0.2 : 0.1}
+            vertical={false}
+            stroke={axisColor}
+          />
+          <ReferenceLine y={0} stroke={axisColor} strokeWidth={2} />
         </AreaChart>
       </ResponsiveContainer>
     </div>

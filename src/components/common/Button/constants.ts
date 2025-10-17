@@ -30,8 +30,8 @@ export const buttonColorClasses = {
 
 export const focusClasses = {
   primary: 'outline-primary/50 light:outline-primary/60',
-  secondary: 'outline-white/40 light:outline-zinc-500',
-  tertiary: 'outline-white/40 light:outline-zinc-500',
+  secondary: 'outline-white/30 bg-white/10 light:outline-zinc-500',
+  tertiary: 'outline-white/30 light:outline-zinc-500',
   quaternary: 'text-white light:text-black',
   long: 'outline-green/50',
   short: 'outline-loss/50',

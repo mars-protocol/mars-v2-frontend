@@ -449,7 +449,8 @@ export default function SettingsModal() {
             onClick={() => {
               handleSlippage(value)
             }}
-            className={classNames('mr-3 text-[16px]', slippage === value && !isCustom && '')}
+            hasFocus={slippage === value && !isCustom}
+            className='mr-3 text-[16px]'
             text={`${value * 100}%`}
           />
         ))}
