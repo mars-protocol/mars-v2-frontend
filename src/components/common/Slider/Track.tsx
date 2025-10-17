@@ -1,7 +1,6 @@
 import classNames from 'classnames'
 
 interface Props {
-  bg: string
   maxValue: number
   sliderValue: number
 }
@@ -23,7 +22,7 @@ export default function Track(props: Props) {
           'h-1 rounded-sm w-1',
           'before:absolute',
           'before:top-0 before:bottom-0 before:right-0 before:left-0',
-          percentage > 0 && props.bg,
+          percentage > 0 && 'before:bg-martian-red',
           percentage > 0 && 'slider-mask',
         )}
         style={{ width: `${percentage}%` }}

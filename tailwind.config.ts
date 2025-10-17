@@ -56,14 +56,6 @@ module.exports = {
     '@nav-4/navigation:hidden',
     '@nav-5/navigation:hidden',
     '@nav-6/navigation:hidden',
-    'bg-slider-1',
-    'bg-slider-2',
-    'bg-slider-3',
-    'bg-slider-4',
-    'bg-slider-5',
-    'bg-slider-6',
-    'bg-slider-7',
-    'bg-slider-8',
     'gradient-droplets',
     'gradient-stride',
     'gradient-lido',
@@ -148,14 +140,6 @@ module.exports = {
         white: 'hsl(var(--color-white) / <alpha-value>)',
         pink: 'hsl(var(--color-pink) / <alpha-value>)',
         black: 'hsl(var(--color-black) / <alpha-value>)',
-        'slider-1': 'hsl(var(--color-slider-1) / <alpha-value>)',
-        'slider-2': 'hsl(var(--color-slider-2) / <alpha-value>)',
-        'slider-3': 'hsl(var(--color-slider-3) / <alpha-value>)',
-        'slider-4': 'hsl(var(--color-slider-4) / <alpha-value>)',
-        'slider-5': 'hsl(var(--color-slider-5) / <alpha-value>)',
-        'slider-6': 'hsl(var(--color-slider-6) / <alpha-value>)',
-        'slider-7': 'hsl(var(--color-slider-7) / <alpha-value>)',
-        'slider-8': 'hsl(var(--color-slider-8) / <alpha-value>)',
         'card-bg': 'hsl(var(--color-card-bg) / <alpha-value>)',
         'card-border': 'hsl(var(--color-card-border) / <alpha-value>)',
         surface: 'hsl(var(--color-surface) / <alpha-value>)',
@@ -472,22 +456,6 @@ module.exports = {
         '.gradient-secondary-to-primary': {
           background:
             'linear-gradient(180deg, hsl(var(--color-martian-red)) 100%, hsl(var(--color-mars)) 0%)',
-        },
-        '.gradient-slider-1': {
-          background:
-            'linear-gradient(to right, hsl(var(--color-slider-1)), hsl(var(--color-slider-2)))',
-        },
-        '.gradient-slider-2': {
-          background:
-            'linear-gradient(to right, hsl(var(--color-slider-3)), hsl(var(--color-slider-4)))',
-        },
-        '.gradient-slider-3': {
-          background:
-            'linear-gradient(to right, hsl(var(--color-slider-5)), hsl(var(--color-slider-6)))',
-        },
-        '.gradient-slider-4': {
-          background:
-            'linear-gradient(to right, hsl(var(--color-slider-7)), hsl(var(--color-slider-8)))',
         },
         '.gradient-slider-pink': {
           background:
