@@ -91,7 +91,7 @@ const Button = React.forwardRef(function Button(
 
     return classNames(
       'relative z-1 flex items-center',
-      'appearance-none break-normal',
+      'appearance-none break-normal rounded-sm',
       textColorClass,
       isDisabled ? 'cursor-not-allowed' : 'hover:cursor-pointer',
       !reduceMotion && 'transition-all duration-300',

@@ -240,9 +240,9 @@ export default function CreateVault() {
       )}
 
       <CreateVaultContent>
-        <form className='flex flex-col space-y-6' onSubmit={(e) => e.preventDefault()}>
+        <form className='flex flex-col space-y-4' onSubmit={(e) => e.preventDefault()}>
           {hasIncompleteVaultSetup && (
-            <Callout type={CalloutType.INFO} className='mb-6'>
+            <Callout type={CalloutType.INFO}>
               <div className='flex justify-between items-center gap-2'>
                 <Text size='sm' className='text-white'>
                   You have an incomplete vault setup. Would you like to continue where you left off?
