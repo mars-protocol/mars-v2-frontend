@@ -235,30 +235,30 @@ export default function CreateVault() {
 
   return (
     <>
-      {hasIncompleteVaultSetup && (
-        <Callout type={CalloutType.INFO} className='mb-6'>
-          <div className='flex justify-between items-center gap-2'>
-            <Text size='sm' className='text-white'>
-              You have an incomplete vault setup. Would you like to continue where you left off?
-            </Text>
-            <Button
-              onClick={() => {
-                const parsedVault = getStoredVaultData()
-                if (parsedVault) {
-                  setPendingVault(parsedVault)
-                }
-              }}
-              text='Continue Setup'
-            />
-          </div>
-        </Callout>
-      )}
       {pendingVault && (
         <PendingVaultMint pendingVault={pendingVault} onClose={() => setPendingVault(null)} />
       )}
 
       <CreateVaultContent>
         <form className='flex flex-col space-y-6' onSubmit={(e) => e.preventDefault()}>
+          {hasIncompleteVaultSetup && (
+            <Callout type={CalloutType.INFO} className='mb-6'>
+              <div className='flex justify-between items-center gap-2'>
+                <Text size='sm' className='text-white'>
+                  You have an incomplete vault setup. Would you like to continue where you left off?
+                </Text>
+                <Button
+                  onClick={() => {
+                    const parsedVault = getStoredVaultData()
+                    if (parsedVault) {
+                      setPendingVault(parsedVault)
+                    }
+                  }}
+                  text='Continue Setup'
+                />
+              </div>
+            </Callout>
+          )}
           <div
             className={classNames(
               'flex flex-col gap-8 md:flex-row',

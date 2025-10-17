@@ -136,7 +136,7 @@ export default function PendingVaultMint(props: Props) {
                     className={classNames(
                       'w-8 h-8 rounded-full flex items-center justify-center',
                       step.isActive
-                        ? 'border-2 border-purple bg-transparent'
+                        ? 'border-2 border-martian-red bg-transparent'
                         : 'border border-white/20 ',
                       'transition-colors',
                     )}
