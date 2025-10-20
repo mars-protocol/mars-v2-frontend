@@ -19,8 +19,7 @@ import { BN } from 'utils/helpers'
 
 const toastBodyClasses = classNames(
   'flex flex-wrap w-full group/transaction',
-  'rounded-sm p-4 shadow-overlay backdrop-blur-lg',
-  'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-sm before:p-[1px] before:border-glas',
+  'p-4 shadow-overlay backdrop-blur-lg',
 )
 
 function isPromise(object?: any): object is ToastPending {
@@ -102,7 +101,7 @@ export default function Toaster() {
     const Content = () => (
       <div className='relative flex flex-wrap w-full m-0 isolate'>
         <div className='flex items-center w-full gap-2 mb-2'>
-          <div className='flex items-center justify-center rounded-sm bg-info w-7 h-7'>
+          <div className='flex items-center justify-center bg-info w-7 h-7'>
             <div className='w-4 h-4 -ml-1 -mt-1'>
               <CircularProgress />
             </div>
@@ -139,13 +138,13 @@ export default function Toaster() {
       <div className='relative flex flex-wrap w-full m-0 isolate'>
         <div className='flex w-full gap-2 mb-2'>
           {isError ? (
-            <div className='rounded-sm p-1.5 bg-error'>
+            <div className='p-1.5 bg-error'>
               <span className='block w-4 h-4 text-white'>
                 <CrossCircled />
               </span>
             </div>
           ) : (
-            <div className='flex items-center justify-center rounded-sm bg-success w-7 h-7'>
+            <div className='flex items-center justify-center bg-success w-7 h-7'>
               <div
                 className={classNames('w-4 h-4 -ml-1 text-white', reduceMotion ? '-mt-2' : '-mt-1')}
               >

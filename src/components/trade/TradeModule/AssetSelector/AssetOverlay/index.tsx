@@ -30,7 +30,10 @@ interface Props {
 
 function MarketSubheadLine(props: { title: string }) {
   return (
-    <Text size='sm' className='w-full px-4 py-2 border-b border-white/5 text-white/60 bg-white/5'>
+    <Text
+      size='sm'
+      className='w-full px-4 py-2 border-b border-white/5 text-white/60 bg-surface-dark'
+    >
       {props.title}
     </Text>
   )
@@ -119,7 +122,7 @@ export default function AssetOverlay(props: Props) {
       show={props.state !== 'closed'}
       setShow={handleClose}
     >
-      <div className='flex justify-between p-4'>
+      <div className='flex justify-between p-4 bg-surface-dark'>
         <Text>{props.type !== 'single' ? 'Select a market' : 'Select asset'}</Text>
         <EscButton onClick={handleClose} enableKeyPress />
       </div>

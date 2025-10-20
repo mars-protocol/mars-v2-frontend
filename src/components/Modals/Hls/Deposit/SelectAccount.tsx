@@ -23,7 +23,7 @@ export default function CreateAccount(props: Props) {
           key={account.id}
           onClick={() => props.onChangeSelected(account)}
           className={classNames(
-            `group/hls relative flex gap-2 items-center px-4 py-5 cursor-pointer`,
+            `group/hls relative flex gap-2 items-center p-4 cursor-pointer`,
             index !== props.hlsAccounts.length - 1 && 'border-b border-white/10',
           )}
         >

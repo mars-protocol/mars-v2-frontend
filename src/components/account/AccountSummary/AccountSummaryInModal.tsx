@@ -12,7 +12,7 @@ export default function AccountSummaryInModal(props: Props) {
   return (
     <div className='md:h-[546px] max-w-screen-full overflow-y-scroll scrollbar-hide'>
       <Card
-        className='w-full max-w-screen-full md:w-94'
+        className='w-full max-w-screen-full md:w-105'
         contentClassName='scrollbar-hide overflow-y-scroll '
       >
         <AccountSummary account={account} isInModal />

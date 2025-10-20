@@ -30,7 +30,7 @@ export default function PositionInfo(props: Props) {
   const showVaultPercentage = type === 'depositPosition' && isOwner
 
   return (
-    <Card className='bg-white/5 w-full'>
+    <Card className='w-full'>
       <div className='flex justify-between items-center p-5'>
         <div className='flex flex-col gap-1'>
           <Text size='xs' className='text-white/50'>

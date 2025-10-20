@@ -118,7 +118,7 @@ export default function RewardsCenter(props: Props) {
       >
         <div
           className={classNames(
-            'flex h-[54px] w-full items-center justify-between bg-white/5 px-4 py-3',
+            'flex h-[54px] w-full items-center justify-between bg-surface px-4 py-3',
             'border border-transparent border-b-white/10',
           )}
         >
@@ -136,7 +136,7 @@ export default function RewardsCenter(props: Props) {
             />
           </div>
         </div>
-        <div className='flex flex-col w-full gap-4 px-4 py-5'>
+        <div className='flex flex-col w-full gap-4 p-4'>
           {!isOsmosis && (
             <SwitchWithText
               options={[

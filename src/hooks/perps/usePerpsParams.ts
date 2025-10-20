@@ -3,6 +3,7 @@ import useSWRImmutable from 'swr/immutable'
 
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
+import useTierSystem from 'hooks/staking/useTierSystem'
 import { PerpParams } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import { byDenom } from 'utils/array'
 import { BN } from 'utils/helpers'
@@ -19,8 +20,13 @@ export function usePerpsParams(denom: string) {
 
 export function useAllPerpsParams() {
   const { data: perpsParams } = useAllPerpsParamsSC()
+  const { data: tierData } = useTierSystem()
 
-  return useMemo(() => perpsParams?.map(resolvePerpsParams), [perpsParams])
+  return useMemo(
+    () =>
+      perpsParams?.map((param) => resolvePerpsParams(param, tierData.currentTier.swapFeeReduction)),
+    [perpsParams, tierData.currentTier.swapFeeReduction],
+  )
 }
 
 export function useAllPerpsParamsSC() {
@@ -39,11 +45,13 @@ async function getPerpsParams(chainConfig: ChainConfig, clients: ContractClients
   return iterateContractQuery(clients.params.allPerpParams, undefined, [])
 }
 
-function resolvePerpsParams(param: PerpParams) {
+function resolvePerpsParams(param: PerpParams, swapFeeReduction: number = 0) {
+  const openingFeeRate = BN(param.opening_fee_rate).times(1 - swapFeeReduction)
+  const closingFeeRate = BN(param.closing_fee_rate).times(1 - swapFeeReduction)
   return {
     denom: param.denom,
-    openingFeeRate: BN(param.opening_fee_rate),
-    closingFeeRate: BN(param.closing_fee_rate),
+    openingFeeRate,
+    closingFeeRate,
     minPositionValue: BN(param.min_position_value),
     maxPositionValue: param.max_position_value ? BN(param.max_position_value) : null,
     maxOpenInterestShort: BN(param.max_short_oi_value),

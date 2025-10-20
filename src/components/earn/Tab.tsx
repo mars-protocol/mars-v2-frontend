@@ -4,8 +4,7 @@ import { NavLink, useParams, useSearchParams } from 'react-router-dom'
 import useAccountId from 'hooks/accounts/useAccountId'
 import { getRoute } from 'utils/route'
 
-const underlineClasses =
-  'relative before:absolute before:h-[2px] before:-bottom-1 before:left-0 before:right-0 before:gradient-active-tab'
+const underlineClasses = 'border-b-2 border-martian-red'
 
 interface Props {
   tabs: Tab[]
@@ -28,7 +27,7 @@ export default function Tab(props: Props) {
   }
 
   return (
-    <div className={classNames('relative w-full', className)}>
+    <div className={classNames('relative w-full mb-2', className)}>
       {tabs.map((tab, index) => (
         <NavLink
           key={`${tab.page}-${index}`}
@@ -41,7 +40,7 @@ export default function Tab(props: Props) {
           }}
           className={classNames(
             activeTabIdx === index ? underlineClasses : 'text-white/40',
-            'relative mr-8 text-xl cursor-pointer',
+            'relative mr-8 text-xl cursor-pointer pb-1',
           )}
         >
           {tab.name}

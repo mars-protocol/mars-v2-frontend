@@ -1,4 +1,5 @@
 import chains from 'chains'
+import classNames from 'classnames'
 import Button from 'components/common/Button'
 import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
@@ -113,40 +114,96 @@ export default function MarsStaking({ className }: { className?: string }) {
   return (
     <>
       <Card
-        className={className}
+        className={classNames(className, 'bg-surface')}
         title={
           <div
-            className='flex items-center gap-2 w-full p-4 font-semibold bg-white/10 cursor-pointer hover:bg-white/15 transition-colors'
+            className='flex items-center gap-3 w-full p-4 font-semibold bg-surface-dark cursor-pointer transition-colors rounded-t-lg'
             onClick={() => setIsExpanded(!isExpanded)}
           >
-            <MarsToken className='w-6 h-6' />
-            <Text size='lg' className='flex-1'>
+            <MarsToken className='w-6 h-6 text-primary' />
+            <Text size='lg' className='flex-1 font-semibold'>
               MARS Staking
             </Text>
             {isExpanded ? (
-              <ChevronDown className='w-4 h-4' />
+              <ChevronDown className='w-5 h-5 text-white/60' />
             ) : (
-              <ChevronRight className='w-4 h-4' />
+              <ChevronRight className='w-5 h-5 text-white/60' />
             )}
           </div>
         }
         contentClassName=''
       >
         <div
-          className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
-            isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
-          }`}
+          className={classNames(
+            'grid transition-[grid-template-rows] duration-300 ease-in-out',
+            isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
+          )}
         >
           <div className='overflow-hidden'>
-            <div className='p-4 space-y-4'>
+            <div className='p-6 space-y-6'>
               {(connectedAddress || displayAddress) && (
-                <TierProgressBar connected={!!connectedAddress} />
+                <div className='mb-4'>
+                  <TierProgressBar connected={!!connectedAddress} />
+                </div>
               )}
+
+              <div className='space-y-4'>
+                <div className='flex justify-between items-center py-2 border-b border-white/10'>
+                  <Text size='sm' className='text-white/80 font-medium'>
+                    Currently Staked
+                  </Text>
+                  <FormattedNumber
+                    amount={stakedAmount?.toNumber() || 0}
+                    options={{ abbreviated: false, suffix: ' MARS', maxDecimals: MARS_DECIMALS }}
+                    className='text-sm font-semibold text-white'
+                  />
+                </div>
+
+                {unstakedData?.totalUnstaked?.gt(0) && (
+                  <div className='flex justify-between items-center py-2 border-b border-white/10'>
+                    <Text size='sm' className='text-white/80 font-medium'>
+                      Unstaking
+                    </Text>
+                    <FormattedNumber
+                      amount={unstakedData.totalUnstaked.toNumber()}
+                      options={{ abbreviated: false, suffix: ' MARS', maxDecimals: MARS_DECIMALS }}
+                      className='text-sm font-semibold text-warning'
+                    />
+                  </div>
+                )}
+
+                {unstakedData?.totalReady?.gt(0) && (
+                  <div className='flex justify-between items-center py-2 border-b border-white/10'>
+                    <Text size='sm' className='text-white/80 font-medium'>
+                      Ready to Withdraw
+                    </Text>
+                    <FormattedNumber
+                      amount={unstakedData.totalReady.toNumber()}
+                      options={{ abbreviated: false, suffix: ' MARS', maxDecimals: MARS_DECIMALS }}
+                      className='text-sm font-semibold text-success'
+                    />
+                  </div>
+                )}
+
+                {unstakedData?.nextReleaseTime && (
+                  <div className='flex justify-between items-center py-2 border-b border-white/10'>
+                    <Text size='sm' className='text-white/80 font-medium'>
+                      Next Available
+                    </Text>
+                    <Text size='sm' className='font-semibold text-white'>
+                      {formatReleaseDate(unstakedData.nextReleaseTime)}
+                    </Text>
+                  </div>
+                )}
+              </div>
+
+              <div className='pt-2'>{renderActionButton()}</div>
+
               <Callout type={CalloutType.INFO}>
                 If you want to learn more about the Mars Staking Tiers, you can find the details on
                 our{' '}
                 <a
-                  className='underline hover:no-underline'
+                  className='underline hover:no-underline text-primary'
                   href='https://docs.marsprotocol.io/governance/mars-staking'
                   target='_blank'
                   rel='noopener noreferrer'
@@ -155,57 +212,6 @@ export default function MarsStaking({ className }: { className?: string }) {
                 </a>
                 .
               </Callout>
-              <div className='space-y-3'>
-                <div className='flex justify-between items-center'>
-                  <Text size='sm' className='text-white/60'>
-                    Currently Staked
-                  </Text>
-                  <FormattedNumber
-                    amount={stakedAmount?.toNumber() || 0}
-                    options={{ abbreviated: false, suffix: ' MARS', maxDecimals: MARS_DECIMALS }}
-                    className='text-sm font-medium'
-                  />
-                </div>
-
-                {unstakedData?.totalUnstaked?.gt(0) && (
-                  <div className='flex justify-between items-center'>
-                    <Text size='sm' className='text-white/60'>
-                      Unstaking
-                    </Text>
-                    <FormattedNumber
-                      amount={unstakedData.totalUnstaked.toNumber()}
-                      options={{ abbreviated: false, suffix: ' MARS', maxDecimals: MARS_DECIMALS }}
-                      className='text-sm font-medium text-warning'
-                    />
-                  </div>
-                )}
-
-                {unstakedData?.totalReady?.gt(0) && (
-                  <div className='flex justify-between items-center'>
-                    <Text size='sm' className='text-white/60'>
-                      Ready to Withdraw
-                    </Text>
-                    <FormattedNumber
-                      amount={unstakedData.totalReady.toNumber()}
-                      options={{ abbreviated: false, suffix: ' MARS', maxDecimals: MARS_DECIMALS }}
-                      className='text-sm font-medium text-success'
-                    />
-                  </div>
-                )}
-
-                {unstakedData?.nextReleaseTime && (
-                  <div className='flex justify-between items-center'>
-                    <Text size='sm' className='text-white/60'>
-                      Next Available
-                    </Text>
-                    <Text size='sm' className='text-white/80'>
-                      {formatReleaseDate(unstakedData.nextReleaseTime)}
-                    </Text>
-                  </div>
-                )}
-              </div>
-
-              {renderActionButton()}
             </div>
           </div>
         </div>

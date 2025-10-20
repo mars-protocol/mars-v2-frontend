@@ -79,11 +79,10 @@ export default function Intro(props: Props) {
   return (
     <Card
       className={classNames(
-        'relative w-full p-8 bg-cover',
-        props.isCompact ? 'md:h-30' : 'md:h-55 min-h-55',
-        isHls ? 'gradient-hls-intro' : 'gradient-intro',
+        'relative w-full bg-surface-dark',
+        props.isCompact ? 'md:h-32' : 'md:h-48 min-h-48',
       )}
-      contentClassName='flex w-full h-full flex-col justify-between'
+      contentClassName='flex w-full h-full flex-col justify-between p-6'
     >
       <div className='absolute inset-0 w-full h-full overflow-hidden text-white'>
         <IntroBackground bg={props.bg} />
@@ -101,14 +100,14 @@ export default function Intro(props: Props) {
         />
       )}
       <div className='flex w-full'>
-        <Text size='lg' className='max-w-full leading-7 w-140 text-white/60'>
+        <Text size='base' className='max-w-full leading-6 w-140 text-white/80'>
           {props.text}
         </Text>
       </div>
       {props.children && (
         <div
           className={classNames(
-            'flex flex-wrap w-full gap-4 pt-4 md:flex-nowrap md:pt-0',
+            'flex flex-wrap w-full gap-3 pt-4 md:flex-nowrap md:pt-0',
             props.isCompact && 'justify-end',
           )}
         >

@@ -43,7 +43,7 @@ export default function AccountsOverview(props: Props) {
   if (isLoadedButEmpty && isDefault) {
     return (
       <Card
-        className='w-full h-fit bg-white/5'
+        className='w-full h-fit bg-surface'
         title='Portfolio'
         contentClassName='px-4 py-6 flex justify-center flex-wrap'
       >
@@ -68,11 +68,11 @@ export default function AccountsOverview(props: Props) {
 
   return (
     <div className='w-full mt-4'>
-      <Text size='2xl' className='mb-8'>
+      <Text size='2xl' className='mb-2'>
         {title}
       </Text>
       <div
-        className={classNames('grid w-full grid-cols-1 gap-6', 'md:grid-cols-2', 'lg:grid-cols-3')}
+        className={classNames('grid w-full grid-cols-1 gap-1', 'md:grid-cols-2', 'lg:grid-cols-3')}
       >
         {accountIds?.map((accountId: string, index: number) => {
           return <PortfolioCard key={accountId} accountId={accountId} />

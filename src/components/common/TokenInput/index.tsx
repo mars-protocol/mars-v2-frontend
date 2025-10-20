@@ -70,7 +70,7 @@ export default function TokenInput(props: Props) {
       <div
         data-testid='token-input-wrapper'
         className={classNames(
-          'relative isolate z-40 box-content flex h-11 w-full rounded-sm border bg-white/5',
+          'relative isolate z-40 box-content flex h-11 w-full rounded-sm border bg-surface',
           props.warningMessages.length ? 'border-warning' : 'border-white/20',
         )}
       >
@@ -80,11 +80,11 @@ export default function TokenInput(props: Props) {
             defaultValue={props.asset.denom}
             onChange={onChangeAsset}
             title={props.accountId ? `Credit Account ${props.accountId}` : 'Your Wallet'}
-            className='h-full border-r border-white/20 bg-white/5'
-            displayClassName='rounded-l-sm'
+            className='h-full border-r border-white/20 bg-surface'
+            displayClassName=''
           />
         ) : (
-          <div className='flex items-center gap-2 p-3 border-r min-w-fit border-white/20 bg-white/5'>
+          <div className='flex items-center gap-2 p-3 border-r min-w-fit border-white/20 bg-surface'>
             {props.asset.poolInfo ? (
               <DoubleLogo
                 primaryDenom={props.asset.poolInfo.assets.primary.denom ?? ''}
@@ -147,7 +147,7 @@ export default function TokenInput(props: Props) {
               <Button
                 dataTestId='token-input-max-button'
                 color='tertiary'
-                className='!h-4 !min-h-0 bg-white/20 !px-2 !py-0.5 text-2xs'
+                className='!h-4 !min-h-0 bg-white/10 !px-2 !py-0.5 text-2xs'
                 variant='transparent'
                 onClick={(e) => {
                   e.preventDefault()

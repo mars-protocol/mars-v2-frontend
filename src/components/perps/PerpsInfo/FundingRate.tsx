@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ChevronDown } from 'components/common/Icons'
 import { Tooltip } from 'components/common/Tooltip'
@@ -9,6 +8,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import usePerpsMarket from 'hooks/perps/usePerpsMarket'
+import { useMemo } from 'react'
 
 type Interval = '1H' | '1D' | '1W' | '1M' | '1Y'
 
@@ -83,7 +83,7 @@ export default function FundingRate() {
         }
         type='info'
         placement='bottom'
-        contentClassName='!bg-white/10 border border-white/20 backdrop-blur-xl !p-0'
+        contentClassName='! border border-white/20 backdrop-blur-xl !p-0'
         interactive
         hideArrow
         visible={show}
@@ -91,7 +91,7 @@ export default function FundingRate() {
       >
         <button
           onClick={() => toggleShow()}
-          className='flex gap-1 bg-white/10 rounded-sm items-center text-xs px-1.5 py-0.5'
+          className='flex gap-1 rounded-sm items-center text-xs px-1.5 py-0.5'
         >
           {interval}
           <ChevronDown className='w-2 h-2' />

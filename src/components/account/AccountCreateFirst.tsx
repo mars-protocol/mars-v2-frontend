@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import AccountFundContent from 'components/account/AccountFund/AccountFundContent'
@@ -87,7 +87,7 @@ export default function AccountCreateFirst() {
       {isLoading ? (
         <CircularProgress size={40} />
       ) : (
-        <Card className='w-full p-6 bg-white/5'>
+        <Card className='w-full p-6 bg-surface'>
           <AccountFundContent
             account={currentAccount}
             address={address}

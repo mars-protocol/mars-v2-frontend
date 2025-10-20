@@ -24,7 +24,7 @@ export default function SummarySkeleton(props: Props) {
   const { data: account } = useAccount(props.accountId, false)
 
   return (
-    <div className='flex flex-col w-full gap-4 md:gap-8'>
+    <div className='flex flex-col w-full gap-2 mb-4'>
       <div className='flex flex-wrap justify-between gap-2 md:flex-nowrap'>
         <div className='flex items-center'>
           <Text size='2xl'>{title}</Text>
@@ -39,9 +39,9 @@ export default function SummarySkeleton(props: Props) {
           </div>
         )}
       </div>
-      <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3'>
+      <div className='grid grid-cols-1 gap-1 sm:grid-cols-2 md:grid-cols-3 w-full'>
         {stats.map((stat) => (
-          <Card key={stat.sub} className='p-6 text-center bg-white/5 flex-grow-1'>
+          <Card key={stat.sub} className='p-6 text-center bg-surface-dark flex-grow-1'>
             <TitleAndSubCell
               title={stat.title || <Loading className='w-20 h-6 mx-auto mb-2' />}
               sub={stat.sub}

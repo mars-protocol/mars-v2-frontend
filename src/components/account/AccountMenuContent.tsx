@@ -103,7 +103,7 @@ export default function AccountMenuContent(props: Props) {
       >
         <div
           className={classNames(
-            'flex h-[54px] w-full items-center justify-between bg-white/5 px-4 py-3',
+            'flex h-[54px] w-full items-center justify-between bg-surface px-4 py-3',
             'border border-transparent border-b-white/10',
           )}
         >
@@ -125,6 +125,7 @@ export default function AccountMenuContent(props: Props) {
             menuClasses,
             'overflow-y-scroll scroll-smooth',
             'top-[54px] h-[calc(100%-54px)] items-start',
+            'bg-surface-light',
           )}
         >
           {managedVaultsEnabled && hasVaults ? (

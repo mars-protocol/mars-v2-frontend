@@ -318,9 +318,9 @@ export default function AccountFundContent(props: Props) {
                     <button
                       onClick={() => setGoFast(true)}
                       className={classNames(
-                        'flex-1 px-4 py-2 rounded text-sm transition-colors duration-200',
+                        'flex-1 px-4 py-2 rounded-sm text-sm transition-colors duration-200',
                         goFast
-                          ? 'bg-white/10 text-white'
+                          ? ' text-white'
                           : 'bg-transparent text-white/60 hover:text-white hover:bg-white/5',
                       )}
                     >
@@ -329,9 +329,9 @@ export default function AccountFundContent(props: Props) {
                     <button
                       onClick={() => setGoFast(false)}
                       className={classNames(
-                        'flex-1 px-4 py-2 rounded text-sm transition-colors duration-200',
+                        'flex-1 px-4 py-2 rounded-sm text-sm transition-colors duration-200',
                         !goFast
-                          ? 'bg-white/10 text-white'
+                          ? ' text-white'
                           : 'bg-transparent text-white/60 hover:text-white hover:bg-white/5',
                       )}
                     >

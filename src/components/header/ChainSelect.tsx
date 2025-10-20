@@ -174,7 +174,7 @@ export default function ChainSelect(props: Props) {
           <React.Fragment key={chain.chainId}>
             <div
               className={classNames(
-                'flex items-center gap-2 px-4 py-3 border-b bg-white/10 border-white/20 relative',
+                'flex items-center gap-2 px-4 py-3 border-b  border-white/20 relative',
                 index > 0 && 'border-t',
               )}
             >

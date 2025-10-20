@@ -12,7 +12,7 @@ export default function Loading(props: Props) {
         <div
           role='status'
           className={classNames(
-            'max-w-full animate-pulse rounded-sm bg-white/40',
+            'max-w-full animate-pulse bg-white/40',
             props.className ? props.className : 'h-4 w-full',
           )}
           key={i}

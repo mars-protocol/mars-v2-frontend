@@ -348,7 +348,7 @@ export default function SettingsModal() {
           }))}
           defaultValue={theme}
           onChange={handleTheme}
-          className='relative border w-60 rounded-base border-white/10'
+          className='relative border w-60 border-white/10'
           containerClassName='justify-end'
         />
       </SettingsOptions>
@@ -422,7 +422,7 @@ export default function SettingsModal() {
           options={displayCurrenciesOptions}
           defaultValue={displayCurrency}
           onChange={handleDisplayCurrency}
-          className='relative border w-60 rounded-base border-white/10'
+          className='relative border w-60 border-white/10'
           containerClassName='justify-end'
         />
       </SettingsOptions>
@@ -449,10 +449,8 @@ export default function SettingsModal() {
             onClick={() => {
               handleSlippage(value)
             }}
-            className={classNames(
-              'mr-3 text-[16px]',
-              slippage === value && !isCustom && 'bg-white/10',
-            )}
+            hasFocus={slippage === value && !isCustom}
+            className='mr-3 text-[16px]'
             text={`${value * 100}%`}
           />
         ))}
@@ -460,7 +458,7 @@ export default function SettingsModal() {
           onClick={() => inputRef?.current?.focus()}
           color='secondary'
           variant='rounded'
-          className={classNames('w-16', !slippages.includes(slippage) && 'bg-white/10')}
+          className={classNames('w-16', !slippages.includes(slippage) && '')}
         >
           <NumberInput
             asset={{ decimals: 0, symbol: '%' }}

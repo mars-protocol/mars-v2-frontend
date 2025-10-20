@@ -135,6 +135,9 @@ export default function TradeChart(props: Props) {
 
   const intitalChartLoad = useCallback(() => {
     try {
+      // Check if chartWidget is valid before accessing its methods
+      if (!chartWidget) return
+
       const chart = chartWidget.activeChart()
       if (!chart) return
       const chartStore = JSON.parse(localStorage.getItem(LocalStorageKeys.TV_CHART_STORE) ?? '{}')
@@ -154,24 +157,26 @@ export default function TradeChart(props: Props) {
         chart.createStudy(studyName)
       })
       if (!isPerps || !onCreateLimitOrder || !onCreateStopOrder) return
-      chartWidget.onContextMenu((unixTime, price) => {
-        return [
-          {
-            position: 'top',
-            text: 'Set Limit Order Price',
-            click: () => {
-              onCreateLimitOrder?.(BN(price))
+      if (chartWidget && chartWidget.onContextMenu) {
+        chartWidget.onContextMenu((unixTime, price) => {
+          return [
+            {
+              position: 'top',
+              text: 'Set Limit Order Price',
+              click: () => {
+                onCreateLimitOrder?.(BN(price))
+              },
             },
-          },
-          {
-            position: 'top',
-            text: 'Set Stop Order Price',
-            click: () => {
-              onCreateStopOrder?.(BN(price))
+            {
+              position: 'top',
+              text: 'Set Stop Order Price',
+              click: () => {
+                onCreateStopOrder?.(BN(price))
+              },
             },
-          },
-        ]
-      })
+          ]
+        })
+      }
     } catch (e) {
       console.info('Error on loading chart', e)
       return
@@ -180,7 +185,11 @@ export default function TradeChart(props: Props) {
 
   const updateShapesAndStudies = useCallback(() => {
     try {
+      // Check if chartWidget is valid before accessing its methods
+      if (!chartWidget) return
+
       const chart = chartWidget.activeChart()
+      if (!chart) return
       const settings = getTradingViewSettings(theme)
       const oraclePriceDecimalDiff = props.buyAsset.decimals - PRICE_ORACLE_DECIMALS
       const { downColor, upColor } = settings.chartStyle
@@ -337,6 +346,9 @@ export default function TradeChart(props: Props) {
       intitalChartLoad()
     })
 
+    // Clear cached chart properties to ensure new colors are applied
+    localStorage.removeItem('tradingview.chartproperties')
+
     const chartProperties = localStorage.getItem('tradingview.chartproperties')
     if (chartProperties) {
       const newChartProperties = JSON.parse(chartProperties)
@@ -348,7 +360,14 @@ export default function TradeChart(props: Props) {
     }
 
     return () => {
-      chartWidget.remove()
+      // Safely remove chartWidget if it exists
+      if (chartWidget && chartWidget.remove) {
+        try {
+          chartWidget.remove()
+        } catch (error) {
+          console.warn('Error removing chartWidget:', error)
+        }
+      }
     }
   }, [
     chartInterval,
@@ -364,22 +383,42 @@ export default function TradeChart(props: Props) {
   // ChartWidget listeners
   useEffect(() => {
     if (!chartWidget) return
-    chartWidget.onChartReady(() => {
-      updateShapesAndStudies()
-      chartWidget
-        .activeChart()
-        .onIntervalChanged()
-        .subscribe(null, () => {
-          updateShapesAndStudies()
-        })
-    })
+
+    const handleChartReady = () => {
+      try {
+        // Check if chartWidget is still valid before accessing its methods
+        if (!chartWidget) return
+
+        updateShapesAndStudies()
+        const chart = chartWidget.activeChart()
+        if (chart && chart.onIntervalChanged) {
+          chart.onIntervalChanged().subscribe(null, () => {
+            // Double-check chartWidget is still valid in the callback
+            if (chartWidget) {
+              try {
+                const currentChart = chartWidget.activeChart()
+                if (currentChart) {
+                  updateShapesAndStudies()
+                }
+              } catch (error) {
+                console.warn('Error accessing activeChart in interval callback:', error)
+              }
+            }
+          })
+        }
+      } catch (error) {
+        console.warn('Error in chartWidget.onChartReady:', error)
+      }
+    }
+
+    chartWidget.onChartReady(handleChartReady)
   }, [updateShapesAndStudies])
 
   const { isTab = false } = props
   return (
     <Card
       title={
-        <div className='flex flex-wrap items-center justify-between w-full p-4 bg-white/10'>
+        <div className='flex flex-wrap items-center justify-between w-full p-4 bg-surface'>
           {props.title ? (
             props.title
           ) : (
@@ -435,14 +474,11 @@ export default function TradeChart(props: Props) {
           )}
         </div>
       }
-      contentClassName='pb-0.5 h-full !w-[calc(100%-2px)] ml-[1px] bg-chart'
-      className={classNames(
-        'h-[500px]',
-        'md:h-screen/70 md:max-h-[980px] md:min-h-[560px] order-1 w-full',
-      )}
+      contentClassName='flex flex-col md:h-full w-full bg-surface-dark h-[500px]'
+      className={classNames('w-full h-full')}
       isTab={isTab}
     >
-      <div ref={chartContainerRef ?? undefined} className='h-[calc(100%-32px)] overflow-hidden'>
+      <div ref={chartContainerRef ?? undefined} className='flex-1 overflow-hidden'>
         <div className='flex items-center w-full h-full'>
           <div className='flex flex-col flex-wrap items-center w-full gap-2'>
             <div className='w-8 mb-2'>

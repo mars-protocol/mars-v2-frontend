@@ -10,7 +10,7 @@ interface Props {
 
 export default function AutoRepayToggle(props: Props) {
   return (
-    <div className='flex flex-row justify-between flex-1 px-4 py-2 bg-white/5'>
+    <div className='flex flex-row justify-between w-full px-4 py-2 bg-white/5'>
       <div className='flex items-center gap-1'>
         <Text size='sm'>Auto Repay Debt</Text>
         <Tooltip

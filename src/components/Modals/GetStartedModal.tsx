@@ -28,11 +28,9 @@ function TutorialItem(props: TutorialItemProps) {
       href={props.link}
       title={props.title}
       target='_blank'
-      className='flex items-center px-2 py-3 rounded-base hover:bg-white/5 group/item'
+      className='flex items-center px-2 py-3 hover:bg-white/5 group/item'
     >
-      <div className='flex items-center justify-center w-8 h-8 rounded-base bg-white/5'>
-        {props.icon}
-      </div>
+      <div className='flex items-center justify-center w-8 h-8 bg-white/5'>{props.icon}</div>
       <div className='flex flex-col ml-3'>
         <Text size='sm' className='pb-1'>
           {props.title}

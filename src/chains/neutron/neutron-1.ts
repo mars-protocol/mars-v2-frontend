@@ -161,6 +161,7 @@ const Neutron1: ChainConfig = {
       perpsVault:
         'https://backend.prod.mars-dev.net/v2/perps_vault_historical?chain=neutron&days=1',
     },
+    liquidations: 'https://backend.prod.mars-dev.net/v2/liquidations?chain=neutron',
   },
   network: NETWORK.MAINNET,
   vaults: [],

@@ -279,7 +279,7 @@ export default function PerpsSummary(props: Props) {
   }, [isStopOrder, isLimitOrder])
 
   return (
-    <div className='flex w-full flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20'>
+    <div className='flex w-full flex-col bg-white bg-opacity-5 rounded-sm border-[1px] border-white/10'>
       <ManageSummary
         {...props}
         newAmount={newAmount}

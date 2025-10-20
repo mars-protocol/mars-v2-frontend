@@ -49,7 +49,7 @@ function PageContainer(props: Props) {
     )
 
   return (
-    <div className='relative flex items-center justify-center w-full h-full'>
+    <div className='relative flex items-center justify-center w-full h-full z-50'>
       {props.focusComponent.component}
     </div>
   )
@@ -117,14 +117,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 'mt-[73px]',
                 'flex',
                 'min-h-screen-full w-full relative',
-                'gap-4 p-2 pb-20',
-                'md:gap-6 md:px-4 md:py-6',
+                'pb-20 md:pb-0 p-2 md:p-0 md:pt-0.5',
                 !focusComponent &&
                   address &&
                   isFullWidth &&
                   accountId &&
                   hasCreditAccounts &&
-                  (accountDetailsExpanded && !isMobile ? 'md:pr-102' : 'md:pr-24'),
+                  (accountDetailsExpanded && !isMobile ? 'md:pr-107' : 'md:pr-18'),
                 !reduceMotion && isFullWidth && 'transition-all duration-500',
                 'justify-center',
                 focusComponent && 'items-center',
