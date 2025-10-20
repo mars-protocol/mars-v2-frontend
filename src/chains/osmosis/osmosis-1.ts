@@ -104,7 +104,7 @@ const Osmosis1: ChainConfig = {
     coinDecimals: 6,
     coinGeckoId: 'osmosis',
     gasPriceStep: {
-      low: 0.01,
+      low: 0.03,
       average: 0.1,
       high: 0.16,
     },
