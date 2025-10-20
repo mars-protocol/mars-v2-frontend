@@ -28,7 +28,7 @@ export default function AddFarmBorrowAssetsModal() {
       header={<Text>Add Assets</Text>}
       onClose={onClose}
       modalClassName='max-w-modal-xs'
-      headerClassName=' border-b-white/5 border-b items-center p-4'
+      headerClassName='border-b-white/5 border-b items-center p-4'
     >
       {modal ? (
         <AddFarmAssetsModalContent

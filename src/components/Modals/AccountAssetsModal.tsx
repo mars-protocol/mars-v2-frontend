@@ -47,9 +47,9 @@ export default function AccountAssetsModal() {
       onClose={closeModal}
       header={`Select assets to repay ${debtAsset.symbol} debt`}
       modalClassName='max-w-modal-lg'
-      headerClassName=' border-b-white/5 border-b items-center p-4'
+      headerClassName='border-b-white/5 border-b items-center p-4'
     >
-      <div className='px-4 py-3 border-b border-white/5 '>
+      <div className='px-4 py-3 border-b border-white/5'>
         <SearchBar
           value={searchString}
           placeholder={`Search for e.g. "ATOM" or "Cosmos"`}

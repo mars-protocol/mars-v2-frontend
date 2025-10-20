@@ -232,7 +232,7 @@ function AccountDetails(props: Props) {
             <div
               className={classNames(
                 'absolute inset-0 -z-1',
-                'before:content-[""] before:transition-opacity before:-z-1 before:absolute before:left-0 before:h-full before:w-full before: before:border-t before:border-white/10',
+                'before:content-[""] before:transition-opacity before:-z-1 before:absolute before:left-0 before:h-full before:w-full before:border-t before:border-white/10',
                 accountDetailsExpanded
                   ? 'before:opacity-100 before:delay-500 before:top-full'
                   : 'before:opacity-0 before:duration-0',

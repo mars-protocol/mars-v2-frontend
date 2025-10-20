@@ -31,7 +31,7 @@ export const NavMenu = (props: Props) => {
 
   return (
     <div
-      className={`${visibilityClass} relative items-center pb-2 -mb-2 pt-0.5`}
+      className={classNames('relative items-center pb-2 -mb-2 pt-0.5', visibilityClass)}
       onMouseLeave={() => setShowMenu(false)}
     >
       <div

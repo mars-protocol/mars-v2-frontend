@@ -36,7 +36,7 @@ export default function BridgeRouteSection({
             className={classNames(
               'flex-1 px-4 py-2 rounded text-sm transition-colors duration-200',
               goFast
-                ? ' text-white'
+                ? 'text-white'
                 : 'bg-transparent text-white/60 hover:text-white hover:bg-white/5',
             )}
           >
@@ -47,7 +47,7 @@ export default function BridgeRouteSection({
             className={classNames(
               'flex-1 px-4 py-2 rounded text-sm transition-colors duration-200',
               !goFast
-                ? ' text-white'
+                ? 'text-white'
                 : 'bg-transparent text-white/60 hover:text-white hover:bg-white/5',
             )}
           >

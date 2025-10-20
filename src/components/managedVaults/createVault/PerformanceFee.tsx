@@ -45,7 +45,7 @@ export default function PerformanceFee(props: Props) {
         maxDecimals={0}
         max={BN(40)}
         placeholder='Enter fee'
-        className='px-4 py-3 rounded-sm bg-white/5 !border-solid border border-white/10 focus:border-white/20 focus: !text-left text-sm'
+        className='px-4 py-3 rounded-sm bg-white/5 !border-solid border border-white/10 focus:border-white/20 !text-left text-sm'
       />
       <div className='flex gap-2 justify-evenly'>
         {fees.map((fee, index) => (
