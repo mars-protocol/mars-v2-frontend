@@ -35,8 +35,8 @@ export default function GridWithSplitters({ className, chartArea, rightArea, bot
         const x = e.clientX - containerRect.left
         const percentage = (x / containerRect.width) * 100
 
-        // Constrain between 60% and 85%
-        const newWidth = Math.min(85, Math.max(60, percentage))
+        // Constrain between 60% and 83%
+        const newWidth = Math.min(83, Math.max(60, percentage))
         setChartWidthPercent(newWidth)
       })
     }
