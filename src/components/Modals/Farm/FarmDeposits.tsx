@@ -232,7 +232,7 @@ export default function FarmDeposits(props: Props) {
             strokeClass='hsl(2, 100%, 69%)'
             strokeWidth={3}
           />
-          <div className='h-full w-[1px] rounded-xl '></div>
+          <div className='h-full w-[1px] rounded-xl bg-surface-light' />
           <Gauge
             percentage={secondaryValuePercentage}
             tooltip={`${secondaryValuePercentage}% of value is ${secondaryAsset.symbol}`}

@@ -121,7 +121,7 @@ export default function Select(props: Props) {
         data-testid='select-component'
         className={classNames(
           props.isParent && 'relative',
-          'flex min-w-fit items-center gap-2 ',
+          'flex min-w-fit items-center gap-2',
           props.className,
         )}
         role='select'
@@ -135,7 +135,7 @@ export default function Select(props: Props) {
             isDisplay
           />
         ) : (
-          <div className={classNames('flex items-center gap-2 p-3', 'hover:cursor-pointer')}>
+          <div className='flex items-center gap-2 p-3 hover:cursor-pointer'>
             <Text className='w-full opacity-50 hover:cursor-pointer'>Select</Text>
             <span
               className={classNames(

@@ -40,7 +40,7 @@ export default function Option(props: Props) {
       return (
         <div
           className={classNames(
-            'flex h-full w-auto items-center gap-2  px-2',
+            'flex h-full w-auto items-center gap-2 px-2',
             'hover:cursor-pointer',
             props.displayClassName,
           )}
@@ -64,7 +64,7 @@ export default function Option(props: Props) {
           'flex gap-4 justify-between items-center py-2 px-4',
           'border-b border-b-white/20 last:border-none',
           'hover:cursor-pointer hover:bg-white/10',
-          !props.isSelected ? '' : 'pointer-events-none',
+          !props.isSelected ? 'bg-white/5' : 'pointer-events-none',
         )}
         onClick={() => handleOnClick(asset.denom)}
       >
@@ -123,7 +123,7 @@ export default function Option(props: Props) {
     <div
       className={classNames(
         'block p-3 hover:cursor-pointer hover:bg-white/10',
-        props.isSelected && '',
+        props.isSelected && 'bg-white/5',
       )}
       onClick={() => handleOnClick(props.value)}
     >

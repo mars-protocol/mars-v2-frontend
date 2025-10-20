@@ -205,7 +205,7 @@ export default function MarsStakingModal() {
           ]}
           selected={modalType}
           onChange={(v) => handleModeChange(v as 'stake' | 'unstake')}
-          className=' rounded-lg'
+          className='rounded-lg'
         />
 
         <div className='space-y-2'>

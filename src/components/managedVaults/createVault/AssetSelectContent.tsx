@@ -56,11 +56,11 @@ export default function AssetSelectContent(props: Props) {
       show={showMenu}
       setShow={setShowMenu}
     >
-      <div className='flex items-center justify-between px-4 pt-4 '>
+      <div className='flex items-center justify-between px-4 pt-4'>
         <Text>Select asset</Text>
         <EscButton onClick={handleCloseModal} enableKeyPress />
       </div>
-      <div className='p-4 border-b border-white/5 '>
+      <div className='p-4 border-b border-white/5'>
         <SearchBar
           value={searchString}
           placeholder={'Search for e.g. "ATOM" or "Cosmos"'}

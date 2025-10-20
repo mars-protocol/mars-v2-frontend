@@ -1,6 +1,11 @@
-export { GridContainer } from './GridContainer'
-export { GridItem } from './GridItem'
-export { ResizableGridLayout } from './ResizableGridLayout'
-export type { GridLayoutItem } from './ResizableGridLayout'
-export { GRID_LAYOUTS, createGridArea, createResponsiveColumns, parseGridArea } from './utils'
-export type { GridArea } from './utils'
+export { GridContainer } from 'components/common/Grid/GridContainer'
+export { GridItem } from 'components/common/Grid/GridItem'
+export { ResizableGridLayout } from 'components/common/Grid/ResizableGridLayout'
+export type { GridLayoutItem } from 'components/common/Grid/ResizableGridLayout'
+export {
+  GRID_LAYOUTS,
+  createGridArea,
+  createResponsiveColumns,
+  parseGridArea,
+} from 'components/common/Grid/utils'
+export type { GridArea } from 'components/common/Grid/utils'

@@ -105,7 +105,7 @@ export default function RewardsCenter(props: Props) {
         }}
         hasFocus={showRewardsCenter}
       >
-        <div className='relative flex items-center h-fullx'>
+        <div className='relative flex items-center h-full'>
           <DisplayCurrency coin={rewardsValueCoin} allowZeroAmount />
         </div>
       </Button>
@@ -151,7 +151,7 @@ export default function RewardsCenter(props: Props) {
           <Text size='xs' className='w-full'>
             Total Rewards
           </Text>
-          <div className='flex flex-wrap content-center justify-center w-full gap-1 p-4 rounded-md bg-black/20'>
+          <div className='flex flex-wrap content-center justify-center w-full gap-1 p-4 rounded-sm bg-black/20'>
             <DisplayCurrency coin={rewardsValueCoin} allowZeroAmount className='text-2xl' />
             <Text size='xs' className='w-full text-center text-white/60'>
               Unclaimed Rewards
