@@ -28,11 +28,13 @@ function PageMetadata() {
         <link color='#dd5b65' href='/safari-pinned-tab.svg' rel='mask-icon' />
         <meta content='index,follow' name='robots' />
         <meta content='summary_large_image' name='twitter:card' />
-        <meta content='Mars Protocol' name='twitter:title' />
+        <meta content={metadata.title} name='twitter:title' />
+        <meta content={metadata.description} name='twitter:description' />
         <meta content='@mars_protocol' name='twitter:site' />
         <meta content='@mars_protocol' name='twitter:creator' />
         <meta content='https://app.marsprotocol.io' property='og:url' />
-        <meta content='https://app.marsprotocol.io/banner.jpg' property='og:image' />
+        <meta content={metadata.ogImage} property='og:image' />
+        <meta content={metadata.ogImage} name='twitter:image' />
         <meta content='Mars Protocol' property='og:site_name' />
         <meta content='#ffffff' name='msapplication-TileColor' />
         <meta content='#ffffff' name='theme-color' />
