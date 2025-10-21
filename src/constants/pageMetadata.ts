@@ -5,6 +5,7 @@ const PAGE_METADATA = {
       "Trade spot, margin and perps, lend, and earn on the Cosmos' most powerful credit protocol. Featuring cross-collateralization and a single liquidation point.",
     keywords:
       'mars protocol, cosmos, credit protocol, crypto trading, margin trading, spot trading, cross-collateralization, defi, mars rovers, decentralized credit accounts, credit accounts',
+    ogImage: 'https://app.marsprotocol.io/banner.jpg',
   },
   trade: {
     title: 'Mars Protocol - Trade',
@@ -12,12 +13,14 @@ const PAGE_METADATA = {
       'Create a Rover credit account to begin spot and margin trading crypto assets with cross-collateralized positions and a single liquidation point.',
     keywords:
       'crypto trading, spot trading, margin trading, decentralized trading, defi, cross-collateralization, cosmos tokens',
+    ogImage: 'https://app.marsprotocol.io/banner.jpg',
   },
   perps: {
     title: 'Mars Protocol - Perps',
     description: 'Trade perps on leverage with a single liquidation point.',
     keywords:
       'crypto trading, spot trading, margin trading, decentralized trading, defi, cross-collateralization, cosmos tokens',
+    ogImage: 'https://app.marsprotocol.io/banner.jpg',
   },
   farm: {
     title: 'Mars Protocol - Farm',
@@ -25,6 +28,7 @@ const PAGE_METADATA = {
       "Lend your crypto assets or deploy advanced defi strategies including leveraged yield farming and leveraged staking in Mars' Farm vaults.",
     keywords:
       'leveraged yield farming, crypto yield, leveraged staking, mars farm vaults, crypto lending, cosmos lending',
+    ogImage: 'https://app.marsprotocol.io/banner.jpg',
   },
   lend: {
     title: 'Mars Protocol - Lend',
@@ -32,6 +36,7 @@ const PAGE_METADATA = {
       "Lend your crypto assets or deploy advanced defi strategies including leveraged yield farming and leveraged staking in Mars' Farm vaults.",
     keywords:
       'leveraged yield farming, crypto yield, leveraged staking, mars farm vaults, crypto lending, cosmos lending',
+    ogImage: 'https://app.marsprotocol.io/banner.jpg',
   },
   borrow: {
     title: 'Mars Protocol - Borrow',
@@ -39,6 +44,7 @@ const PAGE_METADATA = {
       "Use your positions on Mars as collateral to borrow other assets. Then, put them to work in Mars' Farm Vaults or your trading strategies.",
     keywords:
       'borrow crypto, defi, cosmos credit protocol, cosmos lending, decentralized finance, crypto collateral, mars farm vaults, crypto lending',
+    ogImage: 'https://app.marsprotocol.io/banner.jpg',
   },
   portfolio: {
     title: 'Mars Protocol - Portfolio',
@@ -46,17 +52,20 @@ const PAGE_METADATA = {
       'Review all of your positions on Mars at a glance and make adjustments to keep your Rover credit accounts healthy and productive.',
     keywords:
       'rover credit accounts, mars credit accounts, mars, defi, crypto lending, crypto yield',
+    ogImage: 'https://app.marsprotocol.io/banner.jpg',
   },
   council: {
     title: 'Mars Protocol - Council',
     description:
       'Stake MARS token to ascend to the Martian Council and help govern key changes to the protocol.',
     keywords: 'martian council, mars governance, cosmos governance, mars voting, mars staking',
+    ogImage: 'https://app.marsprotocol.io/banner.jpg',
   },
   v1: {
     title: 'Mars Protocol',
     description: "Lend, borrow and earn on the galaxy's most powerful credit protocol.",
     keywords: 'martian council, mars governance, cosmos governance, mars voting, mars staking',
+    ogImage: 'https://app.marsprotocol.io/banner.jpg',
   },
 }
 
