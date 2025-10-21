@@ -64,14 +64,14 @@ export default function SwitchWithText(props: Props) {
   return (
     <div
       className={classNames(
-        'relative transition-opacity bg-black/20 rounded-md w-full p-0.5',
+        'relative transition-opacity bg-black/20 rounded-sm w-full p-0.5',
         props.className,
         props.disabled && 'pointer-events-none opacity-50',
       )}
     >
       <span
         className={classNames(
-          'absolute left-0 top-0 z-1 h-full w-1/2 rounded-md bg-white/10 transition-transform',
+          'absolute left-0 top-0 z-1 h-full w-1/2 rounded-sm bg-white/10 transition-transform',
           props.selected === props.options[1].value && 'translate-x-full',
         )}
       />

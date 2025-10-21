@@ -19,7 +19,7 @@ export function PerpsTabs() {
         id: 'stats',
         renderContent: () => (
           <>
-            <div className='flex flex-wrap items-center justify-between w-full p-4 '>
+            <div className='flex flex-wrap items-center justify-between w-full p-4'>
               <PerpsInfo />
             </div>
             <div className='flex flex-col h-full gap-4'>

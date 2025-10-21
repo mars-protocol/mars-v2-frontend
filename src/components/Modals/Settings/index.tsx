@@ -458,7 +458,7 @@ export default function SettingsModal() {
           onClick={() => inputRef?.current?.focus()}
           color='secondary'
           variant='rounded'
-          className={classNames('w-16', !slippages.includes(slippage) && '')}
+          className='w-16'
         >
           <NumberInput
             asset={{ decimals: 0, symbol: '%' }}
