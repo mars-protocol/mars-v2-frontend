@@ -57,6 +57,32 @@ const nextConfig = {
   },
   async rewrites() {
     return [
+      // Rewrite vault detail pages for bots to SSR endpoint
+      {
+        source: '/vaults/:vaultAddress/details',
+        destination: '/api/ssr/vaults/:vaultAddress',
+        has: [
+          {
+            type: 'header',
+            key: 'User-Agent',
+            value:
+              '(facebook|twitter|linkedin|telegram|discord|bot|crawl|spider|facebookexternalhit|Facebot|Twitterbot|TelegramBot|XtilesBot)',
+          },
+        ],
+      },
+      // Also handle wallet-prefixed vault URLs for bots
+      {
+        source: '/wallets/:wallet/vaults/:vaultAddress/details',
+        destination: '/api/ssr/vaults/:vaultAddress',
+        has: [
+          {
+            type: 'header',
+            key: 'User-Agent',
+            value:
+              '(facebook|twitter|linkedin|telegram|discord|bot|crawl|spider|facebookexternalhit|Facebot|Twitterbot|TelegramBot|XtilesBot)',
+          },
+        ],
+      },
       // Rewrite frontend routes for non-bot user agents (excluding API routes)
       {
         source: '/((?!api|_next|favicon).*)',
