@@ -8,14 +8,17 @@ export default async function getOsmosisRouteInfo(
   denomIn: string,
   assets: Asset[],
   chainConfig: ChainConfig,
+  adjustedSwapFee?: number,
 ): Promise<SwapRouteInfo | null> {
+  const swapFee = adjustedSwapFee ?? chainConfig.swapFee
+
   try {
     const resp = await fetchWithTimeout(url, FETCH_TIMEOUT)
     const route = (await resp.json()) as OsmosisRouteResponse
 
     let amountOut = BN(route.amount_out)
     if (!amountOut.gt(0))
-      amountOut = amountOut.times(1 - chainConfig.swapFee).integerValue(BigNumber.ROUND_FLOOR)
+      amountOut = amountOut.times(1 - swapFee).integerValue(BigNumber.ROUND_FLOOR)
 
     return {
       amountOut,

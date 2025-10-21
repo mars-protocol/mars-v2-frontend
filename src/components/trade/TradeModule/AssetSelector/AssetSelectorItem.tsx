@@ -84,7 +84,7 @@ export default function AssetSelectorItem(props: Props) {
     <li
       className={classNames(
         'relative w-full border-b border-white/10 hover:bg-black/10 z-1',
-        isActive && 'bg-white/20',
+        isActive && 'bg-white/10',
       )}
     >
       <button

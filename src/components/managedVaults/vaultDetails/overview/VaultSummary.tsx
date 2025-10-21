@@ -43,7 +43,7 @@ export default function VaultSummary(props: Props) {
       {
         title: 'Summary',
         renderContent: () => (
-          <div className='bg-white/5'>
+          <div className='bg-surface'>
             <VaultStats
               stats={[
                 {
@@ -116,7 +116,7 @@ export default function VaultSummary(props: Props) {
         title: 'Balances',
         renderContent: () =>
           accountData ? (
-            <div className='h-74 overflow-y-auto bg-white/5 scrollbar-hide'>
+            <div className='h-75 overflow-y-auto scrollbar-hide'>
               <AccountBalancesTable
                 account={accountData}
                 borrowingData={borrowAssetsData}
@@ -142,7 +142,7 @@ export default function VaultSummary(props: Props) {
       tabsArray.push({
         title: 'Strategies',
         renderContent: () => (
-          <div className='h-74 overflow-y-auto bg-white/5 scrollbar-hide'>
+          <div className='h-75 overflow-y-auto bg-surface scrollbar-hide'>
             <AccountStrategiesTable account={accountData} hideCard />
           </div>
         ),
@@ -156,7 +156,7 @@ export default function VaultSummary(props: Props) {
       tabsArray.push({
         title: 'Perp Positions',
         renderContent: () => (
-          <div className='h-74 overflow-y-auto bg-white/5 scrollbar-hide'>
+          <div className='h-75 overflow-y-auto scrollbar-hide'>
             <AccountPerpPositionTable account={accountData} hideCard />
           </div>
         ),
@@ -168,7 +168,7 @@ export default function VaultSummary(props: Props) {
       tabsArray.push({
         title: 'Depositors',
         renderContent: () => (
-          <div className='h-74 overflow-y-auto bg-white/5 scrollbar-hide'>
+          <div className='h-75 overflow-y-auto scrollbar-hide'>
             <VaultDepositorsTable
               vaultTokensDenom={details.vault_tokens_denom}
               vaultAddress={details.vault_address}

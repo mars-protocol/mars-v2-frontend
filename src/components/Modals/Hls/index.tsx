@@ -124,7 +124,7 @@ function HlsModal(props: Props) {
         </>
       }
       headerClassName='gradient-header border-b-white/5 border-b flex-wrap'
-      contentClassName='flex flex-col p-2 md:p-6 h-screen-full max-h-[546px] md:h-auto overflow-y-scroll scrollbar-hide'
+      contentClassName='flex flex-col p-2 h-screen-full max-h-[546px] md:h-auto bg-body overflow-y-scroll scrollbar-hide'
       modalClassName='max-w-screen-full md:max-w-modal-lg '
       onClose={handleClose}
     >

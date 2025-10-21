@@ -8,10 +8,10 @@ export default function V1Page() {
   const { data: account } = useV1Account()
 
   return (
-    <div className='flex flex-wrap w-full gap-6'>
+    <div className='flex flex-wrap w-full gap-2 py-8'>
       <V1Intro />
       {account && <Summary account={account} v1 />}
-      <div className='grid w-full grid-cols-1 gap-6 lg:grid-cols-2'>
+      <div className='grid w-full grid-cols-1 gap-2 lg:grid-cols-2'>
         <Deposits />
         <Borrowings />
       </div>

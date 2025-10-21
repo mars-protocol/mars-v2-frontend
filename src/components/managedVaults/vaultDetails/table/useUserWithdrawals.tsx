@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import UnlockTime, { UNLOCK_TIME_META } from 'components/earn/farm/common/Table/Columns/UnlockTime'
-import Timestamp from 'components/managedVaults/vaultDetails/table/columns/Timestamp'
+import Timestamp from 'components/common/Timestamp'
 import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN } from 'utils/helpers'
@@ -69,7 +69,15 @@ export default function useUserWithdrawals(props: Props) {
         header: 'Initiated',
         meta: { className: 'min-w-30' },
         cell: ({ row }) => {
-          return <Timestamp value={row.original.created_at} isLoading={isLoading} />
+          return (
+            <Timestamp
+              value={row.original.created_at}
+              isLoading={isLoading}
+              unit='seconds'
+              showUtc={false}
+              use24Hour={false}
+            />
+          )
         },
       },
       {

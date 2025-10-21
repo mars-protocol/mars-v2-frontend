@@ -4,8 +4,8 @@ import HealthBar from 'components/account/Health/HealthBar'
 import Card from 'components/common/Card'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import HlsTag from 'components/hls/HlsTag'
 import { Tooltip } from 'components/common/Tooltip'
+import HlsTag from 'components/hls/HlsTag'
 
 interface Props {
   stats: { title: React.ReactNode; sub: string }[]
@@ -21,7 +21,7 @@ export default function Skeleton(props: Props) {
   const { stats, health, healthFactor, accountId, isCurrent, vaultTitle } = props
 
   return (
-    <Card className='p-4 bg-white/5'>
+    <Card className='p-4 bg-surface'>
       <div className='flex items-center justify-between'>
         <Tooltip type='info' content={vaultTitle}>
           <Text className='truncate max-w-[250px]'>

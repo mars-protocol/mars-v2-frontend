@@ -18,12 +18,7 @@ function Benefits({ benefits }: BenefitsProps) {
     <ul className='w-full px-0 list-none'>
       {benefits.map((benefit, index) => (
         <li className='relative flex items-center w-full h-6 px-0 pl-8 mb-6' key={index}>
-          <div
-            className={classNames(
-              'absolute left-0 top-0 isolate h-6 w-6 rounded-full bg-white/10',
-              'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-full before:p-[1px] before:border-glas',
-            )}
-          >
+          <div className='absolute left-0 top-0 isolate h-6 w-6 rounded-full'>
             <Check className='p-1.5' />
           </div>
           <Text size='sm' className=' text-white/60'>

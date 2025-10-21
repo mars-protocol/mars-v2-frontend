@@ -388,20 +388,22 @@ export default function SwapForm(props: Props) {
           <AssetSelectorPair buyAsset={buyAsset} sellAsset={sellAsset} assets={assets} />
         )}
         <Divider />
-        <MarginToggle
-          checked={isMarginChecked}
-          onChange={handleMarginToggleChange}
-          disabled={!borrowMarket?.borrowEnabled}
-          borrowAssetSymbol={inputAsset.symbol}
-        />
-        <Divider />
-        {isRepayable && ENABLE_AUTO_REPAY && (
-          <AutoRepayToggle
-            checked={isAutoRepayChecked}
-            onChange={handleAutoRepayToggleChange}
-            buyAssetSymbol={outputAsset.symbol}
+        <div className='w-full pb-4'>
+          <MarginToggle
+            checked={isMarginChecked}
+            onChange={handleMarginToggleChange}
+            disabled={!borrowMarket?.borrowEnabled}
+            borrowAssetSymbol={inputAsset.symbol}
           />
-        )}
+          <Divider />
+          {isRepayable && ENABLE_AUTO_REPAY && (
+            <AutoRepayToggle
+              checked={isAutoRepayChecked}
+              onChange={handleAutoRepayToggleChange}
+              buyAssetSymbol={outputAsset.symbol}
+            />
+          )}
+        </div>
         <div className='px-3'>
           <OrderTypeSelector
             orderTabs={ORDER_TYPE_TABS}
@@ -442,7 +444,7 @@ export default function SwapForm(props: Props) {
           <DepositCapMessage
             action='buy'
             coins={depositCapReachedCoins}
-            className='p-4 bg-white/5'
+            className='p-4 bg-surface'
           />
 
           {isMarginChecked &&

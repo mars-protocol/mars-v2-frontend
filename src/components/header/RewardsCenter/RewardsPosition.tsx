@@ -71,7 +71,7 @@ export default function RewardsPosition(props: Props) {
   if (!positionAsset) return null
 
   return (
-    <div className='flex items-center justify-between w-full p-4 rounded-md bg-white/10'>
+    <div className='flex items-center justify-between w-full p-4 rounded-sm'>
       <div className='flex items-center gap-2'>
         {isRedBank ? (
           <div className='w-8 h-8 mr-1'>

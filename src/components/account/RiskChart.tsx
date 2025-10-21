@@ -82,7 +82,7 @@ export const RiskChart = ({ data }: RiskChartProps) => {
                 if (payload && payload.length) {
                   const risk = Number(payload[0].value) ?? 0
                   return (
-                    <div className='max-w-[320px] rounded-lg px-4 py-2 shadow-tooltip gradient-tooltip '>
+                    <div className='max-w-[320px] rounded-lg px-4 py-2 shadow-tooltip bg-surface'>
                       <Text size='sm'>{moment(label).format('MM-DD-YYYY')}</Text>
                       <Text size='sm'>
                         Risk: {formatValue(risk, { minDecimals: 0, maxDecimals: 0, suffix: '%' })}

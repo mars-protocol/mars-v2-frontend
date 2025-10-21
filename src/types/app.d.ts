@@ -355,6 +355,7 @@ interface ChainConfig {
       vaults: string
       perpsVault?: string
     }
+    liquidations?: string
   }
   dexName: string
   explorerName: string
@@ -930,7 +931,7 @@ interface ButtonProps {
   autoFocus?: boolean
   children?: string | ReactNode
   className?: string
-  color?: 'primary' | 'secondary' | 'tertiary' | 'quaternary'
+  color?: 'primary' | 'secondary' | 'tertiary' | 'quaternary' | 'long' | 'short'
   disabled?: boolean
   id?: string
   showProgressIndicator?: boolean
@@ -997,10 +998,13 @@ interface MenuTreeEntry {
 }
 
 interface MenuTreeSubmenuEntry {
-  page: Page
+  page?: Page
   label: string
   subtitle?: string
   icon?: React.ReactNode
+  externalUrl?: string
+  isSeparator?: boolean
+  hideOnDesktop?: boolean
 }
 
 interface RiskTimePair {
@@ -1684,6 +1688,11 @@ interface TradingViewSettings {
     'linetooltrendline.linecolor': string
     'paneProperties.backgroundType': string
     'scalesProperties.fontSize': number
+    'scalesProperties.textColor': string
+    'paneProperties.gridProperties.color': string
+    'paneProperties.vertGridProperties.color': string
+    'paneProperties.horzGridProperties.color': string
+    'scalesProperties.lineColor': string
   }
   loadingScreen: {
     backgroundColor: string
@@ -2259,4 +2268,20 @@ interface ManagedVaultDepositor {
     denom: string
     amount: string
   }
+}
+
+interface LiquidationDataItem {
+  liquidatee_account_id: string
+  collateral_asset_won?: BNCoin
+  debt_asset_repaid?: BNCoin
+  price_debt_repaid?: string
+  protocol_fee_coin?: BNCoin
+  price_protocol_fee_coin?: string
+  price_liquidated?: string
+  timestamp: string
+  tx_hash: string
+}
+interface LiquidationsResponse {
+  data: LiquidationDataItem[]
+  total: number
 }

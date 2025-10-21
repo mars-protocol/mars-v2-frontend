@@ -32,7 +32,7 @@ export default function CampaignRewards(props: Props) {
 
     return (
       <div
-        className='flex flex-wrap content-center justify-center w-full gap-1 p-4 rounded-md bg-black/20'
+        className='flex flex-wrap content-center justify-center w-full gap-1 p-4 rounded-sm bg-black/20'
         key={campaign.id}
       >
         <Tooltip

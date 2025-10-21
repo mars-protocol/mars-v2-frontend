@@ -20,6 +20,11 @@ export enum DocURL {
   PERFORMANCE_FEES_URL = 'https://docs.marsprotocol.io/managed-vaults#performance-fee',
   CREATE_VAULT_URL = 'https://docs.marsprotocol.io/managed-vaults/creating-a-vault',
   RECOVER_VAULT_ADDRESS_URL = 'https://docs.marsprotocol.io/managed-vaults/creating-a-vault/how-to-resume-vault-creation-after-failed-transaction',
+  STATS_URL = 'https://stats.marsprotocol.io',
+  TOKENOMICS_URL = 'https://stats.marsprotocol.io/tokenomics',
+  TELEGRAM_URL = 'https://t.me/marsprotocol',
+  DISCORD_URL = 'https://discord.marsprotocol.io/',
+  X_URL = 'https://x.com/mars_protocol',
 }
 
 export enum NETWORK {

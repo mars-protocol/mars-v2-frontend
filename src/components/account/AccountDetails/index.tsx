@@ -7,7 +7,6 @@ import AccountSummary from 'components/account/AccountSummary'
 import AccountSummaryLeverage from 'components/account/AccountSummary/AccountSummaryLeverage'
 import { HealthGauge } from 'components/account/Health/HealthGauge'
 import useBorrowMarketAssetsTableData from 'components/borrow/Table/useBorrowMarketAssetsTableData'
-import { glowElement } from 'components/common/Button/utils'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ThreeDots } from 'components/common/Icons'
@@ -150,8 +149,8 @@ function AccountDetails(props: Props) {
       <div
         data-testid='account-details'
         className={classNames(
-          accountDetailsExpanded ? 'right-4' : '-right-74',
-          'w-94 hidden items-start gap-4 absolute top-6 z-2',
+          accountDetailsExpanded ? 'right-1' : '-right-88',
+          'w-105 hidden items-start gap-4 absolute top-0.5 z-2',
           'md:flex',
           !reduceMotion && 'transition-all duration-500',
         )}
@@ -159,12 +158,11 @@ function AccountDetails(props: Props) {
         <div
           className={classNames(
             'group/accountdetail relative min-h-75',
-            'border rounded-base border-white/20',
-            'backdrop-blur-sticky z-3 overflow-hidden',
+            'bg-surface rounded-sm border border-surface-light z-3 overflow-hidden',
             !reduceMotion && 'transition-all duration-500',
             accountDetailsExpanded
               ? 'is-expanded w-full h-auto'
-              : 'w-16 hover:bg-white/10 hover:cursor-pointer bg-white/5',
+              : 'w-16 hover:bg-surface hover:cursor-pointer bg-surface',
           )}
           onClick={() => {
             if (accountDetailsExpanded) return
@@ -190,7 +188,7 @@ function AccountDetails(props: Props) {
                 Health
               </Text>
             </div>
-            <div className='w-full py-4 border-t border-white/20'>
+            <div className='w-full py-4 border-t border-white/10'>
               <Text
                 size='2xs'
                 className='mb-0.5 w-full text-center text-white/50 whitespace-nowrap'
@@ -199,7 +197,7 @@ function AccountDetails(props: Props) {
               </Text>
               <DisplayCurrency coin={coin} className='w-full text-center truncate text-2xs' />
             </div>
-            <div className='w-full py-4 border-t border-white/20'>
+            <div className='w-full py-4 border-t border-white/10'>
               <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
                 Leverage
               </Text>
@@ -208,7 +206,7 @@ function AccountDetails(props: Props) {
                 updatedLeverage={updatedLeverage?.toNumber() || null}
               />
             </div>
-            <div className='w-full py-4 border-t border-white/20'>
+            <div className='w-full py-4 border-t border-white/10'>
               <Text size='2xs' className='mb-0.5 w-full text-center text-white/50'>
                 APY
               </Text>
@@ -234,7 +232,7 @@ function AccountDetails(props: Props) {
             <div
               className={classNames(
                 'absolute inset-0 -z-1',
-                'before:content-[""] before:transition-opacity before:-z-1 before:absolute before:left-0 before:h-full before:w-full before:bg-white/10 before:rounded-b-base before:border-t before:border-white/10',
+                'before:content-[""] before:transition-opacity before:-z-1 before:absolute before:left-0 before:h-full before:w-full before:border-t before:border-white/10',
                 accountDetailsExpanded
                   ? 'before:opacity-100 before:delay-500 before:top-full'
                   : 'before:opacity-0 before:duration-0',
@@ -251,8 +249,6 @@ function AccountDetails(props: Props) {
           >
             {!accountDetailsExpanded && <ThreeDots className='h-1' />}
           </div>
-
-          {glowElement(!reduceMotion)}
         </div>
       </div>
     </>

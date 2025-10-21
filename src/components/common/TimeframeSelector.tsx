@@ -21,7 +21,7 @@ export default function TimeframeSelector(props: Props) {
     <div className={classNames('flex gap-3 my-3', className)}>
       {timeframe.map((time, index) => (
         <Button
-          color='tertiary'
+          color='secondary'
           onClick={() => setSelectedTimeframe(time.value)}
           hasFocus={time.value === selectedTimeframe}
           key={index}

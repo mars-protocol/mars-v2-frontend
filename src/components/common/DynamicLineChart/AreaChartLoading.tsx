@@ -32,8 +32,15 @@ export default function AreaChartLoading(props: Props) {
     LocalStorageKeys.REDUCE_MOTION,
     getDefaultChainSettings(chainConfig).reduceMotion,
   )
+  const [theme] = useLocalStorage<string>(
+    LocalStorageKeys.THEME,
+    getDefaultChainSettings(chainConfig).theme,
+  )
   const height = props.height ?? 'h-100'
   const loadingData = createLoadingData()
+
+  // Theme-aware axis colors
+  const axisColor = theme === 'light' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.4)'
 
   return (
     <div className={classNames('-ml-6 ', height, !reduceMotion && 'animate-pulse')}>
@@ -55,12 +62,12 @@ export default function AreaChartLoading(props: Props) {
           </defs>
           <CartesianGrid
             horizontal={false}
-            stroke='rgba(255,255,255,0.2)'
+            stroke={axisColor}
             strokeDasharray='6 3'
             syncWithTicks={true}
           />
           <XAxis
-            stroke='rgba(255, 255, 255, 0.3)'
+            stroke={axisColor}
             tickFormatter={() => {
               return '...'
             }}
@@ -75,7 +82,7 @@ export default function AreaChartLoading(props: Props) {
             axisLine={false}
             tickLine={false}
             fontSize={12}
-            stroke='rgba(255, 255, 255, 0.5)'
+            stroke={axisColor}
             tickFormatter={() => {
               return '...'
             }}

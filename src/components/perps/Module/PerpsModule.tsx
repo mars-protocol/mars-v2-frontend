@@ -241,7 +241,7 @@ export function PerpsModule() {
 
   const renderDeprecatedMarketContent = () => (
     <>
-      <div className='flex flex-col gap-4'>
+      <div className='flex flex-col gap-2'>
         <Text size='sm' uppercase>
           Disabled Market
         </Text>
@@ -254,7 +254,7 @@ export function PerpsModule() {
         </Text>
         <Text size='xs'>Click the button below to close your position.</Text>
       </div>
-      <div className='flex flex-col gap-4'>
+      <div className='flex flex-col gap-2'>
         <ActionButton text='Close Position' onClick={closePosition} />
         <Callout type={CalloutType.INFO}>
           Please note: no new positions can be opened until the market is re-enabled.
@@ -378,7 +378,7 @@ export function PerpsModule() {
 
   const renderActiveMarketContent = () => (
     <>
-      <div className='flex flex-col gap-5'>
+      <div className='flex flex-col gap-3'>
         <OrderTypeSelector
           orderTabs={PERPS_ORDER_TYPE_TABS}
           selected={selectedOrderType}
@@ -396,40 +396,41 @@ export function PerpsModule() {
         {renderWarnings()}
         {renderOpenInterestInfo()}
         {renderLeverageSection()}
-      </div>
-      <div className='flex flex-wrap w-full gap-4 mt-4'>
-        <PerpsOrderOptions
-          isReduceOnly={isReduceOnly}
-          setIsReduceOnly={setIsReduceOnly}
-          isStopOrder={isStopOrder}
-          reduceOnlyWarning={reduceOnlyWarning}
-          conditionalTriggers={conditionalTriggers}
-          isMarketOrder={selectedOrderType === OrderType.MARKET}
-        />
-        {(isLimitOrder || isStopOrder || conditionalTriggers.tp || conditionalTriggers.sl) && (
-          <KeeperFee />
-        )}
-        <PerpsSummary
-          amount={amount}
-          tradeDirection={isStopOrder ? stopTradeDirection : tradeDirection}
-          asset={perpsAsset}
-          leverage={effectiveLeverage}
-          previousAmount={previousAmount}
-          previousTradeDirection={previousTradeDirection}
-          previousLeverage={previousLeverage}
-          onTxExecuted={() => {
-            clearValues()
-            simulatePerps(currentPerpPosition, isAutoLendEnabledForCurrentAccount)
-          }}
-          disabled={isDisabledExecution}
-          orderType={selectedOrderType}
-          limitPrice={isLimitOrder ? limitPrice : BN_ZERO}
-          stopPrice={isStopOrder ? stopPrice : BN_ZERO}
-          baseDenom={tradingFee?.baseDenom ?? ''}
-          isReduceOnly={isReduceOnly}
-          validateReduceOnlyOrder={validateReduceOnlyOrder}
-          conditionalTriggers={conditionalTriggers}
-        />
+
+        <div className='flex flex-wrap w-full gap-2 mt-4'>
+          <PerpsOrderOptions
+            isReduceOnly={isReduceOnly}
+            setIsReduceOnly={setIsReduceOnly}
+            isStopOrder={isStopOrder}
+            reduceOnlyWarning={reduceOnlyWarning}
+            conditionalTriggers={conditionalTriggers}
+            isMarketOrder={selectedOrderType === OrderType.MARKET}
+          />
+          {(isLimitOrder || isStopOrder || conditionalTriggers.tp || conditionalTriggers.sl) && (
+            <KeeperFee />
+          )}
+          <PerpsSummary
+            amount={amount}
+            tradeDirection={isStopOrder ? stopTradeDirection : tradeDirection}
+            asset={perpsAsset}
+            leverage={effectiveLeverage}
+            previousAmount={previousAmount}
+            previousTradeDirection={previousTradeDirection}
+            previousLeverage={previousLeverage}
+            onTxExecuted={() => {
+              clearValues()
+              simulatePerps(currentPerpPosition, isAutoLendEnabledForCurrentAccount)
+            }}
+            disabled={isDisabledExecution}
+            orderType={selectedOrderType}
+            limitPrice={isLimitOrder ? limitPrice : BN_ZERO}
+            stopPrice={isStopOrder ? stopPrice : BN_ZERO}
+            baseDenom={tradingFee?.baseDenom ?? ''}
+            isReduceOnly={isReduceOnly}
+            validateReduceOnlyOrder={validateReduceOnlyOrder}
+            conditionalTriggers={conditionalTriggers}
+          />
+        </div>
       </div>
     </>
   )
@@ -438,7 +439,7 @@ export function PerpsModule() {
 
   return (
     <Card
-      contentClassName='p-4 px-3 h-auto flex flex-grow flex-col justify-between h-full'
+      contentClassName='p-4 px-3 flex flex-col overflow-y-auto scrollbar-hide'
       title={
         <AssetSelectorPerps
           asset={perpsAsset}
@@ -446,11 +447,8 @@ export function PerpsModule() {
           onAssetSelect={reset}
         />
       }
-      className={classNames(
-        'mb-4 md:mb-0',
-        'md:min-h-[850px]',
-        'relative isolate overflow-hidden rounded-base z-30',
-      )}
+      className={classNames('mb-4 md:mb-0', 'md:min-h-[850px] md:h-full', 'relative isolate z-30')}
+      showOverflow={true}
     >
       {perpsAsset.isDeprecated ? renderDeprecatedMarketContent() : renderActiveMarketContent()}
     </Card>

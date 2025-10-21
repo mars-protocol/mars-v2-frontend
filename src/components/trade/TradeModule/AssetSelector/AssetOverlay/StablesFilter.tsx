@@ -23,7 +23,7 @@ export default function StablesFilter(props: StablesFilterProps) {
               text={stable.symbol}
               color={isCurrent ? 'secondary' : 'quaternary'}
               variant='transparent'
-              className={isCurrent ? '!text-white !bg-white/10 border-white' : ''}
+              className={isCurrent ? '!text-white border-white' : ''}
             />
           )
         })}

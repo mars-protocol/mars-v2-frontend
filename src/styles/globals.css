@@ -44,37 +44,31 @@
 }
 
 :root {
+  /* Current Palette Variables */
+
   --color-accent: 291deg 27% 15%;
   --color-accent-dark: 323deg 33% 15%;
   --color-accent-inverted: 228deg 100% 60%;
   --color-accent-highlight: 327deg 36% 19%;
   --color-atom: 233deg 13% 50%;
   --color-axlusdc: 211deg 68% 57%;
-  --color-body: 283deg 100% 4%;
-  --color-body-hls: 0deg 100% 2%;
-  --color-body-dark: 231deg 25% 10%;
-  --color-chart: 315deg 42% 9%;
+  --color-body: 252deg 12% 8%;
+  --color-chart: 270deg 12% 10%;
   --color-error: 4deg 86% 58%;
   --color-error-bg: 4deg 96% 80%;
   --color-fuchsia: 312deg 46% 49%;
   --color-green: 153deg 96% 30%;
-  --color-grey: 280deg 1% 56%;
-  --color-grey-dark: 229deg 17% 12%;
-  --color-grey-highlight: 0deg 0% 30%;
-  --color-grey-light: 0deg 0% 75%;
-  --color-grey-medium: 218deg 12% 43%;
+  --color-grey: 270deg 12% 10%;
+  --color-grey-dark: 280deg 15% 6%;
+  --color-grey-highlight: 270deg 12% 15%;
+  --color-grey-light: 290deg 10% 14%;
+  --color-grey-medium: 270deg 12% 12%;
   --color-info: 39deg 98% 56%;
   --color-info-bg: 44deg 98% 74%;
-  --color-input: 229deg 12% 18%;
+  --color-input: 270deg 12% 12%;
   --color-loss: 11deg 96% 46%;
   --color-mars: 354deg 46% 43%;
   --color-martian-red: 2deg 100% 69%;
-  --color-orb-primary: 4deg 65% 42%;
-  --color-orb-primary-hls: 2deg 100% 69%;
-  --color-orb-secondary: 277deg 90% 27%;
-  --color-orb-secondary-hls: 354deg 46% 43%;
-  --color-orb-tertiary: 313deg 100% 50%;
-  --color-orb-tertiary-hls: 20deg 95% 68%;
   --color-profit: 95deg 85% 35%;
   --color-primary: 1deg 100% 68%;
   --color-purple: 244deg 71% 69%;
@@ -85,7 +79,7 @@
   --color-vote-against: 31deg 80% 60%;
   --color-warning: 34deg 94% 50%;
   --color-warning-bg: 42deg 99% 65%;
-  --color-white: 0deg 0% 100%;
+  --color-white: 50deg 70% 96%;
   --color-pink: 343deg 67% 61%;
   --color-black: 0deg 0% 0%;
   --color-vault-blue-primary: 184deg 66% 61%;
@@ -96,14 +90,6 @@
   --color-vault-pink-primary: 295deg 100% 50%;
   --color-hls-primary: 2deg 99% 68%;
   --color-hls-secondary: 20deg 95% 68%;
-  --color-slider-1: 334deg 6% 53%;
-  --color-slider-2: 341deg 25% 62%;
-  --color-slider-3: 342deg 31% 64%;
-  --color-slider-4: 340deg 58% 71%;
-  --color-slider-5: 335deg 54% 67%;
-  --color-slider-6: 315deg 44% 51%;
-  --color-slider-7: 313deg 47% 48%;
-  --color-slider-8: 301deg 79% 33%;
   --color-slider-pink-primary: 343deg 100% 69%;
   --color-slider-pink-secondary: 280deg 9% 25%;
   --color-slider-green-primary: 126deg 100% 69%;
@@ -114,54 +100,59 @@
   --color-slider-tooltip-secondary: 266deg 56% 14%;
   --color-active-tab-primary: 299deg 92% 39%;
   --color-active-tab-secondary: 343deg 100% 81%;
-  --color-active-tab-tertiary: 13deg 33% 14%;
+  --color-active-tab-tertiary: 330deg 12% 10%;
+  --color-card-bg: 240deg 12% 10%;
+  --color-card-border: 330deg 12% 15%;
+  --color-surface: 225deg 9% 9%;
+  --color-surface-light: 231deg 11% 12%;
+  --color-surface-dark: 220deg 9% 7%;
 }
 
 :root[data-theme='light'] {
-  --color-body: 0deg 0% 100%;
-  --color-body-hls: 0deg 0% 100%;
+  --color-body: 0deg 0% 98%;
   --color-white: 0deg 0% 20%;
-  --color-chart: 0deg 0% 100%;
-  --color-black: 0deg 0% 100%;
+  --color-chart: 0deg 0% 95%;
+  --color-black: 0deg 0% 0%;
   --color-purple: 47deg 97% 67%;
   --color-purple-dark: 36deg 99% 65%;
-  --color-martian-red: 40deg 100% 73%;
-  --color-pink: 2deg 99% 68%;
-  --color-fuchsia: 2deg 99% 68%;
-  --color-slider-pink-primary: 2deg 99% 68%;
-  --color-slider-pink-secondary: 2deg 99% 68%;
-  --color-green: 124deg 57% 79%;
-  --color-warning: 40deg 100% 79%;
-  --color-orb-primary: 0deg 0% 70%;
-  --color-orb-primary-hls: 0deg 0% 70%;
-  --color-orb-secondary: 0deg 0% 70%;
-  --color-orb-secondary-hls: 0deg 0% 70%;
-  --color-orb-tertiary: 0deg 0% 70%;
-  --color-orb-tertiary-hls: 0deg 0% 70%;
-  --color-error: 0deg 97% 75%;
-  --color-slider-1: 57deg 97% 85%;
-  --color-slider-2: 57deg 97%, 75%;
-  --color-slider-3: 47deg 97% 79%;
-  --color-slider-4: 47deg 97% 67%;
-  --color-slider-5: 36deg 97% 77%;
-  --color-slider-6: 36deg 97% 65%;
-  --color-slider-7: 36deg 99% 65%;
-  --color-slider-8: 36deg 99% 65%;
-  --color-active-tab-primary: 47deg 97% 79%;
-  --color-active-tab-secondary: 36deg 99% 65%;
-  --color-active-tab-tertiary: 57deg 97% 85%;
+  --color-martian-red: 2deg 100% 60%;
+  --color-pink: 343deg 67% 55%;
+  --color-fuchsia: 312deg 46% 45%;
+  --color-slider-pink-primary: 343deg 100% 60%;
+  --color-slider-pink-secondary: 280deg 9% 75%;
+  --color-green: 153deg 96% 30%;
+  --color-warning: 34deg 94% 50%;
+  --color-orb-primary: 4deg 65% 42%;
+  --color-orb-primary-hls: 2deg 100% 60%;
+  --color-orb-secondary: 277deg 90% 27%;
+  --color-orb-secondary-hls: 354deg 46% 43%;
+  --color-orb-tertiary: 313deg 100% 50%;
+  --color-orb-tertiary-hls: 20deg 95% 60%;
+  --color-error: 4deg 86% 58%;
+  --color-active-tab-primary: 299deg 92% 39%;
+  --color-active-tab-secondary: 343deg 100% 75%;
+  --color-active-tab-tertiary: 0deg 0% 93%;
+  --color-card-bg: 0deg 0% 98%;
+  --color-card-border: 0deg 0% 87%;
+  --color-surface: 0deg 0% 92%;
+  --color-surface-light: 0deg 0% 96%;
+  --color-surface-dark: 0deg 0% 88%;
 }
 
 :root[data-theme='dark'] {
-  --color-body: 0deg 0% 0%;
-  --color-body-hls: 0deg 0% 0%;
-  --color-chart: 0deg 0% 0%;
-  --color-orb-primary: 0deg 0% 0%;
-  --color-orb-primary-hls: 0deg 0% 0%;
-  --color-orb-secondary: 0deg 0% 0%;
-  --color-orb-secondary-hls: 0deg 0% 0%;
-  --color-orb-tertiary: 0deg 0% 0%;
-  --color-orb-tertiary-hls: 0deg 0% 0%;
+  --color-body: 252deg 12% 8%;
+  --color-chart: 300deg 11% 9%;
+  --color-orb-primary: 330deg 12% 9%;
+  --color-orb-primary-hls: 330deg 12% 9%;
+  --color-orb-secondary: 330deg 12% 9%;
+  --color-orb-secondary-hls: 330deg 12% 9%;
+  --color-orb-tertiary: 330deg 12% 9%;
+  --color-orb-tertiary-hls: 330deg 12% 9%;
+  --color-card-bg: 30deg 4% 9%;
+  --color-card-border: 0deg 0% 13%;
+  --color-surface: 225deg 9% 9%;
+  --color-surface-light: 231deg 11% 12%;
+  --color-surface-dark: 220deg 9% 7%;
 }
 
 .Toastify__toast {
@@ -191,4 +182,22 @@ svg {
 .rounded-full.overflow-hidden svg {
   width: auto;
   height: 100%;
+}
+
+.scrollbar-dark {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.scrollbar-dark::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-dark::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-dark::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
 }

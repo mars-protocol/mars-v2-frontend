@@ -32,7 +32,7 @@ function PageMetadata() {
         <meta content='@mars_protocol' name='twitter:site' />
         <meta content='@mars_protocol' name='twitter:creator' />
         <meta content='https://app.marsprotocol.io' property='og:url' />
-        <meta content='https://app.marsprotocol.io/banner.png' property='og:image' />
+        <meta content='https://app.marsprotocol.io/banner.jpg' property='og:image' />
         <meta content='Mars Protocol' property='og:site_name' />
         <meta content='#ffffff' name='msapplication-TileColor' />
         <meta content='#ffffff' name='theme-color' />

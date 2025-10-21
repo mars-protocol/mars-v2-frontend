@@ -1,10 +1,8 @@
-import React from 'react'
+import { RouteResponse } from '@skip-go/client'
 import classNames from 'classnames'
 import AccountFundRow from 'components/account/AccountFund/AccountFundRow'
-import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
-import { BigNumber } from 'bignumber.js'
 import Text from 'components/common/Text'
-import { RouteResponse } from '@skip-go/client'
+import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 
 interface AccountFundingAssetsProps {
   fundingAssets: WrappedBNCoin[]
@@ -34,7 +32,7 @@ export default function AccountFundingAssets({
         key={`${wrappedCoin.coin.denom}-${index}`}
         className={classNames(
           'w-full mb-4',
-          isFullPage && 'w-full p-4 border rounded-base border-white/20 bg-white/5',
+          isFullPage && 'w-full p-4 border border-white/20 bg-white/5',
         )}
       >
         <AccountFundRow

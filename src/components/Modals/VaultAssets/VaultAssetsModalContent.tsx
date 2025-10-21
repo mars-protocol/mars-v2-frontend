@@ -33,7 +33,7 @@ export default function VaultAssetsModalContent(props: Props) {
 
   return (
     <>
-      <div className='px-4 py-3 border-b border-white/5 bg-white/10'>
+      <div className='px-4 py-3 border-b border-white/5'>
         <SearchBar
           value={searchString}
           placeholder={`Search for e.g. "ATOM" or "Cosmos"`}

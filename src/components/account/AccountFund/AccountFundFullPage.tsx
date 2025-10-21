@@ -1,14 +1,14 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import AccountFundContent from 'components/account/AccountFund/AccountFundContent'
 import Card from 'components/common/Card'
 import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
+import useAccountId from 'hooks/accounts/useAccountId'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
-import useAccountId from 'hooks/accounts/useAccountId'
-import useStore from 'store'
 import { useWeb3WalletConnection } from 'hooks/wallet/useWeb3WalletConnections'
+import useStore from 'store'
 
 interface Props {
   isCreateAccount?: boolean
@@ -55,7 +55,7 @@ export default function AccountFundFullPage({ isCreateAccount = false }: Props) 
       {isLoading ? (
         <CircularProgress size={40} />
       ) : (
-        <Card className='w-full p-6 bg-white/5'>
+        <Card className='w-full p-6 bg-surface'>
           <AccountFundContent
             account={currentAccount}
             address={address}
