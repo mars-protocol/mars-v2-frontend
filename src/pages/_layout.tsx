@@ -18,12 +18,13 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { useSkipBridgeStatus } from 'hooks/localStorage/useSkipBridgeStatus'
-import { Suspense, useEffect } from 'react'
+import { Suspense, useEffect, useMemo } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useLocation } from 'react-router-dom'
 import useStore from 'store'
 import { SWRConfig } from 'swr'
 import { debugSWR } from 'utils/middleware'
+import { getPage } from 'utils/route'
 
 interface Props {
   focusComponent: FocusComponent | null
@@ -89,6 +90,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       setCurrentChainId(chainConfig.id)
     }
   }, [chainConfig.id, currentChainId, setCurrentChainId])
+
+  const page = getPage(location.pathname, chainConfig)
+  const [isHls, isV1, isVaults] = useMemo(
+    () => [page.split('-')[0] === 'hls', page === 'v1', page.includes('vaults')],
+    [page],
+  )
+
+  useEffect(() => {
+    useStore.setState({ isHls, isV1, isVaults })
+  }, [isHls, isV1, isVaults])
 
   return (
     <>
