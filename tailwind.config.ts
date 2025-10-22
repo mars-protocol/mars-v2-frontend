@@ -276,7 +276,7 @@ module.exports = {
       },
       maxWidth: {
         content: '1288px',
-        v1: '1248px',
+        v1: '1288px',
         modal: '895px',
         'modal-lg': '650px',
         'modal-md': '556px',

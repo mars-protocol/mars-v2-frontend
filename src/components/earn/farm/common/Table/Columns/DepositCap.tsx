@@ -7,7 +7,7 @@ import Text from 'components/common/Text'
 export const DEPOSIT_CAP_META = {
   accessorKey: 'cap',
   header: () => (
-    <div className='flex flex-col gap-1 text-xs leading-tight'>
+    <div className='flex flex-col text-xs leading-tight'>
       <Text size='xs'>Deposits</Text>
       <Text size='xs' className='text-white/40'>
         Deposit Cap
