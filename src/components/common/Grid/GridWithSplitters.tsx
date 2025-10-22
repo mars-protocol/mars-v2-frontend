@@ -154,7 +154,7 @@ export default function GridWithSplitters({ className, chartArea, rightArea, bot
   }, [chartWidthPercent, chartHeightPercent])
 
   return (
-    <div ref={containerRef} className={classNames('relative w-full h-full', className)}>
+    <div ref={containerRef} className={classNames('relative w-full', className)}>
       {/* Drag Overlay - Prevents TradingView chart from capturing mouse events */}
       {isDragging && (
         <div
@@ -168,7 +168,7 @@ export default function GridWithSplitters({ className, chartArea, rightArea, bot
 
       {/* Mobile Layout - Stacked */}
       <div className='flex flex-col w-full h-full gap-1 md:hidden'>
-        <div className='bg-surface w-full flex-1'>{chartArea}</div>
+        <div className='bg-surface w-full h-[500px] flex-shrink-0'>{chartArea}</div>
         <div className='bg-surface w-full flex-1'>{rightArea}</div>
         <div className='bg-surface w-full flex-1'>{bottomArea}</div>
       </div>

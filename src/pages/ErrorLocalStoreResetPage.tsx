@@ -1,4 +1,3 @@
-import Background from 'components/common/Background'
 import Button from 'components/common/Button'
 import { ExternalLink } from 'components/common/Icons'
 import Text from 'components/common/Text'
@@ -23,7 +22,6 @@ export default function ErrorLocalStoreResetPage() {
 
   return (
     <>
-      <Background />
       <main className='relative z-20 w-full'>
         <div className='flex flex-wrap justify-center w-full gap-6 p-20'>
           <Text size='4xl' className='w-full text-center'>
@@ -31,8 +29,9 @@ export default function ErrorLocalStoreResetPage() {
           </Text>
           <Text size='sm' className='w-full leading-4 text-center text-white/70'>
             The Mars Protocol app encountered an error. <br />
-            Please try to refresh the page. If you get here again try resetting your local storage by
-            clicking on the button below. This will ensure your local browser store isn't corrupted.
+            Please try to refresh the page. If you get here again try resetting your local storage
+            by clicking on the button below. This will ensure your local browser store isn't
+            corrupted.
             <br />
             If this doesn't solve your problem, please contact a moderator on{' '}
             <TextLink

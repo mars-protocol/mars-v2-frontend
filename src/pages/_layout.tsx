@@ -3,7 +3,6 @@ import classNames from 'classnames'
 import ModalsContainer from 'components/Modals/ModalsContainer'
 import SkipBridgeModal from 'components/Modals/SkipBridgeModal'
 import AccountDetails from 'components/account/AccountDetails'
-import Background from 'components/common/Background'
 import { CircularProgress } from 'components/common/CircularProgress'
 import Footer from 'components/common/Footer'
 import PageMetadata from 'components/common/PageMetadata'
@@ -108,7 +107,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             }
           >
             <PageMetadata />
-            <Background />
             <Header />
             {shouldShowSkipBridgeModal && <SkipBridgeModal />}
             <main

@@ -370,13 +370,26 @@ export default function SwapForm(props: Props) {
     [borrowMarket?.liquidity],
   )
 
+  const hasInsufficientFunds = useMemo(
+    () => inputAssetAmount.isGreaterThan(maxInputAmount),
+    [inputAssetAmount, maxInputAmount],
+  )
+
   const isSwapDisabled = useMemo(
     () =>
       inputAssetAmount.isZero() ||
       depositCapReachedCoins.length > 0 ||
       borrowAmount.isGreaterThan(availableLiquidity) ||
-      !routeInfo,
-    [inputAssetAmount, depositCapReachedCoins.length, borrowAmount, availableLiquidity, routeInfo],
+      !routeInfo ||
+      hasInsufficientFunds,
+    [
+      inputAssetAmount,
+      depositCapReachedCoins.length,
+      borrowAmount,
+      availableLiquidity,
+      routeInfo,
+      hasInsufficientFunds,
+    ],
   )
 
   return (
@@ -496,6 +509,7 @@ export default function SwapForm(props: Props) {
           isAdvanced={isAdvanced}
           direction={tradeDirection}
           routeInfo={routeInfo}
+          hasInsufficientFunds={hasInsufficientFunds}
         />
       </div>
     </>

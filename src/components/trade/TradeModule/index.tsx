@@ -14,11 +14,11 @@ export default function TradeModule(props: Props) {
   const chainConfig = useChainConfig()
 
   return (
-    <div className='order-3 md:order-2 md:row-span-2 h-full'>
+    <div className='order-3 md:order-2 md:row-span-2 min-h-full bg-surface'>
       <div
         className={classNames(
-          'md:min-h-[850px] md:h-full',
-          'relative isolate max-w-full overflow-hidden pb-4 z-30 flex flex-col bg-surface',
+          'md:min-h-[850px] md:h-full pb-10',
+          'relative isolate max-w-full z-30 flex flex-col',
         )}
       >
         <SwapForm

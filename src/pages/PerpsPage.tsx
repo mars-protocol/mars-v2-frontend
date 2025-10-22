@@ -24,7 +24,7 @@ export default function PerpsPage() {
     }
   }, [accountId, address, chainConfig, chainConfig.perps, navigate, searchParams])
   return (
-    <div className='flex flex-col w-full h-full'>
+    <div className='flex flex-col w-full min-h-full'>
       <GridWithSplitters
         className='flex-1'
         chartArea={
