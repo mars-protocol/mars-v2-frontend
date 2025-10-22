@@ -88,6 +88,7 @@ export default function AccountStats(props: Props) {
   const navigateToVaultDetails = useCallback(() => {
     if (!account) return
     setShowMenu?.(false)
+    useStore.setState({ mobileNavExpanded: false })
     const vaultAddress =
       typeof account.kind === 'object' && 'fund_manager' in account.kind
         ? account.kind.fund_manager.vault_addr

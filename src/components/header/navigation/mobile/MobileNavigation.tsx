@@ -153,7 +153,7 @@ function Content(props: Props & { account?: Account }) {
               <ChevronDown />
             </div>
             {isDropdownOpen && (
-              <div className='absolute top-full left-0 right-0 mt-1 bg-white/10 backdrop-blur-md border border-white/30 rounded-sm max-h-[400px] overflow-y-auto z-50'>
+              <div className='absolute top-full left-0 right-0 mt-1 bg-white/10 backdrop-blur-md border border-white/30 rounded-sm max-h-[400px] overflow-y-auto z-80'>
                 {menuItems.map((item) => (
                   <button
                     key={item.value}

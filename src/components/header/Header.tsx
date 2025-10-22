@@ -151,7 +151,7 @@ export default function Header() {
   )
   return (
     <>
-      <header className='fixed left-0 top-0 z-50 w-full max-w-screen-full bg-surface-dark'>
+      <header className='fixed left-0 top-0 z-80 w-full max-w-screen-full bg-surface-dark'>
         <div
           className={classNames(
             'flex items-center justify-between px-4 py-4 h-18',
@@ -162,7 +162,7 @@ export default function Header() {
             className={classNames(
               focusComponent
                 ? 'absolute left-4 top-4 z-1 block'
-                : 'flex flex-1 items-center relative z-50',
+                : 'flex flex-1 items-center relative z-80',
             )}
           >
             <NavLink

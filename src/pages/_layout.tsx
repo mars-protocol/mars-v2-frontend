@@ -3,7 +3,6 @@ import classNames from 'classnames'
 import ModalsContainer from 'components/Modals/ModalsContainer'
 import SkipBridgeModal from 'components/Modals/SkipBridgeModal'
 import AccountDetails from 'components/account/AccountDetails'
-import Background from 'components/common/Background'
 import { CircularProgress } from 'components/common/CircularProgress'
 import Footer from 'components/common/Footer'
 import PageMetadata from 'components/common/PageMetadata'
@@ -39,7 +38,7 @@ function PageContainer(props: Props) {
     return (
       <div
         className={classNames(
-          'mx-auto flex items-start w-full max-w-screen-full ',
+          'mx-auto flex items-start w-full md:h-full max-w-screen-full ',
           !props.fullWidth && !isV1 && 'md:max-w-content',
           isV1 && 'md:max-w-v1',
         )}
@@ -49,7 +48,7 @@ function PageContainer(props: Props) {
     )
 
   return (
-    <div className='relative flex items-center justify-center w-full h-full z-50'>
+    <div className='relative flex items-center justify-center w-full h-full z-80'>
       {props.focusComponent.component}
     </div>
   )
@@ -108,15 +107,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             }
           >
             <PageMetadata />
-            <Background />
             <Header />
             {shouldShowSkipBridgeModal && <SkipBridgeModal />}
             <main
               className={classNames(
-                'md:min-h-[calc(100dvh-81px)]',
-                'mt-[73px]',
+                'mt-[72px]',
                 'flex',
                 'min-h-screen-full w-full relative',
+                'md:h-[calc(100vh-72px)]',
                 'pb-20 md:pb-0 p-2 md:p-0 md:pt-0.5',
                 !focusComponent &&
                   address &&

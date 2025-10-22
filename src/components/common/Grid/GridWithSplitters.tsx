@@ -118,43 +118,18 @@ export default function GridWithSplitters({ className, chartArea, rightArea, bot
   }, [isDragging])
 
   // Memoize calculated values to prevent unnecessary re-renders
-  const layoutStyles = useMemo(() => {
-    const rightWidthPercent = 100 - chartWidthPercent
-    const bottomHeightPercent = 100 - chartHeightPercent
+  const gridStyles = useMemo(() => {
+    const rightWidthFr = 100 - chartWidthPercent
+    const bottomHeightFr = 100 - chartHeightPercent
 
     return {
-      chart: {
-        left: '0%',
-        top: '0%',
-        width: `calc(${chartWidthPercent}% - 2px)`,
-        height: `calc(${chartHeightPercent}% - 2px)`,
-      },
-      right: {
-        left: `calc(${chartWidthPercent}% + 2px)`,
-        top: '0%',
-        width: `calc(${rightWidthPercent}% - 2px)`,
-        height: '100%',
-      },
-      bottom: {
-        left: '0%',
-        top: `calc(${chartHeightPercent}% + 2px)`,
-        width: `calc(${chartWidthPercent}% - 2px)`,
-        height: `calc(${bottomHeightPercent}% - 2px)`,
-      },
-      verticalSplitter: {
-        left: `${chartWidthPercent}%`,
-        transform: 'translateX(-50%)',
-      },
-      horizontalSplitter: {
-        top: `${chartHeightPercent}%`,
-        width: `${chartWidthPercent}%`,
-        transform: 'translateY(-50%)',
-      },
+      gridTemplateColumns: `${chartWidthPercent}fr 4px ${rightWidthFr}fr`,
+      gridTemplateRows: `${chartHeightPercent}fr 4px ${bottomHeightFr}fr`,
     }
   }, [chartWidthPercent, chartHeightPercent])
 
   return (
-    <div ref={containerRef} className={classNames('relative w-full h-full', className)}>
+    <div ref={containerRef} className={classNames('w-full md:h-full', className)}>
       {/* Drag Overlay - Prevents TradingView chart from capturing mouse events */}
       {isDragging && (
         <div
@@ -167,34 +142,21 @@ export default function GridWithSplitters({ className, chartArea, rightArea, bot
       )}
 
       {/* Mobile Layout - Stacked */}
-      <div className='flex flex-col w-full h-full gap-1 md:hidden'>
-        <div className='bg-surface w-full flex-1'>{chartArea}</div>
-        <div className='bg-surface w-full flex-1'>{rightArea}</div>
-        <div className='bg-surface w-full flex-1'>{bottomArea}</div>
+      <div className='flex flex-col w-full gap-1 md:hidden'>
+        <div className='bg-surface w-full'>{chartArea}</div>
+        <div className='bg-surface w-full'>{rightArea}</div>
+        <div className='bg-surface w-full'>{bottomArea}</div>
       </div>
 
-      {/* Desktop Layout - Grid with Splitters */}
-      <div className='hidden md:block relative w-full h-full'>
-        {/* Chart Area */}
-        <div className='absolute' style={layoutStyles.chart}>
+      {/* Desktop Layout - CSS Grid with Splitters */}
+      <div className='hidden md:grid w-full h-full min-h-0' style={gridStyles}>
+        {/* Row 1, Col 1: Chart Area */}
+        <div className='min-w-0 min-h-0 overflow-hidden row-start-1 row-end-2 col-start-1 col-end-2'>
           {chartArea}
         </div>
 
-        {/* Right Panel */}
-        <div className='absolute' style={layoutStyles.right}>
-          {rightArea}
-        </div>
-
-        {/* Bottom Panel */}
-        <div className='absolute bg-surface' style={layoutStyles.bottom}>
-          {bottomArea}
-        </div>
-
-        {/* Vertical Splitter - between chart and right panel */}
-        <div
-          className='absolute top-0 bottom-0 w-1 bg-body transition-colors z-30 group'
-          style={layoutStyles.verticalSplitter}
-        >
+        {/* Row 1-3, Col 2: Vertical Splitter (spans all rows) */}
+        <div className='bg-body transition-colors relative group row-start-1 row-end-4 col-start-2 col-end-3'>
           {/* Vertical Drag Knob */}
           <div
             className={classNames(
@@ -216,11 +178,13 @@ export default function GridWithSplitters({ className, chartArea, rightArea, bot
           </div>
         </div>
 
-        {/* Horizontal Splitter - between chart and bottom panel */}
-        <div
-          className='absolute left-0 h-1 bg-body transition-colors z-50 group'
-          style={layoutStyles.horizontalSplitter}
-        >
+        {/* Row 1-3, Col 3: Right Panel (spans all rows) */}
+        <div className='min-w-0 min-h-0 overflow-auto scrollbar-hide row-start-1 row-end-4 col-start-3 col-end-4'>
+          {rightArea}
+        </div>
+
+        {/* Row 2, Col 1: Horizontal Splitter */}
+        <div className='bg-body transition-colors relative group row-start-2 row-end-3 col-start-1 col-end-2'>
           {/* Horizontal Drag Knob */}
           <div
             className={classNames(
@@ -240,6 +204,11 @@ export default function GridWithSplitters({ className, chartArea, rightArea, bot
               <div className='w-3 h-px bg-gray-400'></div>
             </div>
           </div>
+        </div>
+
+        {/* Row 3, Col 1: Bottom Panel */}
+        <div className='bg-surface min-w-0 min-h-0 overflow-auto scrollbar-hide row-start-3 row-end-4 col-start-1 col-end-2'>
+          {bottomArea}
         </div>
       </div>
     </div>

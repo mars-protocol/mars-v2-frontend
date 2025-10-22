@@ -4,6 +4,7 @@ import { NavLink, useParams, useSearchParams } from 'react-router-dom'
 
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import Loading from 'components/common/Loading'
+import VaultDetails from 'components/managedVaults/vaultDetails'
 import Skeleton from 'components/portfolio/Card/Skeleton'
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
@@ -17,7 +18,6 @@ import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useStore from 'store'
 import { checkAccountKind } from 'utils/accounts'
 import { getRoute } from 'utils/route'
-import VaultDetails from 'components/managedVaults/vaultDetails'
 
 interface Props {
   accountId: string
@@ -82,6 +82,7 @@ export default function PortfolioCard(props: Props) {
     if (isVault && vaultAddress) {
       e.preventDefault()
       useStore.setState({
+        mobileNavExpanded: false,
         focusComponent: {
           component: <VaultDetails vaultAddress={vaultAddress} />,
           onClose: () => {

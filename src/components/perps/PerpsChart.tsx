@@ -59,7 +59,7 @@ export function PerpsChart() {
   )
 
   return (
-    <div className='order-2 h-[500px] md:h-full'>
+    <div className='w-full md:h-full'>
       <TradeChart
         buyAsset={perpsAsset}
         sellAsset={stableAsset ?? whitlistedAssets[0]}

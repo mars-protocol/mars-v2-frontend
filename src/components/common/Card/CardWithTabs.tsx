@@ -23,8 +23,8 @@ export function CardWithTabs(props: Props) {
           {...props}
         />
       }
-      className='w-full h-full'
-      contentClassName='flex-1 h-full'
+      className='w-full md:h-full'
+      contentClassName='flex-1 md:h-full'
     >
       {props.tabs[activeIdx].renderContent()}
     </Card>

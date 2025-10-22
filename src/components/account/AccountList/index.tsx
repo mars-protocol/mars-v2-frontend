@@ -77,7 +77,10 @@ export default function AccountList(props: Props) {
               contentClassName='bg-surface group-hover/account:bg-surface'
               onClick={() => {
                 if (isActive) return
-                if (isMobile) setShowMenu(false)
+                if (isMobile) {
+                  setShowMenu(false)
+                  useStore.setState({ mobileNavExpanded: false })
+                }
                 useStore.setState({ accountDeleteModal: null })
 
                 navigate(

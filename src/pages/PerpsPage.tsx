@@ -24,14 +24,14 @@ export default function PerpsPage() {
     }
   }, [accountId, address, chainConfig, chainConfig.perps, navigate, searchParams])
   return (
-    <div className='flex flex-col w-full h-full'>
+    <div className='flex flex-col w-full md:h-full'>
       <GridWithSplitters
         className='flex-1'
         chartArea={
-          <div className='w-full h-full flex flex-col'>
+          <div className='w-full md:h-full flex flex-col'>
             <PerpsBanner />
-            <div className='flex-1 bg-surface h-full'>
-              <div className='w-full h-full'>
+            <div className='flex-1 bg-surface md:h-full'>
+              <div className='w-full md:h-full'>
                 <PerpsTabs />
               </div>
             </div>
