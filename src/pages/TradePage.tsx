@@ -76,7 +76,7 @@ export default function TradePage() {
   }, [])
 
   return (
-    <div className='flex flex-col w-full h-full'>
+    <div className='flex flex-col w-full md:h-full'>
       <GridWithSplitters
         className='flex-1'
         chartArea={<TradeChart buyAsset={buyAsset} sellAsset={sellAsset} />}

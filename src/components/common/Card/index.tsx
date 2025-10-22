@@ -23,7 +23,7 @@ export default function Card(props: Props) {
       className={classNames(
         props.className,
         'flex flex-col',
-        'relative isolate max-w-full max-h-full',
+        'relative isolate max-w-full md:max-h-full',
         !props.showOverflow && 'overflow-hidden',
         isTab ? '' : 'bg-surface rounded-sm border border-surface-light',
       )}
