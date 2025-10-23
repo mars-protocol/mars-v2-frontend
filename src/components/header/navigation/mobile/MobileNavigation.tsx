@@ -65,7 +65,9 @@ function Content(props: Props & { account?: Account }) {
     const items: Array<{ value: string; label: string }> = []
     for (const item of menu) {
       if (item.submenu) {
-        const filteredItems = item.submenu.filter((subItem) => !subItem.isSeparator)
+        const filteredItems = item.submenu.filter(
+          (subItem) => !subItem.isSeparator && !subItem.hideOnDesktop,
+        )
         for (const subItem of filteredItems) {
           const value = subItem.page || subItem.externalUrl || ''
           items.push({ value, label: subItem.label })
