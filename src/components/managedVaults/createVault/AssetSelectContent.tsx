@@ -1,8 +1,8 @@
 import AssetsSelect from 'components/Modals/AssetsSelect'
 import EscButton from 'components/common/Button/EscButton'
-import Text from 'components/common/Text'
-import SearchBar from 'components/common/SearchBar'
 import Overlay from 'components/common/Overlay'
+import SearchBar from 'components/common/SearchBar'
+import Text from 'components/common/Text'
 import { useCallback, useMemo, useState } from 'react'
 
 interface Props {
@@ -56,11 +56,11 @@ export default function AssetSelectContent(props: Props) {
       show={showMenu}
       setShow={setShowMenu}
     >
-      <div className='flex items-center justify-between px-4 pt-4 bg-white/10'>
+      <div className='flex items-center justify-between px-4 pt-4'>
         <Text>Select asset</Text>
         <EscButton onClick={handleCloseModal} enableKeyPress />
       </div>
-      <div className='p-4 border-b border-white/5 bg-white/10'>
+      <div className='p-4 border-b border-white/5'>
         <SearchBar
           value={searchString}
           placeholder={'Search for e.g. "ATOM" or "Cosmos"'}

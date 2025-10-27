@@ -27,10 +27,10 @@ export function Callout(props: Props) {
   return (
     <div
       className={classNames(
-        'grid grid-cols-[20px,auto] py-2 pl-2 pr-4 gap-1 rounded-md items-center',
-        props.type === CalloutType.INFO && 'bg-purple/20 text-purple border-purple',
-        props.type === CalloutType.LOADING && 'bg-purple/20 text-purple border-purple',
-        props.type === CalloutType.WARNING && 'bg-info/20 text-info border-info border',
+        'grid grid-cols-[20px,auto] py-2 pl-2 pr-4 rounded-sm gap-1 items-center',
+        props.type === CalloutType.INFO && 'bg-white/10 text-white border border-white/20',
+        props.type === CalloutType.LOADING && 'bg-surface-light text-white border border-white/20',
+        props.type === CalloutType.WARNING && 'bg-info/20 text-info border border-info',
         props.className,
       )}
     >

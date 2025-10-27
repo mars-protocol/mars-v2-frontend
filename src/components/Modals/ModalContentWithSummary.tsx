@@ -23,7 +23,7 @@ function modalContent(content: React.ReactNode, isContentCard?: boolean, account
   if (isContentCard)
     return (
       <Card
-        className='flex flex-1 w-full p-4 bg-white/5 max-w-screen-full min-w-[200px]'
+        className='flex flex-1 w-full p-4 max-w-screen-full min-w-[200px]'
         contentClassName='gap-6 flex flex-col justify-between h-full min-h-[380px]'
       >
         {content}
@@ -38,13 +38,11 @@ export default function ModalContentWithSummary(props: Props) {
     <Modal
       {...props}
       headerClassName={classNames(
-        'gradient-header border-b-white/5 border-b',
+        'bg-surface-dark border-b-white/5 border-b',
         props.headerClassName,
       )}
       contentClassName={classNames(
-        'flex items-start flex-1 p-2 gap-4 flex-wrap',
-        'md:p-4 md:gap-6',
-        'lg:flex-nowrap lg:p-6',
+        'flex items-start flex-1 p-2 gap-1 flex-wrap bg-body',
         props.contentClassName,
       )}
     >

@@ -57,7 +57,7 @@ export default function VaultsCommunityPage() {
   }, [showDialog])
 
   return (
-    <div className='flex flex-wrap w-full gap-6'>
+    <div className='flex flex-wrap w-full gap-2 py-8'>
       <VaultsCommunityIntro />
       <AvailableCommunityVaults />
 
@@ -79,8 +79,8 @@ export default function VaultsCommunityPage() {
           text: "Don't show again",
           onClick: (isChecked: boolean) => setShowVaultWarning(!isChecked),
         }}
-        modalClassName='!bg-info/20 max-w-modal-md'
-        titleClassName='text-info'
+        modalClassName='!border-martian-red/40 max-w-modal-md'
+        titleClassName='text-martian-red'
       />
     </div>
   )

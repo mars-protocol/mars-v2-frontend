@@ -23,15 +23,16 @@ export default function Card(props: Props) {
       className={classNames(
         props.className,
         'flex flex-col',
-        'relative isolate max-w-full max-h-full',
+        'relative isolate max-w-full md:max-h-full',
         !props.showOverflow && 'overflow-hidden',
-        isTab
-          ? ''
-          : 'before:content-[" "] before:absolute rounded-base before:inset-0 before:-z-1 before:rounded-base before:p-[1px] before:border-glas',
+        isTab ? '' : 'bg-surface rounded-sm border border-surface-light',
       )}
     >
       {typeof props.title === 'string' ? (
-        <Text size='lg' className='flex items-center w-full p-4 font-semibold bg-white/10'>
+        <Text
+          size='base'
+          className='flex items-center w-full px-4 py-3 font-semibold bg-surface-dark'
+        >
           {props.title}
         </Text>
       ) : typeof props.title === 'object' ? (

@@ -1,5 +1,4 @@
 import Text from 'components/common/Text'
-import usePerpsLimitOrders from 'hooks/perps/usePerpsLimitOrders'
 
 export const STATUS_META = {
   accessorKey: 'type',
@@ -26,12 +25,8 @@ export function Status({ type, hasStopLoss, hasTakeProfit, showIndicators, order
       </Text>
       {showIndicators && (hasStopLoss || hasTakeProfit) && (
         <div className='flex items-center justify-center gap-1 mt-1'>
-          {hasStopLoss && (
-            <span className='px-1 text-xs rounded bg-white/10 text-white/60'>SL</span>
-          )}
-          {hasTakeProfit && (
-            <span className='px-1 text-xs rounded bg-white/10 text-white/60'>TP</span>
-          )}
+          {hasStopLoss && <span className='px-1 text-xs rounded text-white/60'>SL</span>}
+          {hasTakeProfit && <span className='px-1 text-xs rounded text-white/60'>TP</span>}
         </div>
       )}
     </div>

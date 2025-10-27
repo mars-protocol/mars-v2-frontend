@@ -36,7 +36,7 @@ export default function AccountPerpPositionTable(props: Props) {
       data={accountPerpData}
       tableBodyClassName={classNames(tableBodyClassName, 'text-white/60')}
       initialSorting={[]}
-      spacingClassName='p-2'
+      spacingClassName='px-4 py-2.5'
       hideCard={hideCard}
       type='perps'
       isBalancesTable

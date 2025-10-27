@@ -4,6 +4,7 @@ import ConnectInfo from 'components/portfolio/Overview/ConnectInfo'
 import useAccountIds from 'hooks/accounts/useAccountIds'
 import useStore from 'store'
 import AccountsOverview from 'components/portfolio/Overview/AccountsOverview'
+import LiquidationsOverview from 'components/portfolio/Overview/LiquidationsOverview'
 
 export default function AccountSummary() {
   const { address: urlAddress } = useParams()
@@ -23,6 +24,11 @@ export default function AccountSummary() {
     true,
     'fund_manager',
   )
+  const allAccountIds = [
+    ...(defaultAccountIds ?? []),
+    ...(hlsAccountIds ?? []),
+    ...(vaultAccountIds ?? []),
+  ]
 
   if (!walletAddress && !urlAddress) return <ConnectInfo />
 
@@ -43,6 +49,7 @@ export default function AccountSummary() {
         accountIds={vaultAccountIds ?? []}
         kind='fund_manager'
       />
+      <LiquidationsOverview accountIds={allAccountIds} />
     </>
   )
 }

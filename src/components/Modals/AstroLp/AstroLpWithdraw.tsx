@@ -94,15 +94,9 @@ export default function AstroLpWithdraw(props: Props) {
   const withdrawNote = isHls ? 'and withdrawn to your wallet' : 'to your Credit Account'
 
   return (
-    <div
-      className={classNames(
-        'flex items-start flex-1 p-2 gap-4 flex-wrap',
-        'md:p-4 md:gap-6',
-        'lg:flex-nowrap lg:p-6',
-      )}
-    >
+    <div className={classNames('flex items-start flex-1 p-2 gap-1 flex-wrap')}>
       <Card
-        className='flex flex-1 w-full p-4 bg-white/5 max-w-screen-full min-w-[200px]'
+        className='flex flex-1 w-full p-4 max-w-screen-full min-w-[200px]'
         contentClassName='gap-6 flex flex-col justify-between h-full min-h-[380px]'
       >
         <div className='flex flex-wrap w-full gap-2'>

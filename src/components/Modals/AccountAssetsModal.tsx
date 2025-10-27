@@ -1,10 +1,10 @@
 import { useState } from 'react'
 
-import Modal from 'components/Modals/Modal'
 import AssetsSelect from 'components/Modals/AssetsSelect'
+import Modal from 'components/Modals/Modal'
+import Button from 'components/common/Button'
 import SearchBar from 'components/common/SearchBar'
 import useStore from 'store'
-import Button from 'components/common/Button'
 
 export default function AccountAssetsModal() {
   const [searchString, setSearchString] = useState<string>('')
@@ -47,9 +47,9 @@ export default function AccountAssetsModal() {
       onClose={closeModal}
       header={`Select assets to repay ${debtAsset.symbol} debt`}
       modalClassName='max-w-modal-lg'
-      headerClassName='bg-white/10 border-b-white/5 border-b items-center p-4'
+      headerClassName='border-b-white/5 border-b items-center p-4'
     >
-      <div className='px-4 py-3 border-b border-white/5 bg-white/10'>
+      <div className='px-4 py-3 border-b border-white/5'>
         <SearchBar
           value={searchString}
           placeholder={`Search for e.g. "ATOM" or "Cosmos"`}

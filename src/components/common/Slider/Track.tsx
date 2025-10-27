@@ -1,7 +1,6 @@
 import classNames from 'classnames'
 
 interface Props {
-  bg: string
   maxValue: number
   sliderValue: number
 }
@@ -16,14 +15,14 @@ export default function Track(props: Props) {
     percentage = ((props.sliderValue - minValue) / (props.maxValue - minValue)) * 100
   }
   return (
-    <div className='relative flex-1 w-1 h-1 rounded-sm bg-white/20'>
+    <div className='relative flex-1 w-1 h-1 rounded-sm bg-white/10'>
       <div
         className={classNames(
           'relative z-1',
           'h-1 rounded-sm w-1',
           'before:absolute',
           'before:top-0 before:bottom-0 before:right-0 before:left-0',
-          percentage > 0 && props.bg,
+          percentage > 0 && 'before:bg-martian-red',
           percentage > 0 && 'slider-mask',
         )}
         style={{ width: `${percentage}%` }}

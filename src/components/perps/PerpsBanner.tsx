@@ -27,7 +27,7 @@ export default function PerpsBanner() {
       title={
         <>
           Counterparty vault APY:{' '}
-          <span className='text-purple'>
+          <span className='text-martian-red'>
             {formatValue(vault?.apy ?? 0, {
               suffix: '%',
               maxDecimals: 2,

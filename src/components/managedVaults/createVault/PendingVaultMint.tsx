@@ -136,8 +136,8 @@ export default function PendingVaultMint(props: Props) {
                     className={classNames(
                       'w-8 h-8 rounded-full flex items-center justify-center',
                       step.isActive
-                        ? 'border-2 border-purple bg-transparent'
-                        : 'border border-white/20 bg-white/10',
+                        ? 'border-2 border-martian-red bg-transparent'
+                        : 'border border-white/20 ',
                       'transition-colors',
                     )}
                   >
@@ -155,7 +155,7 @@ export default function PendingVaultMint(props: Props) {
                     {step.label}
                   </Text>
                 </div>
-                {index < steps.length - 1 && <div className='w-16 h-[1px] bg-white/20 ml-2' />}
+                {index < steps.length - 1 && <div className='w-16 h-[1px] bg-white/10 ml-2' />}
               </div>
             ))}
           </div>

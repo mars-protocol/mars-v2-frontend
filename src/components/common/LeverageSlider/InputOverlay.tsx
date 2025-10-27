@@ -15,11 +15,15 @@ interface Props {
 const THUMB_WIDTH = 33
 
 function InputOverlay({ max, value, marginThreshold, type, min }: Props) {
-  const thumbPosPercent = max === 0 ? 0 : 100 / ((max - min) / (value - min))
+  const thumbPosPercent = Math.max(
+    0,
+    Math.min(100, max === 0 ? 0 : 100 / ((max - min) / (value - min))),
+  )
   const thumbPadRight = (thumbPosPercent / 100) * THUMB_WIDTH
-  const markPosPercent = 100 / (max / (marginThreshold ?? 1))
+  const markPosPercent = Math.max(0, Math.min(100, 100 / (max / (marginThreshold ?? 1))))
   const markPadRight = (markPosPercent / 100) * THUMB_WIDTH
   const hasPastMarginThreshold = marginThreshold ? value >= marginThreshold : undefined
+  const isMarginNearMax = markPosPercent > 85
 
   return (
     <>
@@ -31,7 +35,7 @@ function InputOverlay({ max, value, marginThreshold, type, min }: Props) {
           'slider-mask',
           type === 'long' && 'before:gradient-slider-green',
           type === 'short' && 'before:gradient-slider-red',
-          type === 'margin' && 'before:gradient-slider-pink',
+          type === 'margin' && 'before:gradient-slider-martian-red',
         )}
         style={{ width: `${thumbPosPercent}%` }}
       />
@@ -46,7 +50,12 @@ function InputOverlay({ max, value, marginThreshold, type, min }: Props) {
             style={{ left: `calc(${markPosPercent}% - ${markPadRight}px)` }}
           >
             <div className='w-1 h-1 bg-white rounded-full' />
-            <div className='absolute top-2.5 flex-col text-xs w-[33px] items-center flex'>
+            <div
+              className={classNames(
+                'absolute top-2.5 flex flex-col items-center text-xs w-[33px]',
+                isMarginNearMax && 'pt-4',
+              )}
+            >
               <VerticalThreeLine className='h-2 w-[1px]' />
               <div className={!hasPastMarginThreshold ? 'opacity-50' : 'opacity-100'}>Margin</div>
             </div>
@@ -60,7 +69,7 @@ function InputOverlay({ max, value, marginThreshold, type, min }: Props) {
           'border rounded-sm border-white/20',
           type === 'long' && 'bg-green',
           type === 'short' && 'bg-error',
-          type === 'margin' && 'bg-pink',
+          type === 'margin' && 'bg-martian-red',
         )}
         style={{ left: `calc(${thumbPosPercent}% - ${thumbPadRight}px)` }}
       >

@@ -7,37 +7,31 @@ interface Props {
   className?: string
 }
 
-const barClasses = 'w-4 h-0.5 bg-white my-[1px] transition-all duration-500'
+const barClasses = 'w-4 h-0.5 bg-white transition-all duration-300'
+const barClassesAbsolute =
+  'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-300'
 
 export default function MobileNavigationToggle(props: Props) {
   const mobileNavExpanded = useStore((s) => s.mobileNavExpanded)
   return (
     <Button
-      variant='solid'
-      color='secondary'
-      className={classNames(
-        '!px-2 w-10 flex-wrap active:bg-transparent focus:bg-transparent',
-        props.className,
-      )}
+      variant='transparent'
+      color='quaternary'
+      className={classNames('!p-2 w-10 h-10 flex items-center justify-center', props.className)}
       onClick={() => useStore.setState({ mobileNavExpanded: !mobileNavExpanded })}
     >
-      <div
-        className={classNames(
-          barClasses,
-          mobileNavExpanded
-            ? '-rotate-45 -translate-x-0 translate-y-1.5'
-            : 'rotate-0 translate-x-0 translate-y-0',
-        )}
-      />
-      <div className={classNames(barClasses, mobileNavExpanded ? 'opacity-0' : 'opacity-100')} />
-      <div
-        className={classNames(
-          barClasses,
-          mobileNavExpanded
-            ? 'rotate-45 translate-x-0 -translate-y-1.5'
-            : 'rotate-0 translate-x-0 translate-y-0',
-        )}
-      />
+      {mobileNavExpanded ? (
+        <div className='relative w-4 h-4'>
+          <div className={classNames(barClasses, barClassesAbsolute, 'rotate-45')} />
+          <div className={classNames(barClasses, barClassesAbsolute, '-rotate-45')} />
+        </div>
+      ) : (
+        <div className='flex flex-col gap-[3px] w-4'>
+          <div className={barClasses} />
+          <div className={barClasses} />
+          <div className={barClasses} />
+        </div>
+      )}
     </Button>
   )
 }

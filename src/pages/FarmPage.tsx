@@ -14,7 +14,7 @@ export default function AstroLpPage() {
   const tabs = getEarnTabs(chainConfig)
 
   return (
-    <div className='flex flex-wrap w-full gap-6'>
+    <div className='flex flex-wrap w-full gap-2 py-8'>
       <Tab tabs={tabs} activeTabIdx={1} />
       <FarmIntro />
       {isOsmosis ? (

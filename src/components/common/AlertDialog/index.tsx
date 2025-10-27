@@ -121,7 +121,7 @@ export default function AlertDialog(props: AlertDialogProps) {
             {positiveButton && (
               <Button
                 text={positiveButton.text ?? 'Yes'}
-                color='tertiary'
+                color='secondary'
                 className='px-6'
                 rightIcon={positiveButton.icon ?? <YesIcon />}
                 iconClassName='h-4 w-5'

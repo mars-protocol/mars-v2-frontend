@@ -9,6 +9,7 @@ import { formatValue } from 'utils/formatters'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import BigNumber from 'bignumber.js'
+import classNames from 'classnames'
 
 type PerpsOrderOptionsProps = {
   isReduceOnly: boolean
@@ -60,7 +61,7 @@ export const PerpsOrderOptions = ({
   }, [handleClearTriggers, perpsAsset.denom])
 
   return (
-    <div className='flex w-full flex-col bg-white bg-opacity-5 rounded border-[1px] border-white/20'>
+    <div className='flex w-full flex-col bg-white bg-opacity-5 rounded-sm border-[1px] border-white/10'>
       <div className='flex flex-col gap-1 px-3 py-4'>
         {showReduceOnly && (
           <>
@@ -78,7 +79,7 @@ export const PerpsOrderOptions = ({
             {reduceOnlyWarning && <Callout type={CalloutType.WARNING}>{reduceOnlyWarning}</Callout>}
           </>
         )}
-        <div className={`flex w-full ${showReduceOnly ? 'pt-4' : 'pt-0'}`}>
+        <div className={classNames('flex w-full', showReduceOnly ? 'pt-4' : 'pt-0')}>
           <div className='flex flex-1'>
             <Text className='mr-2 text-white font-bold' size='xs'>
               Conditional Triggers

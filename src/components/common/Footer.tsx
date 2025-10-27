@@ -23,7 +23,7 @@ export default function Footer() {
   const version = `v${packageInfo.version}`
   return (
     <footer className='flex items-center justify-center w-full h-6 -mt-6'>
-      <div className='w-full p-2 pt-0 text-right md:p-4'>
+      <div className='w-full p-2 pt-0 text-right md:p-0 md:px-4'>
         <TextLink
           className='text-xs text-white opacity-50 hover:text-white hover:opacity-80'
           href={`${DocURL.FEATURE_URL}${version}`}

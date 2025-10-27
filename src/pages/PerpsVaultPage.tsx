@@ -37,7 +37,7 @@ export default function PerpsVaultPage() {
   }, [accountId, address, chainConfig, chainConfig.perps, navigate, searchParams])
 
   return (
-    <div className='flex flex-wrap w-full gap-6'>
+    <div className='flex flex-wrap w-full gap-2 py-8'>
       <Tab tabs={tabs} activeTabIdx={2} />
       <PerpsIntro />
       <ActivePerpsVault />

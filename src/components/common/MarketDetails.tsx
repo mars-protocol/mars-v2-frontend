@@ -1,11 +1,11 @@
 import { Row } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 
+import DynamicLineChart from 'components/common/DynamicLineChart'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
 import useAssetApr from 'hooks/markets/useAssetApr'
-import DynamicLineChart from 'components/common/DynamicLineChart'
+import useDisplayCurrencyPrice from 'hooks/prices/useDisplayCurrencyPrice'
 
 interface Props {
   row: Row<BorrowMarketTableData | LendingMarketTableData>
@@ -156,7 +156,7 @@ export default function MarketDetails({ row, type }: Props) {
                   }}
                   className={`px-2 py-1 text-xs rounded ${
                     selectedInterval.label === opt.label
-                      ? 'bg-white/20 text-white'
+                      ? 'bg-white/10 text-white'
                       : 'text-white/50'
                   }`}
                 >

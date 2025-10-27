@@ -30,6 +30,7 @@ interface Props {
   routeInfo?: SwapRouteInfo | null
   isAdvanced?: boolean
   direction?: TradeDirection
+  hasInsufficientFunds?: boolean
 }
 
 export default function TradeSummary(props: Props) {
@@ -46,6 +47,7 @@ export default function TradeSummary(props: Props) {
     isAdvanced,
     direction,
     routeInfo,
+    hasInsufficientFunds,
   } = props
   const [slippage] = useSlippage()
   const { liquidationPrice, isUpdatingLiquidationPrice } = useLiquidationPrice(
@@ -58,9 +60,10 @@ export default function TradeSummary(props: Props) {
   }, [routeInfo, slippage])
 
   const buttonText = useMemo(() => {
+    if (hasInsufficientFunds) return 'Insufficient Funds'
     if (!isAdvanced && direction === 'short') return `Sell ${sellAsset.symbol}`
     return `Buy ${buyAsset.symbol}`
-  }, [isAdvanced, direction, sellAsset.symbol, buyAsset.symbol])
+  }, [hasInsufficientFunds, isAdvanced, direction, sellAsset.symbol, buyAsset.symbol])
 
   return (
     <div className='flex flex-col w-full space-y-2'>
@@ -89,7 +92,7 @@ export default function TradeSummary(props: Props) {
       <div
         className={classNames(
           containerClassName,
-          'flex flex-1 flex-col bg-white/5 rounded border border-white/20',
+          'flex flex-1 flex-col bg-white/5 rounded-sm border border-white/10',
         )}
       >
         <div className='flex flex-col flex-1 m-3'>

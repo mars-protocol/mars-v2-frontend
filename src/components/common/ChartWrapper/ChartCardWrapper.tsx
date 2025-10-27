@@ -1,9 +1,9 @@
-import Card from 'components/common/Card'
-import Text from 'components/common/Text'
 import classNames from 'classnames'
-import { ReactNode } from 'react'
+import Card from 'components/common/Card'
 import { CardWithTabs } from 'components/common/Card/CardWithTabs'
+import Text from 'components/common/Text'
 import TimeframeSelector, { TimeframeOption } from 'components/common/TimeframeSelector'
+import { ReactNode } from 'react'
 
 interface Props {
   title?: string | ReactNode
@@ -21,8 +21,8 @@ export default function ChartCardWrapper(props: Props) {
   const renderContent = (content: ReactNode) => {
     if (timeframe !== undefined && setTimeframe && timeframeOptions) {
       return (
-        <div className='flex flex-col gap-1 px-2 pb-3 min-h-80'>
-          <div className='flex justify-end px-4'>
+        <div className='flex flex-col gap-0.5 px-1 pb-1 min-h-60'>
+          <div className='flex justify-end px-1'>
             <TimeframeSelector
               timeframe={timeframeOptions}
               selectedTimeframe={timeframe}
@@ -50,11 +50,11 @@ export default function ChartCardWrapper(props: Props) {
 
   return (
     <Card
-      className={classNames('w-full bg-black/10', className)}
-      contentClassName='px-1 pb-2'
+      className={classNames('w-full', className)}
+      contentClassName='px-1 py-0.5'
       title={
-        <div className='px-4 py-3 flex items-center justify-between font-semibold bg-white/10'>
-          {typeof title === 'string' ? <Text size='sm'>{title}</Text> : title}
+        <div className='px-2 py-1 flex items-center justify-between font-semibold bg-surface'>
+          {typeof title === 'string' ? <Text size='xs'>{title}</Text> : title}
         </div>
       }
     >

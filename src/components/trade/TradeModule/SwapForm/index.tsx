@@ -370,13 +370,26 @@ export default function SwapForm(props: Props) {
     [borrowMarket?.liquidity],
   )
 
+  const hasInsufficientFunds = useMemo(
+    () => inputAssetAmount.isGreaterThan(maxInputAmount),
+    [inputAssetAmount, maxInputAmount],
+  )
+
   const isSwapDisabled = useMemo(
     () =>
       inputAssetAmount.isZero() ||
       depositCapReachedCoins.length > 0 ||
       borrowAmount.isGreaterThan(availableLiquidity) ||
-      !routeInfo,
-    [inputAssetAmount, depositCapReachedCoins.length, borrowAmount, availableLiquidity, routeInfo],
+      !routeInfo ||
+      hasInsufficientFunds,
+    [
+      inputAssetAmount,
+      depositCapReachedCoins.length,
+      borrowAmount,
+      availableLiquidity,
+      routeInfo,
+      hasInsufficientFunds,
+    ],
   )
 
   return (
@@ -388,20 +401,22 @@ export default function SwapForm(props: Props) {
           <AssetSelectorPair buyAsset={buyAsset} sellAsset={sellAsset} assets={assets} />
         )}
         <Divider />
-        <MarginToggle
-          checked={isMarginChecked}
-          onChange={handleMarginToggleChange}
-          disabled={!borrowMarket?.borrowEnabled}
-          borrowAssetSymbol={inputAsset.symbol}
-        />
-        <Divider />
-        {isRepayable && ENABLE_AUTO_REPAY && (
-          <AutoRepayToggle
-            checked={isAutoRepayChecked}
-            onChange={handleAutoRepayToggleChange}
-            buyAssetSymbol={outputAsset.symbol}
+        <div className='w-full pb-4'>
+          <MarginToggle
+            checked={isMarginChecked}
+            onChange={handleMarginToggleChange}
+            disabled={!borrowMarket?.borrowEnabled}
+            borrowAssetSymbol={inputAsset.symbol}
           />
-        )}
+          <Divider />
+          {isRepayable && ENABLE_AUTO_REPAY && (
+            <AutoRepayToggle
+              checked={isAutoRepayChecked}
+              onChange={handleAutoRepayToggleChange}
+              buyAssetSymbol={outputAsset.symbol}
+            />
+          )}
+        </div>
         <div className='px-3'>
           <OrderTypeSelector
             orderTabs={ORDER_TYPE_TABS}
@@ -442,7 +457,7 @@ export default function SwapForm(props: Props) {
           <DepositCapMessage
             action='buy'
             coins={depositCapReachedCoins}
-            className='p-4 bg-white/5'
+            className='p-4 bg-surface'
           />
 
           {isMarginChecked &&
@@ -494,6 +509,7 @@ export default function SwapForm(props: Props) {
           isAdvanced={isAdvanced}
           direction={tradeDirection}
           routeInfo={routeInfo}
+          hasInsufficientFunds={hasInsufficientFunds}
         />
       </div>
     </>

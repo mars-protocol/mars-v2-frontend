@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
+import GridWithSplitters from 'components/common/Grid/GridWithSplitters'
 import AccountDetailsCard from 'components/trade/AccountDetailsCard'
 import TradeChart from 'components/trade/TradeChart'
 import TradeModule from 'components/trade/TradeModule'
@@ -75,12 +76,15 @@ export default function TradePage() {
   }, [])
 
   return (
-    <div className='flex flex-col w-full h-full gap-4'>
-      <div className='flex flex-wrap w-full gap-4 md:grid md:grid-cols-chart'>
-        <TradeChart buyAsset={buyAsset} sellAsset={sellAsset} />
-        <TradeModule buyAsset={buyAsset} sellAsset={sellAsset} isAdvanced={isAdvanced} />
-        <AccountDetailsCard />
-      </div>
+    <div className='flex flex-col w-full md:h-full'>
+      <GridWithSplitters
+        className='flex-1'
+        chartArea={<TradeChart buyAsset={buyAsset} sellAsset={sellAsset} />}
+        rightArea={
+          <TradeModule buyAsset={buyAsset} sellAsset={sellAsset} isAdvanced={isAdvanced} />
+        }
+        bottomArea={<AccountDetailsCard />}
+      />
       {assetOverlayState !== 'closed' && (
         <div
           className='fixed top-0 left-0 z-20 block w-full h-full hover:cursor-pointer'
