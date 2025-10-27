@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { isMobile } from 'react-device-detect'
 
 interface Props {
   className?: string
@@ -8,7 +9,8 @@ interface Props {
   bottomArea: ReactNode
 }
 
-export default function GridWithSplitters({ className, chartArea, rightArea, bottomArea }: Props) {
+// Desktop layout component with full grid and drag functionality
+function DesktopGridLayout({ className, chartArea, rightArea, bottomArea }: Props) {
   const [chartWidthPercent, setChartWidthPercent] = useState(75) // Chart takes 75% width
   const [chartHeightPercent, setChartHeightPercent] = useState(75) // Chart takes 75% height
   const [isDragging, setIsDragging] = useState<'vertical' | 'horizontal' | null>(null)
@@ -141,15 +143,8 @@ export default function GridWithSplitters({ className, chartArea, rightArea, bot
         />
       )}
 
-      {/* Mobile Layout - Stacked */}
-      <div className='flex flex-col w-full gap-1 md:hidden'>
-        <div className='bg-surface w-full'>{chartArea}</div>
-        <div className='bg-surface w-full'>{rightArea}</div>
-        <div className='bg-surface w-full'>{bottomArea}</div>
-      </div>
-
       {/* Desktop Layout - CSS Grid with Splitters */}
-      <div className='hidden md:grid w-full h-full min-h-0' style={gridStyles}>
+      <div className='grid w-full h-full min-h-0' style={gridStyles}>
         {/* Row 1, Col 1: Chart Area */}
         <div className='min-w-0 min-h-0 overflow-hidden row-start-1 row-end-2 col-start-1 col-end-2'>
           {chartArea}
@@ -213,4 +208,21 @@ export default function GridWithSplitters({ className, chartArea, rightArea, bot
       </div>
     </div>
   )
+}
+
+// Mobile layout - stacked
+function MobileGridLayout({ className, chartArea, rightArea, bottomArea }: Props) {
+  return (
+    <div className={classNames('w-full', className)}>
+      <div className='flex flex-col w-full gap-1'>
+        <div className='bg-surface w-full'>{chartArea}</div>
+        <div className='bg-surface w-full'>{rightArea}</div>
+        <div className='bg-surface w-full'>{bottomArea}</div>
+      </div>
+    </div>
+  )
+}
+
+export default function GridWithSplitters(props: Props) {
+  return isMobile ? <MobileGridLayout {...props} /> : <DesktopGridLayout {...props} />
 }
