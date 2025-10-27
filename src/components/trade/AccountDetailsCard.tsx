@@ -23,7 +23,7 @@ export default function AccountDetailsCard() {
           account={account}
           borrowingData={borrowAssetsData}
           lendingData={lendingAssetsData}
-          tableBodyClassName='gradient-card-content'
+          tableBodyClassName=''
           showLiquidationPrice
         />
       </div>

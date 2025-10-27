@@ -45,14 +45,14 @@ export default function PerformanceFee(props: Props) {
         maxDecimals={0}
         max={BN(40)}
         placeholder='Enter fee'
-        className='px-4 py-3 rounded-sm bg-white/5 !border-solid border border-white/10 focus:border-white/20 focus:bg-white/10 !text-left text-sm'
+        className='px-4 py-3 rounded-sm bg-white/5 !border-solid border border-white/10 focus:border-white/20 !text-left text-sm'
       />
       <div className='flex gap-2 justify-evenly'>
         {fees.map((fee, index) => (
           <Button
             onClick={(event) => handleFeeClick(fee.value, event)}
             color='secondary'
-            className={classNames('w-full min-w-0', value.isEqualTo(fee.value) && 'bg-white/20')}
+            className={classNames('w-full min-w-0', value.isEqualTo(fee.value) && 'bg-white/10')}
             text={fee.label}
             key={index}
           />

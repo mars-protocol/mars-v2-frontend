@@ -52,7 +52,7 @@ export default function ExecuteMessagePage() {
         <input
           value={contract}
           onChange={(e) => setContract(e.target.value)}
-          className='bg-white/5 p-4 w-full text-sm'
+          className='bg-surface p-4 w-full text-sm'
         />
       </label>
 
@@ -65,7 +65,7 @@ export default function ExecuteMessagePage() {
         <textarea
           value={message}
           onChange={(e) => onChangeTextArea(e.target.value)}
-          className='text-white h-90 bg-white/5 p-4 w-full text-sm'
+          className='text-white h-90 bg-surface p-4 w-full text-sm'
         />
       </label>
       <label>
@@ -77,7 +77,7 @@ export default function ExecuteMessagePage() {
         <textarea
           value={funds}
           onChange={(e) => onChangeFunds(e.target.value)}
-          className='text-white h-40 bg-white/5 p-4 w-full text-sm'
+          className='text-white h-40 bg-surface p-4 w-full text-sm'
         />
       </label>
 

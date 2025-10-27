@@ -14,7 +14,7 @@ export function PerpsStats({ denom }: Props) {
   }
 
   return (
-    <div className='flex gap-4 h-[500px] md:h-screen/70 md:max-h-[980px] md:min-h-[560px] w-full items-center justify-center'>
+    <div className='flex gap-4 h-[500px] md:h-full w-full items-center justify-center'>
       {isLoading && <CircularProgress size={60} />}
       <iframe
         src={`https://stats.marsprotocol.io/${denom}?iframeView=on`}

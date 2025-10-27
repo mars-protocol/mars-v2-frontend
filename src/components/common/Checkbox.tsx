@@ -15,11 +15,11 @@ export default function Checkbox(props: Props) {
   return (
     <>
       <input
-        onChange={() => props.onChange(props.checked)}
         id={`checkbox-${props.name}`}
         name={props.name}
         checked={props.checked}
         type='checkbox'
+        readOnly
         className={classNames('peer hidden')}
       />
       <label
@@ -28,14 +28,17 @@ export default function Checkbox(props: Props) {
           props.noMouseEvents && 'pointer-events-none',
         )}
         htmlFor={`checkbox-${props.name}`}
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          props.onChange(!props.checked)
+        }}
       >
         <div
           className={classNames(
             'h-5 w-5 rounded-sm p-0.5',
             props.checked && 'relative isolate overflow-hidden rounded-sm',
-            props.checked &&
-              'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-sm before:p-[1px] before:border-glas',
-            props.checked ? 'bg-white/20' : 'border border-white/60',
+            props.checked ? 'bg-white/10' : 'border border-white/60',
           )}
         >
           {props.checked && <Check />}

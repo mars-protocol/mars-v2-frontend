@@ -27,7 +27,7 @@ export default function VaultAssetsModal() {
       header={<Text>Vault Assets</Text>}
       onClose={onClose}
       modalClassName='max-w-modal-lg'
-      headerClassName='bg-white/10 border-b-white/5 border-b items-center p-4'
+      headerClassName='border-b-white/5 border-b items-center p-4'
       dialogId='wallet-assets-modal'
     >
       <VaultAssetsModalContent

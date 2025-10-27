@@ -105,7 +105,7 @@ export default function RewardsCenter(props: Props) {
         }}
         hasFocus={showRewardsCenter}
       >
-        <div className='relative flex items-center h-fullx'>
+        <div className='relative flex items-center h-full'>
           <DisplayCurrency coin={rewardsValueCoin} allowZeroAmount />
         </div>
       </Button>
@@ -118,7 +118,7 @@ export default function RewardsCenter(props: Props) {
       >
         <div
           className={classNames(
-            'flex h-[54px] w-full items-center justify-between bg-white/5 px-4 py-3',
+            'flex h-[54px] w-full items-center justify-between bg-surface px-4 py-3',
             'border border-transparent border-b-white/10',
           )}
         >
@@ -136,7 +136,7 @@ export default function RewardsCenter(props: Props) {
             />
           </div>
         </div>
-        <div className='flex flex-col w-full gap-4 px-4 py-5'>
+        <div className='flex flex-col w-full gap-4 p-4'>
           {!isOsmosis && (
             <SwitchWithText
               options={[
@@ -151,7 +151,7 @@ export default function RewardsCenter(props: Props) {
           <Text size='xs' className='w-full'>
             Total Rewards
           </Text>
-          <div className='flex flex-wrap content-center justify-center w-full gap-1 p-4 rounded-md bg-black/20'>
+          <div className='flex flex-wrap content-center justify-center w-full gap-1 p-4 rounded-sm bg-black/20'>
             <DisplayCurrency coin={rewardsValueCoin} allowZeroAmount className='text-2xl' />
             <Text size='xs' className='w-full text-center text-white/60'>
               Unclaimed Rewards

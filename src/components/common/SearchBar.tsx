@@ -18,9 +18,8 @@ const SearchBar = (props: Props, ref: LegacyRef<HTMLDivElement>) => {
   return (
     <div
       className={classNames(
-        'flex w-full items-center justify-between rounded-sm bg-white/10 p-2.5',
-        'relative isolate max-w-full overflow-hidden rounded-sm',
-        'before:content-[" "] before:absolute before:inset-0 before:-z-1 before:rounded-sm before:p-[1px] before:border-glas',
+        'flex w-full items-center justify-between rounded-sm p-2.5',
+        'relative isolate max-w-full overflow-hidden rounded-sm bg-surface-dark',
       )}
       ref={ref}
     >

@@ -67,7 +67,7 @@ export const TriggerSection = ({
             disabled={false}
             isUSD
           />
-          <div className='flex flex-row flex-1 py-3 pl-3 pr-2 mt-2 border rounded border-white/20 bg-white/5'>
+          <div className='flex flex-row flex-1 py-3 pl-3 pr-2 mt-2 border rounded-sm border-white/20 bg-white/5'>
             <Text className={getTextColorClass(triggerPercentage)}>
               {formatPercent(triggerPercentage.toNumber())}
             </Text>

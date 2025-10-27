@@ -76,7 +76,7 @@ export default function Table<T>(props: Props<T>) {
         <div className='w-full overflow-x-auto scrollbar-hide'>
           <table className={classNames('w-[calc(100%-1px)]', props?.tableBodyClassName)}>
             {!props.disableSortingRow && (
-              <thead className='border-b bg-black/20 border-white/10'>
+              <thead className='bg-surface-dark border-b border-white/10'>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => {
@@ -85,7 +85,7 @@ export default function Table<T>(props: Props<T>) {
                           key={header.id}
                           onClick={header.column.getToggleSortingHandler()}
                           className={classNames(
-                            props.spacingClassName ?? 'px-4 py-3',
+                            props.spacingClassName ?? 'px-4 py-2',
                             header.column.getCanSort() && 'hover:cursor-pointer',
                             LEFT_ALIGNED_ROWS.includes(header.id) ? 'text-left' : 'text-right',
                             header.column.columnDef.meta?.className,

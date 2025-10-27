@@ -19,12 +19,12 @@ export function LeverageButtons(props: Props) {
   })
 
   return (
-    <div className='flex justify-between'>
+    <div className='flex justify-between gap-2 w-full'>
       {leveragePresets.map((leverage, index) => (
         <button
           key={`${index}-${leverage}`}
           onClick={() => props.onChange(leverage)}
-          className='w-12 !border:none bg-white/10 rounded-sm py-1 text-xs hover:bg-white/20'
+          className='py-1 text-xs w-full rounded-sm bg-surface-light hover:bg-white/10 transition-colors'
         >
           {leverage.toFixed(1)}x
         </button>

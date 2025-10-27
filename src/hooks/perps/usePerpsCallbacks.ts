@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
-import { OrderType } from 'types/enums'
+import { useCallback, useEffect, useState } from 'react'
 import useStore from 'store'
+import { OrderType } from 'types/enums'
 
 interface PerpsCallbacksProps {
   updateAmount: (amount: BigNumber) => void
@@ -108,15 +108,7 @@ export const usePerpsCallbacks = ({
         setStoredUsdValue(null)
       }
     },
-    [
-      isAmountInUSD,
-      assetPrice,
-      perpsAsset.decimals,
-      onChangeAmount,
-      isStopOrder,
-      stopTradeDirection,
-      tradeDirection,
-    ],
+    [isAmountInUSD, assetPrice, perpsAsset.decimals, onChangeAmount],
   )
 
   const convertToDisplayAmount = useCallback(

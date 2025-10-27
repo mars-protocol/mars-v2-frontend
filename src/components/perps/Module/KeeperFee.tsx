@@ -19,7 +19,7 @@ export default function KeeperFee() {
   if (!displayKeeperFee || !chainConfig.perps) return null
 
   return (
-    <div className='flex flex-col w-full border rounded bg-white/5 border-white/20'>
+    <div className='flex flex-col w-full border rounded-sm bg-white/5 border-white/20'>
       <div className='flex gap-1 px-3 py-4 align-center'>
         <Text size='xs' className='flex flex-grow font-bold'>
           Keeper Fee
@@ -30,7 +30,7 @@ export default function KeeperFee() {
         />
         <Button
           text='Edit'
-          className='!py-0 !pr-0 ml-2 text-xs border-l border-white/20 !text-martian-red hover:!text-mars !min-h-0'
+          className='!py-0 !pr-0 ml-2 text-xs border-l border-white/10 !text-martian-red hover:!text-mars !min-h-0'
           variant='transparent'
           color='quaternary'
           onClick={() => useStore.setState({ keeperFeeModal: true })}

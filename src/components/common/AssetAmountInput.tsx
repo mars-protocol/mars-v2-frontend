@@ -87,7 +87,7 @@ export default function AssetAmountInput(props: Props) {
         {label}
         <div
           className={classNames(
-            'flex flex-1 flex-row py-3 border border-white/20 rounded bg-white/5 pl-3 pr-2 mt-2',
+            'flex flex-1 flex-row py-3 border border-white/20 rounded-sm bg-white/5 pl-3 pr-2 mt-2',
             disabled && 'opacity-50',
           )}
         >

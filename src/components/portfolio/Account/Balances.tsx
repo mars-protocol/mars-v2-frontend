@@ -52,7 +52,7 @@ function Skeleton(props: SkeletonProps) {
   return (
     <div className='flex flex-wrap w-full gap-4'>
       <Text size='2xl'>Balances</Text>
-      <Card className='w-full bg-white/5' contentClassName='overflow-x-scroll md:overflow-hidden'>
+      <Card className='w-full bg-surface' contentClassName='overflow-x-scroll md:overflow-hidden'>
         {props.children ? (
           props.children
         ) : (

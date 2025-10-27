@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import Divider from 'components/common/Divider'
 import { FormattedNumber } from 'components/common/FormattedNumber'
@@ -65,7 +66,7 @@ export function PerpsInfo() {
   if (!market) return null
 
   return (
-    <div className='flex flex-wrap items-center gap-2 mb-2 md:gap-4 sm:mb-0'>
+    <div className='flex flex-wrap items-center justify-between gap-2 mb-2 md:gap-4 sm:mb-0'>
       {items.map((item, index) => (
         <React.Fragment key={index}>
           {item}
@@ -86,7 +87,12 @@ interface InfoItemProps {
 
 function InfoItem(props: InfoItemProps) {
   return (
-    <div className={`flex flex-col gap-1 min-w-30 ${props.className || ''}`}>
+    <div
+      className={classNames(
+        'flex flex-col gap-1 w-[calc(50%-0.25rem)] md:w-auto md:min-w-30',
+        props.className,
+      )}
+    >
       <Text size='xs' className='text-white/40'>
         {props.label}
       </Text>

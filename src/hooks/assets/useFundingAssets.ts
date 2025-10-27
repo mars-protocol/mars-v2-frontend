@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 import { BNCoin } from 'types/classes/BNCoin'
+import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 import { BN } from 'utils/helpers'
 
 export function useFundingAssets(selectedDenoms: string[]) {
@@ -9,17 +9,6 @@ export function useFundingAssets(selectedDenoms: string[]) {
 
   useEffect(() => {
     if (JSON.stringify(prevSelectedDenomsRef.current) === JSON.stringify(selectedDenoms)) {
-      return
-    }
-
-    const currentSelectedDenom = fundingAssets.map((asset) =>
-      asset.chain ? `${asset.coin.denom}:${asset.chain}` : asset.coin.denom,
-    )
-
-    if (
-      selectedDenoms.every((denom) => currentSelectedDenom.includes(denom)) &&
-      selectedDenoms.length === currentSelectedDenom.length
-    ) {
       return
     }
 
@@ -34,7 +23,7 @@ export function useFundingAssets(selectedDenoms: string[]) {
     setFundingAssets(newFundingAssets)
 
     prevSelectedDenomsRef.current = selectedDenoms
-  }, [selectedDenoms, fundingAssets])
+  }, [selectedDenoms])
 
   const updateFundingAssets = useCallback(
     (amount: BigNumber, denom: string, chainName?: string) => {

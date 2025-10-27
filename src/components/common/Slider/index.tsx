@@ -20,14 +20,6 @@ type Props = {
   disabled?: boolean
 }
 
-function getActiveIndex(value: number) {
-  if (value >= 100) return '7'
-  if (value >= 75) return '6'
-  if (value >= 50) return '4'
-  if (value >= 25) return '2'
-  return '1'
-}
-
 export default function Slider(props: Props) {
   const { value, onChange, leverage, className, disabled } = props
   const [newValue, setNewValue] = useState(value)
@@ -155,37 +147,24 @@ export default function Slider(props: Props) {
             value={0}
             sliderValue={value}
             disabled={disabled}
-            backgroundClassName='bg-slider-1'
           />
-          <Track maxValue={23} sliderValue={value} bg='before:gradient-slider-1' />
-          <Mark
-            onClick={() => handleOnChange(25)}
-            value={25}
-            sliderValue={value}
-            backgroundClassName='bg-slider-3'
-          />
-          <Track maxValue={48} sliderValue={value} bg='before:gradient-slider-2' />
-          <Mark
-            onClick={() => handleOnChange(50)}
-            value={50}
-            sliderValue={value}
-            backgroundClassName='bg-slider-5'
-          />
-          <Track maxValue={73} sliderValue={value} bg='before:gradient-slider-3' />
+          <Track maxValue={23} sliderValue={value} />
+          <Mark onClick={() => handleOnChange(25)} value={25} sliderValue={value} />
+          <Track maxValue={48} sliderValue={value} />
+          <Mark onClick={() => handleOnChange(50)} value={50} sliderValue={value} />
+          <Track maxValue={73} sliderValue={value} />
           <Mark
             onClick={() => handleOnChange(75)}
             value={75}
             sliderValue={value}
             disabled={disabled}
-            backgroundClassName='bg-slider-6'
           />
-          <Track maxValue={98} sliderValue={value} bg='before:gradient-slider-4' />
+          <Track maxValue={98} sliderValue={value} />
           <Mark
             onClick={() => handleOnChange(100)}
             value={100}
             sliderValue={value}
             disabled={disabled}
-            backgroundClassName='bg-slider-8'
           />
         </div>
         {!disabled && (
@@ -203,8 +182,8 @@ export default function Slider(props: Props) {
               <div ref={nodeRef} className='absolute z-20 leading-3'>
                 <div
                   className={classNames(
-                    `bg-slider-${Number(getActiveIndex(value)) + 1}`,
-                    'z-20 h-3 w-3 rotate-45 hover:cursor-pointer rounded-xs border-[2px] border-white/60 !outline-none',
+                    'bg-martian-red',
+                    'z-20 h-3 w-3 rotate-45 hover:cursor-pointer rounded-xs border-[2px] border-martian-red !outline-none',
                   )}
                 />
                 {leverage ? (
@@ -217,10 +196,10 @@ export default function Slider(props: Props) {
                   </div>
                 ) : (
                   (showTooltip || isDragging) && (
-                    <div className='absolute -top-8 left-1/2 -translate-x-1/2 rounded-xs bg-fuchsia px-2 py-[2px] text-xs'>
+                    <div className='absolute -top-8 left-1/2 -translate-x-1/2 rounded-xs bg-surface-light border border-white/10 px-2 py-[2px] text-xs'>
                       <OverlayMark
                         className={classNames(
-                          'absolute h-2 -translate-x-1/2 -bottom-2 left-1/2 -z-1 text-fuchsia',
+                          'absolute h-2 -translate-x-1/2 -bottom-2 left-1/2 -z-1 text-white/10',
                         )}
                       />
                       {value.toFixed(0)}%

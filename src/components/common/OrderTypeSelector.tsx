@@ -17,13 +17,13 @@ export default function OrderTypeSelector(props: Props) {
   const { selected, onChange } = props
 
   return (
-    <div className='flex flex-row pt-4'>
+    <div className='flex flex-row pb-1'>
       {props.orderTabs.map((tab) => {
         const isSelected = tab.type === selected
         const classes = classNames(
-          'text-white/20 mr-4 pb-2 hover:cursor-pointer select-none flex flex-row',
+          'text-white/20 mr-4 pb-1 hover:cursor-pointer select-none flex flex-row',
           'hover:text-white',
-          isSelected && 'border-b-2 border-pink border-solid !text-white',
+          isSelected && 'border-b-2 border-martian-red !text-white',
           tab.isDisabled && 'pointer-events-none',
         )
 

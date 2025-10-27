@@ -1,4 +1,3 @@
-import Background from 'components/common/Background'
 import Button from 'components/common/Button'
 import { ExternalLink } from 'components/common/Icons'
 import Text from 'components/common/Text'
@@ -23,7 +22,6 @@ export default function ErrorApiPage() {
 
   return (
     <>
-      <Background />
       <main className='relative z-20 w-full'>
         <div className='flex flex-wrap justify-center w-full gap-6 p-20'>
           <Text size='4xl' className='w-full text-center'>

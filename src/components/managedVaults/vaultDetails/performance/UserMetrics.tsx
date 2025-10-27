@@ -101,7 +101,7 @@ export default function UserMetrics(props: Props) {
               <TitleAndSubCell title={value} sub={metric.label} />
             )}
             {index < metrics.length - 1 && (
-              <div className='hidden sm:block absolute right-0 top-1/2 h-8 w-[1px] bg-white/10 -translate-y-1/2' />
+              <div className='hidden sm:block absolute right-0 top-1/2 h-8 w-[1px] -translate-y-1/2 bg-white/10' />
             )}
           </div>
         )

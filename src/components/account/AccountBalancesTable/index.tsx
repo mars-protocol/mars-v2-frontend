@@ -87,7 +87,7 @@ export default function AccountBalancesTable(props: Props) {
           </Card>
         )}
       >
-        <div className='w-full p-4'>
+        <div className='h-full w-full p-4'>
           {isUsersAccount && !isHls ? (
             <ActionButton
               className='w-full'
@@ -110,9 +110,11 @@ export default function AccountBalancesTable(props: Props) {
               }}
             />
           ) : (
-            <Text size='sm' className='text-center'>
-              This account has no balances.
-            </Text>
+            <div className='flex justify-center items-center h-full w-full'>
+              <Text size='sm' className='text-white/60'>
+                This account has no balances.
+              </Text>
+            </div>
           )}
         </div>
       </ConditionalWrapper>
@@ -124,7 +126,7 @@ export default function AccountBalancesTable(props: Props) {
       title={
         <Text
           size='lg'
-          className='flex items-center justify-between w-full p-4 font-semibold bg-white/10'
+          className='flex items-center justify-between w-full p-4 font-semibold bg-surface-dark border-b border-white/10'
         >
           <span>Balances</span>
           <span className='text-white/60'>{accountTitle}</span>
@@ -134,7 +136,7 @@ export default function AccountBalancesTable(props: Props) {
       data={dynamicAssets}
       tableBodyClassName={classNames(tableBodyClassName, 'text-white/60')}
       initialSorting={[{ id: VALUE_META.accessorKey, desc: true }]}
-      spacingClassName='p-2'
+      spacingClassName='px-4 py-2.5'
       hideCard={hideCard}
       type='balances'
       isBalancesTable

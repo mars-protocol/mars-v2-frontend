@@ -1,3 +1,4 @@
+import GridWithSplitters from 'components/common/Grid/GridWithSplitters'
 import { PerpsModule } from 'components/perps/Module/PerpsModule'
 import PerpsBanner from 'components/perps/PerpsBanner'
 import { PerpsPositions } from 'components/perps/PerpsPositions'
@@ -22,17 +23,23 @@ export default function PerpsPage() {
       navigate(getRoute(getPage('trade', chainConfig), searchParams, address, accountId))
     }
   }, [accountId, address, chainConfig, chainConfig.perps, navigate, searchParams])
-
   return (
-    <div className='flex flex-wrap w-full gap-4 md:grid md:grid-cols-chart'>
-      <div className='w-full'>
-        <PerpsBanner />
-        <PerpsTabs />
-      </div>
-      <div className='w-full row-span-2'>
-        <PerpsModule />
-      </div>
-      <PerpsPositions />
+    <div className='flex flex-col w-full md:h-full'>
+      <GridWithSplitters
+        className='flex-1'
+        chartArea={
+          <div className='w-full md:h-full flex flex-col'>
+            <PerpsBanner />
+            <div className='flex-1 bg-surface md:h-full'>
+              <div className='w-full md:h-full'>
+                <PerpsTabs />
+              </div>
+            </div>
+          </div>
+        }
+        rightArea={<PerpsModule />}
+        bottomArea={<PerpsPositions />}
+      />
     </div>
   )
 }

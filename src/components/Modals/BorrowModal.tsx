@@ -1,5 +1,4 @@
 import BigNumber from 'bignumber.js'
-import classNames from 'classnames'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { getButtonText, RepayAssets } from 'components/Modals/BorrowModal/RepayAssets'
@@ -672,15 +671,9 @@ function BorrowModal(props: Props) {
           </Text>
         </div>
       </div>
-      <div
-        className={classNames(
-          'flex items-start flex-1 p-2 gap-4 flex-wrap',
-          'md:p-4 md:gap-6',
-          'lg:flex-nowrap lg:p-6',
-        )}
-      >
+      <div className='flex items-start flex-1 p-2 gap-1 flex-wrap bg-body'>
         <Card
-          className='flex flex-1 w-full p-4 bg-white/5 max-w-screen-full min-w-[200px]'
+          className='flex flex-1 w-full p-4 max-w-screen-full min-w-[200px]'
           contentClassName='gap-6 flex flex-col justify-between h-full'
         >
           {isRepay ? (

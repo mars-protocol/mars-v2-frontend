@@ -69,7 +69,7 @@ export default function ProfileVaultCard(props: Props) {
   const apy = details.apy || 0
 
   return (
-    <Card className='bg-white/5'>
+    <Card className='bg-surface'>
       <div className='relative mb-6'>
         <div className='overflow-hidden h-28'>
           {isLoading ? (

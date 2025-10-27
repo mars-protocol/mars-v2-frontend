@@ -92,7 +92,7 @@ function InputElement(props: InputElementProps) {
       <Button
         onClick={onClick}
         color='secondary'
-        className='w-full px-4 py-3 mt-3 bg-white/5 !border !border-white/10 hover:cursor-pointer'
+        className='w-full px-4 py-3 mt-3 bg-white/5 !border !border-white/10 hover:cursor-pointer [&>span]:justify-between [&>span]:w-full'
         leftIcon={asset && <AssetImage asset={asset} className='w-4 h-4' />}
         rightIcon={<span className='w-4 h-4'>{suffix}</span>}
         text={value}
@@ -134,7 +134,7 @@ function InputElement(props: InputElementProps) {
           maxLength={maxLength}
           placeholder={placeholder}
           className={classNames(
-            'w-full px-4 py-3 outline-none border rounded-sm bg-white/5 border-white/10 text-sm focus:border-white/20 focus:bg-white/10 hover:cursor-pointer placeholder:text-white/60',
+            'w-full px-4 py-3 outline-none border rounded-sm bg-white/5 border-white/10 text-sm focus:border-white/20 hover:cursor-pointer placeholder:text-white/60',
             suffix && 'pr-6',
           )}
         />

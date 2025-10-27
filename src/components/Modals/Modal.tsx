@@ -45,7 +45,7 @@ export default function Modal(props: ModalProps) {
     >
       <Card
         className={classNames(
-          'flex max-w-full h-full flex-1 bg-white/5 backdrop-blur-3xl md:h-auto',
+          'flex max-w-full h-full flex-1 rounded-sm bg-surface border border-white/20 md:h-auto',
           props.className,
         )}
         contentClassName='overflow-y-scroll scrollbar-hide max-h-screen-full'
