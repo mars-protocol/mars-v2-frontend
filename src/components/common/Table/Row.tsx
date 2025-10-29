@@ -78,7 +78,9 @@ export default function Row<T>(props: Props<T>) {
 
     if (props.onClick) {
       const rowData = row.original as RowWithAsset
-      props.onClick(rowData.asset?.denom)
+      if (rowData.asset?.denom) {
+        props.onClick(rowData.asset.denom)
+      }
     }
   }
 
