@@ -51,7 +51,8 @@ export function generateExecutionMessage(
     | PythUpdateExecuteMsg
     | PerpsExecuteMsg
     | IncentivesExecuteMsg
-    | ManagedVaultExecuteMsg,
+    | ManagedVaultExecuteMsg
+    | Record<string, unknown>,
   funds: Coin[],
 ) {
   return new MsgExecuteContract({
@@ -139,7 +140,7 @@ export default function createBroadcastSlice(
         throw new Error('Mars staking contract not available or wallet not connected')
       }
 
-      const stakeMsg = { stake: {} } as any
+      const stakeMsg = { stake: {} }
 
       const messages: MsgExecuteContract[] = []
 
@@ -169,7 +170,7 @@ export default function createBroadcastSlice(
       const stakeExecuteMsg = generateExecutionMessage(
         get().address,
         marsStakingContract,
-        stakeMsg,
+        stakeMsg as Record<string, unknown>,
         [amount.toCoin()],
       )
       messages.push(stakeExecuteMsg)
@@ -194,10 +195,17 @@ export default function createBroadcastSlice(
         unstake: {
           amount: amount.amount.toString(),
         },
-      } as any
+      }
 
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, marsStakingContract, unstakeMsg, [])],
+        messages: [
+          generateExecutionMessage(
+            get().address,
+            marsStakingContract,
+            unstakeMsg as Record<string, unknown>,
+            [],
+          ),
+        ],
       })
 
       const formattedAmount = amount.amount.shiftedBy(-MARS_DECIMALS).toFixed(2)
@@ -216,10 +224,17 @@ export default function createBroadcastSlice(
 
       const withdrawMsg = {
         claim: {},
-      } as any
+      }
 
       const response = get().executeMsg({
-        messages: [generateExecutionMessage(get().address, marsStakingContract, withdrawMsg, [])],
+        messages: [
+          generateExecutionMessage(
+            get().address,
+            marsStakingContract,
+            withdrawMsg as Record<string, unknown>,
+            [],
+          ),
+        ],
       })
 
       const message = amount
@@ -992,7 +1007,7 @@ export default function createBroadcastSlice(
         {
           execute_perp_order: {
             denom: options.coin.denom,
-            order_size: options.coin.amount.toString() as any,
+            order_size: options.coin.amount.toString(),
             reduce_only: options.reduceOnly,
           },
         },
@@ -1101,7 +1116,7 @@ export default function createBroadcastSlice(
           {
             execute_perp_order: {
               denom: order.coin.denom,
-              order_size: order.coin.amount.toString() as any,
+              order_size: order.coin.amount.toString(),
               reduce_only: order.reduceOnly,
               ...(order.orderType === 'parent' ? { order_type: 'parent' } : {}),
             },
@@ -1177,7 +1192,7 @@ export default function createBroadcastSlice(
         {
           execute_perp_order: {
             denom: options.coin.denom,
-            order_size: options.coin.amount.toString() as any,
+            order_size: options.coin.amount.toString(),
             reduce_only: options.reduceOnly,
             ...(options.orderType ? { order_type: options.orderType } : {}),
           },
@@ -1412,7 +1427,7 @@ export default function createBroadcastSlice(
         {
           execute_perp_order: {
             denom: options.coin.denom,
-            order_size: options.coin.amount.toString() as any,
+            order_size: options.coin.amount.toString(),
             reduce_only: options.reduceOnly,
           },
         },
