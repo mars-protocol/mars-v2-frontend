@@ -60,10 +60,12 @@ module.exports = {
     'gradient-stride',
     'gradient-lido',
     'gradient-milkyway',
+    'gradient-ntrn-rewards',
     'droplets',
     'stride',
     'lido',
     'milkyway',
+    'ntrn-rewards',
   ],
   theme: {
     extend: {
@@ -479,6 +481,9 @@ module.exports = {
           background:
             'linear-gradient(270deg, hsl(var(--color-active-tab-primary) /0.765) 0%, hsl(var(--color-active-tab-secondary) /0.886) 23.77%, hsl(var(--color-active-tab-tertiary) /0.26) 99.2%)',
         },
+        '.gradient-ntrn-rewards': {
+          background: 'linear-gradient(90deg, #ff4b2f, #ff9382)',
+        },
         '.gradient-droplets': {
           background: 'linear-gradient(90deg, #6039FF, #E8B8FF)',
         },
@@ -577,6 +582,12 @@ module.exports = {
         },
         '.droplets': {
           background: 'linear-gradient(90deg, #6039FF, #E8B8FF)',
+          '-webkit-background-clip': 'text',
+          '-webkit-text-fill-color': 'transparent',
+          fontWeight: 'bold',
+        },
+        '.ntrn-rewards': {
+          background: 'linear-gradient(90deg, #ff4b2f, #ff9382)',
           '-webkit-background-clip': 'text',
           '-webkit-text-fill-color': 'transparent',
           fontWeight: 'bold',
