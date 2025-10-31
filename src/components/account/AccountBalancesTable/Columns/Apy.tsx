@@ -28,7 +28,7 @@ export default function Apy(props: Props) {
   return (
     <div className='flex justify-end my-auto text-xs'>
       {hasLstApy ? (
-        <Tooltip content='Includes underlying staking APY from Liquid Staking Token' type='info'>
+        <Tooltip content='Includes underlying staking or rewards APY' type='info'>
           <div className='border-b border-dashed hover:cursor-help border-white/40 hover:border-transparent'>
             <FormattedNumber
               amount={totalApy}

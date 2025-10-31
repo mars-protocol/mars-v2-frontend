@@ -8,7 +8,7 @@ import { MarketResponse } from 'types/generated/mars-perps/MarsPerps.types'
 import { Positions } from 'types/generated/mars-rover-health-computer/MarsRoverHealthComputer.types'
 import { byDenom } from 'utils/array'
 import { getCoinValue } from 'utils/formatters'
-import { BN, mergeBNCoinArrays } from 'utils/helpers'
+import { BN } from 'utils/helpers'
 import { convertAprToApy } from 'utils/parsers'
 
 export const calculateAccountBalanceValue = (
@@ -203,12 +203,22 @@ export const calculateAccountApy = (
     if (!asset) return BN_ZERO
     const price = asset.price?.amount ?? BN_ZERO
     const amount = lend.amount.shiftedBy(-asset.decimals)
-    const apy = lendingAssetsData.find((lendingAsset) => lendingAsset.asset.denom === lend.denom)
-      ?.apy.deposit
+    const marketApy = lendingAssetsData.find(
+      (lendingAsset) => lendingAsset.asset.denom === lend.denom,
+    )?.apy.deposit
 
-    if (!apy) return
+    if (!marketApy) return
 
-    const positionInterest = amount.multipliedBy(price).multipliedBy(apy).dividedBy(100)
+    // Add campaign APY if available
+    let campaignApy = 0
+    asset.campaigns?.forEach((campaign) => {
+      if (campaign.type === 'apy') {
+        campaignApy += campaign.apy ?? 0
+      }
+    })
+
+    const totalApy = marketApy + campaignApy
+    const positionInterest = amount.multipliedBy(price).multipliedBy(totalApy).dividedBy(100)
 
     totalLendsInterestValue = totalLendsInterestValue.plus(positionInterest)
   })
