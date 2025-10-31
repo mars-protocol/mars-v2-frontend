@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { BigNumber } from 'bignumber.js'
+import BigNumber from 'bignumber.js'
 
 export const useReduceOnlyOrder = (
   isReduceOnly: boolean,

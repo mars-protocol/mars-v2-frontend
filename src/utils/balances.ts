@@ -1,6 +1,6 @@
 import { BNCoin } from 'types/classes/BNCoin'
 import { BN_ZERO } from 'constants/math'
-import { BigNumber } from 'bignumber.js'
+import BigNumber from 'bignumber.js'
 import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 
 export function findBalanceForAsset(

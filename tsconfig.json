@@ -17,6 +17,9 @@
     "jsx": "preserve",
     "incremental": true,
     "baseUrl": "src",
+    "paths": {
+      "@cosmjs/*": ["../node_modules/@cosmjs/*/build"]
+    },
     "plugins": [
       {
         "name": "next"
