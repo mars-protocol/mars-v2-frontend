@@ -106,10 +106,11 @@ const nextConfig = {
     })
 
     // Handle charting library - it's a UMD bundle that needs special treatment
+    // Use path.resolve instead of require.resolve to avoid issues when file doesn't exist yet
+    const path = require('path')
     config.resolve.alias = {
       ...config.resolve.alias,
-      // Ensure the charting library is resolved correctly
-      'utils/charting_library': require.resolve('./src/utils/charting_library/index.js'),
+      'utils/charting_library': path.resolve(__dirname, 'src/utils/charting_library/index.js'),
     }
 
     return config
