@@ -173,9 +173,7 @@ export default function AssetsSelect(props: Props) {
             selection[index] = true
           }
         })
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setWhitelistedSelected(selection)
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setNonCollateralSelected({})
       } else {
         const whitelistedSelection: RowSelectionState = {}
@@ -199,9 +197,7 @@ export default function AssetsSelect(props: Props) {
           }
         })
 
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setWhitelistedSelected(whitelistedSelection)
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setNonCollateralSelected(nonCollateralSelection)
       }
     }

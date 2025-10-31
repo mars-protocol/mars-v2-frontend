@@ -208,9 +208,7 @@ function BorrowModal(props: Props) {
 
   useEffect(() => {
     if (isRepay) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDebtAssetMax(maxDebtAssetAmount)
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSwapAssetMax(maxSwapAssetAmount)
     }
   }, [isRepay, maxDebtAssetAmount, maxSwapAssetAmount])
@@ -278,7 +276,6 @@ function BorrowModal(props: Props) {
   useEffect(() => {
     if (isRepay && isDifferentAsset) {
       if (swapAssetAmount.isGreaterThan(adjustedSwapAssetMax)) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSwapAssetAmount(adjustedSwapAssetMax)
       }
     }
@@ -317,7 +314,6 @@ function BorrowModal(props: Props) {
       }
     }
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setValidationErrors(errors)
   }, [
     isRepay,
@@ -526,15 +522,12 @@ function BorrowModal(props: Props) {
   useEffect(() => {
     if (!account || isRepay) return
     if (maxBorrow.isEqualTo(max)) return
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMax(maxBorrow)
   }, [account, isRepay, maxBorrow, max])
 
   useEffect(() => {
     if (amount.isLessThanOrEqualTo(max)) return
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     handleChange(max)
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setAmount(max)
   }, [amount, max, handleChange])
 
@@ -555,15 +548,10 @@ function BorrowModal(props: Props) {
   }, [availableRepaymentAssets])
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHasUserMadeSelection(false)
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setUseDebtAsset(false)
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedSwapAsset(null)
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDebtAssetAmount(BN_ZERO)
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSwapAssetAmount(BN_ZERO)
   }, [repayFromWallet])
 
@@ -573,7 +561,6 @@ function BorrowModal(props: Props) {
         account.deposits.some(byDenom(asset.denom)) || account.lends.some(byDenom(asset.denom))
 
       if (hasDebtAssetInAccount) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setUseDebtAsset(true)
       }
     }
