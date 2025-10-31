@@ -110,9 +110,9 @@ export const CAMPAIGNS: AssetCampaign[] = [
     incentiveCopy: '+##APY##% APY',
     classNames: 'ntrn-rewards',
     bgClassNames: 'gradient-ntrn-rewards',
-    detailedIncentiveCopy: 'Deposits earn additional ##APY##% APY via NTRN Rewars.',
+    detailedIncentiveCopy: 'Deposits earn additional ##APY##% APY via Neutron (NTRN) Rewards.',
     tooltip:
-      "Your deposit will earn the underlying Neutron Rewards APY. ATTENTION: Don't modify or close your position after depositing, as this would forfeit your NTRN rewards. You can still add to your position safely.",
+      "Your deposit will earn additional Neutron (NTRN) Rewards. ATTENTION: Don't modify or close your position after depositing, as this would forfeit your NTRN rewards. You can still add to your position safely.",
     enabledOnV1: true,
   },
 ]
