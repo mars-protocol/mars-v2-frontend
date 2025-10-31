@@ -3,8 +3,10 @@ import { fetchWithTimeout } from 'utils/fetch'
 import { convertAprToApy } from 'utils/parsers'
 
 function processApyData(aprOrApy: number, isApr: boolean, isPercent: boolean): number {
-  if (!isApr && isPercent) return aprOrApy
-  const percentApr = isPercent ? aprOrApy : aprOrApy * 100
+  // Ensure the value is a number (API might return strings)
+  const numericValue = typeof aprOrApy === 'string' ? parseFloat(aprOrApy) : aprOrApy
+  if (!isApr && isPercent) return numericValue
+  const percentApr = isPercent ? numericValue : numericValue * 100
   const apy = isApr ? convertAprToApy(percentApr, 365) : percentApr
   return apy
 }
