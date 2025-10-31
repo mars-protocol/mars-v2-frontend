@@ -1,4 +1,4 @@
-import { Droplet, Lido, MilkyWay, Stride } from 'components/common/Icons'
+import { Droplet, Lido, MilkyWay, Neutron, Stride } from 'components/common/Icons'
 
 export const CAMPAIGNS: AssetCampaign[] = [
   {
@@ -96,6 +96,25 @@ export const CAMPAIGNS: AssetCampaign[] = [
     tooltip: 'Your deposit will still earn the underlying Milkyway staking APY.',
     enabledOnV1: true,
   },
+  {
+    id: 'ntrn-rewards',
+    name: 'Neutron Rewards',
+    type: 'apy',
+    apyApi: {
+      url: 'https://cache.marsprotocol.io/api/ntrn-rewards-mars',
+      isApr: false,
+      isPercent: true,
+      apyStructure: ['ntrnRewardsDataMars', 'apy'],
+      denomStructure: ['denom'],
+    },
+    incentiveCopy: '+##APY##% APY',
+    classNames: 'ntrn-rewards',
+    bgClassNames: 'gradient-ntrn-rewards',
+    detailedIncentiveCopy: 'Deposits earn additional ##APY##% APY via Neutron (NTRN) Rewards.',
+    tooltip:
+      "Your deposit will earn additional Neutron (NTRN) Rewards. ATTENTION: Don't reduce or withdraw your position after depositing, as this would forfeit your NTRN rewards. You can still add to your position safely.",
+    enabledOnV1: true,
+  },
 ]
 
 export function CampaignLogo({ campaignId }: { campaignId: AssetCampaignId }) {
@@ -109,6 +128,8 @@ export function CampaignLogo({ campaignId }: { campaignId: AssetCampaignId }) {
       return <Lido />
     case 'milkyway':
       return <MilkyWay />
+    case 'ntrn-rewards':
+      return <Neutron />
     default:
       return null
   }

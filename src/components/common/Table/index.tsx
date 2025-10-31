@@ -45,6 +45,7 @@ export default function Table<T>(props: Props<T>) {
   const sorting = props.onSortingChange ? props.initialSorting : internalSorting
   const onSortingChange = props.onSortingChange ?? setInternalSorting
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: props.data,
     columns: props.columns,

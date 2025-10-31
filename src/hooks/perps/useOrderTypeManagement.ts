@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { OrderType } from 'types/enums'
 import { BN_ZERO } from 'constants/math'
-import { BigNumber } from 'bignumber.js'
+import BigNumber from 'bignumber.js'
 
 export const useOrderTypeManagement = (
   orderType: string,

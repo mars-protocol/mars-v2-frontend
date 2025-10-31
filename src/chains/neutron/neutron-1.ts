@@ -118,6 +118,11 @@ const Neutron1: ChainConfig = {
       campaignIds: ['lido'],
       campaignDenom: 'stETH',
     },
+    {
+      denom: 'ibc/0E293A7622DC9A6439DB60E6D234B5AF446962E27CA3AB44D0590603DFF6968E',
+      campaignIds: ['ntrn-rewards'],
+      campaignDenom: 'wbtc',
+    },
   ],
   deprecated: [
     'ibc/3649CE0C8A2C79048D8C6F31FF18FA69C9BC7EB193512E0BD03B733011290445',

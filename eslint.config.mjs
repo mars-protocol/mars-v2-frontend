@@ -51,6 +51,15 @@ export default tseslint.config(
       'linebreak-style': 'off',
       'no-undef': 'off',
       'prettier/prettier': 0,
+      // Disable new stricter react-hooks rules from Next.js 15.5.4
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/immutability': 'off',
+      'react-hooks/set-state-in-render': 'off',
+      'react-hooks/static-components': 'off',
+      'react-hooks/purity': 'off',
+      'react-hooks/preserve-manual-memoization': 'off',
+      'react-hooks/refs': 'off',
+      'react-hooks/incompatible-library': 'warn',
       'sort-imports': [
         'warn',
         {

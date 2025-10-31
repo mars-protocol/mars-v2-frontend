@@ -1,6 +1,6 @@
 import { ORACLE_DENOM } from 'constants/oracle'
 import { RewardsCenterType } from 'types/enums'
-import { ResolutionString } from 'utils/charting_library'
+import type { ResolutionString } from 'utils/charting_library'
 
 export const getDefaultKeeperFee = (chainConfig: ChainConfig) => {
   return {
