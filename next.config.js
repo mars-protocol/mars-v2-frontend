@@ -105,6 +105,13 @@ const nextConfig = {
       use: ['@svgr/webpack'],
     })
 
+    // Handle charting library - it's a UMD bundle that needs special treatment
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      // Ensure the charting library is resolved correctly
+      'utils/charting_library': require.resolve('./src/utils/charting_library/index.js'),
+    }
+
     return config
   },
 }
