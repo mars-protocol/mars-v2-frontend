@@ -8,5 +8,5 @@ export default async function getPerpsPosition(
 ) {
   const perpsClient = await getPerpsQueryClient(chainConfig)
 
-  return perpsClient.position({ denom, orderSize: amount as any, accountId })
+  return perpsClient.position({ denom, orderSize: amount, accountId })
 }

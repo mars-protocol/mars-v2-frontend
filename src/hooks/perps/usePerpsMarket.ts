@@ -22,7 +22,7 @@ export default function usePerpsMarket() {
 
     return {
       // Funding rate is per 24h
-      fundingRate: BN(perpsMarketState.current_funding_rate as any).shiftedBy(2),
+      fundingRate: BN(perpsMarketState.current_funding_rate).shiftedBy(2),
       asset: perpsAsset,
       openInterest: {
         long: longOI,

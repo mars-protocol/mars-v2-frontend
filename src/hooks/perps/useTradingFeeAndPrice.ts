@@ -20,7 +20,7 @@ export default function useTradingFeeAndPrice(denom: string, newAmount: BigNumbe
     async () => {
       const positionFees = await clients!.perps.positionFees({
         denom,
-        newSize: newAmount.toString() as any,
+        newSize: newAmount.toString(),
         accountId: accountId!,
       })
 

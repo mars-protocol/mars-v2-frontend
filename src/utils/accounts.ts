@@ -354,24 +354,22 @@ export function convertAccountToPositions(account: Account, assets: Asset[]): Po
         denom: perpPosition.denom,
         entry_price: perpPosition.entryPrice.decimalPlaces(perpAssetDecimals).toString(),
         entry_exec_price: perpPosition.entryPrice.toString(),
-        size: perpPosition.amount.toString() as any,
+        size: perpPosition.amount.toString(),
         unrealized_pnl: {
-          accrued_funding: perpPosition.pnl.unrealized.funding.amount
-            .integerValue()
-            .toString() as any,
+          accrued_funding: perpPosition.pnl.unrealized.funding.amount.integerValue().toString(),
           // TODO: There is now a double fee applied. This might be inaccurate (on the conservative side)
-          opening_fee: '0' as any,
-          closing_fee: perpPosition.pnl.unrealized.fees.amount.integerValue().toString() as any,
-          pnl: perpPosition.pnl.unrealized.net.amount.integerValue().toString() as any,
-          price_pnl: perpPosition.pnl.unrealized.price.amount.integerValue().toString() as any,
+          opening_fee: '0',
+          closing_fee: perpPosition.pnl.unrealized.fees.amount.integerValue().toString(),
+          pnl: perpPosition.pnl.unrealized.net.amount.integerValue().toString(),
+          price_pnl: perpPosition.pnl.unrealized.price.amount.integerValue().toString(),
         },
         realized_pnl: {
           // This does not matter for the health calculation
-          accrued_funding: perpPosition.pnl.realized.funding.amount.toString() as any,
-          closing_fee: '0' as any,
-          opening_fee: perpPosition.pnl.realized.fees.amount.toString() as any,
-          pnl: perpPosition.pnl.realized.net.amount.toString() as any,
-          price_pnl: perpPosition.pnl.realized.price.amount.toString() as any,
+          accrued_funding: perpPosition.pnl.realized.funding.amount.toString(),
+          closing_fee: '0',
+          opening_fee: perpPosition.pnl.realized.fees.amount.toString(),
+          pnl: perpPosition.pnl.realized.net.amount.toString(),
+          price_pnl: perpPosition.pnl.realized.price.amount.toString(),
         },
       }
     }),
