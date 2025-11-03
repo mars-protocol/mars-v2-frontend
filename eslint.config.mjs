@@ -54,7 +54,7 @@ export default tseslint.config(
       // Disable new stricter react-hooks rules from Next.js 15.5.4
       'react-hooks/set-state-in-effect': 'off',
       'react-hooks/immutability': 'off',
-      'react-hooks/set-state-in-render': 'off',
+      // 'react-hooks/set-state-in-render': 'off',
       'react-hooks/static-components': 'off',
       'react-hooks/purity': 'off',
       'react-hooks/preserve-manual-memoization': 'off',
