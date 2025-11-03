@@ -5,8 +5,7 @@ import useStore from 'store'
 export default function useLocalStorage<T>(key: string, defaultValue: T): [T, (value: T) => void] {
   const keyRef = useRef(key)
   const defaultValueRef = useRef(defaultValue)
-  const [value, _setValue] = useState(defaultValueRef.current)
-
+  const [value, _setValue] = useState(defaultValue)
   const updateValue = useCallback((value: T) => {
     useStore.setState({ [keyRef.current]: value })
     _setValue(value)
