@@ -1,6 +1,6 @@
 import { Row } from '@tanstack/react-table'
 import moment from 'moment'
-import { useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import { VaultStatus } from 'types/enums'
 import Button from 'components/common/Button'
@@ -22,7 +22,7 @@ export default function VaultExpanded(props: Props) {
   const withdrawFromVaults = useStore((s) => s.withdrawFromVaults)
   const [slippage] = useSlippage()
 
-  function depositMoreHandler() {
+  const depositMoreHandler = useCallback(() => {
     useStore.setState({
       farmModal: {
         farm: props.row.original,
@@ -32,13 +32,13 @@ export default function VaultExpanded(props: Props) {
         type: 'vault',
       },
     })
-  }
+  }, [props.row.original])
 
-  function unlockHandler() {
+  const unlockHandler = useCallback(() => {
     useStore.setState({ unlockModal: { vault } })
-  }
+  }, [vault])
 
-  async function withdrawHandler() {
+  const withdrawHandler = useCallback(async () => {
     if (!accountId) return
     const vaults = [props.row.original as DepositedVault]
     setIsConfirming(true)
@@ -47,22 +47,23 @@ export default function VaultExpanded(props: Props) {
       vaults,
       slippage,
     })
-  }
+  }, [accountId, props.row.original, withdrawFromVaults, slippage])
 
   const status = vault.status
 
-  /* BUTTONS */
+  /* BUTTONS - Memoized to avoid recreating on every render */
 
-  function DepositMoreButton() {
-    return (
+  const DepositMoreButton = useMemo(
+    () => (
       <Button onClick={depositMoreHandler} color='secondary' leftIcon={<Plus className='w-3' />}>
         Deposit more
       </Button>
-    )
-  }
+    ),
+    [depositMoreHandler],
+  )
 
-  function UnlockButton() {
-    return (
+  const UnlockButton = useMemo(
+    () => (
       <Tooltip
         type='info'
         content='In order to withdraw this position, you must first unlock it. This will unlock all the funds within this position.'
@@ -71,11 +72,12 @@ export default function VaultExpanded(props: Props) {
           Unlock to withdraw
         </Button>
       </Tooltip>
-    )
-  }
+    ),
+    [unlockHandler],
+  )
 
-  function UnlockingButton() {
-    return (
+  const UnlockingButton = useMemo(
+    () => (
       <Button
         onClick={withdrawHandler}
         color='tertiary'
@@ -85,11 +87,12 @@ export default function VaultExpanded(props: Props) {
       >
         {`Withdraw in ${moment(vault?.unlocksAt).fromNow(true)}`}
       </Button>
-    )
-  }
+    ),
+    [withdrawHandler, isConfirming, vault?.unlocksAt],
+  )
 
-  function UnlockedButton() {
-    return (
+  const UnlockedButton = useMemo(
+    () => (
       <Button
         onClick={withdrawHandler}
         color='tertiary'
@@ -98,8 +101,9 @@ export default function VaultExpanded(props: Props) {
       >
         Withdraw funds
       </Button>
-    )
-  }
+    ),
+    [withdrawHandler, isConfirming],
+  )
 
   return (
     <tr
@@ -114,10 +118,10 @@ export default function VaultExpanded(props: Props) {
     >
       <td colSpan={props.row.getAllCells().length} className='p-0'>
         <div className='flex justify-end gap-3 p-4 align-center'>
-          {status && <DepositMoreButton />}
-          {status === VaultStatus.ACTIVE && <UnlockButton />}
-          {status === VaultStatus.UNLOCKING && <UnlockingButton />}
-          {status === VaultStatus.UNLOCKED && <UnlockedButton />}
+          {status && DepositMoreButton}
+          {status === VaultStatus.ACTIVE && UnlockButton}
+          {status === VaultStatus.UNLOCKING && UnlockingButton}
+          {status === VaultStatus.UNLOCKED && UnlockedButton}
         </div>
       </td>
     </tr>

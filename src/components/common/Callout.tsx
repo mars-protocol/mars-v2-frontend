@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useCallback } from 'react'
+import { useMemo } from 'react'
 
 import { CircularProgress } from 'components/common/CircularProgress'
 import { ExclamationMarkTriangle, InfoCircle } from 'components/common/Icons'
@@ -13,7 +13,7 @@ interface Props {
 }
 
 export function Callout(props: Props) {
-  const Icon = useCallback(() => {
+  const Icon = useMemo(() => {
     switch (props.type) {
       case CalloutType.INFO:
         return <InfoCircle />
@@ -34,9 +34,7 @@ export function Callout(props: Props) {
         props.className,
       )}
     >
-      <div className={classNames('w-4', props.iconClassName)}>
-        <Icon />
-      </div>
+      <div className={classNames('w-4', props.iconClassName)}>{Icon}</div>
       <Text size='xs'>{props.children}</Text>
     </div>
   )
