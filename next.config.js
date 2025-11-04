@@ -2,6 +2,7 @@
 
 const nextConfig = {
   reactStrictMode: true,
+  transpilePackages: ['bignumber.js'],
   images: {
     remotePatterns: [
       {
@@ -98,14 +99,17 @@ const nextConfig = {
       },
     ]
   },
-  webpack(config) {
-    config.module.rules.push({
-      test: /\.svg$/i,
-      issuer: /\.[jt]sx?$/,
-      use: ['@svgr/webpack'],
-    })
-
-    return config
+  turbopack: {
+    rules: {
+      // SVG handling with @svgr/webpack
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
+    resolveAlias: {
+      'utils/charting_library': './src/utils/charting_library/index.js',
+    },
   },
 }
 

@@ -163,9 +163,9 @@ export default function FarmDeposits(props: Props) {
   function handleSwitch() {
     const isCustomRatioNew = !props.isCustomRatio
     if (!isCustomRatioNew) {
-      primaryCoin.amount = BN_ZERO
-      secondaryCoin.amount = BN_ZERO
-      onChangeDeposits([primaryCoin, secondaryCoin])
+      const newPrimaryCoin = new BNCoin({ denom: primaryCoin.denom, amount: '0' })
+      const newSecondaryCoin = new BNCoin({ denom: secondaryCoin.denom, amount: '0' })
+      onChangeDeposits([newPrimaryCoin, newSecondaryCoin])
       setPercentage(0)
     }
     props.onChangeIsCustomRatio(isCustomRatioNew)
@@ -176,15 +176,17 @@ export default function FarmDeposits(props: Props) {
       if (amount.isGreaterThan(primaryMax)) {
         amount = primaryMax
       }
-      primaryCoin.amount = amount
+      const newPrimaryCoin = new BNCoin({ denom: primaryCoin.denom, amount: amount.toString() })
       setPercentage(amount.dividedBy(primaryMax).multipliedBy(100).decimalPlaces(0).toNumber())
-      if (!props.isCustomRatio) {
-        secondaryCoin.amount = secondaryMax
-          .multipliedBy(amount.dividedBy(primaryMax))
-          .integerValue()
-      }
+      const newSecondaryAmount = !props.isCustomRatio
+        ? secondaryMax.multipliedBy(amount.dividedBy(primaryMax)).integerValue()
+        : secondaryCoin.amount
+      const newSecondaryCoin = new BNCoin({
+        denom: secondaryCoin.denom,
+        amount: newSecondaryAmount.toString(),
+      })
 
-      onChangeDeposits([primaryCoin, secondaryCoin])
+      onChangeDeposits([newPrimaryCoin, newSecondaryCoin])
     },
     [primaryMax, secondaryMax, props.isCustomRatio, primaryCoin, secondaryCoin, onChangeDeposits],
   )
@@ -194,13 +196,20 @@ export default function FarmDeposits(props: Props) {
       if (amount.isGreaterThan(secondaryMax)) {
         amount = secondaryMax
       }
-      secondaryCoin.amount = amount
+      const newSecondaryCoin = new BNCoin({
+        denom: secondaryCoin.denom,
+        amount: amount.toString(),
+      })
       setPercentage(amount.dividedBy(secondaryMax).multipliedBy(100).decimalPlaces(0).toNumber())
-      if (!props.isCustomRatio) {
-        primaryCoin.amount = primaryMax.multipliedBy(amount.dividedBy(secondaryMax)).integerValue()
-      }
+      const newPrimaryAmount = !props.isCustomRatio
+        ? primaryMax.multipliedBy(amount.dividedBy(secondaryMax)).integerValue()
+        : primaryCoin.amount
+      const newPrimaryCoin = new BNCoin({
+        denom: primaryCoin.denom,
+        amount: newPrimaryAmount.toString(),
+      })
 
-      onChangeDeposits([primaryCoin, secondaryCoin])
+      onChangeDeposits([newPrimaryCoin, newSecondaryCoin])
     },
     [primaryMax, secondaryMax, props.isCustomRatio, primaryCoin, secondaryCoin, onChangeDeposits],
   )
@@ -208,9 +217,15 @@ export default function FarmDeposits(props: Props) {
   const onChangeSlider = useCallback(
     (value: number) => {
       if (percentage !== value) setPercentage(value)
-      primaryCoin.amount = primaryMax.multipliedBy(value / 100).integerValue()
-      secondaryCoin.amount = secondaryMax.multipliedBy(value / 100).integerValue()
-      onChangeDeposits([primaryCoin, secondaryCoin])
+      const newPrimaryCoin = new BNCoin({
+        denom: primaryCoin.denom,
+        amount: primaryMax.multipliedBy(value / 100).integerValue().toString(),
+      })
+      const newSecondaryCoin = new BNCoin({
+        denom: secondaryCoin.denom,
+        amount: secondaryMax.multipliedBy(value / 100).integerValue().toString(),
+      })
+      onChangeDeposits([newPrimaryCoin, newSecondaryCoin])
     },
     [percentage, primaryCoin, primaryMax, secondaryCoin, secondaryMax, onChangeDeposits],
   )

@@ -1,10 +1,13 @@
 import { useEffect, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
+import dynamic from 'next/dynamic'
 
 import GridWithSplitters from 'components/common/Grid/GridWithSplitters'
 import AccountDetailsCard from 'components/trade/AccountDetailsCard'
-import TradeChart from 'components/trade/TradeChart'
 import TradeModule from 'components/trade/TradeModule'
+
+// TradeChart uses the charting library which is browser-only, so we load it dynamically
+const TradeChart = dynamic(() => import('components/trade/TradeChart'), { ssr: false })
 import { getDefaultChainSettings } from 'constants/defaultSettings'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useTradeEnabledAssets from 'hooks/assets/useTradeEnabledAssets'

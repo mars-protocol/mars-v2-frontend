@@ -130,8 +130,9 @@ export default function FarmBorrowings(props: FarmBorrowingsProps) {
 
   function updateAssets(denom: string, amount: BigNumber) {
     const index = props.borrowings.findIndex((coin) => coin.denom === denom)
-    props.borrowings[index].amount = amount
-    props.onChangeBorrowings([...props.borrowings])
+    const newBorrowings = [...props.borrowings]
+    newBorrowings[index].amount = amount
+    props.onChangeBorrowings(newBorrowings)
   }
 
   function onDelete(denom: string) {

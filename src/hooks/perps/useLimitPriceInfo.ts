@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { BigNumber } from 'bignumber.js'
+import BigNumber from 'bignumber.js'
 import { DEFAULT_LIMIT_PRICE_INFO } from 'components/perps/Module/constants'
 import { capitalizeFirstLetter } from 'utils/helpers'
 import { CalloutType } from 'components/common/Callout'

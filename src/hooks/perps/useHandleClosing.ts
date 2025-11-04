@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { BigNumber } from 'bignumber.js'
+import BigNumber from 'bignumber.js'
 
 export const useHandleClosing = (
   currentPerpPosition: PerpsPosition | undefined,

@@ -57,9 +57,7 @@ function Content(props: Props) {
         title: (
           <Tooltip
             type='info'
-            content={
-              hasLstApy ? 'Includes underlying staking APY from Liquid Staking Tokens' : undefined
-            }
+            content={hasLstApy ? 'Includes underlying staking or rewards APY' : undefined}
           >
             <div className='flex w-full justify-center'>
               <div
