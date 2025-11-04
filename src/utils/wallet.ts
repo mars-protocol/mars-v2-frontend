@@ -7,7 +7,7 @@ interface SkipAddresses {
 }
 
 export function convertToNeutronAddress(address?: string): string | null {
-  if (!address) return null
+  if (!address || !address.includes('1')) return null
   const { data } = fromBech32(address)
   return toBech32('neutron', data)
 }
