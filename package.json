@@ -23,7 +23,7 @@
     "@cosmjs/cosmwasm-stargate": "^0.37.0",
     "@delphi-labs/shuttle-react": "^4.3.0",
     "@keplr-wallet/cosmos": "^0.12.285",
-    "@next/eslint-plugin-next": "^16.0.1",
+    "@next/eslint-plugin-next": "16.0.1",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@skip-go/client": "^1.5.9",
     "@solana/web3.js": "^1.98.4",
@@ -46,10 +46,11 @@
     "lodash.throttle": "^4.1.1",
     "mobx": "^6.15.0",
     "moment": "^2.30.1",
-    "next": "15.5.4",
+    "next": "16.0.1",
+    "next-devtools-mcp": "^0.2.5",
     "react": "19.2.0",
     "react-device-detect": "^2.2.3",
-    "react-dom": "^19.2.0",
+    "react-dom": "19.2.0",
     "react-draggable": "^4.5.0",
     "react-helmet-async": "^2.0.5",
     "react-qr-code": "^2.0.18",
@@ -117,5 +118,9 @@
   "engines": {
     "npm": "please-use-yarn",
     "yarn": ">= 1.19.1"
+  },
+  "resolutions": {
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2"
   }
 }
