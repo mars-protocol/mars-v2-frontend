@@ -110,8 +110,12 @@ export default function FarmLeverage(props: HlsFarmLeverageProps) {
 
   function updateAssets(denom: string, amount: BigNumber) {
     const index = borrowings.findIndex((coin) => coin.denom === denom)
-    borrowings[index].amount = amount
-    onChangeBorrowings([...borrowings])
+    const updatedBorrowings = [...borrowings]
+    updatedBorrowings[index] = new BNCoin({
+      denom,
+      amount: amount.toString(),
+    })
+    onChangeBorrowings(updatedBorrowings)
   }
 
   return (

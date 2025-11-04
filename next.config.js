@@ -99,36 +99,17 @@ const nextConfig = {
       },
     ]
   },
-  webpack(config, { isServer }) {
-    config.module.rules.push({
-      test: /\.svg$/i,
-      issuer: /\.[jt]sx?$/,
-      use: ['@svgr/webpack'],
-    })
-
-    // Handle charting library - it's a UMD bundle that needs special treatment
-    // Use path.resolve instead of require.resolve to avoid issues when file doesn't exist yet
-    const path = require('path')
-    const fs = require('fs')
-    const chartingLibraryPath = path.resolve(__dirname, 'src/utils/charting_library/index.js')
-
-    // Only add alias if the file exists (it's created by install-charting-library script)
-    if (fs.existsSync(chartingLibraryPath)) {
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        'utils/charting_library': chartingLibraryPath,
-      }
-    }
-
-    // Fix for packages with only "exports" field (like @cosmjs)
-    // This ensures webpack can resolve them properly
-    config.resolve.extensionAlias = {
-      '.js': ['.js', '.ts', '.tsx'],
-      '.mjs': ['.mjs', '.mts'],
-      ...config.resolve.extensionAlias,
-    }
-
-    return config
+  turbopack: {
+    rules: {
+      // SVG handling with @svgr/webpack
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
+    resolveAlias: {
+      'utils/charting_library': './src/utils/charting_library/index.js',
+    },
   },
 }
 

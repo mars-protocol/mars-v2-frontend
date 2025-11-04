@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import Accordion from 'components/common/Accordion'
 import useAccordionItems from 'components/Modals/Hls/Deposit/useAccordionItems'
@@ -23,14 +23,15 @@ export default function Controller(props: Props) {
   const address = useStore((s) => s.address)
   const { data: hlsAccounts } = useAccounts('high_levered_strategy', address)
   const emptyHlsAccounts = useMemo(() => {
-    const emptyAccounts = hlsAccounts.filter((account) => isAccountEmpty(account))
+    return hlsAccounts.filter((account) => isAccountEmpty(account))
+  }, [hlsAccounts])
 
-    if (emptyAccounts.length > 0 && selectedAccount.id === 'default') {
-      setSelectedAccount(emptyAccounts[0])
+  useEffect(() => {
+    if (emptyHlsAccounts.length > 0 && selectedAccount.id === 'default') {
+      setSelectedAccount(emptyHlsAccounts[0])
     }
+  }, [emptyHlsAccounts, selectedAccount.id])
 
-    return emptyAccounts
-  }, [hlsAccounts, selectedAccount])
   const walletCollateralAsset = useCurrentWalletBalance(props.collateralAsset.denom)
 
   if (props.strategy) {

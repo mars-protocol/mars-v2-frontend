@@ -48,6 +48,15 @@ export default function ErrorNodePage() {
     [setValidRpc, chainId, setRpcEndpoint],
   )
 
+  const refresh = useCallback(() => {
+    setClicked(true)
+    if (typeof window !== 'undefined') {
+      setTimeout(() => {
+        window.location.href = '/'
+      }, 1000)
+    }
+  }, [])
+
   const onSetFallback = useCallback(() => {
     setClicked(true)
     if (rpcEndpoint === chainConfig.endpoints.fallbackRpc) {
@@ -67,16 +76,8 @@ export default function ErrorNodePage() {
     currentWallet,
     disconnectWallet,
     setRpcEndpoint,
+    refresh,
   ])
-
-  const refresh = () => {
-    setClicked(true)
-    if (typeof window !== 'undefined') {
-      setTimeout(() => {
-        window.location.href = '/'
-      }, 1000)
-    }
-  }
 
   const inputValue = useMemo(
     () => (tempRpcEndpoint.trim().length === 0 ? rpcEndpoint : tempRpcEndpoint),

@@ -107,11 +107,15 @@ export default function WalletSelect(props: Props) {
       })
 
       if (isMobile) {
+        // window.location.href is a navigation action, not a mutation of state
         if (isAndroid()) {
+          // eslint-disable-next-line react-hooks/immutability
           window.location.href = urls.androidUrl
         } else if (isIOS()) {
+          // eslint-disable-next-line react-hooks/immutability
           window.location.href = urls.iosUrl
         } else {
+          // eslint-disable-next-line react-hooks/immutability
           window.location.href = urls.androidUrl
         }
       } else {

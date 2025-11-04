@@ -6,7 +6,7 @@ import { WrappedBNCoin } from 'types/classes/WrappedBNCoin'
 import { BN } from 'utils/helpers'
 import useChainConfig from 'hooks/chain/useChainConfig'
 
-export function useUSDCBalances(walletBalances: any[]) {
+export function useUSDCBalances(walletBalances: Coin[]) {
   const [usdcBalances, setUsdcBalances] = useState<WrappedBNCoin[]>([])
   const { isConnecting, isConnected, address } = useAccount()
   const chainConfig = useChainConfig()
