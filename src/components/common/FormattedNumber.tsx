@@ -18,10 +18,15 @@ export const FormattedNumber = React.memo(
     const smallerThanThreshold = props.smallerThanThreshold
 
     if (smallerThanThreshold) {
-      if (!options) options = { prefix: '< ' }
-      if (options.prefix && options.prefix.substring(0, 1) !== '<')
-        options.prefix = `< ${options.prefix}`
-      else options.prefix = '< '
+      if (!options) {
+        options = { prefix: '< ' }
+      } else {
+        options = {
+          ...options,
+          prefix:
+            options.prefix && options.prefix.substring(0, 1) !== '<' ? `< ${options.prefix}` : '< ',
+        }
+      }
     }
 
     return (

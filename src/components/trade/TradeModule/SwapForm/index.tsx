@@ -102,13 +102,6 @@ export default function SwapForm(props: Props) {
     return []
   }, [account, isAutoRepayChecked, markets, outputAsset.denom, outputAssetAmount])
 
-  const handleRangeInputChange = useCallback(
-    (value: number) => {
-      setInputAssetAmount(BN(value).shiftedBy(inputAsset.decimals).integerValue())
-    },
-    [setInputAssetAmount, inputAsset.decimals],
-  )
-
   const [maxInputAmount, inputMarginThreshold] = useMemo(() => {
     const maxAmount = computeMaxSwapAmount(inputAsset, outputAsset, 'default', isAutoRepayChecked)
     const maxAmountOnMargin = computeMaxSwapAmount(
@@ -120,18 +113,27 @@ export default function SwapForm(props: Props) {
 
     if (isMarginChecked) return [maxAmountOnMargin, maxAmount]
 
-    if (inputAssetAmount.isGreaterThan(maxAmount)) setInputAssetAmount(maxAmount)
-
     return [maxAmount, maxAmount]
-  }, [
-    computeMaxSwapAmount,
-    inputAsset,
-    outputAsset,
-    isMarginChecked,
-    inputAssetAmount,
-    setInputAssetAmount,
-    isAutoRepayChecked,
-  ])
+  }, [computeMaxSwapAmount, inputAsset, outputAsset, isMarginChecked, isAutoRepayChecked])
+
+  // Wrapped setter that caps input to max when not using margin
+  const setInputAssetAmountCapped = useCallback(
+    (amount: BigNumber) => {
+      if (!isMarginChecked && amount.isGreaterThan(maxInputAmount)) {
+        setInputAssetAmount(maxInputAmount)
+      } else {
+        setInputAssetAmount(amount)
+      }
+    },
+    [isMarginChecked, maxInputAmount, setInputAssetAmount],
+  )
+
+  const handleRangeInputChange = useCallback(
+    (value: number) => {
+      setInputAssetAmountCapped(BN(value).shiftedBy(inputAsset.decimals).integerValue())
+    },
+    [setInputAssetAmountCapped, inputAsset.decimals],
+  )
 
   const swapTx = useMemo(() => {
     if (!routeInfo) return
@@ -435,7 +437,7 @@ export default function SwapForm(props: Props) {
           <AssetAmountInput
             max={maxInputAmount}
             amount={inputAssetAmount}
-            setAmount={setInputAssetAmount}
+            setAmount={setInputAssetAmountCapped}
             asset={inputAsset}
             maxButtonLabel='Balance:'
             disabled={isConfirming}
