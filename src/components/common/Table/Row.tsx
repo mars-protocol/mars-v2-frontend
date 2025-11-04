@@ -34,24 +34,33 @@ function getBorderColor(
   return perpRow.tradeDirection === 'short' ? 'border-loss' : 'border-profit'
 }
 
+type RowWithName = { name?: string }
+type RowWithWhitelisted = { isWhitelisted?: boolean }
+type RowWithAsset = { asset?: { denom?: string; chainName?: string } }
+type RowWithBridgeStatus = { bridgeStatus?: string }
+
 export default function Row<T>(props: Props<T>) {
   const { renderExpanded, table, row, type, spacingClassName, isSelectable, isBalancesTable } =
     props
 
   const canExpand = !!renderExpanded
 
-  const name = (row.original as any).name ?? ''
+  const name = (row.original as RowWithName).name ?? ''
   const isWhitelisted =
-    (row.original as any).isWhitelisted !== false && !name.includes('Perps USDC Vault')
+    (row.original as RowWithWhitelisted).isWhitelisted !== false &&
+    !name.includes('Perps USDC Vault')
 
   const handleRowClick = (e: React.MouseEvent) => {
     e.preventDefault()
     if (isSelectable) {
-      const rowData = row.original as any
+      const rowData = row.original as RowWithAsset
       if (rowData?.asset?.chainName) {
         const allRows = table.getRowModel().rows
         const selectedEvmRows = allRows.filter(
-          (r) => (r.original as any)?.asset?.chainName && r.getIsSelected() && r.id !== row.id,
+          (r) =>
+            (r.original as RowWithAsset)?.asset?.chainName &&
+            r.getIsSelected() &&
+            r.id !== row.id,
         )
 
         if (selectedEvmRows.length > 0 && !row.getIsSelected()) {
@@ -68,13 +77,16 @@ export default function Row<T>(props: Props<T>) {
     }
 
     if (props.onClick) {
-      props.onClick((row.original as any).asset.denom)
+      const rowData = row.original as RowWithAsset
+      if (rowData.asset?.denom) {
+        props.onClick(rowData.asset.denom)
+      }
     }
   }
 
   return (
     <>
-      {(row.original as any)?.bridgeStatus ? (
+      {(row.original as RowWithBridgeStatus)?.bridgeStatus ? (
         <BridgeRow row={row} spacingClassName={spacingClassName} type={type} />
       ) : (
         <tr
@@ -103,7 +115,11 @@ export default function Row<T>(props: Props<T>) {
                     'border-l',
                   type &&
                     type !== 'strategies' &&
-                    getBorderColor(type, cell.row.original as any, isWhitelisted),
+                    getBorderColor(
+                      type,
+                      cell.row.original as AccountBalanceRow | AccountStrategyRow | AccountPerpRow,
+                      isWhitelisted,
+                    ),
                   cell.column.columnDef.meta?.className,
                   !isWhitelisted && isBalancesTable && 'opacity-60',
                   !isWhitelisted && isBalancesTable && 'group-hover/assetRow:opacity-100',
