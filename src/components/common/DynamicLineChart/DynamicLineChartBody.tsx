@@ -10,7 +10,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import moment from 'moment'
+import dayjs from 'utils/dayjs'
 import { formatValue } from 'utils/formatters'
 import ChartLegend from 'components/common/Legend/ChartLegend'
 import DisplayCurrency from 'components/common/DisplayCurrency'
@@ -215,9 +215,9 @@ export default function DynamicLineChartBody(props: Props) {
             stroke={axisColor}
             tickFormatter={(value) => {
               if (timeframe === '24') {
-                return moment(value).format('HH:mm')
+                return dayjs(value).format('HH:mm')
               }
-              return moment(value).format('DD MMM')
+              return dayjs(value).format('DD MMM')
             }}
             interval={data.length > 10 ? Math.floor(data.length / 7) : 0}
           />

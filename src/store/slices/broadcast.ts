@@ -3,7 +3,7 @@ import {
   MsgExecuteContract,
   MsgInstantiateContract,
 } from '@delphi-labs/shuttle'
-import moment from 'moment'
+import dayjs from 'utils/dayjs'
 import { StoreApi } from 'zustand'
 
 import getPythPriceData from 'api/prices/getPythPriceData'
@@ -963,7 +963,7 @@ export default function createBroadcastSlice(
     },
     handleTransaction: (options: { response: Promise<BroadcastResult>; message?: string }) => {
       const { response, message } = options
-      const id = moment().unix()
+      const id = dayjs().unix()
       const toastOptions: Partial<ToastObjectOptions> = {
         id,
         message,

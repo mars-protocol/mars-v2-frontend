@@ -5,7 +5,7 @@ import { ExternalLink } from 'components/common/Icons'
 import { truncate } from 'utils/formatters'
 import { TextLink } from 'components/common/TextLink'
 import useChainConfig from 'hooks/chain/useChainConfig'
-import moment from 'moment'
+import dayjs from 'utils/dayjs'
 
 export const INFO_META = {
   meta: { className: 'w-40' },
@@ -25,7 +25,7 @@ export default function Info(props: Props) {
 
   const getStatus = (cooldown_end?: number) => {
     if (!cooldown_end) return null
-    const currentTime = moment().unix()
+    const currentTime = dayjs().unix()
     return cooldown_end <= currentTime ? 'Ready to withdraw' : 'Queued'
   }
   const status = value.cooldown_end ? getStatus(value.cooldown_end) : value.status

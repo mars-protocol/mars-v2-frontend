@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'utils/dayjs'
 
 import { getClient, getCreditManagerQueryClient, getVaultQueryClient } from 'api/cosmwasm-client'
 import getVaults from 'api/vaults/getVaults'
@@ -47,7 +47,7 @@ async function getVaultPositionStatusAndUnlockIdAndUnlockTime(
       vaultPosition.vault.address,
     )
 
-    if (moment(unlocksAtTimestamp).isBefore(new Date())) {
+    if (dayjs(unlocksAtTimestamp).isBefore(new Date())) {
       return [VaultStatus.UNLOCKED, unlockId, unlocksAtTimestamp]
     }
 
