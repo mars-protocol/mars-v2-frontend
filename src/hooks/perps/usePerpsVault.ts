@@ -1,4 +1,4 @@
-import moment from 'moment'
+import { dayjsDuration } from 'utils/dayjs'
 import useSWR from 'swr'
 
 import { PERPS_DEFAULT_ACTION } from 'constants/perps'
@@ -34,7 +34,7 @@ export default function usePerpsVault() {
         console.error(e)
       }
 
-      const timeframe = moment.duration(perpsVault.cooldown_period, 'seconds').humanize().split(' ')
+      const timeframe = dayjsDuration(perpsVault.cooldown_period, 'seconds').humanize().split(' ')
       return {
         name: 'Perps USDC Vault',
         provider: 'MARS',

@@ -1,4 +1,4 @@
-import moment from 'moment/moment'
+import dayjs from 'utils/dayjs'
 import { useCallback, useMemo, useState } from 'react'
 
 import DropDownButton from 'components/common/Button/DropDownButton'
@@ -92,7 +92,7 @@ export default function VaultManage(props: Props) {
         ? [
             {
               icon: <LockLocked />,
-              text: `Withdraw in ${moment(props.vault?.unlocksAt).fromNow(true)}`,
+              text: `Withdraw in ${dayjs(props.vault?.unlocksAt).fromNow(true)}`,
               onClick: () => {},
               disabled: true,
               disabledTooltip: '',
