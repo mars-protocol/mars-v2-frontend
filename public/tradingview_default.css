@@ -95,7 +95,7 @@ div[data-name="object-tree-dialog"] * ,
 div[data-name="series-properties-dialog"],
 /* Checkbox */
 [class^='close-'],
-/* Close buton series popup */
+/* Close button series popup */
 [class^='close-']:hover {
   background: var(--tv-menu-background) !important;
   outline: white !important;
@@ -125,7 +125,7 @@ div[data-name="series-properties-dialog"],
   background-color: var(--tv-form-background) !important;
 }
 
-/* Devider Lines */
+/* Divider Lines */
 [class^='content-'],
 [class^='container-'],
 [class^='footer-'] {
@@ -146,7 +146,7 @@ div[data-role="dialog-content"] div[data-role="list-item"] span,
 div[data-name="series-properties-dialog"],
 /* Series left sidetabs */
 [class^='tab-'],
-/* Close buton series popup */
+/* Close button series popup */
 [class^='close-'] {
   color: var(--tv-menu-text) !important;
 }
