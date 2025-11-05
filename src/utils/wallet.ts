@@ -26,3 +26,13 @@ export function convertToStargazeAddress(address?: string) {
   const { data } = fromBech32(address)
   return toBech32('stars', data)
 }
+
+export function convertToChainAddress(address?: string, chainPrefix?: string): string | null {
+  if (!address || !chainPrefix) return null
+  try {
+    const { data } = fromBech32(address)
+    return toBech32(chainPrefix, data)
+  } catch {
+    return null
+  }
+}

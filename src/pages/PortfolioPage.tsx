@@ -1,6 +1,7 @@
 import ShareBar from 'components/common/ShareBar'
 import AccountOverview from 'components/portfolio/Overview'
 import PortfolioSummary from 'components/portfolio/Overview/Summary'
+import V1Overview from 'components/portfolio/Overview/V1Overview'
 import PortfolioIntro from 'components/portfolio/PortfolioIntro'
 import MarsStaking from 'components/staking/MarsStaking'
 
@@ -16,6 +17,10 @@ export default function PortfolioPage() {
         <div className='w-full'>
           <MarsStaking className='h-full' />
         </div>
+      </div>
+
+      <div className='w-full'>
+        <V1Overview />
       </div>
 
       <div className='w-full'>
