@@ -1,13 +1,12 @@
-import { useParams } from 'react-router-dom'
-
 import ConnectInfo from 'components/portfolio/Overview/ConnectInfo'
 import useAccountIds from 'hooks/accounts/useAccountIds'
+import useUrlAddress from 'hooks/wallet/useUrlAddress'
 import useStore from 'store'
 import AccountsOverview from 'components/portfolio/Overview/AccountsOverview'
 import LiquidationsOverview from 'components/portfolio/Overview/LiquidationsOverview'
 
 export default function AccountSummary() {
-  const { address: urlAddress } = useParams()
+  const urlAddress = useUrlAddress()
   const walletAddress = useStore((s) => s.address)
   const { data: defaultAccountIds, isLoading: defaultIsLoading } = useAccountIds(
     urlAddress,
