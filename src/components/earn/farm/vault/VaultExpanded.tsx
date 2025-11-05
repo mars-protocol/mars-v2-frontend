@@ -1,14 +1,13 @@
 import { Row } from '@tanstack/react-table'
-import moment from 'moment'
-import { useCallback, useMemo, useState } from 'react'
-
-import { VaultStatus } from 'types/enums'
 import Button from 'components/common/Button'
 import { AccountArrowDown, LockLocked, LockUnlocked, Plus } from 'components/common/Icons'
 import { Tooltip } from 'components/common/Tooltip'
-import useSlippage from 'hooks/settings/useSlippage'
 import useAccountId from 'hooks/accounts/useAccountId'
+import useSlippage from 'hooks/settings/useSlippage'
+import { useCallback, useMemo, useState } from 'react'
 import useStore from 'store'
+import { VaultStatus } from 'types/enums'
+import dayjs from 'utils/dayjs'
 
 interface Props {
   row: Row<DepositedVault>
@@ -85,7 +84,7 @@ export default function VaultExpanded(props: Props) {
         leftIcon={<LockLocked />}
         disabled
       >
-        {`Withdraw in ${moment(vault?.unlocksAt).fromNow(true)}`}
+        {`Withdraw in ${dayjs(vault?.unlocksAt).fromNow(true)}`}
       </Button>
     ),
     [withdrawHandler, isConfirming, vault?.unlocksAt],

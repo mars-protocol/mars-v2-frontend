@@ -1,25 +1,31 @@
 import { useMemo } from 'react'
-import { useParams } from 'react-router-dom'
 
 import DisplayCurrency from 'components/common/DisplayCurrency'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import SummarySkeleton from 'components/portfolio/SummarySkeleton'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import useAccounts from 'hooks/accounts/useAccounts'
+import useUrlAddress from 'hooks/wallet/useUrlAddress'
+import useV1Account from 'hooks/v1/useV1Account'
 import useStore from 'store'
 import { DEFAULT_PORTFOLIO_STATS } from 'utils/constants'
 import { mergeBNCoinArrays, mergePerpsVaults } from 'utils/helpers'
 import { useAccountSummaryStats } from 'hooks/accounts/useAccountSummaryStats'
 
 export default function PortfolioSummary() {
-  const { address: urlAddress } = useParams()
+  const urlAddress = useUrlAddress()
   const walletAddress = useStore((s) => s.address)
   const { data: defaultAccounts } = useAccounts('default', urlAddress || walletAddress)
   const { data: hlsAccounts } = useAccounts('high_levered_strategy', urlAddress || walletAddress)
+  const { data: v1Account } = useV1Account(urlAddress || walletAddress)
 
   const allAccounts = useMemo(() => {
-    return [...(defaultAccounts || []), ...(hlsAccounts || [])]
-  }, [defaultAccounts, hlsAccounts])
+    const accounts = [...(defaultAccounts || []), ...(hlsAccounts || [])]
+    if (v1Account) {
+      accounts.push(v1Account)
+    }
+    return accounts
+  }, [defaultAccounts, hlsAccounts, v1Account])
 
   const combinedAccount = useMemo(() => {
     if (!allAccounts?.length) return

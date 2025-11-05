@@ -18,7 +18,7 @@ import useVaultAssets from 'hooks/assets/useVaultAssets'
 import { useAllUnlocks } from 'hooks/managedVaults/useAllUnlocks'
 import { useUserUnlocks } from 'hooks/managedVaults/useUserUnlocks'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
-import moment from 'moment'
+import dayjs, { dayjsDuration } from 'utils/dayjs'
 import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -64,7 +64,7 @@ export default function Withdrawals(props: Props) {
 
   const vaultAssets = useVaultAssets()
   const depositAsset = vaultAssets.find(byDenom(details.base_tokens_denom)) as Asset
-  const withdrawalDate = moment(details.performance_fee_state.last_withdrawal * 1000)
+  const withdrawalDate = dayjs(details.performance_fee_state.last_withdrawal * 1000)
   const isValidWithdrawal = withdrawalDate.isValid()
   const userWithdrawalColumns = useUserWithdrawals({
     isLoading: false,
@@ -74,7 +74,7 @@ export default function Withdrawals(props: Props) {
   const queuedWithdrawalcolumns = useQueuedWithdrawals({ isLoading: false, details, depositAsset })
 
   const lockUpPeriod = formatLockupPeriod(
-    moment.duration(details.cooldown_period, 'seconds').as('days'),
+    dayjsDuration(details.cooldown_period, 'seconds').asDays(),
     'days',
   )
   const totalQueuedWithdrawals = allUnlocksData.reduce(

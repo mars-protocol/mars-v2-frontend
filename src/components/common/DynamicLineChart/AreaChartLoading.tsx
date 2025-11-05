@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import moment from 'moment'
+import dayjs from 'utils/dayjs'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from 'recharts'
 
 import { getDefaultChainSettings } from 'constants/defaultSettings'
@@ -13,11 +13,11 @@ interface Props {
 function createLoadingData() {
   const data = []
   const dataValues = [10, 20, 80, 30, 60, 50, 60]
-  const startDate = moment().subtract(7, 'days')
-  const endDate = moment()
+  const startDate = dayjs().subtract(7, 'days')
+  const endDate = dayjs()
   const days = endDate.diff(startDate, 'days')
   for (let i = 0; i < days; i++) {
-    const date = moment(startDate).add(i, 'days')
+    const date = startDate.add(i, 'days')
     data.push({
       date: date.format('YYYY-MM-DD'),
       value: dataValues[i],

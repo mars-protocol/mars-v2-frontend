@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'utils/dayjs'
 import { mutate } from 'swr'
 
 import {
@@ -24,8 +24,8 @@ export async function generateToast(
   )
   const accountId = getCreditAccountIdFromBroadcastResult(result)
   const toast = {
-    id: toastOptions?.id ?? moment().unix(),
-    timestamp: toastOptions?.id ?? moment().unix(),
+    id: toastOptions?.id ?? dayjs().unix(),
+    timestamp: toastOptions?.id ?? dayjs().unix(),
     address,
     isError: false,
     hash: result.result?.hash ?? '',
