@@ -22,7 +22,7 @@ import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import moment from 'moment'
+import dayjs from 'utils/dayjs'
 import { BNCoin } from 'types/classes/BNCoin'
 import {
   ChartingLibraryWidgetOptions,
@@ -224,7 +224,7 @@ export default function TradeChart(props: Props) {
 
       if (entryPrice) {
         chart.createShape(
-          { price: entryPrice, time: moment().unix() },
+          { price: entryPrice, time: dayjs().unix() },
           {
             shape: 'horizontal_line',
             lock: true,
@@ -244,7 +244,7 @@ export default function TradeChart(props: Props) {
 
       if (liquidationPrice) {
         chart.createShape(
-          { price: liquidationPrice, time: moment().unix() },
+          { price: liquidationPrice, time: dayjs().unix() },
           {
             shape: 'horizontal_line',
             lock: true,
@@ -271,7 +271,7 @@ export default function TradeChart(props: Props) {
           chart.createShape(
             {
               price: price,
-              time: moment().unix(),
+              time: dayjs().unix(),
             },
             {
               shape: 'horizontal_line',

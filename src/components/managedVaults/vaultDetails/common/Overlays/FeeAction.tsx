@@ -16,7 +16,7 @@ import { FormattedNumber } from 'components/common/FormattedNumber'
 import { MAX_AMOUNT_DECIMALS } from 'constants/math'
 import { produceCountdown } from 'utils/formatters'
 import { useState } from 'react'
-import moment from 'moment'
+import dayjs, { dayjsDuration } from 'utils/dayjs'
 
 interface Props {
   showFeeActionModal: boolean
@@ -45,7 +45,7 @@ export default function FeeAction(props: Props) {
   const isEdit = type === 'edit'
 
   const lastWithdrawalTime = vaultDetails.performance_fee_state.last_withdrawal
-  const currentTime = moment().unix()
+  const currentTime = dayjs().unix()
   const withdrawalInterval = vaultDetails.performance_fee_config.withdrawal_interval
   const timeSinceLastWithdrawal = currentTime - lastWithdrawalTime
   const cannotWithdraw = timeSinceLastWithdrawal <= withdrawalInterval
@@ -61,7 +61,7 @@ export default function FeeAction(props: Props) {
     setIsTxPending(true)
     try {
       const feeRate = performanceFee.dividedBy(100).dividedBy(8760).decimalPlaces(18).toString()
-      const withdrawalIntervalSeconds = moment.duration(30, 'days').asSeconds()
+      const withdrawalIntervalSeconds = dayjsDuration(30, 'days').asSeconds()
 
       const options: PerformanceFeeOptions = {
         vaultAddress,
@@ -159,9 +159,10 @@ export default function FeeAction(props: Props) {
               ) : (
                 <>
                   Fees can only be withdrawn once every{' '}
-                  {moment
-                    .duration(vaultDetails.performance_fee_config.withdrawal_interval, 'seconds')
-                    .asDays()}{' '}
+                  {dayjsDuration(
+                    vaultDetails.performance_fee_config.withdrawal_interval,
+                    'seconds',
+                  ).asDays()}{' '}
                   days.
                 </>
               )}

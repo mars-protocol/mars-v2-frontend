@@ -1,5 +1,5 @@
 import { Row } from '@tanstack/react-table'
-import moment from 'moment'
+import dayjs from 'utils/dayjs'
 import { useCallback, useMemo, useState } from 'react'
 
 import { VaultStatus } from 'types/enums'
@@ -85,7 +85,7 @@ export default function VaultExpanded(props: Props) {
         leftIcon={<LockLocked />}
         disabled
       >
-        {`Withdraw in ${moment(vault?.unlocksAt).fromNow(true)}`}
+        {`Withdraw in ${dayjs(vault?.unlocksAt).fromNow(true)}`}
       </Button>
     ),
     [withdrawHandler, isConfirming, vault?.unlocksAt],

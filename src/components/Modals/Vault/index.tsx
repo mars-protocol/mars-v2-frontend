@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'utils/dayjs'
 import { useCallback, useMemo } from 'react'
 
 import DoubleLogo from 'components/common/DoubleLogo'
@@ -38,9 +38,10 @@ function VaultModal(props: Props) {
   }, [])
 
   const unlockTime = useMemo(() => {
-    if ('unlocksAt' in vault && vault.unlocksAt) {
-      return moment(vault.unlocksAt)
+    if ('unlocksAt' in vault && typeof vault.unlocksAt === 'number') {
+      return dayjs(vault.unlocksAt)
     }
+    return undefined
   }, [vault])
 
   const { addedDebts, removedDeposits, removedLends, simulateVaultDeposit } =
@@ -55,7 +56,7 @@ function VaultModal(props: Props) {
           <Text className='pl-3 pr-2'>{vault.name}</Text>
           {unlockTime && (
             <Tooltip
-              content={`Account position for this vault unlocks at ${unlockTime}`}
+              content={`Account position for this vault unlocks at ${unlockTime.format('MMM D, YYYY h:mm A')}`}
               type={'info'}
             >
               <div className='w-4 h-4'>
