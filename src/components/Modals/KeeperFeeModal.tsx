@@ -99,7 +99,7 @@ export default function KeeperFeeModal() {
         <Button
           onClick={handleActionClick}
           disabled={isLessThanMin}
-          className='w-full !text-base'
+          className='w-full text-base!'
           color='tertiary'
           text='Done'
         />

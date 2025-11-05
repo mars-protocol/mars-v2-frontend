@@ -157,7 +157,7 @@ export default function ChainSelect(props: Props) {
         onClick={() => setShowMenu()}
         className={classNames(
           'flex items-center justify-center',
-          props.withText ? 'w-auto !px-2 !pr-8 h-[32px]' : '!p-0 w-8',
+          props.withText ? 'w-auto px-2! pr-8! h-[32px]' : 'p-0! w-8',
         )}
       />
       {props.withText && (

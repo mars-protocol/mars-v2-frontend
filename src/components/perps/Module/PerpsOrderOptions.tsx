@@ -61,7 +61,7 @@ export const PerpsOrderOptions = ({
   }, [handleClearTriggers, perpsAsset.denom])
 
   return (
-    <div className='flex w-full flex-col bg-white bg-opacity-5 rounded-sm border-[1px] border-white/10'>
+    <div className='flex w-full flex-col bg-white bg-opacity-5 rounded-sm border border-white/10'>
       <div className='flex flex-col gap-1 px-3 py-4'>
         {showReduceOnly && (
           <>

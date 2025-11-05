@@ -62,11 +62,11 @@ export default function AssetAmountInput(props: Props) {
     <div className={containerClassName}>
       <label>
         {label}
-        <div className='flex flex-1 flex-row py-3 border-[1px] border-white/20 rounded bg-white bg-opacity-5 pl-3 pr-2 mt-2'>
+        <div className='flex flex-1 flex-row py-3 border border-white/20 rounded bg-white bg-opacity-5 pl-3 pr-2 mt-2'>
           <NumberInput
             asset={asset}
             amount={amount}
-            className='border-none bg-transparent outline-none flex-1 !text-left'
+            className='border-none bg-transparent outline-none flex-1 text-left!'
             maxDecimals={asset.decimals}
             disabled={disabled}
             onChange={handleChange}
@@ -80,7 +80,7 @@ export default function AssetAmountInput(props: Props) {
             <span className='text-xs font-bold'>{maxButtonLabel}</span>
             <span className='mx-1 text-xs font-bold text-white text-opacity-60'>{maxValue}</span>
             <div
-              className='hover:cursor-pointer select-none bg-white bg-opacity-20 text-2xs !leading-3 font-bold py-0.5 px-1.5 rounded'
+              className='hover:cursor-pointer select-none bg-white bg-opacity-20 text-2xs leading-3! font-bold py-0.5 px-1.5 rounded'
               onClick={handleMaxClick}
             >
               MAX

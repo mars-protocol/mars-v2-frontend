@@ -23,7 +23,7 @@ export default function OrderTypeSelector(props: Props) {
         const classes = classNames(
           'text-white/20 mr-4 pb-1 hover:cursor-pointer select-none flex flex-row',
           'hover:text-white',
-          isSelected && 'border-b-2 border-martian-red !text-white',
+          isSelected && 'border-b-2 border-martian-red text-white!',
           tab.isDisabled && 'pointer-events-none',
         )
 

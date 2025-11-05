@@ -111,7 +111,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
       <div className='flex items-start flex-1 p-2 gap-1 flex-wrap bg-body'>
         <Card
           className='flex flex-1 w-full p-4 bg-surface-dark max-w-screen-full min-w-[200px]'
-          contentClassName='gap-6 flex flex-col justify-between h-full min-h-[300px]'
+          contentClassName='gap-6 flex flex-col justify-between h-full min-h-75'
         >
           <TokenInputWithSlider
             asset={asset}

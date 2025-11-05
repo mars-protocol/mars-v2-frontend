@@ -53,7 +53,7 @@ export default function Modal(props: ModalProps) {
         <div className={classNames('flex justify-between relative', props.headerClassName)}>
           {props.header}
           {!props.hideCloseBtn && (
-            <EscButton className='!absolute right-2 top-2' onClick={props.onClose} />
+            <EscButton className='absolute! right-2 top-2' onClick={props.onClose} />
           )}
         </div>
         {props.subHeader && <div className='gradient-header'>{props.subHeader}</div>}

@@ -122,7 +122,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             {shouldShowSkipBridgeModal && <SkipBridgeModal />}
             <main
               className={classNames(
-                'mt-[72px]',
+                'mt-18',
                 'flex',
                 'min-h-screen-full w-full relative',
                 'md:h-[calc(100vh-72px)]',

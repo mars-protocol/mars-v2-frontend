@@ -18,7 +18,7 @@ export default function AssetButton(props: Props) {
       color='tertiary'
       variant='transparent'
       className={classNames(
-        isMobile ? '!px-2 text-sm' : 'md:text-base',
+        isMobile ? 'px-2! text-sm' : 'md:text-base',
         'w-full border border-white/20',
       )}
       textClassNames='flex flex-1'

@@ -184,7 +184,7 @@ export default function WalletConnectedButton() {
         show={showDetails}
         setShow={setShowDetails}
       >
-        <div className='flex max-w-screen-full w-[440px] flex-wrap p-6'>
+        <div className='flex max-w-screen-full w-110 flex-wrap p-6'>
           <div className='flex items-start w-full mb-4 flex-0 flex-nowrap'>
             <div className='flex flex-1 w-auto'>
               <div className='mr-2 flex h-[31px] items-end text-base-caps'>
@@ -192,13 +192,13 @@ export default function WalletConnectedButton() {
               </div>
               <div className='flex flex-wrap justify-end flex-0'>
                 <FormattedNumber
-                  className='flex items-end h-[31px] text-2xl !leading-5'
+                  className='flex items-end h-[31px] text-2xl leading-5!'
                   amount={walletAmount.toNumber()}
                   options={{ maxDecimals: feeTokenAsset.decimals }}
                 />
               </div>
             </div>
-            <div className='flex h-[31px] w-[116px] justify-end'>
+            <div className='flex h-[31px] w-29 justify-end'>
               <Button color='tertiary' onClick={onDisconnectWallet} text='Disconnect' />
             </div>
           </div>

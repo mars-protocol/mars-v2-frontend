@@ -76,7 +76,7 @@ export default function HealthBar({
         )}
         <div
           className={classNames(
-            'flex w-full flex-shrink',
+            'flex w-full shrink',
             'rounded-full md:overflow-hidden',
             className,
           )}

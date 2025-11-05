@@ -20,7 +20,7 @@ export default function DropDownButton(props: Props) {
       content={<DropDown closeMenu={() => toggleIsOpen(false)} {...props} />}
       type='info'
       placement='bottom'
-      contentClassName='backdrop-blur-xl !p-0 w-full min-w-[140px]'
+      contentClassName='backdrop-blur-xl p-0! w-full min-w-35'
       interactive
       hideArrow
       visible={isOpen}
@@ -69,7 +69,7 @@ function DropDownItem(props: DropDownItemProps) {
           <Tooltip
             type={(props.item.tooltipType || 'warning') as TooltipType}
             content={<Text size='sm'>{props.item.disabledTooltip}</Text>}
-            contentClassName='max-w-[300px]'
+            contentClassName='max-w-nav-1'
             className='ml-auto'
           >
             {children}
@@ -85,7 +85,7 @@ function DropDownItem(props: DropDownItemProps) {
           e.stopPropagation()
         }}
         className={classNames(
-          'z-1 px-4 py-3 flex gap-2 items-center  w-full [&:not(:last-child)]:border-b border-white/10',
+          'z-1 px-4 py-3 flex gap-2 items-center  w-full not-last:border-b border-white/10',
           props.item.disabled ? 'bg-black/20 text-white/40 cursor-events-none' : 'hover:bg-white/5',
         )}
         disabled={props.item.disabled}

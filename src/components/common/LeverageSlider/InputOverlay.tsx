@@ -56,7 +56,7 @@ function InputOverlay({ max, value, marginThreshold, type, min }: Props) {
                 isMarginNearMax && 'pt-4',
               )}
             >
-              <VerticalThreeLine className='h-2 w-[1px]' />
+              <VerticalThreeLine className='h-2 w-px' />
               <div className={!hasPastMarginThreshold ? 'opacity-50' : 'opacity-100'}>Margin</div>
             </div>
           </div>

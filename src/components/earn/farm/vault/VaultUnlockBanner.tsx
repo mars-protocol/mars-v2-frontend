@@ -51,7 +51,7 @@ export default function VaultUnlockBanner(props: Props) {
           onClick={handleWithdraw}
           variant='transparent'
           color='quaternary'
-          className='!text-success underline hover:no-underline'
+          className='text-success! underline hover:no-underline'
           text='Withdraw Unlocked Positions'
           rightIcon={<ChevronRight />}
           iconClassName='text-success w-2 h-4'

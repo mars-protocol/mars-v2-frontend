@@ -22,7 +22,7 @@ export default function CustomTooltip(props: Props) {
     return (
       <div
         className={classNames(
-          'max-w-[320px] rounded-lg px-4 py-2 isolate bg-black/5 backdrop-blur',
+          'max-w-80 rounded-lg px-4 py-2 isolate bg-black/5 backdrop-blur',
         )}
       >
         <Text size='sm' className='text-white/60'>

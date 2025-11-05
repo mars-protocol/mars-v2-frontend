@@ -17,7 +17,7 @@ export default function MobileNavigationToggle(props: Props) {
     <Button
       variant='transparent'
       color='quaternary'
-      className={classNames('!p-2 w-10 h-10 flex items-center justify-center', props.className)}
+      className={classNames('p-2! w-10 h-10 flex items-center justify-center', props.className)}
       onClick={() => useStore.setState({ mobileNavExpanded: !mobileNavExpanded })}
     >
       {mobileNavExpanded ? (

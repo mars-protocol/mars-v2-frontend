@@ -46,7 +46,7 @@ function Tabs(props: TabsProps) {
           <button
             key={tab.title}
             className={classNames(
-              'pt-4 pb-1 mb-2 border-b-[2px] border-transparent flex items-center',
+              'pt-4 pb-1 mb-2 border-b-2 border-transparent flex items-center',
               props.textSizeClass || 'text-base',
               props.tabs.length < 2 && 'cursor-default text-white border-transparent',
               index === props.activeIdx && props.tabs.length > 1 && 'border-b-martian-red',

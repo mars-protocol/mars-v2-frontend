@@ -69,7 +69,7 @@ export const BorrowCapacity = ({
           {!hideValues && (
             <div
               className={classNames(
-                !reduceMotion && 'duration-800 transition-[opcity] delay-[1600ms]',
+                !reduceMotion && 'duration-800 transition-[opcity] delay-1600',
                 'text-3xs-caps',
                 limitPercentOfMax ? 'opacity-50' : 'opacity-0',
               )}
@@ -111,7 +111,7 @@ export const BorrowCapacity = ({
 
                   <div
                     className={classNames(
-                      'absolute bottom-0 h-[120%] w-[1px] bg-white',
+                      'absolute bottom-0 h-[120%] w-px bg-white',
                       !reduceMotion && 'transition-[left] duration-1000 ease-linear',
                     )}
                     style={{ left: `${limitPercentOfMax || 0}%` }}
@@ -119,7 +119,7 @@ export const BorrowCapacity = ({
                   {showPercentageText ? (
                     <span
                       className={classNames(
-                        'absolute top-1/2 mt-[1px] w-full -translate-y-1/2 text-center text-2xs-caps',
+                        'absolute top-1/2 mt-px w-full -translate-y-1/2 text-center text-2xs-caps',
                         !reduceMotion && 'animate-fadein opacity-0',
                       )}
                     >

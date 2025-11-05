@@ -222,7 +222,7 @@ export default function Toaster() {
         draggable: false,
         closeOnClick: true,
         autoClose: 5000,
-        progressClassName: classNames('h-[1px] bg-none', isError ? 'bg-error' : 'bg-success'),
+        progressClassName: classNames('h-px bg-none', isError ? 'bg-error' : 'bg-success'),
         hideProgressBar: false,
       })
     } else {
@@ -234,7 +234,7 @@ export default function Toaster() {
         draggable: false,
         closeOnClick: true,
         autoClose: 5000,
-        progressClassName: classNames('h-[1px] bg-none', isError ? 'bg-error' : 'bg-success'),
+        progressClassName: classNames('h-px bg-none', isError ? 'bg-error' : 'bg-success'),
       })
     }
 

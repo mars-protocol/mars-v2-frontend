@@ -64,7 +64,7 @@ export default function AccountSummaryHeader(props: Props) {
           onClick={onClose}
           leftIcon={<ArrowRightLine />}
           iconClassName='w-full'
-          className='!absolute top-4 right-4 w-8 h-6 px-2 z-4 hidden md:flex'
+          className='absolute! top-4 right-4 w-8 h-6 px-2 z-4 hidden md:flex'
           size='xs'
           color='secondary'
         />
@@ -78,7 +78,7 @@ export default function AccountSummaryHeader(props: Props) {
         <DisplayCurrency
           options={{ abbreviated: false }}
           coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, accountBalance)}
-          className='text-lg -mb-[1px]'
+          className='text-lg -mb-px'
         />
         {hasChanged && updatedAccountBalance && (
           <>
@@ -94,7 +94,7 @@ export default function AccountSummaryHeader(props: Props) {
               options={{ abbreviated: false }}
               coin={BNCoin.fromDenomAndBigNumber(ORACLE_DENOM, updatedAccountBalance)}
               className={classNames(
-                'text-lg -mb-[1px]',
+                'text-lg -mb-px',
                 hasChanged && increase && 'text-profit',
                 hasChanged && !increase && 'text-loss',
               )}
@@ -119,7 +119,7 @@ export default function AccountSummaryHeader(props: Props) {
             enforceSuffix
           />
         </div>
-        <div className='flex flex-wrap content-start flex-grow h-full pl-2'>
+        <div className='flex flex-wrap content-start grow h-full pl-2'>
           <Text size='xs' className='w-full h-4 mb-2 text-white/50'>
             Health
           </Text>

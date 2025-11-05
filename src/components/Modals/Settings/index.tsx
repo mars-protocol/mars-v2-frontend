@@ -471,7 +471,7 @@ export default function SettingsModal() {
             maxDecimals={1}
             style={{ fontSize: 16 }}
             placeholder='...'
-            className='!w-6'
+            className='w-6!'
           />
           %
         </Button>

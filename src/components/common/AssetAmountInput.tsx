@@ -94,7 +94,7 @@ export default function AssetAmountInput(props: Props) {
           <NumberInput
             key={isUSD ? 'usd-input' : 'asset-input'}
             asset={asset}
-            className='border-none bg-transparent outline-none flex-1 !text-left'
+            className='border-none bg-transparent outline-none flex-1 text-left!'
             maxDecimals={asset.decimals}
             max={capMax ? max : undefined}
             disabled={disabled}
@@ -121,14 +121,14 @@ export default function AssetAmountInput(props: Props) {
                   {formatValue(Number(maxValue), { abbreviated: false })}
                 </span>
                 <div
-                  className='hover:cursor-pointer select-none bg-white bg-opacity-20 text-2xs !leading-3 font-bold py-0.5 px-1.5 rounded'
+                  className='hover:cursor-pointer select-none bg-white bg-opacity-20 text-2xs leading-3! font-bold py-0.5 px-1.5 rounded'
                   onClick={handleMaxClick}
                 >
                   MAX
                 </div>
                 {showCloseButton && onClosing && (
                   <div
-                    className='hover:cursor-pointer select-none bg-white bg-opacity-20 text-2xs !leading-3 font-bold py-0.5 px-1.5 rounded ml-2'
+                    className='hover:cursor-pointer select-none bg-white bg-opacity-20 text-2xs leading-3! font-bold py-0.5 px-1.5 rounded ml-2'
                     onClick={onClosing}
                   >
                     CLOSE

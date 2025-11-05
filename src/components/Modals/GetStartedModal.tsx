@@ -39,7 +39,7 @@ function TutorialItem(props: TutorialItemProps) {
           {props.description}
         </Text>
       </div>
-      <div className='flex items-center justify-end flex-grow h-full pr-4'>
+      <div className='flex items-center justify-end grow h-full pr-4'>
         <ChevronRight className='w-3 h-3 opacity-0' />
       </div>
     </a>

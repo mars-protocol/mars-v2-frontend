@@ -19,7 +19,7 @@ export function PerpsStats({ denom }: Props) {
       <iframe
         src={`https://stats.marsprotocol.io/${denom}?iframeView=on`}
         className={classNames(
-          'w-[calc(100%-2px)] ml-[1px] h-full border-0',
+          'w-[calc(100%-2px)] ml-px h-full border-0',
           isLoading ? 'hidden' : 'flex',
         )}
         title='Perps Stats'

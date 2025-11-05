@@ -16,7 +16,7 @@ export default function TooltipContent(props: Props) {
     <div>
       <div
         className={classNames(
-          'flex max-w-[320px] flex-1 gap-2 rounded-sm p-3 text-sm shadow-tooltip border border-white/10',
+          'flex max-w-80 flex-1 gap-2 rounded-sm p-3 text-sm shadow-tooltip border border-white/10',
           'relative isolate max-w-full overflow-hidden',
           props.type === 'info' && 'bg-surface-light',
           props.type === 'warning' && 'bg-warning',
