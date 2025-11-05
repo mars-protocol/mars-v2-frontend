@@ -73,10 +73,8 @@ module.exports = {
         check: 'check 1.5s ease-in-out forwards',
         circle: 'circle 1.5s ease-in-out forwards',
         fadein: 'fadein 1s ease-in-out forwards',
-        glow: 'glow 1000ms ease-in-out forwards',
         progress: 'spin 1200ms cubic-bezier(0.5, 0, 0.5, 1) infinite',
         loaderFade: 'fadein 2s ease-in-out forwards',
-        loaderGlow: 'vector 3s ease-in-out forwards',
       },
       backdropBlur: {
         sticky: '50px',
@@ -231,18 +229,6 @@ module.exports = {
           '0%': { transform: 'translate(0%, 0%)' },
           '50%': { transform: 'translate(50%, 50%)' },
           '100%': { transform: 'translate(0%, 0%)' },
-        },
-        glow: {
-          '0%': { opacity: 0 },
-          '33%': { opacity: 1 },
-          '66%': { opacity: 1 },
-          '100%': { opacity: 0 },
-        },
-        vector: {
-          '0%': { opacity: 0 },
-          '33%': { opacity: 0.3 },
-          '66%': { opacity: 0.6 },
-          '100%': { opacity: 0 },
         },
       },
       letterSpacing: {
@@ -420,50 +406,19 @@ module.exports = {
       })
 
       addUtilities({
-        '.glow-line': {
-          fill: 'transparent',
-          stroke: 'hsl(var(--color-white))',
-          strokeWidth: '0.5',
-          strokeDasharray: '20px 30px',
-        },
-        '.glow-hover': {
-          strokeDashoffset: '-80px',
-          transition: 'stroke-dashoffset 1000ms ease-in',
-        },
-        '.gradient-card': {
-          background: 'transparent',
-        },
         '.gradient-card-content': {
           background: 'transparent',
         },
         '.gradient-header': {
           background: 'hsl(var(--color-surface-dark))',
         },
-        '.gradient-intro': {
-          background: 'hsl(var(--color-surface))',
-        },
-        '.gradient-hls-intro': {
-          background: 'hsl(var(--color-surface))',
-        },
         '.gradient-hls': {
           background:
             'linear-gradient(180deg, hsl(var(--color-hls-primary)) 0%, hsl(var(--color-hls-secondary)) 50%)',
         },
-        '.gradient-popover': {
-          background:
-            'linear-gradient(180deg, hsl(var(--color-white) /0.1) 0%,  hsl(var(--color-white) /0) 100%), linear-gradient(0deg,  hsl(var(--color-white) /0.1), hsl(var(--color-white) /0.05))',
-        },
         '.gradient-primary-to-secondary': {
           background:
             'linear-gradient(180deg, hsl(var(--color-martian-red)) 0%, hsl(var(--color-mars)) 100%)',
-        },
-        '.gradient-secondary-to-primary': {
-          background:
-            'linear-gradient(180deg, hsl(var(--color-martian-red)) 100%, hsl(var(--color-mars)) 0%)',
-        },
-        '.gradient-slider-pink': {
-          background:
-            'linear-gradient(270deg, hsl(var(--color-slider-pink-primary) /0.89) 0%, hsl(var(--color-slider-pink-secondary) /0.05) 100%)',
         },
         '.gradient-slider-martian-red': {
           background:
@@ -476,10 +431,6 @@ module.exports = {
         '.gradient-slider-red': {
           background:
             'linear-gradient(270deg, hsl(var(--color-slider-red-primary) /0.886) 0%, hsl(var(--color-slider-red-secondary) /0.051) 100%)',
-        },
-        '.gradient-active-tab': {
-          background:
-            'linear-gradient(270deg, hsl(var(--color-active-tab-primary) /0.765) 0%, hsl(var(--color-active-tab-secondary) /0.886) 23.77%, hsl(var(--color-active-tab-tertiary) /0.26) 99.2%)',
         },
         '.gradient-ntrn-rewards': {
           background: 'linear-gradient(90deg, #ff4b2f, #ff9382)',
@@ -573,12 +524,6 @@ module.exports = {
           lineHeight: '56px',
           textTransform: 'uppercase',
           letterSpacing: '9px',
-        },
-        '.bg-v1': {
-          backgroundImage: 'url(/images/bg-v1.svg)',
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: '100% auto',
-          backgroundPosition: 'top',
         },
         '.droplets': {
           background: 'linear-gradient(90deg, #6039FF, #E8B8FF)',
