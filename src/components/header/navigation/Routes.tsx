@@ -14,6 +14,7 @@ import PerpsPage from 'pages/PerpsPage'
 import PerpsVaultPage from 'pages/PerpsVaultPage'
 import PortfolioAccountPage from 'pages/PortfolioAccountPage'
 import PortfolioPage from 'pages/PortfolioPage'
+import PortfolioV1Page from 'pages/PortfolioV1Page'
 import TradePage from 'pages/TradePage'
 import V1Page from 'pages/V1Page'
 import VaultsCommunityPage from 'pages/VaultsCommunityPage'
@@ -81,6 +82,10 @@ export default function Routes() {
 
           <Route path='portfolio/:accountId'>
             <Route path='' element={<PortfolioAccountPage />} />
+          </Route>
+
+          <Route path='portfolio/v1'>
+            <Route path='' element={<PortfolioV1Page />} />
           </Route>
         </Route>
 
