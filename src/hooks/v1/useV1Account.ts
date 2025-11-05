@@ -5,11 +5,12 @@ import useStore from 'store'
 import useSWR from 'swr'
 import { BNCoin } from 'types/classes/BNCoin'
 
-export default function useV1Account() {
+export default function useV1Account(overrideAddress?: string) {
   const chainConfig = useChainConfig()
-  const address = useStore((s) => s.address)
+  const storeAddress = useStore((s) => s.address)
   const isV1 = useStore((s) => s.isV1)
-  const enabled = isV1 && !!address
+  const address = overrideAddress || storeAddress
+  const enabled = (isV1 || !!overrideAddress) && !!address
 
   return useSWR(
     enabled && `chains/${chainConfig.id}/v1/user/${address}`,
