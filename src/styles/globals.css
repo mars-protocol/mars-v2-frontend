@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@plugin 'tailwind-scrollbar-hide';
 
 @variant light (:root[data-theme="light"] &);
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
@@ -7,39 +8,36 @@
   /* Fonts */
   --font-sans: 'Inter', 'sans-serif';
 
+  /* Screens - for Tailwind responsive variants (sm:*, md:*, etc.) */
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 920px;
+  --breakpoint-lg: 1280px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1920px;
+
   /* Font sizes with line heights */
-  --font-size-2xs: 11px;
-  --line-height-2xs: 15px;
-
-  --font-size-xs: 12px;
-  --line-height-xs: 16px;
-
-  --font-size-sm: 14px;
-  --line-height-sm: 18px;
-
-  --font-size-base: 15px;
-  --line-height-base: 19px;
-
-  --font-size-lg: 16px;
-  --line-height-lg: 21px;
-
-  --font-size-xl: 17px;
-  --line-height-xl: 23px;
-
-  --font-size-2xl: 19px;
-  --line-height-2xl: 25px;
-
-  --font-size-3xl: 22px;
-  --line-height-3xl: 30px;
-
-  --font-size-4xl: 26px;
-  --line-height-4xl: 34px;
-
-  --font-size-5xl: 32px;
-  --line-height-5xl: 44px;
-
-  --font-size-6xl: 48px;
-  --line-height-6xl: 64px;
+  --text-2xs: 11px;
+  --text-2xs--line-height: 15px;
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+  --text-sm: 14px;
+  --text-sm--line-height: 18px;
+  --text-base: 15px;
+  --text-base--line-height: 19px;
+  --text-lg: 16px;
+  --text-lg--line-height: 21px;
+  --text-xl: 17px;
+  --text-xl--line-height: 23px;
+  --text-2xl: 19px;
+  --text-2xl--line-height: 25px;
+  --text-3xl: 22px;
+  --text-3xl--line-height: 30px;
+  --text-4xl: 26px;
+  --text-4xl--line-height: 34px;
+  --text-5xl: 32px;
+  --text-5xl--line-height: 44px;
+  --text-6xl: 48px;
+  --text-6xl--line-height: 64px;
 
   /* Font weights */
   --font-weight-light: 300;
@@ -48,35 +46,10 @@
   --font-weight-bold: 600;
 
   /* Letter spacing */
-  --letter-spacing-normal: 0;
-  --letter-spacing-wide: 2px;
-  --letter-spacing-wider: 3px;
-  --letter-spacing-widest: 5px;
-
-  /* Spacing */
-  --spacing-1.5: 6px;
-  --spacing-2.5: 10px;
-  --spacing-3.5: 14px;
-  --spacing-4.5: 17px;
-  --spacing-6.5: 26px;
-  --spacing-18: 72px;
-  --spacing-19: 76px;
-  --spacing-24: 96px;
-  --spacing-35: 140px;
-  --spacing-50: 200px;
-  --spacing-70: 280px;
-  --spacing-77: 308px;
-  --spacing-80: 320px;
-  --spacing-88: 352px;
-  --spacing-89: 356px;
-  --spacing-90: 360px;
-  --spacing-94: 376px;
-  --spacing-96: 384px;
-  --spacing-97: 388px;
-  --spacing-98: 392px;
-  --spacing-107: 428px;
-  --spacing-118: 472px;
-  --spacing-full: 100%;
+  --tracking-normal: 0;
+  --tracking-wide: 2px;
+  --tracking-wider: 3px;
+  --tracking-widest: 5px;
 
   /* Colors */
   --color-accent: hsl(291deg 27% 15%);
@@ -153,22 +126,22 @@
   --container-nav-6: 800px;
 
   /* Border radius */
-  --border-radius-none: 0px;
-  --border-radius-xs: 0px;
-  --border-radius-sm: 2px;
-  --border-radius-base: 0px;
-  --border-radius-lg: 0px;
-  --border-radius-xl: 0px;
-  --border-radius-2xl: 0px;
-  --border-radius-3xl: 0px;
+  --radius-none: 0px;
+  --radius-xs: 0px;
+  --radius-sm: 2px;
+  --radius-base: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
 
   /* Box shadow */
-  --box-shadow-inset: inset 0px 2px 2px hsl(var(--color-black) / 0.25);
-  --box-shadow-overlay:
+  --shadow-inset: inset 0px 2px 2px hsl(var(--color-black) / 0.25);
+  --shadow-overlay:
     0 2px 2px hsl(var(--color-black) / 0.14), 0 1px 5px hsl(var(--color-black) / 0.2);
-  --box-shadow-button:
+  --shadow-button:
     0px 1px 1px hsl(var(--color-black) / 0.14), 0px 1px 3px hsl(var(--color-black) / 0.2);
-  --box-shadow-tooltip:
+  --shadow-tooltip:
     0 3px 4px hsl(var(--color-black) / 0.04), 0 3px 3px hsl(var(--color-black) / 0.04),
     0 1px 8px hsl(var(--color-black) / 0.04);
 
@@ -182,7 +155,37 @@
   --z-index-90: 90;
   --z-index-100: 100;
 
-  /* Width */
+  /* Padding */
+  --padding-5.5: 22px;
+  --padding-12: 48px;
+  --padding-18: 72px;
+  --padding-21: 84px;
+
+  /* Spacing - these apply to padding, margin, width, height, gap, etc. */
+  --spacing-1.5: 6px;
+  --spacing-2.5: 10px;
+  --spacing-3.5: 14px;
+  --spacing-4.5: 17px;
+  --spacing-6.5: 26px;
+  --spacing-18: 72px;
+  --spacing-19: 76px;
+  --spacing-24: 96px;
+  --spacing-35: 140px;
+  --spacing-50: 200px;
+  --spacing-70: 280px;
+  --spacing-77: 308px;
+  --spacing-80: 320px;
+  --spacing-88: 352px;
+  --spacing-89: 356px;
+  --spacing-90: 360px;
+  --spacing-94: 376px;
+  --spacing-96: 384px;
+  --spacing-97: 388px;
+  --spacing-98: 392px;
+  --spacing-107: 428px;
+  --spacing-118: 472px;
+
+  /* Additional width-specific values */
   --width-4.5: 18px;
   --width-13: 52px;
   --width-15: 60px;
@@ -205,17 +208,64 @@
   --width-140: 560px;
   --width-180: 720px;
   --width-screen-full: 100dvw;
-  --width-screen/90: 90dvw;
-  --width-screen/80: 80dvw;
-  --width-screen/70: 70dvw;
-  --width-screen/60: 60dvw;
-  --width-screen/50: 50dvw;
-  --width-screen/40: 40dvw;
-  --width-screen/30: 30dvw;
-  --width-screen/20: 20dvw;
-  --width-screen/10: 10dvw;
+  --width-screen-90: 90dvw;
+  --width-screen-80: 80dvw;
+  --width-screen-70: 70dvw;
+  --width-screen-60: 60dvw;
+  --width-screen-50: 50dvw;
+  --width-screen-40: 40dvw;
+  --width-screen-30: 30dvw;
+  --width-screen-20: 20dvw;
+  --width-screen-10: 10dvw;
 
-  /* Min width */
+  /* Height-specific values */
+  --height-4.5: 18px;
+  --height-9: 36px;
+  --height-13: 52px;
+  --height-15: 60px;
+  --height-18: 72px;
+  --height-45: 180px;
+  --height-50: 200px;
+  --height-55: 220px;
+  --height-62: 248px;
+  --height-75: 300px;
+  --height-screen-full: 100dvh;
+  --height-screen-90: 90dvh;
+  --height-screen-80: 80dvh;
+  --height-screen-70: 70dvh;
+  --height-screen-60: 60dvh;
+  --height-screen-50: 50dvh;
+  --height-screen-40: 40dvh;
+  --height-screen-30: 30dvh;
+  --height-screen-20: 20dvh;
+  --height-screen-10: 10dvh;
+
+  /* Min-height values */
+  --min-height-3: 12px;
+  --min-height-5: 20px;
+  --min-height-8: 32px;
+  --min-height-10: 40px;
+  --min-height-14: 56px;
+  --min-height-18: 72px;
+  --min-height-30.5: 122px;
+  --min-height-75: 300px;
+  --min-height-200: 800px;
+  --min-height-screen-full: 100dvh;
+  --min-height-screen-90: 90dvh;
+  --min-height-screen-80: 80dvh;
+  --min-height-screen-70: 70dvh;
+  --min-height-screen-60: 60dvh;
+  --min-height-screen-50: 50dvh;
+  --min-height-screen-40: 40dvh;
+  --min-height-screen-30: 30dvh;
+  --min-height-screen-20: 20dvh;
+  --min-height-screen-10: 10dvh;
+
+  /* Max-height values */
+  --max-height-70: 280px;
+  --max-height-75: 300px;
+
+  /* Min-width values */
   --min-width-13: 52px;
   --min-width-15: 60px;
   --min-width-16: 64px;
@@ -235,89 +285,29 @@
   --min-width-92.5: 370px;
   --min-width-94: 376px;
 
-  /* Max width */
-  --max-width-content: '1288px';
-  --max-width-v1: '1288px';
-  --max-width-modal: '895px';
-  --max-width-modal-lg: '650px';
-  --max-width-modal-md: '556px';
-  --max-width-modal-sm: '526px';
-  --max-width-modal-xs: '442px';
-  --max-width-screen-full: '100dvw';
-  --max-width-screen/90: '90dvw';
-  --max-width-screen/80: '80dvw';
-  --max-width-screen/70: '70dvw';
-  --max-width-screen/60: '60dvw';
-  --max-width-screen/50: '50dvw';
-  --max-width-screen/40: '40dvw';
-  --max-width-screen/30: '30dvw';
-  --max-width-screen/20: '20dvw';
-  --max-width-screen/10: '10dvw';
-
-  /* Height */
-  --height-4.5: 18px;
-  --height-9: 36px;
-  --height-13: 52px;
-  --height-15: 60px;
-  --height-18: 72px;
-  --height-45: 180px;
-  --height-50: 200px;
-  --height-55: 220px;
-  --height-62: 248px;
-  --height-75: 300px;
-  --height-screen-full: 100dvh;
-  --height-screen/90: 90dvh;
-  --height-screen/80: 80dvh;
-  --height-screen/70: 70dvh;
-  --height-screen/60: 60dvh;
-  --height-screen/50: 50dvh;
-  --height-screen/40: 40dvh;
-  --height-screen/30: 30dvh;
-  --height-screen/20: 20dvh;
-  --height-screen/10: 10dvh;
-
-  /* Min height */
-  --min-height-3: 12px;
-  --min-height-5: 20px;
-  --min-height-8: 32px;
-  --min-height-10: 40px;
-  --min-height-14: 56px;
-  --min-height-18: 72px;
-  --min-height-30.5: 122px;
-  --min-height-75: 300px;
-  --min-height-200: 800px;
-  --min-height-screen-full: 100dvh;
-  --min-height-screen/90: 90dvh;
-  --min-height-screen/80: 80dvh;
-  --min-height-screen/70: 70dvh;
-  --min-height-screen/60: 60dvh;
-  --min-height-screen/50: 50dvh;
-  --min-height-screen/40: 40dvh;
-  --min-height-screen/30: 30dvh;
-  --min-height-screen/20: 20dvh;
-  --min-height-screen/10: 10dvh;
-
-  /* Max height */
-  --max-height-70: 280px;
-  --max-height-75: 300px;
-
-  /* Screens */
-  --screen-sm: 480px;
-  --screen-md: 920px;
-  --screen-lg: 1280px;
-  --screen-xl: 1280px;
-  --screen-2xl: 1920px;
-
-  /* Padding */
-  --padding-5.5: 22px;
-  --padding-12: 48px;
-  --padding-18: 72px;
-  --padding-21: 84px;
+  /* Max-width values */
+  --max-width-content: 1288px;
+  --max-width-v1: 1288px;
+  --max-width-modal: 895px;
+  --max-width-modal-lg: 650px;
+  --max-width-modal-md: 556px;
+  --max-width-modal-sm: 526px;
+  --max-width-modal-xs: 442px;
+  --max-width-screen-full: 100dvw;
+  --max-width-screen-90: 90dvw;
+  --max-width-screen-80: 80dvw;
+  --max-width-screen-70: 70dvw;
+  --max-width-screen-60: 60dvw;
+  --max-width-screen-50: 50dvw;
+  --max-width-screen-40: 40dvw;
+  --max-width-screen-30: 30dvw;
+  --max-width-screen-20: 20dvw;
+  --max-width-screen-10: 10dvw;
 
   /* Grid template columns */
   --grid-template-columns-chart: 'minmax(100px, 100%) 346px';
 
-/* Backdrop blur */
+  /* Backdrop blur */
   --backdrop-blur-sticky: 50px;
 
   /* Background size */
@@ -334,46 +324,55 @@
   --transition-property-background: 'filter, -webkit-filter';
 
   /* Animation */
-  --animation-check: 'check 1.5s ease-in-out forwards';
-  --animation-circle: 'circle 1.5s ease-in-out forwards';
-  --animation-fadein: 'fadein 1s ease-in-out forwards';
-  --animation-progress: 'spin 1200ms cubic-bezier(0.5, 0, 0.5, 1) infinite';
-  --animation-loaderFade: 'fadein 2s ease-in-out forwards';
+  --animate-check: check 1.5s ease-in-out forwards;
+  --animate-circle: circle 1.5s ease-in-out forwards;
+  --animate-fadein: fadein 1s ease-in-out forwards;
+  --animate-progress: spin 1200ms cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  --animate-loaderFade: fadein 2s ease-in-out forwards;
 
   /* Hue rotate */
   --hue-rotate-82: -82deg;
 
   /* Keyframes */
-  --keyframes-check: {
-    '0%': {
-      strokeDashoffset: -100,
-    },
-    '100%': {
-      strokeDashoffset: 900,
-    },
-  };
-  --keyframes-circle: {
-    '0%': {
-      strokeDashoffset: 1000,
-    },
-    '100%': {
-      strokeDashoffset: 0,
-    },
-  };
+  @keyframes check {
+    0% {
+      stroke-dashoffset: -100;
+    }
+    100% {
+      stroke-dashoffset: 900;
+    }
+  }
 
-  --keyframes-fadein: {
-    '0%': { opacity: 0 },
-    '100%': { opacity: 1 },
-  };
+  @keyframes circle {
+    0% {
+      stroke-dashoffset: 1000;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
 
-  --keyframes-float: {
-    '0%': { transform: 'translate(0%, 0%)' },
-    '50%': { transform: 'translate(50%, 50%)' },
-    '100%': { transform: 'translate(0%, 0%)' },
+  @keyframes fadein {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes float {
+    0% {
+      transform: translate(0%, 0%);
+    }
+    50% {
+      transform: translate(50%, 50%);
+    }
+    100% {
+      transform: translate(0%, 0%);
+    }
+  }
 }
-}
-
-@source inline("border-error border-success h-2 text-3xs text-3xs-caps text-2xs text-2xs-caps text-xs-caps text-xs text-sm-caps text-sm text-base-caps text-base text-lg-caps text-lg text-xl-caps text-xl text-2xl-caps text-2xl text-3xl-caps text-3xl text-4xl-caps text-4xl text-5xl-caps text-5xl text-yellow-300 text-violet-500 text-green text-grey-light fill-yellow-300 fill-violet-500 fill-green fill-martian-red fill-grey-light w-2 @nav-0/navigation:inline-block @nav-1/navigation:inline-block @nav-2/navigation:inline-block @nav-3/navigation:inline-block @nav-4/navigation:inline-block @nav-5/navigation:inline-block @nav-6/navigation:inline-block @nav-0/navigation:hidden @nav-1/navigation:hidden @nav-2/navigation:hidden @nav-3/navigation:hidden @nav-4/navigation:hidden @nav-5/navigation:hidden @nav-6/navigation:hidden gradient-droplets gradient-stride gradient-lido gradient-milkyway gradient-ntrn-rewards droplets stride lido milkyway ntrn-rewards");
 
 /*
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
@@ -434,23 +433,43 @@
   }
 
   .gradient-hls {
-    background: linear-gradient(180deg, hsl(var(--color-hls-primary)) 0%, hsl(var(--color-hls-secondary)) 50%);
+    background: linear-gradient(
+      180deg,
+      hsl(var(--color-hls-primary)) 0%,
+      hsl(var(--color-hls-secondary)) 50%
+    );
   }
 
   .gradient-primary-to-secondary {
-    background: linear-gradient(180deg, hsl(var(--color-martian-red)) 0%, hsl(var(--color-mars)) 100%);
+    background: linear-gradient(
+      180deg,
+      hsl(var(--color-martian-red)) 0%,
+      hsl(var(--color-mars)) 100%
+    );
   }
 
   .gradient-slider-martian-red {
-    background: linear-gradient(270deg, hsl(var(--color-martian-red) / 0.886) 0%, hsl(var(--color-martian-red) / 0.051) 100%);
+    background: linear-gradient(
+      270deg,
+      hsl(var(--color-martian-red) / 0.886) 0%,
+      hsl(var(--color-martian-red) / 0.051) 100%
+    );
   }
 
   .gradient-slider-green {
-    background: linear-gradient(270deg, hsl(var(--color-slider-green-primary) / 0.886) 0%, hsl(var(--color-slider-green-secondary) / 0.051) 100%);
+    background: linear-gradient(
+      270deg,
+      hsl(var(--color-slider-green-primary) / 0.886) 0%,
+      hsl(var(--color-slider-green-secondary) / 0.051) 100%
+    );
   }
 
   .gradient-slider-red {
-    background: linear-gradient(270deg, hsl(var(--color-slider-red-primary) / 0.886) 0%, hsl(var(--color-slider-red-secondary) / 0.051) 100%);
+    background: linear-gradient(
+      270deg,
+      hsl(var(--color-slider-red-primary) / 0.886) 0%,
+      hsl(var(--color-slider-red-secondary) / 0.051) 100%
+    );
   }
 
   .gradient-ntrn-rewards {
@@ -466,7 +485,11 @@
   }
 
   .gradient-lido {
-    background: linear-gradient(rgb(101, 98, 255) 11.28%, rgb(0, 163, 255) 61.02%, rgb(99, 214, 210) 100%);
+    background: linear-gradient(
+      rgb(101, 98, 255) 11.28%,
+      rgb(0, 163, 255) 61.02%,
+      rgb(99, 214, 210) 100%
+    );
   }
 
   .gradient-milkyway {
@@ -607,7 +630,12 @@
   }
 
   .lido {
-    background: linear-gradient(90deg, rgb(101, 98, 255) 11.28%, rgb(0, 163, 255) 61.02%, rgb(99, 214, 210) 100%);
+    background: linear-gradient(
+      90deg,
+      rgb(101, 98, 255) 11.28%,
+      rgb(0, 163, 255) 61.02%,
+      rgb(99, 214, 210) 100%
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: bold;
@@ -804,16 +832,6 @@
 
 table tr:last-child td {
   border-bottom-width: 0;
-}
-
-svg {
-  width: 100%;
-  height: auto;
-}
-
-.rounded-full.overflow-hidden svg {
-  width: auto;
-  height: 100%;
 }
 
 .scrollbar-dark {

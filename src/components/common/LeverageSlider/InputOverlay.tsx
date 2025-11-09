@@ -41,7 +41,7 @@ function InputOverlay({ max, value, marginThreshold, type, min }: Props) {
       />
       <div className='absolute flex w-full h-2 pointer-events-none top-[11px] justify-evenly'>
         {Array.from(Array(9).keys()).map((i) => (
-          <div key={`mark-${i}`} className='w-1 h-1 bg-black rounded-full bg-opacity-30' />
+          <div key={`mark-${i}`} className='w-1 h-1 bg-black/30 rounded-full' />
         ))}
         {marginThreshold !== undefined && (
           <div
