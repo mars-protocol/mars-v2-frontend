@@ -105,7 +105,7 @@ export default function VaultMetricsCard(props: Props) {
         )
         return (
           <Card
-            className='text-center py-3 w-[calc(50%-0.5rem)] md:w-45 bg-surface'
+            className='text-center py-3 w-[calc(50%-0.5rem)] md:flex-1 bg-surface'
             key={`${metric.label}-${index}`}
           >
             <TitleAndSubCell

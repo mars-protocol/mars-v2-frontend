@@ -37,7 +37,7 @@ export default function Modal(props: ModalProps) {
     >
       <div
         className={classNames(
-          'max-h-screen-full overflow-y-auto scrollbar-hide',
+          'w-full max-h-screen-full overflow-y-auto scrollbar-hide',
           'px-4 py-4',
           modalClassName,
         )}
