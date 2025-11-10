@@ -1,21 +1,72 @@
 @import 'tailwindcss';
-@plugin 'tailwind-scrollbar-hide';
 
-@variant light (:root[data-theme="light"] &);
-@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+@source inline(
+  'border-error',
+  'border-success',
+  'h-2',
+  'text-3xs',
+  'text-3xs-caps',
+  'text-2xs',
+  'text-2xs-caps',
+  'text-xs-caps',
+  'text-xs',
+  'text-sm-caps',
+  'text-sm',
+  'text-base-caps',
+  'text-base',
+  'text-lg-caps',
+  'text-lg',
+  'text-xl-caps',
+  'text-xl',
+  'text-2xl-caps',
+  'text-2xl',
+  'text-3xl-caps',
+  'text-3xl',
+  'text-4xl-caps',
+  'text-4xl',
+  'text-5xl-caps',
+  'text-5xl',
+  'text-yellow-300',
+  'text-violet-500',
+  'text-green',
+  'text-grey-light',
+  'fill-yellow-300',
+  'fill-violet-500',
+  'fill-green',
+  'fill-martian-red',
+  'fill-grey-light',
+  'w-2',
+  '@nav-0/navigation:inline-block',
+  '@nav-1/navigation:inline-block',
+  '@nav-2/navigation:inline-block',
+  '@nav-3/navigation:inline-block',
+  '@nav-4/navigation:inline-block',
+  '@nav-5/navigation:inline-block',
+  '@nav-6/navigation:inline-block',
+  '@nav-0/navigation:hidden',
+  '@nav-1/navigation:hidden',
+  '@nav-2/navigation:hidden',
+  '@nav-3/navigation:hidden',
+  '@nav-4/navigation:hidden',
+  '@nav-5/navigation:hidden',
+  '@nav-6/navigation:hidden',
+  'gradient-droplets',
+  'gradient-stride',
+  'gradient-lido',
+  'gradient-milkyway',
+  'gradient-ntrn-rewards',
+  'droplets',
+  'stride',
+  'lido',
+  'milkyway',
+  'ntrn-rewards',
+);
 
 @theme {
-  /* Fonts */
-  --font-sans: 'Inter', 'sans-serif';
+  /* Font family */
+  --font-sans: Inter, sans-serif;
 
-  /* Screens - for Tailwind responsive variants (sm:*, md:*, etc.) */
-  --breakpoint-sm: 480px;
-  --breakpoint-md: 920px;
-  --breakpoint-lg: 1280px;
-  --breakpoint-xl: 1280px;
-  --breakpoint-2xl: 1920px;
-
-  /* Font sizes with line heights */
+  /* Font sizes */
   --text-2xs: 11px;
   --text-2xs--line-height: 15px;
   --text-xs: 12px;
@@ -50,6 +101,64 @@
   --tracking-wide: 2px;
   --tracking-wider: 3px;
   --tracking-widest: 5px;
+
+  /* Screen breakpoints */
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 920px;
+  --breakpoint-lg: 1280px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1920px;
+
+  /* Shadows */
+  --shadow-inset: inset 0px 2px 2px hsl(var(--color-black) / 0.25);
+  --shadow-overlay:
+    0 2px 2px hsl(var(--color-black) / 0.14), 0 1px 5px hsl(var(--color-black) / 0.2);
+  --shadow-button:
+    0px 1px 1px hsl(var(--color-black) / 0.14), 0px 1px 3px hsl(var(--color-black) / 0.2);
+  --shadow-tooltip:
+    0 3px 4px hsl(var(--color-black) / 0.04), 0 3px 3px hsl(var(--color-black) / 0.04),
+    0 1px 8px hsl(var(--color-black) / 0.04);
+
+  /* Brightness */
+  --brightness-30: 0.3;
+
+  /* Backdrop blur */
+  --backdrop-blur-sticky: 50px;
+
+  /* Background size */
+  --bg-size-desktop: 100% auto;
+
+  /* Radius scale */
+  --radius-none: 0px;
+  --radius-xs: 0px;
+  --radius-sm: 2px;
+  --radius-base: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
+
+  /* Containers */
+  --container-nav-0: 200px;
+  --container-nav-1: 300px;
+  --container-nav-2: 400px;
+  --container-nav-3: 500px;
+  --container-nav-4: 600px;
+  --container-nav-5: 700px;
+  --container-nav-6: 800px;
+
+  --container-screen-full: 100dvw;
+  --container-modal: 895px;
+  --container-modal-lg: 650px;
+  --container-modal-md: 556px;
+  --container-modal-sm: 526px;
+  --container-modal-xs: 442px;
+  --container-content: 1288px;
+  --container-v1: 1288px;
+
+  --grid-cols-chart: minmax(100px, 100%) 346px;
 
   /* Colors */
   --color-accent: hsl(291deg 27% 15%);
@@ -113,215 +222,88 @@
   --color-surface-light: hsl(231deg 11% 12%);
   --color-surface-dark: hsl(220deg 9% 7%);
 
-  /* brightness */
-  --brightness-30: 0.3;
-
-  /* container sizes */
-  --container-nav-0: 200px;
-  --container-nav-1: 300px;
-  --container-nav-2: 400px;
-  --container-nav-3: 500px;
-  --container-nav-4: 600px;
-  --container-nav-5: 700px;
-  --container-nav-6: 800px;
-
-  /* Border radius */
-  --radius-none: 0px;
-  --radius-xs: 0px;
-  --radius-sm: 2px;
-  --radius-base: 0px;
-  --radius-lg: 0px;
-  --radius-xl: 0px;
-  --radius-2xl: 0px;
-  --radius-3xl: 0px;
-
-  /* Box shadow */
-  --shadow-inset: inset 0px 2px 2px hsl(var(--color-black) / 0.25);
-  --shadow-overlay:
-    0 2px 2px hsl(var(--color-black) / 0.14), 0 1px 5px hsl(var(--color-black) / 0.2);
-  --shadow-button:
-    0px 1px 1px hsl(var(--color-black) / 0.14), 0px 1px 3px hsl(var(--color-black) / 0.2);
-  --shadow-tooltip:
-    0 3px 4px hsl(var(--color-black) / 0.04), 0 3px 3px hsl(var(--color-black) / 0.04),
-    0 1px 8px hsl(var(--color-black) / 0.04);
-
-  /* Brightness */
-  --brightness-30: 0.3;
-
-  /* Z-index */
-  --z-index-1: 1;
-  --z-index-2: 2;
-  --z-index-80: 80;
-  --z-index-90: 90;
-  --z-index-100: 100;
-
-  /* Padding */
-  --padding-5.5: 22px;
-  --padding-12: 48px;
-  --padding-18: 72px;
-  --padding-21: 84px;
-
-  /* Spacing - these apply to padding, margin, width, height, gap, etc. */
-  --spacing-1.5: 6px;
-  --spacing-2.5: 10px;
-  --spacing-3.5: 14px;
-  --spacing-4.5: 17px;
-  --spacing-6.5: 26px;
+  /* Spacing scale */
+  --spacing-1-5: 6px;
+  --spacing-2-5: 10px;
+  --spacing-3-5: 14px;
+  --spacing-4-5: 17px;
+  --spacing-5-5: 22px;
+  --spacing-6-5: 26px;
+  --spacing-8: 32px;
+  --spacing-9: 36px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-13: 52px;
+  --spacing-14: 56px;
+  --spacing-15: 60px;
+  --spacing-16: 64px;
   --spacing-18: 72px;
   --spacing-19: 76px;
+  --spacing-20: 80px;
+  --spacing-21: 84px;
   --spacing-24: 96px;
+  --spacing-25: 100px;
+  --spacing-28: 112px;
+  --spacing-29: 116px;
+  --spacing-30: 120px;
+  --spacing-30-5: 122px;
   --spacing-35: 140px;
+  --spacing-35-5: 142px;
+  --spacing-37: 148px;
+  --spacing-40: 160px;
+  --spacing-45: 180px;
   --spacing-50: 200px;
+  --spacing-55: 220px;
+  --spacing-60: 240px;
+  --spacing-62: 248px;
   --spacing-70: 280px;
+  --spacing-75: 300px;
   --spacing-77: 308px;
   --spacing-80: 320px;
   --spacing-88: 352px;
   --spacing-89: 356px;
   --spacing-90: 360px;
+  --spacing-92-5: 370px;
   --spacing-94: 376px;
   --spacing-96: 384px;
   --spacing-97: 388px;
   --spacing-98: 392px;
+  --spacing-100: 400px;
+  --spacing-105: 420px;
   --spacing-107: 428px;
+  --spacing-110: 440px;
   --spacing-118: 472px;
+  --spacing-120: 480px;
+  --spacing-140: 560px;
+  --spacing-180: 720px;
+  --spacing-200: 800px;
+  --spacing-content: 1288px;
+  --spacing-v1: 1288px;
+  --spacing-modal: 895px;
+  --spacing-modal-lg: 650px;
+  --spacing-modal-md: 556px;
+  --spacing-modal-sm: 526px;
+  --spacing-modal-xs: 442px;
+  --spacing-full: 100%;
 
-  /* Additional width-specific values */
-  --width-4.5: 18px;
-  --width-13: 52px;
-  --width-15: 60px;
-  --width-18: 72px;
-  --width-25: 100px;
-  --width-29: 116px;
-  --width-30: 120px;
-  --width-35: 140px;
-  --width-40: 160px;
-  --width-50: 200px;
-  --width-60: 240px;
-  --width-90: 360px;
-  --width-92.5: 370px;
-  --width-94: 376px;
-  --width-97: 388px;
-  --width-100: 400px;
-  --width-105: 420px;
-  --width-110: 440px;
-  --width-120: 480px;
-  --width-140: 560px;
-  --width-180: 720px;
-  --width-screen-full: 100dvw;
-  --width-screen-90: 90dvw;
-  --width-screen-80: 80dvw;
-  --width-screen-70: 70dvw;
-  --width-screen-60: 60dvw;
-  --width-screen-50: 50dvw;
-  --width-screen-40: 40dvw;
-  --width-screen-30: 30dvw;
-  --width-screen-20: 20dvw;
-  --width-screen-10: 10dvw;
+  /* Z-index */
+  --z-1: 1;
+  --z-2: 2;
+  --z-80: 80;
+  --z-90: 90;
+  --z-100: 100;
 
-  /* Height-specific values */
-  --height-4.5: 18px;
-  --height-9: 36px;
-  --height-13: 52px;
-  --height-15: 60px;
-  --height-18: 72px;
-  --height-45: 180px;
-  --height-50: 200px;
-  --height-55: 220px;
-  --height-62: 248px;
-  --height-75: 300px;
-  --height-screen-full: 100dvh;
-  --height-screen-90: 90dvh;
-  --height-screen-80: 80dvh;
-  --height-screen-70: 70dvh;
-  --height-screen-60: 60dvh;
-  --height-screen-50: 50dvh;
-  --height-screen-40: 40dvh;
-  --height-screen-30: 30dvh;
-  --height-screen-20: 20dvh;
-  --height-screen-10: 10dvh;
-
-  /* Min-height values */
-  --min-height-3: 12px;
-  --min-height-5: 20px;
-  --min-height-8: 32px;
-  --min-height-10: 40px;
-  --min-height-14: 56px;
-  --min-height-18: 72px;
-  --min-height-30.5: 122px;
-  --min-height-75: 300px;
-  --min-height-200: 800px;
-  --min-height-screen-full: 100dvh;
-  --min-height-screen-90: 90dvh;
-  --min-height-screen-80: 80dvh;
-  --min-height-screen-70: 70dvh;
-  --min-height-screen-60: 60dvh;
-  --min-height-screen-50: 50dvh;
-  --min-height-screen-40: 40dvh;
-  --min-height-screen-30: 30dvh;
-  --min-height-screen-20: 20dvh;
-  --min-height-screen-10: 10dvh;
-
-  /* Max-height values */
-  --max-height-70: 280px;
-  --max-height-75: 300px;
-
-  /* Min-width values */
-  --min-width-13: 52px;
-  --min-width-15: 60px;
-  --min-width-16: 64px;
-  --min-width-18: 72px;
-  --min-width-20: 80px;
-  --min-width-25: 100px;
-  --min-width-28: 112px;
-  --min-width-29: 116px;
-  --min-width-30: 120px;
-  --min-width-35: 140px;
-  --min-width-35.5: 142px;
-  --min-width-37: 148px;
-  --min-width-40: 160px;
-  --min-width-50: 200px;
-  --min-width-60: 240px;
-  --min-width-90: 360px;
-  --min-width-92.5: 370px;
-  --min-width-94: 376px;
-
-  /* Max-width values */
-  --max-width-content: 1288px;
-  --max-width-v1: 1288px;
-  --max-width-modal: 895px;
-  --max-width-modal-lg: 650px;
-  --max-width-modal-md: 556px;
-  --max-width-modal-sm: 526px;
-  --max-width-modal-xs: 442px;
-  --max-width-screen-full: 100dvw;
-  --max-width-screen-90: 90dvw;
-  --max-width-screen-80: 80dvw;
-  --max-width-screen-70: 70dvw;
-  --max-width-screen-60: 60dvw;
-  --max-width-screen-50: 50dvw;
-  --max-width-screen-40: 40dvw;
-  --max-width-screen-30: 30dvw;
-  --max-width-screen-20: 20dvw;
-  --max-width-screen-10: 10dvw;
-
-  /* Grid template columns */
-  --grid-template-columns-chart: 'minmax(100px, 100%) 346px';
-
-  /* Backdrop blur */
-  --backdrop-blur-sticky: 50px;
-
-  /* Background size */
-  --background-size-desktop: '100% auto';
+  /* Hue rotate */
+  --hue-rotate-82: -82deg;
 
   /* Transition duration */
-  --transition-duration-3000: 3000ms;
-  --transition-duration-120000: 120000ms;
-  --transition-duration-150000: 150000ms;
-  --transition-duration-180000: 180000ms;
-  --transition-duration-DEFAULT: 500ms;
+  --duration-DEFAULT: 500ms;
+  --duration-3000: 3000ms;
+  --duration-120000: 120000ms;
+  --duration-150000: 150000ms;
+  --duration-180000: 180000ms;
 
-  /* Transition property */
-  --transition-property-background: 'filter, -webkit-filter';
+  --transition-background: filter, -webkit-filter;
 
   /* Animation */
   --animate-check: check 1.5s ease-in-out forwards;
@@ -329,9 +311,6 @@
   --animate-fadein: fadein 1s ease-in-out forwards;
   --animate-progress: spin 1200ms cubic-bezier(0.5, 0, 0.5, 1) infinite;
   --animate-loaderFade: fadein 2s ease-in-out forwards;
-
-  /* Hue rotate */
-  --hue-rotate-82: -82deg;
 
   /* Keyframes */
   @keyframes check {
@@ -372,6 +351,41 @@
       transform: translate(0%, 0%);
     }
   }
+}
+@utility w-screen-full {
+  width: 100dvw;
+}
+@utility max-w-screen-full {
+  max-width: 100dvw;
+}
+@utility h-screen-full {
+  height: 100dvh;
+}
+@utility min-h-screen-full {
+  min-height: 100dvh;
+}
+@utility max-h-screen-full {
+  max-height: 100dvh;
+}
+
+@utility container {
+  width: 100%;
+  max-width: var(--container-screen-full, 100%);
+  margin-inline: auto;
+  padding-inline: 0;
+}
+
+/* @utility scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+} */
+
+@utility animate-delay-* {
+  animation-delay: --value(--delay-*, [time], [*]);
 }
 
 /*
