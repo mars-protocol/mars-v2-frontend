@@ -60,7 +60,7 @@
     "react-use-clipboard": "^1.0.9",
     "recharts": "^3.3.0",
     "sharp": "^0.34.4",
-    "starknet": "^7.6.4",
+    "starknet": "^8.7.0",
     "swr": "^2.3.6",
     "viem": "^2.38.5",
     "wagmi": "^2.19.1",
