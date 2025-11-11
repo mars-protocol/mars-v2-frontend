@@ -82,7 +82,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
           <Text>{title}</Text>
         </span>
       }
-      headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
+      headerClassName='bg-surface-dark pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col min-h-[400px]'
     >
       {contentHeader}

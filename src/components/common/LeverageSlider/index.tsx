@@ -62,7 +62,7 @@ function LeverageSlider(props: Props) {
         disabled && 'pointer-events-none opacity-50',
       )}
     >
-      <div className='relative h-[30px]'>
+      <div className='relative h-7-5'>
         <input
           className={classNames(
             'relative w-full appearance-none bg-transparent hover:cursor-pointer',
@@ -87,7 +87,7 @@ function LeverageSlider(props: Props) {
           min={min}
         />
       </div>
-      <div className={'flex w-full justify-between text-xs text-white/50 font-bold'}>
+      <div className='flex w-full justify-between text-xs text-white/50 font-bold'>
         <span>{markPosPercent > LEFT_MARGIN ? min : ''}</span>
         <span>{formatValue(max, { abbreviated: false, maxDecimals: 2 })}</span>
       </div>

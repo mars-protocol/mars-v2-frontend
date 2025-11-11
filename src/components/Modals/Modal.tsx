@@ -55,7 +55,7 @@ export default function Modal(props: ModalProps) {
               <EscButton className='absolute! right-2 top-2' onClick={props.onClose} />
             )}
           </div>
-          {props.subHeader && <div className='gradient-header'>{props.subHeader}</div>}
+          {props.subHeader && <div className='bg-surface-dark'>{props.subHeader}</div>}
           <div className={classNames(props.contentClassName, 'flex-1 relative')}>
             {props.children ?? props.content}
           </div>

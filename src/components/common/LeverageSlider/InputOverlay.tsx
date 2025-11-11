@@ -64,7 +64,7 @@ function InputOverlay({ max, value, marginThreshold, type, min }: Props) {
       </div>
       <div
         className={classNames(
-          'w-[36px] h-4.5 absolute text-[10px] top-[3.5px]',
+          'w-9 h-4.5 absolute text-[10px] top-[3.5px]',
           'pointer-events-none text-center font-bold',
           'border rounded-sm border-white/20',
           type === 'long' && 'bg-green',

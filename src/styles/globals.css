@@ -1,74 +1,14 @@
 @import 'tailwindcss';
 
-@source inline(
-  'border-error',
-  'border-success',
-  'h-2',
-  'text-3xs',
-  'text-3xs-caps',
-  'text-2xs',
-  'text-2xs-caps',
-  'text-xs-caps',
-  'text-xs',
-  'text-sm-caps',
-  'text-sm',
-  'text-base-caps',
-  'text-base',
-  'text-lg-caps',
-  'text-lg',
-  'text-xl-caps',
-  'text-xl',
-  'text-2xl-caps',
-  'text-2xl',
-  'text-3xl-caps',
-  'text-3xl',
-  'text-4xl-caps',
-  'text-4xl',
-  'text-5xl-caps',
-  'text-5xl',
-  'text-yellow-300',
-  'text-violet-500',
-  'text-green',
-  'text-grey-light',
-  'fill-yellow-300',
-  'fill-violet-500',
-  'fill-green',
-  'fill-martian-red',
-  'fill-grey-light',
-  'w-2',
-  '@nav-0/navigation:inline-block',
-  '@nav-1/navigation:inline-block',
-  '@nav-2/navigation:inline-block',
-  '@nav-3/navigation:inline-block',
-  '@nav-4/navigation:inline-block',
-  '@nav-5/navigation:inline-block',
-  '@nav-6/navigation:inline-block',
-  '@nav-0/navigation:hidden',
-  '@nav-1/navigation:hidden',
-  '@nav-2/navigation:hidden',
-  '@nav-3/navigation:hidden',
-  '@nav-4/navigation:hidden',
-  '@nav-5/navigation:hidden',
-  '@nav-6/navigation:hidden',
-  'gradient-droplets',
-  'gradient-stride',
-  'gradient-lido',
-  'gradient-milkyway',
-  'gradient-ntrn-rewards',
-  'droplets',
-  'stride',
-  'lido',
-  'milkyway',
-  'ntrn-rewards',
-);
+@source inline("border-error","border-success","h-2","text-3xs","text-3xs-caps","text-2xs","text-2xs-caps","text-xs-caps","text-xs","text-sm-caps","text-sm","text-base-caps","text-base","text-lg-caps","text-lg","text-xl-caps","text-xl","text-2xl-caps","text-2xl","text-3xl-caps","text-3xl","text-4xl-caps","text-4xl","text-5xl-caps","text-5xl","text-yellow-300","text-violet-500","text-green","text-grey-light","fill-yellow-300","fill-violet-500","fill-green","fill-martian-red","fill-grey-light","w-2","@nav-0/navigation:inline-block","@nav-1/navigation:inline-block","@nav-2/navigation:inline-block","@nav-3/navigation:inline-block","@nav-4/navigation:inline-block","@nav-5/navigation:inline-block","@nav-6/navigation:inline-block","@nav-0/navigation:hidden","@nav-1/navigation:hidden","@nav-2/navigation:hidden","@nav-3/navigation:hidden","@nav-4/navigation:hidden","@nav-5/navigation:hidden","@nav-6/navigation:hidden","gradient-droplets","gradient-stride","gradient-lido","gradient-milkyway","gradient-ntrn-rewards","droplets","stride","lido","milkyway","ntrn-rewards");
 
 @theme {
   /* Font family */
   --font-sans: Inter, sans-serif;
 
   /* Font sizes */
-  --text-2xs: 11px;
-  --text-2xs--line-height: 15px;
+  --text-2xs: 10px;
+  --text-2xs--line-height: 14px;
   --text-xs: 12px;
   --text-xs--line-height: 16px;
   --text-sm: 14px;
@@ -229,6 +169,7 @@
   --spacing-4-5: 17px;
   --spacing-5-5: 22px;
   --spacing-6-5: 26px;
+  --spacing-7-5: 30px;
   --spacing-8: 32px;
   --spacing-9: 36px;
   --spacing-10: 40px;
@@ -388,14 +329,32 @@
   animation-delay: --value(--delay-*, [time], [*]);
 }
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+/* Gradient utilities */
+@utility gradient-slider-green {
+  background: linear-gradient(
+    270deg,
+    hsl(126deg 100% 69% / 0.886) 0%,
+    hsl(280deg 9% 25% / 0.051) 100%
+  );
+}
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
+@utility gradient-slider-red {
+  background: linear-gradient(
+    270deg,
+    hsl(4deg 86% 58% / 0.886) 0%,
+    hsl(280deg 9% 25% / 0.051) 100%
+  );
+}
+
+@utility gradient-slider-martian-red {
+  background: linear-gradient(
+    270deg,
+    hsl(2deg 100% 69% / 0.886) 0%,
+    hsl(2deg 100% 69% / 0.051) 100%
+  );
+}
+
+/* Base utilities */
 @layer base {
   *,
   ::after,
@@ -406,6 +365,7 @@
   }
 }
 
+/* Utilities */
 @layer utilities {
   @font-face {
     font-family: Inter;
@@ -437,53 +397,17 @@
     font-display: swap;
   }
 
-  /* Gradient utilities */
-  .gradient-card-content {
-    background: transparent;
-  }
-
-  .gradient-header {
-    background: hsl(var(--color-surface-dark));
-  }
-
+  /* Gradient classes */
   .gradient-hls {
     background: linear-gradient(
       180deg,
-      hsl(var(--color-hls-primary)) 0%,
-      hsl(var(--color-hls-secondary)) 50%
+      var(--color-hls-primary) 0%,
+      var(--color-hls-secondary) 50%
     );
   }
 
   .gradient-primary-to-secondary {
-    background: linear-gradient(
-      180deg,
-      hsl(var(--color-martian-red)) 0%,
-      hsl(var(--color-mars)) 100%
-    );
-  }
-
-  .gradient-slider-martian-red {
-    background: linear-gradient(
-      270deg,
-      hsl(var(--color-martian-red) / 0.886) 0%,
-      hsl(var(--color-martian-red) / 0.051) 100%
-    );
-  }
-
-  .gradient-slider-green {
-    background: linear-gradient(
-      270deg,
-      hsl(var(--color-slider-green-primary) / 0.886) 0%,
-      hsl(var(--color-slider-green-secondary) / 0.051) 100%
-    );
-  }
-
-  .gradient-slider-red {
-    background: linear-gradient(
-      270deg,
-      hsl(var(--color-slider-red-primary) / 0.886) 0%,
-      hsl(var(--color-slider-red-secondary) / 0.051) 100%
-    );
+    background: linear-gradient(180deg, var(--color-martian-red) 0%, var(--color-mars) 100%);
   }
 
   .gradient-ntrn-rewards {
@@ -506,49 +430,24 @@
     );
   }
 
+  .slider-mask {
+    mask: linear-gradient(var(--color-white) 0 0);
+    -webkit-mask: linear-gradient(var(--color-white) 0 0);
+  }
+
   .gradient-milkyway {
     background: linear-gradient(90deg, #fef7f1 0%, #fde2fb 50%, #fde4fc 100%);
   }
 
-  /* Text utilities */
+  /* Text classes */
   .number {
     white-space: nowrap;
     font-feature-settings: 'tnum' on;
   }
 
-  .slider-mask {
-    mask: linear-gradient(hsl(var(--color-white)) 0 0);
-  }
-
-  .text-3xs {
-    font-size: 9px;
-    line-height: 12px;
-  }
-
-  .text-3xs-caps {
-    font-size: 9px;
-    line-height: 12px;
-    text-transform: uppercase;
-    font-weight: 500;
-    letter-spacing: 0;
-  }
-
-  .text-2xs {
-    font-size: 10px;
-    line-height: 14px;
-  }
-
   .text-2xs-caps {
     font-size: 10px;
     line-height: 14px;
-    text-transform: uppercase;
-    font-weight: 500;
-    letter-spacing: 0;
-  }
-
-  .text-xs-caps {
-    font-size: 12px;
-    line-height: 16px;
     text-transform: uppercase;
     font-weight: 500;
     letter-spacing: 0;
@@ -568,57 +467,6 @@
     text-transform: uppercase;
     font-weight: 500;
     letter-spacing: 0;
-  }
-
-  .text-lg-caps {
-    font-size: 17px;
-    line-height: 22px;
-    text-transform: uppercase;
-    font-weight: 500;
-    letter-spacing: 0;
-  }
-
-  .text-xl-caps {
-    font-size: 19px;
-    line-height: 28px;
-    text-transform: uppercase;
-    font-weight: 300;
-    letter-spacing: 5px;
-  }
-
-  .text-2xl-caps {
-    font-size: 21px;
-    line-height: 32px;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-  }
-
-  .text-3xl-caps {
-    font-size: 24px;
-    line-height: 36px;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-  }
-
-  .text-4xl-caps {
-    font-size: 30px;
-    line-height: 40px;
-    text-transform: uppercase;
-  }
-
-  .text-5xl-caps {
-    font-size: 39px;
-    line-height: 56px;
-    text-transform: uppercase;
-    letter-spacing: 9px;
-  }
-
-  /* Background image utility */
-  .bg-v1 {
-    background-image: url(/images/bg-v1.svg);
-    background-repeat: no-repeat;
-    background-size: 100% auto;
-    background-position: top;
   }
 
   /* Text gradient utilities */
@@ -719,7 +567,6 @@
 
 :root {
   /* Current Palette Variables */
-
   --color-accent: hsl(291deg 27% 15%);
   --color-accent-dark: hsl(323deg 33% 15%);
   --color-accent-inverted: hsl(228deg 100% 60%);

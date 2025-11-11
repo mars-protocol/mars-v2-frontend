@@ -15,7 +15,7 @@ function DetailsHeader({ data }: Props) {
   const balanceInWallet = useCurrentWalletBalance(asset.denom)
 
   return (
-    <div className='flex gap-4 p-4 border-b md:gap-6 md:px-6 border-white/5 gradient-header'>
+    <div className='flex gap-4 p-4 border-b md:gap-6 md:px-6 border-white/5 bg-surface-dark'>
       {assetApy && (
         <>
           <TitleAndSubCell

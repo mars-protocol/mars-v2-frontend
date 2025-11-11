@@ -94,10 +94,10 @@ export default function Borrow(props: Props) {
           <Text>{`Borrow ${asset.symbol} from the Red Bank`}</Text>
         </span>
       }
-      headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
+      headerClassName='bg-surface-dark pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col'
     >
-      <div className='flex gap-3 px-6 py-4 border-b border-white/5 gradient-header'>
+      <div className='flex gap-3 px-6 py-4 border-b border-white/5 bg-surface-dark'>
         <TitleAndSubCell title={formatPercent(apy)} sub={'Borrow Rate APY'} />
         {accountDebt.isGreaterThan(0) && (
           <>
@@ -144,7 +144,7 @@ export default function Borrow(props: Props) {
           </Text>
         </div>
       </div>
-      <div className='flex items-start flex-1 p-2 gap-1 flex-wrap bg-body'>
+      <div className='flex items-start p-2 gap-1 flex-wrap bg-body'>
         <Card
           className='flex flex-1 w-full p-4 max-w-screen-full min-w-[200px]'
           contentClassName='gap-6 flex flex-col justify-between h-full'

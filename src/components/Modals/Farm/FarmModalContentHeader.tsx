@@ -72,7 +72,7 @@ export default function FarmModalContentHeader(props: Props) {
 
   return (
     <>
-      <div className='flex gap-6 px-6 py-4 border-b border-white/5 gradient-header'>
+      <div className='flex gap-6 px-6 py-4 border-b border-white/5 bg-surface-dark'>
         <TitleAndSubCell
           title={
             <div className='flex flex-row'>

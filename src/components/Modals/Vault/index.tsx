@@ -65,7 +65,7 @@ function VaultModal(props: Props) {
           )}
         </span>
       }
-      headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
+      headerClassName='bg-surface-dark pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col'
     >
       <FarmModalContentHeader farm={vault} isAstroLp={false} account={currentAccount} />

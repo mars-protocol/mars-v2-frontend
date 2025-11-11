@@ -59,7 +59,7 @@ export default function GetStartedModal() {
       onClose={onClose}
       header={<Text>Get Started</Text>}
       className='relative'
-      headerClassName='gradient-header p-4 border-b-white/5 border-b'
+      headerClassName='bg-surface-dark p-4 border-b-white/5 border-b'
       contentClassName='flex flex-col p-3 pb-8'
     >
       <Text size='sm' className='p-2 pt-0 text-white/50'>
