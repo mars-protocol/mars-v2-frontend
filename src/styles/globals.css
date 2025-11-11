@@ -7,6 +7,8 @@
   --font-sans: Inter, sans-serif;
 
   /* Font sizes */
+  --text-3xs: 9px;
+  --text-3xs--line-height: 12px;
   --text-2xs: 10px;
   --text-2xs--line-height: 14px;
   --text-xs: 12px;
@@ -316,14 +318,15 @@
   padding-inline: 0;
 }
 
-/* @utility scrollbar-hide {
+/* Scrollbar utilities */
+@utility scrollbar-hide {
   scrollbar-width: none;
   -ms-overflow-style: none;
 
   &::-webkit-scrollbar {
     display: none;
   }
-} */
+}
 
 @utility animate-delay-* {
   animation-delay: --value(--delay-*, [time], [*]);
@@ -445,9 +448,25 @@
     font-feature-settings: 'tnum' on;
   }
 
+  .text-3xs-caps {
+    font-size: 9px;
+    line-height: 12px;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
   .text-2xs-caps {
     font-size: 10px;
     line-height: 14px;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  .text-xs-caps {
+    font-size: 12px;
+    line-height: 16px;
     text-transform: uppercase;
     font-weight: 500;
     letter-spacing: 0;
@@ -467,6 +486,49 @@
     text-transform: uppercase;
     font-weight: 500;
     letter-spacing: 0;
+  }
+
+  .text-lg-caps {
+    font-size: 17px;
+    line-height: 22px;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  .text-xl-caps {
+    font-size: 19px;
+    line-height: 28px;
+    text-transform: uppercase;
+    font-weight: 300;
+    letter-spacing: 5px;
+  }
+
+  .text-2xl-caps {
+    font-size: 21px;
+    line-height: 32px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+  }
+
+  .text-3xl-caps {
+    font-size: 24px;
+    line-height: 36px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+  }
+
+  .text-4xl-caps {
+    font-size: 30px;
+    line-height: 40px;
+    text-transform: uppercase;
+  }
+
+  .text-5xl-caps {
+    font-size: 39px;
+    line-height: 56px;
+    text-transform: uppercase;
+    letter-spacing: 9px;
   }
 
   /* Text gradient utilities */

@@ -450,7 +450,7 @@ export default function SettingsModal() {
               handleSlippage(value)
             }}
             hasFocus={slippage === value && !isCustom}
-            className='mr-3 text-[16px]'
+            className='mr-3'
             text={`${value * 100}%`}
           />
         ))}

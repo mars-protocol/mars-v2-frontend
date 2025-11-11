@@ -147,7 +147,7 @@ export default function TokenInput(props: Props) {
               <Button
                 dataTestId='token-input-max-button'
                 color='tertiary'
-                className='h-4! min-h-0! bg-white/10 px-2! py-0.5! text-2xs'
+                className='h-4! min-h-0! bg-white/10 px-2! py-0.5! text-2xs!'
                 variant='transparent'
                 onClick={(e) => {
                   e.preventDefault()

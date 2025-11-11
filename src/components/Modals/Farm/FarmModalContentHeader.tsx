@@ -85,13 +85,13 @@ export default function FarmModalContentHeader(props: Props) {
               />
             </div>
           }
-          sub={'Deposit APY'}
+          sub='Deposit APY'
         />
-        <div className='h-100 w-px bg-surface-light' />
+        <div className='h-8 w-px bg-surface-light' />
         {!deposited.amount.isZero() && (
           <>
             <TitleAndSubCell title={<DisplayCurrency coin={deposited} />} sub={'Deposited'} />
-            <div className='h-100 w-px bg-surface-light' />
+            <div className='h-8 w-px bg-surface-light' />
           </>
         )}
         {farm.cap && (
@@ -99,7 +99,7 @@ export default function FarmModalContentHeader(props: Props) {
             title={
               <DisplayCurrency coin={BNCoin.fromDenomAndBigNumber(farm.cap.denom, farm.cap.max)} />
             }
-            sub={'Deposit Cap'}
+            sub='Deposit Cap'
           />
         )}
       </div>

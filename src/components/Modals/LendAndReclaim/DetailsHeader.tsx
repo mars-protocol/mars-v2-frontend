@@ -31,7 +31,7 @@ function DetailsHeader({ data }: Props) {
             }
             sub={'APY'}
           />
-          <div className='h-100 w-px bg-surface-light' />
+          <div className='h-8 w-px bg-surface-light' />
         </>
       )}
       {accountLentAmount && (
@@ -44,7 +44,7 @@ function DetailsHeader({ data }: Props) {
             }
             sub={'Deposited'}
           />
-          <div className='h-100 w-px bg-surface-light' />
+          <div className='h-8 w-px bg-surface-light' />
         </>
       )}
       {balanceInWallet && (
@@ -53,7 +53,7 @@ function DetailsHeader({ data }: Props) {
             title={<DisplayCurrency coin={new BNCoin(balanceInWallet)} />}
             sub={'In Wallet'}
           />
-          <div className='h-100 w-px bg-surface-light' />
+          <div className='h-8 w-px bg-surface-light' />
         </>
       )}
       <TitleAndSubCell
