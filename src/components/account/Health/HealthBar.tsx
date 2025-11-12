@@ -75,11 +75,7 @@ export default function HealthBar({
           />
         )}
         <div
-          className={classNames(
-            'flex w-full shrink',
-            'rounded-full md:overflow-hidden',
-            className,
-          )}
+          className={classNames('flex w-full shrink rounded-full md:overflow-hidden', className)}
         >
           <svg
             version='1.1'

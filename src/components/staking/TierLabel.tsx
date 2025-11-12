@@ -20,7 +20,10 @@ export default function TierLabel({
 
   const tierLabel = (
     <div
-      className={classNames('px-2 py-1 rounded text-xs font-medium inline-block', className)}
+      className={classNames(
+        'px-2 py-1 rounded text-2xs md:text-xs font-medium inline-block whitespace-nowrap',
+        className,
+      )}
       style={{ backgroundColor: tier.color + '20', color: tier.color }}
     >
       {tier.name}

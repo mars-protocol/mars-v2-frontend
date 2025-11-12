@@ -1,4 +1,3 @@
-import Divider from 'components/common/Divider'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
@@ -21,12 +20,12 @@ export function SubHeader() {
         }
         sub='TVL'
       />
-      <Divider orientation='vertical' />
+      <div className='h-8 w-px bg-surface-light' />
       <TitleAndSubCell
         title={formatPercent(perpsVault.collateralizationRatio * 100)}
         sub='Collateralization Ratio'
       />
-      <Divider orientation='vertical' />
+      <div className='h-8 w-px bg-surface-light' />
       <TitleAndSubCell title={formatPercent(perpsVault?.apy ?? 0)} sub='Deposit APY' />
     </div>
   )

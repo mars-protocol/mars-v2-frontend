@@ -63,7 +63,7 @@ export default function AccountSummaryHeader(props: Props) {
         <Button
           onClick={onClose}
           leftIcon={<ArrowRightLine />}
-          iconClassName='w-full'
+          iconClassName='w-4 h-4'
           className='absolute! top-4 right-4 w-8 h-6 px-2 z-4 hidden md:flex'
           size='xs'
           color='secondary'

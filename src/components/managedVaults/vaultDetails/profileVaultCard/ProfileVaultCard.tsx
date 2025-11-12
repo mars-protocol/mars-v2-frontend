@@ -247,7 +247,7 @@ export default function ProfileVaultCard(props: Props) {
                     <TextLink
                       href={social.link}
                       target='_blank'
-                      className={'underline hover:no-underline hover:text-white relative'}
+                      className='relative underline hover:no-underline hover:text-white focus-visible:text-white w-4 h-4'
                       title={social.verified ? social.name : `${social.name} (unverified)`}
                     >
                       {social.icon}
