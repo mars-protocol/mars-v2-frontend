@@ -1,7 +1,7 @@
 import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
 import TitleAndSubCell from 'components/common/TitleAndSubCell'
-import moment from 'moment'
+import dayjs from 'utils/dayjs'
 
 export const TIMESTAMP_META = {
   id: 'name',
@@ -40,7 +40,7 @@ export default function Timestamp(props: Props) {
       break
   }
 
-  const date = showUtc ? moment.unix(timestampInSeconds).utc() : moment.unix(timestampInSeconds)
+  const date = showUtc ? dayjs.unix(timestampInSeconds).utc() : dayjs.unix(timestampInSeconds)
   const dateFormatted = date.format('MMM D, YYYY')
   const timeFormat = use24Hour ? 'HH:mm' : 'hh:mm A'
   const timeFormatted = date.format(timeFormat)

@@ -1,4 +1,4 @@
-import moment from 'moment'
+import { dayjsDuration } from 'utils/dayjs'
 
 import { BN_ZERO } from 'constants/math'
 import { ORACLE_DENOM } from 'constants/oracle'
@@ -48,16 +48,19 @@ export function truncate(text = '', [h, t]: [number, number] = [6, 6]): string {
 }
 
 export const produceCountdown = (remainingTime: number) => {
-  const duration = moment.duration(remainingTime, 'milliseconds')
-  const days = formatValue(duration.asDays(), { minDecimals: 0, maxDecimals: 0 })
+  const duration = dayjsDuration(remainingTime, 'milliseconds')
+  const days = Math.floor(duration.asDays())
+  const daysFormatted = formatValue(days, { minDecimals: 0, maxDecimals: 0 })
 
-  duration.subtract(days, 'days')
-  const hours = formatValue(duration.asHours(), { minDecimals: 0, maxDecimals: 0 })
+  const remainingAfterDays = duration.subtract(days, 'days')
+  const hours = Math.floor(remainingAfterDays.asHours())
+  const hoursFormatted = formatValue(hours, { minDecimals: 0, maxDecimals: 0 })
 
-  duration.subtract(hours, 'hours')
-  const minutes = formatValue(duration.asMinutes(), { minDecimals: 0, maxDecimals: 0 })
+  const remainingAfterHours = remainingAfterDays.subtract(hours, 'hours')
+  const minutes = Math.floor(remainingAfterHours.asMinutes())
+  const minutesFormatted = formatValue(minutes, { minDecimals: 0, maxDecimals: 0 })
 
-  return `${days}d ${hours}h ${minutes}m`
+  return `${daysFormatted}d ${hoursFormatted}h ${minutesFormatted}m`
 }
 
 export const formatValue = (amount: number | string, options?: FormatOptions): string => {

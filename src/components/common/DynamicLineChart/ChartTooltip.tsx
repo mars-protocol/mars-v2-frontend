@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import moment from 'moment'
+import dayjs from 'utils/dayjs'
 import Text from 'components/common/Text'
 
 interface Props {
@@ -14,7 +14,7 @@ export default function CustomTooltip(props: Props) {
   const { active, payload, label, renderContent } = props
 
   const formatDateLabel = (label: string) => {
-    const date = moment(label)
+    const date = dayjs(label)
     return date.isValid() ? date.format('DD MMM YYYY') : label
   }
 

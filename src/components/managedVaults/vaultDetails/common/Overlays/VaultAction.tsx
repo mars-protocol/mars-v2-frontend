@@ -15,7 +15,7 @@ import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import { useManagedVaultConvertToShares } from 'hooks/managedVaults/useManagedVaultConvertToShares'
 import { useManagedVaultConvertToBaseTokens } from 'hooks/managedVaults/useManagedVaultConvertToBaseTokens'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
-import moment from 'moment'
+import { dayjsDuration } from 'utils/dayjs'
 import { useMemo, useState } from 'react'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
@@ -93,7 +93,7 @@ export default function VaultAction(props: Props) {
   ])
 
   const withdrawalPeriod = formatLockupPeriod(
-    moment.duration(vaultDetails.cooldown_period, 'seconds').as('days'),
+    dayjsDuration(vaultDetails.cooldown_period, 'seconds').asDays(),
     'days',
   )
 

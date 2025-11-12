@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'utils/dayjs'
 import {
   Area,
   AreaChart,
@@ -65,7 +65,7 @@ export const RiskChart = ({ data }: RiskChartProps) => {
               stroke='rgba(255, 255, 255, 0.6)'
               tickLine={false}
               tickFormatter={(value) => {
-                return moment(value).format('DD')
+                return dayjs(value).format('DD')
               }}
               fontSize={10.53}
               dataKey='date'
@@ -83,7 +83,7 @@ export const RiskChart = ({ data }: RiskChartProps) => {
                   const risk = Number(payload[0].value) ?? 0
                   return (
                     <div className='max-w-80 rounded-lg px-4 py-2 shadow-tooltip bg-surface'>
-                      <Text size='sm'>{moment(label).format('MM-DD-YYYY')}</Text>
+                      <Text size='sm'>{dayjs(label).format('MM-DD-YYYY')}</Text>
                       <Text size='sm'>
                         Risk: {formatValue(risk, { minDecimals: 0, maxDecimals: 0, suffix: '%' })}
                       </Text>

@@ -1,10 +1,10 @@
-import moment from 'moment'
+import dayjs from 'utils/dayjs'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getManagedVaultsUrl } from 'utils/api'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { vaultAddress } = req.query
-  const unixTime = moment().unix()
+  const unixTime = dayjs().unix()
 
   // Get the current host dynamically
   const protocol = req.headers['x-forwarded-proto'] || 'http'

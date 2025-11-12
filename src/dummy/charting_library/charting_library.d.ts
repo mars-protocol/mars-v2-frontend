@@ -9567,7 +9567,7 @@ export interface IChartWidgetApi {
    */
   setPriceToBarRatioLocked(value: boolean, options?: UndoOptions): void
   /**
-   * Get an array of the heigh of all panes.
+   * Get an array of the height of all panes.
    *
    * **Example**
    * ```javascript
@@ -12054,7 +12054,7 @@ export interface IPineSeries {
    */
   get(n?: number): number
   /**
-   * Set the value for the pine series at the current index interation.
+   * Set the value for the pine series at the current index iteration.
    * @param  {number} value - value to be set
    */
   set(value: number): void
@@ -12092,7 +12092,7 @@ export interface IPineSeries {
    *
    * @example
    *
-   * Psuedocode of the adopt algorithm:
+   * Pseudocode of the adopt algorithm:
    *
    * ```
    * adopt(sourceSeries, destinationSeries, mode) =

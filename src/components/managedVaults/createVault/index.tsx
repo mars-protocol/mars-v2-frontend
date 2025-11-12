@@ -20,7 +20,7 @@ import useVaultAssets from 'hooks/assets/useVaultAssets'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import usePrice from 'hooks/prices/usePrice'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
-import moment from 'moment'
+import { dayjsDuration } from 'utils/dayjs'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
@@ -109,8 +109,8 @@ export default function CreateVault() {
       const hourlyRate = annualRate.dividedBy(8760)
       const feeRate = hourlyRate.decimalPlaces(18).toString()
 
-      const freezePeriodSeconds = moment.duration(Number(withdrawFreezePeriod), 'hours').asSeconds()
-      const withdrawalIntervalSeconds = moment.duration(30, 'days').asSeconds()
+      const freezePeriodSeconds = dayjsDuration(Number(withdrawFreezePeriod), 'hours').asSeconds()
+      const withdrawalIntervalSeconds = dayjsDuration(30, 'days').asSeconds()
       const creationFee = creationFeeInAsset
         .multipliedBy(1.01)
         .shiftedBy(selectedAsset.decimals)

@@ -49,7 +49,7 @@ function PageContainer(props: Props) {
     )
 
   return (
-    <div className='relative flex items-center justify-center w-full h-full z-80'>
+    <div className='relative flex items-center justify-center w-full h-full z-50'>
       {props.focusComponent.component}
     </div>
   )

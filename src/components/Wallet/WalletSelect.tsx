@@ -1,5 +1,5 @@
 import { useShuttle } from '@delphi-labs/shuttle-react'
-import moment from 'moment'
+import dayjs from 'utils/dayjs'
 import Image from 'next/image'
 import React, { useEffect, useMemo, useState } from 'react'
 import { isMobile } from 'react-device-detect'
@@ -145,7 +145,7 @@ export default function WalletSelect(props: Props) {
     if (error?.message && error?.title) {
       useStore.setState({
         toast: {
-          id: moment.now(),
+          id: dayjs().valueOf(),
           isError: true,
           title: error.title,
           message: error.message,

@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import moment from 'moment'
+import dayjs from 'utils/dayjs'
 
 import Card from 'components/common/Card'
 import Divider from 'components/common/Divider'
@@ -52,7 +52,7 @@ export default function RecentTransactions() {
                     <div className='flex flex-wrap items-start justify-between w-full gap-2 pb-2 md:flex-nowrap'>
                       <Text className='flex font-bold'>{target}</Text>
                       <Text size='sm' className='text-white/70'>
-                        {moment.unix(timestamp).format('lll')}
+                        {dayjs.unix(timestamp).format('lll')}
                       </Text>
                     </div>
                     {message && (

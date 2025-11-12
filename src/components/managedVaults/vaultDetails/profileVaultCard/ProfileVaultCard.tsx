@@ -22,7 +22,7 @@ import useManagedVaultOwnerInfo from 'hooks/managedVaults/useManagedVaultOwnerIn
 import useManagedVaultOwnerPosition from 'hooks/managedVaults/useManagedVaultOwnerPosition'
 import useManagedVaultPnl from 'hooks/managedVaults/useManagedVaultPnl'
 import { useStakedMars } from 'hooks/staking/useNeutronStakingData'
-import moment from 'moment'
+import { dayjsDuration } from 'utils/dayjs'
 import Image from 'next/image'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
@@ -194,7 +194,7 @@ export default function ProfileVaultCard(props: Props) {
           <InfoRow label='Withdrawal Freeze Period'>
             <Text size='sm'>
               {formatLockupPeriod(
-                moment.duration(details.cooldown_period, 'seconds').as('days'),
+                dayjsDuration(details.cooldown_period, 'seconds').asDays(),
                 'days',
               )}
             </Text>
