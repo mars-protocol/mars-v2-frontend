@@ -1241,6 +1241,8 @@ export default function createBroadcastSlice(
       orderType: ExecutePerpOrderType
       conditionalTriggers: { sl: string | null; tp: string | null }
       keeperFee: BNCoin
+      keeperFeeFromLends: BNCoin
+      keeperFeeFromBorrows: BNCoin
       limitPrice?: string
       stopPrice?: string
     }) => {
@@ -1257,6 +1259,23 @@ export default function createBroadcastSlice(
       try {
         const actions: Action[] = []
         const tradeDirection = options.coin.amount.isNegative() ? 'short' : 'long'
+
+        // Add reclaim action if we need to reclaim from lends
+        if (!options.keeperFeeFromLends.amount.isZero()) {
+          actions.push({
+            reclaim: options.keeperFeeFromLends.toActionCoin(),
+          })
+        }
+
+        // Add borrow action if we need to borrow
+        if (!options.keeperFeeFromBorrows.amount.isZero()) {
+          actions.push({
+            borrow: {
+              amount: options.keeperFeeFromBorrows.amount.toString(),
+              denom: options.keeperFeeFromBorrows.denom,
+            },
+          })
+        }
 
         if (options.orderType === 'parent') {
           let comparison: 'less_than' | 'greater_than'

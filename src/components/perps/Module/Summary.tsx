@@ -52,6 +52,10 @@ type Props = {
   isReduceOnly: boolean
   validateReduceOnlyOrder: () => boolean
   conditionalTriggers: { sl: string | null; tp: string | null }
+  tradingFee?: { opening: BigNumber; closing: BigNumber }
+  keeperFeeFromLends: BNCoin
+  keeperFeeFromBorrows: BNCoin
+  isTradingFeeLoading: boolean
 }
 
 export default function PerpsSummary(props: Props) {
@@ -66,6 +70,8 @@ export default function PerpsSummary(props: Props) {
     baseDenom,
     limitPrice,
     stopPrice,
+    keeperFeeFromLends,
+    keeperFeeFromBorrows,
     isReduceOnly,
     conditionalTriggers,
     validateReduceOnlyOrder,
@@ -120,6 +126,8 @@ export default function PerpsSummary(props: Props) {
       stopPrice: isStopOrder ? stopPrice : undefined,
       isReduceOnly,
       conditionalTriggers,
+      keeperFeeFromLends,
+      keeperFeeFromBorrows,
     })
     return true
   }, [
@@ -134,6 +142,8 @@ export default function PerpsSummary(props: Props) {
     stopPrice,
     isReduceOnly,
     conditionalTriggers,
+    keeperFeeFromLends,
+    keeperFeeFromBorrows,
     submitParentOrderWithChildren,
     currentAccount,
     feeToken,
@@ -235,7 +245,10 @@ export default function PerpsSummary(props: Props) {
     onTxExecuted,
   ])
 
-  const isDisabled = useMemo(() => amount.isZero() || disabled, [amount, disabled])
+  const isDisabled = useMemo(
+    () => amount.isZero() || disabled || props.isTradingFeeLoading || !props.tradingFee,
+    [amount, disabled, props.isTradingFeeLoading, props.tradingFee],
+  )
 
   const tradingFeeTooltip = useMemo(() => {
     const text = 'Trading Fees'
