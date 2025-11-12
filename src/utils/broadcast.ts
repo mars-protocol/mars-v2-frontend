@@ -1014,7 +1014,7 @@ function getPerpsTransactionTypeFromCoin(txCoin: {
   coin: BNCoin
   before: BNCoin
 }): PerpsTransactionType {
-  // if amount of the before positon was 0 -> opened a new position
+  // if amount of the before position was 0 -> opened a new position
   if (txCoin.before.amount.isZero()) return 'open'
   // if amount of the new position is 0 -> close position
   if (txCoin.coin.amount.isZero()) return 'close'

@@ -30,6 +30,8 @@ export function useSubmitParentOrderWithChildren() {
       stopPrice,
       isReduceOnly,
       conditionalTriggers,
+      keeperFeeFromLends,
+      keeperFeeFromBorrows,
     }: {
       asset: Asset
       amount: BigNumber
@@ -40,6 +42,8 @@ export function useSubmitParentOrderWithChildren() {
       stopPrice?: BigNumber
       isReduceOnly?: boolean
       conditionalTriggers: { sl: string | null; tp: string | null }
+      keeperFeeFromLends: BNCoin
+      keeperFeeFromBorrows: BNCoin
     }) => {
       if (!currentAccount || !chainConfig || !address) {
         console.error('Missing required dependencies:', {
@@ -69,24 +73,21 @@ export function useSubmitParentOrderWithChildren() {
         const perpOrderType: ExecutePerpOrderType =
           orderType === OrderType.MARKET ? 'default' : 'parent'
 
-        const params: any = {
+        return executeParentOrderWithConditionalTriggers({
           accountId: currentAccount.id,
           coin: BNCoin.fromDenomAndBigNumber(asset.denom, orderSize),
           reduceOnly: isReduceOnly,
           autolend: isAutoLendEnabledForCurrentAccount,
           baseDenom,
           keeperFee: keeperFee.calculateKeeperFee,
+          keeperFeeFromLends,
+          keeperFeeFromBorrows,
           orderType: perpOrderType,
           conditionalTriggers,
-        }
-
-        if (orderType === OrderType.LIMIT && limitPrice) {
-          params.limitPrice = limitPrice.toString()
-        } else if (orderType === OrderType.STOP && stopPrice) {
-          params.stopPrice = stopPrice.toString()
-        }
-
-        return executeParentOrderWithConditionalTriggers(params)
+          limitPrice:
+            orderType === OrderType.LIMIT && limitPrice ? limitPrice.toString() : undefined,
+          stopPrice: orderType === OrderType.STOP && stopPrice ? stopPrice.toString() : undefined,
+        })
       } catch (error) {
         console.error('Error submitting parent order with children:', error)
         return false

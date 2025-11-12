@@ -29,6 +29,7 @@ import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useAssets from 'hooks/assets/useAssets'
 import { useExecutionState } from 'hooks/perps/useExecutionState'
 import { useHandleClosing } from 'hooks/perps/useHandleClosing'
+import { useKeeperFeeCalculation } from 'hooks/perps/useKeeperFeeCalculation'
 import { useLimitPriceInfo } from 'hooks/perps/useLimitPriceInfo'
 import { useOpenInterestLeft } from 'hooks/perps/useOpenInterestLeft'
 import usePerpsAsset from 'hooks/perps/usePerpsAsset'
@@ -42,6 +43,7 @@ import { useStopPriceInfo } from 'hooks/perps/useStopPriceInfo'
 import useTradingFeeAndPrice from 'hooks/perps/useTradingFeeAndPrice'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import { BNCoin } from 'types/classes/BNCoin'
+import useDebounce from 'hooks/common/useDebounce'
 
 export function PerpsModule() {
   // State declarations
@@ -87,7 +89,24 @@ export function PerpsModule() {
     isStopOrder,
     stopTradeDirection,
   )
-  const { data: tradingFee } = useTradingFeeAndPrice(perpsAsset.denom, amount.plus(previousAmount))
+  const totalAmount = amount.plus(previousAmount)
+  const debouncedTotalAmount = useDebounce(totalAmount, 1_000)
+  // Check if the fee data is stale (calculated for a different amount than what user entered)
+  const isFeeDataStale = !totalAmount.isEqualTo(debouncedTotalAmount)
+
+  const {
+    data: tradingFee,
+    isLoading: isTradingFeeLoading,
+    isValidating: isTradingFeeValidating,
+  } = useTradingFeeAndPrice(perpsAsset.denom, totalAmount)
+
+  // Calculate keeper fees for account simulation
+  const { keeperFeeFromLends, keeperFeeFromBorrows } = useKeeperFeeCalculation({
+    orderType: selectedOrderType,
+    conditionalTriggers,
+    tradingFee: tradingFee?.fee,
+    enabled: true,
+  })
 
   // Custom price info hooks
   const limitPriceInfo = useLimitPriceInfo(limitPrice, perpsAsset, tradeDirection)
@@ -168,6 +187,19 @@ export function PerpsModule() {
     limitPriceInfo,
     limitPrice,
   })
+
+  const totalFeesForSimulation = useMemo(() => {
+    if (!tradingFee) return null
+
+    return {
+      baseDenom: tradingFee.baseDenom,
+      price: tradingFee.price,
+      fee: {
+        opening: tradingFee.fee.opening.plus(keeperFeeFromLends.amount.negated()),
+        closing: tradingFee.fee.closing.plus(keeperFeeFromBorrows.amount.negated()),
+      },
+    }
+  }, [tradingFee, keeperFeeFromLends, keeperFeeFromBorrows])
 
   usePositionSimulation({
     tradingFee,
@@ -429,6 +461,10 @@ export function PerpsModule() {
             isReduceOnly={isReduceOnly}
             validateReduceOnlyOrder={validateReduceOnlyOrder}
             conditionalTriggers={conditionalTriggers}
+            tradingFee={tradingFee?.fee}
+            keeperFeeFromLends={keeperFeeFromLends}
+            keeperFeeFromBorrows={keeperFeeFromBorrows}
+            isTradingFeeLoading={isTradingFeeLoading || isTradingFeeValidating || isFeeDataStale}
           />
         </div>
       </div>
