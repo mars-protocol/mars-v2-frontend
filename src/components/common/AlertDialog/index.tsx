@@ -70,7 +70,9 @@ export default function AlertDialog(props: AlertDialogProps) {
           </div>
         ) : (
           <div className='flex items-center gap-4'>
-            {icon && <div className='w-10 h-10'>{icon}</div>}
+            {icon && (
+              <div className='flex shrink-0 items-center justify-center h-10 w-10'>{icon}</div>
+            )}
             <Text size='2xl' className={titleClassName}>
               {title ?? ''}
             </Text>

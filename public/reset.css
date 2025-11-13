@@ -9,6 +9,7 @@
     --color-red-400: oklch(70.4% 0.191 22.216);
     --color-red-500: oklch(63.7% 0.237 25.331);
     --color-amber-500: oklch(76.9% 0.188 70.08);
+    --color-yellow-300: oklch(90.5% 0.182 98.111);
     --color-yellow-500: oklch(79.5% 0.184 86.047);
     --color-green-500: oklch(72.3% 0.219 149.579);
     --color-gray-200: oklch(92.8% 0.006 264.531);
@@ -5024,6 +5025,18 @@
   .border-error {
     border-color: var(--color-error);
   }
+  .fill-green {
+    fill: var(--color-green);
+  }
+  .fill-yellow-300 {
+    fill: var(--color-yellow-300);
+  }
+  .fill-martian-red {
+    fill: var(--color-martian-red);
+  }
+  .fill-grey-light {
+    fill: var(--color-grey-light);
+  }
   @container navigation (min-width: 200px) {
     .\@nav-0\/navigation\:hidden {
       display: none;
@@ -5339,12 +5352,23 @@
   transition-duration: 1500ms;
   transition-timing-function: ease-in-out;
   background-color: #fedb7c33 !important;
+  border-radius: 1px !important;
 }
 .Toastify__toast--success {
   background: #6ce9a633 !important;
 }
 .Toastify__toast--error {
   background-color: #fda29b33 !important;
+}
+.Toastify__toast .Toastify__progress-bar {
+  height: 2px;
+  border-radius: 9999px;
+}
+.Toastify__toast--success .Toastify__progress-bar {
+  background-color: var(--color-success) !important;
+}
+.Toastify__toast--success .Toastify__progress-bar--success {
+  background-color: var(--color-success) !important;
 }
 table tr:last-child td {
   border-bottom-width: 0;

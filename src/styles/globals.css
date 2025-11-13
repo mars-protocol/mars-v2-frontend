@@ -362,6 +362,22 @@
     border-color: var(--color-error);
   }
 
+  .fill-green {
+    fill: var(--color-green);
+  }
+
+  .fill-yellow-300 {
+    fill: var(--color-yellow-300);
+  }
+
+  .fill-martian-red {
+    fill: var(--color-martian-red);
+  }
+
+  .fill-grey-light {
+    fill: var(--color-grey-light);
+  }
+
   @container navigation (min-width: 200px) {
     .\@nav-0\/navigation\:hidden {
       display: none;
@@ -751,6 +767,7 @@
   transition-duration: 1500ms;
   transition-timing-function: ease-in-out;
   background-color: #fedb7c33 !important;
+  border-radius: 1px !important;
 }
 
 .Toastify__toast--success {
@@ -759,6 +776,19 @@
 
 .Toastify__toast--error {
   background-color: #fda29b33 !important;
+}
+
+.Toastify__toast .Toastify__progress-bar {
+  height: 2px;
+  border-radius: 9999px;
+}
+
+.Toastify__toast--success .Toastify__progress-bar {
+  background-color: var(--color-success) !important;
+}
+
+.Toastify__toast--success .Toastify__progress-bar--success {
+  background-color: var(--color-success) !important;
 }
 
 table tr:last-child td {

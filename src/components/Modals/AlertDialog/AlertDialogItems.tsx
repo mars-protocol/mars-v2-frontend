@@ -20,7 +20,7 @@ export function AlertDialogItems(props: Props) {
         <div key={item.title} className='grid grid-cols-[min-content_auto] items-center'>
           <span
             className={classNames(
-              'rounded-sm relative h-10 w-10 p-3 mr-6 grid place-items-center bg-white/10 border border-white/20',
+              'rounded-sm relative h-10 w-10 p-2.5 mr-6 grid place-items-center bg-white/10 border border-white/20',
             )}
           >
             {item.icon}
