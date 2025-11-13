@@ -742,11 +742,11 @@
   transition-property: background-color;
   transition-duration: 1500ms;
   transition-timing-function: ease-in-out;
-  background-color: #fedb7c33;
+  background-color: #fedb7c33 !important;
 }
 
 .Toastify__toast--success {
-  background: #6ce9a633;
+  background: #6ce9a633 !important;
 }
 
 .Toastify__toast--error {
