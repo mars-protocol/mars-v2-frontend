@@ -13,7 +13,10 @@
     --color-green-500: oklch(72.3% 0.219 149.579);
     --color-gray-200: oklch(92.8% 0.006 264.531);
     --color-gray-400: oklch(70.7% 0.022 261.325);
+    --color-zinc-100: oklch(96.7% 0.001 286.375);
     --color-zinc-400: oklch(70.5% 0.015 286.067);
+    --color-zinc-500: oklch(55.2% 0.016 285.938);
+    --color-zinc-600: oklch(44.2% 0.017 285.786);
     --color-zinc-700: oklch(37% 0.013 285.805);
     --color-zinc-800: oklch(27.4% 0.006 286.033);
     --color-zinc-900: oklch(21% 0.006 285.885);
@@ -4695,6 +4698,145 @@
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
+  .light\:bg-zinc-100 {
+    &:where([data-theme="light"] &) {
+      background-color: var(--color-zinc-100);
+    }
+  }
+  .light\:text-black {
+    &:where([data-theme="light"] &) {
+      color: var(--color-black);
+    }
+  }
+  .light\:text-black\/60 {
+    &:where([data-theme="light"] &) {
+      color: color-mix(in srgb, hsl(0deg 0% 0%) 60%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        color: color-mix(in oklab, var(--color-black) 60%, transparent);
+      }
+    }
+  }
+  .light\:text-primary {
+    &:where([data-theme="light"] &) {
+      color: var(--color-primary);
+    }
+  }
+  .light\:text-zinc-600 {
+    &:where([data-theme="light"] &) {
+      color: var(--color-zinc-600);
+    }
+  }
+  .light\:shadow-\[0_0_20px_rgba\(255\,99\,99\,0\.2\)\] {
+    &:where([data-theme="light"] &) {
+      --tw-shadow: 0 0 20px var(--tw-shadow-color, rgba(255,99,99,0.2));
+      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+    }
+  }
+  .light\:outline-primary\/60 {
+    &:where([data-theme="light"] &) {
+      outline-color: color-mix(in srgb, hsl(1deg 100% 68%) 60%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        outline-color: color-mix(in oklab, var(--color-primary) 60%, transparent);
+      }
+    }
+  }
+  .light\:outline-primary\/70 {
+    &:where([data-theme="light"] &) {
+      outline-color: color-mix(in srgb, hsl(1deg 100% 68%) 70%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        outline-color: color-mix(in oklab, var(--color-primary) 70%, transparent);
+      }
+    }
+  }
+  .light\:outline-zinc-400 {
+    &:where([data-theme="light"] &) {
+      outline-color: var(--color-zinc-400);
+    }
+  }
+  .light\:outline-zinc-500 {
+    &:where([data-theme="light"] &) {
+      outline-color: var(--color-zinc-500);
+    }
+  }
+  .light\:drop-shadow-\[0_1px_2px_rgba\(0\,0\,0\,0\.2\)\] {
+    &:where([data-theme="light"] &) {
+      --tw-drop-shadow-size: drop-shadow(0 1px 2px var(--tw-drop-shadow-color, rgba(0,0,0,0.2)));
+      --tw-drop-shadow: var(--tw-drop-shadow-size);
+      filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
+    }
+  }
+  .light\:hover\:text-black {
+    &:where([data-theme="light"] &) {
+      &:hover {
+        @media (hover: hover) {
+          color: var(--color-black);
+        }
+      }
+    }
+  }
+  .light\:hover\:text-black\/80 {
+    &:where([data-theme="light"] &) {
+      &:hover {
+        @media (hover: hover) {
+          color: color-mix(in srgb, hsl(0deg 0% 0%) 80%, transparent);
+          @supports (color: color-mix(in lab, red, red)) {
+            color: color-mix(in oklab, var(--color-black) 80%, transparent);
+          }
+        }
+      }
+    }
+  }
+  .light\:hover\:outline-primary\/50 {
+    &:where([data-theme="light"] &) {
+      &:hover {
+        @media (hover: hover) {
+          outline-color: color-mix(in srgb, hsl(1deg 100% 68%) 50%, transparent);
+          @supports (color: color-mix(in lab, red, red)) {
+            outline-color: color-mix(in oklab, var(--color-primary) 50%, transparent);
+          }
+        }
+      }
+    }
+  }
+  .light\:hover\:outline-primary\/60 {
+    &:where([data-theme="light"] &) {
+      &:hover {
+        @media (hover: hover) {
+          outline-color: color-mix(in srgb, hsl(1deg 100% 68%) 60%, transparent);
+          @supports (color: color-mix(in lab, red, red)) {
+            outline-color: color-mix(in oklab, var(--color-primary) 60%, transparent);
+          }
+        }
+      }
+    }
+  }
+  .light\:focus\:text-black\/80 {
+    &:where([data-theme="light"] &) {
+      &:focus {
+        color: color-mix(in srgb, hsl(0deg 0% 0%) 80%, transparent);
+        @supports (color: color-mix(in lab, red, red)) {
+          color: color-mix(in oklab, var(--color-black) 80%, transparent);
+        }
+      }
+    }
+  }
+  .light\:active\:text-black {
+    &:where([data-theme="light"] &) {
+      &:active {
+        color: var(--color-black);
+      }
+    }
+  }
+  .light\:active\:text-black\/80 {
+    &:where([data-theme="light"] &) {
+      &:active {
+        color: color-mix(in srgb, hsl(0deg 0% 0%) 80%, transparent);
+        @supports (color: color-mix(in lab, red, red)) {
+          color: color-mix(in oklab, var(--color-black) 80%, transparent);
+        }
+      }
+    }
+  }
   .\[\&\:\:-moz-range-thumb\]\:h-4 {
     &::-moz-range-thumb {
       height: calc(var(--spacing) * 4);
@@ -4876,6 +5018,68 @@
   }
 }
 @layer utilities {
+  .border-success {
+    border-color: var(--color-success);
+  }
+  .border-error {
+    border-color: var(--color-error);
+  }
+  @container navigation (min-width: 200px) {
+    .\@nav-0\/navigation\:hidden {
+      display: none;
+    }
+    .\@nav-0\/navigation\:inline-block {
+      display: inline-block;
+    }
+  }
+  @container navigation (min-width: 300px) {
+    .\@nav-1\/navigation\:hidden {
+      display: none;
+    }
+    .\@nav-1\/navigation\:inline-block {
+      display: inline-block;
+    }
+  }
+  @container navigation (min-width: 400px) {
+    .\@nav-2\/navigation\:hidden {
+      display: none;
+    }
+    .\@nav-2\/navigation\:inline-block {
+      display: inline-block;
+    }
+  }
+  @container navigation (min-width: 500px) {
+    .\@nav-3\/navigation\:hidden {
+      display: none;
+    }
+    .\@nav-3\/navigation\:inline-block {
+      display: inline-block;
+    }
+  }
+  @container navigation (min-width: 600px) {
+    .\@nav-4\/navigation\:hidden {
+      display: none;
+    }
+    .\@nav-4\/navigation\:inline-block {
+      display: inline-block;
+    }
+  }
+  @container navigation (min-width: 700px) {
+    .\@nav-5\/navigation\:hidden {
+      display: none;
+    }
+    .\@nav-5\/navigation\:inline-block {
+      display: inline-block;
+    }
+  }
+  @container navigation (min-width: 800px) {
+    .\@nav-6\/navigation\:hidden {
+      display: none;
+    }
+    .\@nav-6\/navigation\:inline-block {
+      display: inline-block;
+    }
+  }
   @font-face {
     font-family: Inter;
     src: url('../fonts/Inter-ExtraLight.woff2') format('woff2'), url('../fonts/Inter-ExtraLight.woff') format('woff');

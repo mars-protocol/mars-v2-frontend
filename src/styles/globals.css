@@ -1,5 +1,11 @@
 @import 'tailwindcss';
 
+@source "../pages/**/*.{js,ts,jsx,tsx}",
+        "../components/**/*.{js,ts,jsx,tsx}";
+
+@custom-variant dark (&:where([data-theme="dark"] &));
+@custom-variant light (&:where([data-theme="light"] &));
+
 @source inline("border-error","border-success","h-2","text-3xs","text-3xs-caps","text-2xs","text-2xs-caps","text-xs-caps","text-xs","text-sm-caps","text-sm","text-base-caps","text-base","text-lg-caps","text-lg","text-xl-caps","text-xl","text-2xl-caps","text-2xl","text-3xl-caps","text-3xl","text-4xl-caps","text-4xl","text-5xl-caps","text-5xl","text-yellow-300","text-violet-500","text-green","text-grey-light","fill-yellow-300","fill-violet-500","fill-green","fill-martian-red","fill-grey-light","w-2","@nav-0/navigation:inline-block","@nav-1/navigation:inline-block","@nav-2/navigation:inline-block","@nav-3/navigation:inline-block","@nav-4/navigation:inline-block","@nav-5/navigation:inline-block","@nav-6/navigation:inline-block","@nav-0/navigation:hidden","@nav-1/navigation:hidden","@nav-2/navigation:hidden","@nav-3/navigation:hidden","@nav-4/navigation:hidden","@nav-5/navigation:hidden","@nav-6/navigation:hidden","gradient-droplets","gradient-stride","gradient-lido","gradient-milkyway","gradient-ntrn-rewards","droplets","stride","lido","milkyway","ntrn-rewards");
 
 @theme {
@@ -272,6 +278,7 @@
     }
   }
 }
+
 @utility w-screen-full {
   width: 100dvw;
 }
@@ -347,6 +354,77 @@
 
 /* Utilities */
 @layer utilities {
+  .border-success {
+    border-color: var(--color-success);
+  }
+
+  .border-error {
+    border-color: var(--color-error);
+  }
+
+  @container navigation (min-width: 200px) {
+    .\@nav-0\/navigation\:hidden {
+      display: none;
+    }
+    .\@nav-0\/navigation\:inline-block {
+      display: inline-block;
+    }
+  }
+
+  @container navigation (min-width: 300px) {
+    .\@nav-1\/navigation\:hidden {
+      display: none;
+    }
+    .\@nav-1\/navigation\:inline-block {
+      display: inline-block;
+    }
+  }
+
+  @container navigation (min-width: 400px) {
+    .\@nav-2\/navigation\:hidden {
+      display: none;
+    }
+    .\@nav-2\/navigation\:inline-block {
+      display: inline-block;
+    }
+  }
+
+  @container navigation (min-width: 500px) {
+    .\@nav-3\/navigation\:hidden {
+      display: none;
+    }
+    .\@nav-3\/navigation\:inline-block {
+      display: inline-block;
+    }
+  }
+
+  @container navigation (min-width: 600px) {
+    .\@nav-4\/navigation\:hidden {
+      display: none;
+    }
+    .\@nav-4\/navigation\:inline-block {
+      display: inline-block;
+    }
+  }
+
+  @container navigation (min-width: 700px) {
+    .\@nav-5\/navigation\:hidden {
+      display: none;
+    }
+    .\@nav-5\/navigation\:inline-block {
+      display: inline-block;
+    }
+  }
+
+  @container navigation (min-width: 800px) {
+    .\@nav-6\/navigation\:hidden {
+      display: none;
+    }
+    .\@nav-6\/navigation\:inline-block {
+      display: inline-block;
+    }
+  }
+
   @font-face {
     font-family: Inter;
     src:
