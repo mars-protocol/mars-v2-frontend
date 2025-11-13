@@ -245,7 +245,7 @@ export default function FarmDeposits(props: Props) {
   return (
     <div className='flex flex-col'>
       <div className='flex gap-4 p-4 pl-3'>
-        <div className='flex flex-col items-center justify-between gap-1 pb-[30px] pt-2'>
+        <div className='flex flex-col items-center justify-between gap-1 pb-7-5 pt-2'>
           <Gauge
             percentage={primaryValuePercentage}
             tooltip={`${primaryValuePercentage}% of value is ${primaryAsset.symbol}`}

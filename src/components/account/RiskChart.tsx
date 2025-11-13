@@ -38,7 +38,7 @@ export const RiskChart = ({ data }: RiskChartProps) => {
           suffix: '/100',
         }}
       />
-      <div className='-ml-6 h-[100px] w-[412px]'>
+      <div className='-ml-6 h-25 w-[412px]'>
         <ResponsiveContainer width='100%' height='100%'>
           <AreaChart
             data={data}
