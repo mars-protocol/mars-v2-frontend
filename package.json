@@ -70,6 +70,7 @@
     "@babel/eslint-parser": "^7.28.5",
     "@eslint/compat": "^1.4.1",
     "@svgr/webpack": "^8.1.0",
+    "@tailwindcss/cli": "^4.1.17",
     "@tailwindcss/postcss": "^4.1.16",
     "@types/debounce-promise": "^3.1.9",
     "@types/lodash.debounce": "^4.0.9",
