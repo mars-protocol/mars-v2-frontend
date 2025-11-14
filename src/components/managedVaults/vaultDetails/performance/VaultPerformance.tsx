@@ -16,7 +16,7 @@ export default function VaultPerformance(props: Props) {
 
   return (
     <div className={classNames('w-full', focusComponent ? 'min-h-200' : '')}>
-      <div className='flex flex-wrap gap-6'>
+      <div className='flex flex-col gap-6 w-full'>
         {address && (
           <UserMetrics
             vaultAddress={vaultAddress}

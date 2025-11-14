@@ -79,8 +79,8 @@ export default function VaultDetails(props: Props) {
   if (!vaultAddress) return <VaultLoadingState />
 
   return (
-    <section className='container mx-auto flex flex-wrap w-full gap-2 py-8'>
-      <div className='flex w-full'>
+    <section className='container mx-auto w-full md:p-8'>
+      <div className='flex w-full mb-4'>
         {!focusComponent && <NavigateBackButton />}
         <div className='ml-auto'>
           <Tab

@@ -519,6 +519,11 @@
     font-feature-settings: 'tnum' on;
   }
 
+  .text-3xl {
+    font-size: var(--text-3xl);
+    line-height: var(--text-3xl--line-height);
+  }
+
   .text-3xs-caps {
     font-size: 9px;
     line-height: 12px;
@@ -737,6 +742,11 @@
   --color-surface: hsl(225deg 9% 9%);
   --color-surface-light: hsl(231deg 11% 12%);
   --color-surface-dark: hsl(220deg 9% 7%);
+
+  /* Toastify CSS Variables Override */
+  --toastify-toast-bd-radius: 0;
+  --toastify-color-progress-success: hsl(150deg 66% 52%);
+  --toastify-color-progress-error: hsl(4deg 86% 58%);
 }
 
 :root[data-theme='light'] {
@@ -770,29 +780,28 @@
   border-radius: 0 !important;
 }
 
+.Toastify__progress-bar {
+  border-radius: 0 !important;
+}
+
+.Toastify__progress-bar--rtl {
+  border-radius: 0 !important;
+}
+
+.Toastify__progress-bar--success {
+  background-color: var(--toastify-color-progress-success) !important;
+}
+
+.Toastify__progress-bar--error {
+  background-color: var(--toastify-color-progress-error) !important;
+}
+
 .Toastify__toast--success {
   background: #6ce9a633 !important;
 }
 
 .Toastify__toast--error {
   background-color: #fda29b33 !important;
-}
-
-.Toastify__toast .Toastify__progress-bar {
-  height: 2px;
-  border-radius: 0 !important;
-}
-
-.Toastify__toast .Toastify__progress-bar--rtl {
-  border-radius: 0 !important;
-}
-
-.Toastify__toast--success .Toastify__progress-bar {
-  background-color: var(--color-success) !important;
-}
-
-.Toastify__toast--success .Toastify__progress-bar--success {
-  background-color: var(--color-success) !important;
 }
 
 table tr:last-child td {

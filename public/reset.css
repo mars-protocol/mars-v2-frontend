@@ -41,6 +41,8 @@
     --text-xl--line-height: 23px;
     --text-2xl: 19px;
     --text-2xl--line-height: 25px;
+    --text-3xl: 22px;
+    --text-3xl--line-height: 30px;
     --text-4xl: 26px;
     --text-4xl--line-height: 34px;
     --font-weight-normal: 400;
@@ -942,9 +944,6 @@
   .h-118 {
     height: var(--spacing-118);
   }
-  .h-\[31px\] {
-    height: 31px;
-  }
   .h-\[32px\] {
     height: 32px;
   }
@@ -1812,6 +1811,9 @@
   .rounded-md {
     border-radius: var(--radius-md);
   }
+  .rounded-none {
+    border-radius: var(--radius-none);
+  }
   .rounded-sm {
     border-radius: var(--radius-sm);
   }
@@ -2268,9 +2270,6 @@
   }
   .bg-zinc-900 {
     background-color: var(--color-zinc-900);
-  }
-  .bg-none {
-    background-image: none;
   }
   .fill-current {
     fill: currentcolor;
@@ -4598,6 +4597,11 @@
       padding: calc(var(--spacing) * 6);
     }
   }
+  .md\:p-8 {
+    @media (width >= 920px) {
+      padding: var(--spacing-8);
+    }
+  }
   .md\:px-0 {
     @media (width >= 920px) {
       padding-inline: calc(var(--spacing) * 0);
@@ -5143,6 +5147,10 @@
     white-space: nowrap;
     font-feature-settings: 'tnum' on;
   }
+  .text-3xl {
+    font-size: var(--text-3xl);
+    line-height: var(--text-3xl--line-height);
+  }
   .text-3xs-caps {
     font-size: 9px;
     line-height: 12px;
@@ -5325,6 +5333,9 @@
   --color-surface: hsl(225deg 9% 9%);
   --color-surface-light: hsl(231deg 11% 12%);
   --color-surface-dark: hsl(220deg 9% 7%);
+  --toastify-toast-bd-radius: 0;
+  --toastify-color-progress-success: hsl(150deg 66% 52%);
+  --toastify-color-progress-error: hsl(4deg 86% 58%);
 }
 :root[data-theme='light'] {
   --color-body: hsl(0deg 0% 98%);
@@ -5354,24 +5365,23 @@
   background-color: #fedb7c33 !important;
   border-radius: 0 !important;
 }
+.Toastify__progress-bar {
+  border-radius: 0 !important;
+}
+.Toastify__progress-bar--rtl {
+  border-radius: 0 !important;
+}
+.Toastify__progress-bar--success {
+  background-color: var(--toastify-color-progress-success) !important;
+}
+.Toastify__progress-bar--error {
+  background-color: var(--toastify-color-progress-error) !important;
+}
 .Toastify__toast--success {
   background: #6ce9a633 !important;
 }
 .Toastify__toast--error {
   background-color: #fda29b33 !important;
-}
-.Toastify__toast .Toastify__progress-bar {
-  height: 2px;
-  border-radius: 0 !important;
-}
-.Toastify__toast .Toastify__progress-bar--rtl {
-  border-radius: 0 !important;
-}
-.Toastify__toast--success .Toastify__progress-bar {
-  background-color: var(--color-success) !important;
-}
-.Toastify__toast--success .Toastify__progress-bar--success {
-  background-color: var(--color-success) !important;
 }
 table tr:last-child td {
   border-bottom-width: 0;
