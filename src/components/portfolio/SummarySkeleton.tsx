@@ -31,7 +31,7 @@ export default function SummarySkeleton(props: Props) {
           {account?.kind === 'high_levered_strategy' && <HlsTag />}
         </div>
         {health !== undefined && healthFactor !== undefined && (
-          <div className='flex items-center gap-2 md:flex-grow md:justify-end'>
+          <div className='flex items-center gap-2 md:grow md:justify-end'>
             <HealthIcon isLoading={healthFactor === 0} health={health} />
             <div className='w-[260px]'>
               <HealthBar health={health} healthFactor={healthFactor} className='h-3' />
@@ -41,7 +41,7 @@ export default function SummarySkeleton(props: Props) {
       </div>
       <div className='grid grid-cols-1 gap-1 sm:grid-cols-2 md:grid-cols-3 w-full'>
         {stats.map((stat) => (
-          <Card key={stat.sub} className='p-6 text-center bg-surface-dark flex-grow-1'>
+          <Card key={stat.sub} className='p-6 text-center bg-surface-dark grow'>
             <TitleAndSubCell
               title={stat.title || <Loading className='w-20 h-6 mx-auto mb-2' />}
               sub={stat.sub}

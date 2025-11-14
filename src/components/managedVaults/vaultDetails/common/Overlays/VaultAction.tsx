@@ -143,9 +143,10 @@ export default function VaultAction(props: Props) {
     <Overlay
       setShow={handleCloseModal}
       show={showActionModal}
-      className='fixed md:absolute top-[40vh] md:top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full md:w-140 h-auto overflow-hidden !bg-body'
+      className='fixed md:absolute top-[40vh] md:top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full md:w-140 h-auto overflow-hidden bg-body!'
+      backdropClassName='backdrop-blur-sm'
     >
-      <div className='flex items-center justify-between gradient-header py-2.5 px-4'>
+      <div className='flex items-center justify-between bg-surface-dark py-2.5 px-4'>
         <Text size='lg'>{isDeposit ? 'Deposit' : 'Unlock'}</Text>
         <EscButton onClick={handleCloseModal} enableKeyPress />
       </div>

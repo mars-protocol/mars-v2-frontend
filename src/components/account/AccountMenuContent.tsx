@@ -88,7 +88,7 @@ export default function AccountMenuContent(props: Props) {
         color={hasCreditAccounts ? 'secondary' : 'primary'}
         hasFocus={showMenu}
         hasSubmenu={hasCreditAccounts}
-        className={isMobile ? '!px-2' : undefined}
+        className={isMobile ? 'px-2!' : undefined}
       >
         {hasCreditAccounts
           ? isAccountSelected

@@ -21,7 +21,7 @@ export const buttonColorClasses = {
   secondary:
     'relative bg-transparent outline outline-[1.50px] outline-offset-[-1.50px] outline-zinc-700 light:outline-zinc-400 hover:outline-primary/50 light:hover:outline-primary/60 overflow-hidden transition-all duration-300',
   tertiary:
-    'relative bg-transparent outline outline-1 outline-offset-[-1px] outline-zinc-800 light:outline-zinc-400 hover:outline-primary/40 light:hover:outline-primary/50 overflow-hidden transition-all duration-300',
+    'relative bg-transparent outline outline-1 -outline-offset-1 outline-zinc-800 light:outline-zinc-400 hover:outline-primary/40 light:hover:outline-primary/50 overflow-hidden transition-all duration-300',
   quaternary:
     'bg-transparent text-white/60 light:text-black/60 hover:text-white light:hover:text-black active:text-white light:active:text-black',
   long: 'relative bg-green hover:bg-green/90 active:bg-green/80 transition-colors duration-200',
@@ -38,19 +38,19 @@ export const focusClasses = {
 }
 
 export const buttonGradientClasses = [
-  'before:content-[""] before:absolute before:w-[200%] before:h-48 before:left-1/2 before:top-[75%] before:-translate-x-1/2 before:bg-primary before:rounded-[50%] before:blur-[12px] before:opacity-0 before:z-0',
+  'before:content-[""] before:absolute before:w-[200%] before:h-48 before:left-1/2 before:top-[75%] before:-translate-x-1/2 before:bg-primary before:rounded-[50%] before:blur-md before:opacity-0 before:z-0',
   'hover:before:opacity-100 before:transition-opacity before:duration-300 before:ease-in-out',
   'after:content-[""] after:absolute after:inset-0 after:bg-primary/5 after:opacity-0 after:transition-opacity after:duration-300 after:z-0',
   'hover:after:opacity-100',
 ]
 
 export const buttonSecondaryGradientClasses = [
-  'before:content-[""] before:absolute before:w-32 before:h-0.5 before:left-1/2 before:-translate-x-1/2 before:bottom-0 before:bg-gradient-to-r before:from-primary/0 before:via-primary before:to-primary/0 before:opacity-0 before:z-0',
+  'before:content-[""] before:absolute before:w-32 before:h-0.5 before:left-1/2 before:-translate-x-1/2 before:bottom-0 before:bg-linear-to-r before:from-primary/0 before:via-primary before:to-primary/0 before:opacity-0 before:z-0',
   'hover:before:opacity-100 before:transition-opacity before:duration-300',
 ]
 
 export const buttonTertiaryGradientClasses = [
-  'before:content-[""] before:absolute before:inset-[-1px] before:rounded-[inherit] before:bg-primary/0 before:transition-all before:duration-300 before:z-0',
+  'before:content-[""] before:absolute before:-inset-px before:rounded-[inherit] before:bg-primary/0 before:transition-all before:duration-300 before:z-0',
   'hover:before:bg-primary/20 hover:before:blur-[2px]',
 ]
 

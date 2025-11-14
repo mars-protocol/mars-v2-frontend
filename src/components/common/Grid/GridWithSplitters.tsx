@@ -136,7 +136,7 @@ function DesktopGridLayout({ className, chartArea, rightArea, bottomArea }: Prop
       {isDragging && (
         <div
           className={classNames(
-            'fixed inset-0 z-[9999]',
+            'fixed inset-0 z-9999',
             isDragging === 'vertical' ? 'cursor-col-resize' : 'cursor-row-resize',
           )}
           style={{ userSelect: 'none' }}
@@ -155,12 +155,12 @@ function DesktopGridLayout({ className, chartArea, rightArea, bottomArea }: Prop
           {/* Vertical Drag Knob */}
           <div
             className={classNames(
-              'absolute top-1/2 left-1/2 w-6 h-6 rounded-full cursor-col-resize transition-all duration-200 z-[60]',
+              'absolute top-1/2 left-1/2 w-6 h-6 rounded-full cursor-col-resize transition-all duration-200 z-60',
               'transform -translate-x-1/2 -translate-y-1/2',
-              'opacity-0 group-hover:opacity-50 hover:!opacity-75',
+              'opacity-0 group-hover:opacity-50 hover:opacity-75!',
               'bg-white shadow-lg border border-white/20',
               'flex items-center justify-center',
-              isDragging === 'vertical' && '!opacity-100 scale-110',
+              isDragging === 'vertical' && 'opacity-100! scale-110',
             )}
             onMouseDown={handleVerticalKnobDrag}
           >
@@ -183,12 +183,12 @@ function DesktopGridLayout({ className, chartArea, rightArea, bottomArea }: Prop
           {/* Horizontal Drag Knob */}
           <div
             className={classNames(
-              'absolute top-1/2 left-1/2 w-6 h-6 rounded-full cursor-row-resize transition-all duration-200 z-[60]',
+              'absolute top-1/2 left-1/2 w-6 h-6 rounded-full cursor-row-resize transition-all duration-200 z-60',
               'transform -translate-x-1/2 -translate-y-1/2',
-              'opacity-0 group-hover:opacity-50 hover:!opacity-75',
+              'opacity-0 group-hover:opacity-50 hover:opacity-75!',
               'bg-white shadow-lg border border-white/20',
               'flex items-center justify-center',
-              isDragging === 'horizontal' && '!opacity-100 scale-110',
+              isDragging === 'horizontal' && 'opacity-100! scale-110',
             )}
             onMouseDown={handleHorizontalKnobDrag}
           >

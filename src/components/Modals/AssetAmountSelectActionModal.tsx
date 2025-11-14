@@ -82,7 +82,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
           <Text>{title}</Text>
         </span>
       }
-      headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
+      headerClassName='bg-surface-dark pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col min-h-[400px]'
     >
       {contentHeader}
@@ -111,7 +111,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
       <div className='flex items-start flex-1 p-2 gap-1 flex-wrap bg-body'>
         <Card
           className='flex flex-1 w-full p-4 bg-surface-dark max-w-screen-full min-w-[200px]'
-          contentClassName='gap-6 flex flex-col justify-between h-full min-h-[300px]'
+          contentClassName='gap-6 flex flex-col justify-between h-full min-h-75'
         >
           <TokenInputWithSlider
             asset={asset}

@@ -38,7 +38,7 @@ export const NavMenu = (props: Props) => {
         onMouseOver={() => {
           if (!showMenu) setShowMenu(true)
         }}
-        className={classNames('text-base p-0 flex gap-2', showMenu && '!text-white')}
+        className={classNames('text-base p-0 flex gap-2', showMenu && 'text-white!')}
         onClick={() => setShowMenu(false)}
       >
         <NavLink
@@ -46,7 +46,7 @@ export const NavMenu = (props: Props) => {
           item={{ pages: [item.pages[0]], label: item.label }}
           className={classNames(
             'whitespace-nowrap',
-            (getIsActive(item.pages) || showMenu) && '!text-white',
+            (getIsActive(item.pages) || showMenu) && 'text-white!',
           )}
         >
           {item.label}

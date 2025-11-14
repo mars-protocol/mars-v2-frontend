@@ -246,7 +246,7 @@ export default function PerpsSlTpModal() {
     <Modal
       onClose={onClose}
       header='Add Stop Loss / Take Profit Orders'
-      headerClassName='gradient-header px-4 py-2.5 border-b-white/5 border-b'
+      headerClassName='bg-surface-dark px-4 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col'
       modalClassName='md:max-w-modal-xs'
     >

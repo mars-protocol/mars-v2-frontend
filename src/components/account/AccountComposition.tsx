@@ -106,7 +106,7 @@ function Item(props: ItemProps) {
 
   return (
     <div className={classNames('flex w-full flex-nowrap', props.className)}>
-      <div className='flex items-center flex-shrink'>
+      <div className='flex items-center shrink'>
         <Text size='sm' className='text-white/60'>
           {props.title}
         </Text>

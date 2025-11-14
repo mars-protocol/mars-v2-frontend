@@ -19,7 +19,7 @@ export default function LeverageLabel(props: Props) {
       )}
       style={props.style}
     >
-      <div className={classNames('h-2.5 w-[1px] border-[0.5px] border-white/20')} />
+      <div className={classNames('h-2.5 w-px border-[0.5px] border-white/20')} />
       <Text className='text-xs text-white/50'>{props.leverage.toFixed(props.decimals)}x</Text>
     </div>
   )

@@ -113,7 +113,7 @@ export default function ErrorNodePage() {
             Node data is mandatory for the app to work. You can switch to a fallback node to
             overcome this issue or set your own nodes in the inputs below.
           </Text>
-          <div className='flex flex-wrap items-stretch w-full max-w-[600px] gap-4 justify-center'>
+          <div className='flex flex-wrap items-stretch w-full max-w-nav-4 gap-4 justify-center'>
             <TextInput
               label='RPC'
               placeholder='https://'

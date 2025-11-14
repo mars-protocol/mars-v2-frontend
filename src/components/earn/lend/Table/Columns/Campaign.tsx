@@ -4,7 +4,7 @@ export const CAMPAIGN_META = {
   sortEnabled: false,
   header: 'Campaign',
   id: 'campaign',
-  meta: { className: 'min-w-40 flex flex-wrap gap-4 min-h-[66px] items-center !py-0' },
+  meta: { className: 'min-w-40 flex flex-wrap gap-4 min-h-[66px] items-center py-0!' },
 }
 
 interface Props {

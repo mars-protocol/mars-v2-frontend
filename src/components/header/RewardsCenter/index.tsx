@@ -111,7 +111,7 @@ export default function RewardsCenter(props: Props) {
       </Button>
       <Overlay
         className={
-          'mt-2 right-0 md:top-8 top-16 content-start h-screen-full pb-20 md:pb-0 md:h-auto overflow-y-scroll scrollbar-hide w-full md:w-[420px] flex flex-wrap'
+          'mt-2 right-0 md:top-8 top-16 content-start h-screen-full pb-20 md:pb-0 md:h-auto overflow-y-scroll scrollbar-hide w-full md:w-105 flex flex-wrap'
         }
         show={showRewardsCenter}
         setShow={setShowRewardsCenter}

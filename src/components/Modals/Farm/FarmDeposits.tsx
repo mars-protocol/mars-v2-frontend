@@ -219,11 +219,17 @@ export default function FarmDeposits(props: Props) {
       if (percentage !== value) setPercentage(value)
       const newPrimaryCoin = new BNCoin({
         denom: primaryCoin.denom,
-        amount: primaryMax.multipliedBy(value / 100).integerValue().toString(),
+        amount: primaryMax
+          .multipliedBy(value / 100)
+          .integerValue()
+          .toString(),
       })
       const newSecondaryCoin = new BNCoin({
         denom: secondaryCoin.denom,
-        amount: secondaryMax.multipliedBy(value / 100).integerValue().toString(),
+        amount: secondaryMax
+          .multipliedBy(value / 100)
+          .integerValue()
+          .toString(),
       })
       onChangeDeposits([newPrimaryCoin, newSecondaryCoin])
     },
@@ -239,7 +245,7 @@ export default function FarmDeposits(props: Props) {
   return (
     <div className='flex flex-col'>
       <div className='flex gap-4 p-4 pl-3'>
-        <div className='flex flex-col items-center justify-between gap-1 pb-[30px] pt-2'>
+        <div className='flex flex-col items-center justify-between gap-1 pb-7-5 pt-2'>
           <Gauge
             percentage={primaryValuePercentage}
             tooltip={`${primaryValuePercentage}% of value is ${primaryAsset.symbol}`}
@@ -247,7 +253,7 @@ export default function FarmDeposits(props: Props) {
             strokeClass='hsl(2, 100%, 69%)'
             strokeWidth={3}
           />
-          <div className='h-full w-[1px] rounded-xl bg-surface-light' />
+          <div className='h-full w-px bg-surface-light' />
           <Gauge
             percentage={secondaryValuePercentage}
             tooltip={`${secondaryValuePercentage}% of value is ${secondaryAsset.symbol}`}

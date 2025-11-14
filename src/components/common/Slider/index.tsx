@@ -183,7 +183,7 @@ export default function Slider(props: Props) {
                 <div
                   className={classNames(
                     'bg-martian-red',
-                    'z-20 h-3 w-3 rotate-45 hover:cursor-pointer rounded-xs border-[2px] border-martian-red !outline-none',
+                    'z-20 h-3 w-3 rotate-45 hover:cursor-pointer rounded-xs border-2 border-martian-red outline-none!',
                   )}
                 />
                 {leverage ? (

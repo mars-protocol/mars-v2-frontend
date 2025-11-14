@@ -56,12 +56,12 @@ function ActionLabel({ text, tradeDirection, isLimitOrder, showCloseLabel }: Act
     <div className='flex justify-between items-center'>
       <Text>{text}</Text>
       {showCloseLabel ? (
-        <CloseLabel className='capitalize !text-sm' />
+        <CloseLabel className='capitalize text-sm!' />
       ) : tradeDirection ? (
         <TradeDirection
           tradeDirection={tradeDirection}
           type={isLimitOrder ? 'limit' : 'stop'}
-          className='capitalize !text-sm'
+          className='capitalize text-sm!'
         />
       ) : null}
     </div>
@@ -209,7 +209,7 @@ export default function ConfirmationSummary(props: Props) {
 
   if (!amount || !tradeDirection || isLoading || !updatePerpsPosition || !account || !feeMarket)
     return (
-      <div className='flex items-center justify-center w-full h-[300px]'>
+      <div className='flex items-center justify-center w-full h-75'>
         <CircularProgress />
       </div>
     )

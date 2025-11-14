@@ -83,7 +83,7 @@ export default function FundingRate() {
         }
         type='info'
         placement='bottom'
-        contentClassName='border border-white/20 backdrop-blur-xl !p-0'
+        contentClassName='border border-white/20 backdrop-blur-xl p-0!'
         interactive
         hideArrow
         visible={show}

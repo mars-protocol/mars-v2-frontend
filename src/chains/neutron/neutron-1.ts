@@ -11,87 +11,18 @@ const Neutron1: ChainConfig = {
   campaignAssets: [
     {
       denom: 'factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom',
-      campaignIds: ['drop_apy', 'drop'],
-      baseMultiplier: 1,
-      collateralMultiplier: 5,
+      campaignIds: ['drop_apy'],
       campaignDenom: 'dATOM',
     },
     {
       denom: 'factory/neutron1ut4c6pv4u6vyu97yw48y8g7mle0cat54848v6m97k977022lzxtsaqsgmq/udtia',
-      campaignIds: ['drop_apy', 'drop'],
-      baseMultiplier: 1,
-      collateralMultiplier: 5,
+      campaignIds: ['drop_apy'],
       campaignDenom: 'dTIA',
     },
     {
       denom: 'factory/neutron1frc0p5czd9uaaymdkug2njz7dc7j65jxukp9apmt9260a8egujkspms2t2/udntrn',
-      campaignIds: ['drop_apy', 'drop'],
-      baseMultiplier: 1,
-      collateralMultiplier: 5,
+      campaignIds: ['drop_apy'],
       campaignDenom: 'dNTRN',
-    },
-    //dATOM-NTRN
-    {
-      denom:
-        'factory/neutron1ke92yjl47eqy0mpgn9x4xups4szsm0ql6xhn4htw9zgn9wl5gm0quzh6ch/astroport/share',
-      campaignIds: ['drop'],
-      baseMultiplier: 50,
-    },
-    //dATOM-USDC
-    {
-      denom:
-        'factory/neutron1nfns3ck2ykrs0fknckrzd9728cyf77devuzernhwcwrdxw7ssk2s3tjf8r/astroport/share',
-      campaignIds: ['drop'],
-      baseMultiplier: 50,
-    },
-    //dTIA-NTRN
-    {
-      denom:
-        'factory/neutron1hljhz97ng9guyqzpelkvphaky0gnav7wt8jmkr7n497wek8373dqgv8tdp/astroport/share',
-      campaignIds: ['drop'],
-      baseMultiplier: 50,
-    },
-    //dTIA-USDC
-    {
-      denom:
-        'factory/neutron1awgqp5ma90qy0ecezzf6ghple8mpgtlv8z3kez065z7x5fprd4qs7vz4dc/astroport/share',
-      campaignIds: ['drop'],
-      baseMultiplier: 50,
-    },
-    //dATOM-ATOM
-    {
-      denom:
-        'factory/neutron1yem82r0wf837lfkwvcu2zxlyds5qrzwkz8alvmg0apyrjthk64gqeq2e98/astroport/share',
-      campaignIds: ['drop'],
-      baseMultiplier: 10,
-    },
-    //dTIA-TIA
-    {
-      denom:
-        'factory/neutron1f6wucml5pmys4uh7mwurz2ge2v7gamkqdy03rfuatpdphmjjag3qeutzgx/astroport/share',
-      campaignIds: ['drop'],
-      baseMultiplier: 10,
-    },
-    //dATOM-dTIA
-    {
-      denom:
-        'factory/neutron1djs222dtwf3pw5h474fm68wc72ter5y4zftd36ugjs5e069hwqaq79pnrt/astroport/share',
-      campaignIds: ['drop'],
-      baseMultiplier: 20,
-    },
-    //dNTRN-NTRN
-    {
-      denom:
-        'factory/neutron1pd9u7h4vf36vtj5lqlcp4376xf4wktdnhmzqtn8958wyh0nzwsmsavc2dz/astroport/share',
-      campaignIds: ['drop'],
-      baseMultiplier: 10,
-    },
-    //dNTRN-USDC
-    {
-      denom:
-        'factory/neutron1hme8vcsky2xeq4qc4wg3uy9gc47xzga6uqk8plaps8tvutjshuwqajnze6/astroport/share',
-      campaignIds: ['drop'],
-      baseMultiplier: 50,
     },
     {
       denom: 'ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C',
