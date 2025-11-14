@@ -141,7 +141,7 @@ div[data-name="series-properties-dialog"],
 div[data-role="dialog-content"] div[data-role="list-item"] span,
 /*  Layers dialog list item */
 [class^='wrap-'],
-/* Series proerties */
+/* Series properties */
 div[data-name="series-properties-dialog"],
 /* Series left sidetabs */
 [class^='tab-'],
@@ -152,7 +152,7 @@ div[data-name="series-properties-dialog"],
 /* General toolbar popup list items */
 [class^='item-']:hover,
 [class^='item-'][class*='interactive-'][class*='hovered-'],
-/* Sub headers for inteval popup */
+/* Sub headers for interval popup */
 [class^='section-']:hover,
 /* Emoji topbar items */
 [class^='isActive-'],
