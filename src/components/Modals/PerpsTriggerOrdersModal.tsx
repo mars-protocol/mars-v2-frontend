@@ -57,19 +57,19 @@ const ConnectionLines = ({ hasBothOrders }: { hasBothOrders: boolean }) => {
   if (hasBothOrders) {
     return (
       <div className='relative h-24 w-full my-4'>
-        <div className='absolute left-1/2 top-0 w-[1px] h-12 bg-[#3B333E] transform -translate-x-1/2' />
+        <div className='absolute left-1/2 top-0 w-px h-12 bg-[#3B333E] transform -translate-x-1/2' />
         <div className='mx-auto w-1/2 relative'>
-          <div className='absolute left-0 right-0 top-12 h-[1px] bg-[#3B333E]' />
+          <div className='absolute left-0 right-0 top-12 h-px bg-[#3B333E]' />
         </div>
-        <div className='absolute left-1/4 top-12 w-[1px] h-12 bg-[#3B333E] transform -translate-x-1/2' />
-        <div className='absolute right-1/4 top-12 w-[1px] h-12 bg-[#3B333E] transform translate-x-1/2' />
+        <div className='absolute left-1/4 top-12 w-px h-12 bg-[#3B333E] transform -translate-x-1/2' />
+        <div className='absolute right-1/4 top-12 w-px h-12 bg-[#3B333E] transform translate-x-1/2' />
       </div>
     )
   }
 
   return (
     <div className='flex justify-center w-full my-4'>
-      <div className='w-[1px] h-24 bg-[#3B333E]' />
+      <div className='w-px h-24 bg-[#3B333E]' />
     </div>
   )
 }
@@ -230,7 +230,7 @@ export default function PerpsTriggerOrdersModal() {
   return (
     <Modal
       header={<Text size='xl'>Take Profit / Stop Loss</Text>}
-      headerClassName='gradient-header px-4 py-2.5 border-b-white/5 border-b'
+      headerClassName='bg-surface-dark px-4 py-2.5 border-b-white/5 border-b'
       onClose={closeModal}
       className='border border-white/5 rounded-md'
     >

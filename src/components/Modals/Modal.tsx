@@ -6,9 +6,7 @@ import Card from 'components/common/Card'
 
 export default function Modal(props: ModalProps) {
   const ref = useRef<HTMLDialogElement>(null)
-  const modalClassName =
-    props.modalClassName ??
-    'max-w-screen-full md:max-w-modal h-screen-full flex items-center justify-center'
+  const modalClassName = props.modalClassName ?? 'max-w-screen-full md:max-w-modal'
 
   function onClose() {
     ref.current?.close()
@@ -35,10 +33,12 @@ export default function Modal(props: ModalProps) {
       ref={ref}
       onCancel={onClose}
       className={classNames(
-        `w-screen-full border-none bg-transparent text-white h-screen-full flex justify-center items-center`,
-        'focus-visible:outline-none',
-        'max-h-full scrollbar-hide',
+        'w-screen-full h-screen-full max-h-full',
+        'flex items-center justify-center',
+        'border-none bg-transparent text-white',
+        'scrollbar-hide focus-visible:outline-none',
         'backdrop:bg-black/50 backdrop:backdrop-blur-sm',
+        'mx-auto',
         modalClassName,
       )}
       id={props.dialogId ?? 'modal'}
@@ -53,10 +53,10 @@ export default function Modal(props: ModalProps) {
         <div className={classNames('flex justify-between relative', props.headerClassName)}>
           {props.header}
           {!props.hideCloseBtn && (
-            <EscButton className='!absolute right-2 top-2' onClick={props.onClose} />
+            <EscButton className='absolute! right-2 top-2' onClick={props.onClose} />
           )}
         </div>
-        {props.subHeader && <div className='gradient-header'>{props.subHeader}</div>}
+        {props.subHeader && <div className='bg-surface-dark'>{props.subHeader}</div>}
         <div className={classNames(props.contentClassName, 'flex-1 relative')}>
           {props.children ?? props.content}
         </div>

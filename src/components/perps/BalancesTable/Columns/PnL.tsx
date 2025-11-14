@@ -65,7 +65,7 @@ export default function PnL(props: Props) {
 
 function PnLTooltipLimitOrder(props: Props) {
   return (
-    <div className='flex flex-col w-full gap-2 min-w-[280px]'>
+    <div className='flex flex-col w-full gap-2 min-w-70'>
       <div className='flex items-center w-full gap-8 space-between'>
         <Text className='mr-auto font-bold text-white/60' size='sm'>
           Keeper Fee
@@ -84,7 +84,7 @@ function PnLTooltipLimitOrder(props: Props) {
 
 function PnLTooltip(props: Props) {
   return (
-    <div className='flex flex-col w-full gap-2 min-w-[280px]'>
+    <div className='flex flex-col w-full gap-2 min-w-70'>
       {[props.pnl.realized, props.pnl.unrealized].map((coins, i) => (
         <Fragment key={i}>
           <div className='flex items-center w-full gap-8 space-between'>

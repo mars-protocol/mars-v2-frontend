@@ -59,7 +59,7 @@ export default function ApyRange(props: Props) {
       <TitleAndSubCell
         title={
           <>
-            <FormattedNumber amount={minApy} options={{ suffix: '% to ' }} className='inline' />
+            <FormattedNumber amount={minApy} options={{ suffix: '% to' }} className='inline' />{' '}
             <FormattedNumber amount={maxApy} options={{ suffix: '%' }} className='inline' />
           </>
         }
@@ -67,9 +67,9 @@ export default function ApyRange(props: Props) {
           <>
             <FormattedNumber
               amount={minApy / 365}
-              options={{ suffix: '% to ' }}
+              options={{ suffix: '% to' }}
               className='inline'
-            />
+            />{' '}
             <FormattedNumber
               amount={maxApy / 365}
               options={{ suffix: '% daily' }}

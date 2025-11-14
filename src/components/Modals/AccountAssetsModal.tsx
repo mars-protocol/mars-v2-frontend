@@ -46,7 +46,7 @@ export default function AccountAssetsModal() {
     <Modal
       onClose={closeModal}
       header={`Select assets to repay ${debtAsset.symbol} debt`}
-      modalClassName='max-w-modal-lg'
+      modalClassName='max-w-screen-full md:max-w-modal-lg'
       headerClassName='border-b-white/5 border-b items-center p-4'
     >
       <div className='px-4 py-3 border-b border-white/5'>

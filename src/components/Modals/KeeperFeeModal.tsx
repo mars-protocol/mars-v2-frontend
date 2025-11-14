@@ -67,7 +67,7 @@ export default function KeeperFeeModal() {
     <Modal
       onClose={onClose}
       header='Keeper Fee'
-      headerClassName='gradient-header px-2 py-2.5 border-b-white/5 border-b'
+      headerClassName='bg-surface-dark px-2 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col'
       modalClassName='md:max-w-modal-xs'
     >
@@ -99,7 +99,7 @@ export default function KeeperFeeModal() {
         <Button
           onClick={handleActionClick}
           disabled={isLessThanMin}
-          className='w-full !text-base'
+          className='w-full text-base!'
           color='tertiary'
           text='Done'
         />

@@ -24,7 +24,7 @@ export default function WarningMessages(props: Props) {
                   </span>
                   <Text size='xs'>{message}</Text>
                 </div>
-                {index !== props.messages.length - 1 && <Divider className='!bg-white/30 my-1' />}
+                {index !== props.messages.length - 1 && <Divider className='bg-white/30! my-1' />}
               </React.Fragment>
             ))}
           </div>

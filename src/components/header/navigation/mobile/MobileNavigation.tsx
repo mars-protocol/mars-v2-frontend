@@ -146,7 +146,7 @@ function Content(props: Props & { account?: Account }) {
           <Text size='sm'>Page:</Text>
           <div className='relative' ref={dropdownRef}>
             <button
-              className='py-1.5 pl-2 pr-6 text-sm text-white bg-transparent border rounded-sm border-white/30 focus:outline-none active:outline-none leading-normal min-w-[140px] text-left'
+              className='py-1.5 pl-2 pr-6 text-sm text-white bg-transparent border rounded-sm border-white/30 focus:outline-none active:outline-none leading-normal min-w-35 text-left'
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
               {currentPageLabel}
@@ -162,7 +162,7 @@ function Content(props: Props & { account?: Account }) {
                     className='w-full px-2 py-2 text-sm text-left hover:bg-white/20 transition-colors flex items-center gap-2'
                     onClick={() => selectPage(item.value as Page)}
                   >
-                    <span className='w-4 h-4 flex items-center justify-center flex-shrink-0'>
+                    <span className='w-4 h-4 flex items-center justify-center shrink-0'>
                       {item.value === currentPage && <Check className='w-4 h-4 text-white' />}
                     </span>
                     <span className='text-white flex-1'>{item.label}</span>

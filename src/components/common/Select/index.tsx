@@ -149,7 +149,7 @@ export default function Select(props: Props) {
         )}
         <Overlay
           show={showDropdown}
-          className={classNames('left-0 top-[calc(100%+8px)] !absolute isolate w-full')}
+          className={classNames('left-0 top-[calc(100%+8px)] absolute! isolate w-full')}
           setShow={handleToggleDropdown}
           hasBackdropIsolation
         >

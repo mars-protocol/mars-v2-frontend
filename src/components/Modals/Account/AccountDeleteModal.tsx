@@ -96,7 +96,7 @@ function AccountDeleteModal(props: Props) {
     return (
       <AccountAlertDialog
         title='Repay your Debts to delete your account'
-        icon={<ExclamationMarkCircled width={18} />}
+        icon={<ExclamationMarkCircled />}
         content='You must repay all borrowings before deleting your account.'
         closeHandler={closeDeleteAccountModal}
         positiveButton={{

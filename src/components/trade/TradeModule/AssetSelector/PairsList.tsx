@@ -47,7 +47,7 @@ export default function PairsList(props: Props) {
   )
 
   return (
-    <section className='flex flex-wrap flex-grow w-full overflow-hidden'>
+    <section className='flex flex-wrap grow w-full overflow-hidden'>
       {props.isOpen &&
         (props.assets.length === 0 ? (
           <Text size='xs' className='p-4'>

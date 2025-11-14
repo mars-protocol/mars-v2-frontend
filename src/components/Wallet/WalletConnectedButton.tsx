@@ -184,23 +184,17 @@ export default function WalletConnectedButton() {
         show={showDetails}
         setShow={setShowDetails}
       >
-        <div className='flex max-w-screen-full w-[440px] flex-wrap p-6'>
-          <div className='flex items-start w-full mb-4 flex-0 flex-nowrap'>
-            <div className='flex flex-1 w-auto'>
-              <div className='mr-2 flex h-[31px] items-end text-base-caps'>
-                {feeTokenAsset.symbol}
-              </div>
-              <div className='flex flex-wrap justify-end flex-0'>
-                <FormattedNumber
-                  className='flex items-end h-[31px] text-2xl !leading-5'
-                  amount={walletAmount.toNumber()}
-                  options={{ maxDecimals: feeTokenAsset.decimals }}
-                />
-              </div>
+        <div className='flex max-w-screen-full w-110 flex-wrap p-6'>
+          <div className='flex justify-between flex-nowrap w-full mb-4'>
+            <div className='flex items-end gap-2'>
+              <div className='text-base-caps'>{feeTokenAsset.symbol}</div>
+              <FormattedNumber
+                className='text-2xl leading-5!'
+                amount={walletAmount.toNumber()}
+                options={{ maxDecimals: feeTokenAsset.decimals }}
+              />
             </div>
-            <div className='flex h-[31px] w-[116px] justify-end'>
-              <Button color='tertiary' onClick={onDisconnectWallet} text='Disconnect' />
-            </div>
+            <Button color='tertiary' onClick={onDisconnectWallet} text='Disconnect' />
           </div>
           <div className='flex flex-wrap w-full gap-2'>
             <Text size='lg'>

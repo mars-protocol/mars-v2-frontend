@@ -41,7 +41,7 @@ function InputOverlay({ max, value, marginThreshold, type, min }: Props) {
       />
       <div className='absolute flex w-full h-2 pointer-events-none top-[11px] justify-evenly'>
         {Array.from(Array(9).keys()).map((i) => (
-          <div key={`mark-${i}`} className='w-1 h-1 bg-black rounded-full bg-opacity-30' />
+          <div key={`mark-${i}`} className='w-1 h-1 bg-black/30 rounded-full' />
         ))}
         {marginThreshold !== undefined && (
           <div
@@ -56,7 +56,7 @@ function InputOverlay({ max, value, marginThreshold, type, min }: Props) {
                 isMarginNearMax && 'pt-4',
               )}
             >
-              <VerticalThreeLine className='h-2 w-[1px]' />
+              <VerticalThreeLine className='h-2 w-px' />
               <div className={!hasPastMarginThreshold ? 'opacity-50' : 'opacity-100'}>Margin</div>
             </div>
           </div>
@@ -64,7 +64,7 @@ function InputOverlay({ max, value, marginThreshold, type, min }: Props) {
       </div>
       <div
         className={classNames(
-          'w-[36px] h-4.5 absolute text-[10px] top-[3.5px]',
+          'w-9 h-4.5 absolute text-[10px] top-[3.5px]',
           'pointer-events-none text-center font-bold',
           'border rounded-sm border-white/20',
           type === 'long' && 'bg-green',

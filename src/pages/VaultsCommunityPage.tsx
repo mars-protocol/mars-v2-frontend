@@ -79,7 +79,7 @@ export default function VaultsCommunityPage() {
           text: "Don't show again",
           onClick: (isChecked: boolean) => setShowVaultWarning(!isChecked),
         }}
-        modalClassName='!border-martian-red/40 max-w-modal-md'
+        modalClassName='border-martian-red/40! max-w-modal-md'
         titleClassName='text-martian-red'
       />
     </div>

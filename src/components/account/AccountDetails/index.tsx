@@ -171,7 +171,7 @@ function AccountDetails(props: Props) {
         >
           <div
             className={classNames(
-              'w-16 pr-[1px]',
+              'w-16 pr-px',
               accountDetailsExpanded
                 ? 'opacity-0 absolute inset-0 -z-1'
                 : 'transition-opacity opacity-100 duration-300 delay-200',
@@ -242,7 +242,7 @@ function AccountDetails(props: Props) {
           <div
             className={classNames(
               'flex justify-center items-center w-full h-6 opacity-50',
-              !reduceMotion && 'transition-[opacity] duration-300',
+              !reduceMotion && 'transition-opacity duration-300',
               'absolute -bottom-6',
               'group-hover/accountdetail:opacity-100',
             )}
