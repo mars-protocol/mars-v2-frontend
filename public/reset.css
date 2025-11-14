@@ -5352,7 +5352,7 @@
   transition-duration: 1500ms;
   transition-timing-function: ease-in-out;
   background-color: #fedb7c33 !important;
-  border-radius: 1px !important;
+  border-radius: 0 !important;
 }
 .Toastify__toast--success {
   background: #6ce9a633 !important;
@@ -5362,7 +5362,10 @@
 }
 .Toastify__toast .Toastify__progress-bar {
   height: 2px;
-  border-radius: 9999px;
+  border-radius: 0 !important;
+}
+.Toastify__toast .Toastify__progress-bar--rtl {
+  border-radius: 0 !important;
 }
 .Toastify__toast--success .Toastify__progress-bar {
   background-color: var(--color-success) !important;
