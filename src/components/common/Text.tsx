@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { Component, ElementType, ReactNode } from 'react'
+import { ReactNode } from 'react'
 
 interface Props {
   children: ReactNode | string
@@ -15,7 +15,7 @@ const headMap = ['6xl', '5xl', '4xl', '3xl']
 
 export default function Text(props: Props) {
   const tag = props.tag ?? 'p'
-  const size = props.size
+  const size = props.size ?? 'sm'
 
   const tagIndex = headlines.indexOf(tag)
   const sizeClass = tagIndex > -1 ? headMap[tagIndex] : size

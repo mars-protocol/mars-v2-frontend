@@ -71,7 +71,7 @@ export default function WithdrawFromVaultsModal() {
                   primaryDenom={vault.denoms.primary}
                   secondaryDenom={vault.denoms.secondary}
                 />
-                <div className='flex flex-wrap flex-grow'>
+                <div className='flex flex-wrap grow'>
                   <Text size='sm' className='w-full'>
                     {vault.name}
                   </Text>
@@ -79,7 +79,7 @@ export default function WithdrawFromVaultsModal() {
                     Unlocked
                   </Text>
                 </div>
-                <div className='flex flex-wrap flex-shrink max-w-1/2'>
+                <div className='flex flex-wrap shrink max-w-1/2'>
                   <DisplayCurrency coin={coin} className='w-full text-sm text-right' />
                   <FormattedNumber
                     amount={Number(primaryAssetAmount.toPrecision(4))}

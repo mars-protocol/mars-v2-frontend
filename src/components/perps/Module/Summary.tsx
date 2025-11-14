@@ -279,7 +279,7 @@ export default function PerpsSummary(props: Props) {
   }, [isStopOrder, isLimitOrder])
 
   return (
-    <div className='flex w-full flex-col bg-white bg-opacity-5 rounded-sm border-[1px] border-white/10'>
+    <div className='flex w-full flex-col bg-white/5 rounded-sm border border-white/10'>
       <ManageSummary
         {...props}
         newAmount={newAmount}
@@ -325,7 +325,7 @@ export default function PerpsSummary(props: Props) {
       <ActionButton
         onClick={handleOnClick}
         disabled={isDisabled}
-        className='w-full py-2.5 !text-base'
+        className='w-full py-2.5 text-base!'
       >
         {isLimitOrder || isStopOrder ? (
           submitBtnText

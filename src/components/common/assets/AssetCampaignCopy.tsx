@@ -93,7 +93,7 @@ function AssetCampaignCopy(props: CopyProps) {
         type='info'
         className={classNames('flex items-center gap-2', className)}
         content={
-          <Text size='xs' className='max-w-[320px]'>
+          <Text size='xs' className='max-w-80'>
             {isV1 && !campaign.enabledOnV1
               ? 'This campaign is not available on v1.'
               : campaign.tooltip}

@@ -31,7 +31,7 @@ export default function Banner(props: Props) {
             color='quaternary'
             onClick={onClose}
             leftIcon={<Cross />}
-            className='!p-1.5'
+            className='p-1.5!'
             iconClassName='w-3 h-3'
           />
         </div>

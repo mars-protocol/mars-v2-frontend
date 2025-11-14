@@ -94,7 +94,7 @@ export default function AssetAmountInput(props: Props) {
           <NumberInput
             key={isUSD ? 'usd-input' : 'asset-input'}
             asset={asset}
-            className='border-none bg-transparent outline-none flex-1 !text-left'
+            className='border-none bg-transparent outline-none flex-1 text-left!'
             maxDecimals={asset.decimals}
             max={capMax ? max : undefined}
             disabled={disabled}
@@ -117,25 +117,25 @@ export default function AssetAmountInput(props: Props) {
             >
               <div className='flex flex-row flex-1 mt-2'>
                 <span className='text-xs font-bold'>{maxButtonLabel ?? 'Max:'}</span>
-                <span className='mx-1 text-xs font-bold text-white text-opacity-60'>
+                <span className='mx-1 text-xs font-bold text-white/60'>
                   {formatValue(Number(maxValue), { abbreviated: false })}
                 </span>
                 <div
-                  className='hover:cursor-pointer select-none bg-white bg-opacity-20 text-2xs !leading-3 font-bold py-0.5 px-1.5 rounded'
+                  className='hover:cursor-pointer select-none bg-white/20 text-2xs leading-3! font-bold py-0.5 px-1.5 rounded'
                   onClick={handleMaxClick}
                 >
                   MAX
                 </div>
                 {showCloseButton && onClosing && (
                   <div
-                    className='hover:cursor-pointer select-none bg-white bg-opacity-20 text-2xs !leading-3 font-bold py-0.5 px-1.5 rounded ml-2'
+                    className='hover:cursor-pointer select-none bg-white/20 text-2xs leading-3! font-bold py-0.5 px-1.5 rounded ml-2'
                     onClick={onClosing}
                   >
                     CLOSE
                   </div>
                 )}
               </div>
-              <div className='mt-2 text-xs text-white text-opacity-60'>
+              <div className='mt-2 text-xs text-white/60'>
                 {isUSD ? (
                   <div>
                     {formatValue(Number(nativeAssetAmount.shiftedBy(-asset.decimals).toString()), {

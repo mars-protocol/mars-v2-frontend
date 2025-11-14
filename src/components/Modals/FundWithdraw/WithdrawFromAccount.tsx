@@ -167,7 +167,13 @@ export default function WithdrawFromAccount(props: Props) {
           </div>
         )}
       </div>
-      <Button onClick={onConfirm} className='w-full' text={'Withdraw'} rightIcon={<ArrowRight />} />
+      <Button
+        onClick={onConfirm}
+        disabled={amount.isZero()}
+        className='w-full'
+        text='Withdraw'
+        rightIcon={<ArrowRight />}
+      />
     </>
   )
 }

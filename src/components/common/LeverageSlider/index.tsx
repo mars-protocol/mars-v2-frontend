@@ -62,12 +62,12 @@ function LeverageSlider(props: Props) {
         disabled && 'pointer-events-none opacity-50',
       )}
     >
-      <div className='relative h-[30px]'>
+      <div className='relative h-7-5'>
         <input
           className={classNames(
             'relative w-full appearance-none bg-transparent hover:cursor-pointer',
-            '[&::-webkit-slider-runnable-track]:bg-white [&::-webkit-slider-runnable-track]:bg-opacity-20 [&::-webkit-slider-runnable-track]:h-[9px] [&::-webkit-slider-runnable-track]:rounded-lg',
-            '[&::-moz-range-track]:bg-white [&::-moz-range-track]:bg-opacity-20 [&::-moz-range-track]:h-1 [&::-moz-range-track]:pb-[5px] [&::-moz-range-track]:rounded-lg',
+            '[&::-webkit-slider-runnable-track]:bg-white/20 [&::-webkit-slider-runnable-track]:h-[9px] [&::-webkit-slider-runnable-track]:rounded-lg',
+            '[&::-moz-range-track]:bg-white/20 [&::-moz-range-track]:h-1 [&::-moz-range-track]:pb-[5px] [&::-moz-range-track]:rounded-lg',
             '[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:bg-transparent [&::-webkit-slider-thumb]:-mt-1 [&::-webkit-slider-thumb]:w-[33px] [&::-webkit-slider-thumb]:h-4',
             '[&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:bg-transparent [&::-moz-range-thumb]:opacity-0 [&::-moz-range-thumb]:w-[33px] [&::-moz-range-thumb]:h-4',
           )}
@@ -87,7 +87,7 @@ function LeverageSlider(props: Props) {
           min={min}
         />
       </div>
-      <div className={'flex w-full justify-between text-xs text-opacity-50 text-white font-bold'}>
+      <div className='flex w-full justify-between text-xs text-white/50 font-bold'>
         <span>{markPosPercent > LEFT_MARGIN ? min : ''}</span>
         <span>{formatValue(max, { abbreviated: false, maxDecimals: 2 })}</span>
       </div>

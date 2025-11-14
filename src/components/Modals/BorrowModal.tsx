@@ -616,10 +616,10 @@ function BorrowModal(props: Props) {
           </Text>
         </span>
       }
-      headerClassName='gradient-header pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
+      headerClassName='bg-surface-dark pl-2 pr-2.5 py-2.5 border-b-white/5 border-b'
       contentClassName='flex flex-col'
     >
-      <div className='flex flex-wrap gap-4 p-4 border-b md:gap-6 md:px-6 md:py-4 border-white/5 gradient-header md:flex-nowrap'>
+      <div className='flex flex-wrap gap-4 p-4 border-b md:gap-6 md:px-6 md:py-4 border-white/5 bg-surface-dark md:flex-nowrap'>
         <TitleAndSubCell
           containerClassName='w-full md:w-auto'
           title={formatPercent(modal.marketData.apy.borrow)}

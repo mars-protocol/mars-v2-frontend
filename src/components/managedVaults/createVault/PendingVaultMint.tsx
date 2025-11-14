@@ -155,7 +155,7 @@ export default function PendingVaultMint(props: Props) {
                     {step.label}
                   </Text>
                 </div>
-                {index < steps.length - 1 && <div className='w-16 h-[1px] bg-white/10 ml-2' />}
+                {index < steps.length - 1 && <div className='w-16 h-px bg-white/10 ml-2' />}
               </div>
             ))}
           </div>

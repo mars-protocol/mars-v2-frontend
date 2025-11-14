@@ -37,7 +37,7 @@ function WalletOption(props: WalletOptionProps) {
   return (
     <Button
       color='tertiary'
-      className='flex w-full !justify-start px-4 py-3 h-11'
+      className='flex w-full justify-start! px-4 py-3 h-11'
       onClick={props.handleClick}
       showProgressIndicator={props.showLoader}
     >

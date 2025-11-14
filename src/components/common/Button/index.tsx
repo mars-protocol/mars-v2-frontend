@@ -106,7 +106,10 @@ const Button = React.forwardRef(function Button(
 
   const [leftIconClassNames, rightIconClassNames] = useMemo(() => {
     const hasContent = !!(text || children)
-    const iconClasses = ['flex items-center justify-center', iconClassName ?? 'h-4 w-4']
+    const iconClasses = [
+      'flex items-center justify-center [&>svg]:h-full [&>svg]:w-full',
+      iconClassName ?? 'h-4 w-4',
+    ]
     const leftIconClasses = [...iconClasses, hasContent && 'mr-2']
     const rightIconClasses = [...iconClasses, hasContent && 'ml-2']
 

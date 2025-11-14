@@ -32,7 +32,7 @@ export default function ShareBar(props: Props) {
 
   if (!window || (!props.excludeWalletAddress && !address)) return null
   return (
-    <div className='flex justify-end gap-2 flex-grow'>
+    <div className='flex justify-end gap-2 grow'>
       <ConditionalWrapper
         condition={isCopied}
         wrapper={(children) => (
@@ -44,7 +44,7 @@ export default function ShareBar(props: Props) {
         <Button
           color='secondary'
           iconClassName='w-4 h-4'
-          className={classNames('!p-2', isCopied && '!bg-transparent')}
+          className={classNames('p-2!', isCopied && 'bg-transparent!')}
           leftIcon={isCopied ? <Check /> : <Chain />}
           onClick={setCopied}
         />
@@ -52,7 +52,7 @@ export default function ShareBar(props: Props) {
       <Button
         color='secondary'
         iconClassName='w-4 h-4'
-        className='!p-2'
+        className='p-2!'
         leftIcon={<Twitter />}
         onClick={(e) => {
           e.preventDefault()

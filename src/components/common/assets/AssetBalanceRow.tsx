@@ -48,7 +48,7 @@ export default function AssetBalanceRow(props: Props) {
             className={classNames(
               'w-full',
               (small || tiny) && 'text-sm',
-              tiny ? '!justify-start' : 'text-right',
+              tiny ? 'justify-start!' : 'text-right',
             )}
           />
         )}

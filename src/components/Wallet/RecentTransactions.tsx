@@ -31,14 +31,14 @@ export default function RecentTransactions() {
         </Text>
       ) : (
         <>
-          <div className='px-4 py-2 max-h-[400px] overflow-y-scroll scrollbar-hide'>
+          <div className='px-4 py-2 max-h-100 overflow-y-scroll scrollbar-hide'>
             <div className='flex flex-col w-full gap-2'>
               {recentTransactions.map((tx) => {
                 const { hash, content, message, target, timestamp } = tx
                 return (
                   <Card
                     className={classNames(
-                      'gradient-card-content',
+                      'bg-transparent',
                       hash &&
                         'transitions-color duration-300 hover:cursor-pointer hover:bg-white/5',
                     )}

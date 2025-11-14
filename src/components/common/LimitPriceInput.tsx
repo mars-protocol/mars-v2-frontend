@@ -48,7 +48,7 @@ export default function LimitPriceInput(props: Props) {
           <NumberInput
             asset={{ ...asset, decimals: 0 }}
             amount={inputValue}
-            className='border-none bg-transparent outline-none flex-1 !text-left'
+            className='border-none bg-transparent outline-none flex-1 text-left!'
             maxDecimals={18}
             disabled={disabled}
             onChange={handleChange}
@@ -57,7 +57,7 @@ export default function LimitPriceInput(props: Props) {
           />
           <span>USD</span>
         </div>
-        <div className='mt-2 text-xs text-white text-opacity-60'>
+        <div className='mt-2 text-xs text-white/60'>
           <DisplayCurrency
             coin={BNCoin.fromDenomAndBigNumber('usd', inputValue)}
             showDetailedPrice

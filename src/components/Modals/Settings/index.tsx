@@ -450,7 +450,7 @@ export default function SettingsModal() {
               handleSlippage(value)
             }}
             hasFocus={slippage === value && !isCustom}
-            className='mr-3 text-[16px]'
+            className='mr-3'
             text={`${value * 100}%`}
           />
         ))}
@@ -471,7 +471,7 @@ export default function SettingsModal() {
             maxDecimals={1}
             style={{ fontSize: 16 }}
             placeholder='...'
-            className='!w-6'
+            className='w-6!'
           />
           %
         </Button>
