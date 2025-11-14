@@ -745,8 +745,8 @@
 
   /* Toastify CSS Variables Override */
   --toastify-toast-bd-radius: 0;
-  --toastify-color-progress-success: hsl(150deg 66% 52%);
-  --toastify-color-progress-error: hsl(4deg 86% 58%);
+  --toastify-color-progress-success: var(--color-success);
+  --toastify-color-progress-error: var(--color-error);
 }
 
 :root[data-theme='light'] {
@@ -782,18 +782,6 @@
 
 .Toastify__progress-bar {
   border-radius: 0 !important;
-}
-
-.Toastify__progress-bar--rtl {
-  border-radius: 0 !important;
-}
-
-.Toastify__progress-bar--success {
-  background-color: var(--toastify-color-progress-success) !important;
-}
-
-.Toastify__progress-bar--error {
-  background-color: var(--toastify-color-progress-error) !important;
 }
 
 .Toastify__toast--success {

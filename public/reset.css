@@ -5334,8 +5334,8 @@
   --color-surface-light: hsl(231deg 11% 12%);
   --color-surface-dark: hsl(220deg 9% 7%);
   --toastify-toast-bd-radius: 0;
-  --toastify-color-progress-success: hsl(150deg 66% 52%);
-  --toastify-color-progress-error: hsl(4deg 86% 58%);
+  --toastify-color-progress-success: var(--color-success);
+  --toastify-color-progress-error: var(--color-error);
 }
 :root[data-theme='light'] {
   --color-body: hsl(0deg 0% 98%);
@@ -5367,15 +5367,6 @@
 }
 .Toastify__progress-bar {
   border-radius: 0 !important;
-}
-.Toastify__progress-bar--rtl {
-  border-radius: 0 !important;
-}
-.Toastify__progress-bar--success {
-  background-color: var(--toastify-color-progress-success) !important;
-}
-.Toastify__progress-bar--error {
-  background-color: var(--toastify-color-progress-error) !important;
 }
 .Toastify__toast--success {
   background: #6ce9a633 !important;
