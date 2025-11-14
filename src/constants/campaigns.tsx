@@ -20,28 +20,6 @@ export const CAMPAIGNS: AssetCampaign[] = [
     enabledOnV1: true,
   },
   {
-    id: 'drop',
-    name: 'Droplets',
-    type: 'points_with_multiplier',
-    pointsApi: {
-      url: 'https://droplets.drop.money/api/droplet?address=##ADDRESS##',
-      pointsStructure: ['result', 'data', 'points'],
-      pointsDecimals: 6,
-      queryVariable: 'address',
-    },
-    pointBase: 'value',
-    incentiveCopy: 'Earn ##MULTIPLIER##x Droplets',
-    classNames: 'droplets',
-    bgClassNames: 'gradient-droplets',
-    detailedIncentiveCopy: '##POINTS## Droplets daily (##MULTIPLIER##x)',
-    tooltip:
-      'Droplets earned are based on the value of your position. Some positions may have a multiplier range (e.g.: 1-5x). The higher multiplier will be unlocked as soon as you borrow against the position.',
-    totalPointsTooltip:
-      'Total Droplets earned are updated every 24 hours and are counted for the entire wallet.',
-    enabledOnV1: false,
-    v1Tooltip: 'Note: Only deposits on Mars v2 are eligible for the Droplets campaign.',
-  },
-  {
     id: 'drop_apy',
     name: 'Drop Staking',
     type: 'apy',
@@ -121,7 +99,6 @@ export function CampaignLogo({ campaignId }: { campaignId: AssetCampaignId }) {
   switch (campaignId) {
     case 'stride':
       return <Stride />
-    case 'drop':
     case 'drop_apy':
       return <Droplet />
     case 'lido':
