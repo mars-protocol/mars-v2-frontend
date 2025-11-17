@@ -103,7 +103,7 @@ function AccountDeleteModal(props: Props) {
           text: 'Repay Debts',
           icon: <ArrowRight />,
           onClick: () => {
-            navigate(getRoute('borrow', searchParams, address, accountId))
+            navigate(getRoute('bank', searchParams, address, accountId))
             closeDeleteAccountModal()
           },
         }}
@@ -134,10 +134,10 @@ function AccountDeleteModal(props: Props) {
         content='You must first withdraw your funds from the counterparty vault before deleting your account.'
         closeHandler={closeDeleteAccountModal}
         positiveButton={{
-          text: 'Go to Perps Vault',
+          text: 'Go to Vaults',
           icon: <ArrowRight />,
           onClick: () => {
-            navigate(getRoute('perps-vault', searchParams, address, accountId))
+            navigate(getRoute('vaults', searchParams, address, accountId))
             closeDeleteAccountModal()
           },
         }}

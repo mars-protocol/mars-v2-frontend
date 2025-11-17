@@ -508,14 +508,9 @@ type Page =
   | 'trade'
   | 'trade-advanced'
   | 'perps'
-  | 'borrow'
   | 'farm'
-  | 'lend'
-  | 'perps-vault'
   | 'portfolio'
   | 'portfolio/{accountId}'
-  | 'hls-farm'
-  | 'hls-staking'
   | 'vaults'
   | 'vaults/create'
   | 'vaults/{vaultId}'
@@ -523,6 +518,7 @@ type Page =
   | 'governance'
   | 'execute'
   | 'v1'
+  | 'bank'
 
 type OsmosisRouteResponse = {
   amount_in: {

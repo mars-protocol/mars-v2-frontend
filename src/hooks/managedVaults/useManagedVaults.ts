@@ -57,7 +57,7 @@ export default function useManagedVaults() {
                 vault_tokens_denom: details.vault_token,
                 vault_tokens_amount: details.total_vault_tokens,
                 ownerAddress: owner,
-                isOwner: address ? owner === address : false,
+                isOwner: address && owner ? owner.toLowerCase() === address.toLowerCase() : false,
                 isPending: pendingVault?.address === vault.vault_address,
               } as ManagedVaultWithDetails
             } catch (error) {
@@ -99,7 +99,10 @@ export default function useManagedVaults() {
               base_tokens_amount: '0',
               vault_tokens_denom: pendingVault.params.vaultToken,
               vault_tokens_amount: '0',
-              isOwner: pendingVault.creatorAddress === address,
+              isOwner:
+                address && pendingVault.creatorAddress
+                  ? pendingVault.creatorAddress.toLowerCase() === address.toLowerCase()
+                  : false,
               isPending: true,
               ownerAddress: pendingVault.creatorAddress,
             } as ManagedVaultWithDetails)
@@ -157,8 +160,22 @@ export default function useManagedVaults() {
   const result = useMemo(() => {
     if (error || !dataToUse || dataToUse.length === 0) {
       return {
-        ownedVaults: fallbackUserVaults.filter((vault) => vault.isOwner) || [],
-        depositedVaults: fallbackUserVaults.filter((vault) => !vault.isOwner) || [],
+        ownedVaults:
+          fallbackUserVaults.filter(
+            (vault) =>
+              vault.isOwner ||
+              (address &&
+                vault.ownerAddress &&
+                vault.ownerAddress.toLowerCase() === address.toLowerCase()),
+          ) || [],
+        depositedVaults:
+          fallbackUserVaults.filter(
+            (vault) =>
+              !vault.isOwner &&
+              (!address ||
+                !vault.ownerAddress ||
+                vault.ownerAddress.toLowerCase() !== address.toLowerCase()),
+          ) || [],
         availableVaults: [],
       }
     }
