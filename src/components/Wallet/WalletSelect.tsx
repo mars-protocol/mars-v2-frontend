@@ -49,7 +49,7 @@ function WalletOption(props: WalletOptionProps) {
         alt={props.name}
       />
       <Text className='flex-1 ml-2 text-left'>{props.name}</Text>
-      <ChevronRight className='w-4 h-4' />
+      <ChevronRight className='w-4 h-4 ml-2' />
     </Button>
   )
 }
