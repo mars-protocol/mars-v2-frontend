@@ -103,7 +103,7 @@ function AccountDeleteModal(props: Props) {
           text: 'Repay Debts',
           icon: <ArrowRight />,
           onClick: () => {
-            navigate(getRoute('borrow', searchParams, address, accountId))
+            navigate(getRoute('bank', searchParams, address, accountId))
             closeDeleteAccountModal()
           },
         }}

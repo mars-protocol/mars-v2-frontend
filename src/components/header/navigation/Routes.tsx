@@ -5,12 +5,8 @@ import VaultDetails from 'components/managedVaults/vaultDetails/index'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import Layout from 'pages/_layout'
 import BankPage from 'pages/BankPage'
-import BorrowPage from 'pages/BorrowPage'
 import ExecuteMessagePage from 'pages/ExecuteMessagePage'
 import FarmPage from 'pages/FarmPage'
-import HlsFarmPage from 'pages/HlsFarmPage'
-import HlsStakingPage from 'pages/HlsStakingPage'
-import LendPage from 'pages/LendPage'
 import PerpsPage from 'pages/PerpsPage'
 import PortfolioAccountPage from 'pages/PortfolioAccountPage'
 import PortfolioPage from 'pages/PortfolioPage'
@@ -35,14 +31,10 @@ export default function Routes() {
         <Route path='/trade-advanced' element={<TradePage />} />
         <Route path='/perps' element={<PerpsPage />} />
         <Route path='/farm' element={<FarmPage />} />
-        <Route path='/lend' element={<LendPage />} />
         <Route path='/perps-vault' element={<Navigate to='/vaults' replace />} />
-        <Route path='/borrow' element={<BorrowPage />} />
         <Route path='/bank' element={<BankPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
         <Route path='/v1' element={<V1Page />} />
-        <Route path='/hls-staking' element={<HlsStakingPage />} />
-        <Route path='/hls-farm' element={<HlsFarmPage />} />
         <Route
           path='/'
           element={
@@ -65,14 +57,10 @@ export default function Routes() {
           <Route path='trade-advanced' element={<TradePage />} />
           <Route path='perps' element={<PerpsPage />} />
           <Route path='farm' element={<FarmPage />} />
-          <Route path='lend' element={<LendPage />} />
           <Route path='perps-vault' element={<Navigate to='/vaults' replace />} />
-          <Route path='borrow' element={<BorrowPage />} />
           <Route path='bank' element={<BankPage />} />
           <Route path='portfolio' element={<PortfolioPage />} />
           <Route path='v1' element={<V1Page />} />
-          <Route path='hls-staking' element={<HlsStakingPage />} />
-          <Route path='hls-farm' element={<HlsFarmPage />} />
 
           <Route path='vaults'>
             <Route path=':vaultAddress'>
