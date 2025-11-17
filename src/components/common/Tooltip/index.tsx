@@ -1,6 +1,6 @@
 import Tippy, { TippyProps } from '@tippyjs/react'
 import classNames from 'classnames'
-import { ReactNode } from 'react'
+import { ReactNode, useMemo } from 'react'
 
 import { Questionmark } from 'components/common/Icons'
 import TooltipContent from 'components/common/Tooltip/TooltipContent'
@@ -28,14 +28,26 @@ export const Tooltip = (props: Props) => {
     getDefaultChainSettings(chainConfig).reduceMotion,
   )
 
-  const isInWalletAssetModal = document.getElementById('wallet-assets-modal')
-  const isInModal = document.getElementById('modal')
-  const isInMarsStakingModal = document.getElementById('mars-staking-modal')
+  const appendToElement = useMemo(() => {
+    return () => {
+      const isInWalletAssetModal = document.getElementById('wallet-assets-modal')
+      const isInMarsStakingModal = document.getElementById('mars-staking-modal')
+      const isInModal = document.getElementById('modal')
+      return isInWalletAssetModal ?? isInMarsStakingModal ?? isInModal ?? document.body
+    }
+  }, [])
+
+  const zIndexValue = useMemo(() => {
+    const isInWalletAssetModal = document.getElementById('wallet-assets-modal')
+    const isInMarsStakingModal = document.getElementById('mars-staking-modal')
+    const isInModal = document.getElementById('modal')
+    return isInWalletAssetModal || isInMarsStakingModal || isInModal ? 9999 : undefined
+  }, [])
 
   return (
     <Tippy
-      appendTo={() => isInWalletAssetModal ?? isInMarsStakingModal ?? isInModal ?? document.body}
-      zIndex={isInWalletAssetModal || isInMarsStakingModal || isInModal ? 9999 : undefined}
+      appendTo={appendToElement}
+      zIndex={zIndexValue}
       interactive={props.interactive}
       animation={false}
       delay={[props.delay ?? 0, 0]}

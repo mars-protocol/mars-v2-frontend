@@ -45,11 +45,6 @@ export default function VaultsCommunityPage() {
     }
   }, [accountId, address, chainConfig, chainConfig.managedVaults, navigate, searchParams])
 
-  const showDialog = useCallback(() => {
-    if (!showVaultWarning) return
-    setIsDialogOpen(true)
-  }, [showVaultWarning])
-
   const handleDialogClose = () => {
     setIsDialogOpen(false)
   }
@@ -66,9 +61,9 @@ export default function VaultsCommunityPage() {
   useEffect(() => {
     const vaultWarning = localStorage.getItem(LocalStorageKeys.VAULT_PAGE_WARNING)
     if (vaultWarning === null || vaultWarning === 'true') {
-      showDialog()
+      setIsDialogOpen(true)
     }
-  }, [showDialog])
+  }, [])
 
   return (
     <div className='flex flex-col w-full gap-2 py-8'>
@@ -87,6 +82,9 @@ export default function VaultsCommunityPage() {
 
       {/* Community Vaults Section */}
       <div className='w-full mt-6'>
+        <Text size='2xl' className='mb-4 text-white'>
+          Community Vaults
+        </Text>
         <AvailableCommunityVaults />
       </div>
 
