@@ -4,9 +4,6 @@ export const EARN_TABS: Tab[] = [
 ]
 
 export const getEarnTabs = (chainConfig: ChainConfig): Tab[] => {
-  if (chainConfig.perps) {
-    return [...EARN_TABS, { page: 'perps-vault', name: 'Perps Vault' }]
-  }
   return EARN_TABS
 }
 

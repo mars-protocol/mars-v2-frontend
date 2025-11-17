@@ -36,7 +36,6 @@ export function getPage(pathname: string, chainConfig: ChainConfig): Page {
     'borrow',
     'farm',
     'lend',
-    'perps-vault',
     'portfolio',
     'hls-farm',
     'hls-staking',
@@ -45,6 +44,7 @@ export function getPage(pathname: string, chainConfig: ChainConfig): Page {
     'vaults/create',
     'vaults/{vaultId}/details',
     'v1',
+    'bank',
   ]
 
   const segments = pathname.split('/')
