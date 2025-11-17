@@ -27,7 +27,6 @@ export default function VaultsIntro(props: Props) {
   const [searchParams] = useSearchParams()
   const address = useStore((s) => s.address)
   const chainConfig = useChainConfig()
-  const showTutorial = useStore((s) => s.tutorial)
 
   const openCreateVaultOverlay = useCallback(() => {
     if (!address) {
@@ -64,52 +63,40 @@ export default function VaultsIntro(props: Props) {
     <>
       <Intro
         bg='vaults'
-        isCompact={!showTutorial}
         text={
-          showTutorial ? (
-            <>
-              {props.hasPerpsVault && (
-                <>
-                  Deposit into the <span className='text-white'>Counterparty Vault</span> to earn
-                  trading fees from perpetuals.{' '}
-                </>
-              )}
-              <span className='text-white'>Community Vaults</span> are managed strategies where
-              vault creators use deposited funds to run trading strategies aiming to generate
-              returns for both themselves and their depositors.
-            </>
-          ) : (
-            <>
-              <span className='text-white'>Become a Vault Manager</span> and create your own
-              strategy. Earn management fees from users who deposit into your vault.
-            </>
-          )
+          <>
+            {props.hasPerpsVault && (
+              <>
+                Deposit into the <span className='text-white'>Counterparty Vault</span> to earn
+                trading fees from perpetuals.{' '}
+              </>
+            )}
+            <span className='text-white'>Community Vaults</span> are managed strategies where
+            vault creators use deposited funds to run trading strategies aiming to generate
+            returns for both themselves and their depositors.
+          </>
         }
       >
         <Button text='Create Vault' color='primary' leftIcon={<Plus />} onClick={handleOnClick} />
-        {showTutorial && (
-          <>
-            <Button
-              text='Learn about Community Vaults'
-              leftIcon={<PlusSquared />}
-              onClick={(e) => {
-                e.preventDefault()
-                window.open(DocURL.CREATE_VAULT_URL, '_blank')
-              }}
-              color='secondary'
-            />
-            {props.hasPerpsVault && (
-              <Button
-                text='Learn about Counterparty Vault'
-                leftIcon={<PlusSquared />}
-                onClick={(e) => {
-                  e.preventDefault()
-                  window.open(DocURL.PERPS_VAULT_URL, '_blank')
-                }}
-                color='secondary'
-              />
-            )}
-          </>
+        <Button
+          text='Learn about Community Vaults'
+          leftIcon={<PlusSquared />}
+          onClick={(e) => {
+            e.preventDefault()
+            window.open(DocURL.CREATE_VAULT_URL, '_blank')
+          }}
+          color='secondary'
+        />
+        {props.hasPerpsVault && (
+          <Button
+            text='Learn about Counterparty Vault'
+            leftIcon={<PlusSquared />}
+            onClick={(e) => {
+              e.preventDefault()
+              window.open(DocURL.PERPS_VAULT_URL, '_blank')
+            }}
+            color='secondary'
+          />
         )}
       </Intro>
 
