@@ -24,7 +24,7 @@ export default function PerpsIntro() {
           they win, the vault takes the loss.
         </>
       }
-      bg='perps-vault'
+      bg='vaults'
     >
       <Button
         text='Learn more'
