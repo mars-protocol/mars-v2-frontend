@@ -2,7 +2,6 @@ import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
 import Apy, { APY_META } from 'components/earn/lend/Table/Columns/Apy'
-import Campaign, { CAMPAIGN_META } from 'components/earn/lend/Table/Columns/Campaign'
 import Chevron, { CHEVRON_META } from 'components/earn/lend/Table/Columns/Chevron'
 import DepositCap, {
   DEPOSIT_CAP_META,
@@ -22,10 +21,6 @@ export default function useAvailableColumns(props: Props) {
       {
         ...NAME_META,
         cell: ({ row }) => <Name asset={row.original.asset} v1={props.v1} />,
-      },
-      {
-        ...CAMPAIGN_META,
-        cell: ({ row }) => <Campaign asset={row.original.asset} />,
       },
       {
         ...APY_META,

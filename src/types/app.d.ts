@@ -511,7 +511,6 @@ type Page =
   | 'borrow'
   | 'farm'
   | 'lend'
-  | 'perps-vault'
   | 'portfolio'
   | 'portfolio/{accountId}'
   | 'hls-farm'
@@ -523,6 +522,7 @@ type Page =
   | 'governance'
   | 'execute'
   | 'v1'
+  | 'bank'
 
 type OsmosisRouteResponse = {
   amount_in: {

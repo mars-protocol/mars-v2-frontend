@@ -4,6 +4,7 @@ import CreateVault from 'components/managedVaults/createVault/index'
 import VaultDetails from 'components/managedVaults/vaultDetails/index'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import Layout from 'pages/_layout'
+import BankPage from 'pages/BankPage'
 import BorrowPage from 'pages/BorrowPage'
 import ExecuteMessagePage from 'pages/ExecuteMessagePage'
 import FarmPage from 'pages/FarmPage'
@@ -11,7 +12,6 @@ import HlsFarmPage from 'pages/HlsFarmPage'
 import HlsStakingPage from 'pages/HlsStakingPage'
 import LendPage from 'pages/LendPage'
 import PerpsPage from 'pages/PerpsPage'
-import PerpsVaultPage from 'pages/PerpsVaultPage'
 import PortfolioAccountPage from 'pages/PortfolioAccountPage'
 import PortfolioPage from 'pages/PortfolioPage'
 import PortfolioV1Page from 'pages/PortfolioV1Page'
@@ -36,8 +36,9 @@ export default function Routes() {
         <Route path='/perps' element={<PerpsPage />} />
         <Route path='/farm' element={<FarmPage />} />
         <Route path='/lend' element={<LendPage />} />
-        <Route path='/perps-vault' element={<PerpsVaultPage />} />
+        <Route path='/perps-vault' element={<Navigate to='/vaults' replace />} />
         <Route path='/borrow' element={<BorrowPage />} />
+        <Route path='/bank' element={<BankPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
         <Route path='/v1' element={<V1Page />} />
         <Route path='/hls-staking' element={<HlsStakingPage />} />
@@ -65,8 +66,9 @@ export default function Routes() {
           <Route path='perps' element={<PerpsPage />} />
           <Route path='farm' element={<FarmPage />} />
           <Route path='lend' element={<LendPage />} />
-          <Route path='perps-vault' element={<PerpsVaultPage />} />
+          <Route path='perps-vault' element={<Navigate to='/vaults' replace />} />
           <Route path='borrow' element={<BorrowPage />} />
+          <Route path='bank' element={<BankPage />} />
           <Route path='portfolio' element={<PortfolioPage />} />
           <Route path='v1' element={<V1Page />} />
           <Route path='hls-staking' element={<HlsStakingPage />} />

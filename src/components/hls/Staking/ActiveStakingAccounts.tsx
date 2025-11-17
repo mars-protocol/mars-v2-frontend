@@ -4,7 +4,7 @@ import useDepositedColumns from 'components/hls/Staking/Table/Columns/useDeposit
 import useHlsStakingAccounts from 'hooks/hls/useHlsStakingAccounts'
 import useStore from 'store'
 
-const title = 'Active Strategies'
+const title = 'Active High Leverage Staking'
 
 export default function ActiveStakingAccounts() {
   const address = useStore((s) => s.address)

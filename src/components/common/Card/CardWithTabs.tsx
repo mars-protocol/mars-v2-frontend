@@ -6,10 +6,12 @@ import Card from 'components/common/Card'
 type Props = {
   tabs: CardTab[]
   textSizeClass?: string
+  fullHeight?: boolean
 }
 
 export function CardWithTabs(props: Props) {
   const [activeIdx, setActiveIdx] = useState(0)
+  const fullHeight = props.fullHeight ?? true
 
   if (props.tabs.length === 0) return null
 
@@ -23,8 +25,8 @@ export function CardWithTabs(props: Props) {
           {...props}
         />
       }
-      className='w-full md:h-full'
-      contentClassName='flex-1 md:h-full'
+      className={classNames('w-full', fullHeight && 'md:h-full')}
+      contentClassName={classNames('flex-1', fullHeight && 'md:h-full')}
     >
       {props.tabs[activeIdx].renderContent()}
     </Card>
