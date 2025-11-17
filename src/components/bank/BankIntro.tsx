@@ -16,7 +16,7 @@ export default function BankIntro() {
           zero, you&apos;ll be liquidated.
         </>
       }
-      bg='lend'
+      bg='bank'
     >
       <Button
         text='Learn more'

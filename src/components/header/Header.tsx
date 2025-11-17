@@ -57,33 +57,15 @@ const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
       },
     ],
   },
-  {
-    pages: chainConfig.farm ? ['lend', 'farm'] : ['lend'],
-    label: 'Earn',
-  },
-  { pages: ['borrow'], label: 'Borrow' },
   { pages: ['bank'], label: 'Bank' },
   { pages: ['farm'], label: 'Farm' },
   ...(chainConfig.managedVaults ? [{ pages: ['vaults'] as Page[], label: 'Vaults' }] : []),
   { pages: ['portfolio'], label: 'Portfolio' },
-  ...(chainConfig.hls
-    ? [{ pages: ['hls-staking', 'hls-farm'] as Page[], label: 'High Leverage' }]
-    : []),
   {
     pages: ['governance'],
     label: 'More',
     submenu: [
       // Hidden navbar items appear here when screen gets smaller
-      {
-        page: 'lend' as Page,
-        label: 'Earn',
-        hideOnDesktop: true,
-      },
-      {
-        page: 'borrow' as Page,
-        label: 'Borrow',
-        hideOnDesktop: true,
-      },
       {
         page: 'bank' as Page,
         label: 'Bank',
@@ -108,15 +90,6 @@ const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
         label: 'Portfolio',
         hideOnDesktop: true,
       },
-      ...(chainConfig.hls
-        ? [
-            {
-              page: 'hls-staking' as Page,
-              label: 'High Leverage',
-              hideOnDesktop: true,
-            },
-          ]
-        : []),
       {
         label: '',
         isSeparator: true,
