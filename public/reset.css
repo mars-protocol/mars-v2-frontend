@@ -77,6 +77,7 @@
     --container-nav-1: 300px;
     --container-nav-4: 600px;
     --container-screen-full: 100dvw;
+    --container-modal-xl: 1400px;
     --color-body: hsl(252deg 12% 8%);
     --color-error: hsl(4deg 86% 58%);
     --color-error-bg: hsl(4deg 96% 80%);
@@ -944,6 +945,9 @@
   .h-118 {
     height: var(--spacing-118);
   }
+  .h-200 {
+    height: var(--spacing-200);
+  }
   .h-\[32px\] {
     height: 32px;
   }
@@ -1060,9 +1064,6 @@
   }
   .min-h-90 {
     min-height: var(--spacing-90);
-  }
-  .min-h-200 {
-    min-height: var(--spacing-200);
   }
   .min-h-\[58px\] {
     min-height: 58px;
@@ -1339,6 +1340,9 @@
   }
   .max-w-modal-sm {
     max-width: var(--spacing-modal-sm);
+  }
+  .max-w-modal-xl {
+    max-width: var(--container-modal-xl);
   }
   .max-w-modal-xs {
     max-width: var(--spacing-modal-xs);
