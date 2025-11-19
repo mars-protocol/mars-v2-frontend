@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 
 import AccountMenu from 'components/account/AccountMenu'
@@ -27,6 +27,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useInitFeeToken from 'hooks/wallet/useInitFeeToken'
 import useStore from 'store'
 import { DocURL } from 'types/enums'
+import SearchBar from 'components/common/SearchBar/index'
 
 const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
   {
@@ -138,6 +139,7 @@ export default function Header() {
   const isV1 = useStore((s) => s.isV1)
   const showAccountMenu = address && !isHls && !isVaults && !isMobile && !isV1
   const feeTokenInitiated = useInitFeeToken()
+  const [searchValue, setSearchValue] = useState('')
 
   function handleCloseFocusMode() {
     focusComponent?.onClose?.()
@@ -192,6 +194,7 @@ export default function Header() {
           ) : (
             <div className='flex gap-2'>
               {showStaleOracle && <OracleResyncInfo />}
+              <SearchBar value={searchValue} onChange={setSearchValue} label='Search Market' />
               {showRewardsCenter && <RewardsCenter className='hidden lg:flex' />}
               {showAccountMenu && <AccountMenu className='hidden md:flex' />}
               <Wallet initiated={feeTokenInitiated} />
