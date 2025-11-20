@@ -27,7 +27,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useInitFeeToken from 'hooks/wallet/useInitFeeToken'
 import useStore from 'store'
 import { DocURL } from 'types/enums'
-import SearchBar from 'components/common/SearchBar/index'
+import AssetSearch from 'components/common/AssetSearch'
 
 const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
   {
@@ -139,8 +139,6 @@ export default function Header() {
   const isV1 = useStore((s) => s.isV1)
   const showAccountMenu = address && !isHls && !isVaults && !isMobile && !isV1
   const feeTokenInitiated = useInitFeeToken()
-  const [searchValue, setSearchValue] = useState('')
-
   function handleCloseFocusMode() {
     focusComponent?.onClose?.()
     useStore.setState({ focusComponent: null })
@@ -151,6 +149,9 @@ export default function Header() {
     () => (isV1 ? address && !isMobile : accountId && !isMobile),
     [isV1, address, accountId],
   )
+
+  const handleSelectAsset = (asset: Asset) => {}
+
   return (
     <>
       <header className='fixed left-0 top-0 z-80 w-full max-w-screen-full bg-surface-dark'>
@@ -194,7 +195,7 @@ export default function Header() {
           ) : (
             <div className='flex gap-2'>
               {showStaleOracle && <OracleResyncInfo />}
-              <SearchBar value={searchValue} onChange={setSearchValue} label='Search Market' />
+              <AssetSearch onSelectAsset={handleSelectAsset} label='Search Assets' />
               {showRewardsCenter && <RewardsCenter className='hidden lg:flex' />}
               {showAccountMenu && <AccountMenu className='hidden md:flex' />}
               <Wallet initiated={feeTokenInitiated} />

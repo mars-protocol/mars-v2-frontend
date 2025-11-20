@@ -7,9 +7,17 @@ interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> 
   onChange: (value: string) => void
   className?: string
   label?: string
+  children?: React.ReactNode
 }
 
-export default function SearchBar({ value, onChange, className, label, ...props }: Props) {
+export default function SearchBar({
+  value,
+  onChange,
+  className,
+  label,
+  children,
+  ...props
+}: Props) {
   const [isExpanded, setIsExpanded] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -92,6 +100,7 @@ export default function SearchBar({ value, onChange, className, label, ...props 
           {...props}
         />
       </div>
+      {children}
     </div>
   )
 }
