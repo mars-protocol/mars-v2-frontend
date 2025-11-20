@@ -32,7 +32,7 @@ export function checkPositionValue(
       const introMessage = wasLong
         ? 'You are changing your Long position to a Short position.'
         : 'You are changing your Short position to a Long position.'
-      return `${introMessage} To open the new position it has to be at least worth ${minPositionValueString}. To achieve that you need to set the size to ${minPositionSize} at minumum.`
+      return `${introMessage} To open the new position it has to be at least worth ${minPositionValueString}. To achieve that you need to set the size to ${minPositionSize} at minimum.`
     }
     return `Minimum position value is ${minPositionValueString} (${minPositionSize})`
   }
