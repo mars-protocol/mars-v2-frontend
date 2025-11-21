@@ -1878,7 +1878,7 @@ interface StakedAstroLpRewards {
   rewards: BNCoin[]
 }
 
-type AssetCampaignId = 'stride' | 'lido' | 'drop_apy' | 'milkyway' | 'ntrn-rewards'
+type AssetCampaignId = 'stride' | 'lido' | 'drop_apy' | 'milkyway' | 'ntrn-rewards' | 'fragments'
 type AssetCampaignType = 'points_with_multiplier' | 'apy'
 type AssetCampaignPointBase = 'value' | 'amount'
 

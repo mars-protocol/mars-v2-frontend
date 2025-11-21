@@ -1,4 +1,4 @@
-import { Droplet, Lido, MilkyWay, Neutron, Stride } from 'components/common/Icons'
+import { Droplet, Lido, MarsFragments, MilkyWay, Neutron, Stride } from 'components/common/Icons'
 
 export const CAMPAIGNS: AssetCampaign[] = [
   {
@@ -93,6 +93,26 @@ export const CAMPAIGNS: AssetCampaign[] = [
       "Your deposit will earn additional Neutron (NTRN) Rewards. ATTENTION: Don't reduce or withdraw your position after depositing, as this would forfeit your NTRN rewards. You can still add to your position safely.",
     enabledOnV1: true,
   },
+  {
+    id: 'fragments',
+    name: 'Mars Fragments',
+    type: 'points_with_multiplier',
+    pointsApi: {
+      url: 'https://amberfi-backend.prod.mars-dev.net/v2/fragments/by_wallet?chain=neutron&wallet=##ADDRESS##',
+      pointsStructure: ['total_fragments', 'total_accumulated'],
+      pointsDecimals: 0,
+      queryVariable: 'address',
+    },
+    pointBase: 'value',
+    incentiveCopy: 'Earn ##MULTIPLIER##x Mars Fragments',
+    classNames: 'fragments',
+    bgClassNames: 'gradient-fragments',
+    detailedIncentiveCopy: '##POINTS## Mars Fragments daily (##MULTIPLIER##x)',
+    tooltip: 'Mars Fragments earned are based on the value of your position.',
+    totalPointsTooltip:
+      'Total Mars Fragments earned are updated every 24 hours and are counted for the entire wallet.',
+    enabledOnV1: true,
+  },
 ]
 
 export function CampaignLogo({ campaignId }: { campaignId: AssetCampaignId }) {
@@ -107,6 +127,8 @@ export function CampaignLogo({ campaignId }: { campaignId: AssetCampaignId }) {
       return <MilkyWay />
     case 'ntrn-rewards':
       return <Neutron />
+    case 'fragments':
+      return <MarsFragments />
     default:
       return null
   }
