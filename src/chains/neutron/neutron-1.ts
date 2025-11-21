@@ -51,8 +51,9 @@ const Neutron1: ChainConfig = {
     },
     {
       denom: 'ibc/0E293A7622DC9A6439DB60E6D234B5AF446962E27CA3AB44D0590603DFF6968E',
-      campaignIds: ['ntrn-rewards'],
+      campaignIds: ['ntrn-rewards', 'fragments'],
       campaignDenom: 'wbtc',
+      baseMultiplier: 1,
     },
   ],
   deprecated: [

@@ -68,7 +68,7 @@ export function getVaultBaseDepositCoinsAndValue(
       : ratio.isLessThan(BN(0.999).minus(slippage)) || ratio.isGreaterThan(BN(0.999).plus(slippage))
 
   if (isCustomRatio) {
-    // on a custom ratio the value of the asset with the highe value has to deducted by the value of the asset with the lower value
+    // on a custom ratio the value of the asset with the higher value has to deducted by the value of the asset with the lower value
     // this value is then divided by 2 to get the leftover value that will be swapped to the asset with the lower value
 
     // e.g.: $250 ATOM (primary) and $500 stATOM (secondary) -> $750 totalValue, $375 halfValue
