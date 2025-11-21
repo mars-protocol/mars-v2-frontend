@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { isMobile } from 'react-device-detect'
 
 import AccountMenu from 'components/account/AccountMenu'
@@ -195,7 +195,7 @@ export default function Header() {
           ) : (
             <div className='flex gap-2'>
               {showStaleOracle && <OracleResyncInfo />}
-              <AssetSearch onSelectAsset={handleSelectAsset} label='Search Assets' />
+              <AssetSearch onSelectAsset={handleSelectAsset} />
               {showRewardsCenter && <RewardsCenter className='hidden lg:flex' />}
               {showAccountMenu && <AccountMenu className='hidden md:flex' />}
               <Wallet initiated={feeTokenInitiated} />

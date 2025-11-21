@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import AssetImage from 'components/common/assets/AssetImage'
 import AssetSymbol from 'components/common/assets/AssetSymbol'
 import Text from 'components/common/Text'
-import useAssets from 'hooks/assets/useAssets'
+import useSearchableAssets from 'hooks/assets/useSearchableAssets'
 
 interface Props {
   searchValue: string
@@ -22,28 +22,33 @@ export default function AssetDropdown({
   className,
   maxResults = 50,
 }: Props) {
-  const { data: assets } = useAssets()
+  const searchableAssets = useSearchableAssets()
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   const filteredAssets = useMemo(() => {
-    if (!assets) return []
+    if (!searchableAssets) return []
 
     const searchTrimmed = searchValue.trim()
-    if (!searchTrimmed) {
-      return assets.filter((asset) => !asset.isDeprecated).slice(0, maxResults)
+    const searchLower = searchTrimmed.toLowerCase()
+
+    // Only show searchable assets (pre-set terms that always return valid result pages)
+    // These are assets with at least one actionable feature: trade, perps, borrow, or deposit
+    if (searchTrimmed) {
+      // Filter searchable assets that match the query
+      return searchableAssets
+        .filter(
+          (asset) =>
+            asset.name.toLowerCase().includes(searchLower) ||
+            asset.symbol.toLowerCase().includes(searchLower) ||
+            asset.denom.toLowerCase().includes(searchLower),
+        )
+        .slice(0, maxResults)
     }
 
-    const searchLower = searchTrimmed.toLowerCase()
-    const filtered = assets.filter(
-      (asset) =>
-        !asset.isDeprecated &&
-        (asset.name.toLowerCase().includes(searchLower) ||
-          asset.symbol.toLowerCase().includes(searchLower) ||
-          asset.denom.toLowerCase().includes(searchLower)),
-    )
-
-    return filtered.slice(0, maxResults)
-  }, [assets, searchValue, maxResults])
+    // If no search query, show limited pre-set searchable assets
+    // These are the "library of pre-set search terms" that always return valid result pages
+    return searchableAssets.slice(0, Math.min(10, maxResults))
+  }, [searchableAssets, searchValue, maxResults])
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {

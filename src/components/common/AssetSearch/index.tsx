@@ -1,4 +1,3 @@
-import classNames from 'classnames'
 import { useState } from 'react'
 import SearchBar from 'components/common/SearchBar/index'
 import AssetDropdown from 'components/common/AssetDropdown'
