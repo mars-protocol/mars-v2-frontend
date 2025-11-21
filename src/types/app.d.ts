@@ -1193,6 +1193,8 @@ interface BroadcastSlice {
     orderType: ExecutePerpOrderType
     conditionalTriggers: { sl: string | null; tp: string | null }
     keeperFee: BNCoin
+    keeperFeeFromLends: BNCoin
+    keeperFeeFromBorrows: BNCoin
     limitPrice?: string
     stopPrice?: string
   }) => Promise<boolean>
