@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import AlertDialog from 'components/common/AlertDialog'
 import { CircularProgress } from 'components/common/CircularProgress'
 import { ArrowRight } from 'components/common/Icons'
@@ -15,7 +16,6 @@ import { useManagedVaultDetails } from 'hooks/managedVaults/useManagedVaultDetai
 import { useCallback, useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import useStore from 'store'
-import classNames from 'classnames'
 
 function VaultLoadingState() {
   return (

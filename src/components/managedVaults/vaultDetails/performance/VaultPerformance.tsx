@@ -1,6 +1,6 @@
-import VaultMetricsCard from 'components/managedVaults/vaultDetails/performance/VaultMetricsCard'
 import PerformanceChart from 'components/managedVaults/vaultDetails/performance/chart/PerformanceChart'
 import UserMetrics from 'components/managedVaults/vaultDetails/performance/UserMetrics'
+import VaultMetricsCard from 'components/managedVaults/vaultDetails/performance/VaultMetricsCard'
 import useStore from 'store'
 
 interface Props {
