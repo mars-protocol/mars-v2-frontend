@@ -105,7 +105,7 @@ export default function FeeAction(props: Props) {
           <Text size='xs' className='text-white/50 mb-4 mt-2'>
             {isEdit
               ? 'You may update your performance fee.'
-              : 'Congratulations, you can withdraw the accrued perfomance fee!'}
+              : 'Congratulations, you can withdraw the accrued performance fee!'}
           </Text>
         </div>
 
