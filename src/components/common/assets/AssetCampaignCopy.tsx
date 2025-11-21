@@ -110,7 +110,13 @@ function AssetCampaignCopy(props: CopyProps) {
               className={classNames('w-1 h-1 ml-2 rounded-full bg-white/50', noDot && 'hidden')}
             />
           )}
-          <Text size={size} className={textClassName ? textClassName : campaign.classNames}>
+          <Text
+            size={size}
+            className={classNames(
+              textClassName ? textClassName : campaign.classNames,
+              'whitespace-nowrap',
+            )}
+          >
             {incentiveCopy}
           </Text>
         </>

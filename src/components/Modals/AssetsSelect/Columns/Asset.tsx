@@ -64,7 +64,7 @@ export default function Asset(props: Props) {
         </div>
         <div className='flex items-center gap-2'>
           {!hideApy && showRate && market ? (
-            <Text size='xs' className='text-white/60'>
+            <Text size='xs' className='text-white/60 whitespace-nowrap'>
               {(apy ?? 0).toFixed(1)}% APY
             </Text>
           ) : (

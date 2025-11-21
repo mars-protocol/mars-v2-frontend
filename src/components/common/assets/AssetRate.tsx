@@ -52,7 +52,7 @@ export default function AssetRate(props: Props) {
   return (
     <FormattedNumber
       amount={rate}
-      className={className}
+      className={classNames('whitespace-nowrap', className)}
       options={{ suffix: props.suffix ? `% ${suffix}` : '%', maxDecimals: 2, abbreviated: true }}
     />
   )

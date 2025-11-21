@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import AlertDialog from 'components/common/AlertDialog'
 import { CircularProgress } from 'components/common/CircularProgress'
 import { ArrowRight } from 'components/common/Icons'
@@ -79,19 +80,26 @@ export default function VaultDetails(props: Props) {
   if (!vaultAddress) return <VaultLoadingState />
 
   return (
-    <section className='container mx-auto w-full md:p-8'>
-      <div className='flex w-full mb-4'>
-        {!focusComponent && <NavigateBackButton />}
-        <div className='ml-auto'>
-          <Tab
-            tabs={VAULT_DETAILS_TABS}
-            activeTabIdx={activeTabIdx}
-            onTabChange={handleTabChange}
-            disableNavigation
-          />
+    <section className={classNames('container mx-auto w-full', !focusComponent && 'md:p-8')}>
+      <div
+        className={classNames(
+          'w-full',
+          focusComponent ? 'flex flex-col max-w-modal-xl h-200 mx-auto' : '',
+        )}
+      >
+        <div className='flex w-full mb-4'>
+          {!focusComponent && <NavigateBackButton />}
+          <div className='ml-auto'>
+            <Tab
+              tabs={VAULT_DETAILS_TABS}
+              activeTabIdx={activeTabIdx}
+              onTabChange={handleTabChange}
+              disableNavigation
+            />
+          </div>
         </div>
+        <VaultDetailsContent vaultAddress={vaultAddress} activeTabIdx={activeTabIdx} />
       </div>
-      <VaultDetailsContent vaultAddress={vaultAddress} activeTabIdx={activeTabIdx} />
 
       <AlertDialog
         isOpen={isDialogOpen}
@@ -132,12 +140,12 @@ export function VaultDetailsContent({
   }
 
   return (
-    <>
+    <div className='h-full'>
       {activeTabIdx === 0 ? (
         <VaultOverview vaultDetails={vaultDetails} isOwner={isOwner} vaultAddress={vaultAddress} />
       ) : (
         <VaultPerformance vaultDetails={vaultDetails} vaultAddress={vaultAddress} />
       )}
-    </>
+    </div>
   )
 }
