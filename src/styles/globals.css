@@ -6,7 +6,7 @@
 @custom-variant dark (&:where([data-theme="dark"] &));
 @custom-variant light (&:where([data-theme="light"] &));
 
-@source inline("border-error","border-success","h-2","text-3xs","text-3xs-caps","text-2xs","text-2xs-caps","text-xs-caps","text-xs","text-sm-caps","text-sm","text-base-caps","text-base","text-lg-caps","text-lg","text-xl-caps","text-xl","text-2xl-caps","text-2xl","text-3xl-caps","text-3xl","text-4xl-caps","text-4xl","text-5xl-caps","text-5xl","text-yellow-300","text-violet-500","text-green","text-grey-light","fill-yellow-300","fill-violet-500","fill-green","fill-martian-red","fill-grey-light","w-2","@nav-0/navigation:inline-block","@nav-1/navigation:inline-block","@nav-2/navigation:inline-block","@nav-3/navigation:inline-block","@nav-4/navigation:inline-block","@nav-5/navigation:inline-block","@nav-6/navigation:inline-block","@nav-0/navigation:hidden","@nav-1/navigation:hidden","@nav-2/navigation:hidden","@nav-3/navigation:hidden","@nav-4/navigation:hidden","@nav-5/navigation:hidden","@nav-6/navigation:hidden","gradient-droplets","gradient-stride","gradient-lido","gradient-milkyway","gradient-ntrn-rewards","droplets","stride","lido","milkyway","ntrn-rewards");
+@source inline("border-error","border-success","h-2","text-3xs","text-3xs-caps","text-2xs","text-2xs-caps","text-xs-caps","text-xs","text-sm-caps","text-sm","text-base-caps","text-base","text-lg-caps","text-lg","text-xl-caps","text-xl","text-2xl-caps","text-2xl","text-3xl-caps","text-3xl","text-4xl-caps","text-4xl","text-5xl-caps","text-5xl","text-yellow-300","text-violet-500","text-green","text-grey-light","fill-yellow-300","fill-violet-500","fill-green","fill-martian-red","fill-grey-light","w-2","@nav-0/navigation:inline-block","@nav-1/navigation:inline-block","@nav-2/navigation:inline-block","@nav-3/navigation:inline-block","@nav-4/navigation:inline-block","@nav-5/navigation:inline-block","@nav-6/navigation:inline-block","@nav-0/navigation:hidden","@nav-1/navigation:hidden","@nav-2/navigation:hidden","@nav-3/navigation:hidden","@nav-4/navigation:hidden","@nav-5/navigation:hidden","@nav-6/navigation:hidden","gradient-droplets","gradient-stride","gradient-lido","gradient-milkyway","gradient-ntrn-rewards","gradient-fragments","droplets","stride","lido","milkyway","ntrn-rewards","fragments");
 
 @theme {
   /* Font family */
@@ -378,6 +378,10 @@
     fill: var(--color-grey-light);
   }
 
+  .text-yellow-300 {
+    color: var(--color-yellow-300);
+  }
+
   @container navigation (min-width: 200px) {
     .\@nav-0\/navigation\:hidden {
       display: none;
@@ -490,6 +494,10 @@
 
   .gradient-droplets {
     background: linear-gradient(90deg, #6039ff, #e8b8ff);
+  }
+
+  .gradient-fragments {
+    background: linear-gradient(90deg, var(--color-mars), var(--color-martian-red));
   }
 
   .gradient-stride {
@@ -643,6 +651,13 @@
 
   .milkyway {
     background: linear-gradient(90deg, #fef7f1 0%, #fde2fb 50%, #fde4fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+  }
+
+  .fragments {
+    background: linear-gradient(90deg, var(--color-mars), var(--color-martian-red));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: bold;
