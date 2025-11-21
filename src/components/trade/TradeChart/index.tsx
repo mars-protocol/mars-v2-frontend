@@ -10,6 +10,7 @@ import Loading from 'components/common/Loading'
 import Text from 'components/common/Text'
 import { datafeed } from 'components/trade/TradeChart/DataFeed'
 import PoweredByPyth from 'components/trade/TradeChart/PoweredByPyth'
+import TradingViewAttribution from 'components/trade/TradeChart/TradingViewAttribution'
 import {
   disabledFeatures,
   disabledFeaturesMobile,
@@ -493,7 +494,12 @@ export default function TradeChart(props: Props) {
           </div>
         </div>
       </div>
-      <PoweredByPyth />
+      <div className='flex items-center justify-between w-full gap-2 p-2 bg-surface-dark'>
+        <TradingViewAttribution
+          symbol={props.buyAsset.pythFeedName ?? `${props.buyAsset.symbol.toUpperCase()}/USD`}
+        />
+        <PoweredByPyth />
+      </div>
     </Card>
   )
 }

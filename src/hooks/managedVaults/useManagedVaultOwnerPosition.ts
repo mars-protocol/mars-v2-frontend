@@ -16,7 +16,7 @@ export default function useManagedVaultOwnerPosition(
 
   const { data } = useSWR(
     vaultAddress && ownerAddress
-      ? `chains/${chainConfig.id}/managedVaults/${vaultAddress}/ownerPosition`
+      ? `chains/${chainConfig.id}/managedVaults/${vaultAddress}/ownerPosition/${ownerAddress}`
       : null,
     async () => {
       if (!ownerAddress) return DEFAULT_OWNER_POSITION_RESPONSE
