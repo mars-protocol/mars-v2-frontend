@@ -23,7 +23,7 @@
     "@cosmjs/cosmwasm-stargate": "^0.37.0",
     "@delphi-labs/shuttle-react": "^4.3.0",
     "@keplr-wallet/cosmos": "^0.12.285",
-    "@next/eslint-plugin-next": "16.0.1",
+    "@next/eslint-plugin-next": "16.0.3",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@skip-go/client": "^1.5.9",
     "@solana/web3.js": "^1.98.4",
