@@ -8,6 +8,7 @@ import { Tooltip } from 'components/common/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import useAccountId from 'hooks/accounts/useAccountId'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useDepositModal from 'hooks/common/useDepositModal'
 import useLendAndReclaimModal from 'hooks/common/useLendAndReclaimModal'
 import useCurrentAccountDeposits from 'hooks/wallet/useCurrentAccountDeposits'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
@@ -20,7 +21,7 @@ export const LEND_BUTTON_META = {
   enableSorting: false,
   header: '',
   meta: {
-    className: 'w-40',
+    className: 'w-35',
   },
 }
 
@@ -29,6 +30,7 @@ interface Props {
 }
 export default function LendButton(props: Props) {
   const { openLend } = useLendAndReclaimModal()
+  const { openDeposit, openDepositAndLend } = useDepositModal()
   const accountDeposits = useCurrentAccountDeposits()
   const currentAccount = useCurrentAccount()
   const walletBalance = useCurrentWalletBalance(props.data.asset.denom)
@@ -46,19 +48,14 @@ export default function LendButton(props: Props) {
         icon: <Enter />,
         text: 'Deposit',
         onClick: () => {
-          useStore.setState({ fundAndWithdrawModal: 'fund' })
+          openDeposit(props.data)
         },
       },
       {
         icon: <CoinsSwap />,
         text: 'Deposit & Lend',
         onClick: () => {
-          // Open fund modal and then immediately open lend modal
-          useStore.setState({ fundAndWithdrawModal: 'fund' })
-          // Set a flag to auto-lend after deposit
-          setTimeout(() => {
-            openLend(props.data)
-          }, 100)
+          openDepositAndLend(props.data)
         },
       },
       ...(assetDepositAmount
@@ -71,7 +68,7 @@ export default function LendButton(props: Props) {
           ]
         : []),
     ],
-    [assetDepositAmount, openLend, props.data],
+    [assetDepositAmount, openLend, openDeposit, openDepositAndLend, props.data],
   )
 
   if (!isAutoLendEnabled && address) return null

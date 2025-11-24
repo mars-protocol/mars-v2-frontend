@@ -1,3 +1,4 @@
+import Text from 'components/common/Text'
 import { ActiveAstroLps } from 'components/earn/farm/astroLp/ActiveAstroLps'
 import { AvailableAstroLps } from 'components/earn/farm/astroLp/AvailableAstroLps'
 import { ActiveVaults } from 'components/earn/farm/vault/ActiveVaults'
@@ -16,28 +17,30 @@ export default function FarmPage() {
   const showHLS = chainConfig.hls && !isOsmosis
 
   return (
-    <div className='flex flex-wrap w-full gap-2 py-8'>
+    <div className='flex flex-col w-full gap-2 py-8'>
       <FarmIntro />
-      
-      {/* Active Tables First */}
-      {/* Regular Farm Section (Astroport LPs or Osmosis Vaults) */}
-      {isOsmosis ? <ActiveVaults /> : <ActiveAstroLps />}
 
-      {/* HLS Staking Section - Active */}
-      {showHLS && <ActiveStakingAccounts />}
+      {/* Farm Section */}
+      <div className='w-full mt-6'>
+        <Text size='2xl' className='mb-4 text-white'>
+          Farm
+        </Text>
+        {isOsmosis ? <ActiveVaults /> : <ActiveAstroLps />}
+        {isOsmosis ? <AvailableVaults /> : <AvailableAstroLps />}
+      </div>
 
-      {/* HLS Farm Section - Active */}
-      {showHLS && <ActiveHlsFarms />}
-
-      {/* Available Tables */}
-      {/* Regular Farm Section */}
-      {isOsmosis ? <AvailableVaults /> : <AvailableAstroLps />}
-
-      {/* Available High Leverage Staking */}
-      {showHLS && <AvailableHlsStakingAssets />}
-
-      {/* Available High Leverage Farms */}
-      {showHLS && <AvailableHlsFarms />}
+      {/* High Leverage Farms Section */}
+      {showHLS && (
+        <div className='w-full mt-6'>
+          <Text size='2xl' className='mb-4 text-white'>
+            High Leverage Farms
+          </Text>
+          <ActiveStakingAccounts />
+          <AvailableHlsStakingAssets />
+          <ActiveHlsFarms />
+          <AvailableHlsFarms />
+        </div>
+      )}
     </div>
   )
 }

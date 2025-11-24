@@ -3,10 +3,6 @@ import { useMemo } from 'react'
 
 import Apy, { APY_META } from 'components/earn/lend/Table/Columns/Apy'
 import Chevron, { CHEVRON_META } from 'components/earn/lend/Table/Columns/Chevron'
-import DepositCap, {
-  DEPOSIT_CAP_META,
-  marketDepositCapSortingFn,
-} from 'components/earn/lend/Table/Columns/DepositCap'
 import DepositValue, {
   DEPOSIT_VALUE_META,
   depositedSortingFn,
@@ -22,24 +18,14 @@ interface Props {
 
 export default function useDepositedColumns(props: Props) {
   return useMemo<ColumnDef<LendingMarketTableData>[]>(() => {
-    const adjustedNameMeta = props.v1
-      ? { ...NAME_META, meta: { className: 'min-w-37' } }
-      : NAME_META
-
     return [
       {
-        ...adjustedNameMeta,
+        ...NAME_META,
         cell: ({ row }) => (
           <Name asset={row.original.asset} v1={props.v1} amount={row.original.accountLentAmount} />
         ),
       },
-      {
-        ...DEPOSIT_VALUE_META,
-        cell: ({ row }) => (
-          <DepositValue asset={row.original.asset} lentAmount={row.original.accountLentAmount} />
-        ),
-        sortingFn: depositedSortingFn,
-      },
+
       {
         ...APY_META,
         cell: ({ row }) => (
@@ -54,9 +40,11 @@ export default function useDepositedColumns(props: Props) {
         ),
       },
       {
-        ...DEPOSIT_CAP_META,
-        cell: ({ row }) => <DepositCap isLoading={props.isLoading} data={row.original} />,
-        sortingFn: marketDepositCapSortingFn,
+        ...DEPOSIT_VALUE_META,
+        cell: ({ row }) => (
+          <DepositValue asset={row.original.asset} lentAmount={row.original.accountLentAmount} />
+        ),
+        sortingFn: depositedSortingFn,
       },
       {
         ...MANAGE_META,

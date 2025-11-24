@@ -26,7 +26,6 @@ export default function Routes() {
           </Layout>
         }
       >
-        <Route path='/' element={<TradePage />} />
         <Route path='/trade' element={<TradePage />} />
         <Route path='/trade-advanced' element={<TradePage />} />
         <Route path='/perps' element={<PerpsPage />} />
@@ -51,7 +50,12 @@ export default function Routes() {
         </Route>
 
         <Route path='/wallets/:address'>
-          <Route path='' element={<TradePage />} />
+          <Route
+            path=''
+            element={
+              chainConfig.perps ? <Navigate to='perps' replace /> : <Navigate to='trade' replace />
+            }
+          />
           <Route path='execute' element={<ExecuteMessagePage />} />
           <Route path='trade' element={<TradePage />} />
           <Route path='trade-advanced' element={<TradePage />} />

@@ -4,6 +4,7 @@ import {
   AddFarmAssetsModal,
   AstroLpModal,
   BorrowModal,
+  DepositModalController,
   FundAndWithdrawModal,
   GetStartedModal,
   HlsCloseModal,
@@ -25,18 +26,17 @@ import {
   WalletAssets,
   WithdrawFromVaultsModal,
 } from 'components/Modals'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 
 export default function ModalsContainer() {
   const store = useStore((s) => s)
-  const chainConfig = useChainConfig()
 
   return (
     <>
       {store.accountDeleteModal && <AccountDeleteController />}
       {store.farmModal && <AddFarmAssetsModal />}
       {store.borrowModal && <BorrowModal />}
+      {store.depositModal && <DepositModalController />}
       {store.fundAndWithdrawModal && <FundAndWithdrawModal />}
       {store.getStartedModal && <GetStartedModal />}
       {store.lendAndReclaimModal && <LendAndReclaimModalController />}

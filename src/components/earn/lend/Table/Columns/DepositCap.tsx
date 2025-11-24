@@ -7,16 +7,18 @@ import { demagnify } from 'utils/formatters'
 export const DEPOSIT_CAP_META = {
   accessorKey: 'marketDepositCap',
   header: () => (
-    <div className='flex flex-col text-xs leading-tight'>
-      <Text size='xs'>Deposits</Text>
-      <Text size='xs' className='text-white/40'>
-        Deposit Cap
-      </Text>
+    <div className='flex items-center justify-end w-full gap-3'>
+      <div className='flex flex-col text-xs leading-tight'>
+        <Text size='xs'>Deposits</Text>
+        <Text size='xs' className='text-white/40'>
+          Deposit Cap
+        </Text>
+      </div>
     </div>
   ),
   id: 'marketDepositCap',
   meta: {
-    className: 'w-40 min-w-30',
+    className: 'w-40',
   },
 }
 

@@ -5,7 +5,7 @@ export const APY_META = {
   id: 'apy',
   accessorKey: 'apy.deposit',
   header: 'APY',
-  meta: { className: 'min-w-20' },
+  meta: { className: 'w-24' },
 }
 
 interface Props {

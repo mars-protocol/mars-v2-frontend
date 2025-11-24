@@ -69,11 +69,11 @@ export default function VaultsCommunityPage() {
     <div className='flex flex-col w-full gap-2 py-8'>
       <VaultsIntro hasPerpsVault={hasPerpsVault} />
 
-      {/* Perps Vault Section */}
+      {/* Official Mars Protocol Vaults Section */}
       {hasPerpsVault && (
         <div className='w-full mt-6'>
           <Text size='2xl' className='mb-4 text-white'>
-            Counterparty Vault
+            Official Mars Protocol Vaults
           </Text>
           <ActivePerpsVault />
           {activePerpsVaults === 0 && <AvailablePerpsVaultsTable />}
