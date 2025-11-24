@@ -523,6 +523,7 @@ type Page =
   | 'governance'
   | 'execute'
   | 'v1'
+  | 'assets/{symbol}'
 
 type OsmosisRouteResponse = {
   amount_in: {

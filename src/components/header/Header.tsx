@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
 import { isMobile } from 'react-device-detect'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import AccountMenu from 'components/account/AccountMenu'
 import EscButton from 'components/common/Button/EscButton'
@@ -27,6 +28,7 @@ import useChainConfig from 'hooks/chain/useChainConfig'
 import useInitFeeToken from 'hooks/wallet/useInitFeeToken'
 import useStore from 'store'
 import { DocURL } from 'types/enums'
+import { getRoute } from 'utils/route'
 import AssetSearch from 'components/common/AssetSearch'
 
 const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
@@ -150,7 +152,13 @@ export default function Header() {
     [isV1, address, accountId],
   )
 
-  const handleSelectAsset = (asset: Asset) => {}
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const handleSelectAsset = (asset: Asset) => {
+    const encodedSymbol = encodeURIComponent(asset.symbol)
+    const route = getRoute(`assets/${encodedSymbol}` as Page, searchParams, address, accountId)
+    navigate(route)
+  }
 
   return (
     <>

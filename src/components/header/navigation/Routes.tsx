@@ -4,6 +4,7 @@ import CreateVault from 'components/managedVaults/createVault/index'
 import VaultDetails from 'components/managedVaults/vaultDetails/index'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import Layout from 'pages/_layout'
+import AssetDetailPage from 'pages/AssetDetailPage'
 import BorrowPage from 'pages/BorrowPage'
 import ExecuteMessagePage from 'pages/ExecuteMessagePage'
 import FarmPage from 'pages/FarmPage'
@@ -42,6 +43,7 @@ export default function Routes() {
         <Route path='/v1' element={<V1Page />} />
         <Route path='/hls-staking' element={<HlsStakingPage />} />
         <Route path='/hls-farm' element={<HlsFarmPage />} />
+        <Route path='/assets/:symbol' element={<AssetDetailPage />} />
         <Route
           path='/'
           element={
@@ -87,6 +89,8 @@ export default function Routes() {
           <Route path='portfolio/v1'>
             <Route path='' element={<PortfolioV1Page />} />
           </Route>
+
+          <Route path='assets/:symbol' element={<AssetDetailPage />} />
         </Route>
 
         <Route path='*' element={<Navigate to='/' />} />

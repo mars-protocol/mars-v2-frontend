@@ -45,9 +45,16 @@ export function getPage(pathname: string, chainConfig: ChainConfig): Page {
     'vaults/create',
     'vaults/{vaultId}/details',
     'v1',
+    'assets/{symbol}',
   ]
 
   const segments = pathname.split('/')
+
+  const assetsIndex = segments.findIndex((segment) => segment === 'assets')
+
+  if (assetsIndex !== -1 && segments[assetsIndex + 1]) {
+    return `assets/${segments[assetsIndex + 1]}` as Page
+  }
 
   const fullPath = segments.join('/')
   if (pages.includes(fullPath as Page)) {
