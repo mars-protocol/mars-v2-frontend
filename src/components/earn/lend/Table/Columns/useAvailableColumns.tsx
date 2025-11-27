@@ -32,6 +32,16 @@ export default function useAvailableColumns(props: Props) {
             campaigns={row.original.asset.campaigns}
           />
         ),
+        sortingFn: (rowA, rowB) => {
+          const getTotalApy = (row: typeof rowA) => {
+            const depositApy = row.original.apy.deposit
+            const campaignApy = row.original.asset.campaigns
+              .filter((c: AssetCampaign) => c.type === 'apy' && c.apy)
+              .reduce((sum: number, c: AssetCampaign) => sum + (c.apy || 0), 0)
+            return depositApy + campaignApy
+          }
+          return getTotalApy(rowA) - getTotalApy(rowB)
+        },
       },
       {
         ...DEPOSIT_CAP_META,

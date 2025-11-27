@@ -7,26 +7,11 @@ import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import { CampaignLogo } from 'constants/campaigns'
 
-interface RowWithApy {
-  original: LendingMarketTableData
-}
-
 export const APY_META = {
   id: 'apy',
   accessorKey: 'apy.deposit',
   header: 'APY',
   meta: { className: 'w-24' },
-  sortingFn: (rowA: RowWithApy, rowB: RowWithApy) => {
-    const getTotalApy = (row: RowWithApy) => {
-      const depositApy = row.original.apy.deposit
-      const campaignApy = row.original.asset.campaigns
-        .filter((c: AssetCampaign) => c.type === 'apy' && c.apy)
-        .reduce((sum: number, c: AssetCampaign) => sum + (c.apy || 0), 0)
-      return depositApy + campaignApy
-    }
-
-    return getTotalApy(rowA) - getTotalApy(rowB)
-  },
 }
 
 interface Props {
