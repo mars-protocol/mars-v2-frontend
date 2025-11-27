@@ -16,8 +16,10 @@ interface Props {
 export default function Name(props: Props) {
   const { asset } = props
 
+  const nonApyCampaigns = asset.campaigns.filter((campaign) => campaign.type !== 'apy')
+
   const subContent = props.v1 ? (
-    asset.campaigns.map((campaign, index) => (
+    nonApyCampaigns.map((campaign, index) => (
       <AssetCampaignCopy
         campaign={campaign}
         asset={props.asset}
@@ -31,9 +33,9 @@ export default function Name(props: Props) {
   ) : (
     <>
       <div>{asset.name}</div>
-      {asset.campaigns.length > 0 && (
+      {nonApyCampaigns.length > 0 && (
         <div className='flex flex-col gap-0.5 mt-0.5'>
-          {asset.campaigns.map((campaign, index) => (
+          {nonApyCampaigns.map((campaign, index) => (
             <AssetCampaignCopy
               campaign={campaign}
               asset={asset}

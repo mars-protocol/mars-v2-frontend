@@ -29,9 +29,7 @@ export default function useAvailableColumns(props: Props) {
             isLoading={props.isLoading}
             borrowEnabled={row.original.borrowEnabled}
             apy={row.original.apy.deposit}
-            hasCampaignApy={
-              row.original.asset.campaigns.find((c) => c.type === 'apy') !== undefined
-            }
+            campaigns={row.original.asset.campaigns}
           />
         ),
       },
