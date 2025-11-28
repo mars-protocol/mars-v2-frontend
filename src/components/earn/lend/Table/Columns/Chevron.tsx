@@ -5,7 +5,7 @@ export const CHEVRON_META = {
   enableSorting: false,
   header: '',
   meta: {
-    className: 'w-5',
+    className: 'w-4',
   },
 }
 
@@ -15,7 +15,7 @@ interface Props {
 export default function Chevron(props: Props) {
   return (
     <div className='flex items-center justify-end'>
-      <div className='w-4'>{props.isExpanded ? <ChevronUp /> : <ChevronDown />}</div>
+      <div className='w-3'>{props.isExpanded ? <ChevronUp /> : <ChevronDown />}</div>
     </div>
   )
 }

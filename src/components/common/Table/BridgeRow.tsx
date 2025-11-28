@@ -18,11 +18,7 @@ interface BridgeRowProps<T> {
   type?: TableType
 }
 
-export function BridgeRow<T>({
-  row,
-  spacingClassName,
-  type,
-}: BridgeRowProps<T>) {
+export function BridgeRow<T>({ row, spacingClassName, type }: BridgeRowProps<T>) {
   const { handleBridgeCompletion } = useHandleBridgeCompletion()
   const rowData = row.original as T & BridgeRowData
 
@@ -33,7 +29,7 @@ export function BridgeRow<T>({
           key={cell.id}
           className={classNames(
             LEFT_ALIGNED_ROWS.includes(cell.column.id) ? 'text-left' : 'text-right',
-            spacingClassName ?? 'px-4 py-2.5',
+            spacingClassName ?? 'px-2.5 py-2.5',
             type &&
               type !== 'strategies' &&
               LEFT_ALIGNED_ROWS.includes(cell.column.id) &&
