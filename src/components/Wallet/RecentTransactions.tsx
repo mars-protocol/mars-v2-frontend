@@ -35,7 +35,7 @@ export default function RecentTransactions() {
             <div className='flex flex-col w-full gap-2'>
               {recentTransactions.map((tx) => {
                 const { hash, content, message, target, timestamp } = tx
-                console.log(tx)
+
                 return (
                   <Card
                     className={classNames(
