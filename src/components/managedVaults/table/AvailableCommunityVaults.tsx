@@ -59,7 +59,7 @@ export default function AvailableCommunityVaults() {
 
   return (
     <>
-      {address && <CardWithTabs tabs={userTabs} />}
+      {address && <CardWithTabs tabs={userTabs} fullHeight={false} />}
       <VaultTable title='Available Vaults' data={data.availableVaults} isLoading={isLoading} />
     </>
   )

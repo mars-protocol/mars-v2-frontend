@@ -11,7 +11,7 @@ import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useHlsStakingAssets from 'hooks/hls/useHlsStakingAssets'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 
-const title = 'Available Strategies'
+const title = 'Available High Leverage Staking'
 
 interface ContentProps {
   openHlsInfoDialog: (continueCallback: () => void) => void

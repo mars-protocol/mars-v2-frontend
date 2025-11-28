@@ -6,7 +6,7 @@ export const NAME_META = {
   accessorKey: 'asset.symbol',
   header: 'Asset',
   id: 'symbol',
-  meta: { className: 'min-w-60 w-60' },
+  meta: { className: 'min-w-30' },
 }
 interface Props {
   asset: Asset
@@ -15,27 +15,46 @@ interface Props {
 }
 export default function Name(props: Props) {
   const { asset } = props
-  return (
-    <div className='flex items-center flex-1 gap-3'>
-      <AssetImage asset={asset} className='w-8 h-8 min-w-8' />
-      {props.v1 ? (
-        <TitleAndSubCell
-          title={asset.symbol}
-          sub={asset.campaigns.map((campaign, index) => (
+
+  const nonApyCampaigns = asset.campaigns.filter((campaign) => campaign.type !== 'apy')
+
+  const subContent = props.v1 ? (
+    nonApyCampaigns.map((campaign, index) => (
+      <AssetCampaignCopy
+        campaign={campaign}
+        asset={props.asset}
+        size='xs'
+        noDot
+        withLogo
+        amount={props.amount}
+        key={index}
+      />
+    ))
+  ) : (
+    <>
+      <div>{asset.name}</div>
+      {nonApyCampaigns.length > 0 && (
+        <div className='flex flex-col gap-0.5 mt-0.5'>
+          {nonApyCampaigns.map((campaign, index) => (
             <AssetCampaignCopy
               campaign={campaign}
-              asset={props.asset}
+              asset={asset}
               size='xs'
               noDot
+              withLogo
               amount={props.amount}
               key={index}
             />
           ))}
-          className='text-left min-w-15'
-        />
-      ) : (
-        <TitleAndSubCell title={asset.symbol} sub={asset.name} className='text-left min-w-15' />
+        </div>
       )}
+    </>
+  )
+
+  return (
+    <div className='flex items-center flex-1 gap-3'>
+      <AssetImage asset={asset} className='w-8 h-8 min-w-8' />
+      <TitleAndSubCell title={asset.symbol} sub={subContent} className='text-left min-w-15' />
     </div>
   )
 }

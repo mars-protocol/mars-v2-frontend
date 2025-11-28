@@ -3,6 +3,7 @@ export { default as AccountAssetsModal } from 'components/Modals/AccountAssetsMo
 export { default as AddFarmAssetsModal } from 'components/Modals/AddFarmAssets'
 export { default as AstroLpModal } from 'components/Modals/AstroLp'
 export { default as BorrowModal } from 'components/Modals/BorrowModal'
+export { default as DepositModalController } from 'components/Modals/Deposit'
 export { default as FundAndWithdrawModal } from 'components/Modals/FundWithdraw'
 export { default as GetStartedModal } from 'components/Modals/GetStartedModal'
 export { default as HlsModal } from 'components/Modals/Hls'

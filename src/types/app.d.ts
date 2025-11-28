@@ -508,14 +508,9 @@ type Page =
   | 'trade'
   | 'trade-advanced'
   | 'perps'
-  | 'borrow'
   | 'farm'
-  | 'lend'
-  | 'perps-vault'
   | 'portfolio'
   | 'portfolio/{accountId}'
-  | 'hls-farm'
-  | 'hls-staking'
   | 'vaults'
   | 'vaults/create'
   | 'vaults/{vaultId}'
@@ -523,6 +518,7 @@ type Page =
   | 'governance'
   | 'execute'
   | 'v1'
+  | 'bank'
 
 type OsmosisRouteResponse = {
   amount_in: {
@@ -1176,6 +1172,8 @@ interface BroadcastSlice {
     isPythUpdate?: boolean
   }) => Promise<BroadcastResult>
   lend: (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => Promise<boolean>
+  depositSingle: (options: { accountId: string; coin: BNCoin }) => Promise<boolean>
+  depositAndLend: (options: { accountId: string; coin: BNCoin }) => Promise<boolean>
   executePerpOrder: (options: {
     accountId: string
     coin: BNCoin
@@ -1426,6 +1424,7 @@ interface ModalSlice {
   getStartedModal: boolean
   hlsInformationModal: boolean | null
   lendAndReclaimModal: LendAndReclaimModalConfig | null
+  depositModal: DepositModalConfig | null
   perpsVaultModal: PerpsVaultModal | null
   settingsModal: boolean
   keeperFeeModal: boolean
@@ -1479,6 +1478,13 @@ type LendAndReclaimModalAction = 'lend' | 'reclaim'
 interface LendAndReclaimModalConfig {
   data: LendingMarketTableData
   action: LendAndReclaimModalAction
+}
+
+type DepositModalAction = 'deposit' | 'deposit-and-lend'
+
+interface DepositModalConfig {
+  data: LendingMarketTableData
+  action: DepositModalAction
 }
 
 interface FarmModal {

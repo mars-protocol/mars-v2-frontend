@@ -5,17 +5,18 @@ import Intro from 'components/common/Intro'
 import useStore from 'store'
 import { DocURL } from 'types/enums'
 
-export default function LendIntro() {
+export default function BankIntro() {
   return (
     <Intro
       text={
         <>
-          By <span className='text-white'>Lending</span> your assets, you&apos;ll earn attractive
-          interest (APY) without impacting your loan to value (LTV). It&apos;s a win-win situation -
-          don&apos;t miss out on this easy opportunity to grow your holdings!
+          <span className='text-white'>Lend</span> your assets to earn attractive interest (APY)
+          without impacting your loan to value (LTV), or <span className='text-white'>borrow</span>{' '}
+          assets against your collateral. But always have an eye on your Health. Once it reaches
+          zero, you&apos;ll be liquidated.
         </>
       }
-      bg='lend'
+      bg='bank'
     >
       <Button
         text='Learn more'
