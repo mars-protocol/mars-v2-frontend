@@ -85,7 +85,7 @@ export default function Row<T>(props: Props<T>) {
   return (
     <>
       {(row.original as RowWithBridgeStatus)?.bridgeStatus ? (
-        <BridgeRow row={row} spacingClassName={spacingClassName} type={type} />
+        <BridgeRow row={row as any} spacingClassName={spacingClassName} type={type} />
       ) : (
         <tr
           key={`${row.id}-row`}
