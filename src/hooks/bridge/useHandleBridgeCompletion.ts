@@ -19,7 +19,10 @@ export function useHandleBridgeCompletion() {
     cosmosAddress: address,
   })
 
-  const handleBridgeCompletion = async (rowData: any) => {
+  const handleBridgeCompletion = async (rowData: {
+    skipBridgeId?: string
+    amount: BigNumber
+  }) => {
     if (!rowData?.skipBridgeId) return
 
     try {
