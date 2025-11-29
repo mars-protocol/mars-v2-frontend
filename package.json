@@ -117,9 +117,6 @@
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2"
   },
-  "engines": {
-    "pnpm": ">=10.0.0"
-  },
   "resolutions": {
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2"
