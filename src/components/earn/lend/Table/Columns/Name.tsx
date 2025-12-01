@@ -53,7 +53,7 @@ export default function Name(props: Props) {
 
   return (
     <div className='flex items-center flex-1 gap-3'>
-      <AssetImage asset={asset} className='w-8 h-8 min-w-8 flex-shrink-0' />
+      <AssetImage asset={asset} className='w-8 h-8 min-w-8 shrink-0' />
       <TitleAndSubCell title={asset.symbol} sub={subContent} className='text-left min-w-15' />
     </div>
   )
