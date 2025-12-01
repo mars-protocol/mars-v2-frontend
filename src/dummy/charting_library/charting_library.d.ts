@@ -949,8 +949,7 @@ export interface ActionDescriptionWithCallback extends ActionDescription {
   action: (a?: ActionDescription) => void
 }
 export interface ActionOptions
-  extends Partial<OmitActionId<ActionState>>,
-    Pick<ActionState, 'actionId'> {
+  extends Partial<OmitActionId<ActionState>>, Pick<ActionState, 'actionId'> {
   /**
    * A function which will be called when an action should be executed (e.g. when a user clicks on the item).
    */
@@ -4693,8 +4692,9 @@ export interface CorrelationLogIndicatorOverrides {
 /**
  * Options for creating an anchored drawing.
  */
-export interface CreateAnchoredShapeOptions<TOverrides extends object>
-  extends CreateShapeOptionsBase<TOverrides> {
+export interface CreateAnchoredShapeOptions<
+  TOverrides extends object,
+> extends CreateShapeOptionsBase<TOverrides> {
   /**
    * A drawing to create;
    */
@@ -4759,8 +4759,9 @@ export interface CreateHTMLButtonOptions {
 /**
  * Options for creating a multipoint drawing.
  */
-export interface CreateMultipointShapeOptions<TOverrides extends object>
-  extends CreateShapeOptionsBase<TOverrides> {
+export interface CreateMultipointShapeOptions<
+  TOverrides extends object,
+> extends CreateShapeOptionsBase<TOverrides> {
   /**
    * A drawing to create.
    */
@@ -4772,8 +4773,9 @@ export interface CreateMultipointShapeOptions<TOverrides extends object>
 /**
  * Options for creating a drawing.
  */
-export interface CreateShapeOptions<TOverrides extends object>
-  extends CreateShapeOptionsBase<TOverrides> {
+export interface CreateShapeOptions<
+  TOverrides extends object,
+> extends CreateShapeOptionsBase<TOverrides> {
   /**
    * A drawing to create.
    */
@@ -18956,8 +18958,7 @@ export interface StudyBooleanInputInfo extends StudyInputBaseInfo {
  * A description of a border colorer plot.
  */
 export interface StudyCandleBorderColorerPlotInfo
-  extends StudyPalettedPlotInfo,
-    StudyTargetedPlotInfo {
+  extends StudyPalettedPlotInfo, StudyTargetedPlotInfo {
   /** @inheritDoc */
   readonly type: StudyPlotType.CandleBorderColorer
 }
@@ -18965,8 +18966,7 @@ export interface StudyCandleBorderColorerPlotInfo
  * A description of a wick colorer plot.
  */
 export interface StudyCandleWickColorerPlotInfo
-  extends StudyPalettedPlotInfo,
-    StudyTargetedPlotInfo {
+  extends StudyPalettedPlotInfo, StudyTargetedPlotInfo {
   /** @inheritDoc */
   readonly type: StudyPlotType.CandleWickColorer
 }
@@ -25357,11 +25357,10 @@ export interface TradingQuotes {
   /** Whether quotes are can not be shorted */
   isNotShortable?: boolean
 }
-export interface TradingTerminalWidgetOptions
-  extends Omit<
-    ChartingLibraryWidgetOptions,
-    'enabled_features' | 'disabled_features' | 'favorites'
-  > {
+export interface TradingTerminalWidgetOptions extends Omit<
+  ChartingLibraryWidgetOptions,
+  'enabled_features' | 'disabled_features' | 'favorites'
+> {
   /**
    * The array containing names of features that should be disabled by default. `Feature` means part of the functionality of the chart (part of the UI/UX). Supported features are listed in [Featuresets](https://www.tradingview.com/charting-library-docs/latest/customization/Featuresets.md).
    *

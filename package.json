@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.37.0",
+    "@cosmjs/encoding": "^0.32.0",
     "@delphi-labs/shuttle": "^4.3.0",
     "@delphi-labs/shuttle-react": "^4.3.0",
     "@keplr-wallet/cosmos": "^0.12.294",
@@ -47,6 +48,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
     "mobx": "^6.15.0",
+    "mobile-detect": "^1.4.5",
     "next": "16.0.5",
     "next-devtools-mcp": "^0.3.5",
     "react": "19.2.0",
@@ -71,6 +73,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.28.5",
     "@eslint/compat": "^2.0.0",
+    "@eslint/js": "^9.15.0",
     "@svgr/webpack": "^8.1.0",
     "@tailwindcss/cli": "^4.1.17",
     "@tailwindcss/postcss": "^4.1.17",

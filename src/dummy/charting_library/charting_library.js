@@ -9,7 +9,7 @@
   function t() {
     return 'CL v27.001 (internal id 3eb6c0e5 @ 2024-02-02T14:43:45.314Z)'
   }
-  'undefined' != typeof window &&
+  ;('undefined' != typeof window &&
     ((window.TradingView = window.TradingView || {}), (window.TradingView.version = t)),
     'undefined' != typeof window &&
       window.navigator &&
@@ -110,5 +110,5 @@
       _create() {}
       _render(e) {}
     }),
-    Object.defineProperty(e, '__esModule', { value: !0 })
+    Object.defineProperty(e, '__esModule', { value: !0 }))
 })
