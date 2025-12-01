@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { Search } from 'components/common/Icons'
-import { ChangeEvent, InputHTMLAttributes, useRef, useState } from 'react'
+import { ChangeEvent, InputHTMLAttributes, KeyboardEvent, useRef, useState } from 'react'
 
 interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   value: string
@@ -8,6 +8,7 @@ interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> 
   className?: string
   label?: string
   children?: React.ReactNode
+  onEnter?: () => void
 }
 
 export default function SearchBar({
@@ -16,6 +17,8 @@ export default function SearchBar({
   className,
   label,
   children,
+  onEnter,
+  onKeyDown,
   ...props
 }: Props) {
   const [isExpanded, setIsExpanded] = useState(false)
@@ -23,6 +26,15 @@ export default function SearchBar({
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value)
+  }
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && onEnter) {
+      e.preventDefault()
+      onEnter()
+    }
+    // Call the original onKeyDown if provided
+    onKeyDown?.(e)
   }
 
   const handleFocus = () => {
@@ -90,6 +102,7 @@ export default function SearchBar({
           type='text'
           value={value}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           onFocus={handleFocus}
           onBlur={handleBlur}
           placeholder=' '
