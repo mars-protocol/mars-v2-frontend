@@ -1,5 +1,4 @@
-import { Row } from '@tanstack/react-table'
-import { Table as TanstackTable } from '@tanstack/table-core/build/lib/types'
+import { Row, Table as TanstackTable } from '@tanstack/react-table'
 import { useCallback } from 'react'
 
 import { NAME_META } from 'components/borrow/Table/Columns/Name'
