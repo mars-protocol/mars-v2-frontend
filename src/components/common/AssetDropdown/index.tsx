@@ -1,9 +1,8 @@
 import classNames from 'classnames'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import AssetImage from 'components/common/assets/AssetImage'
 import AssetSymbol from 'components/common/assets/AssetSymbol'
 import Text from 'components/common/Text'
-import useSearchableAssets from 'hooks/assets/useSearchableAssets'
 
 interface Props {
   searchValue: string
@@ -12,6 +11,8 @@ interface Props {
   onSelectAsset: (asset: Asset) => void
   className?: string
   maxResults?: number
+  highlightedIndex?: number
+  filteredAssets?: Asset[]
 }
 
 export default function AssetDropdown({
@@ -21,34 +22,22 @@ export default function AssetDropdown({
   onSelectAsset,
   className,
   maxResults = 50,
+  highlightedIndex = 0,
+  filteredAssets: providedFilteredAssets,
 }: Props) {
-  const searchableAssets = useSearchableAssets()
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
 
-  const filteredAssets = useMemo(() => {
-    if (!searchableAssets) return []
-
-    const searchTrimmed = searchValue.trim()
-    const searchLower = searchTrimmed.toLowerCase()
-
-    // Only show searchable assets (pre-set terms that always return valid result pages)
-    // These are assets with at least one actionable feature: trade, perps, borrow, or deposit
-    if (searchTrimmed) {
-      // Filter searchable assets that match the query
-      return searchableAssets
-        .filter(
-          (asset) =>
-            asset.name.toLowerCase().includes(searchLower) ||
-            asset.symbol.toLowerCase().includes(searchLower) ||
-            asset.denom.toLowerCase().includes(searchLower),
-        )
-        .slice(0, maxResults)
+  useEffect(() => {
+    if (isOpen && highlightedIndex >= 0 && itemRefs.current[highlightedIndex]) {
+      itemRefs.current[highlightedIndex]?.scrollIntoView({
+        block: 'nearest',
+        behavior: 'smooth',
+      })
     }
+  }, [highlightedIndex, isOpen])
 
-    // If no search query, show limited pre-set searchable assets
-    // These are the "library of pre-set search terms" that always return valid result pages
-    return searchableAssets.slice(0, Math.min(10, maxResults))
-  }, [searchableAssets, searchValue, maxResults])
+  const filteredAssets = providedFilteredAssets || []
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -78,12 +67,18 @@ export default function AssetDropdown({
       )}
     >
       <ul className='w-full'>
-        {filteredAssets.map((asset) => (
+        {filteredAssets.map((asset, index) => (
           <li
             key={`${asset.denom}-${asset.chainName || ''}`}
-            className='border-b border-white/10 last:border-b-0 hover:bg-black/10 cursor-pointer transition-colors'
+            className={classNames(
+              'border-b border-white/10 last:border-b-0 cursor-pointer transition-colors',
+              highlightedIndex === index ? 'bg-white/10' : 'hover:bg-black/10',
+            )}
           >
             <button
+              ref={(el) => {
+                itemRefs.current[index] = el
+              }}
               onClick={() => {
                 onSelectAsset(asset)
                 onClose()

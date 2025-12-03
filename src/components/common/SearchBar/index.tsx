@@ -1,6 +1,14 @@
 import classNames from 'classnames'
 import { Search } from 'components/common/Icons'
-import { ChangeEvent, InputHTMLAttributes, KeyboardEvent, useRef, useState } from 'react'
+import {
+  ChangeEvent,
+  forwardRef,
+  InputHTMLAttributes,
+  KeyboardEvent,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 
 interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   value: string
@@ -11,43 +19,37 @@ interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> 
   onEnter?: () => void
 }
 
-export default function SearchBar({
-  value,
-  onChange,
-  className,
-  label,
-  children,
-  onEnter,
-  onKeyDown,
-  ...props
-}: Props) {
-  const [isExpanded, setIsExpanded] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
+const SearchBar = forwardRef<HTMLInputElement, Props>(
+  ({ value, onChange, className, label, children, onEnter, onKeyDown, ...props }, ref) => {
+    const [isExpanded, setIsExpanded] = useState(false)
+    const inputRef = useRef<HTMLInputElement>(null)
+
+    useImperativeHandle(ref, () => inputRef.current as HTMLInputElement)
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value)
   }
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && onEnter) {
-      e.preventDefault()
-      onEnter()
+    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter' && onEnter) {
+        e.preventDefault()
+        onEnter()
+      }
+      // Call the original onKeyDown if provided
+      onKeyDown?.(e)
     }
-    // Call the original onKeyDown if provided
-    onKeyDown?.(e)
-  }
 
-  const handleFocus = () => {
-    setIsExpanded(true)
-  }
-
-  const handleBlur = () => {
-    if (!value) {
-      setIsExpanded(false)
+    const handleFocus = () => {
+      setIsExpanded(true)
     }
-  }
 
-  return (
+    const handleBlur = () => {
+      if (!value) {
+        setIsExpanded(false)
+      }
+    }
+
+    return (
     <div
       className={classNames(
         'relative flex items-center bg-surface-dark rounded-sm overflow-visible',
@@ -115,5 +117,10 @@ export default function SearchBar({
       </div>
       {children}
     </div>
-  )
-}
+    )
+  },
+)
+
+SearchBar.displayName = 'SearchBar'
+
+export default SearchBar
