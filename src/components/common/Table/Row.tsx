@@ -58,9 +58,7 @@ export default function Row<T>(props: Props<T>) {
         const allRows = table.getRowModel().rows
         const selectedEvmRows = allRows.filter(
           (r) =>
-            (r.original as RowWithAsset)?.asset?.chainName &&
-            r.getIsSelected() &&
-            r.id !== row.id,
+            (r.original as RowWithAsset)?.asset?.chainName && r.getIsSelected() && r.id !== row.id,
         )
 
         if (selectedEvmRows.length > 0 && !row.getIsSelected()) {
@@ -87,7 +85,7 @@ export default function Row<T>(props: Props<T>) {
   return (
     <>
       {(row.original as RowWithBridgeStatus)?.bridgeStatus ? (
-        <BridgeRow row={row} spacingClassName={spacingClassName} type={type} />
+        <BridgeRow row={row as any} spacingClassName={spacingClassName} type={type} />
       ) : (
         <tr
           key={`${row.id}-row`}
@@ -108,7 +106,7 @@ export default function Row<T>(props: Props<T>) {
                 key={cell.id}
                 className={classNames(
                   LEFT_ALIGNED_ROWS.includes(cell.column.id) ? 'text-left' : 'text-right',
-                  spacingClassName ?? 'px-4 py-2.5',
+                  spacingClassName ?? 'px-2.5 py-2.5',
                   type &&
                     type !== 'strategies' &&
                     LEFT_ALIGNED_ROWS.includes(cell.column.id) &&

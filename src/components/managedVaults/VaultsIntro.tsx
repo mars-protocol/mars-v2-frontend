@@ -71,9 +71,9 @@ export default function VaultsIntro(props: Props) {
                 trading fees from perpetuals.{' '}
               </>
             )}
-            <span className='text-white'>Community Vaults</span> are managed strategies where
-            vault creators use deposited funds to run trading strategies aiming to generate
-            returns for both themselves and their depositors.
+            <span className='text-white'>Community Vaults</span> are managed strategies where vault
+            creators use deposited funds to run trading strategies aiming to generate returns for
+            both themselves and their depositors.
           </>
         }
       >
@@ -143,4 +143,3 @@ const INFO_ITEMS = [
       'Set your fee structure and withdrawal periods to generate revenue as your vault performs well for investors.',
   },
 ]
-

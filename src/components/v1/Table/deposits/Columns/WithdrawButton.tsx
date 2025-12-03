@@ -12,10 +12,10 @@ export default function WithdrawButton(props: Props) {
         leftIcon={<ArrowDownLine />}
         color='tertiary'
         onClick={(e) => {
-          useStore.setState({
+          ;(useStore.setState({
             v1DepositAndWithdrawModal: { type: 'withdraw', data: props.data },
           }),
-            e.stopPropagation()
+            e.stopPropagation())
         }}
         text='Withdraw'
         short

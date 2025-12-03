@@ -19,14 +19,11 @@ export function useHandleBridgeCompletion() {
     cosmosAddress: address,
   })
 
-  const handleBridgeCompletion = async (rowData: {
-    skipBridgeId?: string
-    amount: BigNumber
-  }) => {
+  const handleBridgeCompletion = async (rowData: { skipBridgeId?: string; amount: BigNumber }) => {
     if (!rowData?.skipBridgeId) return
 
     try {
-      const { depositAmount } = calculateUsdcFeeReserve(rowData.amount, chainConfig)
+      const { depositAmount } = calculateUsdcFeeReserve(rowData.amount.toString(), chainConfig)
 
       if (BN(depositAmount).isZero()) {
         removeSkipBridge(rowData.skipBridgeId)
