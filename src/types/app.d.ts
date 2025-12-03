@@ -504,6 +504,9 @@ declare global {
     hasSL: boolean
     hasTP: boolean
   }
+  type AssetCampaignId = 'stride' | 'lido' | 'drop_apy' | 'milkyway' | 'ntrn-rewards' | 'fragments'
+  type AssetCampaignType = 'points_with_multiplier' | 'apy'
+  type AssetCampaignPointBase = 'value' | 'amount'
 
   interface PerpsPosition {
     denom: string
