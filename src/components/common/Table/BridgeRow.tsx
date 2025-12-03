@@ -6,14 +6,21 @@ import Text from 'components/common/Text'
 import { LEFT_ALIGNED_ROWS } from 'constants/table'
 import { useHandleBridgeCompletion } from 'hooks/bridge/useHandleBridgeCompletion'
 
+interface BridgeRowData {
+  bridgeStatus?: string
+  skipBridgeId?: string
+  amount: BigNumber
+}
+
 interface BridgeRowProps<T> {
-  row: TanstackRow<T>
+  row: TanstackRow<T & BridgeRowData>
   spacingClassName?: string
   type?: TableType
 }
 
 export function BridgeRow<T>({ row, spacingClassName, type }: BridgeRowProps<T>) {
   const { handleBridgeCompletion } = useHandleBridgeCompletion()
+  const rowData = row.original as T & BridgeRowData
 
   return (
     <tr key={`${row.id}-row`} className={classNames('bg-black/50 relative')}>
@@ -22,7 +29,7 @@ export function BridgeRow<T>({ row, spacingClassName, type }: BridgeRowProps<T>)
           key={cell.id}
           className={classNames(
             LEFT_ALIGNED_ROWS.includes(cell.column.id) ? 'text-left' : 'text-right',
-            spacingClassName ?? 'px-4 py-2.5',
+            spacingClassName ?? 'px-2.5 py-2.5',
             type &&
               type !== 'strategies' &&
               LEFT_ALIGNED_ROWS.includes(cell.column.id) &&
@@ -37,14 +44,14 @@ export function BridgeRow<T>({ row, spacingClassName, type }: BridgeRowProps<T>)
       ))}
       <td colSpan={row.getVisibleCells().length} className='absolute inset-0'>
         <div className='absolute inset-0 flex items-center justify-center'>
-          {(row.original as any)?.bridgeStatus === 'STATE_COMPLETED' ? (
+          {rowData.bridgeStatus === 'STATE_COMPLETED' ? (
             <div className='flex items-center gap-1'>
               <Button
                 size='xs'
                 color='secondary'
                 onClick={(e) => {
                   e.stopPropagation()
-                  handleBridgeCompletion(row.original as any)
+                  handleBridgeCompletion(rowData)
                 }}
               >
                 Complete Transaction

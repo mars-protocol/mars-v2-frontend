@@ -1,0 +1,11 @@
+packages:
+  - ./
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - bufferutil
+  - keccak
+  - protobufjs
+  - secp256k1
+  - sharp
+  - tiny-secp256k1
+  - utf-8-validate

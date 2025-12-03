@@ -4,18 +4,27 @@ import { isMobile } from 'react-device-detect'
 import { ACCOUNT_MENU_BUTTON_ID } from 'components/account/AccountMenuContent'
 import AlertDialog from 'components/common/AlertDialog'
 import DropDownButton from 'components/common/Button/DropDownButton'
-import { ArrowDownLine, ArrowUpLine, Enter, ExclamationMarkCircled } from 'components/common/Icons'
+import {
+  ArrowDownLine,
+  ArrowUpLine,
+  CoinsSwap,
+  Enter,
+  ExclamationMarkCircled,
+} from 'components/common/Icons'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useDepositModal from 'hooks/common/useDepositModal'
 import useLendAndReclaimModal from 'hooks/common/useLendAndReclaimModal'
 import useAutoLend from 'hooks/wallet/useAutoLend'
+import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import useStore from 'store'
+import { BN } from 'utils/helpers'
 
 export const MANAGE_META = {
   accessorKey: 'manage',
   enableSorting: false,
   header: '',
   meta: {
-    className: 'w-40',
+    className: 'w-35',
   },
 }
 
@@ -24,14 +33,21 @@ interface Props {
 }
 export default function Manage(props: Props) {
   const { openLend, openReclaim } = useLendAndReclaimModal()
+  const { openDepositAndLend } = useDepositModal()
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
   const [isAutoLendDialogOpen, setIsAutoLendDialogOpen] = useState(false)
   const address = useStore((s) => s.address)
   const account = useCurrentAccount()
+  const walletBalance = useCurrentWalletBalance(props.data.asset.denom)
 
   const hasAssetInDeposits = useMemo(
     () => !!account?.deposits?.find((deposit) => deposit.denom === props.data.asset.denom)?.amount,
     [account?.deposits, props.data.asset.denom],
+  )
+
+  const hasWalletBalance = useMemo(
+    () => walletBalance && BN(walletBalance.amount).isGreaterThan(0),
+    [walletBalance],
   )
 
   const handleUnlend = useCallback(() => {
@@ -68,13 +84,22 @@ export default function Manage(props: Props) {
              Please first deposit ${props.data.asset.symbol} into your Credit Account before lending.`,
         }),
       },
+      ...(hasWalletBalance
+        ? [
+            {
+              icon: <CoinsSwap />,
+              text: 'Deposit and Lend',
+              onClick: () => openDepositAndLend(props.data),
+            },
+          ]
+        : []),
       {
         icon: <ArrowDownLine />,
         text: 'Unlend',
         onClick: handleUnlend,
       },
     ],
-    [handleUnlend, hasAssetInDeposits, openLend, props.data],
+    [handleUnlend, hasAssetInDeposits, hasWalletBalance, openDepositAndLend, openLend, props.data],
   )
 
   if (!address) return null

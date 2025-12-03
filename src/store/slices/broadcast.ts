@@ -865,6 +865,60 @@ export default function createBroadcastSlice(
       get().handleTransaction({ response })
       return response.then((response) => !!response.result)
     },
+    depositSingle: async (options: { accountId: string; coin: BNCoin }) => {
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [
+            {
+              deposit: {
+                denom: options.coin.denom,
+                amount: options.coin.amount.toString(),
+              },
+            },
+          ],
+        },
+      }
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const funds = [options.coin.toCoin()]
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, sortFunds(funds))],
+      })
+      get().handleTransaction({ response })
+      return response.then((response) => !!response.result)
+    },
+    depositAndLend: async (options: { accountId: string; coin: BNCoin }) => {
+      const msg: CreditManagerExecuteMsg = {
+        update_credit_account: {
+          account_id: options.accountId,
+          actions: [
+            {
+              deposit: {
+                denom: options.coin.denom,
+                amount: options.coin.amount.toString(),
+              },
+            },
+            {
+              lend: {
+                denom: options.coin.denom,
+                amount: {
+                  exact: options.coin.amount.toString(),
+                },
+              },
+            },
+          ],
+        },
+      }
+      const cmContract = get().chainConfig.contracts.creditManager
+
+      const funds = [options.coin.toCoin()]
+      const response = get().executeMsg({
+        messages: [generateExecutionMessage(get().address, cmContract, msg, sortFunds(funds))],
+      })
+      get().handleTransaction({ response })
+      return response.then((response) => !!response.result)
+    },
     reclaim: async (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => {
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {

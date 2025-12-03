@@ -3,7 +3,7 @@ import Loading from 'components/common/Loading'
 
 export const BORROW_RATE_META = {
   accessorKey: 'apy.borrow',
-  header: 'Borrow Rate APY',
+  header: 'Borrow APY',
   meta: { className: 'min-w-20' },
 }
 

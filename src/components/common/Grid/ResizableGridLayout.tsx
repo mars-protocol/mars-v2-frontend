@@ -54,11 +54,7 @@ export const ResizableGridLayout: React.FC<ResizableGridLayoutProps> = ({
       }}
     >
       {items.map((item) => (
-        <GridItem
-          key={item.id}
-          gridArea={item.gridArea}
-          backgroundColor={item.backgroundColor}
-        >
+        <GridItem key={item.id} gridArea={item.gridArea} backgroundColor={item.backgroundColor}>
           {item.component}
         </GridItem>
       ))}

@@ -16,6 +16,7 @@ export default function createModalSlice(
     hlsManageModal: null,
     hlsCloseModal: null,
     lendAndReclaimModal: null,
+    depositModal: null,
     perpsVaultModal: null,
     settingsModal: false,
     unlockModal: null,

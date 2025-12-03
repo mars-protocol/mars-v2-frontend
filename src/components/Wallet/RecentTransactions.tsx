@@ -35,6 +35,7 @@ export default function RecentTransactions() {
             <div className='flex flex-col w-full gap-2'>
               {recentTransactions.map((tx) => {
                 const { hash, content, message, target, timestamp } = tx
+
                 return (
                   <Card
                     className={classNames(
@@ -52,7 +53,7 @@ export default function RecentTransactions() {
                     <div className='flex flex-wrap items-start justify-between w-full gap-2 pb-2 md:flex-nowrap'>
                       <Text className='flex font-bold'>{target}</Text>
                       <Text size='sm' className='text-white/70'>
-                        {dayjs.unix(timestamp).format('lll')}
+                        {dayjs.unix(timestamp).format('MMM Do YYYY, hh:mm:ss')}
                       </Text>
                     </div>
                     {message && (
