@@ -60,29 +60,43 @@ const menuTree = (chainConfig: ChainConfig): MenuTreeEntry[] => [
       },
     ],
   },
-  {
-    pages: chainConfig.farm || chainConfig.perps ? ['lend', 'farm', 'perps-vault'] : ['lend'],
-    label: 'Earn',
-  },
-  { pages: ['borrow'], label: 'Borrow' },
+  { pages: ['bank'], label: 'Bank' },
+  { pages: ['farm'], label: 'Farm' },
   ...(chainConfig.managedVaults ? [{ pages: ['vaults'] as Page[], label: 'Vaults' }] : []),
   { pages: ['portfolio'], label: 'Portfolio' },
-  ...(chainConfig.hls
-    ? [{ pages: ['hls-staking', 'hls-farm'] as Page[], label: 'High Leverage' }]
-    : []),
   {
-    pages: ['portfolio', 'governance', 'hls-staking', 'hls-farm'],
+    pages: ['governance'],
     label: 'More',
     submenu: [
-      ...(chainConfig.hls
+      // Hidden navbar items appear here when screen gets smaller
+      {
+        page: 'bank' as Page,
+        label: 'Bank',
+        hideOnDesktop: true,
+      },
+      {
+        page: 'farm' as Page,
+        label: 'Farm',
+        hideOnDesktop: true,
+      },
+      ...(chainConfig.managedVaults
         ? [
             {
-              page: 'hls-staking' as Page,
-              label: 'High Leverage',
+              page: 'vaults' as Page,
+              label: 'Vaults',
               hideOnDesktop: true,
             },
           ]
         : []),
+      {
+        page: 'portfolio' as Page,
+        label: 'Portfolio',
+        hideOnDesktop: true,
+      },
+      {
+        label: '',
+        isSeparator: true,
+      },
       {
         label: 'Governance',
         externalUrl: DocURL.COUNCIL,

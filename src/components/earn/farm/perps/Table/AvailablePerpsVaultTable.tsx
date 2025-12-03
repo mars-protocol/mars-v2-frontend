@@ -10,7 +10,7 @@ export default function AvailablePerpsVaultsTable() {
 
   return (
     <Table
-      title='Available Perps Vaults'
+      title='Available Vaults'
       columns={columns}
       data={[vault]}
       initialSorting={[{ id: 'name', desc: false }]}

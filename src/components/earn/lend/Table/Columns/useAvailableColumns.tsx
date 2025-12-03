@@ -2,7 +2,6 @@ import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
 import Apy, { APY_META } from 'components/earn/lend/Table/Columns/Apy'
-import Campaign, { CAMPAIGN_META } from 'components/earn/lend/Table/Columns/Campaign'
 import Chevron, { CHEVRON_META } from 'components/earn/lend/Table/Columns/Chevron'
 import DepositCap, {
   DEPOSIT_CAP_META,
@@ -24,21 +23,25 @@ export default function useAvailableColumns(props: Props) {
         cell: ({ row }) => <Name asset={row.original.asset} v1={props.v1} />,
       },
       {
-        ...CAMPAIGN_META,
-        cell: ({ row }) => <Campaign asset={row.original.asset} />,
-      },
-      {
         ...APY_META,
         cell: ({ row }) => (
           <Apy
             isLoading={props.isLoading}
             borrowEnabled={row.original.borrowEnabled}
             apy={row.original.apy.deposit}
-            hasCampaignApy={
-              row.original.asset.campaigns.find((c) => c.type === 'apy') !== undefined
-            }
+            campaigns={row.original.asset.campaigns}
           />
         ),
+        sortingFn: (rowA, rowB) => {
+          const getTotalApy = (row: typeof rowA) => {
+            const depositApy = row.original.apy.deposit
+            const campaignApy = row.original.asset.campaigns
+              .filter((c: AssetCampaign) => c.type === 'apy' && c.apy)
+              .reduce((sum: number, c: AssetCampaign) => sum + (c.apy || 0), 0)
+            return depositApy + campaignApy
+          }
+          return getTotalApy(rowA) - getTotalApy(rowB)
+        },
       },
       {
         ...DEPOSIT_CAP_META,

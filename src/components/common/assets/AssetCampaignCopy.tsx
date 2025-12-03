@@ -53,6 +53,22 @@ function AssetCampaignCopy(props: CopyProps) {
   const incentiveCopy = useMemo(() => {
     if (!campaign) return ''
     if (!campaign.enabledOnV1 && isV1) return campaign.v1Tooltip
+
+    if (campaign.id === 'fragments') {
+      if (!amount || amount.isZero()) {
+        return 'Mars Fragments (1x)'
+      }
+
+      const tokenValue = getCoinValue(BNCoin.fromDenomAndBigNumber(asset.denom, amount), assets)
+      const hasDebt = props.hasDebt || (account?.debts && account.debts.length > 0)
+      const activeCollateralMultiplier = campaign?.collateralMultiplier ?? campaign.baseMultiplier
+      const multiplier = hasDebt ? activeCollateralMultiplier : campaign.baseMultiplier
+
+      const campaignPoints = tokenValue.times(multiplier ?? 0).integerValue()
+
+      return `${formatValue(campaignPoints.toString(), { maxDecimals: 2, minDecimals: 2, abbreviated: false })} / day`
+    }
+
     if (!amount || amount.isZero() || campaign.type === 'apy' || !campaign.baseMultiplier)
       return campaign.incentiveCopy
 
@@ -110,7 +126,13 @@ function AssetCampaignCopy(props: CopyProps) {
               className={classNames('w-1 h-1 ml-2 rounded-full bg-white/50', noDot && 'hidden')}
             />
           )}
-          <Text size={size} className={textClassName ? textClassName : campaign.classNames}>
+          <Text
+            size={size}
+            className={classNames(
+              textClassName ? textClassName : campaign.classNames,
+              'whitespace-nowrap',
+            )}
+          >
             {incentiveCopy}
           </Text>
         </>

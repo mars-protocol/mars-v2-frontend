@@ -101,4 +101,4 @@ const s = class {
 const r =
   !('undefined' == typeof window || !window.navigator || !window.navigator.userAgent) &&
   window.navigator.userAgent.includes('CriOS')
-;(exports.version = o), (exports.widget = s)
+;((exports.version = o), (exports.widget = s))

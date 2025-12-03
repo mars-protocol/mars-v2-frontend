@@ -30,7 +30,11 @@ export function asyncThrottle<F extends (...args: never[]) => Promise<unknown>>(
   wait?: number,
 ) {
   const throttled = throttle(
-    (resolve: (value: unknown) => void, reject: (reason?: unknown) => void, args: Parameters<F>) => {
+    (
+      resolve: (value: unknown) => void,
+      reject: (reason?: unknown) => void,
+      args: Parameters<F>,
+    ) => {
       func(...args)
         .then(resolve)
         .catch(reject)

@@ -13,11 +13,15 @@ interface Props {
 export default function TitleAndSubCell(props: Props) {
   return (
     <div className={classNames('flex flex-col gap-0.5', props.containerClassName)}>
-      <Text size='xs' className={props.className} tag='span'>
+      <Text size='xs' className={classNames('break-words', props.className)} tag='span'>
         {props.title}
         {props.isDeprecated && <span className='text-info ml-1'>(disabled)</span>}
       </Text>
-      <Text size='xs' className={classNames('text-white/40', props.className)} tag='span'>
+      <Text
+        size='xs'
+        className={classNames('text-white/40 break-words', props.className)}
+        tag='span'
+      >
         {props.sub}
       </Text>
     </div>

@@ -71,7 +71,7 @@
     _send(e, s) {}
     _setupWithConfiguration(e) {}
   }
-  ;(e.UDFCompatibleDatafeed = class extends b {
+  ;((e.UDFCompatibleDatafeed = class extends b {
     constructor(e, s = 1e4, t) {
       let r = new (class e {
         constructor(e) {
@@ -93,5 +93,5 @@
       )
     }
   }),
-    Object.defineProperty(e, '__esModule', { value: !0 })
+    Object.defineProperty(e, '__esModule', { value: !0 }))
 })

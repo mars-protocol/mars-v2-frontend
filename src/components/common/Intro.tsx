@@ -2,15 +2,7 @@ import classNames from 'classnames'
 import { ReactNode } from 'react'
 
 import Card from 'components/common/Card'
-import {
-  GridGlobe,
-  GridHole,
-  GridLandscape,
-  GridPlanet,
-  GridTire,
-  GridWeb,
-  PerpsVault,
-} from 'components/common/Icons'
+import { GridGlobe, GridLandscape, GridTire } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import useStore from 'store'
@@ -24,13 +16,6 @@ interface Props {
 
 function IntroBackground(props: { bg: Props['bg'] }) {
   switch (props.bg) {
-    case 'borrow':
-      return (
-        <div className='absolute top-0 right-0 block w-140 opacity-5'>
-          <GridHole />
-        </div>
-      )
-    case 'lend':
     case 'vaults':
       return (
         <div className='absolute top-0 right-0 block w-180 opacity-5'>
@@ -41,24 +26,6 @@ function IntroBackground(props: { bg: Props['bg'] }) {
       return (
         <div className='absolute top-0 right-0 block w-140 opacity-5'>
           <GridLandscape />
-        </div>
-      )
-    case 'hls-farm':
-      return (
-        <div className='absolute bottom-0 right-0 block w-140 opacity-10'>
-          <GridWeb />
-        </div>
-      )
-    case 'hls-staking':
-      return (
-        <div className='absolute top-0 right-0 block w-110 opacity-10'>
-          <GridPlanet />
-        </div>
-      )
-    case 'perps-vault':
-      return (
-        <div className='absolute -top-8 right-0 block w-120 opacity-40'>
-          <PerpsVault />
         </div>
       )
     default:
@@ -72,7 +39,6 @@ function IntroBackground(props: { bg: Props['bg'] }) {
 
 export default function Intro(props: Props) {
   const showTutorial = useStore((s) => s.tutorial)
-  const isHls = useStore((s) => s.isHls)
 
   if (!showTutorial && !props.isCompact) return null
 

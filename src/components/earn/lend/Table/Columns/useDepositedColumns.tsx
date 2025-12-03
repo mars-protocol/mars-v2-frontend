@@ -1,13 +1,8 @@
-import { ColumnDef, Row } from '@tanstack/react-table'
+import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
 import Apy, { APY_META } from 'components/earn/lend/Table/Columns/Apy'
-import Campaign, { CAMPAIGN_META } from 'components/earn/lend/Table/Columns/Campaign'
 import Chevron, { CHEVRON_META } from 'components/earn/lend/Table/Columns/Chevron'
-import DepositCap, {
-  DEPOSIT_CAP_META,
-  marketDepositCapSortingFn,
-} from 'components/earn/lend/Table/Columns/DepositCap'
 import DepositValue, {
   DEPOSIT_VALUE_META,
   depositedSortingFn,
@@ -23,34 +18,14 @@ interface Props {
 
 export default function useDepositedColumns(props: Props) {
   return useMemo<ColumnDef<LendingMarketTableData>[]>(() => {
-    const adjustedNameMeta = props.v1
-      ? { ...NAME_META, meta: { className: 'min-w-37' } }
-      : NAME_META
-
     return [
       {
-        ...adjustedNameMeta,
+        ...NAME_META,
         cell: ({ row }) => (
           <Name asset={row.original.asset} v1={props.v1} amount={row.original.accountLentAmount} />
         ),
       },
-      ...(!props.v1
-        ? [
-            {
-              ...CAMPAIGN_META,
-              cell: ({ row }: { row: Row<LendingMarketTableData> }) => (
-                <Campaign asset={row.original.asset} amount={row.original.accountLentAmount} />
-              ),
-            },
-          ]
-        : []),
-      {
-        ...DEPOSIT_VALUE_META,
-        cell: ({ row }) => (
-          <DepositValue asset={row.original.asset} lentAmount={row.original.accountLentAmount} />
-        ),
-        sortingFn: depositedSortingFn,
-      },
+
       {
         ...APY_META,
         cell: ({ row }) => (
@@ -58,16 +33,26 @@ export default function useDepositedColumns(props: Props) {
             isLoading={props.isLoading}
             borrowEnabled={row.original.borrowEnabled}
             apy={row.original.apy.deposit}
-            hasCampaignApy={
-              row.original.asset.campaigns.find((c) => c.type === 'apy') !== undefined
-            }
+            campaigns={row.original.asset.campaigns}
           />
         ),
+        sortingFn: (rowA, rowB) => {
+          const getTotalApy = (row: typeof rowA) => {
+            const depositApy = row.original.apy.deposit
+            const campaignApy = row.original.asset.campaigns
+              .filter((c: AssetCampaign) => c.type === 'apy' && c.apy)
+              .reduce((sum: number, c: AssetCampaign) => sum + (c.apy || 0), 0)
+            return depositApy + campaignApy
+          }
+          return getTotalApy(rowA) - getTotalApy(rowB)
+        },
       },
       {
-        ...DEPOSIT_CAP_META,
-        cell: ({ row }) => <DepositCap isLoading={props.isLoading} data={row.original} />,
-        sortingFn: marketDepositCapSortingFn,
+        ...DEPOSIT_VALUE_META,
+        cell: ({ row }) => (
+          <DepositValue asset={row.original.asset} lentAmount={row.original.accountLentAmount} />
+        ),
+        sortingFn: depositedSortingFn,
       },
       {
         ...MANAGE_META,
