@@ -37,14 +37,28 @@ export default function WithdrawFromAccount(props: Props) {
         }),
     [account.deposits, account.lends, nonPoolTokens],
   )
-  const defaultAsset = useMemo(
-    () => nonPoolTokens.find(byDenom(sortedBalances[0]?.denom)) ?? nonPoolTokens[0],
-    [sortedBalances, nonPoolTokens],
-  )
+  const walletAssetsModal = useStore((s) => s.walletAssetsModal)
+  const preselectedDenom = walletAssetsModal?.selectedDenoms?.[0]
+
+  const defaultAsset = useMemo(() => {
+    // If there's a preselected denom and it exists in account balances, use it
+    if (preselectedDenom) {
+      const [denom] = preselectedDenom.split(':')
+      const preselectedAsset = nonPoolTokens.find(
+        (asset) => asset.denom === denom && sortedBalances.some((coin) => coin.denom === denom),
+      )
+      if (preselectedAsset) {
+        return preselectedAsset
+      }
+    }
+    // Otherwise use the default (first sorted balance)
+    return nonPoolTokens.find(byDenom(sortedBalances[0]?.denom)) ?? nonPoolTokens[0]
+  }, [sortedBalances, nonPoolTokens, preselectedDenom])
 
   const withdraw = useStore((s) => s.withdraw)
   const [withdrawWithBorrowing, setWithdrawWithBorrowing] = useToggle()
   const [currentAsset, setCurrentAsset] = useState<Asset>(defaultAsset)
+
   const [amount, setAmount] = useState(BN_ZERO)
   const { simulateWithdraw } = useUpdatedAccount(account)
   const { computeMaxWithdrawAmount } = useHealthComputer(account)
