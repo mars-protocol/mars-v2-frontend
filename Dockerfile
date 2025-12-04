@@ -2,7 +2,8 @@ FROM node:22-alpine as builder
 WORKDIR /app
 
 COPY package.json ./
-RUN yarn install
+RUN corepack enable
+RUN pnpm install
 COPY . .
 RUN apk --update add patch
 RUN patch next.config.js next-config.patch
@@ -15,7 +16,7 @@ ENV NEXT_PUBLIC_NEUTRON_REST=APP_NEXT_NEUTRON_REST
 ENV NEXT_PUBLIC_WALLET_CONNECT_ID=APP_NEXT_WALLET_CONNECT_ID
 ENV NODE_ENV=production
 
-RUN yarn build
+RUN pnpm build
 
 FROM node:20-alpine as runner
 WORKDIR /app
