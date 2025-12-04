@@ -1,12 +1,14 @@
 import { FormattedNumber } from 'components/common/FormattedNumber'
-import { InfoCircle } from 'components/common/Icons'
+import { ExternalLink, InfoCircle } from 'components/common/Icons'
 import Text from 'components/common/Text'
+import { TextLink } from 'components/common/TextLink'
 import { Tooltip } from 'components/common/Tooltip'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useWhitelistedAssets from 'hooks/assets/useWhitelistedAssets'
 import useAssetCampaigns from 'hooks/campaign/useAssetCampaigns'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
+import { DocURL } from 'types/enums'
 import { getDailyAccountPoints } from 'utils/campaign'
 
 interface Props {
@@ -53,6 +55,16 @@ export default function CampaignRewards(props: Props) {
           <Text size='xs' className='w-full text-center text-white/60'>
             {`${dailyPoints} ${campaign.name} / daily with this Account`}
           </Text>
+        )}
+        {campaign.id === 'fragments' && (
+          <TextLink
+            href={DocURL.FRAGMENTS_LEADERBOARD_URL}
+            externalLink
+            className='mt-2 text-xs text-white/60 hover:text-white hover:underline'
+          >
+            View Leaderboard
+            <ExternalLink className='ml-1 inline w-3 h-3' />
+          </TextLink>
         )}
       </div>
     )

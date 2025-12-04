@@ -32,6 +32,8 @@ export default function Routes() {
         <Route path='/perps' element={<PerpsPage />} />
         <Route path='/farm' element={<FarmPage />} />
         <Route path='/perps-vault' element={<Navigate to='/vaults' replace />} />
+        <Route path='/earn' element={<Navigate to='/bank' replace />} />
+        <Route path='/borrow' element={<Navigate to='/bank' replace />} />
         <Route path='/bank' element={<BankPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
         <Route path='/v1' element={<V1Page />} />
@@ -64,6 +66,8 @@ export default function Routes() {
           <Route path='perps' element={<PerpsPage />} />
           <Route path='farm' element={<FarmPage />} />
           <Route path='perps-vault' element={<Navigate to='/vaults' replace />} />
+          <Route path='earn' element={<Navigate to='bank' replace />} />
+          <Route path='borrow' element={<Navigate to='bank' replace />} />
           <Route path='bank' element={<BankPage />} />
           <Route path='portfolio' element={<PortfolioPage />} />
           <Route path='v1' element={<V1Page />} />
