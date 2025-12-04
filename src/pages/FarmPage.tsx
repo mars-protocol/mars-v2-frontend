@@ -14,7 +14,7 @@ import useIsOsmosis from 'hooks/chain/useIsOsmosis'
 export default function FarmPage() {
   const isOsmosis = useIsOsmosis()
   const chainConfig = useChainConfig()
-  const showHLS = chainConfig.hls && !isOsmosis
+  const showHLS = chainConfig.hls
 
   return (
     <div className='flex flex-col w-full gap-2 py-8'>
