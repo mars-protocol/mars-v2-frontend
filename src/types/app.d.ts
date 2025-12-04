@@ -386,12 +386,77 @@ declare global {
     swapFee: number
   }
 
-  interface AssetCampaignInfo {
-    denom: string
-    campaignIds: AssetCampaignId[]
+  interface SwitchOption {
+    text: string
+    value: string
+  }
+
+  interface StakedAstroLpRewards {
+    lpDenom: string
+    rewards: BNCoin[]
+  }
+
+  type AssetCampaignId = 'stride' | 'lido' | 'drop_apy' | 'milkyway' | 'ntrn-rewards' | 'fragments'
+  type AssetCampaignType = 'points_with_multiplier' | 'apy'
+  type AssetCampaignPointBase = 'value' | 'amount'
+
+  interface AssetCampaignApyApi {
+    url: string
+    isApr: boolean
+    isPercent: boolean
+    apyStructure: string[]
+    denomStructure: string[]
+  }
+  interface AssetCampaignPointsApi {
+    url: string
+    pointsStructure: string[]
+    queryVariable: 'address' | 'accountId'
+    pointsDecimals: number
+  }
+
+  interface AssetCampaign {
+    id: AssetCampaignId
+    type: AssetCampaignType
+    name: string
+    classNames: string
+    bgClassNames: string
+    incentiveCopy: string
+    detailedIncentiveCopy: string
+    tooltip: string
+    pointBase?: AssetCampaignPointBase
+    apyApi?: AssetCampaignApyApi
+    pointsApi?: AssetCampaignPointsApi
+    apy?: number
     baseMultiplier?: number
     collateralMultiplier?: number
-    campaignDenom?: string
+    totalPointsTooltip?: string
+    enabledOnV1: boolean
+    v1Tooltip?: string
+  }
+
+  interface AssetCampaignApy {
+    denom: string
+    apy: number
+  }
+
+  interface AssetCampaignPoints {
+    id: AssetCampaignId
+    points: number
+  }
+
+  type KeplrMode = 'core' | 'extension' | 'mobile-web' | 'walletconnect'
+  type TriggerType = 'less_than' | 'greater_than'
+
+  type DatafeedErrorCallback = (reason: string) => void
+
+  interface Trigger {
+    price_trigger: {
+      denom: string
+      campaignIds: AssetCampaignId[]
+      baseMultiplier?: number
+      collateralMultiplier?: number
+      campaignDenom?: string
+    }
   }
 
   interface ContractClients {
@@ -439,6 +504,9 @@ declare global {
     hasSL: boolean
     hasTP: boolean
   }
+  type AssetCampaignId = 'stride' | 'lido' | 'drop_apy' | 'milkyway' | 'ntrn-rewards' | 'fragments'
+  type AssetCampaignType = 'points_with_multiplier' | 'apy'
+  type AssetCampaignPointBase = 'value' | 'amount'
 
   interface PerpsPosition {
     denom: string
