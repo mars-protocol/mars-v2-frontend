@@ -133,7 +133,7 @@ export function resolveAssetCampaigns(
   if (!campaign) return []
   const campaignInfos = [] as AssetCampaign[]
 
-  campaign.campaignIds.forEach((campaignId) => {
+  campaign.campaignIds.forEach((campaignId: AssetCampaignId) => {
     const currentCampaign = CAMPAIGNS.find((c) => c.id === campaignId)
     if (!currentCampaign) return
 
