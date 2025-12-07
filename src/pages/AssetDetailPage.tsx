@@ -7,7 +7,6 @@ import Text from 'components/common/Text'
 import AssetImage from 'components/common/assets/AssetImage'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import DisplayCurrency from 'components/common/DisplayCurrency'
-import AssetMarketInfo from 'components/common/AssetMarketInfo'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
 import { accumulateAmounts } from 'utils/accounts'
@@ -18,6 +17,8 @@ import { BN, mergeBNCoinArrays } from 'utils/helpers'
 import Button from 'components/common/Button'
 import { ArrowDownLine, ArrowUpLine } from 'components/common/Icons'
 import useStore from 'store'
+import LendCard from 'components/common/AssetMarketInfo/LendCard'
+import BorrowCard from 'components/common/AssetMarketInfo/BorrowCard'
 
 export default function AssetDetailPage() {
   const { symbol } = useParams<{ symbol: string }>()
@@ -50,8 +51,8 @@ export default function AssetDetailPage() {
   }
 
   return (
-    <div className='flex flex-col w-full gap-6 py-8'>
-      <div className='flex items-center justify-between w-full'>
+    <div className='flex flex-col w-full gap-6'>
+      <div className='flex items-center justify-between w-full border-b border-white/5 pb-4'>
         <div className='flex items-center gap-4'>
           <AssetImage asset={asset} className='w-12 h-12' />
           <div className='flex flex-col'>
@@ -85,35 +86,7 @@ export default function AssetDetailPage() {
         </div>
 
         <div className='flex items-center gap-8'>
-          {accountBalanceCoin && (
-            <div className='flex flex-col'>
-              <Text size='sm' className='text-gray-400 mb-1'>
-                Account Balance
-              </Text>
-              <DisplayCurrency coin={accountBalanceCoin} className='text-white text-base mb-0.5' />
-              <FormattedNumber
-                amount={demagnify(accountBalance, asset)}
-                className='text-sm text-gray-400'
-                options={{ suffix: ` ${asset.symbol}`, maxDecimals: asset.decimals }}
-              />
-            </div>
-          )}
-
-          {walletBalanceCoin && walletBalance && (
-            <div className='flex flex-col'>
-              <Text size='sm' className='text-gray-400 mb-1'>
-                Wallet Balance
-              </Text>
-              <DisplayCurrency coin={walletBalanceCoin} className='text-white text-base mb-0.5' />
-              <FormattedNumber
-                amount={demagnify(BN(walletBalance.amount), asset)}
-                className='text-sm text-gray-400'
-                options={{ suffix: ` ${asset.symbol}`, maxDecimals: asset.decimals }}
-              />
-            </div>
-          )}
-
-          <div className='flex flex-col gap-3'>
+          <div className='flex gap-3'>
             <Button
               text='Fund'
               color='tertiary'
@@ -150,6 +123,42 @@ export default function AssetDetailPage() {
           </div>
         </div>
       </div>
+
+      <div className='flex gap-4 w-full'>
+        {accountBalanceCoin && (
+          <div className='flex flex-col gap-2 bg-surface p-4 w-full'>
+            <Text size='sm' className='mb-1'>
+              Account Balance
+            </Text>
+            <DisplayCurrency coin={accountBalanceCoin} className='text-base mb-0.5' />
+            <FormattedNumber
+              amount={demagnify(accountBalance, asset)}
+              className='text-sm'
+              options={{ suffix: ` ${asset.symbol}`, maxDecimals: asset.decimals }}
+            />
+          </div>
+        )}
+
+        {walletBalanceCoin && walletBalance && (
+          <div className='flex flex-col gap-2 bg-surface p-4 w-full'>
+            <Text size='sm' className='mb-1'>
+              Wallet Balance
+            </Text>
+            <DisplayCurrency coin={walletBalanceCoin} className='text-base mb-0.5' />
+            <FormattedNumber
+              amount={demagnify(BN(walletBalance.amount), asset)}
+              className='text-sm'
+              options={{ suffix: ` ${asset.symbol}`, maxDecimals: asset.decimals }}
+            />
+          </div>
+        )}
+      </div>
+      {asset && (
+        <div className='mt-6 flex gap-4 w-full'>
+          <LendCard asset={asset} />
+          <BorrowCard asset={asset} />
+        </div>
+      )}
     </div>
   )
 }
