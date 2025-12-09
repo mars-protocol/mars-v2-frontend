@@ -224,7 +224,9 @@ export default function ConfirmationSummary(props: Props) {
 
   return (
     <div className='flex flex-wrap w-full gap-4'>
-      <Text className='w-full'>{action}</Text>
+      <Text className='w-full' tag='div'>
+        {action}
+      </Text>
       <Container title='New Position' className='w-full'>
         <AssetAmountAndValue asset={asset} amount={newAmount.abs()} priceOverride={limitPrice} />
         {!newAmount.isZero() && (

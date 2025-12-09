@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import BigNumber from 'bignumber.js'
 
 import Button from 'components/common/Button'
 import DisplayCurrency from 'components/common/DisplayCurrency'
@@ -16,6 +17,7 @@ import useBaseAsset from 'hooks/assets/useBaseAsset'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
+import { BN_ZERO } from 'constants/math'
 import { getCurrentFeeToken, MIN_FEE_AMOUNT } from 'utils/feeToken'
 import { BN } from 'utils/helpers'
 
@@ -44,14 +46,17 @@ export default function TokenInput(props: Props) {
 
   const currentFeeToken = getCurrentFeeToken(chainConfig)
   const isCurrentFeeToken = currentFeeToken?.coinMinimalDenom === props.asset.denom
-  const deductFee = isCurrentFeeToken && props.deductFee ? MIN_FEE_AMOUNT : 0
+  const deductFeeBN = useMemo(() => {
+    return isCurrentFeeToken && props.deductFee ? BN(MIN_FEE_AMOUNT) : BN_ZERO
+  }, [isCurrentFeeToken, props.deductFee])
 
   const adjustedMax = useMemo(() => {
-    return Math.max(props.max.minus(deductFee).toNumber(), 0)
-  }, [deductFee, props.max])
+    const result = props.max.minus(deductFeeBN)
+    return result.isLessThanOrEqualTo(0) ? BN_ZERO : result.integerValue(BigNumber.ROUND_DOWN)
+  }, [deductFeeBN, props.max])
 
   function onMaxBtnClick() {
-    props.onChange(BN(adjustedMax))
+    props.onChange(adjustedMax)
   }
 
   function onChangeAsset(denom: string) {
@@ -109,7 +114,7 @@ export default function TokenInput(props: Props) {
           maxDecimals={props.asset.decimals}
           onChange={props.onChange}
           amount={props.amount}
-          max={BN(adjustedMax)}
+          max={adjustedMax}
           className='flex-1 p-3 border-none'
         />
         {props.onDelete && (
@@ -131,7 +136,7 @@ export default function TokenInput(props: Props) {
               </Text>
               <FormattedNumber
                 className='mr-1 text-xs text-white/50'
-                amount={adjustedMax}
+                amount={adjustedMax.toNumber()}
                 options={{ decimals: props.asset.decimals }}
               />
               {isCurrentFeeToken && props.deductFee === true && !props.chainName && (

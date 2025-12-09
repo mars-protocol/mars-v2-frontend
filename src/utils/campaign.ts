@@ -7,7 +7,7 @@ export function getDailyAccountPoints(
   chainConfig: ChainConfig,
   assets: Asset[],
 ): string {
-  const collateral = [...account.deposits, ...account.lends, ...account.stakedAstroLps]
+  const collateral = [...account.lends, ...account.stakedAstroLps]
   const debt = account.debts ?? []
   const campaignAssets = chainConfig.campaignAssets?.filter((asset) =>
     asset.campaignIds.includes(campaign.id),
