@@ -150,22 +150,12 @@ export default function useHealthComputer(account?: Account) {
     )
   }, [vaultConfigs])
 
-  // Get denoms of perps positions the account has open
-  const accountPerpsDenoms = useMemo(() => {
-    if (!account?.perps) return new Set<string>()
-    return new Set(account.perps.map((p) => p.denom))
-  }, [account?.perps])
-
   const perpsParamsData = useMemo(() => {
     if (!perpsParams) return {}
     return perpsParams.reduce(
       (prev, curr) => {
-        // For markets where the account has open positions, force enabled to true
-        // so the health computer can properly calculate health
-        const hasOpenPosition = accountPerpsDenoms.has(curr.denom)
         prev[curr.denom] = {
           ...curr,
-          enabled: hasOpenPosition ? true : curr.enabled,
           max_long_oi_value: BN(curr.max_long_oi_value).toString(),
           max_short_oi_value: BN(curr.max_short_oi_value).toString(),
           max_net_oi_value: BN(curr.max_net_oi_value).toString(),
@@ -175,7 +165,7 @@ export default function useHealthComputer(account?: Account) {
       },
       {} as { [key: string]: PerpParams },
     )
-  }, [perpsParams, accountPerpsDenoms])
+  }, [perpsParams])
 
   const marketStates = useMemo(() => {
     const marketStates: { [key: string]: MarketResponse } = {}
@@ -334,10 +324,9 @@ export default function useHealthComputer(account?: Account) {
 
   const computeMaxPerpAmount = useCallback(
     (denom: string, tradeDirection: TradeDirection) => {
-      if (!healthComputer || !perpsVault || !marketStates || !perpsParams) return BN_ZERO
-      // Return early if the market is disabled (check original params, not modified perpsParamsData)
-      const originalParams = perpsParams.find((p) => p.denom === denom)
-      if (!originalParams?.enabled) return BN_ZERO
+      if (!healthComputer || !perpsVault || !marketStates) return BN_ZERO
+      // Return early if the market is disabled
+      if (!perpsParamsData[denom]?.enabled) return BN_ZERO
       const positions = [
         ...healthComputer.positions.deposits,
         ...healthComputer.positions.lends,
@@ -365,7 +354,7 @@ export default function useHealthComputer(account?: Account) {
         return BN_ZERO
       }
     },
-    [healthComputer, perpsVault, marketStates, perpsParams, assets],
+    [healthComputer, perpsVault, marketStates, perpsParamsData, assets],
   )
 
   const health = useMemo(() => {
