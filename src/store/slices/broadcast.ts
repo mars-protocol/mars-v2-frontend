@@ -30,6 +30,7 @@ import { setAutoLendForAccount } from 'utils/autoLend'
 import { generateErrorMessage, getSingleValueFromBroadcastResult, sortFunds } from 'utils/broadcast'
 import checkAutoLendEnabled from 'utils/checkAutoLendEnabled'
 import { MARS_DECIMALS } from 'utils/constants'
+import { retryOnUnknownError } from 'utils/error'
 import { getCurrentFeeToken } from 'utils/feeToken'
 import { generateToast } from 'utils/generateToast'
 import { BN } from 'utils/helpers'
@@ -73,35 +74,38 @@ export default function createBroadcastSlice(
     if (!get().client) {
       return { fee: undefined, error: 'The client disconnected. Please reload the page!' }
     }
-    try {
-      const feeCurrency = getCurrentFeeToken(get().chainConfig)
 
-      const simulateResult = await get().client?.simulate({
-        messages,
-        wallet: get().client?.connectedWallet,
-        overrides: {
-          feeCurrency,
-          gasPrice: `${feeCurrency.gasPriceStep.average}${feeCurrency.coinMinimalDenom}`,
-          gasAdjustment: DEFAULT_GAS_MULTIPLIER,
-        },
-      })
+    return await retryOnUnknownError(async () => {
+      try {
+        const feeCurrency = getCurrentFeeToken(get().chainConfig)
 
-      if (simulateResult) {
-        const { success } = simulateResult
-        if (success) {
-          const fee = simulateResult.fee
-          return {
-            fee: {
-              amount: fee.amount,
-              gas: BN(fee.gas).toFixed(0),
-            },
+        const simulateResult = await get().client?.simulate({
+          messages,
+          wallet: get().client?.connectedWallet,
+          overrides: {
+            feeCurrency,
+            gasPrice: `${feeCurrency.gasPriceStep.average}${feeCurrency.coinMinimalDenom}`,
+            gasAdjustment: DEFAULT_GAS_MULTIPLIER,
+          },
+        })
+
+        if (simulateResult) {
+          const { success } = simulateResult
+          if (success) {
+            const fee = simulateResult.fee
+            return {
+              fee: {
+                amount: fee.amount,
+                gas: BN(fee.gas).toFixed(0),
+              },
+            }
           }
         }
+        return { fee: undefined, error: simulateResult?.error ?? 'Unknown Error' }
+      } catch (ex) {
+        return { fee: undefined, error: ex as string }
       }
-      return { fee: undefined, error: simulateResult?.error ?? 'Unknown Error' }
-    } catch (ex) {
-      return { fee: undefined, error: ex as string }
-    }
+    })
   }
 
   return {
