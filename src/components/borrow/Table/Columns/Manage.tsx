@@ -17,6 +17,11 @@ interface Props {
 export default function Manage(props: Props) {
   const address = useStore((s) => s.address)
 
+  const isUSDC = useMemo(
+    () => props.data.asset?.symbol?.toUpperCase().includes('USDC'),
+    [props.data.asset?.symbol],
+  )
+
   const borrowHandler = useCallback(() => {
     if (!props.data.asset) return null
     useStore.setState({ borrowModal: { asset: props.data.asset, marketData: props.data } })
@@ -30,6 +35,7 @@ export default function Manage(props: Props) {
   }, [props.data])
 
   const isDeprecatedAsset = props.data.asset.isDeprecated
+  const isBorrowDisabled = isDeprecatedAsset || isUSDC
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [
@@ -38,20 +44,24 @@ export default function Manage(props: Props) {
         text: 'Repay',
         onClick: repayHandler,
       },
-      {
-        icon: <Plus />,
-        text: 'Borrow more',
-        onClick: borrowHandler,
-      },
+      ...(!isUSDC
+        ? [
+            {
+              icon: <Plus />,
+              text: 'Borrow more',
+              onClick: borrowHandler,
+            },
+          ]
+        : []),
     ],
-    [borrowHandler, repayHandler],
+    [borrowHandler, repayHandler, isUSDC],
   )
 
   if (!address) return null
 
   return (
     <div className='z-10 flex justify-end'>
-      {isDeprecatedAsset ? (
+      {isBorrowDisabled ? (
         <ActionButton
           leftIcon={<HandCoins />}
           color='tertiary'

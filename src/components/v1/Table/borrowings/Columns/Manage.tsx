@@ -15,6 +15,11 @@ export default function Manage(props: Props) {
   const { data: balances } = useWalletBalances(address)
   const hasBalance = !!balances.find(byDenom(props.data.asset.denom))
 
+  const isUSDC = useMemo(
+    () => props.data.asset?.symbol?.toUpperCase().includes('USDC'),
+    [props.data.asset?.symbol],
+  )
+
   const ITEMS: DropDownItem[] = useMemo(
     () => [
       {
@@ -24,6 +29,8 @@ export default function Manage(props: Props) {
           useStore.setState({
             v1BorrowAndRepayModal: { type: 'borrow', data: props.data },
           }),
+        disabled: isUSDC,
+        disabledTooltip: isUSDC ? 'USDC borrowing is temporarily disabled.' : undefined,
       },
       {
         icon: <HandCoins />,
@@ -33,10 +40,10 @@ export default function Manage(props: Props) {
             v1BorrowAndRepayModal: { type: 'repay', data: props.data },
           }),
         disabled: !hasBalance,
-        disabledTooltip: `You don’t have any ${props.data.asset.symbol} in your Wallet.`,
+        disabledTooltip: `You don't have any ${props.data.asset.symbol} in your Wallet.`,
       },
     ],
-    [hasBalance, props.data],
+    [hasBalance, props.data, isUSDC],
   )
 
   return (
