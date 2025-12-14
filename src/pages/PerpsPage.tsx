@@ -1,4 +1,6 @@
 import GridWithSplitters from 'components/common/Grid/GridWithSplitters'
+import { ExclamationMarkTriangle } from 'components/common/Icons'
+import Text from 'components/common/Text'
 import { PerpsModule } from 'components/perps/Module/PerpsModule'
 import PerpsBanner from 'components/perps/PerpsBanner'
 import { PerpsPositions } from 'components/perps/PerpsPositions'
@@ -25,6 +27,18 @@ export default function PerpsPage() {
   }, [accountId, address, chainConfig, chainConfig.perps, navigate, searchParams])
   return (
     <div className='flex flex-col w-full md:h-full'>
+      {/* Announcement banner - fixed below navbar */}
+      <div className='fixed top-18 left-0 right-0 z-50 bg-white/10 border-b border-white/20 backdrop-blur-sm'>
+        <div className='flex items-center justify-center gap-2 px-4 py-2.5'>
+          <ExclamationMarkTriangle className='w-4 h-4 text-white' />
+          <Text size='sm' className='text-white'>
+            Perps markets have been temporarily disabled. You are still able to close your existing
+            positions.
+          </Text>
+        </div>
+      </div>
+      {/* Spacer to account for fixed banner */}
+      <div className='h-10' />
       <GridWithSplitters
         className='flex-1'
         chartArea={
