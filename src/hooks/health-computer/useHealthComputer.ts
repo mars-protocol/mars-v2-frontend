@@ -325,6 +325,8 @@ export default function useHealthComputer(account?: Account) {
   const computeMaxPerpAmount = useCallback(
     (denom: string, tradeDirection: TradeDirection) => {
       if (!healthComputer || !perpsVault || !marketStates) return BN_ZERO
+      // Return early if the market is disabled
+      if (!perpsParamsData[denom]?.enabled) return BN_ZERO
       const positions = [
         ...healthComputer.positions.deposits,
         ...healthComputer.positions.lends,
@@ -352,7 +354,7 @@ export default function useHealthComputer(account?: Account) {
         return BN_ZERO
       }
     },
-    [healthComputer, perpsVault, marketStates, assets],
+    [healthComputer, perpsVault, marketStates, perpsParamsData, assets],
   )
 
   const health = useMemo(() => {
