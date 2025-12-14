@@ -272,27 +272,30 @@ export function PerpsModule() {
   ])
 
   const renderDeprecatedMarketContent = () => (
-    <>
-      <div className='flex flex-col gap-2'>
-        <Text size='sm' uppercase>
+    <div className='flex flex-col gap-6'>
+      <div className='flex flex-col gap-4'>
+        <Text size='lg' uppercase className='font-bold'>
           Disabled Market
         </Text>
-        <Text size='xs'>
+        <Text size='sm' className='text-white/70'>
           The selected market is currently disabled, and opening new positions is unavailable.
         </Text>
-        <Text size='xs'>
-          You have an active position in this market. To manage your exposure, you may still close
-          your existing position by using the button below.
-        </Text>
-        <Text size='xs'>Click the button below to close your position.</Text>
+        {currentPerpPosition && (
+          <Text size='sm' className='text-white/70'>
+            You have an active position in this market. To manage your exposure, you may still close
+            your existing position by using the button below.
+          </Text>
+        )}
       </div>
-      <div className='flex flex-col gap-2'>
-        <ActionButton text='Close Position' onClick={closePosition} />
-        <Callout type={CalloutType.INFO}>
-          Please note: no new positions can be opened until the market is re-enabled.
-        </Callout>
-      </div>
-    </>
+      {currentPerpPosition && (
+        <div className='flex flex-col gap-4'>
+          <ActionButton text='Close Position' onClick={closePosition} color='secondary' />
+        </div>
+      )}
+      <Callout type={CalloutType.INFO}>
+        No new positions can be opened until the market is re-enabled.
+      </Callout>
+    </div>
   )
 
   const renderPriceInputs = () => (
