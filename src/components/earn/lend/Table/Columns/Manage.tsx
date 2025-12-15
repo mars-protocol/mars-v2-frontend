@@ -5,6 +5,7 @@ import { ACCOUNT_MENU_BUTTON_ID } from 'components/account/AccountMenuContent'
 import AlertDialog from 'components/common/AlertDialog'
 import DropDownButton from 'components/common/Button/DropDownButton'
 import {
+  AccountArrowDown,
   ArrowDownLine,
   ArrowUpLine,
   CoinsSwap,
@@ -72,6 +73,10 @@ export default function Manage(props: Props) {
     handleDialogClose()
   }
 
+  const handleWithdraw = useCallback(() => {
+    useStore.setState({ fundAndWithdrawModal: 'withdraw' })
+  }, [])
+
   const ITEMS: DropDownItem[] = useMemo(
     () => [
       {
@@ -98,8 +103,21 @@ export default function Manage(props: Props) {
         text: 'Unlend',
         onClick: handleUnlend,
       },
+      {
+        icon: <AccountArrowDown />,
+        text: 'Withdraw',
+        onClick: handleWithdraw,
+      },
     ],
-    [handleUnlend, hasAssetInDeposits, hasWalletBalance, openDepositAndLend, openLend, props.data],
+    [
+      handleUnlend,
+      handleWithdraw,
+      hasAssetInDeposits,
+      hasWalletBalance,
+      openDepositAndLend,
+      openLend,
+      props.data,
+    ],
   )
 
   if (!address) return null
