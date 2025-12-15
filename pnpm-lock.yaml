@@ -25,8 +25,8 @@ importers:
         specifier: ^4.3.0
         version: 4.3.0(@react-native-async-storage/async-storage@2.2.0(react-native@0.82.1(@babel/core@7.28.5)(@types/react@19.2.2)(bufferutil@4.0.9)(react@19.2.0)(utf-8-validate@5.0.10)))(@types/react@19.2.2)(bufferutil@4.0.9)(immer@11.0.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76)
       '@keplr-wallet/cosmos':
-        specifier: ^0.12.294
-        version: 0.12.296(bitcoinjs-lib@7.0.0(typescript@5.9.3))(starknet@8.9.1)
+        specifier: ^0.12.300
+        version: 0.12.300(bitcoinjs-lib@7.0.0(typescript@5.9.3))(starknet@8.9.1)
       '@next/eslint-plugin-next':
         specifier: 16.0.7
         version: 16.0.7
@@ -1507,31 +1507,39 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@keplr-wallet/common@0.12.296':
-    resolution: {integrity: sha512-hlTyBpx1NlwiIALVmMk3/0hfbtHaLAwN9hMBuT7zsj9oX7vE6n3yekCsDF0LxUAfwD5P5piSkWuu4beI4I4Gxg==}
+  '@keplr-wallet/common@0.12.300':
+    resolution: {integrity: sha512-mXvwzydE9hGvyV1IoeBj8vOxkBZcr3jCA9Ifnbgu7lud0DGrdvjLOpuUWSnQtnuyYMsI7KrZDHveZUvd3ieFiQ==}
 
-  '@keplr-wallet/cosmos@0.12.296':
-    resolution: {integrity: sha512-lN0i7puCsiYezIKuwdMz9I8AWnZNkg3p+DB28HnfG5F2R7HflcfEzSYavgNsnVESGxfLgToB2YzRDg8aH0C/wA==}
+  '@keplr-wallet/cosmos@0.12.300':
+    resolution: {integrity: sha512-SvC/Wg3zX0tIgdqkAiEiqMTimeV727ys5d3GodBK76efBjdYkhDZLcOhmINqtn7xlit+AK+WgLf59vP/I9xMrA==}
 
-  '@keplr-wallet/crypto@0.12.296':
-    resolution: {integrity: sha512-aFjPysGm/njI79jjLDjn5oEsnQpp+X73MXSoU887mIze44J8osSadRlAgxTtH95YYzknhu5dMZJHP8WVd8kCPA==}
+  '@keplr-wallet/crypto@0.12.300':
+    resolution: {integrity: sha512-WlBekzg+IrkT5tcAAIMtUXPWs59/yyVkzkzoHTdo8mUQKxHve3Bi4XqE6bPHIc1rvc8wyLizD17b53i0sIpe3g==}
     peerDependencies:
       bitcoinjs-lib: ^6
-      starknet: ^7
+      starknet: ^8
 
-  '@keplr-wallet/proto-types@0.12.296':
-    resolution: {integrity: sha512-85WUCxQI+QVkhvZTZI/xFQHhGdTctrH0jp1SmuA/MvU2iCvBfDmZpYBuo1hhApq3cHOo5meZLAvM+jhwWQwKcw==}
+  '@keplr-wallet/proto-types@0.12.300':
+    resolution: {integrity: sha512-pUVHwBGi5YdRt3zpn9Q+xcHrfdIwcn6VLjITDyLQdTZ7y0gDgkZVc6pYc9ueCRz3s/7gC8PwH3wFkS3f7F9U1Q==}
 
-  '@keplr-wallet/simple-fetch@0.12.296':
-    resolution: {integrity: sha512-AtX8bb9AjYViznJl9Wpy7u5HZHx9Buy1KOaBZ//TcNL90hPNTqu+ELS4wF1SbN0kuq0R4QVzWL6vJFPhXLZDiQ==}
+  '@keplr-wallet/simple-fetch@0.12.300':
+    resolution: {integrity: sha512-+mZ5oUIQXaCmE9CXeMmfq2DlSglbXxY6sBvREPlGBaCBK+LCuEdsn0YFCkE0itDLap033pjHfYIipf85xGc5aQ==}
 
   '@keplr-wallet/types@0.12.296':
     resolution: {integrity: sha512-FIyjacCSa2RRILb7pL3Y/DcdV2nHjlWjekLujV2NCaE8a0FC0qLIM/GtTuTsOyB+xvmnUiN3d5vedFudGDCLEw==}
     peerDependencies:
       starknet: ^7
 
+  '@keplr-wallet/types@0.12.300':
+    resolution: {integrity: sha512-jtkTEZA3BomDeYIwkNG5dhd8kOP9ddKRq/JFEyDma4fta/0I1mLAYyRpBWiZ4sO6W8UppYSIH4zEbesAHZmzDA==}
+    peerDependencies:
+      starknet: ^8
+
   '@keplr-wallet/unit@0.12.296':
     resolution: {integrity: sha512-ZuVAcGmGZOQT3N0SLWNa1NAFM78LIsoINH17Wa88fJ1AoWwk/FQlhcjonft82Ftb3yaSnPwuXVsj+T0ORXfggw==}
+
+  '@keplr-wallet/unit@0.12.300':
+    resolution: {integrity: sha512-KqDJF+BohFB0EI+f19Xkz10ICRfgegXLpe5Wk7qVpz2bgekZO7uNA7QKQICrYWpvjgKJlV7+xXcYV3p0D6VvTA==}
 
   '@lit-labs/ssr-dom-shim@1.4.0':
     resolution: {integrity: sha512-ficsEARKnmmW5njugNYKipTm4SFnbik7CXtoencDZzmzo/dQ+2Q0bgkzJuoJP20Aj0F+izzJjOqsnkd6F/o1bw==}
@@ -2831,8 +2839,8 @@ packages:
   '@types/node@24.10.1':
     resolution: {integrity: sha512-GNWcUTRBgIRJD5zj+Tq0fKOJ5XZajIiBroOF0yvj2bSU1WvNdYS/dn9UxwsujGW4JX06dnHyjV2y9rRaybH0iQ==}
 
-  '@types/node@24.10.2':
-    resolution: {integrity: sha512-WOhQTZ4G8xZ1tjJTvKOpyEVSGgOTvJAfDK3FNFgELyaTpzhdgHVHeqW8V+UJvzF5BT+/B54T/1S2K6gd9c7bbA==}
+  '@types/node@24.10.4':
+    resolution: {integrity: sha512-vnDVpYPMzs4wunl27jHrfmwojOGKya0xyM3sH+UE5iv5uPS6vX7UIoh6m+vQc5LGBq52HBKPIn/zcSZVzeDEZg==}
 
   '@types/pbkdf2@3.1.2':
     resolution: {integrity: sha512-uRwJqmiXmh9++aSu1VNEn3iIxWOhd8AHXNSdlaLfdAAdSTY9jYVeGWnzejM3dvrkbqE3/hyQkQQ29IFATEGlew==}
@@ -5723,8 +5731,8 @@ packages:
   multiformats@9.9.0:
     resolution: {integrity: sha512-HoMUjhH9T8DDBNT+6xzkrd9ga/XiBI4xLr58LJACwK6G3HTOPeMz4nB4KJs33L2BelrIJa7P0VuNaVF3hMYfjg==}
 
-  nan@2.23.1:
-    resolution: {integrity: sha512-r7bBUGKzlqk8oPBDYxt6Z0aEdF1G1rwlMcLk8LCOMbOzf0mG+JUfUzG4fIMWwHWP0iyaLWEQZJmtB7nOHEm/qw==}
+  nan@2.24.0:
+    resolution: {integrity: sha512-Vpf9qnVW1RaDkoNKFUvfxqAbtI8ncb8OJlqZ9wwpXzWPEsvsB1nvdUi6oYrHIkQ1Y/tMDnr1h4nczS0VB9Xykg==}
 
   nano-spawn@2.0.0:
     resolution: {integrity: sha512-tacvGzUY5o2D8CBh2rrwxyNojUsZNU2zjNTzKQrkgGJQTbGAfArVWXSKMBokBeeg6C7OLRGUEyoFlYbfeWQIqw==}
@@ -5753,6 +5761,7 @@ packages:
   next@16.0.7:
     resolution: {integrity: sha512-3mBRJyPxT4LOxAJI6IsXeFtKfiJUbjCLgvXO02fV8Wy/lIhPvP94Fe7dGhUgHXcQy4sSuYwQNcOLhIfOm0rL0A==}
     engines: {node: '>=20.9.0'}
+    deprecated: This version has a security vulnerability. Please upgrade to a patched version. See https://nextjs.org/blog/security-update-2025-12-11 for more details.
     hasBin: true
     peerDependencies:
       '@opentelemetry/api': ^1.1.0
@@ -9602,14 +9611,14 @@ snapshots:
     dependencies:
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 24.10.2
+      '@types/node': 24.10.4
       jest-mock: 29.7.0
 
   '@jest/fake-timers@29.7.0':
     dependencies:
       '@jest/types': 29.6.3
       '@sinonjs/fake-timers': 10.3.0
-      '@types/node': 24.10.2
+      '@types/node': 24.10.4
       jest-message-util: 29.7.0
       jest-mock: 29.7.0
       jest-util: 29.7.0
@@ -9643,7 +9652,7 @@ snapshots:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 24.10.2
+      '@types/node': 24.10.4
       '@types/yargs': 17.0.35
       chalk: 4.1.2
 
@@ -9671,25 +9680,25 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@keplr-wallet/common@0.12.296(bitcoinjs-lib@7.0.0(typescript@5.9.3))(starknet@8.9.1)':
+  '@keplr-wallet/common@0.12.300(bitcoinjs-lib@7.0.0(typescript@5.9.3))(starknet@8.9.1)':
     dependencies:
-      '@keplr-wallet/crypto': 0.12.296(bitcoinjs-lib@7.0.0(typescript@5.9.3))(starknet@8.9.1)
-      '@keplr-wallet/types': 0.12.296(starknet@8.9.1)
+      '@keplr-wallet/crypto': 0.12.300(bitcoinjs-lib@7.0.0(typescript@5.9.3))(starknet@8.9.1)
+      '@keplr-wallet/types': 0.12.300(starknet@8.9.1)
       buffer: 6.0.3
       delay: 4.4.1
     transitivePeerDependencies:
       - bitcoinjs-lib
       - starknet
 
-  '@keplr-wallet/cosmos@0.12.296(bitcoinjs-lib@7.0.0(typescript@5.9.3))(starknet@8.9.1)':
+  '@keplr-wallet/cosmos@0.12.300(bitcoinjs-lib@7.0.0(typescript@5.9.3))(starknet@8.9.1)':
     dependencies:
       '@ethersproject/address': 5.8.0
-      '@keplr-wallet/common': 0.12.296(bitcoinjs-lib@7.0.0(typescript@5.9.3))(starknet@8.9.1)
-      '@keplr-wallet/crypto': 0.12.296(bitcoinjs-lib@7.0.0(typescript@5.9.3))(starknet@8.9.1)
-      '@keplr-wallet/proto-types': 0.12.296
-      '@keplr-wallet/simple-fetch': 0.12.296
-      '@keplr-wallet/types': 0.12.296(starknet@8.9.1)
-      '@keplr-wallet/unit': 0.12.296(starknet@8.9.1)
+      '@keplr-wallet/common': 0.12.300(bitcoinjs-lib@7.0.0(typescript@5.9.3))(starknet@8.9.1)
+      '@keplr-wallet/crypto': 0.12.300(bitcoinjs-lib@7.0.0(typescript@5.9.3))(starknet@8.9.1)
+      '@keplr-wallet/proto-types': 0.12.300
+      '@keplr-wallet/simple-fetch': 0.12.300
+      '@keplr-wallet/types': 0.12.300(starknet@8.9.1)
+      '@keplr-wallet/unit': 0.12.300(starknet@8.9.1)
       bech32: 1.1.4
       buffer: 6.0.3
       long: 4.0.0
@@ -9699,7 +9708,7 @@ snapshots:
       - bitcoinjs-lib
       - starknet
 
-  '@keplr-wallet/crypto@0.12.296(bitcoinjs-lib@7.0.0(typescript@5.9.3))(starknet@8.9.1)':
+  '@keplr-wallet/crypto@0.12.300(bitcoinjs-lib@7.0.0(typescript@5.9.3))(starknet@8.9.1)':
     dependencies:
       '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
@@ -9711,14 +9720,19 @@ snapshots:
       ecpair: 2.1.0
       starknet: 8.9.1
 
-  '@keplr-wallet/proto-types@0.12.296':
+  '@keplr-wallet/proto-types@0.12.300':
     dependencies:
       long: 4.0.0
       protobufjs: 6.11.4
 
-  '@keplr-wallet/simple-fetch@0.12.296': {}
+  '@keplr-wallet/simple-fetch@0.12.300': {}
 
   '@keplr-wallet/types@0.12.296(starknet@8.9.1)':
+    dependencies:
+      long: 4.0.0
+      starknet: 8.9.1
+
+  '@keplr-wallet/types@0.12.300(starknet@8.9.1)':
     dependencies:
       long: 4.0.0
       starknet: 8.9.1
@@ -9726,6 +9740,14 @@ snapshots:
   '@keplr-wallet/unit@0.12.296(starknet@8.9.1)':
     dependencies:
       '@keplr-wallet/types': 0.12.296(starknet@8.9.1)
+      big-integer: 1.6.52
+      utility-types: 3.11.0
+    transitivePeerDependencies:
+      - starknet
+
+  '@keplr-wallet/unit@0.12.300(starknet@8.9.1)':
+    dependencies:
+      '@keplr-wallet/types': 0.12.300(starknet@8.9.1)
       big-integer: 1.6.52
       utility-types: 3.11.0
     transitivePeerDependencies:
@@ -11511,7 +11533,7 @@ snapshots:
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 24.10.1
+      '@types/node': 24.10.4
 
   '@types/d3-array@3.2.2': {}
 
@@ -11547,7 +11569,7 @@ snapshots:
 
   '@types/graceful-fs@4.1.9':
     dependencies:
-      '@types/node': 24.10.2
+      '@types/node': 24.10.4
 
   '@types/istanbul-lib-coverage@2.0.6': {}
 
@@ -11589,13 +11611,13 @@ snapshots:
     dependencies:
       undici-types: 7.16.0
 
-  '@types/node@24.10.2':
+  '@types/node@24.10.4':
     dependencies:
       undici-types: 7.16.0
 
   '@types/pbkdf2@3.1.2':
     dependencies:
-      '@types/node': 24.10.1
+      '@types/node': 24.10.4
 
   '@types/react-dom@19.2.3(@types/react@19.2.2)':
     dependencies:
@@ -11619,7 +11641,7 @@ snapshots:
 
   '@types/secp256k1@4.0.7':
     dependencies:
-      '@types/node': 24.10.1
+      '@types/node': 24.10.4
 
   '@types/stack-utils@2.0.3': {}
 
@@ -11633,11 +11655,11 @@ snapshots:
 
   '@types/ws@7.4.7':
     dependencies:
-      '@types/node': 24.10.1
+      '@types/node': 24.10.4
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 24.10.1
+      '@types/node': 24.10.4
 
   '@types/yargs-parser@21.0.3': {}
 
@@ -13630,7 +13652,7 @@ snapshots:
 
   chrome-launcher@0.15.2:
     dependencies:
-      '@types/node': 24.10.2
+      '@types/node': 24.10.4
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -13639,7 +13661,7 @@ snapshots:
 
   chromium-edge-launcher@0.2.0:
     dependencies:
-      '@types/node': 24.10.2
+      '@types/node': 24.10.4
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -15319,7 +15341,7 @@ snapshots:
       '@jest/environment': 29.7.0
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 24.10.2
+      '@types/node': 24.10.4
       jest-mock: 29.7.0
       jest-util: 29.7.0
 
@@ -15329,7 +15351,7 @@ snapshots:
     dependencies:
       '@jest/types': 29.6.3
       '@types/graceful-fs': 4.1.9
-      '@types/node': 24.10.2
+      '@types/node': 24.10.4
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
@@ -15356,7 +15378,7 @@ snapshots:
   jest-mock@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 24.10.2
+      '@types/node': 24.10.4
       jest-util: 29.7.0
 
   jest-regex-util@29.6.3: {}
@@ -15364,7 +15386,7 @@ snapshots:
   jest-util@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 24.10.2
+      '@types/node': 24.10.4
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -15381,7 +15403,7 @@ snapshots:
 
   jest-worker@29.7.0:
     dependencies:
-      '@types/node': 24.10.2
+      '@types/node': 24.10.4
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
@@ -15940,7 +15962,7 @@ snapshots:
 
   multiformats@9.9.0: {}
 
-  nan@2.23.1: {}
+  nan@2.24.0: {}
 
   nano-spawn@2.0.0: {}
 
@@ -16151,8 +16173,8 @@ snapshots:
   ox@0.6.7(typescript@5.9.3)(zod@3.25.76):
     dependencies:
       '@adraffy/ens-normalize': 1.11.1
-      '@noble/curves': 1.8.1
-      '@noble/hashes': 1.7.1
+      '@noble/curves': 1.9.7
+      '@noble/hashes': 1.8.0
       '@scure/bip32': 1.6.2
       '@scure/bip39': 1.5.4
       abitype: 1.0.8(typescript@5.9.3)(zod@3.25.76)
@@ -16470,7 +16492,7 @@ snapshots:
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
       '@types/long': 4.0.2
-      '@types/node': 24.10.1
+      '@types/node': 24.10.4
       long: 4.0.0
 
   protobufjs@7.5.4:
@@ -17503,7 +17525,7 @@ snapshots:
       bn.js: 4.12.2
       create-hmac: 1.1.7
       elliptic: 6.6.1
-      nan: 2.23.1
+      nan: 2.24.0
 
   tinyglobby@0.2.15:
     dependencies:
