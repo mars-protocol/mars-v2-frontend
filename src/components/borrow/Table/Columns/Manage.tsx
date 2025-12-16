@@ -35,7 +35,9 @@ export default function Manage(props: Props) {
   }, [props.data])
 
   const isDeprecatedAsset = props.data.asset.isDeprecated
-  const isBorrowDisabled = isDeprecatedAsset || isUSDC
+  const isBorrowEnabled = props.data.asset.isBorrowEnabled
+  const canBorrowMore = isBorrowEnabled && !isUSDC
+  const isBorrowDisabled = isDeprecatedAsset || isUSDC || !isBorrowEnabled
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [
@@ -44,7 +46,7 @@ export default function Manage(props: Props) {
         text: 'Repay',
         onClick: repayHandler,
       },
-      ...(!isUSDC
+      ...(canBorrowMore
         ? [
             {
               icon: <Plus />,
@@ -54,7 +56,7 @@ export default function Manage(props: Props) {
           ]
         : []),
     ],
-    [borrowHandler, repayHandler, isUSDC],
+    [borrowHandler, repayHandler, canBorrowMore],
   )
 
   if (!address) return null
