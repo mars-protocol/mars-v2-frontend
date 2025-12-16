@@ -33,7 +33,7 @@ export default function LendButton(props: Props) {
   const assetDepositAmount = accountDeposits.find(byDenom(props.data.asset.denom))?.amount
   const address = useStore((s) => s.address)
   const hasWalletBalance = walletBalance && BN(walletBalance.amount).isGreaterThan(0)
-  
+
   // Check if user has this specific asset in deposits or lends
   const hasThisAssetInAccount = useMemo(() => {
     const inDeposits = currentAccount?.deposits?.find(byDenom(props.data.asset.denom))?.amount
@@ -92,7 +92,7 @@ export default function LendButton(props: Props) {
     ],
   )
 
-  if (!isAutoLendEnabled && address) return null
+  // if (!isAutoLendEnabled && address) return null
   if (!address) return null
   if (ITEMS.length === 0) return null
 
