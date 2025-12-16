@@ -6,14 +6,15 @@ import { ArrowUpLine, CoinsSwap, Enter } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
-import useAccountId from 'hooks/accounts/useAccountId'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useDepositModal from 'hooks/common/useDepositModal'
 import useLendAndReclaimModal from 'hooks/common/useLendAndReclaimModal'
 import useCurrentAccountDeposits from 'hooks/wallet/useCurrentAccountDeposits'
 import useCurrentWalletBalance from 'hooks/wallet/useCurrentWalletBalance'
+import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
+import { isDepositOnlyAsset } from 'utils/assets'
 import { BN } from 'utils/helpers'
 
 export const LEND_BUTTON_META = {
@@ -36,11 +37,11 @@ export default function LendButton(props: Props) {
   const walletBalance = useCurrentWalletBalance(props.data.asset.denom)
   const assetDepositAmount = accountDeposits.find(byDenom(props.data.asset.denom))?.amount
   const address = useStore((s) => s.address)
-  const accountId = useAccountId()
-  const hasNoDeposit = !!(!assetDepositAmount && accountId)
   const hasWalletBalance = walletBalance && BN(walletBalance.amount).isGreaterThan(0)
   const isDefaultAccount = currentAccount?.kind === 'default'
   const isLendEnabled = !!props.data.asset.isAutoLendEnabled
+  const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
+  const isDepositOnly = isDepositOnlyAsset(props.data.asset)
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [
@@ -84,19 +85,53 @@ export default function LendButton(props: Props) {
     )
   }
 
+  // For LSTs, show Deposit button only
+  if (isDepositOnly) {
+    return (
+      <div className='flex justify-end'>
+        <ConditionalWrapper
+          condition={!hasWalletBalance && !!address}
+          wrapper={(children) => (
+            <Tooltip
+              type='warning'
+              content={
+                <Text size='sm'>{`You don't have any ${props.data.asset.symbol} in your wallet.`}</Text>
+              }
+              contentClassName='max-w-[200px]'
+              className='ml-auto'
+            >
+              {children}
+            </Tooltip>
+          )}
+        >
+          <ActionButton
+            leftIcon={<Enter />}
+            disabled={!hasWalletBalance}
+            color='tertiary'
+            onClick={(e) => {
+              openDeposit(props.data)
+              e.stopPropagation()
+            }}
+            text='Deposit'
+            short
+          />
+        </ConditionalWrapper>
+      </div>
+    )
+  }
+
+  // If asset doesn't support lending, don't show anything
   if (!isLendEnabled) return null
 
-  // Otherwise show the original Lend button
   return (
     <div className='flex justify-end'>
       <ConditionalWrapper
-        condition={hasNoDeposit && !!address}
+        condition={!hasWalletBalance && !!address}
         wrapper={(children) => (
           <Tooltip
             type='warning'
             content={
-              <Text size='sm'>{`You don't have any ${props.data.asset.symbol}.
-             Please first deposit ${props.data.asset.symbol} into your Credit Account before lending.`}</Text>
+              <Text size='sm'>{`You don't have any ${props.data.asset.symbol} in your wallet.`}</Text>
             }
             contentClassName='max-w-[200px]'
             className='ml-auto'
@@ -105,17 +140,31 @@ export default function LendButton(props: Props) {
           </Tooltip>
         )}
       >
-        <ActionButton
-          leftIcon={<ArrowUpLine />}
-          disabled={hasNoDeposit}
-          color='tertiary'
-          onClick={(e) => {
-            openLend(props.data)
-            e.stopPropagation()
-          }}
-          text='Lend'
-          short
-        />
+        {isAutoLendEnabledForCurrentAccount ? (
+          <ActionButton
+            leftIcon={<ArrowUpLine />}
+            disabled={!hasWalletBalance}
+            color='tertiary'
+            onClick={(e) => {
+              openLend(props.data)
+              e.stopPropagation()
+            }}
+            text='Lend'
+            short
+          />
+        ) : (
+          <ActionButton
+            leftIcon={<Enter />}
+            disabled={!hasWalletBalance}
+            color='tertiary'
+            onClick={(e) => {
+              openDeposit(props.data)
+              e.stopPropagation()
+            }}
+            text='Deposit'
+            short
+          />
+        )}
       </ConditionalWrapper>
     </div>
   )
