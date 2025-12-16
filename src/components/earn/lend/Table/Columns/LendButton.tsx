@@ -1,7 +1,12 @@
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 
+import ActionButton from 'components/common/Button/ActionButton'
 import DropDownButton from 'components/common/Button/DropDownButton'
-import { AccountArrowDown, ArrowUpLine, CoinsSwap, Enter } from 'components/common/Icons'
+import { ArrowUpLine, CoinsSwap, Enter } from 'components/common/Icons'
+import Text from 'components/common/Text'
+import { Tooltip } from 'components/common/Tooltip'
+import ConditionalWrapper from 'hocs/ConditionalWrapper'
+import useAccountId from 'hooks/accounts/useAccountId'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useDepositModal from 'hooks/common/useDepositModal'
 import useLendAndReclaimModal from 'hooks/common/useLendAndReclaimModal'
@@ -29,38 +34,30 @@ export default function LendButton(props: Props) {
   const accountDeposits = useCurrentAccountDeposits()
   const currentAccount = useCurrentAccount()
   const walletBalance = useCurrentWalletBalance(props.data.asset.denom)
-  const isAutoLendEnabled = props.data.asset.isAutoLendEnabled
+  // const isAutoLendEnabled = props.data.asset.isAutoLendEnabled
   const assetDepositAmount = accountDeposits.find(byDenom(props.data.asset.denom))?.amount
   const address = useStore((s) => s.address)
+  const accountId = useAccountId()
+  const hasNoDeposit = !!(!assetDepositAmount && accountId)
   const hasWalletBalance = walletBalance && BN(walletBalance.amount).isGreaterThan(0)
-
-  // Check if user has this specific asset in deposits or lends
-  const hasThisAssetInAccount = useMemo(() => {
-    const inDeposits = currentAccount?.deposits?.find(byDenom(props.data.asset.denom))?.amount
-    const inLends = currentAccount?.lends?.find(byDenom(props.data.asset.denom))?.amount
-    return (inDeposits && !inDeposits.isZero()) || (inLends && !inLends.isZero())
-  }, [currentAccount?.deposits, currentAccount?.lends, props.data.asset.denom])
-
-  const handleWithdraw = useCallback(() => {
-    useStore.setState({ fundAndWithdrawModal: 'withdraw' })
-  }, [])
+  const isDefaultAccount = currentAccount?.kind === 'default'
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [
-      ...(hasWalletBalance
-        ? [
-            {
-              icon: <Enter />,
-              text: 'Deposit',
-              onClick: () => openDeposit(props.data),
-            },
-            {
-              icon: <CoinsSwap />,
-              text: 'Deposit & Lend',
-              onClick: () => openDepositAndLend(props.data),
-            },
-          ]
-        : []),
+      {
+        icon: <Enter />,
+        text: 'Deposit',
+        onClick: () => {
+          openDeposit(props.data)
+        },
+      },
+      {
+        icon: <CoinsSwap />,
+        text: 'Deposit & Lend',
+        onClick: () => {
+          openDepositAndLend(props.data)
+        },
+      },
       ...(assetDepositAmount
         ? [
             {
@@ -70,35 +67,52 @@ export default function LendButton(props: Props) {
             },
           ]
         : []),
-      ...(hasThisAssetInAccount
-        ? [
-            {
-              icon: <AccountArrowDown />,
-              text: 'Withdraw',
-              onClick: handleWithdraw,
-            },
-          ]
-        : []),
     ],
-    [
-      assetDepositAmount,
-      hasThisAssetInAccount,
-      hasWalletBalance,
-      handleWithdraw,
-      openDeposit,
-      openDepositAndLend,
-      openLend,
-      props.data,
-    ],
+    [assetDepositAmount, openLend, openDeposit, openDepositAndLend, props.data],
   )
 
   // if (!isAutoLendEnabled && address) return null
-  if (!address) return null
-  if (ITEMS.length === 0) return null
 
+  // If user has wallet balance and it's a default account, show Manage dropdown
+  if (hasWalletBalance && address && isDefaultAccount) {
+    return (
+      <div className='flex justify-end'>
+        <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
+      </div>
+    )
+  }
+
+  // Otherwise show the original Lend button
   return (
     <div className='flex justify-end'>
-      <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
+      <ConditionalWrapper
+        condition={hasNoDeposit && !!address}
+        wrapper={(children) => (
+          <Tooltip
+            type='warning'
+            content={
+              <Text size='sm'>{`You don't have any ${props.data.asset.symbol}.
+             Please first deposit ${props.data.asset.symbol} into your Credit Account before lending.`}</Text>
+            }
+            contentClassName='max-w-[200px]'
+            className='ml-auto'
+          >
+            {children}
+          </Tooltip>
+        )}
+      >
+        <ActionButton
+          leftIcon={<ArrowUpLine />}
+          disabled={hasNoDeposit}
+          color='tertiary'
+          onClick={(e) => {
+            openLend(props.data)
+            e.stopPropagation()
+          }}
+          text='Lend'
+          short
+        />
+      </ConditionalWrapper>
     </div>
   )
 }
