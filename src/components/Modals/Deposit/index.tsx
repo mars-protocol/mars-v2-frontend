@@ -33,7 +33,8 @@ function DepositModal({ currentAccount, config }: Props) {
   const { data, action } = config
   const { asset } = data
 
-  const isDepositAndLend = action === 'deposit-and-lend'
+  const isLendEnabled = !!asset.isAutoLendEnabled
+  const isDepositAndLend = action === 'deposit-and-lend' && isLendEnabled
   const actionText = isDepositAndLend ? 'Deposit and Lend' : 'Deposit'
 
   const walletBalance = useCurrentWalletBalance(asset.denom)

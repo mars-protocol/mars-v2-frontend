@@ -40,6 +40,7 @@ export default function Manage(props: Props) {
   const address = useStore((s) => s.address)
   const account = useCurrentAccount()
   const walletBalance = useCurrentWalletBalance(props.data.asset.denom)
+  const isLendEnabled = !!props.data.asset.isAutoLendEnabled
 
   const hasAssetInDeposits = useMemo(
     () => !!account?.deposits?.find((deposit) => deposit.denom === props.data.asset.denom)?.amount,
@@ -83,13 +84,17 @@ export default function Manage(props: Props) {
         icon: <ArrowUpLine />,
         text: 'Lend more',
         onClick: () => openLend(props.data),
-        disabled: !hasAssetInDeposits,
-        ...(!hasAssetInDeposits && {
-          disabledTooltip: `You don't have any ${props.data.asset.symbol}.
-             Please first deposit ${props.data.asset.symbol} into your Credit Account before lending.`,
+        disabled: !isLendEnabled || !hasAssetInDeposits,
+        ...(!isLendEnabled && {
+          disabledTooltip: `${props.data.asset.symbol} can only be deposited, not lent.`,
         }),
+        ...(isLendEnabled &&
+          !hasAssetInDeposits && {
+            disabledTooltip: `You don't have any ${props.data.asset.symbol}.
+             Please first deposit ${props.data.asset.symbol} into your Credit Account before lending.`,
+          }),
       },
-      ...(hasWalletBalance
+      ...(hasWalletBalance && isLendEnabled
         ? [
             {
               icon: <CoinsSwap />,
@@ -117,6 +122,7 @@ export default function Manage(props: Props) {
       openDepositAndLend,
       openLend,
       props.data,
+      isLendEnabled,
     ],
   )
 

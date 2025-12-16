@@ -20,18 +20,23 @@ export default function Manage(props: Props) {
     [props.data.asset?.symbol],
   )
 
+  const isBorrowEnabled = props.data.asset.isBorrowEnabled
+  const canBorrowMore = isBorrowEnabled && !isUSDC
+
   const ITEMS: DropDownItem[] = useMemo(
     () => [
-      {
-        icon: <Plus />,
-        text: 'Borrow more',
-        onClick: () =>
-          useStore.setState({
-            v1BorrowAndRepayModal: { type: 'borrow', data: props.data },
-          }),
-        disabled: isUSDC,
-        disabledTooltip: isUSDC ? 'USDC borrowing is temporarily disabled.' : undefined,
-      },
+      ...(canBorrowMore
+        ? [
+            {
+              icon: <Plus />,
+              text: 'Borrow more',
+              onClick: () =>
+                useStore.setState({
+                  v1BorrowAndRepayModal: { type: 'borrow', data: props.data },
+                }),
+            },
+          ]
+        : []),
       {
         icon: <HandCoins />,
         text: 'Repay',
@@ -43,7 +48,7 @@ export default function Manage(props: Props) {
         disabledTooltip: `You don't have any ${props.data.asset.symbol} in your Wallet.`,
       },
     ],
-    [hasBalance, props.data, isUSDC],
+    [hasBalance, props.data, canBorrowMore],
   )
 
   return (
