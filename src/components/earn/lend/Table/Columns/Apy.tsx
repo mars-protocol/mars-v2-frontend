@@ -121,20 +121,20 @@ export default function Apr(props: Props) {
 
   if (props.isLoading) return <Loading />
 
-  if (!props.borrowEnabled && !hasCampaignApy) {
-    return (
-      <Text tag='div' className='flex items-center justify-end text-xs'>
-        <Tooltip
-          content='This asset cannot be borrowed, and thus does not currently generate yield when lending.'
-          type='info'
-          className='mr-1'
-        >
-          <InfoCircle className='w-4 h-4 text-white/40 hover:text-inherit' />
-        </Tooltip>
-        N/A
-      </Text>
-    )
-  }
+  // if (!props.borrowEnabled && !hasCampaignApy) {
+  //   return (
+  //     <Text tag='div' className='flex items-center justify-end text-xs'>
+  //       <Tooltip
+  //         content='This asset cannot be borrowed, and thus does not currently generate yield when lending.'
+  //         type='info'
+  //         className='mr-1'
+  //       >
+  //         <InfoCircle className='w-4 h-4 text-white/40 hover:text-inherit' />
+  //       </Tooltip>
+  //       N/A
+  //     </Text>
+  //   )
+  // }
 
   // If not borrowEnabled but has campaign APY, show it with tooltip explaining it's staking APY
   if (!props.borrowEnabled && hasCampaignApy) {

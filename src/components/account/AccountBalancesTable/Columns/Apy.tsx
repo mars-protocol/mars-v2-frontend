@@ -21,7 +21,6 @@ export default function Apy(props: Props) {
   if (apy === undefined) return <Loading />
   if (apy === null) return <Text size='xs'>N/A</Text>
 
-  const isEnabled = markets.find((market) => market.asset.denom === denom)?.borrowEnabled ?? false
   const hasLstApy = type !== 'borrow' && lstApy > 0
   const totalApy = type === 'borrow' ? apy : apy + lstApy
 
@@ -40,7 +39,7 @@ export default function Apy(props: Props) {
         <AssetRate
           className='justify-end my-auto text-xs'
           rate={totalApy}
-          isEnabled={type !== 'lend' || isEnabled}
+          isEnabled={true}
           type='apy'
           orientation='ltr'
           hasCampaignApy={hasCampaignApy}
