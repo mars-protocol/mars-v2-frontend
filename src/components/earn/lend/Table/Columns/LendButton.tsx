@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import ActionButton from 'components/common/Button/ActionButton'
 import DropDownButton from 'components/common/Button/DropDownButton'
-import { ArrowUpLine, CoinsSwap, Enter } from 'components/common/Icons'
+import { ArrowUpLine, CoinsSwap } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
@@ -46,7 +46,7 @@ export default function LendButton(props: Props) {
   const ITEMS: DropDownItem[] = useMemo(
     () => [
       {
-        icon: <Enter />,
+        icon: <ArrowUpLine />,
         text: 'Deposit',
         onClick: () => {
           openDeposit(props.data)
@@ -105,7 +105,7 @@ export default function LendButton(props: Props) {
           )}
         >
           <ActionButton
-            leftIcon={<Enter />}
+            leftIcon={<ArrowUpLine />}
             disabled={!hasWalletBalance}
             color='tertiary'
             onClick={(e) => {
@@ -154,7 +154,7 @@ export default function LendButton(props: Props) {
           />
         ) : (
           <ActionButton
-            leftIcon={<Enter />}
+            leftIcon={<ArrowUpLine />}
             disabled={!hasWalletBalance}
             color='tertiary'
             onClick={(e) => {
