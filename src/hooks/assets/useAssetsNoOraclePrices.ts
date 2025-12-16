@@ -10,7 +10,7 @@ import useSWRImmutable from 'swr/immutable'
 import { BNCoin } from 'types/classes/BNCoin'
 import { AssetParamsBaseForAddr, PerpParams } from 'types/generated/mars-params/MarsParams.types'
 import { byDenom } from 'utils/array'
-import { resolveAssetCampaigns } from 'utils/assets'
+import { isDepositOnlyAsset, resolveAssetCampaigns } from 'utils/assets'
 import { BN } from 'utils/helpers'
 import { calculatePoolWeight } from 'utils/pools'
 
@@ -119,6 +119,8 @@ async function fetchSortAndMapAllAssets(
       : deprecatedAssets.includes(asset.denom)
     const isAnyAssetAndNoPool = chainConfig.anyAsset && !currentAssetPoolInfo
     const isDepositEnabled = isDeprecated ? false : currentAssetParams?.red_bank.deposit_enabled
+    const isLendEnabled =
+      !isDeprecated && !!currentAssetParams?.red_bank.deposit_enabled && !isDepositOnlyAsset(asset)
     const isTradeEnabled = isDeprecated
       ? true
       : asset.denom !== 'usd' &&
@@ -130,7 +132,7 @@ async function fetchSortAndMapAllAssets(
       isPoolToken: !!currentAssetPoolInfo,
       isWhitelisted:
         currentAssetParams && (currentAssetParams.credit_manager.whitelisted || isDeprecated),
-      isAutoLendEnabled: currentAssetParams?.red_bank.borrow_enabled ?? false,
+      isAutoLendEnabled: isLendEnabled,
       isBorrowEnabled: currentAssetParams?.red_bank.borrow_enabled ?? false,
       isDepositEnabled: isAnyAssetAndNoPool ? true : isDepositEnabled,
       isDisplayCurrency: currentAssetParams?.red_bank.borrow_enabled || asset.denom === 'usd',

@@ -6,6 +6,15 @@ import { byDenom } from 'utils/array'
 import { demagnify, truncate } from 'utils/formatters'
 import { BN } from 'utils/helpers'
 
+const DEPOSIT_ONLY_ASSET_SYMBOLS = new Set(['dATOM', 'dTIA', 'dNTRN', 'stTIA'])
+
+export function isDepositOnlyAsset(assetOrSymbol?: Asset | { symbol?: string } | string) {
+  const symbol =
+    typeof assetOrSymbol === 'string' ? assetOrSymbol : (assetOrSymbol?.symbol ?? undefined)
+  if (!symbol) return false
+  return DEPOSIT_ONLY_ASSET_SYMBOLS.has(symbol)
+}
+
 export function findCoinByDenom(denom: string, coins: BigNumberCoin[]) {
   return coins.find((coin) => coin.denom === denom)
 }

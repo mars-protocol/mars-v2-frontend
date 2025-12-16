@@ -851,6 +851,16 @@ export default function createBroadcastSlice(
       return response.then((response) => !!response.result)
     },
     lend: async (options: { accountId: string; coin: BNCoin; isMax?: boolean }) => {
+      const asset = get().assets.find(byDenom(options.coin.denom))
+      if (!asset?.isAutoLendEnabled) {
+        const response: Promise<BroadcastResult> = Promise.resolve({
+          result: undefined,
+          error: `${asset?.symbol ?? options.coin.denom} can only be deposited, not lent.`,
+        })
+        get().handleTransaction({ response })
+        return response.then((r) => !!r.result)
+      }
+
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,
@@ -893,6 +903,12 @@ export default function createBroadcastSlice(
       return response.then((response) => !!response.result)
     },
     depositAndLend: async (options: { accountId: string; coin: BNCoin }) => {
+      const asset = get().assets.find(byDenom(options.coin.denom))
+      if (!asset?.isAutoLendEnabled) {
+        // Asset is deposit-only (or unknown) - fall back to deposit without lending.
+        return get().depositSingle(options)
+      }
+
       const msg: CreditManagerExecuteMsg = {
         update_credit_account: {
           account_id: options.accountId,

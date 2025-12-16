@@ -34,13 +34,13 @@ export default function LendButton(props: Props) {
   const accountDeposits = useCurrentAccountDeposits()
   const currentAccount = useCurrentAccount()
   const walletBalance = useCurrentWalletBalance(props.data.asset.denom)
-  // const isAutoLendEnabled = props.data.asset.isAutoLendEnabled
   const assetDepositAmount = accountDeposits.find(byDenom(props.data.asset.denom))?.amount
   const address = useStore((s) => s.address)
   const accountId = useAccountId()
   const hasNoDeposit = !!(!assetDepositAmount && accountId)
   const hasWalletBalance = walletBalance && BN(walletBalance.amount).isGreaterThan(0)
   const isDefaultAccount = currentAccount?.kind === 'default'
+  const isLendEnabled = !!props.data.asset.isAutoLendEnabled
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [
@@ -51,14 +51,18 @@ export default function LendButton(props: Props) {
           openDeposit(props.data)
         },
       },
-      {
-        icon: <CoinsSwap />,
-        text: 'Deposit & Lend',
-        onClick: () => {
-          openDepositAndLend(props.data)
-        },
-      },
-      ...(assetDepositAmount
+      ...(isLendEnabled
+        ? [
+            {
+              icon: <CoinsSwap />,
+              text: 'Deposit & Lend',
+              onClick: () => {
+                openDepositAndLend(props.data)
+              },
+            },
+          ]
+        : []),
+      ...(isLendEnabled && assetDepositAmount
         ? [
             {
               icon: <ArrowUpLine />,
@@ -68,10 +72,8 @@ export default function LendButton(props: Props) {
           ]
         : []),
     ],
-    [assetDepositAmount, openLend, openDeposit, openDepositAndLend, props.data],
+    [assetDepositAmount, isLendEnabled, openLend, openDeposit, openDepositAndLend, props.data],
   )
-
-  // if (!isAutoLendEnabled && address) return null
 
   // If user has wallet balance and it's a default account, show Manage dropdown
   if (hasWalletBalance && address && isDefaultAccount) {
@@ -81,6 +83,8 @@ export default function LendButton(props: Props) {
       </div>
     )
   }
+
+  if (!isLendEnabled) return null
 
   // Otherwise show the original Lend button
   return (
