@@ -16,7 +16,12 @@ export default function useV1BorrowingsTableData() {
     const debtAssets: BorrowMarketTableData[] = []
 
     markets
-      .filter((market) => market.borrowEnabled)
+      .filter((market) => {
+        // Include markets where borrows are enabled OR where user has active debt
+        const hasActiveDebt =
+          userDebts.find((debt) => debt.denom === market.asset.denom)?.amount?.gt(BN_ZERO) ?? false
+        return market.borrowEnabled || hasActiveDebt
+      })
       .forEach((market) => {
         const amount =
           userDebts.find((debt) => debt.denom === market.asset.denom)?.amount ?? BN_ZERO
