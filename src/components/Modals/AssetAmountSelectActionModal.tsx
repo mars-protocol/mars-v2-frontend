@@ -4,6 +4,7 @@ import { ReactElement, useCallback, useMemo, useState } from 'react'
 import Modal from 'components/Modals/Modal'
 import AccountSummaryInModal from 'components/account/AccountSummary/AccountSummaryInModal'
 import Button from 'components/common/Button'
+import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
 import Divider from 'components/common/Divider'
 import { ArrowRight } from 'components/common/Icons'
@@ -29,6 +30,7 @@ interface Props {
   onChange: (value: BigNumber) => void
   onAction: (value: BigNumber, isMax: boolean) => void
   deductFee?: boolean
+  disabledMessage?: string
 }
 
 export default function AssetAmountSelectActionModal(props: Props) {
@@ -44,6 +46,7 @@ export default function AssetAmountSelectActionModal(props: Props) {
     onChange,
     onAction,
     deductFee,
+    disabledMessage,
   } = props
   const [amount, setAmount] = useState(BN_ZERO)
   const updatedAccount = useStore((s) => s.updatedAccount)
@@ -124,9 +127,14 @@ export default function AssetAmountSelectActionModal(props: Props) {
             deductFee={deductFee}
           />
           <Divider />
+          {disabledMessage && (
+            <Callout type={CalloutType.WARNING} className='mb-4'>
+              {disabledMessage}
+            </Callout>
+          )}
           <Button
             onClick={handleActionClick}
-            disabled={!amount.toNumber()}
+            disabled={!amount.toNumber() || !!disabledMessage}
             className='w-full'
             text={actionButtonText}
             rightIcon={<ArrowRight />}

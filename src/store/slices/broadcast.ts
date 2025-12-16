@@ -772,7 +772,10 @@ export default function createBroadcastSlice(
           })
         }
 
-        if (options.lend && options.lend.amount.isGreaterThan(0)) {
+        // Skip reclaiming from lends if withdrawals are disabled for this denom
+        const isWithdrawalDisabled =
+          get().chainConfig.disabledWithdrawals?.includes(options.lend?.denom ?? '') ?? false
+        if (options.lend && options.lend.amount.isGreaterThan(0) && !isWithdrawalDisabled) {
           actions.push({ reclaim: options.lend.toActionCoin() })
         }
 
@@ -818,7 +821,10 @@ export default function createBroadcastSlice(
         },
       ]
 
-      if (options.lend && options.lend.amount.isGreaterThan(0))
+      // Skip reclaiming from lends if withdrawals are disabled for this denom
+      const isWithdrawalDisabledForRepay =
+        get().chainConfig.disabledWithdrawals?.includes(options.lend?.denom ?? '') ?? false
+      if (options.lend && options.lend.amount.isGreaterThan(0) && !isWithdrawalDisabledForRepay)
         actions.unshift({ reclaim: options.lend.toActionCoin() })
 
       const msg: CreditManagerExecuteMsg = options.fromWallet
