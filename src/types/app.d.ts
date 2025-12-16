@@ -332,6 +332,7 @@ declare global {
     lp?: Asset[]
     stables: string[]
     deprecated?: string[]
+    disabledWithdrawals?: string[]
     campaignAssets?: AssetCampaignInfo[]
     defaultTradingPair: TradingPair
     bech32Config: import('@keplr-wallet/types').Bech32Config

@@ -168,13 +168,13 @@ export default function SwapForm(props: Props) {
   ])
 
   const updateAccount = useCallback(
-    (removeCoin: BNCoin, addCoin: BNCoin, debtCoin: BNCoin, isBorrowEnabled: boolean) => {
+    (removeCoin: BNCoin, addCoin: BNCoin, debtCoin: BNCoin, isLendEnabled: boolean) => {
       if (addCoin.amount.isZero()) {
         simulateTrade(
           BNCoin.fromDenomAndBigNumber(inputAsset.denom, BN_ZERO),
           BNCoin.fromDenomAndBigNumber(outputAsset.denom, BN_ZERO),
           BNCoin.fromDenomAndBigNumber(inputAsset.denom, BN_ZERO),
-          isAutoLendEnabled && isBorrowEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
+          isAutoLendEnabled && isLendEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
           isAutoRepayChecked,
         )
       } else {
@@ -182,7 +182,7 @@ export default function SwapForm(props: Props) {
           removeCoin,
           addCoin,
           debtCoin,
-          isAutoLendEnabled && isBorrowEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
+          isAutoLendEnabled && isLendEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
           isAutoRepayChecked,
         )
       }
@@ -305,7 +305,9 @@ export default function SwapForm(props: Props) {
       BNCoin.fromDenomAndBigNumber(inputAsset.denom, BN_ZERO),
       BNCoin.fromDenomAndBigNumber(outputAsset.denom, BN_ZERO),
       BNCoin.fromDenomAndBigNumber(inputAsset.denom, BN_ZERO),
-      isAutoLendEnabled && outputAsset.isBorrowEnabled && !isAutoRepayChecked ? 'lend' : 'deposit',
+      isAutoLendEnabled && outputAsset.isAutoLendEnabled && !isAutoRepayChecked
+        ? 'lend'
+        : 'deposit',
       isAutoRepayChecked,
     )
   }, [
@@ -314,7 +316,7 @@ export default function SwapForm(props: Props) {
     useMargin,
     useAutoRepay,
     outputAsset.denom,
-    outputAsset.isBorrowEnabled,
+    outputAsset.isAutoLendEnabled,
     inputAsset.denom,
     isAutoLendEnabled,
     isAutoRepayChecked,
@@ -342,13 +344,13 @@ export default function SwapForm(props: Props) {
     const addCoin = BNCoin.fromDenomAndBigNumber(outputAsset.denom, outputAssetAmount)
     const debtCoin = BNCoin.fromDenomAndBigNumber(inputAsset.denom, addDebtAmount)
 
-    updateAccount(removeCoin, addCoin, debtCoin, outputAsset.isBorrowEnabled ?? true)
+    updateAccount(removeCoin, addCoin, debtCoin, outputAsset.isAutoLendEnabled ?? false)
   }, [
     inputAssetAmount,
     outputAssetAmount,
     inputMarginThreshold,
     outputAsset.denom,
-    outputAsset.isBorrowEnabled,
+    outputAsset.isAutoLendEnabled,
     inputAsset.denom,
     updateAccount,
     modal,

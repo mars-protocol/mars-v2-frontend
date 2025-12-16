@@ -1,6 +1,7 @@
 import { BN_ZERO } from 'constants/math'
 import { PRICE_ORACLE_DECIMALS } from 'constants/query'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import { useCallback } from 'react'
 import useStore from 'store'
@@ -27,6 +28,7 @@ interface SubmitLimitOrderParams {
 
 export function useSubmitLimitOrder() {
   const currentAccount = useCurrentAccount()
+  const chainConfig = useChainConfig()
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
 
   const createTriggerOrder = useStore((s) => s.createTriggerOrder)
@@ -54,8 +56,12 @@ export function useSubmitLimitOrder() {
         ? BN_ZERO
         : totalKeeperFeeAmount.minus(keeperFeeTokenDepositsAmount)
 
-      const keeperFeeTokenLendsAmount =
-        currentAccount.lends.find(byDenom(orderKeeperFee.denom))?.amount ?? BN_ZERO
+      // Skip reclaiming from lends if withdrawals are disabled for this denom
+      const isWithdrawalDisabled =
+        chainConfig.disabledWithdrawals?.includes(orderKeeperFee.denom) ?? false
+      const keeperFeeTokenLendsAmount = isWithdrawalDisabled
+        ? BN_ZERO
+        : (currentAccount.lends.find(byDenom(orderKeeperFee.denom))?.amount ?? BN_ZERO)
 
       const keeperFeeFromLendsAmount = keeperFeeTokenLendsAmount.isGreaterThan(keeperFeeAmountLeft)
         ? keeperFeeAmountLeft
@@ -126,6 +132,7 @@ export function useSubmitLimitOrder() {
     },
     [
       currentAccount,
+      chainConfig,
       isAutoLendEnabledForCurrentAccount,
       createTriggerOrder,
       createMultipleTriggerOrders,

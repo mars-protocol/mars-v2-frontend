@@ -501,14 +501,27 @@ function BorrowModal(props: Props) {
           asset.denom,
           newAmount.isGreaterThan(max) ? max : newAmount,
         )
-        const target = borrowToWallet ? 'wallet' : isAutoLendEnabled ? 'lend' : 'deposit'
+        const target = borrowToWallet
+          ? 'wallet'
+          : isAutoLendEnabled && asset.isAutoLendEnabled
+            ? 'lend'
+            : 'deposit'
         simulateBorrow(target, borrowCoin)
         setTimeout(() => {
           setLoadingState({ isLoading: false, action: 'none' })
         }, 500)
       }
     },
-    [amount, asset.denom, borrowToWallet, isAutoLendEnabled, isRepay, max, simulateBorrow],
+    [
+      amount,
+      asset.denom,
+      asset.isAutoLendEnabled,
+      borrowToWallet,
+      isAutoLendEnabled,
+      isRepay,
+      max,
+      simulateBorrow,
+    ],
   )
 
   const maxBorrow = useMemo(() => {
