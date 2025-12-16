@@ -512,7 +512,16 @@ function BorrowModal(props: Props) {
         }, 500)
       }
     },
-    [amount, asset.denom, borrowToWallet, isAutoLendEnabled, isRepay, max, simulateBorrow],
+    [
+      amount,
+      asset.denom,
+      asset.isAutoLendEnabled,
+      borrowToWallet,
+      isAutoLendEnabled,
+      isRepay,
+      max,
+      simulateBorrow,
+    ],
   )
 
   const maxBorrow = useMemo(() => {
