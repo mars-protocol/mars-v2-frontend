@@ -108,6 +108,20 @@ export default function createBroadcastSlice(
     })
   }
 
+  // USDC lending is being disabled. Auto-lend should never append a `lend` action for USDC.
+  // We intentionally key off chainConfig.stables (stable denoms) to avoid matching LP tokens
+  // whose symbols may contain "USDC" but are not the USDC stable itself.
+  const isUsdcDenom = (denom: string): boolean => {
+    const stables = get().chainConfig.stables
+    if (!stables.includes(denom)) return false
+
+    const symbol = get().assets.find(byDenom(denom))?.symbol
+    if (symbol) return symbol.toUpperCase().includes('USDC')
+
+    // Fallback: if assets aren't loaded yet, assume the primary stable is USDC.
+    return denom === stables[0]
+  }
+
   return {
     toast: null,
     addToStakingStrategy: async (options: {
@@ -275,7 +289,8 @@ export default function createBroadcastSlice(
       if (
         !options.borrowToWallet &&
         checkAutoLendEnabled(options.accountId, get().chainConfig.id) &&
-        get().assets.find(byDenom(options.coin.denom))?.isAutoLendEnabled
+        get().assets.find(byDenom(options.coin.denom))?.isAutoLendEnabled &&
+        !isUsdcDenom(options.coin.denom)
       ) {
         msg.update_credit_account.actions.push({
           lend: { denom: options.coin.denom, amount: 'account_balance' },
@@ -415,7 +430,11 @@ export default function createBroadcastSlice(
         for (const reward of stakedAstroLpRewards) {
           for (const coin of reward.rewards) {
             const asset = assets.find(byDenom(coin.denom))
-            if (asset?.isAutoLendEnabled && !lendCoins.find(byDenom(coin.denom))) {
+            if (
+              asset?.isAutoLendEnabled &&
+              !isUsdcDenom(coin.denom) &&
+              !lendCoins.find(byDenom(coin.denom))
+            ) {
               lendCoins.push(coin)
               actions.push({
                 lend: {
@@ -431,7 +450,11 @@ export default function createBroadcastSlice(
       if (!isV1 && options.lend && redBankRewards.length) {
         for (const coin of redBankRewards) {
           const asset = assets.find(byDenom(coin.denom))
-          if (asset?.isAutoLendEnabled && !lendCoins.find(byDenom(coin.denom))) {
+          if (
+            asset?.isAutoLendEnabled &&
+            !isUsdcDenom(coin.denom) &&
+            !lendCoins.find(byDenom(coin.denom))
+          ) {
             actions.push({
               lend: {
                 denom: coin.denom,
@@ -489,7 +512,11 @@ export default function createBroadcastSlice(
       if (options.lend) {
         msg.update_credit_account.actions.push(
           ...options.coins
-            .filter((coin) => get().assets.find(byDenom(coin.denom))?.isAutoLendEnabled)
+            .filter(
+              (coin) =>
+                get().assets.find(byDenom(coin.denom))?.isAutoLendEnabled &&
+                !isUsdcDenom(coin.denom),
+            )
             .map((coin) => ({ lend: coin.toActionCoin() })),
         )
       }
@@ -561,7 +588,10 @@ export default function createBroadcastSlice(
           actions.push({
             withdraw_from_perp_vault: {},
           })
-          if (checkAutoLendEnabled(options.accountId, get().chainConfig.id)) {
+          if (
+            checkAutoLendEnabled(options.accountId, get().chainConfig.id) &&
+            !isUsdcDenom(vault.denoms.lp)
+          ) {
             actions.push({
               lend: { denom: vault.denoms.lp, amount: 'account_balance' },
             })
@@ -579,7 +609,7 @@ export default function createBroadcastSlice(
         for (const vault of options.vaults) {
           for (const symbol of Object.values(vault.symbols)) {
             const asset = get().assets.find(bySymbol(symbol))
-            if (asset?.isAutoLendEnabled) {
+            if (asset?.isAutoLendEnabled && !isUsdcDenom(asset.denom)) {
               msg.update_credit_account.actions.push({
                 lend: { denom: asset.denom, amount: 'account_balance' },
               })
@@ -677,7 +707,7 @@ export default function createBroadcastSlice(
         for (const astroLp of options.astroLps) {
           for (const symbol of Object.values(astroLp.symbols)) {
             const asset = get().assets.find(bySymbol(symbol))
-            if (asset?.isAutoLendEnabled) {
+            if (asset?.isAutoLendEnabled && !isUsdcDenom(asset.denom)) {
               msg.update_credit_account.actions.push({
                 lend: { denom: asset.denom, amount: 'account_balance' },
               })
@@ -904,8 +934,8 @@ export default function createBroadcastSlice(
     },
     depositAndLend: async (options: { accountId: string; coin: BNCoin }) => {
       const asset = get().assets.find(byDenom(options.coin.denom))
-      if (!asset?.isAutoLendEnabled) {
-        // Asset is deposit-only (or unknown) - fall back to deposit without lending.
+      if (isUsdcDenom(options.coin.denom) || !asset?.isAutoLendEnabled) {
+        // USDC lending is disabled (or asset is deposit-only/unknown) - fall back to deposit without lending.
         return get().depositSingle(options)
       }
 
@@ -1003,6 +1033,7 @@ export default function createBroadcastSlice(
       if (
         checkAutoLendEnabled(options.accountId, get().chainConfig.id) &&
         get().assets.find(byDenom(options.denomOut))?.isAutoLendEnabled &&
+        !isUsdcDenom(options.denomOut) &&
         !options.repay
       ) {
         msg.update_credit_account.actions.push({
@@ -1086,7 +1117,7 @@ export default function createBroadcastSlice(
           },
         },
       ]
-      if (options.autolend)
+      if (options.autolend && !isUsdcDenom(options.keeperFee.denom))
         triggerActions.push({
           lend: {
             denom: options.keeperFee.denom,
@@ -1196,7 +1227,7 @@ export default function createBroadcastSlice(
             },
           },
         ]
-        if (order.autolend)
+        if (order.autolend && !isUsdcDenom(order.keeperFee.denom))
           triggerActions.push({
             lend: {
               denom: order.keeperFee.denom,
@@ -1272,7 +1303,7 @@ export default function createBroadcastSlice(
           },
         },
       ]
-      if (options.autolend)
+      if (options.autolend && !isUsdcDenom(options.baseDenom))
         actions.push({
           lend: {
             denom: options.baseDenom,
@@ -1401,7 +1432,7 @@ export default function createBroadcastSlice(
           })
         }
 
-        if (options.autolend) {
+        if (options.autolend && !isUsdcDenom(options.baseDenom)) {
           actions.push({
             lend: {
               denom: options.baseDenom,
@@ -1555,7 +1586,7 @@ export default function createBroadcastSlice(
         }
       }
 
-      if (options.autolend) {
+      if (options.autolend && !isUsdcDenom(options.baseDenom)) {
         actions.push({
           lend: {
             denom: options.baseDenom,
@@ -1594,7 +1625,7 @@ export default function createBroadcastSlice(
           },
         },
       ]
-      if (options.autolend)
+      if (options.autolend && !isUsdcDenom(options.baseDenom))
         actions.push({
           lend: {
             denom: options.baseDenom,
@@ -1828,7 +1859,7 @@ export default function createBroadcastSlice(
             {
               withdraw_from_perp_vault: {},
             },
-            ...(options.isAutoLend
+            ...(options.isAutoLend && !isUsdcDenom(options.vaultDenom)
               ? [
                   {
                     lend: {
