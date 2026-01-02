@@ -286,11 +286,12 @@ export default function createBroadcastSlice(
         },
       }
 
+      const isOsmosis = get().chainConfig.isOsmosis
       if (
         !options.borrowToWallet &&
         checkAutoLendEnabled(options.accountId, get().chainConfig.id) &&
         get().assets.find(byDenom(options.coin.denom))?.isAutoLendEnabled &&
-        !isUsdcDenom(options.coin.denom)
+        (isOsmosis || !isUsdcDenom(options.coin.denom))
       ) {
         msg.update_credit_account.actions.push({
           lend: { denom: options.coin.denom, amount: 'account_balance' },
@@ -426,13 +427,14 @@ export default function createBroadcastSlice(
         }
       }
 
+      const isOsmosis = get().chainConfig.isOsmosis
       if (!isV1 && options.lend && stakedAstroLpRewards.length) {
         for (const reward of stakedAstroLpRewards) {
           for (const coin of reward.rewards) {
             const asset = assets.find(byDenom(coin.denom))
             if (
               asset?.isAutoLendEnabled &&
-              !isUsdcDenom(coin.denom) &&
+              (isOsmosis || !isUsdcDenom(coin.denom)) &&
               !lendCoins.find(byDenom(coin.denom))
             ) {
               lendCoins.push(coin)
@@ -452,7 +454,7 @@ export default function createBroadcastSlice(
           const asset = assets.find(byDenom(coin.denom))
           if (
             asset?.isAutoLendEnabled &&
-            !isUsdcDenom(coin.denom) &&
+            (isOsmosis || !isUsdcDenom(coin.denom)) &&
             !lendCoins.find(byDenom(coin.denom))
           ) {
             actions.push({
@@ -510,12 +512,13 @@ export default function createBroadcastSlice(
         },
       }
       if (options.lend) {
+        const isOsmosis = get().chainConfig.isOsmosis
         msg.update_credit_account.actions.push(
           ...options.coins
             .filter(
               (coin) =>
                 get().assets.find(byDenom(coin.denom))?.isAutoLendEnabled &&
-                !isUsdcDenom(coin.denom),
+                (isOsmosis || !isUsdcDenom(coin.denom)),
             )
             .map((coin) => ({ lend: coin.toActionCoin() })),
         )
@@ -588,9 +591,10 @@ export default function createBroadcastSlice(
           actions.push({
             withdraw_from_perp_vault: {},
           })
+          const isOsmosis = get().chainConfig.isOsmosis
           if (
             checkAutoLendEnabled(options.accountId, get().chainConfig.id) &&
-            !isUsdcDenom(vault.denoms.lp)
+            (isOsmosis || !isUsdcDenom(vault.denoms.lp))
           ) {
             actions.push({
               lend: { denom: vault.denoms.lp, amount: 'account_balance' },
@@ -606,10 +610,11 @@ export default function createBroadcastSlice(
       }
 
       if (checkAutoLendEnabled(options.accountId, get().chainConfig.id)) {
+        const isOsmosis = get().chainConfig.isOsmosis
         for (const vault of options.vaults) {
           for (const symbol of Object.values(vault.symbols)) {
             const asset = get().assets.find(bySymbol(symbol))
-            if (asset?.isAutoLendEnabled && !isUsdcDenom(asset.denom)) {
+            if (asset?.isAutoLendEnabled && (isOsmosis || !isUsdcDenom(asset.denom))) {
               msg.update_credit_account.actions.push({
                 lend: { denom: asset.denom, amount: 'account_balance' },
               })
@@ -704,10 +709,11 @@ export default function createBroadcastSlice(
       }
 
       if (checkAutoLendEnabled(options.accountId, get().chainConfig.id)) {
+        const isOsmosis = get().chainConfig.isOsmosis
         for (const astroLp of options.astroLps) {
           for (const symbol of Object.values(astroLp.symbols)) {
             const asset = get().assets.find(bySymbol(symbol))
-            if (asset?.isAutoLendEnabled && !isUsdcDenom(asset.denom)) {
+            if (asset?.isAutoLendEnabled && (isOsmosis || !isUsdcDenom(asset.denom))) {
               msg.update_credit_account.actions.push({
                 lend: { denom: asset.denom, amount: 'account_balance' },
               })
@@ -934,8 +940,9 @@ export default function createBroadcastSlice(
     },
     depositAndLend: async (options: { accountId: string; coin: BNCoin }) => {
       const asset = get().assets.find(byDenom(options.coin.denom))
-      if (isUsdcDenom(options.coin.denom) || !asset?.isAutoLendEnabled) {
-        // USDC lending is disabled (or asset is deposit-only/unknown) - fall back to deposit without lending.
+      const isOsmosis = get().chainConfig.isOsmosis
+      if ((!isOsmosis && isUsdcDenom(options.coin.denom)) || !asset?.isAutoLendEnabled) {
+        // USDC lending is disabled on Neutron (or asset is deposit-only/unknown) - fall back to deposit without lending.
         return get().depositSingle(options)
       }
 
@@ -1030,10 +1037,11 @@ export default function createBroadcastSlice(
         },
       }
 
+      const isOsmosis = get().chainConfig.isOsmosis
       if (
         checkAutoLendEnabled(options.accountId, get().chainConfig.id) &&
         get().assets.find(byDenom(options.denomOut))?.isAutoLendEnabled &&
-        !isUsdcDenom(options.denomOut) &&
+        (isOsmosis || !isUsdcDenom(options.denomOut)) &&
         !options.repay
       ) {
         msg.update_credit_account.actions.push({
@@ -1117,7 +1125,8 @@ export default function createBroadcastSlice(
           },
         },
       ]
-      if (options.autolend && !isUsdcDenom(options.keeperFee.denom))
+      const isOsmosis = get().chainConfig.isOsmosis
+      if (options.autolend && (isOsmosis || !isUsdcDenom(options.keeperFee.denom)))
         triggerActions.push({
           lend: {
             denom: options.keeperFee.denom,
@@ -1216,6 +1225,7 @@ export default function createBroadcastSlice(
         })
       }
 
+      const isOsmosis = get().chainConfig.isOsmosis
       options.orders.forEach((order) => {
         const triggerActions: Action[] = [
           {
@@ -1227,7 +1237,7 @@ export default function createBroadcastSlice(
             },
           },
         ]
-        if (order.autolend && !isUsdcDenom(order.keeperFee.denom))
+        if (order.autolend && (isOsmosis || !isUsdcDenom(order.keeperFee.denom)))
           triggerActions.push({
             lend: {
               denom: order.keeperFee.denom,
@@ -1293,6 +1303,8 @@ export default function createBroadcastSlice(
       conditionalTriggers?: { sl: string | null; tp: string | null }
       keeperFee?: BNCoin
     }) => {
+      const isOsmosis = get().chainConfig.isOsmosis
+      const autoLend = options.autolend && (isOsmosis || !isUsdcDenom(options.baseDenom))
       const actions: Action[] = [
         {
           execute_perp_order: {
@@ -1303,7 +1315,8 @@ export default function createBroadcastSlice(
           },
         },
       ]
-      if (options.autolend && !isUsdcDenom(options.baseDenom))
+
+      if (autoLend)
         actions.push({
           lend: {
             denom: options.baseDenom,
@@ -1432,7 +1445,8 @@ export default function createBroadcastSlice(
           })
         }
 
-        if (options.autolend && !isUsdcDenom(options.baseDenom)) {
+        const isOsmosis = get().chainConfig.isOsmosis
+        if (options.autolend && (isOsmosis || !isUsdcDenom(options.baseDenom))) {
           actions.push({
             lend: {
               denom: options.baseDenom,
@@ -1586,7 +1600,8 @@ export default function createBroadcastSlice(
         }
       }
 
-      if (options.autolend && !isUsdcDenom(options.baseDenom)) {
+      const isOsmosis = get().chainConfig.isOsmosis
+      if (options.autolend && (isOsmosis || !isUsdcDenom(options.baseDenom))) {
         actions.push({
           lend: {
             denom: options.baseDenom,
@@ -1625,7 +1640,8 @@ export default function createBroadcastSlice(
           },
         },
       ]
-      if (options.autolend && !isUsdcDenom(options.baseDenom))
+      const isOsmosis = get().chainConfig.isOsmosis
+      if (options.autolend && (isOsmosis || !isUsdcDenom(options.baseDenom)))
         actions.push({
           lend: {
             denom: options.baseDenom,
@@ -1859,16 +1875,19 @@ export default function createBroadcastSlice(
             {
               withdraw_from_perp_vault: {},
             },
-            ...(options.isAutoLend && !isUsdcDenom(options.vaultDenom)
-              ? [
-                  {
-                    lend: {
-                      denom: options.vaultDenom,
-                      amount: 'account_balance' as ActionAmount,
+            ...(() => {
+              const isOsmosis = get().chainConfig.isOsmosis
+              return options.isAutoLend && (isOsmosis || !isUsdcDenom(options.vaultDenom))
+                ? [
+                    {
+                      lend: {
+                        denom: options.vaultDenom,
+                        amount: 'account_balance' as ActionAmount,
+                      },
                     },
-                  },
-                ]
-              : []),
+                  ]
+                : []
+            })(),
           ],
         },
       }

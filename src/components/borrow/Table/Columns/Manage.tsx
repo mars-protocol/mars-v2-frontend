@@ -1,6 +1,7 @@
 import ActionButton from 'components/common/Button/ActionButton'
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { HandCoins, Plus } from 'components/common/Icons'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { useCallback, useMemo } from 'react'
 import useStore from 'store'
 
@@ -16,10 +17,12 @@ interface Props {
 
 export default function Manage(props: Props) {
   const address = useStore((s) => s.address)
+  const chainConfig = useChainConfig()
+  const isOsmosis = chainConfig.isOsmosis
 
   const isUSDC = useMemo(
-    () => props.data.asset?.symbol?.toUpperCase().includes('USDC'),
-    [props.data.asset?.symbol],
+    () => !isOsmosis && props.data.asset?.symbol?.toUpperCase().includes('USDC'),
+    [props.data.asset?.symbol, isOsmosis],
   )
 
   const borrowHandler = useCallback(() => {
