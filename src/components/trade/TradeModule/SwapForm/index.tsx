@@ -30,7 +30,7 @@ import useRouteInfo from 'hooks/trade/useRouteInfo'
 import useAutoLend from 'hooks/wallet/useAutoLend'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
-import { OrderType } from 'types/enums'
+import { ChainInfoID, OrderType } from 'types/enums'
 import { byDenom } from 'utils/array'
 import { ENABLE_AUTO_REPAY } from 'utils/constants'
 import { formatValue } from 'utils/formatters'
@@ -63,8 +63,15 @@ export default function SwapForm(props: Props) {
     if (tradeDirection === 'long') return [sellAsset, buyAsset]
     return [buyAsset, sellAsset]
   }, [buyAsset, sellAsset, tradeDirection, isAdvanced])
-  const isBorrowEnabled = !!markets.find((market) => market.asset.denom === inputAsset.denom)
-    ?.borrowEnabled
+
+  const isUSDC = inputAsset.symbol.toUpperCase().includes('USDC')
+  const isNeutron = chainConfig.id === ChainInfoID.Neutron1
+  const isUSDCDisabled = isUSDC && isNeutron
+
+  const isBorrowEnabled =
+    !!markets.find((market) => market.asset.denom === inputAsset.denom)?.borrowEnabled &&
+    !isUSDCDisabled
+
   const isRepayable = !!account?.debts.find(byDenom(outputAsset.denom))
   const [isMarginChecked, setMarginChecked] = useToggle(isBorrowEnabled ? useMargin : false)
   const [isAutoRepayChecked, setAutoRepayChecked] = useToggle(
@@ -409,7 +416,7 @@ export default function SwapForm(props: Props) {
           <MarginToggle
             checked={isMarginChecked}
             onChange={handleMarginToggleChange}
-            disabled={!borrowMarket?.borrowEnabled}
+            disabled={!isBorrowEnabled}
             borrowAssetSymbol={inputAsset.symbol}
           />
           <Divider />

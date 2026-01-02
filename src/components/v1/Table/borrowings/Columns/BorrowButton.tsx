@@ -7,12 +7,14 @@ import { Tooltip } from 'components/common/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import useV1Account from 'hooks/v1/useV1Account'
 import useStore from 'store'
+import { ChainInfoID } from 'types/enums'
 
 interface Props {
   data: BorrowMarketTableData
 }
 export default function BorrowButton(props: Props) {
   const address = useStore((s) => s.address)
+  const chainConfig = useStore((s) => s.chainConfig)
   const { data: account } = useV1Account()
 
   const hasCollateral = account?.lends?.length ?? 0 > 0
@@ -22,17 +24,20 @@ export default function BorrowButton(props: Props) {
     [props.data.asset?.symbol],
   )
 
-  const isDisabled = !hasCollateral || isUSDC
+  const isNeutron = chainConfig.id === ChainInfoID.Neutron1
+  const isUSDCDisabled = isUSDC && isNeutron
+
+  const isDisabled = !hasCollateral || isUSDCDisabled
 
   const tooltipContent = useMemo(() => {
-    if (isUSDC) {
+    if (isUSDCDisabled) {
       return 'USDC borrowing is temporarily disabled.'
     }
     if (!hasCollateral) {
       return `You don't have assets deposited in the Red Bank. Please deposit assets before you borrow.`
     }
     return null
-  }, [isUSDC, hasCollateral])
+  }, [isUSDCDisabled, hasCollateral])
 
   return (
     <div className='flex justify-end'>

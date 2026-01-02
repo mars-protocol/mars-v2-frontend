@@ -3,6 +3,7 @@ import DropDownButton from 'components/common/Button/DropDownButton'
 import { HandCoins, Plus } from 'components/common/Icons'
 import { useCallback, useMemo } from 'react'
 import useStore from 'store'
+import { ChainInfoID } from 'types/enums'
 
 export const MANAGE_META = {
   accessorKey: 'manage',
@@ -16,6 +17,7 @@ interface Props {
 
 export default function Manage(props: Props) {
   const address = useStore((s) => s.address)
+  const chainConfig = useStore((s) => s.chainConfig)
 
   const isUSDC = useMemo(
     () => props.data.asset?.symbol?.toUpperCase().includes('USDC'),
@@ -36,8 +38,11 @@ export default function Manage(props: Props) {
 
   const isDeprecatedAsset = props.data.asset.isDeprecated
   const isBorrowEnabled = props.data.asset.isBorrowEnabled
-  const canBorrowMore = isBorrowEnabled && !isUSDC
-  const isBorrowDisabled = isDeprecatedAsset || isUSDC || !isBorrowEnabled
+  const isNeutron = chainConfig.id === ChainInfoID.Neutron1
+  const isUSDCDisabled = isUSDC && isNeutron
+
+  const canBorrowMore = isBorrowEnabled && !isUSDCDisabled
+  const isBorrowDisabled = isDeprecatedAsset || isUSDCDisabled || !isBorrowEnabled
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [

@@ -4,6 +4,7 @@ import DropDownButton from 'components/common/Button/DropDownButton'
 import { HandCoins, Plus } from 'components/common/Icons'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
+import { ChainInfoID } from 'types/enums'
 import { byDenom } from 'utils/array'
 
 interface Props {
@@ -12,6 +13,7 @@ interface Props {
 
 export default function Manage(props: Props) {
   const address = useStore((s) => s.address)
+  const chainConfig = useStore((s) => s.chainConfig)
   const { data: balances } = useWalletBalances(address)
   const hasBalance = !!balances.find(byDenom(props.data.asset.denom))
 
@@ -21,7 +23,9 @@ export default function Manage(props: Props) {
   )
 
   const isBorrowEnabled = props.data.asset.isBorrowEnabled
-  const canBorrowMore = isBorrowEnabled && !isUSDC
+  const isNeutron = chainConfig.id === ChainInfoID.Neutron1
+  const isUSDCDisabled = isUSDC && isNeutron
+  const canBorrowMore = isBorrowEnabled && !isUSDCDisabled
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [

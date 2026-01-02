@@ -8,6 +8,8 @@ import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useStore from 'store'
 
+import { ChainInfoID } from 'types/enums'
+
 export const BORROW_BUTTON_META = {
   accessorKey: 'borrow',
   enableSorting: false,
@@ -20,6 +22,7 @@ interface Props {
 export default function BorrowButton(props: Props) {
   const account = useCurrentAccount()
   const address = useStore((s) => s.address)
+  const chainConfig = useStore((s) => s.chainConfig)
   const hasNoDeposits = !account?.deposits?.length && !account?.lends?.length
 
   const isUSDC = useMemo(
@@ -27,17 +30,20 @@ export default function BorrowButton(props: Props) {
     [props.data.asset?.symbol],
   )
 
-  const isDisabled = hasNoDeposits || isUSDC
+  const isNeutron = chainConfig.id === ChainInfoID.Neutron1
+  const isUSDCDisabled = isUSDC && isNeutron
+
+  const isDisabled = hasNoDeposits || isUSDCDisabled
 
   const tooltipContent = useMemo(() => {
-    if (isUSDC) {
+    if (isUSDCDisabled) {
       return 'USDC borrowing is temporarily disabled.'
     }
     if (hasNoDeposits) {
       return `You don't have any collateral. Please first deposit into your Credit Account before borrowing.`
     }
     return null
-  }, [isUSDC, hasNoDeposits])
+  }, [isUSDCDisabled, hasNoDeposits])
 
   const borrowHandler = useCallback(() => {
     if (!props.data.asset) return null
