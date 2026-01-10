@@ -1,7 +1,6 @@
 import ActionButton from 'components/common/Button/ActionButton'
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { HandCoins, Plus } from 'components/common/Icons'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import { useCallback, useMemo } from 'react'
 import useStore from 'store'
 
@@ -17,13 +16,6 @@ interface Props {
 
 export default function Manage(props: Props) {
   const address = useStore((s) => s.address)
-  const chainConfig = useChainConfig()
-  const isOsmosis = chainConfig.isOsmosis
-
-  const isUSDC = useMemo(
-    () => !isOsmosis && props.data.asset?.symbol?.toUpperCase().includes('USDC'),
-    [props.data.asset?.symbol, isOsmosis],
-  )
 
   const borrowHandler = useCallback(() => {
     if (!props.data.asset) return null
@@ -39,8 +31,7 @@ export default function Manage(props: Props) {
 
   const isDeprecatedAsset = props.data.asset.isDeprecated
   const isBorrowEnabled = props.data.asset.isBorrowEnabled
-  const canBorrowMore = isBorrowEnabled && !isUSDC
-  const isBorrowDisabled = isDeprecatedAsset || isUSDC || !isBorrowEnabled
+  const isBorrowDisabled = isDeprecatedAsset || !isBorrowEnabled
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [
@@ -49,7 +40,7 @@ export default function Manage(props: Props) {
         text: 'Repay',
         onClick: repayHandler,
       },
-      ...(canBorrowMore
+      ...(isBorrowEnabled
         ? [
             {
               icon: <Plus />,
@@ -59,7 +50,7 @@ export default function Manage(props: Props) {
           ]
         : []),
     ],
-    [borrowHandler, repayHandler, canBorrowMore],
+    [borrowHandler, repayHandler, isBorrowEnabled],
   )
 
   if (!address) return null
