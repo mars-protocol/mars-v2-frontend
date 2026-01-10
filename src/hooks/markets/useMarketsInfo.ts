@@ -1,5 +1,7 @@
+import BigNumber from 'bignumber.js'
 import useSWR from 'swr'
 
+import { BN_ZERO } from 'constants/math'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useClients from 'hooks/chain/useClients'
 import { BN } from 'utils/helpers'
@@ -42,6 +44,6 @@ async function getMarketsInfo(clients: ContractClients) {
     ...market,
     debt: BN(debts[index]),
     deposits: BN(liquidity[index]),
-    liquidity: BN(liquidity[index]).minus(debts[index]),
+    liquidity: BigNumber.max(BN(liquidity[index]).minus(debts[index]), BN_ZERO),
   }))
 }

@@ -53,7 +53,9 @@ export default function MarketDetails({ row, type }: Props) {
           title: 'Oracle Price',
         },
         {
-          amount: debt.isZero() ? 0 : debt.dividedBy(deposits).multipliedBy(100).toNumber(),
+          amount: debt.isZero()
+            ? 0
+            : Math.min(debt.dividedBy(deposits).multipliedBy(100).toNumber(), 100),
           options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
           title: 'Utilization Rate',
         },
@@ -82,7 +84,9 @@ export default function MarketDetails({ row, type }: Props) {
           title: 'Oracle Price',
         },
         {
-          amount: debt.isZero() ? 0 : debt.dividedBy(deposits).multipliedBy(100).toNumber(),
+          amount: debt.isZero()
+            ? 0
+            : Math.min(debt.dividedBy(deposits).multipliedBy(100).toNumber(), 100),
           options: { minDecimals: 2, maxDecimals: 2, suffix: '%' },
           title: 'Utilization Rate',
         },
