@@ -1843,9 +1843,9 @@ export default function createBroadcastSlice(
                       denom: options.vaultDenom,
                       amount: 'account_balance' as ActionAmount,
                     },
-                  ]
-                : []
-            })(),
+                  },
+                ]
+              : []),
           ],
         },
       }
