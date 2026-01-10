@@ -38,6 +38,7 @@ export default function LendButton(props: Props) {
   const assetDepositAmount = accountDeposits.find(byDenom(props.data.asset.denom))?.amount
   const address = useStore((s) => s.address)
   const hasWalletBalance = walletBalance && BN(walletBalance.amount).isGreaterThan(0)
+  const hasAccountDeposit = assetDepositAmount && assetDepositAmount.isGreaterThan(0)
   const isDefaultAccount = currentAccount?.kind === 'default'
   const isLendEnabled = !!props.data.asset.isAutoLendEnabled
   const { isAutoLendEnabledForCurrentAccount } = useAutoLend()
@@ -51,6 +52,8 @@ export default function LendButton(props: Props) {
         onClick: () => {
           openDeposit(props.data)
         },
+        disabled: !hasWalletBalance,
+        disabledTooltip: `You don't have any ${props.data.asset.symbol} in your wallet.`,
       },
       ...(isLendEnabled
         ? [
@@ -60,10 +63,12 @@ export default function LendButton(props: Props) {
               onClick: () => {
                 openDepositAndLend(props.data)
               },
+              disabled: !hasWalletBalance,
+              disabledTooltip: `You don't have any ${props.data.asset.symbol} in your wallet.`,
             },
           ]
         : []),
-      ...(isLendEnabled && assetDepositAmount
+      ...(isLendEnabled && hasAccountDeposit
         ? [
             {
               icon: <ArrowUpLine />,
@@ -73,11 +78,19 @@ export default function LendButton(props: Props) {
           ]
         : []),
     ],
-    [assetDepositAmount, isLendEnabled, openLend, openDeposit, openDepositAndLend, props.data],
+    [
+      hasWalletBalance,
+      hasAccountDeposit,
+      isLendEnabled,
+      openLend,
+      openDeposit,
+      openDepositAndLend,
+      props.data,
+    ],
   )
 
-  // If user has wallet balance and it's a default account, show Manage dropdown
-  if (hasWalletBalance && address && isDefaultAccount) {
+  // If user has wallet balance or account deposits and it's a default account, show Manage dropdown
+  if ((hasWalletBalance || hasAccountDeposit) && address && isDefaultAccount) {
     return (
       <div className='flex justify-end'>
         <DropDownButton items={ITEMS} text='Manage' color='tertiary' />
@@ -123,16 +136,20 @@ export default function LendButton(props: Props) {
   // If asset doesn't support lending, don't show anything
   if (!isLendEnabled) return null
 
+  // For lending: user can lend from wallet OR from unlent account deposits
+  const canLend = hasWalletBalance || hasAccountDeposit
+  const lendTooltip = !canLend
+    ? `You don't have any ${props.data.asset.symbol} in your wallet or Credit Account.`
+    : undefined
+
   return (
     <div className='flex justify-end'>
       <ConditionalWrapper
-        condition={!hasWalletBalance && !!address}
+        condition={!canLend && !!address}
         wrapper={(children) => (
           <Tooltip
             type='warning'
-            content={
-              <Text size='sm'>{`You don't have any ${props.data.asset.symbol} in your wallet.`}</Text>
-            }
+            content={<Text size='sm'>{lendTooltip}</Text>}
             contentClassName='max-w-[200px]'
             className='ml-auto'
           >
@@ -143,7 +160,7 @@ export default function LendButton(props: Props) {
         {isAutoLendEnabledForCurrentAccount ? (
           <ActionButton
             leftIcon={<ArrowUpLine />}
-            disabled={!hasWalletBalance}
+            disabled={!canLend}
             color='tertiary'
             onClick={(e) => {
               openLend(props.data)
