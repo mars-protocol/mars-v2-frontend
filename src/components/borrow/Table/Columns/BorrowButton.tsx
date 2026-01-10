@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 
 import ActionButton from 'components/common/Button/ActionButton'
 import { Plus } from 'components/common/Icons'
@@ -25,23 +25,6 @@ export default function BorrowButton(props: Props) {
   const chainConfig = useChainConfig()
   const isOsmosis = chainConfig.isOsmosis
 
-  const isUSDC = useMemo(
-    () => !isOsmosis && props.data.asset?.symbol?.toUpperCase().includes('USDC'),
-    [props.data.asset?.symbol, isOsmosis],
-  )
-
-  const isDisabled = hasNoDeposits || isUSDC
-
-  const tooltipContent = useMemo(() => {
-    if (isUSDC) {
-      return 'USDC borrowing is temporarily disabled.'
-    }
-    if (hasNoDeposits) {
-      return `You don't have any collateral. Please first deposit into your Credit Account before borrowing.`
-    }
-    return null
-  }, [isUSDC, hasNoDeposits])
-
   const borrowHandler = useCallback(() => {
     if (!props.data.asset) return null
     useStore.setState({ borrowModal: { asset: props.data.asset, marketData: props.data } })
@@ -50,11 +33,16 @@ export default function BorrowButton(props: Props) {
   return (
     <div className='flex justify-end'>
       <ConditionalWrapper
-        condition={isDisabled && !!address}
+        condition={hasNoDeposits && !!address}
         wrapper={(children) => (
           <Tooltip
             type='warning'
-            content={<Text size='sm'>{tooltipContent}</Text>}
+            content={
+              <Text size='sm'>
+                You don't have any collateral. Please first deposit into your Credit Account before
+                borrowing.
+              </Text>
+            }
             contentClassName='max-w-[200px]'
             className='ml-auto'
           >
@@ -64,7 +52,7 @@ export default function BorrowButton(props: Props) {
       >
         <ActionButton
           leftIcon={<Plus />}
-          disabled={isDisabled}
+          disabled={hasNoDeposits}
           color='tertiary'
           onClick={(e) => {
             borrowHandler()

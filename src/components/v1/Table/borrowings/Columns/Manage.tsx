@@ -18,17 +18,11 @@ export default function Manage(props: Props) {
   const chainConfig = useChainConfig()
   const isOsmosis = chainConfig.isOsmosis
 
-  const isUSDC = useMemo(
-    () => !isOsmosis && props.data.asset?.symbol?.toUpperCase().includes('USDC'),
-    [props.data.asset?.symbol, isOsmosis],
-  )
-
   const isBorrowEnabled = props.data.asset.isBorrowEnabled
-  const canBorrowMore = isBorrowEnabled && !isUSDC
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [
-      ...(canBorrowMore
+      ...(isBorrowEnabled
         ? [
             {
               icon: <Plus />,
@@ -51,7 +45,7 @@ export default function Manage(props: Props) {
         disabledTooltip: `You don't have any ${props.data.asset.symbol} in your Wallet.`,
       },
     ],
-    [hasBalance, props.data, canBorrowMore],
+    [hasBalance, props.data, isBorrowEnabled],
   )
 
   return (

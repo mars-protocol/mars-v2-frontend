@@ -20,11 +20,6 @@ export default function Manage(props: Props) {
   const chainConfig = useChainConfig()
   const isOsmosis = chainConfig.isOsmosis
 
-  const isUSDC = useMemo(
-    () => !isOsmosis && props.data.asset?.symbol?.toUpperCase().includes('USDC'),
-    [props.data.asset?.symbol, isOsmosis],
-  )
-
   const borrowHandler = useCallback(() => {
     if (!props.data.asset) return null
     useStore.setState({ borrowModal: { asset: props.data.asset, marketData: props.data } })
@@ -39,8 +34,7 @@ export default function Manage(props: Props) {
 
   const isDeprecatedAsset = props.data.asset.isDeprecated
   const isBorrowEnabled = props.data.asset.isBorrowEnabled
-  const canBorrowMore = isBorrowEnabled && !isUSDC
-  const isBorrowDisabled = isDeprecatedAsset || isUSDC || !isBorrowEnabled
+  const isBorrowDisabled = isDeprecatedAsset || !isBorrowEnabled
 
   const ITEMS: DropDownItem[] = useMemo(
     () => [
@@ -49,7 +43,7 @@ export default function Manage(props: Props) {
         text: 'Repay',
         onClick: repayHandler,
       },
-      ...(canBorrowMore
+      ...(isBorrowEnabled
         ? [
             {
               icon: <Plus />,
@@ -59,7 +53,7 @@ export default function Manage(props: Props) {
           ]
         : []),
     ],
-    [borrowHandler, repayHandler, canBorrowMore],
+    [borrowHandler, repayHandler, isBorrowEnabled],
   )
 
   if (!address) return null
