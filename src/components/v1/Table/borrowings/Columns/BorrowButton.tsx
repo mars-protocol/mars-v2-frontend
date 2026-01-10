@@ -3,6 +3,7 @@ import { Plus } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useV1Account from 'hooks/v1/useV1Account'
 import useStore from 'store'
 
@@ -12,6 +13,8 @@ interface Props {
 export default function BorrowButton(props: Props) {
   const address = useStore((s) => s.address)
   const { data: account } = useV1Account()
+  const chainConfig = useChainConfig()
+  const isOsmosis = chainConfig.isOsmosis
 
   const hasCollateral = account?.lends?.length ?? 0 > 0
 

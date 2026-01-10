@@ -6,6 +6,7 @@ import Text from 'components/common/Text'
 import { Tooltip } from 'components/common/Tooltip'
 import ConditionalWrapper from 'hocs/ConditionalWrapper'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useStore from 'store'
 
 export const BORROW_BUTTON_META = {
@@ -21,6 +22,8 @@ export default function BorrowButton(props: Props) {
   const account = useCurrentAccount()
   const address = useStore((s) => s.address)
   const hasNoDeposits = !account?.deposits?.length && !account?.lends?.length
+  const chainConfig = useChainConfig()
+  const isOsmosis = chainConfig.isOsmosis
 
   const borrowHandler = useCallback(() => {
     if (!props.data.asset) return null

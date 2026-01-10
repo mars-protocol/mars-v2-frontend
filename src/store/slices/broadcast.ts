@@ -272,6 +272,7 @@ export default function createBroadcastSlice(
         },
       }
 
+      const isOsmosis = get().chainConfig.isOsmosis
       if (
         !options.borrowToWallet &&
         checkAutoLendEnabled(options.accountId, get().chainConfig.id) &&
@@ -578,6 +579,7 @@ export default function createBroadcastSlice(
       }
 
       if (checkAutoLendEnabled(options.accountId, get().chainConfig.id)) {
+        const isOsmosis = get().chainConfig.isOsmosis
         for (const vault of options.vaults) {
           for (const symbol of Object.values(vault.symbols)) {
             const asset = get().assets.find(bySymbol(symbol))
@@ -676,6 +678,7 @@ export default function createBroadcastSlice(
       }
 
       if (checkAutoLendEnabled(options.accountId, get().chainConfig.id)) {
+        const isOsmosis = get().chainConfig.isOsmosis
         for (const astroLp of options.astroLps) {
           for (const symbol of Object.values(astroLp.symbols)) {
             const asset = get().assets.find(bySymbol(symbol))
@@ -1001,6 +1004,7 @@ export default function createBroadcastSlice(
         },
       }
 
+      const isOsmosis = get().chainConfig.isOsmosis
       if (
         checkAutoLendEnabled(options.accountId, get().chainConfig.id) &&
         get().assets.find(byDenom(options.denomOut))?.isAutoLendEnabled &&
@@ -1839,9 +1843,9 @@ export default function createBroadcastSlice(
                       denom: options.vaultDenom,
                       amount: 'account_balance' as ActionAmount,
                     },
-                  },
-                ]
-              : []),
+                  ]
+                : []
+            })(),
           ],
         },
       }

@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 
 import DropDownButton from 'components/common/Button/DropDownButton'
 import { HandCoins, Plus } from 'components/common/Icons'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useWalletBalances from 'hooks/wallet/useWalletBalances'
 import useStore from 'store'
 import { byDenom } from 'utils/array'
@@ -14,6 +15,8 @@ export default function Manage(props: Props) {
   const address = useStore((s) => s.address)
   const { data: balances } = useWalletBalances(address)
   const hasBalance = !!balances.find(byDenom(props.data.asset.denom))
+  const chainConfig = useChainConfig()
+  const isOsmosis = chainConfig.isOsmosis
 
   const isBorrowEnabled = props.data.asset.isBorrowEnabled
 
