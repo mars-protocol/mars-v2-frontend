@@ -14,6 +14,7 @@ import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useAsset from 'hooks/assets/useAsset'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useToggle from 'hooks/common/useToggle'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import usePerpsVault from 'hooks/perps/usePerpsVault'
@@ -38,6 +39,7 @@ type Props = {
 
 function PerpsVaultModal(props: Props) {
   const account = useCurrentAccount()
+  const chainConfig = useChainConfig()
   const [amount, setAmount] = useState(BN(0))
   const [isConfirming, setIsConfirming] = useState(false)
   const { simulatePerpsVaultDeposit, simulatePerpsVaultUnlock } = useUpdatedAccount(account)
@@ -45,6 +47,10 @@ function PerpsVaultModal(props: Props) {
   const asset = useAsset(perpsVault?.denom || '')
   const [depositFromWallet, setDepositFromWallet] = useToggle()
   const walletAddress = useStore((s) => s.address)
+  const isWithdrawalDisabled = useMemo(
+    () => chainConfig.disabledWithdrawals?.includes(perpsVault?.denom ?? '') ?? false,
+    [chainConfig.disabledWithdrawals, perpsVault?.denom],
+  )
 
   const { computeMaxWithdrawAmount } = useHealthComputer(account)
   const { data: walletBalances } = useWalletBalances(walletAddress)
@@ -79,9 +85,12 @@ function PerpsVaultModal(props: Props) {
       const amountInDeposits =
         account.deposits.find((d) => d.denom === perpsVault.denom)?.amount || BN(0)
 
+      // If withdrawals are disabled, only allow deposits from wallet or existing deposits (not lends)
       const maxAmount = depositFromWallet
         ? BN(walletBalances.find(byDenom(perpsVault.denom))?.amount ?? 0)
-        : computeMaxWithdrawAmount(perpsVault.denom)
+        : isWithdrawalDisabled
+          ? amountInDeposits
+          : computeMaxWithdrawAmount(perpsVault.denom)
 
       return [amountInDeposits, maxAmount]
     }
@@ -98,6 +107,7 @@ function PerpsVaultModal(props: Props) {
     computeMaxWithdrawAmount,
     depositFromWallet,
     walletBalances,
+    isWithdrawalDisabled,
   ])
 
   const onClose = useCallback(() => {
@@ -115,9 +125,11 @@ function PerpsVaultModal(props: Props) {
       const amountFromDeposits = amount.isLessThanOrEqualTo(amountInDeposits)
         ? amount
         : amountInDeposits
-      const amountFromLends = amount.isGreaterThan(amountInDeposits)
-        ? amount.minus(amountInDeposits)
-        : BN(0)
+      // Skip reclaiming from lends if withdrawals are disabled for this denom
+      const amountFromLends =
+        amount.isGreaterThan(amountInDeposits) && !isWithdrawalDisabled
+          ? amount.minus(amountInDeposits)
+          : BN(0)
       await useStore.getState().depositIntoPerpsVault({
         accountId: account.id,
         denom: perpsVault.denom,

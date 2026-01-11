@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { BN_ZERO } from 'constants/math'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import { useKeeperFee } from 'hooks/perps/useKeeperFee'
 import { useMemo } from 'react'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -25,6 +26,7 @@ export function useKeeperFeeCalculation({
   enabled: boolean
 }): KeeperFeeCalculation {
   const currentAccount = useCurrentAccount()
+  const chainConfig = useChainConfig()
   const keeperFee = useKeeperFee()
 
   // Extract stable primitive values for dependencies
@@ -32,6 +34,7 @@ export function useKeeperFeeCalculation({
   const keeperFeeAmount = keeperFee.calculateKeeperFee?.amount.toString()
   const tradingFeeOpeningStr = tradingFee?.opening.toString()
   const tradingFeeClosingStr = tradingFee?.closing.toString()
+  const disabledWithdrawals = chainConfig.disabledWithdrawals
 
   return useMemo(() => {
     const emptyResult: KeeperFeeCalculation = {
@@ -90,8 +93,11 @@ export function useKeeperFeeCalculation({
       ? BN_ZERO
       : totalKeeperFeeAmount.minus(keeperFeeTokenDepositsAmount)
 
-    const keeperFeeTokenLendsAmount =
-      currentAccount.lends.find(byDenom(orderKeeperFee.denom))?.amount ?? BN_ZERO
+    // Skip reclaiming from lends if withdrawals are disabled for this denom
+    const isWithdrawalDisabled = disabledWithdrawals?.includes(orderKeeperFee.denom) ?? false
+    const keeperFeeTokenLendsAmount = isWithdrawalDisabled
+      ? BN_ZERO
+      : (currentAccount.lends.find(byDenom(orderKeeperFee.denom))?.amount ?? BN_ZERO)
 
     const keeperFeeFromLendsAmount = keeperFeeTokenLendsAmount.isGreaterThan(keeperFeeAmountLeft)
       ? keeperFeeAmountLeft
@@ -123,5 +129,6 @@ export function useKeeperFeeCalculation({
     conditionalTriggers.sl,
     tradingFeeOpeningStr,
     tradingFeeClosingStr,
+    disabledWithdrawals,
   ])
 }

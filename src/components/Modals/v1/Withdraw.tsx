@@ -1,10 +1,11 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import AssetAmountSelectActionModal from 'components/Modals/AssetAmountSelectActionModal'
 import DetailsHeader from 'components/Modals/LendAndReclaim/DetailsHeader'
 import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useBaseAsset from 'hooks/assets/useBaseAsset'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -17,12 +18,17 @@ interface Props {
 export default function Withdraw(props: Props) {
   const { account } = props
   const baseAsset = useBaseAsset()
+  const chainConfig = useChainConfig()
   const modal = useStore((s) => s.v1DepositAndWithdrawModal)
   const asset = modal?.data.asset ?? baseAsset
   const [withdrawAsset, setWithdrawAsset] = useState<BNCoin>(
     BNCoin.fromDenomAndBigNumber(modal?.data.asset.denom ?? baseAsset.denom, BN_ZERO),
   )
   const isDeprecated = asset.isDeprecated
+  const isWithdrawalDisabled = useMemo(
+    () => chainConfig.disabledWithdrawals?.includes(asset.denom) ?? false,
+    [chainConfig.disabledWithdrawals, asset.denom],
+  )
   const { computeMaxWithdrawAmount } = useHealthComputer(account)
   const maxWithdrawAmount = isDeprecated
     ? (account?.lends?.find(byDenom(asset.denom))?.amount ?? BN_ZERO)
@@ -64,6 +70,9 @@ export default function Withdraw(props: Props) {
       onAction={handleClick}
       onChange={handleAmountChange}
       checkForCampaign
+      disabledMessage={
+        isWithdrawalDisabled ? 'The withdrawal of this asset is temporarily disabled.' : undefined
+      }
     />
   )
 }
