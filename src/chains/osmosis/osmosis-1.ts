@@ -76,13 +76,8 @@ const Osmosis1: ChainConfig = {
       campaignIds: ['lido'],
       campaignDenom: 'stETH',
     },
-    {
-      denom: 'factory/osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0/umilkTIA',
-      campaignIds: ['milkyway'],
-      campaignDenom: 'milkTIA',
-    },
   ],
-  deprecated: ['ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858'],
+  deprecated: ['ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858', 'factory/osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0/umilkTIA'],
   defaultTradingPair: {
     buy: 'uosmo',
     sell: 'ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4',
