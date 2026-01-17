@@ -2,7 +2,6 @@ import { Navigate, Outlet, Route, Routes as RoutesWrapper } from 'react-router-d
 
 import CreateVault from 'components/managedVaults/createVault/index'
 import VaultDetails from 'components/managedVaults/vaultDetails/index'
-import useChainConfig from 'hooks/chain/useChainConfig'
 import Layout from 'pages/_layout'
 import BankPage from 'pages/BankPage'
 import ExecuteMessagePage from 'pages/ExecuteMessagePage'
@@ -16,7 +15,6 @@ import V1Page from 'pages/V1Page'
 import VaultsCommunityPage from 'pages/VaultsCommunityPage'
 
 export default function Routes() {
-  const chainConfig = useChainConfig()
   return (
     <RoutesWrapper>
       <Route
@@ -36,12 +34,7 @@ export default function Routes() {
         <Route path='/bank' element={<BankPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
         <Route path='/v1' element={<V1Page />} />
-        <Route
-          path='/'
-          element={
-            chainConfig.perps ? <Navigate to='/perps' replace /> : <Navigate to='/trade' replace />
-          }
-        />
+        <Route path='/' element={<Navigate to='/bank' replace />} />
 
         <Route path='/vaults'>
           <Route path='' element={<VaultsCommunityPage />} />
@@ -52,12 +45,7 @@ export default function Routes() {
         </Route>
 
         <Route path='/wallets/:address'>
-          <Route
-            path=''
-            element={
-              chainConfig.perps ? <Navigate to='perps' replace /> : <Navigate to='trade' replace />
-            }
-          />
+          <Route path='' element={<Navigate to='bank' replace />} />
           <Route path='execute' element={<ExecuteMessagePage />} />
           <Route path='trade' element={<TradePage />} />
           <Route path='trade-advanced' element={<TradePage />} />
