@@ -1,7 +1,8 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
+import useChainConfig from 'hooks/chain/useChainConfig'
 import useLendAndReclaimModal from 'hooks/common/useLendAndReclaimModal'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
@@ -24,6 +25,7 @@ interface Props {
 
 function LendAndReclaimModal({ currentAccount, config }: Props) {
   const account = useCurrentAccount()
+  const chainConfig = useChainConfig()
   const lend = useStore((s) => s.lend)
   const reclaim = useStore((s) => s.reclaim)
   const { close } = useLendAndReclaimModal()
@@ -36,6 +38,10 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
   const isLendAction = action === 'lend'
   const actionText = isLendAction ? 'Lend' : 'Unlend'
   const coinBalances = currentAccount[isLendAction ? 'deposits' : 'lends'] ?? []
+  const isWithdrawalDisabled = useMemo(
+    () => !isLendAction && (chainConfig.disabledWithdrawals?.includes(asset.denom) ?? false),
+    [chainConfig.disabledWithdrawals, asset.denom, isLendAction],
+  )
 
   const handleAmountChange = useCallback(
     (value: BigNumber) => {
@@ -77,6 +83,9 @@ function LendAndReclaimModal({ currentAccount, config }: Props) {
       onAction={handleAction}
       onChange={handleAmountChange}
       deductFee={isLendAction}
+      disabledMessage={
+        isWithdrawalDisabled ? 'The withdrawal of this asset is temporarily disabled.' : undefined
+      }
     />
   )
 }

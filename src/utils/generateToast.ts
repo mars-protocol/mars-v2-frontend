@@ -202,5 +202,8 @@ export function beautifyErrorMessage(error: string) {
   if (lowerCaseError.includes('generic error'))
     return 'Transaction failed: Unknown error. Please try again.'
 
+  if (lowerCaseError.includes('withdraw') && lowerCaseError.includes('is not enabled'))
+    return 'The withdrawal of this asset is temporarily disabled.'
+
   return `Transaction failed: ${error}`
 }
