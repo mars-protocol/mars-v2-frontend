@@ -67,41 +67,77 @@ async function getMarketsInfo(clients: ContractClients, chainConfig: ChainConfig
     }),
   )
 
-  // For Neutron USDC, fetch the actual bank balance of the redBank contract
-  // This is needed because there's bad debt that makes the contract state inaccurate
+  // For Neutron USDC, fetch the actual bank balance AND true total deposits
+  // This is needed because there's bad debt that makes the Red Bank's internal state inaccurate
   let usdcActualBalance: BigNumber | null = null
+  let usdcTrueDeposits: BigNumber | null = null
   if (chainConfig.id === ChainInfoID.Neutron1) {
+    // Fetch actual USDC balance in the redBank contract
     usdcActualBalance = await getRedBankBalance(
       chainConfig.endpoints.rest,
       chainConfig.contracts.redBank,
       NEUTRON_USDC_DENOM,
     )
+    // Fetch true total deposits from params contract (not affected by bad debt accounting)
+    try {
+      const totalDeposit = await clients.params.totalDeposit({ denom: NEUTRON_USDC_DENOM })
+      usdcTrueDeposits = BN(totalDeposit.amount)
+    } catch (error) {
+      console.error('Failed to fetch USDC total deposits:', error)
+    }
   }
 
   const [debts, liquidity] = await Promise.all([Promise.all(debts$), Promise.all(liquidities$)])
 
   return markets.map((market, index) => {
-    const deposits = BN(liquidity[index])
+    const redBankDeposits = BN(liquidity[index])
+    const contractDebt = BN(debts[index])
 
-    // For USDC on Neutron, use actual bank balance as liquidity and derive debt from it
-    if (chainConfig.id === ChainInfoID.Neutron1 && market.denom === NEUTRON_USDC_DENOM && usdcActualBalance !== null) {
-      const actualLiquidity = BigNumber.max(usdcActualBalance, BN_ZERO)
-      const derivedDebt = BigNumber.max(deposits.minus(actualLiquidity), BN_ZERO)
+    // For USDC on Neutron, use actual bank balance as liquidity and derive debt from true deposits
+    // The Red Bank's internal accounting has been impacted by bad debt, so we use params contract's
+    // totalDeposit as the "true" deposits to correctly calculate the borrowed amount
+    const isNeutronUsdc = chainConfig.id === ChainInfoID.Neutron1 && market.denom === NEUTRON_USDC_DENOM
+    const shouldAdjustForBadDebt = isNeutronUsdc && usdcActualBalance && usdcActualBalance.isGreaterThan(0) && usdcTrueDeposits
+    
+    if (shouldAdjustForBadDebt) {
+      // Use true deposits from params contract for accurate debt calculation
+      const trueDeposits = usdcTrueDeposits!
+      const actualLiquidity = usdcActualBalance!
+      // Derived debt = true deposits - actual balance in contract
+      const derivedDebt = BigNumber.max(trueDeposits.minus(actualLiquidity), BN_ZERO)
 
       return {
-        ...market,
+        borrow_index: market.borrow_index,
+        borrow_rate: market.borrow_rate,
+        collateral_total_scaled: market.collateral_total_scaled,
+        debt_total_scaled: market.debt_total_scaled,
+        denom: market.denom,
+        indexes_last_updated: market.indexes_last_updated,
+        interest_rate_model: market.interest_rate_model,
+        liquidity_index: market.liquidity_index,
+        liquidity_rate: market.liquidity_rate,
+        reserve_factor: market.reserve_factor,
         debt: derivedDebt,
-        deposits,
+        deposits: trueDeposits,
         liquidity: actualLiquidity,
       }
     }
 
     // Default logic for all other markets
     return {
-      ...market,
-      debt: BN(debts[index]),
-      deposits,
-      liquidity: BigNumber.max(deposits.minus(debts[index]), BN_ZERO),
+      borrow_index: market.borrow_index,
+      borrow_rate: market.borrow_rate,
+      collateral_total_scaled: market.collateral_total_scaled,
+      debt_total_scaled: market.debt_total_scaled,
+      denom: market.denom,
+      indexes_last_updated: market.indexes_last_updated,
+      interest_rate_model: market.interest_rate_model,
+      liquidity_index: market.liquidity_index,
+      liquidity_rate: market.liquidity_rate,
+      reserve_factor: market.reserve_factor,
+      debt: contractDebt,
+      deposits: redBankDeposits,
+      liquidity: BigNumber.max(redBankDeposits.minus(contractDebt), BN_ZERO),
     }
   })
 }
