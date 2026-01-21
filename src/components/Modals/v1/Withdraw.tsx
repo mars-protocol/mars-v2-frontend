@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react'
+import BigNumber from 'bignumber.js'
+import { useCallback, useMemo, useState } from 'react'
 
 import AssetAmountSelectActionModal from 'components/Modals/AssetAmountSelectActionModal'
 import DetailsHeader from 'components/Modals/LendAndReclaim/DetailsHeader'
@@ -6,6 +7,7 @@ import { BN_ZERO } from 'constants/math'
 import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useBaseAsset from 'hooks/assets/useBaseAsset'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import useMarket from 'hooks/markets/useMarket'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { byDenom } from 'utils/array'
@@ -19,14 +21,20 @@ export default function Withdraw(props: Props) {
   const baseAsset = useBaseAsset()
   const modal = useStore((s) => s.v1DepositAndWithdrawModal)
   const asset = modal?.data.asset ?? baseAsset
+  const market = useMarket(asset.denom)
   const [withdrawAsset, setWithdrawAsset] = useState<BNCoin>(
     BNCoin.fromDenomAndBigNumber(modal?.data.asset.denom ?? baseAsset.denom, BN_ZERO),
   )
   const isDeprecated = asset.isDeprecated
   const { computeMaxWithdrawAmount } = useHealthComputer(account)
-  const maxWithdrawAmount = isDeprecated
+  const healthBasedMax = isDeprecated
     ? (account?.lends?.find(byDenom(asset.denom))?.amount ?? BN_ZERO)
     : computeMaxWithdrawAmount(asset.denom)
+  // Cap max withdraw by available liquidity in the market
+  const maxWithdrawAmount = useMemo(() => {
+    const availableLiquidity = market?.liquidity ?? BN_ZERO
+    return BigNumber.min(healthBasedMax, availableLiquidity)
+  }, [healthBasedMax, market?.liquidity])
   const { simulateWithdraw } = useUpdatedAccount(account)
   const balance = BNCoin.fromDenomAndBigNumber(asset.denom, maxWithdrawAmount)
   const v1Action = useStore((s) => s.v1Action)
