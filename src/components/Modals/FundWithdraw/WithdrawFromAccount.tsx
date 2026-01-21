@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js'
 import { useCallback, useMemo, useState } from 'react'
 
 import Button from 'components/common/Button'
@@ -11,6 +12,7 @@ import { useUpdatedAccount } from 'hooks/accounts/useUpdatedAccount'
 import useAssets from 'hooks/assets/useAssets'
 import useToggle from 'hooks/common/useToggle'
 import useHealthComputer from 'hooks/health-computer/useHealthComputer'
+import useMarket from 'hooks/markets/useMarket'
 import useStore from 'store'
 import { BNCoin } from 'types/classes/BNCoin'
 import { cloneAccount, removeDepositsAndLends } from 'utils/accounts'
@@ -52,6 +54,7 @@ export default function WithdrawFromAccount(props: Props) {
   const borrowAccount = removeDepositsAndLends(accountClone, currentAsset.denom)
   const { computeMaxBorrowAmount } = useHealthComputer(borrowAccount)
 
+  const market = useMarket(currentAsset.denom)
   const accountDeposit = account.deposits.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO
   const accountLent = account.lends.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO
   const shouldReclaim = amount.isGreaterThan(accountDeposit) && !accountLent.isZero()
@@ -60,10 +63,20 @@ export default function WithdrawFromAccount(props: Props) {
   const reclaimAmount = isReclaimingMaxAmount ? amount : amount.minus(accountDeposit)
   const isDeprecatedAsset = currentAsset.isDeprecated
   const isBorrowEnabledAsset = currentAsset.isBorrowEnabled
-  const maxWithdrawAmount =
+  const healthBasedMaxWithdraw =
     isDeprecatedAsset || !isBorrowEnabledAsset
       ? (sortedBalances.find(byDenom(currentAsset.denom))?.amount ?? BN_ZERO)
       : computeMaxWithdrawAmount(currentAsset.denom)
+  // Cap max withdraw by available liquidity when reclaiming from lends
+  const availableLiquidity = market?.liquidity ?? BN_ZERO
+  const maxWithdrawAmount = useMemo(() => {
+    // If user has lent assets, cap total withdraw by deposits + available liquidity
+    if (accountLent.isGreaterThan(0)) {
+      const maxFromLiquidity = accountDeposit.plus(BigNumber.min(accountLent, availableLiquidity))
+      return BigNumber.min(healthBasedMaxWithdraw, maxFromLiquidity)
+    }
+    return healthBasedMaxWithdraw
+  }, [healthBasedMaxWithdraw, accountDeposit, accountLent, availableLiquidity])
   const maxWithdrawWithBorrowAmount =
     isDeprecatedAsset || !isBorrowEnabledAsset
       ? maxWithdrawAmount
