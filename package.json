@@ -44,7 +44,7 @@
     "graphql-request": "^7.3.5",
     "ibc-domains-sdk": "^1.1.0",
     "isbot": "^5.1.32",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
     "mobx": "^6.15.0",
