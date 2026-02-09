@@ -35,7 +35,7 @@
     "@vercel/analytics": "^1.6.1",
     "@vercel/og": "^0.8.5",
     "@web3modal/wagmi": "^5.1.11",
-    "axios": "^1.13.2",
+    "axios": "^1.13.5",
     "bignumber.js": "^9.3.1",
     "bitcoinjs-lib": "^7.0.0",
     "classnames": "^2.5.1",
