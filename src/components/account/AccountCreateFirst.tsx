@@ -6,7 +6,6 @@ import AccountFundFullPage from 'components/account/AccountFund/AccountFundFullP
 import Card from 'components/common/Card'
 import { CircularProgress } from 'components/common/CircularProgress'
 import FullOverlayContent from 'components/common/FullOverlayContent'
-import WalletSelect from 'components/Wallet/WalletSelect'
 import useAccounts from 'hooks/accounts/useAccounts'
 import useCurrentAccount from 'hooks/accounts/useCurrentAccount'
 import useChainConfig from 'hooks/chain/useChainConfig'
@@ -31,7 +30,7 @@ export default function AccountCreateFirst() {
   const { handleConnectWallet } = useWeb3WalletConnection()
 
   useEffect(() => {
-    if (!address) useStore.setState({ focusComponent: { component: <WalletSelect /> } })
+    if (!address) useStore.setState({ focusComponent: null })
   }, [address])
 
   const handleClick = useCallback(async () => {

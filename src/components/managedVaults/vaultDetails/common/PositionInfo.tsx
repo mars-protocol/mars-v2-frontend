@@ -1,9 +1,6 @@
-import Button from 'components/common/Button'
 import Card from 'components/common/Card'
 import Text from 'components/common/Text'
-import WalletConnectButton from 'components/Wallet/WalletConnectButton'
 import { ReactElement } from 'react'
-import useStore from 'store'
 
 interface Props {
   value: ReactElement
@@ -18,12 +15,9 @@ export default function PositionInfo(props: Props) {
   const {
     value,
     subtitle,
-    primaryButton,
-    secondaryButton,
     isOwner,
     type = 'performanceFee',
   } = props
-  const address = useStore((s) => s.address)
 
   const title = type === 'performanceFee' ? 'Performance Fee' : 'My Position'
   const showFeeInfo = type === 'performanceFee' && isOwner
@@ -49,22 +43,6 @@ export default function PositionInfo(props: Props) {
             <Text size='xs' className='text-white/50'>
               {subtitle}
             </Text>
-          )}
-        </div>
-
-        <div className='flex flex-col gap-2'>
-          {!address ? (
-            <WalletConnectButton {...primaryButton} />
-          ) : isOwner ? (
-            <div className='flex flex-col gap-2'>
-              <Button {...primaryButton} />
-              <Button {...secondaryButton} />
-            </div>
-          ) : (
-            <div className='flex flex-col md:flex-row gap-2'>
-              <Button {...primaryButton} />
-              <Button {...secondaryButton} />
-            </div>
           )}
         </div>
       </div>

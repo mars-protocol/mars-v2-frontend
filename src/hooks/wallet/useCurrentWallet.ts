@@ -1,13 +1,5 @@
-import { useShuttle } from '@delphi-labs/shuttle-react'
-import { useMemo } from 'react'
+import type { WalletConnection } from '@delphi-labs/shuttle'
 
-import { getCurrentChainId } from 'utils/getCurrentChainId'
-
-export default function useCurrentWallet() {
-  const { wallets } = useShuttle()
-  const chainId = getCurrentChainId()
-
-  return useMemo(() => {
-    return wallets.find((wallet) => wallet.network.chainId === chainId)
-  }, [wallets, chainId])
+export default function useCurrentWallet(): WalletConnection | undefined {
+  return undefined
 }

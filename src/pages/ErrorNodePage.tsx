@@ -1,4 +1,3 @@
-import { useShuttle } from '@delphi-labs/shuttle-react'
 import Button from 'components/common/Button'
 import { ExternalLink } from 'components/common/Icons'
 import Text from 'components/common/Text'
@@ -7,7 +6,6 @@ import { TextLink } from 'components/common/TextLink'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import useChainConfig from 'hooks/chain/useChainConfig'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
-import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import { useCallback, useMemo, useState } from 'react'
 import useStore from 'store'
 import { getCurrentChainId } from 'utils/getCurrentChainId'
@@ -18,8 +16,6 @@ export default function ErrorNodePage() {
   const chainId = getCurrentChainId()
   const nodeError = useStore((s) => s.errorStore).nodeError
   const [tempRpcEndpoint, setTempRpcEndpoint] = useState('')
-  const { disconnectWallet } = useShuttle()
-  const currentWallet = useCurrentWallet()
   const [validRpc, setValidRpc] = useState(true)
   const [rpcEndpoint, setRpcEndpoint] = useLocalStorage<string>(
     `${chainConfig.id}/${LocalStorageKeys.RPC_ENDPOINT}`,
@@ -67,14 +63,11 @@ export default function ErrorNodePage() {
       setRpcEndpoint(chainConfig.endpoints.fallbackRpc)
       setTempRpcEndpoint('')
     }
-    if (currentWallet) disconnectWallet(currentWallet)
     refresh()
   }, [
     rpcEndpoint,
     chainConfig.endpoints.fallbackRpc,
     chainConfig.endpoints.rpc,
-    currentWallet,
-    disconnectWallet,
     setRpcEndpoint,
     refresh,
   ])

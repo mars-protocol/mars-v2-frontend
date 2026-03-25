@@ -1,27 +1,18 @@
-import chains from 'chains'
 import classNames from 'classnames'
-import Button from 'components/common/Button'
 import { Callout, CalloutType } from 'components/common/Callout'
 import Card from 'components/common/Card'
 import { FormattedNumber } from 'components/common/FormattedNumber'
 import { ChevronDown, ChevronRight, MarsToken } from 'components/common/Icons'
 import Text from 'components/common/Text'
 import TierProgressBar from 'components/staking/TierProgressBar'
-import WalletConnectButton from 'components/Wallet/WalletConnectButton'
 import { LocalStorageKeys } from 'constants/localStorageKeys'
 import { BN_ZERO } from 'constants/math'
-import useChainConfig from 'hooks/chain/useChainConfig'
-import useCurrentChainId from 'hooks/localStorage/useCurrentChainId'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import { useStakedMars, useUnstakedMars } from 'hooks/staking/useNeutronStakingData'
-import { useCallback } from 'react'
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import useStore from 'store'
-import { useSWRConfig } from 'swr'
-import { ChainInfoID } from 'types/enums'
 import { MARS_DECIMALS } from 'utils/constants'
 import { formatReleaseDate } from 'utils/dateTime'
-import { getRoute } from 'utils/route'
 
 export default function MarsStaking({ className }: { className?: string }) {
   const [isExpanded, setIsExpanded] = useLocalStorage<boolean>(
@@ -30,85 +21,16 @@ export default function MarsStaking({ className }: { className?: string }) {
   )
   const { address: urlAddress } = useParams()
   const connectedAddress = useStore((s) => s.address)
-  const chainConfig = useChainConfig()
-  const { mutate } = useSWRConfig()
-  const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const [_, setCurrentChainId] = useCurrentChainId()
 
   const displayAddress = urlAddress ?? connectedAddress
-  const isOwnWallet = !urlAddress || urlAddress === connectedAddress
 
   const { data: stakedMarsData } = useStakedMars(displayAddress)
   const { data: unstakedData } = useUnstakedMars(displayAddress)
 
   const stakedAmount = stakedMarsData?.stakedAmount || BN_ZERO
 
-  const handleOpenManageModal = () => {
-    useStore.setState({ marsStakingModal: { type: 'stake' } })
-  }
-
-  const handleSwitchToNeutron = useCallback(async () => {
-    const neutronChainConfig = chains[ChainInfoID.Neutron1]
-    setCurrentChainId(neutronChainConfig.id)
-    mutate(() => true)
-    useStore.setState({
-      assets: [],
-      mobileNavExpanded: false,
-      chainConfig: neutronChainConfig,
-      isV1: false,
-      client: undefined,
-      address: undefined,
-      userDomain: undefined,
-      balances: [],
-    })
-    navigate(getRoute('portfolio', searchParams))
-  }, [setCurrentChainId, mutate, navigate, searchParams])
-
   const renderActionButton = () => {
-    if (!isOwnWallet) {
-      return null
-    }
-
-    if (!connectedAddress) {
-      return (
-        <WalletConnectButton
-          className='w-full'
-          color='primary'
-          size='md'
-          textOverride='Connect Wallet to Stake MARS'
-        />
-      )
-    }
-
-    if (chainConfig.isOsmosis) {
-      return (
-        <div className='space-y-3'>
-          <div className='p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg'>
-            <Text size='sm' className='text-warning text-center'>
-              MARS staking is only available on Neutron network.
-            </Text>
-          </div>
-          <Button
-            color='primary'
-            size='md'
-            text='Switch to Neutron'
-            onClick={handleSwitchToNeutron}
-            className='w-full'
-          />
-        </div>
-      )
-    }
-
-    return (
-      <Button
-        color='primary'
-        size='md'
-        text='Manage your MARS stake'
-        onClick={handleOpenManageModal}
-        className='w-full'
-      />
-    )
+    return null
   }
 
   return (

@@ -1,6 +1,5 @@
 import Card from 'components/common/Card'
 import Text from 'components/common/Text'
-import WalletConnectButton from 'components/Wallet/WalletConnectButton'
 
 export default function ConnectInfo() {
   return (
@@ -10,9 +9,8 @@ export default function ConnectInfo() {
       contentClassName='px-4 py-6 flex justify-center flex-wrap'
     >
       <Text size='sm' className='w-full text-center'>
-        You need to be connected to view the portfolio page.
+        This protocol has been retired. The app is now view-only.
       </Text>
-      <WalletConnectButton className='mt-4' />
     </Card>
   )
 }

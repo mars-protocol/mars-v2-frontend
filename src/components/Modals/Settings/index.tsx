@@ -1,4 +1,3 @@
-import { useShuttle } from '@delphi-labs/shuttle-react'
 import classNames from 'classnames'
 import { useCallback, useMemo, useState } from 'react'
 
@@ -25,7 +24,6 @@ import useDisplayCurrency from 'hooks/localStorage/useDisplayCurrency'
 import useEnableAutoLendGlobal from 'hooks/localStorage/useEnableAutoLendGlobal'
 import useLocalStorage from 'hooks/localStorage/useLocalStorage'
 import useAutoLend from 'hooks/wallet/useAutoLend'
-import useCurrentWallet from 'hooks/wallet/useCurrentWallet'
 import useStore from 'store'
 import { getCurrentChainId } from 'utils/getCurrentChainId'
 import { BN } from 'utils/helpers'
@@ -35,8 +33,6 @@ const slippages = [0.01, 0.02]
 export default function SettingsModal() {
   const chainConfig = useChainConfig()
   const chainId = getCurrentChainId()
-  const { disconnectWallet } = useShuttle()
-  const currentWallet = useCurrentWallet()
   const modal = useStore((s) => s.settingsModal)
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false)
   const displayCurrencies = useDisplayCurrencyAssets()
@@ -303,8 +299,7 @@ export default function SettingsModal() {
   }
 
   const handleCloseModal = useCallback(() => {
-    if (hasEndpointsChangedValid && currentWallet) {
-      disconnectWallet(currentWallet)
+    if (hasEndpointsChangedValid) {
       window.location.reload()
     }
     setTempRestEndpoint('')
@@ -312,7 +307,7 @@ export default function SettingsModal() {
     setValidRest(true)
     setValidRpc(true)
     useStore.setState({ settingsModal: false })
-  }, [hasEndpointsChangedValid, currentWallet, disconnectWallet])
+  }, [hasEndpointsChangedValid])
 
   if (!modal) return null
 

@@ -1,9 +1,6 @@
-import WalletConnectButton from 'components/Wallet/WalletConnectButton'
 import Intro from 'components/common/Intro'
-import useStore from 'store'
 
 export default function V1Intro() {
-  const address = useStore((state) => state.address)
   return (
     <Intro
       text={
@@ -17,8 +14,6 @@ export default function V1Intro() {
         </>
       }
       bg='v1'
-    >
-      {!address && <WalletConnectButton className='mt-4' />}
-    </Intro>
+    />
   )
 }
